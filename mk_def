@@ -1,0 +1,22 @@
+﻿
+
+my_prefix := ./
+
+
+my_tool_chain :=
+my_cc := $(my_tool_chain)gcc
+my_cxx := $(my_tool_chain)g++
+my_ar := $(my_tool_chain)ar
+my_ranlib := $(my_tool_chain)ranlib
+my_strip := $(my_tool_chain)strip
+my_flags := -m64 -lstdc++ -static-libgcc -static-libstdc++ -D__LINUX__ -D__X86_64__
+
+my_lib_path := ../klua/lib/release/lib_linux64
+
+INSTALL_TOP := /usr/local
+INSTALL_BIN := $(INSTALL_TOP)/bin
+INSTALL_INC := $(INSTALL_TOP)/include
+INSTALL_LIB := $(INSTALL_TOP)/lib
+INSTALL_MAN := $(INSTALL_TOP)/man/man1
+INSTALL_LMOD := $(INSTALL_TOP)/share/lua/$V
+INSTALL_CMOD := $(INSTALL_TOP)/lib/lua/$V

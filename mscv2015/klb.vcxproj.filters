@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="inc">
+      <UniqueIdentifier>{fdcb7959-f2ea-4bba-86d6-8b5babe09ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bc0c271a-e6fc-46dd-a1d9-aed36e981ed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\mem">
+      <UniqueIdentifier>{6f2fed0f-558b-4f40-a9e6-324ac897a1d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\mem">
+      <UniqueIdentifier>{3c9397a3-3453-486b-96eb-1abeeeb4a1ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\lock">
+      <UniqueIdentifier>{0d3b3f18-da76-4c70-a664-9dd4d823ca9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\list">
+      <UniqueIdentifier>{c389ea9f-d4a1-4135-aa9e-4fe8c95338ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\lock">
+      <UniqueIdentifier>{f06cbc83-1d7e-4088-8c8c-75bd99b9999b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\list">
+      <UniqueIdentifier>{154f0c5d-bf32-4f9c-9c3e-96922a946653}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\obj">
+      <UniqueIdentifier>{1e8cb316-ade3-4ae1-99be-96542c30a37e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\obj">
+      <UniqueIdentifier>{545e2d90-a8c8-44f6-b3e8-b505646d0972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\hash">
+      <UniqueIdentifier>{b88430cb-7593-46bc-9ec0-917a1eb51f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\hash">
+      <UniqueIdentifier>{83a7ab8d-0460-404f-823f-72148fb307f0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\inc\mem\klb_mem.h">
+      <Filter>inc\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\klb_type.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\obj\klb_obj.h">
+      <Filter>inc\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\hash\klb_hash_dx.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\mem\klb_mem.c">
+      <Filter>src\mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\obj\klb_obj.c">
+      <Filter>src\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hash\klb_hash_dx.c">
+      <Filter>src\hash</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\fmt_c.sh" />
+    <None Include="..\Makefile" />
+    <None Include="..\mk_def" />
+  </ItemGroup>
+</Project>
