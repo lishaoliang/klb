@@ -13,14 +13,8 @@
     <Filter Include="src\mem">
       <UniqueIdentifier>{3c9397a3-3453-486b-96eb-1abeeeb4a1ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\lock">
-      <UniqueIdentifier>{0d3b3f18-da76-4c70-a664-9dd4d823ca9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\list">
       <UniqueIdentifier>{c389ea9f-d4a1-4135-aa9e-4fe8c95338ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\lock">
-      <UniqueIdentifier>{f06cbc83-1d7e-4088-8c8c-75bd99b9999b}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\list">
       <UniqueIdentifier>{154f0c5d-bf32-4f9c-9c3e-96922a946653}</UniqueIdentifier>
@@ -36,6 +30,18 @@
     </Filter>
     <Filter Include="inc\hash">
       <UniqueIdentifier>{83a7ab8d-0460-404f-823f-72148fb307f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\thread">
+      <UniqueIdentifier>{19854936-5871-4d9c-8923-92266be2092d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\thread">
+      <UniqueIdentifier>{b3f81169-36c1-49f5-ba3a-b245487da94f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\log">
+      <UniqueIdentifier>{7e3b5e99-7eea-46c5-9985-2f23536c4f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\log">
+      <UniqueIdentifier>{8a99df81-c1ff-43d4-9825-961cce0dd9f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +63,24 @@
     <ClInclude Include="..\inc\list\list.h">
       <Filter>inc\list</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\thread\klb_thread.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\log\klb_log.h">
+      <Filter>inc\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\thread\klb_atomic.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\thread\klb_mutex.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\thread\klb_rwlock.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\thread\klb_spinlock.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\mem\klb_mem.c">
@@ -70,6 +94,21 @@
     </ClCompile>
     <ClCompile Include="..\src\list\klb_list.c">
       <Filter>src\list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\klb_thread.c">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\klb_atomic.c">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\klb_mutex.c">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\klb_rwlock.c">
+      <Filter>src\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\thread\klb_spinlock.c">
+      <Filter>src\thread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

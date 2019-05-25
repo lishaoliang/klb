@@ -13,8 +13,11 @@
 #ifndef __KLB_OBJ_H__
 #define __KLB_OBJ_H__
 
-
 #include "klb_type.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 
 #pragma pack(4)
@@ -57,8 +60,9 @@ typedef struct klb_obj_t_
 #define KLB_OBJ_DESTROY(KLB_OBJ_)   {if(KLB_OBJ_){klb_obj_destroy_cb cb_destroy=((klb_obj_t*)(KLB_OBJ_))->cb_destroy;cb_destroy(KLB_OBJ_);(KLB_OBJ_)=NULL;}}
 
 
-
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __KLB_OBJ_H__
 //end
