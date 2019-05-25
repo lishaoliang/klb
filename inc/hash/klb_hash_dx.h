@@ -1,9 +1,9 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, All Rights Reserved
+//  Copyright(c) 2019, MIT License
 //  Created: 2019/05/19
 //
 /// @file    klb_hash_dx.h
-/// @brief   文件简要描述
+/// @brief   hash dx算法
 /// @author  李绍良
 ///  \n 修改自: https://github.com/torvalds/linux/blob/v5.1-rc7/fs/ext4/hash.c
 ///  \n Copyright (C) 2002 by Theodore Ts'o
@@ -16,8 +16,11 @@
 #ifndef __KLB_HASH_DX_H__
 #define __KLB_HASH_DX_H__
 
-
 #include "klb_type.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 
 /// @brief dx hash unsigned 算法
@@ -27,6 +30,10 @@
 KLB_API uint32_t klb_hash_dx(const char* p_data, int len);
 
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __KLB_HASH_DX_H__
 //end

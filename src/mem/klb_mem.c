@@ -1,4 +1,5 @@
 ﻿#include "mem/klb_mem.h"
+#include <stdlib.h>
 #include <assert.h>
 
 

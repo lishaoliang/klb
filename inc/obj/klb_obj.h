@@ -1,9 +1,9 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, All Rights Reserved
+//  Copyright(c) 2019, MIT License
 //  Created: 2019/05/19
 //
 /// @file    klb_obj.h
-/// @brief   基础对象定义
+/// @brief   基础obj定义
 /// @author  李绍良
 /// @version 0.1
 /// @history 修改历史

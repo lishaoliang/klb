@@ -21,11 +21,14 @@
   <ItemGroup>
     <ClInclude Include="..\inc\hash\klb_hash_dx.h" />
     <ClInclude Include="..\inc\klb_type.h" />
+    <ClInclude Include="..\inc\list\klb_list.h" />
+    <ClInclude Include="..\inc\list\list.h" />
     <ClInclude Include="..\inc\mem\klb_mem.h" />
     <ClInclude Include="..\inc\obj\klb_obj.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\hash\klb_hash_dx.c" />
+    <ClCompile Include="..\src\list\klb_list.c" />
     <ClCompile Include="..\src\mem\klb_mem.c" />
     <ClCompile Include="..\src\obj\klb_obj.c" />
   </ItemGroup>

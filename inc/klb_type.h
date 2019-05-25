@@ -1,9 +1,9 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, All Rights Reserved
+//  Copyright(c) 2019, MIT License
 //  Created: 2019/05/19
 //
 /// @file    klb_type.h
-/// @brief   文件简要描述
+/// @brief   基础类型,常用宏定义
 /// @author  李绍良
 /// @version 0.1
 /// @history 修改历史
