@@ -14,12 +14,31 @@
 #define __KLB_LOG_H__
 
 #include "klb_type.h"
+#include <stdio.h>
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 
+/// @def   KLB_LOG
+/// @brief 常规打印
+#define KLB_LOG(FMT_, ...)      printf(FMT_, ## __VA_ARGS__)
+
+
+/// @def   KLB_LOG_D
+/// @brief 调试打印
+#define KLB_LOG_D(FMT_, ...)    printf(FMT_, ## __VA_ARGS__)
+
+
+/// @def   KLB_LOG_E
+/// @brief 错误打印
+#define KLB_LOG_E(FMT_, ...)    printf(FMT_, ## __VA_ARGS__)
+
+
+/// @def   KLB_LOG_S
+/// @brief 系统错误打印
+#define KLB_LOG_S(FMT_, ...)    printf(FMT_, ## __VA_ARGS__)
 
 
 #ifdef __cplusplus

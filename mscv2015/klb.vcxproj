@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\hash\klb_hashtab.h" />
     <ClInclude Include="..\inc\hash\klb_hash_dx.h" />
     <ClInclude Include="..\inc\klb_type.h" />
     <ClInclude Include="..\inc\list\klb_list.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="..\inc\time\klb_time.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\hash\klb_hashtab.c" />
     <ClCompile Include="..\src\hash\klb_hash_dx.c" />
     <ClCompile Include="..\src\list\klb_list.c" />
     <ClCompile Include="..\src\mem\klb_buf.c" />

@@ -99,6 +99,9 @@
     <ClInclude Include="..\inc\obj\klb_obj_hash.h">
       <Filter>inc\obj</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\hash\klb_hashtab.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\mem\klb_mem.c">
@@ -136,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="..\src\mem\klb_mpool.c">
       <Filter>src\mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hash\klb_hashtab.c">
+      <Filter>src\hash</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

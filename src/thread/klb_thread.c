@@ -1,5 +1,6 @@
 ﻿#include "thread/klb_thread.h"
 #include "mem/klb_mem.h"
+#include "log/klb_log.h"
 #include <assert.h>
 
 #ifdef _MSC_VER
@@ -47,7 +48,15 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     p_thread->run = TRUE;
     p_thread->hnd = CreateThread(0, 0, cb_klb_thread, (void *)p_thread, 0, NULL);
 
-    assert(NULL != p_thread->hnd);
+    if (NULL == p_thread->hnd)
+    {
+        KLB_LOG_S("sys error!klb thread create!");
+
+        KLB_FREE(p_thread->p_name);
+        KLB_FREE(p_thread);
+        return NULL;
+    }
+
     return p_thread;
 }
 
@@ -99,7 +108,7 @@ static void* cb_klb_thread(void* p_obj)
         int tid = syscall(__NR_gettid);;
         if (-1 == sched_setaffinity(tid, sizeof(mask), &mask))
         {
-            //printf("error!set cpu idx:%d\n", p_thread->cpu_idx);
+            KLB_LOG_E("error!klb thread set cpu idx:%d\n", p_thread->cpu_idx);
         }
     }
 
@@ -132,6 +141,8 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
 
     if (0 != pthread_create(&(p_thread->hnd), 0, cb_klb_thread, p_thread))
     {
+        KLB_LOG_S("sys error!klb thread create!");
+
         KLB_FREE(p_thread->p_name);
         KLB_FREE(p_thread);
         return NULL;
