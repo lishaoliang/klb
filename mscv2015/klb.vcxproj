@@ -24,24 +24,31 @@
     <ClInclude Include="..\inc\list\klb_list.h" />
     <ClInclude Include="..\inc\list\list.h" />
     <ClInclude Include="..\inc\log\klb_log.h" />
+    <ClInclude Include="..\inc\mem\klb_buf.h" />
     <ClInclude Include="..\inc\mem\klb_mem.h" />
+    <ClInclude Include="..\inc\mem\klb_mpool.h" />
     <ClInclude Include="..\inc\obj\klb_obj.h" />
+    <ClInclude Include="..\inc\obj\klb_obj_hash.h" />
     <ClInclude Include="..\inc\thread\klb_atomic.h" />
     <ClInclude Include="..\inc\thread\klb_mutex.h" />
     <ClInclude Include="..\inc\thread\klb_rwlock.h" />
     <ClInclude Include="..\inc\thread\klb_spinlock.h" />
     <ClInclude Include="..\inc\thread\klb_thread.h" />
+    <ClInclude Include="..\inc\time\klb_time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\hash\klb_hash_dx.c" />
     <ClCompile Include="..\src\list\klb_list.c" />
+    <ClCompile Include="..\src\mem\klb_buf.c" />
     <ClCompile Include="..\src\mem\klb_mem.c" />
+    <ClCompile Include="..\src\mem\klb_mpool.c" />
     <ClCompile Include="..\src\obj\klb_obj.c" />
     <ClCompile Include="..\src\thread\klb_atomic.c" />
     <ClCompile Include="..\src\thread\klb_mutex.c" />
     <ClCompile Include="..\src\thread\klb_rwlock.c" />
     <ClCompile Include="..\src\thread\klb_spinlock.c" />
     <ClCompile Include="..\src\thread\klb_thread.c" />
+    <ClCompile Include="..\src\time\klb_time.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fmt_c.sh" />
