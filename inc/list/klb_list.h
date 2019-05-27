@@ -45,6 +45,22 @@ KLB_API klb_list_t* klb_list_create();
 KLB_API void klb_list_destroy(klb_list_t* p_list);
 
 
+/// @brief 清空列表回调函数
+/// @param [in] *p_obj      传参对象
+/// @param [in] *p_data     数据
+/// @return int 0
+typedef int(*klb_list_clean_cb)(void* p_obj, void* p_data);
+
+
+/// @brief 清空列表
+/// @param [in] *p_list     list对象
+/// @param [in] cb_clean    清理回调函数
+/// @param [in] *p_obj      传参对象
+/// @return 无
+/// @note 方向: 从头到尾
+KLB_API void klb_list_clean(klb_list_t* p_list, klb_list_clean_cb cb_clean, void* p_obj);
+
+
 /// @brief 在最前面, 向list压入数据
 /// @param [in] *p_list     list对象
 /// @param [in] *p_data     数据

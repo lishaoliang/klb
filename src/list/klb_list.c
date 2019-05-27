@@ -41,22 +41,118 @@ void klb_list_destroy(klb_list_t* p_list)
     assert(NULL == p_list->p_head);
     assert(NULL == p_list->p_tail);
 
+    // 销毁前必须释放所有节点
+
     KLB_FREE(p_list);
 }
+
+
+void klb_list_clean(klb_list_t* p_list, klb_list_clean_cb cb_clean, void* p_obj)
+{
+    assert(NULL != p_list);
+    assert(NULL != cb_clean);
+
+    while (TRUE)
+    {
+        void* p_data = klb_list_pop_head(p_list);
+
+        if (NULL != p_data)
+        {
+            cb_clean(p_obj, p_data);
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
 
 void klb_list_push_head(klb_list_t* p_list, void* p_data)
 {
     assert(NULL != p_list);
+
+    if (NULL != p_data)
+    {
+        klb_list_iter_t* p_iter = KLB_MALLOC(klb_list_iter_t, 1, 0);
+
+        p_iter->p_data = p_data;
+
+        p_iter->p_prev = NULL;
+        p_iter->p_next = p_list->p_head;
+
+        // 设置后节点的 p_prev指向
+        if (NULL != p_iter->p_next)
+        {
+            p_iter->p_next->p_prev = p_iter;
+        }
+
+        // 如果插入首个元素
+        if (NULL == p_list->p_tail)
+        {
+            assert(0 == p_list->size);
+            p_list->p_tail = p_iter;
+        }
+
+        p_list->p_head = p_iter;
+        p_list->size += 1;
+    }
 }
 
 void klb_list_push_tail(klb_list_t* p_list, void* p_data)
 {
     assert(NULL != p_list);
+
+    if (NULL != p_data)
+    {
+        klb_list_iter_t* p_iter = KLB_MALLOC(klb_list_iter_t, 1, 0);
+
+        p_iter->p_data = p_data;
+
+        p_iter->p_prev = p_list->p_tail;
+        p_iter->p_next = NULL;
+
+        // 设置前节点的 p_next
+        if (NULL != p_iter->p_prev)
+        {
+            p_iter->p_prev->p_next = p_iter;
+        }
+
+        // 如果插入首个元素
+        if (NULL == p_list->p_head)
+        {
+            assert(0 == p_list->size);
+            p_list->p_head = p_iter;
+        }
+
+        p_list->p_tail = p_iter;
+        p_list->size += 1;
+    }
 }
 
 void* klb_list_pop_head(klb_list_t* p_list)
 {
     assert(NULL != p_list);
+
+    klb_list_iter_t* p_iter = p_list->p_head;
+
+    if (NULL != p_iter)
+    {
+        assert(0 <= p_list->size);
+        p_list->p_head = p_iter->p_next;
+        p_list->size -= 1;
+
+        if (NULL == p_iter->p_next)
+        {
+            p_list->p_tail = NULL;
+            assert(0 == p_list->size);
+        }
+
+        void* p_data = p_iter->p_data;
+
+        KLB_FREE(p_iter);
+        return p_data;
+    }
 
     return NULL;
 }
@@ -64,6 +160,26 @@ void* klb_list_pop_head(klb_list_t* p_list)
 void* klb_list_pop_tail(klb_list_t* p_list)
 {
     assert(NULL != p_list);
+
+    klb_list_iter_t* p_iter = p_list->p_tail;
+
+    if (NULL != p_iter)
+    {
+        assert(0 <= p_list->size);
+        p_list->p_tail = p_iter->p_prev;
+        p_list->size -= 1;
+
+        if (NULL == p_iter->p_prev)
+        {
+            p_list->p_head = NULL;
+            assert(0 == p_list->size);
+        }
+
+        void* p_data = p_iter->p_data;
+
+        KLB_FREE(p_iter);
+        return p_data;
+    }
 
     return NULL;
 }
@@ -92,6 +208,48 @@ int klb_list_size(klb_list_t* p_list)
 void* klb_list_remove(klb_list_t* p_list, klb_list_iter_t* p_iter)
 {
     assert(NULL != p_list);
+    
+    if (NULL != p_iter)
+    {
+        klb_list_iter_t* p_prev = p_iter->p_prev;
+        klb_list_iter_t* p_next = p_iter->p_next;
+
+        if (NULL != p_prev)
+        {
+            p_prev->p_next = p_next;
+
+            if (NULL != p_next)
+            {
+                p_next->p_prev = p_prev;
+            }
+            else
+            {
+                p_list->p_tail = p_prev;
+            }
+        }
+        else
+        {
+            p_list->p_head = p_next;
+
+            if (NULL != p_next)
+            {
+                p_next->p_prev = NULL;
+            }
+            else
+            {
+                assert(1 == p_list->size);
+                p_list->p_tail = NULL;
+            }
+        }
+
+        p_list->size -= 1;
+        assert(0 <= p_list->size);
+
+        void* p_data = p_iter->p_data;
+        KLB_FREE(p_iter);
+
+        return p_data;
+    }
 
     return NULL;
 }
