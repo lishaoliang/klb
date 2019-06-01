@@ -49,6 +49,21 @@ KLB_API klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, in
 KLB_API void klb_thread_destroy(klb_thread_t* p_thread);
 
 
+/// @brief 毫秒级休眠
+/// @param [in] ms          毫秒[0 - ‭2,147,483,648‬]
+/// @return 无
+/// @note 1秒 = 1000毫秒
+KLB_API void klb_sleep(uint32_t ms);
+
+
+/// @brief 纳秒级休眠
+/// @param [in] ns          纳秒[0 - 999,999,999]
+/// @return 无
+/// @note 1秒 = 1000毫秒 = 1000,000,000纳秒
+///  \n 本函数可以实现最多999毫秒休眠
+KLB_API void klb_sleep_ns(uint32_t ns);
+
+
 #ifdef __cplusplus
 }
 #endif

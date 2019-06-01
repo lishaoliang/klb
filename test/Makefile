@@ -4,12 +4,13 @@ SHELL = /bin/bash
 
 
 # 引入一些环境参数
--include ./mk_def
+-include ../mk_def
+my_lib_path := ../../klua/lib/release/lib_linux64
 
 
 # 从目录检索需要编译的c文件
-MY_DIRS := ./src/hash ./src/list ./src/log ./src/mem ./src/obj 
-MY_DIRS += ./src/string ./src/thread ./src/time
+MY_DIRS := . ./t_time ./t_thread ./t_string ./t_obj ./t_log
+MY_DIRS += ./t_list ./t_hash
 
 
 # 编译选项
@@ -18,9 +19,8 @@ MY_CFLAGS += -std=gnu99
 
 
 # 引用头文件
-MY_INCLUDES := -I ./inc
-MY_INCLUDES += -I ./src/hash -I./src/list -I ./src/log -I ./src/mem -I ./src/obj 
-MY_INCLUDES += -I ./src/string -I ./src/thread -I ./src/time
+MY_INCLUDES := -I ../inc -I ../../klua/src/inc
+MY_INCLUDES += -I .
 
 
 # 引用的静态库
@@ -31,7 +31,7 @@ MY_LIB_DYNAMIC := -L $(my_lib_path) -Bdynamic -lm -ldl -lpthread
 
 
 # 编译目标名称
-MY_TARGET_NAME := klb
+MY_TARGET_NAME := klb_test
 MY_TARGET_EXE := $(my_lib_path)/$(MY_TARGET_NAME)
 MY_TARGET_A := $(my_lib_path)/lib$(MY_TARGET_NAME).a
 MY_TARGET_SO := $(my_lib_path)/lib$(MY_TARGET_NAME).so
@@ -68,7 +68,7 @@ MY_LIB_MINI = -ffunction-sections -fdata-sections
 MY_LINK_MINI = -Wl,--gc-sections
 
 
-.PHONY: all clean install
+.PHONY: all clean
 
 all: lib
 

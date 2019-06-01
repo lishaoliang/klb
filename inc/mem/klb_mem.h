@@ -23,18 +23,20 @@ extern "C" {
 #endif
 
 
-#if 0
+#if !defined(_MSC_VER)
 
-/// @brief 申请内存
-/// @param [in] size    需申请的内存大小
-/// @return void* 申请到的内存地址
-KLB_API void* klb_malloc(size_t size);
+/// @brief 按对齐申请内存
+/// @param [in] size        需要申请的内存大小
+/// @param [in] align       对齐系数: 2^N
+/// @return void* 申请到的内存
+/// @note 返回NULL: align值错误或内存不足
+void* _aligned_malloc(size_t size, size_t align);
 
 
-/// @brief 释放内存
-/// @param [in] *p      待释放的内存地址
+/// @brief 释放按对齐申请的内存
+/// @param [in] *ptr        对齐内存指针
 /// @return 无
-KLB_API void klb_free(void* p);
+#define _aligned_free   free
 
 #endif
 
@@ -58,6 +60,15 @@ KLB_API void klb_free(void* p);
 /// @brief 通过释放函数释放结构体对象
 #define KLB_FREE_BY(PTR_, FUNC_FREE_)       {if(NULL!=(PTR_)){(FUNC_FREE_)(PTR_);(PTR_)=NULL;}}
 
+
+/// @def   KLB_MALLOC
+/// @brief 申请对齐内存; 按结构体数目 + 对齐字节; ALIGN_对齐(一般2^N对齐, 4, 8, 4K等)
+#define KLB_MALLOC_ALIGNED(ST_, NUM_, PADDING_, ALIGN_) (ST_*)_aligned_malloc(sizeof(ST_) * (NUM_) + (PADDING_), ALIGN_)
+
+
+/// @def   KLB_FREE_ALIGNED
+/// @brief 释放对齐内存, 并将指针置空
+#define KLB_FREE_ALIGNED(PTR_)              {if(NULL!=(PTR_)){_aligned_free(PTR_);(PTR_)=NULL;}}
 
 
 #ifdef __cplusplus

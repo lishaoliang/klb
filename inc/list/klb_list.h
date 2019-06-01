@@ -3,7 +3,7 @@
 //  Created: 2019/05/25
 //
 /// @file    klb_list.h
-/// @brief   精简双向链表
+/// @brief   精简双向链表: 非侵入式
 ///  \n 精简list: 仅支持压入, 弹出, 迭代访问
 ///  \n 参考: https://github.com/IIJ-NetBSD/netbsd-src/blob/master/external/bsd/libbind/dist/include/isc/list.h
 ///  \n 参考: std::list
@@ -103,8 +103,8 @@ KLB_API void* klb_list_tail(klb_list_t* p_list);
 
 /// @brief 当前节点数目
 /// @param [in] *p_list     list对象
-/// @return int 返回值
-KLB_API int klb_list_size(klb_list_t* p_list);
+/// @return uint32_t 返回当前节点数目
+KLB_API uint32_t klb_list_size(klb_list_t* p_list);
 
 
 /// @brief 按迭代子移除节点
@@ -114,6 +114,12 @@ KLB_API int klb_list_size(klb_list_t* p_list);
 /// @note 1. 数据由调用者维护其生命周期
 ///  \n   2. 函数调用后, iter迭代子失效(内存被释放)
 KLB_API void* klb_list_remove(klb_list_t* p_list, klb_list_iter_t* p_iter);
+
+
+/// @brief 获取list iter对应的数据
+/// @param [in] *p_iter     iter迭代子
+/// @return void* 返回数据
+KLB_API void* klb_list_data(klb_list_iter_t* p_iter);
 
 
 /// @brief 获取最前面的迭代子
@@ -126,7 +132,7 @@ KLB_API klb_list_iter_t* klb_list_begin(klb_list_t* p_list);
 /// @brief 下一个迭代子
 /// @param [in] *p_list      list对象
 /// @return klb_list_iter_t* iter迭代子
-/// @note 和klb_list_head配合使用
+/// @note 和klb_list_begin配合使用
 KLB_API klb_list_iter_t* klb_list_next(klb_list_iter_t* p_iter);
 
 
@@ -140,7 +146,7 @@ KLB_API klb_list_iter_t* klb_list_end(klb_list_t* p_list);
 /// @brief 前一个迭代子
 /// @param [in] *p_list      list对象
 /// @return klb_list_iter_t* iter迭代子
-/// @note 和klb_list_tail配合使用
+/// @note 和klb_list_end配合使用
 KLB_API klb_list_iter_t* klb_list_prev(klb_list_iter_t* p_iter);
 
 

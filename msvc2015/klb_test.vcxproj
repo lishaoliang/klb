@@ -19,48 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\hash\klb_hashtab.h" />
-    <ClInclude Include="..\inc\hash\klb_hash_dx.h" />
-    <ClInclude Include="..\inc\klb_type.h" />
-    <ClInclude Include="..\inc\list\klb_list.h" />
-    <ClInclude Include="..\inc\list\list.h" />
-    <ClInclude Include="..\inc\log\klb_log.h" />
-    <ClInclude Include="..\inc\mem\klb_buf.h" />
-    <ClInclude Include="..\inc\mem\klb_mem.h" />
-    <ClInclude Include="..\inc\mem\klb_mpool.h" />
-    <ClInclude Include="..\inc\obj\klb_obj.h" />
-    <ClInclude Include="..\inc\obj\klb_obj_hash.h" />
-    <ClInclude Include="..\inc\thread\klb_atomic.h" />
-    <ClInclude Include="..\inc\thread\klb_mutex.h" />
-    <ClInclude Include="..\inc\thread\klb_rwlock.h" />
-    <ClInclude Include="..\inc\thread\klb_spinlock.h" />
-    <ClInclude Include="..\inc\thread\klb_thread.h" />
-    <ClInclude Include="..\inc\time\klb_time.h" />
+    <ClInclude Include="..\test\lua_t_klb.h" />
+    <ClInclude Include="..\test\t_klb.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\hash\klb_hashtab.c" />
-    <ClCompile Include="..\src\hash\klb_hash_dx.c" />
-    <ClCompile Include="..\src\list\klb_list.c" />
-    <ClCompile Include="..\src\mem\klb_buf.c" />
-    <ClCompile Include="..\src\mem\klb_mem.c" />
-    <ClCompile Include="..\src\mem\klb_mpool.c" />
-    <ClCompile Include="..\src\obj\klb_obj.c" />
-    <ClCompile Include="..\src\thread\klb_atomic.c" />
-    <ClCompile Include="..\src\thread\klb_mutex.c" />
-    <ClCompile Include="..\src\thread\klb_rwlock.c" />
-    <ClCompile Include="..\src\thread\klb_spinlock.c" />
-    <ClCompile Include="..\src\thread\klb_thread.c" />
-    <ClCompile Include="..\src\time\klb_time.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\fmt_c.sh" />
-    <None Include="..\Makefile" />
-    <None Include="..\mk_def" />
+    <ClCompile Include="..\test\lua_t_klb.c" />
+    <ClCompile Include="..\test\t_hash\t_klb_hlist.c" />
+    <ClCompile Include="..\test\t_hash\t_klb_htab.c" />
+    <ClCompile Include="..\test\t_list\t_klb_list.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{59FAC04B-C1EC-4D11-9963-C7B70956DC4D}</ProjectGuid>
+    <ProjectGuid>{136936A4-7FA2-47C7-8DE6-32A9FE65B269}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>klb</RootNamespace>
+    <RootNamespace>klb_test</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -109,23 +80,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,7 +106,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;..\test;..\..\klua\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,7 +119,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;..\test;..\..\klua\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,7 +134,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;..\test;..\..\klua\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,7 +151,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\inc;..\test;..\..\klua\src\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

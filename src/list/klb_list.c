@@ -18,10 +18,10 @@ typedef struct klb_list_iter_t_
 /// @brief  list对象
 typedef struct klb_list_t_
 {
-    int                 size;           ///< 节点成员数目
-
     klb_list_iter_t*    p_head;         ///< 起始节点
     klb_list_iter_t*    p_tail;         ///< 末尾节点
+
+    uint32_t            size;           ///< 节点成员数目
 }klb_list_t;
 
 
@@ -50,7 +50,6 @@ void klb_list_destroy(klb_list_t* p_list)
 void klb_list_clean(klb_list_t* p_list, klb_list_clean_cb cb_clean, void* p_obj)
 {
     assert(NULL != p_list);
-    assert(NULL != cb_clean);
 
     while (TRUE)
     {
@@ -58,7 +57,10 @@ void klb_list_clean(klb_list_t* p_list, klb_list_clean_cb cb_clean, void* p_obj)
 
         if (NULL != p_data)
         {
-            cb_clean(p_obj, p_data);
+            if (NULL != cb_clean)
+            {
+                cb_clean(p_obj, p_data);
+            }
         }
         else
         {
@@ -142,7 +144,12 @@ void* klb_list_pop_head(klb_list_t* p_list)
         p_list->p_head = p_iter->p_next;
         p_list->size -= 1;
 
-        if (NULL == p_iter->p_next)
+        if (NULL != p_iter->p_next)
+        {
+            p_iter->p_next->p_prev = NULL;
+            assert(0 < p_list->size);
+        }
+        else
         {
             p_list->p_tail = NULL;
             assert(0 == p_list->size);
@@ -169,7 +176,12 @@ void* klb_list_pop_tail(klb_list_t* p_list)
         p_list->p_tail = p_iter->p_prev;
         p_list->size -= 1;
 
-        if (NULL == p_iter->p_prev)
+        if (NULL != p_iter->p_prev)
+        {
+            p_iter->p_prev->p_next = NULL;
+            assert(0 < p_list->size);
+        }
+        else
         {
             p_list->p_head = NULL;
             assert(0 == p_list->size);
@@ -198,7 +210,7 @@ void* klb_list_tail(klb_list_t* p_list)
     return (NULL != p_list->p_tail) ? p_list->p_tail->p_data : NULL;
 }
 
-int klb_list_size(klb_list_t* p_list)
+uint32_t klb_list_size(klb_list_t* p_list)
 {
     assert(NULL != p_list);
 
@@ -252,6 +264,13 @@ void* klb_list_remove(klb_list_t* p_list, klb_list_iter_t* p_iter)
     }
 
     return NULL;
+}
+
+void* klb_list_data(klb_list_iter_t* p_iter)
+{
+    assert(NULL != p_iter);
+
+    return (NULL != p_iter) ? p_iter->p_data : NULL;
 }
 
 klb_list_iter_t* klb_list_begin(klb_list_t* p_list)

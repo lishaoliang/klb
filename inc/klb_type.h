@@ -34,9 +34,9 @@
     #endif
 #else
     #ifdef __cplusplus
-    #define KLB_API extern "C"
+        #define KLB_API extern "C"
     #else
-    #define KLB_API extern
+        #define KLB_API extern
     #endif
 #endif
 

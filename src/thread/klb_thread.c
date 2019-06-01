@@ -73,10 +73,23 @@ void klb_thread_destroy(klb_thread_t* p_thread)
     KLB_FREE(p_thread);
 }
 
+void klb_sleep(uint32_t ms)
+{
+    Sleep(ms);
+}
+
+void klb_sleep_ns(uint32_t ns)
+{
+    assert(ns <= 999999999);
+    assert(FALSE);
+}
+
 #else
 
 #include <pthread.h>
-
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/prctl.h>
 
 /// @struct klb_thread_t
 /// @brief  线程对象
@@ -115,7 +128,7 @@ static void* cb_klb_thread(void* p_obj)
     // 设置线程名称
     if (NULL != p_thread->p_name)
     {
-        prctl(PR_SET_NAME, p_thread->name);
+        prctl(PR_SET_NAME, p_thread->p_name);
     }
 
     if (NULL != p_thread->cb_thread)
@@ -160,6 +173,51 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 
     KLB_FREE(p_thread->p_name);
     KLB_FREE(p_thread);
+}
+
+void klb_sleep(uint32_t ms)
+{
+    if (ms <= 10)
+    {
+        // [0毫秒, 10毫秒]采用纳秒级休眠
+        klb_sleep_ns(ms * 1000000);
+    }
+    else if (ms <= 60000)
+    {
+        // (10毫秒, 60秒]采用 usleep
+        usleep(ms * 1000);
+    }
+    else
+    {
+        // (60秒,N] 60秒以上, 忽略秒以下休眠时间
+        uint32_t s = ms / 1000;
+
+        do
+        {
+            int left = sleep(s);
+
+            if (left < s)
+            {
+                s = left;
+            }
+            else
+            {
+                s = 0;
+            }
+
+        } while (0 < s);
+    }
+}
+
+void klb_sleep_ns(uint32_t ns)
+{
+    assert(ns <= 999999999);
+
+    struct timespec wait;
+    wait.tv_sec = 0;
+    wait.tv_nsec = ns;
+
+    clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wait, NULL);
 }
 
 #endif

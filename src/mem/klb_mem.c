@@ -1,19 +1,22 @@
 ﻿#include "mem/klb_mem.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 
-void* klb_malloc(size_t size)
-{
-    void* p = malloc(size);
-    assert(NULL != p);
+#if !defined(_MSC_VER)
 
-    return p;
+/// @brief 按对齐申请内存
+/// @param [in] size        需要申请的内存大小
+/// @param [in] align       对齐系数: 2^N
+/// @return void* 申请到的内存
+void* _aligned_malloc(size_t size, size_t align)
+{
+    void* ptr = NULL;
+    int ret = posix_memalign(&ptr, align, size);
+
+    assert(NULL != ptr);
+    return ptr;
 }
 
-void klb_free(void* p)
-{
-    assert(NULL != p);
-
-    free(p);
-}
+#endif
