@@ -49,6 +49,36 @@
     <Filter Include="src\time">
       <UniqueIdentifier>{d03963d3-210c-422c-91f5-9b87fddf28da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\socket">
+      <UniqueIdentifier>{4d5e9a4a-ab85-4d86-b9aa-130e87a9b719}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\string">
+      <UniqueIdentifier>{71fb8924-4147-4df1-bfb6-4a6493cdc601}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\socket">
+      <UniqueIdentifier>{c9fb4038-4e0a-458a-ac49-fc5c00ade629}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\string">
+      <UniqueIdentifier>{610828a8-6a4a-4fa9-a70d-2265012b5b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\graph">
+      <UniqueIdentifier>{037341e1-35b4-4ff3-b60c-bb5d3427091f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\media">
+      <UniqueIdentifier>{e9be01f8-bb7a-47b8-a6d2-669dd7efeba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\graph">
+      <UniqueIdentifier>{8fd73350-c5f6-4aed-8cac-cb0b1fee310e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\media">
+      <UniqueIdentifier>{24bb1dbf-dc21-41f7-b355-f66bcd66bf85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\file">
+      <UniqueIdentifier>{c717de08-99c2-4f4b-a657-15c1792fb731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\file">
+      <UniqueIdentifier>{b52b8d51-d5fd-4bb9-8be3-f621c49b5eef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\mem\klb_mem.h">
@@ -108,6 +138,12 @@
     <ClInclude Include="..\inc\hash\klb_hlist.h">
       <Filter>inc\hash</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\string\klb_string.h">
+      <Filter>inc\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\socket\klb_socket.h">
+      <Filter>inc\socket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\mem\klb_mem.c">
@@ -154,6 +190,12 @@
     </ClCompile>
     <ClCompile Include="..\src\hash\klb_hlist.c">
       <Filter>src\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\string\klb_string.c">
+      <Filter>src\string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\socket\klb_socket.c">
+      <Filter>src\socket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

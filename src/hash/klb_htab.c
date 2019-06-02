@@ -110,11 +110,6 @@ int klb_htab_push(klb_htab_t* p_htab, void* p_key, uint32_t key_len, void* p_dat
     assert(NULL != p_key);
     assert(NULL != p_data);
 
-    if (NULL == p_key)
-    {
-        return 1;
-    }
-
     uint32_t dx = klb_hash_dx((const char*)p_key, key_len);
     uint32_t idx = dx % p_htab->idx_max;
 
@@ -199,11 +194,6 @@ void* klb_htab_remove(klb_htab_t* p_htab, void* p_key, uint32_t key_len)
     assert(NULL != p_htab);
     assert(NULL != p_key);
 
-    if (NULL == p_key)
-    {
-        return NULL;
-    }
-
     uint32_t dx = klb_hash_dx((const char*)p_key, key_len);
     uint32_t idx = dx % p_htab->idx_max;
 
@@ -260,11 +250,6 @@ void* klb_htab_find(klb_htab_t* p_htab, const void* p_key, uint32_t key_len)
 {
     assert(NULL != p_htab);
     assert(NULL != p_key);
-
-    if (NULL == p_key)
-    {
-        return NULL;
-    }
 
     uint32_t dx = klb_hash_dx((const char*)p_key, key_len);
     uint32_t idx = dx % p_htab->idx_max;

@@ -139,8 +139,8 @@ KLB_API klb_hlist_iter_t* klb_hlist_begin(klb_hlist_t* p_list);
 
 
 /// @brief 下一个迭代子
-/// @param [in] *p_list      hlist对象
-/// @return klb_list_iter_t* iter迭代子
+/// @param [in] *p_iter      iter迭代子
+/// @return klb_list_iter_t* 下一个iter迭代子
 /// @note 和klb_hlist_begin配合使用
 KLB_API klb_hlist_iter_t* klb_hlist_next(klb_hlist_iter_t* p_iter);
 
@@ -153,10 +153,17 @@ KLB_API klb_hlist_iter_t* klb_hlist_end(klb_hlist_t* p_list);
 
 
 /// @brief 前一个迭代子
-/// @param [in] *p_list      hlist对象
-/// @return klb_list_iter_t* iter迭代子
+/// @param [in] *p_iter      iter迭代子
+/// @return klb_list_iter_t* 前一个iter迭代子
 /// @note 和klb_hlist_end配合使用
 KLB_API klb_hlist_iter_t* klb_hlist_prev(klb_hlist_iter_t* p_iter);
+
+
+/// @brief 获取迭代子的key指针
+/// @param [in]  *p_iter        iter迭代子
+/// @param [out] *p_key_len     key长度
+/// @return void* key指针
+KLB_API void* klb_hlist_key(klb_hlist_iter_t* p_iter, uint32_t* p_key_len);
 
 
 /// @brief 更新数据(只能更新已经存在的key)
@@ -192,6 +199,12 @@ KLB_API void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t ke
 /// @param [in] key_len      key长度
 /// @return void* 数据指针 或 NULL(未找到)
 KLB_API void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, uint32_t key_len);
+
+
+/// @brief 对节点进行排序
+/// @param [in] *p_list      hlist对象
+/// @return 无
+KLB_API void klb_hlist_qsort(klb_hlist_t* p_list);
 
 
 #ifdef __cplusplus

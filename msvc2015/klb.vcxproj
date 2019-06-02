@@ -32,6 +32,8 @@
     <ClInclude Include="..\inc\mem\klb_mpool.h" />
     <ClInclude Include="..\inc\obj\klb_obj.h" />
     <ClInclude Include="..\inc\obj\klb_obj_hash.h" />
+    <ClInclude Include="..\inc\socket\klb_socket.h" />
+    <ClInclude Include="..\inc\string\klb_string.h" />
     <ClInclude Include="..\inc\thread\klb_atomic.h" />
     <ClInclude Include="..\inc\thread\klb_mutex.h" />
     <ClInclude Include="..\inc\thread\klb_rwlock.h" />
@@ -49,6 +51,8 @@
     <ClCompile Include="..\src\mem\klb_mem.c" />
     <ClCompile Include="..\src\mem\klb_mpool.c" />
     <ClCompile Include="..\src\obj\klb_obj.c" />
+    <ClCompile Include="..\src\socket\klb_socket.c" />
+    <ClCompile Include="..\src\string\klb_string.c" />
     <ClCompile Include="..\src\thread\klb_atomic.c" />
     <ClCompile Include="..\src\thread\klb_mutex.c" />
     <ClCompile Include="..\src\thread\klb_rwlock.c" />

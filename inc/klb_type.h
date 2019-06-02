@@ -19,6 +19,7 @@
 /// @note 
 ///  \n int8_t  int16_t  int32_t  int64_t
 ///  \n uint8_t uint16_t uint32_t uint64_t
+///  \n intptr_t uintptr_t
 #include <stdint.h>
 
 
