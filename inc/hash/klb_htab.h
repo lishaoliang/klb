@@ -1,12 +1,18 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, MIT License
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //  Created: 2019/05/26
 //
 /// @file    klb_htab.h
 /// @brief   hash table查找算法
 ///  \n 参考: https://github.com/torvalds/linux/blob/v5.1-rc7/security/selinux/ss/hashtab.h
 ///  \n 参考: https://github.com/torvalds/linux/blob/v5.1-rc7/security/selinux/ss/hashtab.c
+///  \n 可选优化方案:
+///  \n  1. 采用比较回调函数替代(klb_htab_node_t.hash, klb_htab_node_t.p_key, klb_htab_node_t.key_len)
+///  \n 以节省空间, 但会增加时间复杂度 和 提高使用难度
+///  \n 此模块主要面向应用开发,优先考虑降低使用难度 
 /// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 ///  \n 2019/05/26 0.1 创建文件

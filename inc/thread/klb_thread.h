@@ -1,11 +1,13 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, MIT License
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //  Created: 2019/05/25
 //
 /// @file    klb_thread.h
 /// @brief   线程
 ///  \n 参考: https://github.com/gozfree/gear-lib/blob/master/libthread/libthread.h
 /// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
 ///  \n 依赖库: -lpthread
 /// @version 0.1
 /// @history 修改历史

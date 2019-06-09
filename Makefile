@@ -10,7 +10,7 @@ SHELL = /bin/bash
 # 从目录检索需要编译的c文件
 MY_DIRS := ./src/hash ./src/list ./src/log ./src/mem ./src/obj 
 MY_DIRS += ./src/socket ./src/string ./src/thread ./src/time ./src/graph
-MY_DIRS += ./src/media ./src/file
+MY_DIRS += ./src/media ./src/file ./src/algorithm
 
 
 # 编译选项
@@ -22,7 +22,7 @@ MY_CFLAGS += -std=c99
 MY_INCLUDES := -I ./inc
 MY_INCLUDES += -I ./src/hash -I./src/list -I ./src/log -I ./src/mem -I ./src/obj 
 MY_INCLUDES += -I ./src/socket -I ./src/string -I ./src/thread -I ./src/time -I ./src/graph
-MY_INCLUDES += -I ./src/media -I ./src/file
+MY_INCLUDES += -I ./src/media -I ./src/file -I ./src/algorithm
 
 
 # 引用的静态库

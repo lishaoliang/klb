@@ -1,4 +1,13 @@
-﻿#include "thread/klb_mutex.h"
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_mutex.c
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
+/// @brief   文件简要描述
+///////////////////////////////////////////////////////////////////////////
+#include "thread/klb_mutex.h"
 #include "mem/klb_mem.h"
 #include <assert.h>
 
@@ -70,6 +79,10 @@ typedef struct klb_mutex_t_
     pthread_mutex_t     mutex;      ///< 互斥量
 }klb_mutex_t;
 
+
+#ifndef PTHREAD_MUTEX_RECURSIVE
+#define PTHREAD_MUTEX_RECURSIVE PTHREAD_MUTEX_RECURSIVE_NP
+#endif
 
 klb_mutex_t* klb_mutex_create()
 {

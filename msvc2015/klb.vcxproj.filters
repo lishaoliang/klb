@@ -79,6 +79,12 @@
     <Filter Include="src\file">
       <UniqueIdentifier>{b52b8d51-d5fd-4bb9-8be3-f621c49b5eef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\algorithm">
+      <UniqueIdentifier>{6669c56b-988a-4ccc-bf96-b97609e327cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\algorithm">
+      <UniqueIdentifier>{66eed854-3e6d-45b1-bcf7-4bc315229bde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\mem\klb_mem.h">
@@ -144,6 +150,15 @@
     <ClInclude Include="..\inc\socket\klb_socket.h">
       <Filter>inc\socket</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\algorithm\klb_sort_insert.h">
+      <Filter>inc\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\algorithm\klb_algorithm.h">
+      <Filter>inc\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\algorithm\klb_sort_quick.h">
+      <Filter>inc\algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\mem\klb_mem.c">
@@ -196,6 +211,12 @@
     </ClCompile>
     <ClCompile Include="..\src\socket\klb_socket.c">
       <Filter>src\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\algorithm\klb_sort_insert.c">
+      <Filter>src\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\algorithm\klb_sort_quick.c">
+      <Filter>src\algorithm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

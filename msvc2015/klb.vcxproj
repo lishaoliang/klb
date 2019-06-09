@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\inc\algorithm\klb_algorithm.h" />
+    <ClInclude Include="..\inc\algorithm\klb_sort_insert.h" />
+    <ClInclude Include="..\inc\algorithm\klb_sort_quick.h" />
     <ClInclude Include="..\inc\hash\klb_hash_dx.h" />
     <ClInclude Include="..\inc\hash\klb_hash_hgsmi.h" />
     <ClInclude Include="..\inc\hash\klb_hlist.h" />
@@ -42,6 +45,8 @@
     <ClInclude Include="..\inc\time\klb_time.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\algorithm\klb_sort_insert.c" />
+    <ClCompile Include="..\src\algorithm\klb_sort_quick.c" />
     <ClCompile Include="..\src\hash\klb_hash_dx.c" />
     <ClCompile Include="..\src\hash\klb_hash_hgsmi.c" />
     <ClCompile Include="..\src\hash\klb_hlist.c" />
@@ -172,6 +177,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -189,6 +195,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

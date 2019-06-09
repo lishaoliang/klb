@@ -1,4 +1,13 @@
-﻿#include "thread/klb_thread.h"
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_thread.c
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
+/// @brief   文件简要描述
+///////////////////////////////////////////////////////////////////////////
+#include "thread/klb_thread.h"
 #include "mem/klb_mem.h"
 #include "log/klb_log.h"
 #include <assert.h>
@@ -87,6 +96,8 @@ void klb_sleep_ns(uint32_t ns)
 #else
 
 #include <pthread.h>
+#include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <sys/prctl.h>
@@ -217,6 +228,7 @@ void klb_sleep_ns(uint32_t ns)
     wait.tv_sec = 0;
     wait.tv_nsec = ns;
 
+    //nanosleep(&wait, NULL);
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wait, NULL);
 }
 

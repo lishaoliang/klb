@@ -1,4 +1,13 @@
-﻿#include "hash/klb_hash_dx.h"
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_hash_dx.c
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
+/// @brief   hash dx算法
+///////////////////////////////////////////////////////////////////////////
+#include "hash/klb_hash_dx.h"
 
 
 // 修改自: https://github.com/torvalds/linux/blob/v5.1-rc7/fs/ext4/hash.c

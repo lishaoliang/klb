@@ -1,5 +1,13 @@
-﻿#include "time/klb_time.h"
-#include <time.h>
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_time.c
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
+/// @brief   文件简要描述
+///////////////////////////////////////////////////////////////////////////
+#include "time/klb_time.h"
 #include <assert.h>
 
 #ifdef _MSC_VER
@@ -12,6 +20,7 @@ uint32_t klb_tick_count()
 
 #else
 
+#include <time.h>
 #include <sys/time.h>
 
 uint32_t klb_tick_count()

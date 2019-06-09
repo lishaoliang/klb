@@ -1,4 +1,13 @@
-﻿#include "hash/klb_htab.h"
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_htab.c
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
+/// @brief   hash table查找算法
+///////////////////////////////////////////////////////////////////////////
+#include "hash/klb_htab.h"
 #include "mem/klb_mem.h"
 #include "hash/klb_hash_dx.h"
 #include "hash/klb_hash_hgsmi.h"

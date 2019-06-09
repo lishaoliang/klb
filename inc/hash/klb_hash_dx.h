@@ -1,13 +1,15 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, MIT License
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //  Created: 2019/05/19
 //
 /// @file    klb_hash_dx.h
 /// @brief   hash dx算法
-/// @author  李绍良
 ///  \n 修改自: https://github.com/torvalds/linux/blob/v5.1-rc7/fs/ext4/hash.c
 ///  \n Copyright (C) 2002 by Theodore Ts'o
 ///  \n linux/fs/ext4/hash.c
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 ///  \n 2019/05/19 0.1 创建文件

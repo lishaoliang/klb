@@ -1,5 +1,5 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, MIT License
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //  Created: 2019/06/01
 //
 /// @file    klb_hash_hgsmi.h
@@ -8,6 +8,8 @@
 ///  \n 修改自: https://github.com/torvalds/linux/blob/a2d635decbfa9c1e4ae15cb05b68b2559f7f827c/drivers/gpu/drm/vboxvideo/vbox_hgsmi.c
 ///  \n SPDX-License-Identifier: MIT
 /// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 ///  \n 2019/06/01 0.1 创建文件

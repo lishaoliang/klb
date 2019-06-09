@@ -1,5 +1,5 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, MIT License
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //  Created: 2019/05/25
 //
 /// @file    klb_list.h
@@ -8,6 +8,8 @@
 ///  \n 参考: https://github.com/IIJ-NetBSD/netbsd-src/blob/master/external/bsd/libbind/dist/include/isc/list.h
 ///  \n 参考: std::list
 /// @author  李绍良
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 ///  \n 2019/05/25 0.1 创建文件
