@@ -412,7 +412,7 @@ void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, uint32_t ke
     return klb_hlist_remove(p_list, p_iter);
 }
 
-static int cb_hlist_qsort(void const* p1, void const* p2)
+static int cb_hlist_qsort(void* p_arg, void const* p1, void const* p2)
 {
     klb_hlist_iter_t** p_iter1 = (klb_hlist_iter_t**)p1;
     klb_hlist_iter_t** p_iter2 = (klb_hlist_iter_t**)p2;
@@ -452,7 +452,8 @@ void klb_hlist_qsort(klb_hlist_t* p_list)
         p_iter = p_iter->p_next;
     }
 
-    qsort(p_src, size, sizeof(klb_hlist_iter_t*), cb_hlist_qsort);
+    //qsort(p_src, size, sizeof(klb_hlist_iter_t*), cb_hlist_qsort);
+    qsort_s(p_src, size, sizeof(klb_hlist_iter_t*), cb_hlist_qsort, NULL);
 
     for (uint32_t i = 1; i < size - 1; i++)
     {

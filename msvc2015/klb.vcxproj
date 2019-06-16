@@ -25,6 +25,7 @@
     <ClInclude Include="..\inc\hash\klb_hash_dx.h" />
     <ClInclude Include="..\inc\hash\klb_hash_hgsmi.h" />
     <ClInclude Include="..\inc\hash\klb_hlist.h" />
+    <ClInclude Include="..\inc\hash\klb_hmap.h" />
     <ClInclude Include="..\inc\hash\klb_htab.h" />
     <ClInclude Include="..\inc\klb_type.h" />
     <ClInclude Include="..\inc\list\klb_list.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="..\src\hash\klb_hash_dx.c" />
     <ClCompile Include="..\src\hash\klb_hash_hgsmi.c" />
     <ClCompile Include="..\src\hash\klb_hlist.c" />
+    <ClCompile Include="..\src\hash\klb_hmap.c" />
     <ClCompile Include="..\src\hash\klb_htab.c" />
     <ClCompile Include="..\src\list\klb_list.c" />
     <ClCompile Include="..\src\mem\klb_buf.c" />

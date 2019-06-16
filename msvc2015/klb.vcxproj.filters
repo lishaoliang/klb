@@ -159,6 +159,9 @@
     <ClInclude Include="..\inc\algorithm\klb_sort_quick.h">
       <Filter>inc\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\hash\klb_hmap.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\mem\klb_mem.c">
@@ -217,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="..\src\algorithm\klb_sort_quick.c">
       <Filter>src\algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hash\klb_hmap.c">
+      <Filter>src\hash</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
