@@ -37,14 +37,14 @@ void klb_atomic_destroy(klb_atomic_t* p_atomic)
 #if defined(_MSC_VER)
 #include <windows.h>
 
-int klb_atomic_add(klb_atomic_t* p_atomic)
+int klb_atomic_ref(klb_atomic_t* p_atomic)
 {
     assert(NULL != p_atomic);
 
     return InterlockedExchangeAdd(&p_atomic->count, 1);
 }
 
-int klb_atomic_sub(klb_atomic_t* p_atomic)
+int klb_atomic_unref(klb_atomic_t* p_atomic)
 {
     assert(NULL != p_atomic);
 
@@ -66,14 +66,14 @@ int klb_atomic_is_zero(klb_atomic_t* p_atomic)
 
 #else
 
-int klb_atomic_add(klb_atomic_t* p_atomic)
+int klb_atomic_ref(klb_atomic_t* p_atomic)
 {
     assert(NULL != p_atomic);
 
     return __sync_fetch_and_add(&p_atomic->count, 1);
 }
 
-int klb_atomic_sub(klb_atomic_t* p_atomic)
+int klb_atomic_unref(klb_atomic_t* p_atomic)
 {
     assert(NULL != p_atomic);
 

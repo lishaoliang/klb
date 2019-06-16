@@ -3,7 +3,7 @@
 //  Created: 2019/05/19
 //
 /// @file    klb_type.h
-/// @brief   基础类型,常用宏定义
+/// @brief   基础类型,常用宏定义,C99
 /// @author  李绍良
 ///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
 ///  \n https://github.com/lishaoliang/klb
@@ -17,13 +17,15 @@
 
 
 /// @def   int*_t, uint*_t
-/// @brief 引入与32,64位系统无关的类型定义
+/// @brief 引入标准类型定义
 /// @note 
 ///  \n int8_t  int16_t  int32_t  int64_t
 ///  \n uint8_t uint16_t uint32_t uint64_t
 ///  \n intptr_t uintptr_t size_t
-#include <stdint.h>
-#include <stddef.h>
+///  \n bool false true
+#include <stdint.h>     /// int*_t uint*_t
+#include <stddef.h>     /// intptr_t uintptr_t size_t
+#include <stdbool.h>    /// bool false true
 
 
 /// @def   KLB_API
@@ -53,20 +55,6 @@
     #else
         #define NULL ((void *)0)
     #endif
-#endif
-
-
-/// @def   TRUE
-/// @brief TRUE定义
-#ifndef TRUE
-    #define TRUE    1
-#endif
-
-
-/// @def   FALSE
-/// @brief FALSE定义
-#ifndef FALSE
-    #define FALSE   0
 #endif
 
 

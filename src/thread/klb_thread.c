@@ -54,7 +54,7 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     p_thread->p_obj = p_obj;
     p_thread->cpu_idx = cpu_idx;
 
-    p_thread->run = TRUE;
+    p_thread->run = true;
     p_thread->hnd = CreateThread(0, 0, cb_klb_thread, (void *)p_thread, 0, NULL);
 
     if (NULL == p_thread->hnd)
@@ -74,7 +74,7 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 {
     assert(NULL != p_thread);
 
-    p_thread->run = FALSE;
+    p_thread->run = false;
     WaitForSingleObject(p_thread->hnd, INFINITE);
     CloseHandle(p_thread->hnd);
 
@@ -90,7 +90,7 @@ void klb_sleep(uint32_t ms)
 void klb_sleep_ns(uint32_t ns)
 {
     assert(ns <= 999999999);
-    assert(FALSE);
+    assert(false);
 }
 
 #else
@@ -161,7 +161,7 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     p_thread->p_obj = p_obj;
     p_thread->cpu_idx = cpu_idx;
 
-    p_thread->run = TRUE;
+    p_thread->run = true;
 
     if (0 != pthread_create(&(p_thread->hnd), 0, cb_klb_thread, p_thread))
     {
@@ -179,7 +179,7 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 {
     assert(NULL != p_thread);
 
-    p_thread->run = FALSE;
+    p_thread->run = false;
     pthread_join(p_thread->hnd, NULL);
 
     KLB_FREE(p_thread->p_name);

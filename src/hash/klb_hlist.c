@@ -70,7 +70,7 @@ void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, void* p_o
 {
     assert(NULL != p_list);
 
-    while (TRUE)
+    while (true)
     {
         void* p_data = klb_hlist_pop_head(p_list);
 
