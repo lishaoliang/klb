@@ -14,16 +14,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lua.h"
-
-#include "lauxlib.h"
-#include "lualib.h"
+//#include "lua.h"
+//
+//#include "lauxlib.h"
+//#include "lualib.h"
+#include "klua/klua.h"
 
 
 
 #if !defined(LUA_PROMPT)
-#define LUA_PROMPT        "> "
-#define LUA_PROMPT2        ">> "
+#define LUA_PROMPT          "> "
+#define LUA_PROMPT2         ">> "
 #endif
 
 #if !defined(LUA_PROGNAME)
@@ -554,6 +555,7 @@ static int handle_luainit (lua_State *L) {
 static int pmain (lua_State *L) {
   int argc = (int)lua_tointeger(L, 1);
   char **argv = (char **)lua_touserdata(L, 2);
+  klua_openlibs_cb cb_openlibs = (klua_openlibs_cb)lua_touserdata(L, 3);
   int script;
   int args = collectargs(argv, &script);
   luaL_checkversion(L);  /* check that interpreter has correct version */
@@ -569,6 +571,8 @@ static int pmain (lua_State *L) {
     lua_setfield(L, LUA_REGISTRYINDEX, "LUA_NOENV");
   }
   luaL_openlibs(L);  /* open standard libraries */
+  if (cb_openlibs)
+      cb_openlibs(L);   /* open user's libraries */
   createargtable(L, argv, argc, script);  /* create table 'arg' */
   if (!(args & has_E)) {  /* no option '-E'? */
     if (handle_luainit(L) != LUA_OK)  /* run LUA_INIT */
@@ -593,7 +597,7 @@ static int pmain (lua_State *L) {
 }
 
 
-int lua_main (int argc, char **argv) {
+int klua_main (int argc, char **argv, klua_openlibs_cb cb) {
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
   if (L == NULL) {
@@ -603,7 +607,8 @@ int lua_main (int argc, char **argv) {
   lua_pushcfunction(L, &pmain);  /* to call 'pmain' in protected mode */
   lua_pushinteger(L, argc);  /* 1st argument */
   lua_pushlightuserdata(L, argv); /* 2nd argument */
-  status = lua_pcall(L, 2, 1, 0);  /* do the call */
+  lua_pushlightuserdata(L, cb); /* 3nd argument */
+  status = lua_pcall(L, 3, 1, 0);  /* do the call */
   result = lua_toboolean(L, -1);  /* get result */
   report(L, status);
   lua_close(L);

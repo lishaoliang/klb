@@ -162,6 +162,8 @@
     <None Include="..\Makefile" />
     <None Include="..\mk_def" />
     <None Include="..\src\main\main.go" />
+    <None Include="..\src\main\test.go" />
+    <None Include="..\src\main\thread.go" />
     <None Include="..\src\Makefile" />
     <None Include="..\src_c\Makefile" />
   </ItemGroup>
