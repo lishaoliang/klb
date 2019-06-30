@@ -5,7 +5,7 @@ SHELL = /bin/bash
 
 # 引入一些环境参数
 -include ../mk_def
-my_lib_path := ../../klua/lib/release/lib_linux64
+my_lib_path := ../../klua/lib/release/lib_arm_linux
 
 
 # 从目录检索需要编译的c文件
@@ -15,7 +15,7 @@ MY_DIRS += ./t_list ./t_hash
 
 # 编译选项
 MY_CFLAGS := $(my_flags)
-MY_CFLAGS += -std=gnu99
+MY_CFLAGS += -std=c99
 
 
 # 引用头文件
@@ -27,7 +27,7 @@ MY_INCLUDES += -I .
 MY_LIB_STATIC := -L $(my_lib_path) -Bstatic
 
 # 引用的动态库
-MY_LIB_DYNAMIC := -L $(my_lib_path) -Bdynamic -lm -ldl -lpthread
+MY_LIB_DYNAMIC := -L $(my_lib_path) -Bdynamic
 
 
 # 编译目标名称

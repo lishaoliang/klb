@@ -1,17 +1,40 @@
-﻿
+﻿# Ubuntu编译环境
+# Arm linux交叉编译: sudo apt install gcc-arm-linux-gnueabi g++-arm-linux-gnueabi
+# linux编译: sudo apt install gcc g++ build-essential
+# win交叉编译: sudo apt install mingw-w64
+# go编译器: sudo apt install golang
+# msvc系列: (_MSC_VER)
+# 
 
-my_prefix := ./
+# go系统目录
+MY_HOME_GOPATH = /home/lsl/go/
 
 
-my_tool_chain :=
-my_cc := $(my_tool_chain)gcc
-my_cxx := $(my_tool_chain)g++
-my_ar := $(my_tool_chain)ar
-my_ranlib := $(my_tool_chain)ranlib
-my_strip := $(my_tool_chain)strip
-my_flags := -m64 -lstdc++ -static-libgcc -static-libstdc++ -D__LINUX__ -D__X86_64__ -D_GNU_SOURCE
+# "linux"
+MY_OS := linux
 
-my_lib_path := ../klua/lib/release/lib_linux64
+# "amd64","arm"
+MY_ARCH := amd64
+
+# "", "arm-linux-gnueabi-"
+MY_TOOL_CHAIN := 
+
+
+MY_LIB_NAME	:= lib
+MY_LIB_PATH := ./$(MY_LIB_NAME)
+MY_CFLAGS	:= -std=c99 -static -lstdc++ -static-libgcc -static-libstdc++ -D__LINUX__ -D_GNU_SOURCE
+
+
+# 系统及编译器
+CC				:= $(MY_TOOL_CHAIN)gcc
+CXX				:= $(MY_TOOL_CHAIN)g++
+CAR				:= $(MY_TOOL_CHAIN)ar
+CRANLIB			:= $(MY_TOOL_CHAIN)ranlib
+CSTRIP			:= $(MY_TOOL_CHAIN)strip
+MAKE			:= make
+RM				:= -rm -f
+CP				:= cp
+
 
 INSTALL_TOP := /usr/local
 INSTALL_BIN := $(INSTALL_TOP)/bin

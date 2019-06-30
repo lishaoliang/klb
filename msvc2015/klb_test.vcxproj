@@ -28,6 +28,9 @@
     <ClCompile Include="..\test\t_hash\t_klb_htab.c" />
     <ClCompile Include="..\test\t_list\t_klb_list.c" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\test\Makefile" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{136936A4-7FA2-47C7-8DE6-32A9FE65B269}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

@@ -17,5 +17,7 @@ FMT_C_CPP(){
 }
 
 FMT_C_CPP inc
+FMT_C_CPP src_c
 FMT_C_CPP src
 FMT_C_CPP test
+
