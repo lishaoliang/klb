@@ -10,7 +10,7 @@
 #include "time/klb_time.h"
 #include <assert.h>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <windows.h>
 
 uint32_t klb_tick_count()

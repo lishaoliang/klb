@@ -1,9 +1,9 @@
 ﻿#include <stdio.h>
 
-#ifndef _MSC_VER
+#ifndef _WIN32
 
 #include "klua/klua.h"
-#include "libklb_go.h"
+#include "libklua_go.h"
 
 int main(int argc, char **argv)
 {

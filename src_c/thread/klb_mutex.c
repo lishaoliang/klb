@@ -11,7 +11,7 @@
 #include "mem/klb_mem.h"
 #include <assert.h>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <windows.h>
 
 /// @struct klb_mutex_t
@@ -70,7 +70,10 @@ void klb_mutex_unlock(klb_mutex_t* p_mutex)
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+
+#ifndef __APPLE__
 #include <sys/prctl.h>
+#endif
 
 /// @struct klb_mutex_t
 /// @brief  通用(互斥量)锁

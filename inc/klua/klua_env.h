@@ -16,18 +16,33 @@
 #define __KLUA_ENV_H__
 
 #include "klb_type.h"
+#include "klua/klua_cfg.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+
 
 typedef struct klua_env_t klua_env_t;
 
 
-KLB_API klua_env_t* klua_env_create();
+KLB_API klua_env_t* klua_env_create(lua_CFunction cb_pre_load, char* p_main);
 KLB_API void klua_env_destroy(klua_env_t* p_env);
 
+
+//KLB_API int klua_env_dofile(klua_env_t* p_env, char* p_name);
+//KLB_API int klua_env_dolibrary(klua_env_t* p_env, char* p_name);
+
+
+KLB_API klua_env_t* klua_env_get_by_L(lua_State* L);
+KLB_API lua_State*  klua_env_get_L(klua_env_t* p_env);
+
+
+KLB_API int klua_env_call_kgo(klua_env_t* p_env);
 
 
 #ifdef __cplusplus

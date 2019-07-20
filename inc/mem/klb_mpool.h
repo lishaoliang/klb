@@ -24,27 +24,37 @@ extern "C" {
 
 #pragma pack(4)
 
+
+typedef struct klb_mpbuf_t_ klb_mpbuf_t;
+
+
 /// @struct klb_mpbuf_t
 /// @brief  内存池缓存(mem pool buf)
 typedef struct klb_mpbuf_t_
 {
-    klb_obj_t       obj;            ///< 基础对象
+    klb_obj_t           obj;            ///< 基础对象
 
     struct
     {
-        char*       p_buf;          ///< 缓存指针
-        int         buf_len;        ///< 缓存大小
+        char*           p_buf;          ///< 缓存指针
+        int             buf_len;        ///< 缓存大小
 
-        int         start;          ///< 有效数据起始位置
-        int         end;            ///< 有效数据末尾
+        int             start;          ///< 有效数据起始位置
+        int             end;            ///< 有效数据末尾
     };
 
     struct
     {
-        uint32_t    x;
-        uint32_t    y;
-        uint32_t    z;
-        uint32_t    a;
+        klb_mpbuf_t*    p_prev;         ///< 前一个节点
+        klb_mpbuf_t*    p_next;         ///< 后一个节点
+    };
+
+    struct
+    {
+        uint32_t        x;              ///< 用户自定义X
+        uint32_t        y;              ///< 用户自定义Y
+        uint32_t        z;              ///< 用户自定义Z
+        uint32_t        a;              ///< 用户自定义A
     };
 }klb_mpbuf_t;
 

@@ -11,7 +11,7 @@
 #define LUA_COMPAT_5_2
 
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(__STM32__)
 #define LUA_USE_POSIX
 #define LUA_USE_DLOPEN
 #endif
@@ -26,7 +26,9 @@
 #define LUA_CJSON               1
 
 /// @brief "lfs"模块
+#if !defined(__STM32__)
 #define LUA_LFS                 1
+#endif
 
 /// @brief "lpeg"模块
 #define LUA_LPEG                1

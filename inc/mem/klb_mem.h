@@ -25,7 +25,7 @@ extern "C" {
 #endif
 
 
-#if !defined(_MSC_VER)
+#if !defined(_WIN32)
 
 /// @brief 按对齐申请内存
 /// @param [in] size        需要申请的内存大小

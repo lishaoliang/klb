@@ -607,7 +607,7 @@ int klua_main (int argc, char **argv, klua_openlibs_cb cb) {
   lua_pushcfunction(L, &pmain);  /* to call 'pmain' in protected mode */
   lua_pushinteger(L, argc);  /* 1st argument */
   lua_pushlightuserdata(L, argv); /* 2nd argument */
-  lua_pushlightuserdata(L, cb); /* 3nd argument */
+  lua_pushlightuserdata(L, (void*)cb); /* 3nd argument */
   status = lua_pcall(L, 3, 1, 0);  /* do the call */
   result = lua_toboolean(L, -1);  /* get result */
   report(L, status);

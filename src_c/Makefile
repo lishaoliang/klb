@@ -1,55 +1,63 @@
-ï»¿# ç¼–è¯‘å‘½ä»¤ : make
+# ±àÒëÃüÁî : make
 
 SHELL = /bin/bash
 
 
-# å¼•å…¥ä¸€äº›ç¯å¢ƒå‚æ•°
+# ÒıÈëÒ»Ğ©»·¾³²ÎÊı
 -include ../mk_def
 MY_LIB_PATH = ../$(MY_LIB_NAME)
 
 
-# ä»ç›®å½•æ£€ç´¢éœ€è¦ç¼–è¯‘çš„cæ–‡ä»¶
+# ´ÓÄ¿Â¼¼ìË÷ĞèÒª±àÒëµÄcÎÄ¼ş
 MY_DIRS := ./hash ./list ./log ./mem ./obj 
-MY_DIRS += ./socket ./string ./thread ./time ./graph
-MY_DIRS += ./media ./file ./algorithm ./klua
+MY_DIRS += ./socket ./string ./graph ./media ./file
+MY_DIRS += ./algorithm ./klua ./mnp
 
 
-# ç¬¬ä¸‰æ–¹åº“
-MY_DIRS += ../third/lua-5.3.5/src ../third/lua-cjson-2.1.0 ../third/luafilesystem-2.0/src
-MY_DIRS += ../third/lpeg-1.0.2
+# µÚÈı·½¿â
+MY_DIRS += ../third/lua-5.3.5/src ../third/lua-cjson-2.1.0 ../third/lpeg-1.0.2
 
+# STM32
+ifeq ($(MY_OS), stm32)
+MY_DIRS += ./stm32
+else ifeq ($(MY_OS), emscripten)
+MY_DIRS += ./emscripten
+else
+MY_DIRS += ./thread ./time ../third/luafilesystem-2.0/src
+endif
 
-# ç¼–è¯‘é€‰é¡¹
+# ±àÒëÑ¡Ïî
 #MY_CFLAGS := $(my_flags)
 #MY_CFLAGS += -std=c99
 
 
-# å¼•ç”¨å¤´æ–‡ä»¶
+# ÒıÓÃÍ·ÎÄ¼ş
 MY_INCLUDES := -I ../inc
 MY_INCLUDES += -I ./hash -I./list -I ./log -I ./mem -I ./obj 
 MY_INCLUDES += -I ./socket -I ./string -I ./thread -I ./time -I ./graph
-MY_INCLUDES += -I ./media -I ./file -I ./algorithm -I ./klua
+MY_INCLUDES += -I ./media -I ./file -I ./algorithm -I ./klua -I ./mnp
+MY_INCLUDES += -I ./stm32
 
 
-# ç¬¬ä¸‰æ–¹åº“å¤´æ–‡ä»¶
+# µÚÈı·½¿âÍ·ÎÄ¼ş
 MY_INCLUDES += -I ../third/lua-5.3.5/src
 
 
-# å¼•ç”¨çš„é™æ€åº“
+# ÒıÓÃµÄ¾²Ì¬¿â
 MY_LIB_STATIC := -L $(MY_LIB_PATH) -Bstatic
 
-# å¼•ç”¨çš„åŠ¨æ€åº“
+# ÒıÓÃµÄ¶¯Ì¬¿â
 MY_LIB_DYNAMIC := -L $(MY_LIB_PATH) -Bdynamic
 
 
-# ç¼–è¯‘ç›®æ ‡åç§°
+# ±àÒëÄ¿±êÃû³Æ
 MY_TARGET_NAME := klb_c
 MY_TARGET_EXE := $(MY_LIB_PATH)/$(MY_TARGET_NAME)
 MY_TARGET_A := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).a
 MY_TARGET_SO := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).so
 
 
-# æ‰€æœ‰ç¼–è¯‘æ–‡ä»¶
+# ËùÓĞ±àÒëÎÄ¼ş
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 
@@ -61,10 +69,10 @@ MY_LIB_SO_OBJS := $(addsuffix .oo, $(MY_SOURCES))
 MY_SO_PARAMS := -fPIC $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC) 
 
 
-# ç¼–è¯‘é™æ€åº“æ—¶å€™,ä½¿compilerä¸ºæ¯ä¸ªfunctionå’Œdata itemåˆ†é…ç‹¬ç«‹çš„section
+# ±àÒë¾²Ì¬¿âÊ±ºò,Ê¹compilerÎªÃ¿¸öfunctionºÍdata item·ÖÅä¶ÀÁ¢µÄsection
 MY_LIB_MINI = -ffunction-sections -fdata-sections
 
-# ç¼–è¯‘åŠ¨æ€åº“æˆ–æ‰§è¡Œæ¡£æ—¶,ä½¿compileråˆ é™¤æ‰€æœ‰æœªè¢«ä½¿ç”¨çš„functionå’Œdata,å³ç¼–è¯‘ä¹‹åçš„æ–‡ä»¶æœ€å°åŒ–
+# ±àÒë¶¯Ì¬¿â»òÖ´ĞĞµµÊ±,Ê¹compilerÉ¾³ıËùÓĞÎ´±»Ê¹ÓÃµÄfunctionºÍdata,¼´±àÒëÖ®ºóµÄÎÄ¼ş×îĞ¡»¯
 MY_LINK_MINI = -Wl,--gc-sections
 
 

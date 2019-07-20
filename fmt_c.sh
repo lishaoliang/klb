@@ -7,13 +7,17 @@ FMT_C_CPP(){
 	FMT_PATH=${FMT_PWD}/${PATH_1}
 	echo "${FMT_PATH}"
 	
+	find ${FMT_PATH} -name "*.cpp" -type f | xargs sed -i 's/\r//g'
+	find ${FMT_PATH} -name "*.c" -type f | xargs sed -i 's/\r//g'
+	find ${FMT_PATH} -name "*.h" -type f | xargs sed -i 's/\r//g'
+
 	find ${FMT_PATH} -name "*.cpp" -type f | xargs sed -i 's/\t/    /g'
 	find ${FMT_PATH} -name "*.c" -type f | xargs sed -i 's/\t/    /g'
 	find ${FMT_PATH} -name "*.h" -type f | xargs sed -i 's/\t/    /g'
 
-	find ${FMT_PATH} -name "*.cpp" -type f | xargs sed -i 's/\r//g'
-	find ${FMT_PATH} -name "*.c" -type f | xargs sed -i 's/\r//g'
-	find ${FMT_PATH} -name "*.h" -type f | xargs sed -i 's/\r//g'
+
+#	find ${FMT_PATH} -name "*.go" -type f | xargs sed -i 's/\r//g'
+#	find ${FMT_PATH} -name "*.go" -type f | xargs sed -i 's/\t/    /g'
 }
 
 FMT_C_CPP inc

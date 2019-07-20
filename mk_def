@@ -1,31 +1,69 @@
-Ôªø# UbuntuÁºñËØëÁéØÂ¢É
-# Arm linux‰∫§ÂèâÁºñËØë: sudo apt install gcc-arm-linux-gnueabi g++-arm-linux-gnueabi
-# linuxÁºñËØë: sudo apt install gcc g++ build-essential
-# win‰∫§ÂèâÁºñËØë: sudo apt install mingw-w64
-# goÁºñËØëÂô®: sudo apt install golang
-# msvcÁ≥ªÂàó: (_MSC_VER)
+# Ubuntu±‡“Îª∑æ≥
+# -------------------------------------------------------------------------------
+# ±‡“Îπ§æﬂ¡¥:
+# Arm linuxΩª≤Ê±‡“Î: sudo apt install gcc-arm-linux-gnueabi g++-arm-linux-gnueabi
+# STM32Ωª≤Ê±‡“Î: sudo apt install gcc-arm-none-eabi
+# Linux±‡“Î: sudo apt install gcc g++ build-essential
+# WinΩª≤Ê±‡“Î: sudo apt install mingw-w64
+# Go±‡“Î∆˜: sudo apt install golang
+# msvcœµ¡–: (_WIN32)
+# -------------------------------------------------------------------------------
+# DocŒƒµµ:
+# sudo apt install doxygen graphviz doxygen-gui
 # 
 
-# goÁ≥ªÁªüÁõÆÂΩï
+# goœµÕ≥ƒø¬º
 MY_HOME_GOPATH = /home/lsl/go/
 
 
-# "linux"
-MY_OS := linux
+# "linux", "windows", "darwin", "stm32", "emscripten"
+MY_OS ?= linux
 
-# "amd64","arm"
-MY_ARCH := amd64
-
-# "", "arm-linux-gnueabi-"
-MY_TOOL_CHAIN := 
+# "amd64", "386", "arm"
+MY_ARCH ?= amd64
 
 
-MY_LIB_NAME	:= lib
-MY_LIB_PATH := ./$(MY_LIB_NAME)
-MY_CFLAGS	:= -std=c99 -static -lstdc++ -static-libgcc -static-libstdc++ -D__LINUX__ -D_GNU_SOURCE
+ifeq ($(MY_OS), linux)
+	ifeq ($(MY_ARCH), arm)
+		MY_TOOL_CHAIN ?= arm-linux-gnueabi-
+	endif
+
+	MY_CFLAGS +=
+	MY_GO_STATIC  ?= -ldflags -extldflags=-static
+	MY_GCC_STATIC ?= -static
+else ifeq ($(MY_OS), windows)
+
+	MY_CFLAGS += -static -D__WINDOWS__
+else ifeq ($(MY_OS), darwin)
+	CC ?= clang
+	CXX ?= clang
+	MY_GO_STATIC ?=
+
+	MY_CFLAGS +=
+	MY_GO_STATIC  ?= 
+	MY_GCC_STATIC ?= 
+else ifeq ($(MY_OS), stm32)
+	MY_TOOL_CHAIN ?= arm-none-eabi-
+
+	MY_CFLAGS += -D__STM32__
+	MY_GO_STATIC  ?= 
+	MY_GCC_STATIC ?= -static
+else ifeq ($(MY_OS), emscripten)
+	MY_TOOL_CHAIN ?= 
+
+	MY_CFLAGS += -D__EMSCRIPTEN__
+	MY_GO_STATIC  ?= 
+	MY_GCC_STATIC ?= -static
+else
+	MY_GO_STATIC  ?= -ldflags -extldflags=-static
+	MY_GCC_STATIC ?= -static
+endif
 
 
-# Á≥ªÁªüÂèäÁºñËØëÂô®
+# "", "arm-linux-gnueabi-", "arm-none-eabi-"
+MY_TOOL_CHAIN ?= 
+
+# œµÕ≥º∞±‡“Î∆˜
 CC				:= $(MY_TOOL_CHAIN)gcc
 CXX				:= $(MY_TOOL_CHAIN)g++
 CAR				:= $(MY_TOOL_CHAIN)ar
@@ -34,6 +72,19 @@ CSTRIP			:= $(MY_TOOL_CHAIN)strip
 MAKE			:= make
 RM				:= -rm -f
 CP				:= cp
+
+ifeq ($(MY_OS), emscripten)
+CC				= emcc
+CXX				= emcc
+CAR				= llvm-ar
+CRANLIB			= llvm-ranlib
+CSTRIP			= emcc
+endif
+
+
+MY_LIB_NAME	:= lib
+MY_LIB_PATH := ./$(MY_LIB_NAME)
+MY_CFLAGS	+= -std=c99 -D_GNU_SOURCE
 
 
 INSTALL_TOP := /usr/local

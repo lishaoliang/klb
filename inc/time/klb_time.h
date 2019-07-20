@@ -21,11 +21,15 @@
 extern "C" {
 #endif
 
+#if !defined(__STM32__)
+
 
 /// @brief 获取系统滴答数
 /// @return uint32_t 系统滴答
 KLB_API uint32_t klb_tick_count();
 
+
+#endif
 
 /// @def   KLB_TIME_1S
 /// @brief 1秒 = 1000毫秒

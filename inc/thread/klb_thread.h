@@ -23,6 +23,7 @@
 extern "C" {
 #endif
 
+#if !defined(__STM32__)
 
 /// @struct klb_thread_t
 /// @brief  线程
@@ -65,6 +66,7 @@ KLB_API void klb_sleep(uint32_t ms);
 ///  \n 本函数可以实现最多999毫秒休眠
 KLB_API void klb_sleep_ns(uint32_t ns);
 
+#endif
 
 #ifdef __cplusplus
 }

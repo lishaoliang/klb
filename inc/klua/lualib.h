@@ -9,7 +9,7 @@
 #define lualib_h
 
 #include "lua.h"
-#include "klua_cfg.h"
+#include "klua/klua_cfg.h"
 
 
 /* version suffix for environment variable names */

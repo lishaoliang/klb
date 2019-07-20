@@ -34,7 +34,7 @@ void klb_atomic_destroy(klb_atomic_t* p_atomic)
     KLB_FREE_ALIGNED(p_atomic);
 }
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 #include <windows.h>
 
 int klb_atomic_ref(klb_atomic_t* p_atomic)

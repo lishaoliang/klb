@@ -21,6 +21,7 @@
 extern "C" {
 #endif
 
+#if !defined(__STM32__)
 
 /// @struct klb_atomic_t
 /// @brief  原子变量
@@ -55,6 +56,7 @@ KLB_API int klb_atomic_unref(klb_atomic_t* p_atomic);
 /// @return int 0.表示为0;  非0.表示不为0
 KLB_API int klb_atomic_is_zero(klb_atomic_t* p_atomic);
 
+#endif
 
 #ifdef __cplusplus
 }

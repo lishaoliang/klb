@@ -1,22 +1,41 @@
-ï»¿# ç¼–è¯‘å‘½ä»¤ : make
+# ±àÒëÃüÁî : make
 
 SHELL = /bin/bash
+PWD = `pwd`
 
-# å¼•å…¥ä¸€äº›ç¯å¢ƒå‚æ•°
+# ÒıÈëÒ»Ğ©»·¾³²ÎÊı
 -include ./mk_def
 
 
-.PHONY: all clean strip install
+.PHONY: all clean strip doc install
+
 
 all:
 	if [ -d ./src_c ]; then $(MAKE) -C ./src_c; fi
+
+ifeq ($(MY_OS), stm32)
+else ifeq ($(MY_OS), emscripten)
+else
 	if [ -d ./src ]; then $(MAKE) -C ./src; fi
+endif
+
 
 clean:
 	if [ -d ./src_c ]; then $(MAKE) -C ./src_c clean; fi
+
+ifeq ($(MY_OS), stm32)
+else ifeq ($(MY_OS), emscripten)
+else
 	if [ -d ./src ]; then $(MAKE) -C ./src clean; fi
+endif
+
 
 strip:
+	
+
+doc:
+	doxygen
 
 
 install:
+	$(CP) $(MY_LIB_PATH)/klua $(INSTALL_BIN)

@@ -10,11 +10,6 @@
 ///////////////////////////////////////////////////////////////////////////
 package main
 
-/*
-#include "klua/klua.h"
-*/
-import "C"
-
 import (
     "fmt"
     "time"
@@ -25,22 +20,4 @@ func Say(s string) {
         time.Sleep(100 * time.Millisecond)
         fmt.Println(s)
     }
-}
-
-//export klua_go_test_hello
-func klua_go_test_hello() C.int {
-
-    go Say("world")
-    Say("hello")
-
-    return 0
-}
-
-//export klua_go_test_func
-func klua_go_test_func(L *C.lua_State) C.int {
-
-    go Say("func,world")
-    Say("func,hello")
-
-    return 0
 }

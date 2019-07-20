@@ -22,6 +22,9 @@ extern "C" {
 #endif
 
 
+#if !defined(__STM32__)
+
+
 /// @struct klb_mutex_t
 /// @brief  通用(互斥量)锁
 typedef struct klb_mutex_t_ klb_mutex_t;
@@ -56,6 +59,8 @@ KLB_API int klb_mutex_trylock(klb_mutex_t* p_mutex);
 /// @note 解锁 klb_mutex_lock / klb_mutex_trylock
 KLB_API void klb_mutex_unlock(klb_mutex_t* p_mutex);
 
+
+#endif
 
 #ifdef __cplusplus
 }

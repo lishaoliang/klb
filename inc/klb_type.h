@@ -16,6 +16,39 @@
 #define __KLB_TYPE_H__
 
 
+#ifdef _WIN32
+    //define something for Windows (32-bit and 64-bit, this part is common)
+    #ifdef _WIN64
+        //define something for Windows (64-bit only)
+    #else
+        //define something for Windows (32-bit only)
+    #endif
+#elif __APPLE__
+    #include "TargetConditionals.h"
+    #if TARGET_IPHONE_SIMULATOR
+        // iOS Simulator
+    #elif TARGET_OS_IPHONE
+        // iOS device
+    #elif TARGET_OS_MAC
+        // Other kinds of Mac OS
+    #else
+        #error "Unknown Apple platform"
+    #endif
+#elif __linux__
+    // linux
+#elif __unix__ // all unices not caught above
+    // Unix
+#elif defined(_POSIX_VERSION)
+    // POSIX
+#elif defined(__STM32__)
+    // STM32
+#elif defined(__EMSCRIPTEN__)
+    // emscripten
+#else
+    #error "Unknown compiler"
+#endif
+
+
 /// @def   int*_t, uint*_t
 /// @brief 引入标准类型定义
 /// @note 
@@ -30,7 +63,7 @@
 
 /// @def   KLB_API
 /// @brief 导出/导入函数
-#if defined(_MSC_VER)
+#if defined(_WIN32)
     #if defined(__KLB_BUILD_DLL__) || defined(__KLB_CORE_API__)
         #define KLB_API extern "C" __declspec(dllexport)
     #elif defined(__KLB_USE_DLL__)

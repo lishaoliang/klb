@@ -21,8 +21,10 @@
 extern "C" {
 #endif
 
+#if !defined(__STM32__)
 
 
+#endif
 
 #ifdef __cplusplus
 }

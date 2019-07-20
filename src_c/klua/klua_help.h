@@ -27,12 +27,13 @@ extern "C" {
 #include <assert.h>
 
 
-#define KLUA_HELP_TOP_B(L_)     int idx_top_b_ = lua_gettop(L_);
-#define KLUA_HELP_TOP_E(L_)     int idx_top_e_ = lua_gettop(L_); assert(idx_top_b_ == idx_top_e_);
+#define KLUA_HELP_TOP_B(L_)     int klua_tb_ = lua_gettop(L_);
+#define KLUA_HELP_TOP_E(L_)     int klua_te_ = lua_gettop(L_); assert(klua_tb_ == klua_te_);
 
 
 int klua_help_report(lua_State *L, int status);
 
+int klua_help_dofile(lua_State *L, const char *name);
 int klua_help_dolibrary(lua_State *L, const char *name);
 
 

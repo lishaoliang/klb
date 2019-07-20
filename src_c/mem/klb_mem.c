@@ -13,7 +13,7 @@
 #include <assert.h>
 
 
-#if !defined(_MSC_VER)
+#if !defined(_WIN32) && !defined(__cplusplus)
 
 #if __STDC_VERSION__ < 199901L
 #error Not C99

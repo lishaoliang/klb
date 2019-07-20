@@ -370,7 +370,7 @@ void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, uint32_t key_len,
     assert(NULL != p_list);
     assert(NULL != p_key);
 
-    klb_hlist_iter_t* p_iter = klb_htab_find(p_list->p_htab, p_key, key_len);
+    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
     if (NULL != p_iter)
     {
         void* p_old = p_iter->p_data;
@@ -387,7 +387,7 @@ klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, ui
     assert(NULL != p_list);
     assert(NULL != p_key);
 
-    klb_hlist_iter_t* p_iter = klb_htab_find(p_list->p_htab, p_key, key_len);
+    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
 
     return p_iter;
 }
@@ -397,7 +397,7 @@ void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t key_len)
     assert(NULL != p_list);
     assert(NULL != p_key);
 
-    klb_hlist_iter_t* p_iter = klb_htab_find(p_list->p_htab, p_key, key_len);
+    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
 
     return (NULL != p_iter) ? p_iter->p_data : NULL;
 }

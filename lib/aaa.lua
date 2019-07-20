@@ -1,33 +1,34 @@
 
+
+local string = require("string")
+local lfs = require("lfs")
+
 local kos = require("kos")
 local ktime = require("ktime")
 local kthread = require("kthread")
 
 local gothread = require("gothread")
 
-print(kos.os, kos.arch)
+print('aaa', kos.os, kos.arch)
+
+print('123456')
+print(lfs.currentdir())
 
 
 kin = function ()
-	print('kin')
-	
+	print('aaa, kin')
+
 	return 0
 end
 
 
 kgo = function ()
-	print('kgo')
+	print('aaa, kgo')
 	--gothread.hello()
-
-
-	for i = 1, 1 do
-		gothread.create("./aaa.lua")
-	end	
-	
 	return 0
 end
 
 
 kexit = function ()
-	print('kexit')
+	print('aaa, kexit')
 end

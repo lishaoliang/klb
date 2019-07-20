@@ -243,7 +243,7 @@ static int dochunk(lua_State *L, int status) {
 }
 
 
-static int dofile(lua_State *L, const char *name) {
+int klua_help_dofile(lua_State *L, const char *name) {
     return dochunk(L, luaL_loadfile(L, name));
 }
 
@@ -542,7 +542,7 @@ static int handle_luainit(lua_State *L) {
     }
     if (init == NULL) return LUA_OK;
     else if (init[0] == '@')
-        return dofile(L, init + 1);
+        return klua_help_dofile(L, init + 1);
     else
         return dostring(L, init, name);
 }
@@ -587,7 +587,7 @@ static int handle_luainit(lua_State *L) {
 //            print_version();
 //            doREPL(L);  /* do read-eval-print loop */
 //        }
-//        else dofile(L, NULL);  /* executes stdin as a file */
+//        else klua_help_dofile(L, NULL);  /* executes stdin as a file */
 //    }
 //    lua_pushboolean(L, 1);  /* signal no errors */
 //    return 1;

@@ -30,6 +30,7 @@
     <ClInclude Include="..\inc\klb_type.h" />
     <ClInclude Include="..\inc\klua\klua.h" />
     <ClInclude Include="..\inc\klua\klua_cfg.h" />
+    <ClInclude Include="..\inc\klua\klua_env.h" />
     <ClInclude Include="..\inc\klua\lauxlib.h" />
     <ClInclude Include="..\inc\klua\lua.h" />
     <ClInclude Include="..\inc\klua\lua.hpp" />
@@ -41,6 +42,9 @@
     <ClInclude Include="..\inc\mem\klb_buf.h" />
     <ClInclude Include="..\inc\mem\klb_mem.h" />
     <ClInclude Include="..\inc\mem\klb_mpool.h" />
+    <ClInclude Include="..\inc\mnp\klb_mnp.h" />
+    <ClInclude Include="..\inc\mnp\klb_mnp_media.h" />
+    <ClInclude Include="..\inc\mnp\klb_mnp_txt.h" />
     <ClInclude Include="..\inc\obj\klb_obj.h" />
     <ClInclude Include="..\inc\obj\klb_obj_hash.h" />
     <ClInclude Include="..\inc\socket\klb_socket.h" />
@@ -100,6 +104,9 @@
     <ClCompile Include="..\src_c\klua\klua.c" />
     <ClCompile Include="..\src_c\klua\klua_env.c" />
     <ClCompile Include="..\src_c\klua\klua_help.c" />
+    <ClCompile Include="..\src_c\klua\klua_os.c" />
+    <ClCompile Include="..\src_c\klua\klua_thread.c" />
+    <ClCompile Include="..\src_c\klua\klua_time.c" />
     <ClCompile Include="..\src_c\klua\lua.c" />
     <ClCompile Include="..\src_c\list\klb_list.c" />
     <ClCompile Include="..\src_c\mem\klb_buf.c" />
@@ -163,6 +170,7 @@
     <None Include="..\mk_def" />
     <None Include="..\src\main\main.go" />
     <None Include="..\src\main\test.go" />
+    <None Include="..\src\main\test_lua.go" />
     <None Include="..\src\main\thread.go" />
     <None Include="..\src\Makefile" />
     <None Include="..\src_c\Makefile" />

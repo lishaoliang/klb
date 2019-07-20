@@ -16,15 +16,11 @@
 #define __KLUA_H__
 
 #include "klb_type.h"
+#include "klua/klua_env.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-#include "klua/klua_cfg.h"
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
 
 
 /// @brief 自定义预加载Lua库
@@ -47,6 +43,24 @@ KLB_API int klua_main(int argc, char** argv, klua_openlibs_cb cb);
 /// @param [in] p_name      库名称
 /// @return 无
 KLB_API void klua_pre_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name);
+
+
+/// @brief 扩展库"kos"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_pre_open_kos(lua_State* L);
+
+
+/// @brief 扩展库"ktime"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_pre_open_ktime(lua_State* L);
+
+
+/// @brief 扩展库"kthread"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_pre_open_kthread(lua_State* L);
 
 
 #ifdef __cplusplus

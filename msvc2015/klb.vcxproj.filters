@@ -118,6 +118,24 @@
     <Filter Include="src_c\klua">
       <UniqueIdentifier>{64d42d46-d90e-4014-8b56-da44b48211ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\mnp">
+      <UniqueIdentifier>{e7c9f057-e7ac-4e80-ac15-cefdd6f776a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\mnp">
+      <UniqueIdentifier>{7ced7e64-87f6-45e1-82b6-89752ae99645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\stm32">
+      <UniqueIdentifier>{c92e65e8-492e-4c79-81f0-5512c30de96e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\stm32">
+      <UniqueIdentifier>{861a7278-4fc1-4a0a-b346-528723e7f797}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\emscripten">
+      <UniqueIdentifier>{e4e42425-ee4d-45e6-8484-300f047f8d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\emscripten">
+      <UniqueIdentifier>{d1bbcb96-bb3c-423b-8726-f84580a7f1d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\mem\klb_mem.h">
@@ -324,6 +342,18 @@
     <ClInclude Include="..\src_c\klua\klua_help.h">
       <Filter>src_c\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\klua\klua_env.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\mnp\klb_mnp.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\mnp\klb_mnp_media.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\mnp\klb_mnp_txt.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\third\lpeg-1.0.2\lpcap.c">
@@ -527,6 +557,15 @@
     <ClCompile Include="..\src_c\klua\klua_help.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
+    <ClCompile Include="..\src_c\klua\klua_os.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src_c\klua\klua_time.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src_c\klua\klua_thread.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fmt_c.sh" />
@@ -545,6 +584,9 @@
       <Filter>src\main</Filter>
     </None>
     <None Include="..\src\main\test.go">
+      <Filter>src\main</Filter>
+    </None>
+    <None Include="..\src\main\test_lua.go">
       <Filter>src\main</Filter>
     </None>
   </ItemGroup>

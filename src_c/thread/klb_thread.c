@@ -12,7 +12,7 @@
 #include "log/klb_log.h"
 #include <assert.h>
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <windows.h>
 
 
@@ -100,7 +100,10 @@ void klb_sleep_ns(uint32_t ns)
 #include <time.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+
+#ifndef __APPLE__
 #include <sys/prctl.h>
+#endif
 
 /// @struct klb_thread_t
 /// @brief  线程对象
@@ -121,6 +124,7 @@ static void* cb_klb_thread(void* p_obj)
 {
     klb_thread_t* p_thread = (klb_thread_t*)(p_obj);
 
+#ifndef __APPLE__
     // 设置CPU
     if (0 <= p_thread->cpu_idx)
     {
@@ -141,6 +145,7 @@ static void* cb_klb_thread(void* p_obj)
     {
         prctl(PR_SET_NAME, p_thread->p_name);
     }
+#endif
 
     if (NULL != p_thread->cb_thread)
     {
@@ -228,8 +233,11 @@ void klb_sleep_ns(uint32_t ns)
     wait.tv_sec = 0;
     wait.tv_nsec = ns;
 
-    //nanosleep(&wait, NULL);
+#ifndef __APPLE__
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wait, NULL);
+#else
+    nanosleep(&wait, NULL);
+#endif
 }
 
 #endif
