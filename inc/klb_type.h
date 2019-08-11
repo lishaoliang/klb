@@ -3,7 +3,7 @@
 //  Created: 2019/05/19
 //
 /// @file    klb_type.h
-/// @brief   基础类型,常用宏定义,C99
+/// @brief   基础类型,常用宏定义,C11
 /// @author  李绍良
 ///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
 ///  \n https://github.com/lishaoliang/klb

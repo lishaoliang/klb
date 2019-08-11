@@ -7,6 +7,8 @@
 # Win交叉编译: sudo apt install mingw-w64
 # Go编译器: sudo apt install golang
 # msvc系列: (_WIN32)
+# emscripten
+# MY_OS/MY_ARCH取值参考: go tool dist list
 # -------------------------------------------------------------------------------
 # Doc文档:
 # sudo apt install doxygen graphviz doxygen-gui
@@ -14,12 +16,13 @@
 
 # go系统目录
 MY_HOME_GOPATH = /home/lsl/go/
+MY_WORK_GOPATH = /home/lsl/work/go/
 
 
-# "linux", "windows", "darwin", "stm32", "emscripten"
+# "linux", "windows", "darwin", "stm32", "js"
 MY_OS ?= linux
 
-# "amd64", "386", "arm"
+# "amd64", "386", "arm", "wasm"
 MY_ARCH ?= amd64
 
 
@@ -48,7 +51,7 @@ else ifeq ($(MY_OS), stm32)
 	MY_CFLAGS += -D__STM32__
 	MY_GO_STATIC  ?= 
 	MY_GCC_STATIC ?= -static
-else ifeq ($(MY_OS), emscripten)
+else ifeq ($(MY_OS), js)
 	MY_TOOL_CHAIN ?= 
 
 	MY_CFLAGS += -D__EMSCRIPTEN__
@@ -84,7 +87,7 @@ endif
 
 MY_LIB_NAME	:= lib
 MY_LIB_PATH := ./$(MY_LIB_NAME)
-MY_CFLAGS	+= -std=c99 -D_GNU_SOURCE
+MY_CFLAGS	+= -std=c11 -D_GNU_SOURCE
 
 
 INSTALL_TOP := /usr/local

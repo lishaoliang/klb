@@ -42,25 +42,35 @@ KLB_API int klua_main(int argc, char** argv, klua_openlibs_cb cb);
 /// @param [in] openlib     库函数列表
 /// @param [in] p_name      库名称
 /// @return 无
-KLB_API void klua_pre_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name);
+KLB_API void klua_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name);
+
+
+/// @brief check boolean
+/// @return int 0.false; 1.true
+KLB_API int luaL_checkboolean(lua_State* L, int arg);
+
+
+/// @brief check lightuserdata
+/// @return void*
+KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
 
 
 /// @brief 扩展库"kos"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
-KLB_API int klua_pre_open_kos(lua_State* L);
+KLB_API int klua_open_kos(lua_State* L);
 
 
 /// @brief 扩展库"ktime"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
-KLB_API int klua_pre_open_ktime(lua_State* L);
+KLB_API int klua_open_ktime(lua_State* L);
 
 
 /// @brief 扩展库"kthread"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
-KLB_API int klua_pre_open_kthread(lua_State* L);
+KLB_API int klua_open_kthread(lua_State* L);
 
 
 #ifdef __cplusplus

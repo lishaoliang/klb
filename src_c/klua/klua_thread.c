@@ -1,7 +1,7 @@
 ﻿#include "klua/klua.h"
 
 
-int klua_pre_open_kthread(lua_State* L)
+int klua_open_kthread(lua_State* L)
 {
     static luaL_Reg kthread_lib[] =
     {

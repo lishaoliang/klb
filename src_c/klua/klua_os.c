@@ -41,6 +41,10 @@
     // STM32
     #define KLUA_OS_STR         "stm32"
     #define KLUA_ARCH_STR       "arm"
+#elif defined(__EMSCRIPTEN__)
+    // emscripten
+    #define KLUA_OS_STR         "js"
+    #define KLUA_ARCH_STR       "wasm"
 #else
     //#error "Unknown compiler"
     #define KLUA_OS_STR         "unknown"
@@ -48,7 +52,7 @@
 #endif
 
 
-int klua_pre_open_kos(lua_State* L)
+int klua_open_kos(lua_State* L)
 {
     static luaL_Reg kos_lib[] =
     {

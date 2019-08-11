@@ -30,19 +30,22 @@ extern "C" {
 typedef struct klua_env_t klua_env_t;
 
 
-KLB_API klua_env_t* klua_env_create(lua_CFunction cb_pre_load, char* p_main);
+KLB_API klua_env_t* klua_env_create(lua_CFunction cb_pre_load);
 KLB_API void klua_env_destroy(klua_env_t* p_env);
 
+KLB_API void klua_env_set_udata(klua_env_t* p_env, void* p_udata);
+KLB_API void* klua_env_get_udata(klua_env_t* p_env);
 
-//KLB_API int klua_env_dofile(klua_env_t* p_env, char* p_name);
-//KLB_API int klua_env_dolibrary(klua_env_t* p_env, char* p_name);
+KLB_API int klua_env_dofile(klua_env_t* p_env, char* p_loader);
+KLB_API int klua_env_dolibrary(klua_env_t* p_env, char* p_loader);
 
 
 KLB_API klua_env_t* klua_env_get_by_L(lua_State* L);
 KLB_API lua_State*  klua_env_get_L(klua_env_t* p_env);
 
 
-KLB_API int klua_env_call_kgo(klua_env_t* p_env);
+KLB_API int klua_env_has_kgo(klua_env_t* p_env);
+KLB_API int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_lparam, const char* p_wparam, void* ptr);
 
 
 #ifdef __cplusplus

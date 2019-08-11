@@ -83,22 +83,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <OutDir>..\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
     <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <OutDir>..\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
     <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <OutDir>..\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
     <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\..\klua\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
+    <OutDir>..\lib\$(Configuration)\lib_msc_$(Platform)\</OutDir>
     <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <TargetName>lib$(ProjectName)</TargetName>
   </PropertyGroup>

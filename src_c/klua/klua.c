@@ -13,7 +13,7 @@
 #include <assert.h>
 
 
-void klua_pre_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name)
+void klua_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name)
 {
     luaL_getsubtable(L, LUA_REGISTRYINDEX, "_PRELOAD");
 
@@ -21,4 +21,18 @@ void klua_pre_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name)
     lua_setfield(L, -2, p_name);
 
     lua_pop(L, 1);  // remove _PRELOAD table
+}
+
+int luaL_checkboolean(lua_State* L, int arg)
+{
+    luaL_checktype(L, arg, LUA_TBOOLEAN);
+
+    return lua_toboolean(L, arg);
+}
+
+void* luaL_checklightuserdata(lua_State* L, int arg)
+{
+    luaL_checktype(L, arg, LUA_TLIGHTUSERDATA);
+
+    return lua_touserdata(L, arg);
 }

@@ -28,7 +28,7 @@ endif
 
 # 编译选项
 #MY_CFLAGS := $(my_flags)
-#MY_CFLAGS += -std=c99
+#MY_CFLAGS += -std=c11
 
 
 # 引用头文件

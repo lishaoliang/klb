@@ -7,7 +7,7 @@ static int klua_ktime_sleep(lua_State* L)
     return 0;
 }
 
-int klua_pre_open_ktime(lua_State* L)
+int klua_open_ktime(lua_State* L)
 {
     static luaL_Reg ktime_lib[] =
     {
