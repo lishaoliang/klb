@@ -24,9 +24,14 @@ extern "C" {
 #if !defined(__STM32__)
 
 
-/// @brief 获取系统滴答数
+/// @brief 获取系统滴答数(毫秒)
 /// @return uint32_t 系统滴答
 KLB_API uint32_t klb_tick_count();
+
+
+/// @brief 获取系统滴答数(毫秒)
+/// @return int64_t 系统滴答
+KLB_API int64_t klb_tick_count64();
 
 
 #endif

@@ -12,6 +12,7 @@ package kgtime
 
 /*
 #include "klua/klua.h"
+#include "time/klb_time.h"
 extern int klua_go_open_kg_time_cgo(lua_State* L);
 */
 import "C"
@@ -50,4 +51,14 @@ func klua_go_kg_time_sleep_ns(lua *C.lua_State) C.int {
 
 	time.Sleep((time.Duration)(time.Nanosecond) * (time.Duration)(ns))
 	return 0
+}
+
+//export klua_go_kg_time_tick_count
+func klua_go_kg_time_tick_count(lua *C.lua_State) C.int {
+	ls := (*klua.LuaState)(lua)
+
+	tc := C.klb_tick_count64()
+
+	klua.LuaPushinteger(ls, int64(tc))
+	return 1
 }

@@ -30,4 +30,11 @@ kg_time.sleep_ns = function (ns)
 end
 
 
+-- @brief 获取系统滴答数(毫秒)
+-- @return [number(int)] 系统滴答数
+kg_time.tick_count = function ()
+	return 123456
+end
+
+
 return kg_time
