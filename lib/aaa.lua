@@ -3,32 +3,61 @@
 local string = require("string")
 local lfs = require("lfs")
 
-local kos = require("kos")
-local ktime = require("ktime")
-local kthread = require("kthread")
+local kg_thread = require("kg_thread")
+local kg_os = require("kg_os")
+local kg_time = require("kg_time")
 
-local gothread = require("gothread")
-
-print('aaa', kos.os, kos.arch)
-
-print('123456')
 print(lfs.currentdir())
 
 
+--kg_os.shell()
+
+--local count = 4
+--while 0 < count do
+--	count = count - 1
+	
+	kg_thread.create('test_1', 'bbb')
+--end
+
+
+
+
 kin = function ()
-	print('aaa, kin')
-
 	return 0
 end
 
 
-kgo = function ()
-	print('aaa, kgo')
-	--gothread.hello()
-	return 0
-end
+--kgo = function ()
+--	print('aaa, kgo')
+--	
+--	print('aaa, kgo')
+--	
+--	return 0
+--end
 
 
 kexit = function ()
-	print('aaa, kexit')
+
+	return 0
 end
+
+for i = 0, 100 do
+	kg_thread.post('test_1', 'post', tostring(i), '123456')
+end
+
+	
+--kg_time.sleep(1000)
+
+
+kg_thread.destroy('test_1')
+
+
+print('post', 100)
+for i = 100, 200 do
+	kg_thread.post('test_1', 'post', tostring(i), '123456')
+end
+
+
+print('sleep', 1000)
+kg_time.sleep(1000)
+print('sleep over', 1000)

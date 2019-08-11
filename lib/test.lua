@@ -3,8 +3,6 @@ local kos = require("kos")
 local ktime = require("ktime")
 local kthread = require("kthread")
 
-local gothread = require("gothread")
-
 print(kos.os, kos.arch)
 
 
@@ -18,11 +16,6 @@ end
 kgo = function ()
 	print('kgo')
 	--gothread.hello()
-
-
-	for i = 1, 1 do
-		gothread.create("./aaa.lua")
-	end	
 	
 	return 0
 end
@@ -30,4 +23,6 @@ end
 
 kexit = function ()
 	print('kexit')
+	
+	return 0
 end
