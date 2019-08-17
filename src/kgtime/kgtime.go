@@ -18,7 +18,6 @@ package kgtime
 
 extern int klua_go_kg_time_sleep(lua_State* L);
 extern int klua_go_kg_time_sleep_ns(lua_State* L);
-extern int klua_go_kg_time_tick_count(lua_State* L);
 
 int klua_go_open_kg_time_cgo(lua_State* L)
 {
@@ -26,8 +25,6 @@ int klua_go_open_kg_time_cgo(lua_State* L)
 	{
 		{ "sleep",		klua_go_kg_time_sleep },
 		{ "sleep_ns",	klua_go_kg_time_sleep_ns },
-
-		{ "tick_count",	klua_go_kg_time_tick_count},
 
 		{ NULL,			NULL }
 	};

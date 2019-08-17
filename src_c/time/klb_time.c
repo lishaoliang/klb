@@ -18,9 +18,9 @@ uint32_t klb_tick_count()
     return GetTickCount();
 }
 
-int64_t klb_tick_count64()
+uint64_t klb_tick_count64()
 {
-    return (int64_t)GetTickCount();
+    return (uint64_t)GetTickCount();
 }
 
 #else
@@ -39,7 +39,7 @@ uint32_t klb_tick_count()
     return (uint32_t)(tp.tv_sec) * 1000 + (uint32_t)(tp.tv_nsec) / 1000000;
 }
 
-int64_t klb_tick_count64()
+uint64_t klb_tick_count64()
 {
     struct timespec tp = { 0 };
     if (!clock_gettime(CLOCK_MONOTONIC, &tp) < 0)
@@ -47,7 +47,7 @@ int64_t klb_tick_count64()
         assert(false);
     }
 
-    return (int64_t)(tp.tv_sec) * 1000 + (int64_t)(tp.tv_nsec) / 1000000;
+    return (uint64_t)(tp.tv_sec) * 1000 + (uint64_t)(tp.tv_nsec) / 1000000;
 }
 
 #endif

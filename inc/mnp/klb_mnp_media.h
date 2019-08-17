@@ -26,26 +26,28 @@ extern "C" {
 
 /// @struct klb_mnp_mh_t
 /// @brief  media net protocol, media head
-///  \n {[klb_mnp_mh_t + N][data...]}
+///  \n F包: [klb_mnp_t][klb_mnp_mh_t][extra][data...]
+///  \n B包: [klb_mnp_t][klb_mnp_mh_t][extra][data...]
+///  \n C包: [klb_mnp_t][data...]
+///  \n E包: [klb_mnp_t][data...]
+///  \n 数据包可以被存储, 数据包尽可能只描述与数据有关部分?
 typedef struct klb_mnp_mh_t_
 {
-    uint32_t    size;       ///< 媒体数据大小(包含本结构体)
-    uint16_t    chnn;       ///< 通道(channel)
-    uint16_t    sidx;       ///< 流序号(stream index): klb_mnp_sidx_e
-    int64_t     time;       ///< 时间戳(毫秒)
-    // - 4 + 2 + 2 + 8 = 16 Byte
-
-    uint16_t    dtype;      ///< 数据类型(data type): klb_mnp_dtype_e
+    uint16_t     extra : 12; ///< 附加数据长度 <= 4K
     union
     {
-        uint8_t vtype;      ///< 视频(video type): klb_mnp_vtype_e
+        uint16_t vtype : 4;  ///< 视频(video type): klb_mnp_vtype_e
     };
-    uint8_t     st_size;    ///< 本结构体大小: [sizeof(klb_mnp_mh_t), 256]
-    // - 16 + 4 = 20 Byte
 
-    uint32_t    uid;        ///< 用户自定义ID(user defined id)
-    // - 20 + 4 = 24 Byte
-    // extra: 24 + N Byte
+    uint16_t     chnn;       ///< 通道(channel)
+    //- 4 Byte
+
+    uint16_t     sidx;       ///< 流序号(stream index): klb_mnp_sidx_e
+    uint16_t     dtype;      ///< 数据类型(data type): klb_mnp_dtype_e
+    //- 4 + 4 = 8 Byte
+
+    int64_t      time;       ///< 时间戳(毫秒)
+    //- 8 + 8 = 16 Byte
 }klb_mnp_mh_t;
 
 #pragma pack()
@@ -55,10 +57,10 @@ typedef struct klb_mnp_mh_t_
 /// @brief  视频帧类型
 typedef enum klb_mnp_vtype_e_
 {
-    KLB_NMP_VTYPE_I    = 0x00,      ///< I帧
-    KLB_NMP_VTYPE_P    = 0x01,      ///< P帧
-    KLB_NMP_VTYPE_B    = 0x02,      ///< B帧
-    KLB_NMP_VTYPE_MAX  = 0xFF       ///< MAX
+    KLB_NMP_VTYPE_I    = 0x0,       ///< I帧
+    KLB_NMP_VTYPE_P    = 0x1,       ///< P帧
+    KLB_NMP_VTYPE_B    = 0x2,       ///< B帧
+    KLB_NMP_VTYPE_MAX  = 0xF        ///< MAX
 }klb_mnp_vtype_e;
 
 

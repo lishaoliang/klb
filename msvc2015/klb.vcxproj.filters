@@ -354,6 +354,12 @@
     <ClInclude Include="..\inc\mnp\klb_mnp_txt.h">
       <Filter>inc\mnp</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\socket\klb_go_socket.h">
+      <Filter>inc\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\mnp\klb_mnp_bin.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\third\lpeg-1.0.2\lpcap.c">
@@ -557,13 +563,16 @@
     <ClCompile Include="..\src_c\klua\klua_help.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_os.c">
+    <ClCompile Include="..\src_c\socket\klb_go_socket.c">
+      <Filter>src_c\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src_c\klua\klua_kos.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_time.c">
+    <ClCompile Include="..\src_c\klua\klua_kthread.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_thread.c">
+    <ClCompile Include="..\src_c\klua\klua_ktime.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
   </ItemGroup>

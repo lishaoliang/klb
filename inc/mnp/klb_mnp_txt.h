@@ -26,26 +26,21 @@ extern "C" {
 
 /// @struct klb_mnp_txth_t
 /// @brief  media net protocol, text head
+///  \n F包: [klb_mnp_t][klb_mnp_txth_t][extra][data...]
+///  \n B包: [klb_mnp_t][klb_mnp_txth_t][extra][data...]
+///  \n C包: [klb_mnp_t][data...]
+///  \n E包: [klb_mnp_t][data...]
 typedef struct klb_mnp_txth_t_
 {
-    uint32_t    size;       ///< 文本数据大小(包含本结构体)
-    uint32_t    ttype;      ///< 类型(text type)
+    uint16_t    extra;      ///< 附加数据长度
+    uint16_t    resv1;      ///< 0
+
     uint32_t    sequence;   ///< 序列号
     uint32_t    uid;        ///< 用户自定义ID(user defined id)
-    // - 4 + 4 + 4 + 4 = 12 Byte
+    // - 4 + 4 + 4 = 12 Byte
 }klb_mnp_txth_t;
 
 #pragma pack()
-
-
-/// @enum  klb_mnp_ttype_e
-/// @brief 文本类型
-typedef enum klb_mnp_ttype_e_
-{
-    KLB_MNP_TJSON     = 0,      ///< JSON
-    KLB_MNP_TXML      = 1,      ///< XML
-    KLB_MNP_TTYPE_MAX = 0x7FFF  ///< MAX
-}klb_mnp_ttype_e;
 
 
 #ifdef __cplusplus
