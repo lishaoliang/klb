@@ -23,14 +23,8 @@ import (
 
 // init
 func init() {
-	// int com, at com.go
-	comInit()
-
 	// init ctxMan, at ctx_man.go
 	ctxManInit()
-
-	// init envManInit, at env_man.go
-	envManInit()
 }
 
 // LoadLib load lib
@@ -61,3 +55,49 @@ func OpenKthread(lua *LuaState, name string) {
 
 // Open Go libs
 // eg. "kg_*" "ka_*" "kx_*"
+
+// Ctx func
+
+// Wait wait for done
+func Wait() {
+	gCtxMan.wg.Wait()
+}
+
+// Cancel cancel
+func Cancel() {
+	gCtxMan.cancel()
+}
+
+// Find find
+func Find(name string) *Ctx {
+	return ctxManFind(name)
+}
+
+// FindByEnv find Ctx by *Env
+func FindByEnv(env *Env) *Ctx {
+	return ctxManFind(env.GetName())
+}
+
+// Post post msg
+func Post(name, msg, msgex, lparam, wparam string, ptr unsafe.Pointer) bool {
+	ctx := ctxManFind(name)
+
+	if nil == ctx {
+		return false
+	}
+
+	ctx.Post(msg, msgex, lparam, wparam, ptr)
+	return true
+}
+
+// Close close envOne
+func Close(name string) bool {
+	ctx := ctxManFind(name)
+
+	if nil == ctx {
+		return false
+	}
+
+	ctx.Destroy()
+	return true
+}

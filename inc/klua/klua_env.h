@@ -45,7 +45,9 @@ KLB_API lua_State*  klua_env_get_L(klua_env_t* p_env);
 
 
 KLB_API int klua_env_has_kgo(klua_env_t* p_env);
-KLB_API int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_lparam, const char* p_wparam, void* ptr);
+KLB_API int klua_env_kgo(klua_env_t* p_env);
+KLB_API int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_msgex, const char* p_lparam, const char* p_wparam, void* ptr);
+KLB_API int klua_env_report(klua_env_t* p_env, int status);
 
 
 #ifdef __cplusplus

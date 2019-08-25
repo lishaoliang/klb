@@ -15,7 +15,9 @@ package klua
 #include "klua/klua.h"
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 // Env *C.klua_env_t *C.lua_State, CGO
 // Env must not has Go pointer
@@ -24,13 +26,15 @@ type Env struct {
 	env *C.klua_env_t
 	lua *LuaState // *C.lua_State, C pointer
 
-	ctxName *C.char // Can't get Ctx by Go pointer, use string replace
+	kgo LuaInteger // "kgo"
+
+	name *C.char // Can't get by Go pointer, use string replace
 }
 
 // EnvCreate create lua env
-func EnvCreate(ctxName string, preLoad LuaCFunction) *Env {
+func EnvCreate(name string, preLoad LuaCFunction) *Env {
 	var e Env
-	e.ctxName = C.CString(ctxName)
+	e.name = C.CString(name)
 	e.env = C.klua_env_create(preLoad)
 	e.lua = (*LuaState)(unsafe.Pointer(C.klua_env_get_L(e.env)))
 
@@ -58,16 +62,16 @@ func EnvGetByLua(lua *LuaState) *Env {
 // Destroy destroy
 func (e *Env) Destroy() {
 	C.klua_env_destroy(e.env)
-	C.free(unsafe.Pointer(e.ctxName))
+	C.free(unsafe.Pointer(e.name))
 
 	e.lua = nil
 	e.env = nil
-	e.ctxName = nil
+	e.name = nil
 }
 
-// GetCtxName get Ctx name
-func (e *Env) GetCtxName() string {
-	return C.GoString(e.ctxName)
+// GetName get name
+func (e *Env) GetName() string {
+	return C.GoString(e.name)
 }
 
 // DoFile call C.klua_env_dofile
@@ -77,6 +81,8 @@ func (e *Env) DoFile(loader string) int {
 	defer C.free(unsafe.Pointer(cStr))
 
 	ret := C.klua_env_dofile(e.env, cStr)
+	e.kgo = (LuaInteger)(C.klua_env_kgo(e.env))
+	//fmt.Println("do file", ret, e.kgo)
 
 	return int(ret)
 }
@@ -88,6 +94,7 @@ func (e *Env) DoLibrary(loader string) int {
 	defer C.free(unsafe.Pointer(cStr))
 
 	ret := C.klua_env_dolibrary(e.env, cStr)
+	e.kgo = (LuaInteger)(C.klua_env_kgo(e.env))
 
 	return int(ret)
 }
@@ -104,9 +111,12 @@ func (e *Env) HasKgo() bool {
 }
 
 // CallKgo call C.klua_env_call_kgo; "kgo" in *.lua
-func (e *Env) CallKgo(msg, lparam, wparam string, ptr unsafe.Pointer) int {
+func (e *Env) CallKgo(msg, msgex, lparam, wparam string, ptr unsafe.Pointer) int {
 	cMsg := C.CString(msg)
 	defer C.free(unsafe.Pointer(cMsg))
+
+	cMsgex := C.CString(msgex)
+	defer C.free(unsafe.Pointer(cMsgex))
 
 	cLparam := C.CString(lparam)
 	defer C.free(unsafe.Pointer(cLparam))
@@ -114,6 +124,36 @@ func (e *Env) CallKgo(msg, lparam, wparam string, ptr unsafe.Pointer) int {
 	cWparam := C.CString(wparam)
 	defer C.free(unsafe.Pointer(cWparam))
 
-	ret := C.klua_env_call_kgo(e.env, cMsg, cLparam, cWparam, ptr)
+	ret := C.klua_env_call_kgo(e.env, cMsg, cMsgex, cLparam, cWparam, ptr)
 	return int(ret)
+}
+
+// CallKgoB call
+func (e *Env) CallKgoB(msg, msgex, lparam, wparam []byte, ptr unsafe.Pointer) int {
+
+	if e.kgo <= 0 {
+		return 1
+	}
+
+	LuaRawgeti(e.lua, LUAREGISTRYINDEX, e.kgo) // to call 'kgo' in protected mode
+	LuaPushstringB(e.lua, msg)                 // 1st argument
+	LuaPushstringB(e.lua, msgex)               // 2st argument
+	LuaPushstringB(e.lua, lparam)              // 3st argument
+	LuaPushstringB(e.lua, wparam)              // 4st argument
+	LuaPushlightuserdata(e.lua, ptr)           // 5st argument
+
+	status := LuaPcall(e.lua, 5, 1, 0) // do the call
+	result := LuaToboolean(e.lua, -1)  // get result
+
+	if result {
+		LuaPop(e.lua, 1)
+	} else {
+		C.klua_env_report(e.env, C.int(1))
+	}
+
+	if result && 0 == status {
+		return 0
+	}
+
+	return 1
 }

@@ -192,6 +192,8 @@ static int klua_env_call_kin(klua_env_t* p_env)
 
 int klua_env_has_kgo(klua_env_t* p_env)
 {
+    assert(NULL != p_env);
+
     if (0 < p_env->kgo)
     {
         return 0;
@@ -200,7 +202,14 @@ int klua_env_has_kgo(klua_env_t* p_env)
     return 1;
 }
 
-int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_lparam, const char* p_wparam, void* ptr)
+int klua_env_kgo(klua_env_t* p_env)
+{
+    assert(NULL != p_env);
+
+    return p_env->kgo;
+}
+
+int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_msgex, const char* p_lparam, const char* p_wparam, void* ptr)
 {
     assert(NULL != p_env);
     if (p_env->kgo <= 0) return EXIT_FAILURE;
@@ -209,16 +218,23 @@ int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_lparam
     KLUA_HELP_TOP_B(L);
     lua_rawgeti(L, LUA_REGISTRYINDEX, p_env->kgo);  /* to call 'kgo' in protected mode */
     lua_pushstring(L, p_msg);                       /* 1st argument */
-    lua_pushstring(L, p_lparam);                    /* 2st argument */
-    lua_pushstring(L, p_wparam);                    /* 3st argument */
-    lua_pushlightuserdata(L, ptr);                  /* 4st argument */
-    int status = lua_pcall(L, 4, 1, 0);             /* do the call */
+    lua_pushstring(L, p_msgex);                     /* 2st argument */
+    lua_pushstring(L, p_lparam);                    /* 3st argument */
+    lua_pushstring(L, p_wparam);                    /* 4st argument */
+    lua_pushlightuserdata(L, ptr);                  /* 5st argument */
+    int status = lua_pcall(L, 5, 1, 0);             /* do the call */
     int result = lua_toboolean(L, -1);              /* get result */
     klua_help_report(L, status);
     if (LUA_OK == status) { lua_pop(L, 1); }
 
     KLUA_HELP_TOP_E(L);
     return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+int klua_env_report(klua_env_t* p_env, int status)
+{
+    assert(NULL != p_env);
+    return klua_help_report(p_env->L, status);
 }
 
 static int klua_env_call_kexit(klua_env_t* p_env)

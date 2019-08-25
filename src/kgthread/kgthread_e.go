@@ -34,16 +34,25 @@ func klua_go_open_kg_thread(lua *C.lua_State) C.int {
 func klua_go_kg_thread_create(lua *C.lua_State) C.int {
 	ls := (*klua.LuaState)(lua)
 
-	name := klua.LuaLCheckstring(ls, 1)   // @1 thread name
-	loader := klua.LuaLCheckstring(ls, 2) // @2 main loader in *.lua
+	loader := klua.LuaLCheckstring(ls, 1) // @1 main loader in *.lua
 
 	env := klua.EnvGetByLua(ls)
-	ctx := klua.CtxFindByEnv(env)
+	ctx := klua.FindByEnv(env)
 
-	b, _ := ctx.WorkerDoLibrary(name, loader)
+	ctxNew := klua.CtxCreate(ctx.GetPreLoad())
+	b, _ := ctxNew.DoLibrary(loader)
 
-	klua.LuaPushboolean(ls, b) // #1 true,false
-	return 1
+	if b {
+		klua.LuaPushboolean(ls, true) // #1 true,false
+		klua.LuaPushstring(ls, ctxNew.GetName())
+	} else {
+		ctxNew.Destroy()
+
+		klua.LuaPushboolean(ls, false) // #1 true,false
+		klua.LuaPushstring(ls, "")
+	}
+
+	return 2
 }
 
 //export klua_go_kg_thread_destroy
@@ -52,7 +61,7 @@ func klua_go_kg_thread_destroy(lua *C.lua_State) C.int {
 
 	name := klua.LuaLCheckstring(ls, 1) // @1 thread name
 
-	b := klua.CtxClose(name)
+	b := klua.Close(name)
 
 	klua.LuaPushboolean(ls, b) // #1 true,false
 	return 1
@@ -64,11 +73,12 @@ func klua_go_kg_thread_post(lua *C.lua_State) C.int {
 
 	name := klua.LuaLCheckstring(ls, 1)   // @1 thread name
 	msg := klua.LuaLCheckstring(ls, 2)    // @2 message
-	lparam := klua.LuaLCheckstring(ls, 3) // @3 l param
-	wparam := klua.LuaLCheckstring(ls, 4) // @4 w param
-	//var ptr =                          // @5 ptr void*
+	msgex := klua.LuaLCheckstring(ls, 3)  // @3 message ex
+	lparam := klua.LuaLCheckstring(ls, 4) // @4 l param
+	wparam := klua.LuaLCheckstring(ls, 5) // @5 w param
+	//var ptr =                          // @6 ptr void*
 
-	b := klua.CtxPost(name, msg, lparam, wparam, nil)
+	b := klua.Post(name, msg, msgex, lparam, wparam, nil)
 
 	klua.LuaPushboolean(ls, b) // #1 true,false
 	return 1

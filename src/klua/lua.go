@@ -12,6 +12,7 @@ package klua
 
 /*
 #include "stdlib.h"
+#include "string.h"
 #include "klua/klua.h"
 */
 import (
@@ -28,6 +29,9 @@ type LuaCFunction C.lua_CFunction
 // LuaState lua state
 type LuaState C.lua_State
 
+// LuaInteger lua_Integer
+type LuaInteger C.lua_Integer
+
 // LUA basic types
 const (
 	LUATNONE          = int(C.LUA_TNONE)          //LUA_TNONE
@@ -43,24 +47,42 @@ const (
 	LUANUMTAGS        = int(C.LUA_NUMTAGS)        //LUA_NUMTAGS
 )
 
-// luaIntToBool int to bool;
+// LUA
+const (
+	LUAREGISTRYINDEX = int(C.LUA_REGISTRYINDEX) // LUA_REGISTRYINDEX
+)
+
+// LuaIntToBool int to bool;
 // 0. false;
 // not 0. true
-func luaIntToBool(v int) bool {
+func LuaIntToBool(v int) bool {
 	if 0 != v {
 		return true
 	}
 	return false
 }
 
-// luaBoolToInt bool to int;
+// LuaBoolToInt bool to int;
 // false. 0;
 // true. 1
-func luaBoolToInt(b bool) int {
+func LuaBoolToInt(b bool) int {
 	if b {
 		return 1
 	}
 	return 0
+}
+
+// LuaCopy copy from char* to []byte
+// must: l <= len(b)
+func LuaCopy(b []byte, p unsafe.Pointer, l int) {
+	C.memcpy(unsafe.Pointer(&b[0]), p, C.size_t(l))
+}
+
+// basic stack manipulation -----------------------------------------------------------------------
+
+// LuaSettop lua_settop
+func LuaSettop(lua *LuaState, idx int) {
+	C.lua_settop((*C.lua_State)(lua), C.int(idx))
 }
 
 // access functions (stack -> C -> Go) ------------------------------------------------------------
@@ -68,31 +90,31 @@ func luaBoolToInt(b bool) int {
 // LuaIsnumber lua_isnumber
 func LuaIsnumber(lua *LuaState, idx int) bool {
 	b := C.lua_isnumber((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaIsstring lua_isstring
 func LuaIsstring(lua *LuaState, idx int) bool {
 	b := C.lua_isstring((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaIscfunction lua_iscfunction
 func LuaIscfunction(lua *LuaState, idx int) bool {
 	b := C.lua_iscfunction((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaIsinteger lua_isinteger
 func LuaIsinteger(lua *LuaState, idx int) bool {
 	b := C.lua_isinteger((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaIsuserdata lua_isuserdata
 func LuaIsuserdata(lua *LuaState, idx int) bool {
 	b := C.lua_isuserdata((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaType lua_type, lua type at idx
@@ -122,13 +144,21 @@ func LuaTointeger(lua *LuaState, idx int) int64 {
 // LuaToboolean lua_toboolean
 func LuaToboolean(lua *LuaState, idx int) bool {
 	b := C.lua_toboolean((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaTostring lua_tolstring
 func LuaTostring(lua *LuaState, idx int) string {
 	s := C.lua_tolstring((*C.lua_State)(lua), C.int(idx), nil)
 	return C.GoString(s)
+}
+
+// LuaTostringPtr lua_tolstring
+func LuaTostringPtr(lua *LuaState, idx int) (unsafe.Pointer, int) {
+	l := C.size_t(0)
+	s := C.lua_tolstring((*C.lua_State)(lua), C.int(idx), &l)
+
+	return unsafe.Pointer(s), int(l)
 }
 
 // LuaTocfunction lua_tocfunction
@@ -175,10 +205,18 @@ func LuaLCheckstring(lua *LuaState, idx int) string {
 	return C.GoString(s)
 }
 
+// LuaLCheckstringPtr luaL_checklstring
+func LuaLCheckstringPtr(lua *LuaState, idx int) (unsafe.Pointer, int) {
+	l := C.size_t(0)
+	s := C.luaL_checklstring((*C.lua_State)(lua), C.int(idx), &l)
+
+	return unsafe.Pointer(s), int(l)
+}
+
 // LuaLCheckboolean luaL_checkboolean
 func LuaLCheckboolean(lua *LuaState, idx int) bool {
 	b := C.luaL_checkboolean((*C.lua_State)(lua), C.int(idx))
-	return luaIntToBool(int(b))
+	return LuaIntToBool(int(b))
 }
 
 // LuaLChecklightuserdata luaL_checklightuserdata
@@ -212,9 +250,15 @@ func LuaPushstring(lua *LuaState, s string) {
 	C.lua_pushstring((*C.lua_State)(lua), cStr)
 }
 
+// LuaPushstringB lua_pushlstring
+func LuaPushstringB(lua *LuaState, b []byte) {
+	l := len(b)
+	C.lua_pushlstring((*C.lua_State)(lua), (*C.char)(unsafe.Pointer(&b[0])), C.size_t(l))
+}
+
 // LuaPushboolean lua_pushboolean
 func LuaPushboolean(lua *LuaState, b bool) {
-	n := luaBoolToInt(b)
+	n := LuaBoolToInt(b)
 	C.lua_pushboolean((*C.lua_State)(lua), C.int(n))
 }
 
@@ -224,3 +268,24 @@ func LuaPushlightuserdata(lua *LuaState, p unsafe.Pointer) {
 }
 
 // get functions (Lua -> stack) ------------------------------------------------------------
+
+// LuaRawgeti lua_rawgeti
+func LuaRawgeti(lua *LuaState, idx int, n LuaInteger) {
+	C.lua_rawgeti((*C.lua_State)(lua), C.int(idx), C.lua_Integer(n))
+}
+
+// 'load' and 'call' functions (load and run Lua code) -------------------------------------
+
+// LuaPcall lua_pcall
+func LuaPcall(lua *LuaState, nargs, nresults, errfunc int) int {
+	ret := C.lua_pcallk((*C.lua_State)(lua), C.int(nargs), C.int(nresults), C.int(errfunc), 0, nil)
+	return int(ret)
+}
+
+// some useful macros ----------------------------------------------------------------------
+
+// LuaPop lua_pop
+func LuaPop(lua *LuaState, idx int) {
+	// lua_pop(L,n)		lua_settop(L, -(n)-1)
+	LuaSettop(lua, -(idx)-1)
+}

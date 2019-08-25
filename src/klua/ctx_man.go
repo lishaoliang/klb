@@ -12,18 +12,24 @@ package klua
 
 import (
 	"context"
+	"math/rand"
 	"sync"
+	"time"
 )
 
 // 存储所有*Ctx,并映射string;
 // 通过string可查找对应的*Ctx
 type ctxMan struct {
-	ctx    context.Context
-	cancel context.CancelFunc
-	wg     sync.WaitGroup
+	ctx    context.Context    // 上下文环境
+	cancel context.CancelFunc // 取消
+	wg     sync.WaitGroup     // 等待组
 
-	m     map[string]*Ctx
-	mutex sync.Mutex
+	mapCtx map[string]*Ctx // 集合*Ctx
+	mutex  sync.Mutex      // 锁
+
+	r        *rand.Rand // 随机值
+	bytes    []byte     // 字符集[A-Za-z0-9]
+	bytesLen int        // bytes长度
 }
 
 // 模块唯一
@@ -35,7 +41,22 @@ var gCtxMan ctxMan
 func ctxManInit() {
 	gCtxMan.ctx, gCtxMan.cancel = context.WithCancel(context.Background())
 
-	gCtxMan.m = make(map[string]*Ctx)
+	gCtxMan.r = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	chs := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+	gCtxMan.bytes = []byte(chs)
+	gCtxMan.bytesLen = len(gCtxMan.bytes)
+
+	gCtxMan.mapCtx = make(map[string]*Ctx)
+}
+
+func randStr(sl int) string {
+	ret := []byte{}
+	for i := 0; i < sl; i++ {
+		ret = append(ret, gCtxMan.bytes[gCtxMan.r.Intn(gCtxMan.bytesLen)])
+	}
+
+	return string(ret)
 }
 
 // 存储*Ctx
@@ -43,9 +64,9 @@ func ctxManPush(s *Ctx) string {
 
 	var name string
 	for true {
-		name = comRandStr(8)
+		name = randStr(8)
 
-		if nil == gCtxMan.m[name] {
+		if nil == gCtxMan.mapCtx[name] {
 			break
 		}
 	}
@@ -53,7 +74,7 @@ func ctxManPush(s *Ctx) string {
 	gCtxMan.mutex.Lock()
 	defer gCtxMan.mutex.Unlock()
 
-	gCtxMan.m[name] = s
+	gCtxMan.mapCtx[name] = s
 	return name
 }
 
@@ -62,7 +83,7 @@ func ctxManRemove(name string) {
 	gCtxMan.mutex.Lock()
 	defer gCtxMan.mutex.Unlock()
 
-	delete(gCtxMan.m, name)
+	delete(gCtxMan.mapCtx, name)
 }
 
 // 通过名称查找*Ctx
@@ -70,6 +91,6 @@ func ctxManFind(name string) *Ctx {
 	gCtxMan.mutex.Lock()
 	defer gCtxMan.mutex.Unlock()
 
-	ctx := gCtxMan.m[name]
+	ctx := gCtxMan.mapCtx[name]
 	return ctx
 }

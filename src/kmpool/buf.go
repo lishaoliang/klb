@@ -1,3 +1,13 @@
+///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//  Created: 2019/08/17
+//
+/// @file    buf.go
+/// @author  lishaoliang
+///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
+///  \n https://github.com/lishaoliang/klb
+/// @brief	buf
+///////////////////////////////////////////////////////////////////////////
 package kmpool
 
 import "sync/atomic"
