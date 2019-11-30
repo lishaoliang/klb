@@ -1,0 +1,13 @@
+///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+/// @file   comm_vi_dev.go
+/// @author lishaoliang
+/// @brief	comm vi dev
+///////////////////////////////////////////////////////////////////////////
+
+package himpp
+
+/*
+#include "himpp/klb_himpp.h"
+*/
+import "C"
