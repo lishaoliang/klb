@@ -1,23 +1,32 @@
 
-local kg_time = require("kg_time")
 local ka_mdc = require("ka_mdc")
+local kg_stream = require("kg_stream")
 
+print('demo.demo.lua,start...')
 
 ka_mdc.init()
-ka_mdc.start()
+kg_stream.init()
+
+
+kg_stream.set_stream_cb(ka_mdc.get_cb_push_stream())
+
+
+ka_mdc.start('test_mdc', 'demo.entry_ser', 'klua_go_main_openlibs', '')
+kg_stream.start()
 
 
 kexit = function ()
+	kg_stream.stop()
 	ka_mdc.stop()
+
+	kg_stream.quit()
 	ka_mdc.quit()
 	
 	return 0
 end
 
-
-local count = 30
-while 0 < count do
-	--count = count - 1
+kgo = function (msg, msgex, lparam, wparam)
+	print('lua:', msg, msgex, lparam, wparam)
 	
-	kg_time.sleep(1000)
+	return 0
 end

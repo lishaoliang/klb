@@ -15,12 +15,13 @@ local kg_thread = {}
 
 
 -- @brief 创建线程
--- @param [in]  	name[string]	线程名称; ""表示不记名线程
--- @param [in]		loader[string]	加载入口: require(loader)
--- @return [boolean] true.成功; false.失败
-kg_thread.create = function (name, loader)
-	return true
-	--return false
+-- @param [in]  	preload[string]	环境预加载库系列
+-- @param [in]		loader[string]	加载入口脚本: require(loader)
+-- @return [string]		线程名称
+--  \n 		[boolean]	true.成功; false.失败
+kg_thread.create = function (preload, loader)
+	return 'sfef', true
+	--return 'sdfef', false
 end
 
 
@@ -28,7 +29,8 @@ end
 -- @param [in]  	name[string]	线程名称
 -- @return 无
 kg_thread.destroy = function (name)
-	
+	return true
+	--return false
 end
 
 

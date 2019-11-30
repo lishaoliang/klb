@@ -1,7 +1,5 @@
 
 local kos = require("kos")
-local kd_demo = require("kd_demo")
-
 print(kos.os, kos.arch)
 
 
@@ -12,19 +10,16 @@ kin = function ()
 end
 
 
-kgo = function ()
-	--print('kd_demo')
-	
-	print('lua:', kd_demo.hello())
-	
-	print('lua:', kd_demo.test('test1', 'test2'))
-	
+kgo = function (msg, msgex, lparam, wparam)
+	print('lua:', msg, msgex, lparam, wparam)
 	return 0
 end
 
 
 kexit = function ()
-	--print('kexit')
+	print('kexit.')
+	print('kexit..')
 	
+	print('kexit...')
 	return 0
 end

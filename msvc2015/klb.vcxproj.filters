@@ -136,6 +136,15 @@
     <Filter Include="src_c\emscripten">
       <UniqueIdentifier>{d1bbcb96-bb3c-423b-8726-f84580a7f1d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\himpp">
+      <UniqueIdentifier>{7257ea32-bfa7-468e-8783-5e560d41d86e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\go">
+      <UniqueIdentifier>{9a229c66-9ca9-4cf6-aca0-27db0df549c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\go">
+      <UniqueIdentifier>{c24fe285-69ac-45c2-8239-c63e51376dbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\mem\klb_mem.h">
@@ -360,6 +369,36 @@
     <ClInclude Include="..\inc\mnp\klb_mnp_bin.h">
       <Filter>inc\mnp</Filter>
     </ClInclude>
+    <ClInclude Include="..\inc\mnp\klb_mnp_stream.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_himpp.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3519v101.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3531dv100.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3520dv200.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3520dv300.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3520dv400.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3559av100.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\go\klb_select.h">
+      <Filter>inc\go</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\himpp\klb_hi3516av100.h">
+      <Filter>inc\himpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\third\lpeg-1.0.2\lpcap.c">
@@ -575,6 +614,9 @@
     <ClCompile Include="..\src_c\klua\klua_ktime.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
+    <ClCompile Include="..\src_c\go\klb_select.c">
+      <Filter>src_c\go</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\fmt_c.sh" />
@@ -598,5 +640,6 @@
     <None Include="..\src\main\test_lua.go">
       <Filter>src\main</Filter>
     </None>
+    <None Include="..\pack.sh" />
   </ItemGroup>
 </Project>

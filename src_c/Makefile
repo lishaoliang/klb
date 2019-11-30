@@ -23,7 +23,7 @@ MY_DIRS += ./stm32
 else ifeq ($(MY_OS), emscripten)
 MY_DIRS += ./emscripten
 else
-MY_DIRS += ./thread ./time ../third/luafilesystem-2.0/src
+MY_DIRS += ./go ./thread ./time ../third/luafilesystem-2.0/src
 endif
 
 # ±‡“Î—°œÓ

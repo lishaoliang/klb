@@ -19,6 +19,7 @@
 #include "mnp/klb_mnp_txt.h"
 #include "mnp/klb_mnp_bin.h"
 #include "mnp/klb_mnp_media.h"
+#include "mnp/klb_mnp_stream.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -29,6 +30,7 @@ extern "C" {
 
 /// @struct klb_mnp_t
 /// @brief  网络封包头
+///  \n 固定8字节, 封包头可以被写入文件, 需要精简大小
 ///  \n 缓存大小:
 ///  \n  媒体包缓存: [4K, 8K, 16K, 32K]
 typedef struct klb_mnp_t_
@@ -39,14 +41,11 @@ typedef struct klb_mnp_t_
 
     uint16_t size;              ///< 单个数据包大小(包含本结构体): <= 60K (超过60K,协议错误)
 
-    uint8_t  subtype;           ///< 子协议类型: klb_mnp_subtype_e
     uint8_t  opt : 2;           ///< 包组合方式: klb_mnp_opt_e
-    uint8_t  packtype : 3;      ///< pack type包类型
-    uint8_t  resv1 : 3;         ///< 0 
+    uint8_t  packtype : 3;      ///< 包类型: klb_mnp_packtype_e
+    uint8_t  subtype : 3;       ///< 子协议类型: klb_mnp_subtype_e
+    uint8_t  resv;              ///< 0
     //- 4 + 4 = 8 Byte
-
-    uint32_t resv2;             ///< 0
-    //- 8 + 4 = 12 Byte
 }klb_mnp_t;
 
 #pragma pack()
@@ -91,8 +90,8 @@ typedef enum klb_mnp_packtype_e_
 /// @brief  子协议类型
 typedef enum klb_mnp_subtype_e_
 {
-    KLB_MNP_SUB_MEDIA   = 0x00, ///< 媒体协议
-    KLB_MNP_SUBTYPE_MAX = 0xFF  ///< MAX
+    KLB_MNP_SUB_MEDIA   = 0x0, ///< 媒体协议
+    KLB_MNP_SUBTYPE_MAX = 0x7  ///< MAX
 }klb_mnp_subtype_e;
 
 

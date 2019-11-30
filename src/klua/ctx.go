@@ -1,134 +1,113 @@
 ///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/08/11
-//
-/// @file    ctx.go
-/// @author  lishaoliang
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
+//	Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+/// @file	ctx.go
+/// @author	lishaoliang
 /// @brief	Ctx
 ///////////////////////////////////////////////////////////////////////////
+
 package klua
 
 import (
 	"context"
 	"sync"
-	"unsafe"
 )
 
+// ctxMsg msg []byte
+// []byte消息
 type ctxMsg struct {
-	msg    string
-	msgex  string
-	lparam string
-	wparam string
-	ptr    unsafe.Pointer
-}
-
-type ctxMsgB struct {
-	msg    []byte
-	msgex  []byte
-	lparam []byte
-	wparam []byte
-	ptr    unsafe.Pointer
+	msg    []byte // message[string]
+	msgex  []byte // message ext[string]
+	lparam []byte // l param[string]
+	wparam []byte // w param[string]
 }
 
 // Ctx ctx
 type Ctx struct {
-	env     *Env         // CGO Env(Lua对接C环境)
-	preLoad LuaCFunction // 预加载函数
+	ctx    context.Context    // 上下文环境
+	cancel context.CancelFunc // 取消
+	wg     sync.WaitGroup     // 等待组
 
-	name string       // 本Ctx名称
-	msgs chan ctxMsg  // 传递过来的消息
-	msgB chan ctxMsgB // 传递过来的[]byte
+	env  *Env        // CGO Env(Lua对接C环境)
+	name string      // 本Ctx线程名称
+	msgs chan ctxMsg // 传递过来的消息
 }
 
-// CtxCreate create Ctx
-func CtxCreate(preLoad LuaCFunction) *Ctx {
-	var s Ctx
+// ctxCreate create Ctx
+func ctxCreate(name, preLoad, loader string) *Ctx {
+	var m Ctx
 
-	// push ctxMan
-	s.name = ctxManPush(&s)
+	m.ctx, m.cancel = context.WithCancel(context.Background())
 
-	s.preLoad = preLoad
+	cbPreLoad := gMapFuncs.FindPreload(preLoad)
+	cbLoader := gMapFuncs.FindLoader(loader)
 
-	s.msgs = make(chan ctxMsg)
-	s.msgB = make(chan ctxMsgB)
-	s.env = EnvCreate(s.name, preLoad)
+	m.name = name
+	m.msgs = make(chan ctxMsg)
+	m.env = EnvCreate("", cbPreLoad, cbLoader)
 
-	return &s
+	return &m
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Destroy destroy
-func (s *Ctx) Destroy() {
-	//fmt.Println("Ctx.Destroy", s.name)
+// destroy destroy
+func (m *Ctx) destroy() {
 
-	ctxManRemove(s.name)
+	// 等待线程退出
+	m.cancel()
+	m.wg.Wait()
 
-	s.env.Destroy()
+	// 销毁lua环境
+	//m.env.Destroy()
 
-	close(s.msgs)
-	close(s.msgB)
+	close(m.msgs)
+
+	m.env = nil
+	m.msgs = nil
 }
 
 // GetName get ctx name
-func (s *Ctx) GetName() string {
-	return s.name
-}
-
-// GetPreLoad get preload func
-func (s *Ctx) GetPreLoad() LuaCFunction {
-	return s.preLoad
+func (m *Ctx) GetName() string {
+	return m.name
 }
 
 // DoFile worker do file
-func (s *Ctx) DoFile(loader string) (bool, error) {
+func (m *Ctx) DoFile(loader string) (bool, error) {
 	gCtxMan.wg.Add(1)
-	go s.worker(gCtxMan.ctx, &gCtxMan.wg, loader, true)
+	m.wg.Add(1)
+	go m.worker(gCtxMan.ctx, &gCtxMan.wg, loader, true)
 
 	return true, nil
 }
 
 // DoLibrary worker do library
-func (s *Ctx) DoLibrary(loader string) (bool, error) {
-
+func (m *Ctx) DoLibrary(loader string) (bool, error) {
 	gCtxMan.wg.Add(1)
-	go s.worker(gCtxMan.ctx, &gCtxMan.wg, loader, false)
+	m.wg.Add(1)
+	go m.worker(gCtxMan.ctx, &gCtxMan.wg, loader, false)
 
 	return true, nil
 }
 
-// Post post
-func (s *Ctx) Post(msg, msgex, lparam, wparam string, ptr unsafe.Pointer) {
+// Post post []byte
+func (m *Ctx) Post(msg, msgex, lparam, wparam []byte) {
 	var cm ctxMsg
 	cm.msg = msg
 	cm.msgex = msgex
 	cm.lparam = lparam
 	cm.wparam = wparam
-	cm.ptr = ptr
 
-	s.msgs <- cm
-}
-
-// PostB post []byte
-func (s *Ctx) PostB(msg, msgex, lparam, wparam []byte, ptr unsafe.Pointer) {
-	var cm ctxMsgB
-	cm.msg = msg
-	cm.msgex = msgex
-	cm.lparam = lparam
-	cm.wparam = wparam
-	cm.ptr = ptr
-
-	s.msgB <- cm
+	m.msgs <- cm
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-func (s *Ctx) worker(ctx context.Context, wg *sync.WaitGroup, loader string, bDoFile bool) error {
+func (m *Ctx) worker(ctx context.Context, wg *sync.WaitGroup, loader string, bDoFile bool) error {
 	defer wg.Done()
+	defer m.wg.Done()
+	defer m.env.Destroy()
 
-	env := s.env
+	env := m.env
 
 	if bDoFile {
 		env.DoFile(loader)
@@ -136,18 +115,13 @@ func (s *Ctx) worker(ctx context.Context, wg *sync.WaitGroup, loader string, bDo
 		env.DoLibrary(loader)
 	}
 
-	if !env.HasKgo() {
-		// lua 如果没有"kgo"函数, 则可以直接退出
-		return ctx.Err()
-	}
-
 	for {
 		select {
-		case msg := <-s.msgs:
-			env.CallKgo(msg.msg, msg.msgex, msg.lparam, msg.wparam, msg.ptr) // post消息
-		case msgB := <-s.msgB:
-			env.CallKgoB(msgB.msg, msgB.msgex, msgB.lparam, msgB.wparam, msgB.ptr) // post []byte
+		case msg := <-m.msgs:
+			env.CallKgoB(msg.msg, msg.msgex, msg.lparam, msg.wparam, nil) // post []byte
 		case <-ctx.Done():
+			return ctx.Err() // 超时或强制退出
+		case <-m.ctx.Done():
 			return ctx.Err() // 超时或强制退出
 		}
 	}

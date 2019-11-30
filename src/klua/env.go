@@ -1,13 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/08/10
-//
-/// @file    env.go
-/// @author  lishaoliang
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief	Env
+//	Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+/// @file	env.go
+/// @author	lishaoliang
+/// @brief	env
 ///////////////////////////////////////////////////////////////////////////
+
 package klua
 
 /*
@@ -32,76 +29,59 @@ type Env struct {
 }
 
 // EnvCreate create lua env
-func EnvCreate(name string, preLoad LuaCFunction) *Env {
-	var e Env
-	e.name = C.CString(name)
-	e.env = C.klua_env_create(preLoad)
-	e.lua = (*LuaState)(unsafe.Pointer(C.klua_env_get_L(e.env)))
+func EnvCreate(name string, preLoad LuaCFunction, loader LuaCFunction) *Env {
+	var m Env
+	m.name = C.CString(name)
+	m.env = C.klua_env_create(preLoad)
+	m.lua = (*LuaState)(unsafe.Pointer(C.klua_env_get_L(m.env)))
 
 	// set Env ptr at user data
 	// so Env must not has Go pointer
-	C.klua_env_set_udata(e.env, unsafe.Pointer(&e))
+	C.klua_env_set_udata(m.env, unsafe.Pointer(&m))
 
-	return &e
-}
-
-// EnvGetByLua get env by luastate
-func EnvGetByLua(lua *LuaState) *Env {
-
-	// get *C.klua_env_t by lua
-	env := C.klua_env_get_by_L((*C.lua_State)(unsafe.Pointer(lua)))
-
-	// get Env ptr by *C.klua_env_t at user data
-	e := (*Env)(unsafe.Pointer(C.klua_env_get_udata(env)))
-
-	return e
+	return &m
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 // Destroy destroy
-func (e *Env) Destroy() {
-	C.klua_env_destroy(e.env)
-	C.free(unsafe.Pointer(e.name))
+func (m *Env) Destroy() {
+	C.klua_env_destroy(m.env)
+	C.free(unsafe.Pointer(m.name))
 
-	e.lua = nil
-	e.env = nil
-	e.name = nil
-}
-
-// GetName get name
-func (e *Env) GetName() string {
-	return C.GoString(e.name)
+	m.lua = nil
+	m.env = nil
+	m.name = nil
 }
 
 // DoFile call C.klua_env_dofile
-func (e *Env) DoFile(loader string) int {
+func (m *Env) DoFile(loader string) int {
 	// do file
 	cStr := C.CString(loader)
 	defer C.free(unsafe.Pointer(cStr))
 
-	ret := C.klua_env_dofile(e.env, cStr)
-	e.kgo = (LuaInteger)(C.klua_env_kgo(e.env))
+	ret := C.klua_env_dofile(m.env, cStr)
+	m.kgo = (LuaInteger)(C.klua_env_kgo(m.env))
 	//fmt.Println("do file", ret, e.kgo)
 
 	return int(ret)
 }
 
 // DoLibrary call C.klua_env_dolibrary
-func (e *Env) DoLibrary(loader string) int {
+func (m *Env) DoLibrary(loader string) int {
 	// do file
 	cStr := C.CString(loader)
 	defer C.free(unsafe.Pointer(cStr))
 
-	ret := C.klua_env_dolibrary(e.env, cStr)
-	e.kgo = (LuaInteger)(C.klua_env_kgo(e.env))
+	ret := C.klua_env_dolibrary(m.env, cStr)
+	m.kgo = (LuaInteger)(C.klua_env_kgo(m.env))
 
 	return int(ret)
 }
 
 // HasKgo has "kgo" in *.lua file
-func (e *Env) HasKgo() bool {
-	ret := C.klua_env_has_kgo(e.env)
+func (m *Env) HasKgo() bool {
+	ret := C.klua_env_has_kgo(m.env)
 
 	if 0 == ret {
 		return true
@@ -111,7 +91,7 @@ func (e *Env) HasKgo() bool {
 }
 
 // CallKgo call C.klua_env_call_kgo; "kgo" in *.lua
-func (e *Env) CallKgo(msg, msgex, lparam, wparam string, ptr unsafe.Pointer) int {
+func (m *Env) CallKgo(msg, msgex, lparam, wparam string, ptr unsafe.Pointer) int {
 	cMsg := C.CString(msg)
 	defer C.free(unsafe.Pointer(cMsg))
 
@@ -124,31 +104,31 @@ func (e *Env) CallKgo(msg, msgex, lparam, wparam string, ptr unsafe.Pointer) int
 	cWparam := C.CString(wparam)
 	defer C.free(unsafe.Pointer(cWparam))
 
-	ret := C.klua_env_call_kgo(e.env, cMsg, cMsgex, cLparam, cWparam, ptr)
+	ret := C.klua_env_call_kgo(m.env, cMsg, cMsgex, cLparam, cWparam, ptr)
 	return int(ret)
 }
 
 // CallKgoB call
-func (e *Env) CallKgoB(msg, msgex, lparam, wparam []byte, ptr unsafe.Pointer) int {
+func (m *Env) CallKgoB(msg, msgex, lparam, wparam []byte, ptr unsafe.Pointer) int {
 
-	if e.kgo <= 0 {
+	if m.kgo <= 0 {
 		return 1
 	}
 
-	LuaRawgeti(e.lua, LUAREGISTRYINDEX, e.kgo) // to call 'kgo' in protected mode
-	LuaPushstringB(e.lua, msg)                 // 1st argument
-	LuaPushstringB(e.lua, msgex)               // 2st argument
-	LuaPushstringB(e.lua, lparam)              // 3st argument
-	LuaPushstringB(e.lua, wparam)              // 4st argument
-	LuaPushlightuserdata(e.lua, ptr)           // 5st argument
+	LuaRawgeti(m.lua, LUAREGISTRYINDEX, m.kgo) // to call 'kgo' in protected mode
+	LuaPushstringB(m.lua, msg)                 // 1st argument
+	LuaPushstringB(m.lua, msgex)               // 2st argument
+	LuaPushstringB(m.lua, lparam)              // 3st argument
+	LuaPushstringB(m.lua, wparam)              // 4st argument
+	LuaPushlightuserdata(m.lua, ptr)           // 5st argument
 
-	status := LuaPcall(e.lua, 5, 1, 0) // do the call
-	result := LuaToboolean(e.lua, -1)  // get result
+	status := LuaPcall(m.lua, 5, 1, 0) // do the call
+	result := LuaToboolean(m.lua, -1)  // get result
 
-	if result {
-		LuaPop(e.lua, 1)
+	if 0 == status {
+		LuaPop(m.lua, 1)
 	} else {
-		C.klua_env_report(e.env, C.int(1))
+		C.klua_env_report(m.env, C.int(status))
 	}
 
 	if result && 0 == status {

@@ -19,7 +19,7 @@ extern "C" {
 typedef struct klb_mnp_binh_t_
 {
     uint16_t    extra;      ///< 附加数据长度
-    uint16_t    resv1;      ///< 0
+    uint16_t    resv;       ///< 0
 
     uint32_t    sequence;   ///< 序列号
     uint32_t    uid;        ///< 用户自定义ID(user defined id)

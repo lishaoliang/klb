@@ -21,7 +21,16 @@
 extern "C" {
 #endif
 
+#ifdef _WIN32
+    #include <winsock2.h>
+    typedef SOCKET          klb_socket_fd;
+#else
+    #include <sys/socket.h>
+    #include <netinet/in.h>
 
+    typedef int             klb_socket_fd;
+    #define INVALID_SOCKET  -1
+#endif
 
 
 #ifdef __cplusplus

@@ -22,11 +22,20 @@
     <ClInclude Include="..\inc\algorithm\klb_algorithm.h" />
     <ClInclude Include="..\inc\algorithm\klb_sort_insert.h" />
     <ClInclude Include="..\inc\algorithm\klb_sort_quick.h" />
+    <ClInclude Include="..\inc\go\klb_select.h" />
     <ClInclude Include="..\inc\hash\klb_hash_dx.h" />
     <ClInclude Include="..\inc\hash\klb_hash_hgsmi.h" />
     <ClInclude Include="..\inc\hash\klb_hlist.h" />
     <ClInclude Include="..\inc\hash\klb_hmap.h" />
     <ClInclude Include="..\inc\hash\klb_htab.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3516av100.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3519v101.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3520dv200.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3520dv300.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3520dv400.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3531dv100.h" />
+    <ClInclude Include="..\inc\himpp\klb_hi3559av100.h" />
+    <ClInclude Include="..\inc\himpp\klb_himpp.h" />
     <ClInclude Include="..\inc\klb_type.h" />
     <ClInclude Include="..\inc\klua\klua.h" />
     <ClInclude Include="..\inc\klua\klua_cfg.h" />
@@ -45,6 +54,7 @@
     <ClInclude Include="..\inc\mnp\klb_mnp.h" />
     <ClInclude Include="..\inc\mnp\klb_mnp_bin.h" />
     <ClInclude Include="..\inc\mnp\klb_mnp_media.h" />
+    <ClInclude Include="..\inc\mnp\klb_mnp_stream.h" />
     <ClInclude Include="..\inc\mnp\klb_mnp_txt.h" />
     <ClInclude Include="..\inc\obj\klb_obj.h" />
     <ClInclude Include="..\inc\obj\klb_obj_hash.h" />
@@ -98,6 +108,7 @@
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src_c\algorithm\klb_sort_insert.c" />
     <ClCompile Include="..\src_c\algorithm\klb_sort_quick.c" />
+    <ClCompile Include="..\src_c\go\klb_select.c" />
     <ClCompile Include="..\src_c\hash\klb_hash_dx.c" />
     <ClCompile Include="..\src_c\hash\klb_hash_hgsmi.c" />
     <ClCompile Include="..\src_c\hash\klb_hlist.c" />
@@ -171,6 +182,7 @@
     <None Include="..\fmt_c.sh" />
     <None Include="..\Makefile" />
     <None Include="..\mk_def" />
+    <None Include="..\pack.sh" />
     <None Include="..\src\main\main.go" />
     <None Include="..\src\main\test.go" />
     <None Include="..\src\main\test_lua.go" />

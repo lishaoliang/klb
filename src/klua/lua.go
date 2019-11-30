@@ -1,13 +1,10 @@
 ///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/08/10
-//
-/// @file    lua.go
-/// @author  lishaoliang
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief	Lua
+//	Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+/// @file	lua.go
+/// @author	lishaoliang
+/// @brief	lua
 ///////////////////////////////////////////////////////////////////////////
+
 package klua
 
 /*
@@ -21,6 +18,8 @@ import (
 
 import (
 	"unsafe"
+
+	"github.com/lishaoliang/klb/src/kutil"
 )
 
 // LuaCFunction lua c function
@@ -70,12 +69,6 @@ func LuaBoolToInt(b bool) int {
 		return 1
 	}
 	return 0
-}
-
-// LuaCopy copy from char* to []byte
-// must: l <= len(b)
-func LuaCopy(b []byte, p unsafe.Pointer, l int) {
-	C.memcpy(unsafe.Pointer(&b[0]), p, C.size_t(l))
 }
 
 // basic stack manipulation -----------------------------------------------------------------------
@@ -205,6 +198,17 @@ func LuaLCheckstring(lua *LuaState, idx int) string {
 	return C.GoString(s)
 }
 
+// LuaLCheckstringB luaL_checklstring
+func LuaLCheckstringB(lua *LuaState, idx int) []byte {
+	l := C.size_t(0)
+	s := C.luaL_checklstring((*C.lua_State)(lua), C.int(idx), &l)
+
+	b := make([]byte, l)
+	kutil.Memcpy(b, unsafe.Pointer(s), int(l))
+
+	return b
+}
+
 // LuaLCheckstringPtr luaL_checklstring
 func LuaLCheckstringPtr(lua *LuaState, idx int) (unsafe.Pointer, int) {
 	l := C.size_t(0)
@@ -253,7 +257,12 @@ func LuaPushstring(lua *LuaState, s string) {
 // LuaPushstringB lua_pushlstring
 func LuaPushstringB(lua *LuaState, b []byte) {
 	l := len(b)
-	C.lua_pushlstring((*C.lua_State)(lua), (*C.char)(unsafe.Pointer(&b[0])), C.size_t(l))
+
+	if 0 < l {
+		C.lua_pushlstring((*C.lua_State)(lua), (*C.char)(unsafe.Pointer(&b[0])), C.size_t(l))
+	} else {
+		C.lua_pushlstring((*C.lua_State)(lua), nil, C.size_t(0))
+	}
 }
 
 // LuaPushboolean lua_pushboolean

@@ -1,20 +1,18 @@
 ///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/08/11
-//
-/// @file    ctx_man.go
-/// @author  lishaoliang
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
+//	Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+/// @file	ctx_man.go
+/// @author	lishaoliang
 /// @brief	ctxMan
 ///////////////////////////////////////////////////////////////////////////
+
 package klua
 
 import (
 	"context"
-	"math/rand"
+	"fmt"
 	"sync"
-	"time"
+
+	"github.com/lishaoliang/klb/src/kutil"
 )
 
 // 存储所有*Ctx,并映射string;
@@ -23,13 +21,10 @@ type ctxMan struct {
 	ctx    context.Context    // 上下文环境
 	cancel context.CancelFunc // 取消
 	wg     sync.WaitGroup     // 等待组
+	rand   *kutil.Rand        // 随机字符串
 
 	mapCtx map[string]*Ctx // 集合*Ctx
 	mutex  sync.Mutex      // 锁
-
-	r        *rand.Rand // 随机值
-	bytes    []byte     // 字符集[A-Za-z0-9]
-	bytesLen int        // bytes长度
 }
 
 // 模块唯一
@@ -41,56 +36,85 @@ var gCtxMan ctxMan
 func ctxManInit() {
 	gCtxMan.ctx, gCtxMan.cancel = context.WithCancel(context.Background())
 
-	gCtxMan.r = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	chs := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-	gCtxMan.bytes = []byte(chs)
-	gCtxMan.bytesLen = len(gCtxMan.bytes)
+	gCtxMan.rand = kutil.RandCreate()
 
 	gCtxMan.mapCtx = make(map[string]*Ctx)
 }
 
-func randStr(sl int) string {
-	ret := []byte{}
-	for i := 0; i < sl; i++ {
-		ret = append(ret, gCtxMan.bytes[gCtxMan.r.Intn(gCtxMan.bytesLen)])
+// Destroy destroy
+func (m *ctxMan) Destroy() {
+	m.rand.Destroy()
+
+	m.rand = nil
+	m.mapCtx = nil
+}
+
+// Wait wait
+func (m *ctxMan) Wait() {
+	m.wg.Wait()
+}
+
+// Cancel cancel
+func (m *ctxMan) Cancel() {
+	m.cancel()
+}
+
+// Open
+func (m *ctxMan) Open(name, entry, preload, loader string, bDoFile bool) (*Ctx, error) {
+	ctx := ctxCreate(name, preload, loader)
+
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if nil != m.mapCtx[name] {
+		return nil, fmt.Errorf("klua.ctx_man.Open error!name=\"%s\" repeat", name)
 	}
 
-	return string(ret)
-}
+	m.mapCtx[name] = ctx // 放入ctx集合
 
-// 存储*Ctx
-func ctxManPush(s *Ctx) string {
-
-	var name string
-	for true {
-		name = randStr(8)
-
-		if nil == gCtxMan.mapCtx[name] {
-			break
-		}
+	if bDoFile {
+		ctx.DoFile(entry)
+	} else {
+		ctx.DoLibrary(entry)
 	}
 
-	gCtxMan.mutex.Lock()
-	defer gCtxMan.mutex.Unlock()
-
-	gCtxMan.mapCtx[name] = s
-	return name
+	return ctx, nil
 }
 
-// 通过名称移除*Ctx
-func ctxManRemove(name string) {
-	gCtxMan.mutex.Lock()
-	defer gCtxMan.mutex.Unlock()
+// Close close
+func (m *ctxMan) Close(name string) bool {
 
-	delete(gCtxMan.mapCtx, name)
+	m.mutex.Lock()
+	ctx := m.mapCtx[name]
+	if nil != ctx {
+		delete(m.mapCtx, name)
+	}
+	m.mutex.Unlock()
+
+	if nil != ctx {
+		// 关闭Ctx耗时
+		// 从map中移除之后, 另开线程等待关闭结束
+		go func(c *Ctx) {
+			c.destroy()
+		}(ctx)
+
+		return true
+	}
+
+	return false
 }
 
-// 通过名称查找*Ctx
-func ctxManFind(name string) *Ctx {
-	gCtxMan.mutex.Lock()
-	defer gCtxMan.mutex.Unlock()
+// Post post
+func (m *ctxMan) Post(name string, msg, msgex, lparam, wparam []byte) bool {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
 
-	ctx := gCtxMan.mapCtx[name]
-	return ctx
+	ctx := m.mapCtx[name]
+
+	if nil != ctx {
+		ctx.Post(msg, msgex, lparam, wparam)
+		return true
+	}
+
+	return false
 }
