@@ -1,0 +1,136 @@
+Wireshark, vlc server, vlc client
+
+
+
+
+OPTIONS rtsp://127.0.0.1:8554/aaa RTSP/1.0
+CSeq: 2
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+
+
+RTSP/1.0 200 OK
+Server: VLC/3.0.2
+Content-Length: 0
+Cseq: 2
+Public: DESCRIBE,SETUP,TEARDOWN,PLAY,PAUSE,GET_PARAMETER
+
+
+DESCRIBE rtsp://127.0.0.1:8554/aaa RTSP/1.0
+CSeq: 3
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+Accept: application/sdp
+
+
+RTSP/1.0 200 OK
+Server: VLC/3.0.2
+Date: Thu, 21 Nov 2019 00:57:49 GMT
+Content-Type: application/sdp
+Content-Base: rtsp://127.0.0.1:8554/aaa
+Content-Length: 561
+Cache-Control: no-cache
+Cseq: 3
+
+v=0
+o=- 16249092515919465577 16249092515919465577 IN IP4 DESKTOP-LP5DLNC
+s=Unnamed
+i=N/A
+c=IN IP4 0.0.0.0
+t=0 0
+a=tool:vlc 3.0.2
+a=recvonly
+a=type:broadcast
+a=charset:UTF-8
+a=control:rtsp://127.0.0.1:8554/aaa
+
+m=audio 0 RTP/AVP 14
+b=AS:128
+b=RR:0
+a=rtpmap:14 MPA/90000/2
+a=control:rtsp://127.0.0.1:8554/aaa/trackID=0
+
+m=video 0 RTP/AVP 96
+b=RR:0
+a=rtpmap:96 H264/90000
+a=fmtp:96 packetization-mode=1;profile-level-id=42c028;sprop-parameter-sets=Z0LAKNoB4BnsBagICAoAAAMAAgAAAwBlHjBlQA==,aM4PyA==;
+a=control:rtsp://127.0.0.1:8554/aaa/trackID=1
+
+
+SETUP rtsp://127.0.0.1:8554/aaa/trackID=0 RTSP/1.0
+CSeq: 4
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+Transport: RTP/AVP/TCP;unicast;interleaved=0-1
+
+
+RTSP/1.0 461 Client error
+Server: VLC/3.0.2
+Date: Thu, 21 Nov 2019 00:57:49 GMT
+Content-Length: 0
+Cache-Control: no-cache
+Cseq: 4
+
+
+SETUP rtsp://127.0.0.1:8554/aaa/trackID=0 RTSP/1.0
+CSeq: 5
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+Transport: RTP/AVP;unicast;client_port=59744-59745
+
+
+RTSP/1.0 200 OK
+Server: VLC/3.0.2
+Date: Thu, 21 Nov 2019 00:57:49 GMT
+Transport: RTP/AVP/UDP;unicast;client_port=59744-59745;server_port=59746-59747;ssrc=25BCB192;mode=play
+Session: 99443c26570b3379;timeout=60
+Content-Length: 0
+Cache-Control: no-cache
+Cseq: 5
+
+
+SETUP rtsp://127.0.0.1:8554/aaa/trackID=1 RTSP/1.0
+CSeq: 6
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+Transport: RTP/AVP/TCP;unicast;interleaved=2-3
+Session: 99443c26570b3379
+
+
+RTSP/1.0 461 Client error
+Server: VLC/3.0.2
+Date: Thu, 21 Nov 2019 00:57:49 GMT
+Session: 99443c26570b3379;timeout=60
+Content-Length: 0
+Cache-Control: no-cache
+Cseq: 6
+
+
+SETUP rtsp://127.0.0.1:8554/aaa/trackID=1 RTSP/1.0
+CSeq: 7
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+Transport: RTP/AVP;unicast;client_port=59748-59749
+Session: 99443c26570b3379
+
+
+RTSP/1.0 200 OK
+Server: VLC/3.0.2
+Date: Thu, 21 Nov 2019 00:57:49 GMT
+Transport: RTP/AVP/UDP;unicast;client_port=59748-59749;server_port=59750-59751;ssrc=F13F6E38;mode=play
+Session: 99443c26570b3379;timeout=60
+Content-Length: 0
+Cache-Control: no-cache
+Cseq: 7
+
+
+PLAY rtsp://127.0.0.1:8554/aaa RTSP/1.0
+CSeq: 8
+User-Agent: LibVLC/3.0.2 (LIVE555 Streaming Media v2016.11.28)
+Session: 99443c26570b3379
+Range: npt=0.000-
+
+
+RTSP/1.0 200 OK
+Server: VLC/3.0.2
+Date: Thu, 21 Nov 2019 00:57:49 GMT
+RTP-Info: url=rtsp://127.0.0.1:8554/aaa/trackID=0;seq=23090;rtptime=34256500, url=rtsp://127.0.0.1:8554/aaa/trackID=1;seq=62658;rtptime=34256500
+Range: npt=55.419780-
+Session: 99443c26570b3379;timeout=60
+Content-Length: 0
+Cache-Control: no-cache
+Cseq: 8

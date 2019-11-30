@@ -1,0 +1,190 @@
+RTP/RTCP的RFC协议
+原文: https://blog.csdn.net/dong_beijing/article/details/82056484
+
+RFC版本号   名称
+备注
+
+1889    RTP: A Transport Protocol for Real-Time Applications
+早期RTP协议，RTP v1
+
+
+1890    RTP Profile for Audio and Video Conferences with Minimal Control
+RTP的负载类型定义，对应于RTP v1
+
+
+2198    RTP Payload for Redundant Audio Data
+发送音频冗余数据的机制，FEC的雏形
+
+
+3550    RTP: A Transport Protocol for Real-Time Applications
+现用RTP协议，RTP v2
+
+
+3551    RTP Profile for Audio and Video Conferences with Minimal Control
+RTP的负载类型定义，对应于RTP v2
+
+3611    RTP Control Protocol Extended Reports (RTCP XR)
+RTCP的拓展报文即XR报文定义
+
+
+3640    RTP Payload Format for Transport of MPEG-4 Elementary Streams
+RTP负载为MPEG-4的格式定义
+
+
+3711    The Secure Real-time Transport Protocol (SRTP)
+RTP媒体流采用AES-128对称加密
+
+
+3984    RTP Payload Format for H.264 Video
+RTP负载为H264的格式定义，已被6184取代
+
+
+4103    RTP Payload for Text Conversation
+RTP负载为文本或者T.140的格式定义
+
+
+4585    Extended RTP Profile for Real-time Transport Control Protocol (RTCP)-Based Feedback (RTP/AVPF)
+NACK定义，通过实时的RTCP进行丢包重传
+
+
+4587    RTP Payload Format for H.261 Video Streams
+H261的负载定义
+
+4588    RTP Retransmission Payload Format
+RTP重传包的定义
+
+
+4961    Symmetric RTP / RTP Control Protocol (RTCP)
+终端收发端口用同一个，叫做对称的RTP，便于DTLS加密
+
+
+5104    Codec Control Messages in the RTP Audio-Visual Profile with Feedback (AVPF)
+基于4585实时RTCP消息，来控制音视频编码器的机制
+
+
+5109	RTP Payload Format for Generic Forward Error Correction	
+Fec的通用规范。
+
+
+5124    Extended Secure RTP Profile for Real-time Transport Control Protocol (RTCP)-Based Feedback (RTP/SAVPF)
+SRTP的丢包重传
+
+
+5285    A General Mechanism for RTP Header Extensions
+RTP 扩展头定义，可以扩展1或2个字节，比如CSRC，已被8285协议替代
+
+
+5450    Transmission Time Offsets in RTP Streams
+计算RTP的时间差，可以配合抖动计算
+
+
+5484    Associating Time-Codes with RTP Streams
+RTP和RTCP中时间格式的定义
+
+
+5506    Support for Reduced-Size Real-Time Transport Control Protocol (RTCP): Opportunities and Consequences
+RTCP压缩
+
+
+5669    The SEED Cipher Algorithm and Its Use with the Secure Real-Time Transport Protocol (SRTP)
+SRTP的对称加密算法的种子使用方法
+
+
+5691    RTP Payload Format for Elementary Streams with MPEG Surround Multi-Channel Audio
+对于MPEG-4中有多路音频的RTP负载格式的定义
+
+
+5760    RTP Control Protocol (RTCP) Extensions for Single-Source Multicast Sessions with Unicast Feedback
+RTCP对于单一源进行多播的反馈机制
+
+
+5761    Multiplexing RTP Data and Control Packets on a Single Port
+RTP和RTCP在同一端口上传输
+
+
+6051    Rapid Synchronisation of RTP Flows
+多RTP流的快速同步机制，适用于MCU的处理
+
+
+6128    RTP Control Protocol (RTCP) Port for Source-Specific Multicast (SSM) Sessions
+RTCP对于多播中特定源的反馈机制
+
+
+6184    RTP Payload Format for H.264 Video
+H264的负载定义
+
+
+6188    The Use of AES-192 and AES-256 in Secure RTP
+SRTP拓展定义AES192和AES256
+
+
+6189    ZRTP: Media Path Key Agreement for Unicast Secure RTP
+ZRTP的定义，非对称加密，用于密钥交换
+
+
+6190    RTP Payload Format for Scalable Video Coding
+H264-SVC的负载定义
+
+
+6222    Guidelines for Choosing RTP Control Protocol (RTCP) Canonical Names (CNAMEs)
+RTCP的CNAME的选定规则，可根据RFC 4122的UUID来选取
+
+
+6798 6843 6958 7002 7003 7097   RTP Control Protocol (RTCP) Extended  Report (XR) Block for XXX
+RTCP的XR报文，关于各个方面的定义
+
+
+6904    Encryption of Header Extensions in the Secure Real-time Transport Protocol
+SRTP的RTP头信息加密
+
+
+7022    Guidelines for Choosing RTP Control Protocol (RTCP) Canonical Names (CNAMEs)
+RTCP的CNAME的选定规则，修订6222
+
+
+7160    Support for Multiple Clock Rates in an RTP Session
+RTP中的码流采样率变化的处理规则，音频较常见
+
+
+7164    RTP and Leap Seconds
+RTP时间戳的校准机制
+
+
+7201    Options for Securing RTP Sessions
+RTP的安全机制的建议，什么时候用DTLS，SRTP，ZRTP或者RTP over TLS等
+
+
+7202    Securing the RTP Framework: Why RTP Does Not Mandate a Single Media Security Solution
+RTP的安全机制的补充说明
+
+
+7656    A Taxonomy of Semantics and Mechanisms for               Real-Time Transport Protocol (RTP) Sources
+RTP在webrtc中的应用场景
+
+
+7667    RTP Topologies
+在MCU等复杂系统中，RTP流的设计规范
+
+
+7741    RTP Payload Format for VP8 Video
+负载为vp8的定义
+
+
+7798	RTP Payload Format for High Efficiency Video Coding (HEVC)
+负载为HEVC的定义
+
+
+8082    Using Codec Control Messages in the RTP Audio-Visual Profile with Feedback with Layered Codecs
+基于4585实时RTCP消息，来控制分层的音视频编码器的机制，对于5104协议的补充
+
+
+8083    Multimedia Congestion Control: Circuit Breakers for Unicast RTP Sessions
+RTP的拥塞处理之码流环回的处理
+
+
+8108    Sending Multiple RTP Streams in a Single RTP Session
+单一会话，单一端口传输所有的RTP/RTCP码流，对现有RTP/RTCP机制的总结
+
+
+8285    A General Mechanism for RTP Header Extensions
+RTP 扩展头定义，可以同时扩展为1或2个字节
