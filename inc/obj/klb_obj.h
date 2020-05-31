@@ -44,8 +44,8 @@ typedef void(*klb_obj_destroy_cb)(void* p_obj);
 /// @note 注意32, 64位系统对齐
 typedef struct klb_obj_t_
 {
-    uint32_t                module;         ///< 模块名称(32位哈希值): 函数klb_hash_dx()
-    uint32_t                name;           ///< 对象名称(32位哈希值): 函数klb_hash_dx()
+    uint32_t                module;         ///< 模块名称(32位哈希值): 函数klb_hash32()
+    uint32_t                name;           ///< 对象名称(32位哈希值): 函数klb_hash32()
 
     struct
     {

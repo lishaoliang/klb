@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="test">
+      <UniqueIdentifier>{65f8cf7b-5c5e-4e26-ac9b-420780e22a45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_hash">
+      <UniqueIdentifier>{a6b2f7d2-ac21-4f8e-b6b1-5159eae10e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_list">
+      <UniqueIdentifier>{aaed402f-9303-4177-b8fa-60a51e80f6f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_log">
+      <UniqueIdentifier>{062284e5-d5d0-451f-ac7c-0d215484c22a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_obj">
+      <UniqueIdentifier>{e4883a03-3e4b-4a30-a747-9845804380ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_string">
+      <UniqueIdentifier>{f2e58b7e-0e97-4573-ba09-4ce603c06c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_thread">
+      <UniqueIdentifier>{638c6014-3ed2-4028-9fac-2105923bc2bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test\t_time">
+      <UniqueIdentifier>{ca72a19d-52ae-4a0a-a790-9eefd23a6316}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\test\t_klb.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\test\lua_t_klb.h">
+      <Filter>test</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\test\t_list\t_klb_list.c">
+      <Filter>test\t_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\lua_t_klb.c">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\t_hash\t_klb_htab.c">
+      <Filter>test\t_hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\test\t_hash\t_klb_hlist.c">
+      <Filter>test\t_hash</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\test\Makefile" />
+  </ItemGroup>
+</Project>

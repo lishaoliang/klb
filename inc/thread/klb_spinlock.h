@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#if !defined(__STM32__)
+#if !defined(__STM32__) && !defined(__EMSCRIPTEN__)
 
 
 #endif

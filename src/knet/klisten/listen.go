@@ -20,22 +20,30 @@ type listen struct {
 	cancel context.CancelFunc // 取消
 	wg     sync.WaitGroup     // 等待组
 
-	listener net.Listener
-	run      bool
+	listener net.Listener // 监听对象
+	tls      bool         // 是否为TLS监听
+	run      bool         // 是否已经start线程了
+	callback ListenCb     // 监听到连接的回调函数
+	cbPtr    interface{}  // 对象指针
 }
 
-func newListen(ln net.Listener) *listen {
+func newListen(ln net.Listener, tls bool, cb ListenCb, ptr interface{}) *listen {
 	var m listen
 
 	m.ctx, m.cancel = context.WithCancel(context.Background())
 	m.listener = ln
+	m.tls = tls
 	m.run = false
+	m.callback = cb
+	m.cbPtr = ptr
 
 	return &m
 }
 
 func (m *listen) destroy() {
 	m.stop()
+	m.callback = nil
+	m.cbPtr = nil
 }
 
 func (m *listen) start() {
@@ -67,8 +75,10 @@ func (m *listen) worker() error {
 			conn, err := m.listener.Accept()
 			if err != nil {
 				// handle error
-			} else {
-
+			} else if nil != m.callback {
+				if 0 == m.callback(m.cbPtr, conn, m.tls) {
+					conn = nil
+				}
 			}
 
 			if nil != conn {

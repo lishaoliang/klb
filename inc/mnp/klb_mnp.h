@@ -35,16 +35,15 @@ extern "C" {
 ///  \n  媒体包缓存: [4K, 8K, 16K, 32K]
 typedef struct klb_mnp_t_
 {
-    uint16_t magic;             ///< 魔数: KLB_MNP_MAGIC
-    uint16_t magic_user;        ///< magic random, 自定义魔数: KLB_MNP_MAGIC_USER
+    uint32_t magic;             ///< 魔数: KLB_MNP_MAGIC
     //- 4 Byte
 
-    uint16_t size;              ///< 单个数据包大小(包含本结构体): <= 60K (超过60K,协议错误)
+    uint16_t size ;             ///< 单个数据包大小(包含本结构体) <= 32K
 
     uint8_t  opt : 2;           ///< 包组合方式: klb_mnp_opt_e
-    uint8_t  packtype : 3;      ///< 包类型: klb_mnp_packtype_e
-    uint8_t  subtype : 3;       ///< 子协议类型: klb_mnp_subtype_e
-    uint8_t  resv;              ///< 0
+    uint8_t  packtype : 5;      ///< 包类型: klb_mnp_packtype_e
+    uint8_t  resv1 : 1;         ///< 0
+    uint8_t  resv2;             ///< 0
     //- 4 + 4 = 8 Byte
 }klb_mnp_t;
 
@@ -52,13 +51,8 @@ typedef struct klb_mnp_t_
 
 
 /// @def   KLB_MNP_MAGIC
-/// @brief media net protocol魔数
-#define KLB_MNP_MAGIC           0xDCE6
-
-
-/// @def   KLB_MNP_MAGIC_USER
-/// @brief media net protocol user魔数
-#define KLB_MNP_MAGIC_USER      0x6ECD
+/// @brief k media net protocol魔数
+#define KLB_MNP_MAGIC           0x504E4DEB  ///< "*MNP"
 
 
 /// @struct klb_mnp_opt_e
@@ -78,21 +72,13 @@ typedef enum klb_mnp_opt_e_
 /// @brief  包类型
 typedef enum klb_mnp_packtype_e_
 {
-    KLB_MNP_HEART        = 0x0, ///< 心跳包: 附加数据为0
+    KLB_MNP_HEART        = 0x0, ///< 心跳包: 附加数据为0; 否则协议错误
     KLB_MNP_TXT          = 0x1, ///< 文本数据
     KLB_MNP_BIN          = 0x2, ///< 二进制数据
     KLB_MNP_MEDIA        = 0x3, ///< 媒体数据
-    KLB_MNP_PACKTYPE_MAX = 0x7  ///< MAX
+
+    KLB_MNP_PACKTYPE_MAX = 0x1F ///< MAX
 }klb_mnp_packtype_e;
-
-
-/// @struct klb_mnp_subtype_e
-/// @brief  子协议类型
-typedef enum klb_mnp_subtype_e_
-{
-    KLB_MNP_SUB_MEDIA   = 0x0, ///< 媒体协议
-    KLB_MNP_SUBTYPE_MAX = 0x7  ///< MAX
-}klb_mnp_subtype_e;
 
 
 #ifdef __cplusplus

@@ -7,33 +7,43 @@
 
 package kutil
 
-import "errors"
+/*
+#include "string.h"
+#include "stdlib.h"
+*/
+import "C"
+
+import (
+	"unsafe"
+)
 
 // Buf buf
 // buf 常规操作
 type Buf struct {
-	buf    []byte // 缓存切片
-	bufLen int    // 缓存长度
-	pos    int    // 当前位置
+	buf []byte // 缓存切片
+	pos int    // 当前位置
 }
 
-// BufCreate create buf
+// NewBuf new Buf
 // 创建缓存
-func BufCreate(bufLen int) *Buf {
-	var b Buf
-	b.bufLen = bufLen
-	b.buf = make([]byte, bufLen)
-	b.pos = 0
+func NewBuf(bufLen int) *Buf {
+	var m Buf
 
-	return &b
+	m.buf = make([]byte, bufLen)
+	m.pos = 0
+
+	return &m
 }
 
-// Destroy destory
-// 销毁
-func (m *Buf) Destroy() {
+// Drop Drop
+// 放弃数据
+func (m *Buf) Drop() []byte {
+	d := m.Data()
+
 	m.buf = nil
-	m.bufLen = 0
 	m.pos = 0
+
+	return d
 }
 
 // Reset reset
@@ -48,18 +58,19 @@ func (m *Buf) Data() []byte {
 	return m.buf[:m.pos]
 }
 
-// LeftBuf buf left
+// Spare spare buffer
 // 剩余缓存
-func (m *Buf) LeftBuf() []byte {
+func (m *Buf) Spare() []byte {
 	return m.buf[m.pos:]
 }
 
-// LeftBufBy buf left by
+// SpareBy spare buffer by num
 // 按数量获取剩余缓存
-func (m *Buf) LeftBufBy(num int) []byte {
+func (m *Buf) SpareBy(num int) []byte {
+	bufLen := len(m.buf)
 	e := m.pos + num
-	if m.bufLen < e {
-		e = m.bufLen
+	if bufLen < e {
+		e = bufLen
 	}
 
 	return m.buf[m.pos:e]
@@ -71,21 +82,32 @@ func (m *Buf) Pos() int {
 	return m.pos
 }
 
-// AddPos add pos
+// Add add pos
 // 添加缓存指示位置
-func (m *Buf) AddPos(n int) error {
+func (m *Buf) Add(n int) {
 	m.pos += n
 
-	if m.bufLen < m.pos {
-		m.pos = m.bufLen
-		return errors.New("kutil.buf.AddPos,error!out of range")
+	bufLen := len(m.buf)
+	if bufLen < m.pos {
+		m.pos = bufLen
 	}
-
-	return nil
 }
 
 // IsFull is full
 // 是否满了
 func (m *Buf) IsFull() bool {
-	return m.pos == m.bufLen
+	return m.pos == len(m.buf)
+}
+
+// Memmove memmove
+func (m *Buf) Memmove(pos int) {
+	if m.pos <= pos {
+		m.pos = 0
+	} else if pos <= 0 {
+		// do not
+	} else {
+		l := m.pos - pos
+		C.memmove(unsafe.Pointer(&m.buf[0]), unsafe.Pointer(&m.buf[pos]), C.size_t(l))
+		m.pos = l
+	}
 }

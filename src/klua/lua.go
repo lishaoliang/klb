@@ -73,9 +73,26 @@ func LuaBoolToInt(b bool) int {
 
 // basic stack manipulation -----------------------------------------------------------------------
 
+// LuaGettop lua_gettop
+func LuaGettop(lua *LuaState) int {
+	t := C.lua_gettop((*C.lua_State)(lua))
+	return int(t)
+}
+
 // LuaSettop lua_settop
 func LuaSettop(lua *LuaState, idx int) {
 	C.lua_settop((*C.lua_State)(lua), C.int(idx))
+}
+
+// LuaPushvalue lua_pushvalue
+func LuaPushvalue(lua *LuaState, idx int) {
+	C.lua_pushvalue((*C.lua_State)(lua), C.int(idx))
+}
+
+// LuaCheckstack lua_checkstack
+func LuaCheckstack(lua *LuaState, n int) int {
+	r := C.lua_checkstack((*C.lua_State)(lua), C.int(n))
+	return int(r)
 }
 
 // access functions (stack -> C -> Go) ------------------------------------------------------------
@@ -229,6 +246,16 @@ func LuaLChecklightuserdata(lua *LuaState, idx int) unsafe.Pointer {
 	return unsafe.Pointer(p)
 }
 
+// LuaLChecktype luaL_checktype
+func LuaLChecktype(lua *LuaState, idx, t int) {
+	C.luaL_checktype((*C.lua_State)(lua), C.int(idx), C.int(t))
+}
+
+// LuaLCheckany luaL_checkany
+func LuaLCheckany(lua *LuaState, idx int) {
+	C.luaL_checkany((*C.lua_State)(lua), C.int(idx))
+}
+
 // push functions (Go -> C -> stack) ------------------------------------------------------------
 
 // LuaPushnil lua_pushnil
@@ -276,11 +303,25 @@ func LuaPushlightuserdata(lua *LuaState, p unsafe.Pointer) {
 	C.lua_pushlightuserdata((*C.lua_State)(lua), p)
 }
 
+// Reference system.predefined references --------------------------------------------------
+
+// LuaLRef luaL_ref
+func LuaLRef(lua *LuaState, t int) int {
+	ref := C.luaL_ref((*C.lua_State)(lua), C.int(t))
+	return int(ref)
+}
+
+// LuaLUnref luaL_unref
+func LuaLUnref(lua *LuaState, t, ref int) {
+	C.luaL_unref((*C.lua_State)(lua), C.int(t), C.int(ref))
+}
+
 // get functions (Lua -> stack) ------------------------------------------------------------
 
 // LuaRawgeti lua_rawgeti
-func LuaRawgeti(lua *LuaState, idx int, n LuaInteger) {
-	C.lua_rawgeti((*C.lua_State)(lua), C.int(idx), C.lua_Integer(n))
+func LuaRawgeti(lua *LuaState, idx int, n LuaInteger) int {
+	r := C.lua_rawgeti((*C.lua_State)(lua), C.int(idx), C.lua_Integer(n))
+	return int(r)
 }
 
 // 'load' and 'call' functions (load and run Lua code) -------------------------------------

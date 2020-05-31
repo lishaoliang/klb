@@ -1,37 +1,41 @@
-# ±àÒëÃüÁî : make
+# ç¼–è¯‘å‘½ä»¤ : make
 
 SHELL = /bin/bash
 
 
-# ÒıÈëÒ»Ğ©»·¾³²ÎÊı
--include ../mk_def
+# å¼•å…¥ä¸€äº›ç¯å¢ƒå‚æ•°
+-include ../make_define
 MY_LIB_PATH = ../$(MY_LIB_NAME)
 
 
-# ´ÓÄ¿Â¼¼ìË÷ĞèÒª±àÒëµÄcÎÄ¼ş
+# ä»ç›®å½•æ£€ç´¢éœ€è¦ç¼–è¯‘çš„cæ–‡ä»¶
 MY_DIRS := ./hash ./list ./log ./mem ./obj 
 MY_DIRS += ./socket ./string ./graph ./media ./file
 MY_DIRS += ./algorithm ./klua ./mnp
 
 
-# µÚÈı·½¿â
+# ç¬¬ä¸‰æ–¹åº“
 MY_DIRS += ../third/lua-5.3.5/src ../third/lua-cjson-2.1.0 ../third/lpeg-1.0.2
+#MY_DIRS += ../third/quickjs
 
 # STM32
 ifeq ($(MY_OS), stm32)
 MY_DIRS += ./stm32
-else ifeq ($(MY_OS), emscripten)
+else ifeq ($(MY_OS), js)
 MY_DIRS += ./emscripten
 else
 MY_DIRS += ./go ./thread ./time ../third/luafilesystem-2.0/src
 endif
 
-# ±àÒëÑ¡Ïî
+# ç¼–è¯‘é€‰é¡¹
 #MY_CFLAGS := $(my_flags)
-#MY_CFLAGS += -std=c11
+#MY_CFLAGS += -std=c99
+
+# quickjsçš„å®
+MY_CFLAGS += -DCONFIG_BIGNUM -DCONFIG_VERSION=\"2019-10-27\"
 
 
-# ÒıÓÃÍ·ÎÄ¼ş
+# å¼•ç”¨å¤´æ–‡ä»¶
 MY_INCLUDES := -I ../inc
 MY_INCLUDES += -I ./hash -I./list -I ./log -I ./mem -I ./obj 
 MY_INCLUDES += -I ./socket -I ./string -I ./thread -I ./time -I ./graph
@@ -39,25 +43,26 @@ MY_INCLUDES += -I ./media -I ./file -I ./algorithm -I ./klua -I ./mnp
 MY_INCLUDES += -I ./stm32
 
 
-# µÚÈı·½¿âÍ·ÎÄ¼ş
+# ç¬¬ä¸‰æ–¹åº“å¤´æ–‡ä»¶
 MY_INCLUDES += -I ../third/lua-5.3.5/src
+MY_INCLUDES += -I ../third/quickjs
 
 
-# ÒıÓÃµÄ¾²Ì¬¿â
+# å¼•ç”¨çš„é™æ€åº“
 MY_LIB_STATIC := -L $(MY_LIB_PATH) -Bstatic
 
-# ÒıÓÃµÄ¶¯Ì¬¿â
+# å¼•ç”¨çš„åŠ¨æ€åº“
 MY_LIB_DYNAMIC := -L $(MY_LIB_PATH) -Bdynamic
 
 
-# ±àÒëÄ¿±êÃû³Æ
+# ç¼–è¯‘ç›®æ ‡åç§°
 MY_TARGET_NAME := klb_c
 MY_TARGET_EXE := $(MY_LIB_PATH)/$(MY_TARGET_NAME)
 MY_TARGET_A := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).a
 MY_TARGET_SO := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).so
 
 
-# ËùÓĞ±àÒëÎÄ¼ş
+# æ‰€æœ‰ç¼–è¯‘æ–‡ä»¶
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 
@@ -69,10 +74,10 @@ MY_LIB_SO_OBJS := $(addsuffix .oo, $(MY_SOURCES))
 MY_SO_PARAMS := -fPIC $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC) 
 
 
-# ±àÒë¾²Ì¬¿âÊ±ºò,Ê¹compilerÎªÃ¿¸öfunctionºÍdata item·ÖÅä¶ÀÁ¢µÄsection
+# ç¼–è¯‘é™æ€åº“æ—¶å€™,ä½¿compilerä¸ºæ¯ä¸ªfunctionå’Œdata itemåˆ†é…ç‹¬ç«‹çš„section
 MY_LIB_MINI = -ffunction-sections -fdata-sections
 
-# ±àÒë¶¯Ì¬¿â»òÖ´ĞĞµµÊ±,Ê¹compilerÉ¾³ıËùÓĞÎ´±»Ê¹ÓÃµÄfunctionºÍdata,¼´±àÒëÖ®ºóµÄÎÄ¼ş×îĞ¡»¯
+# ç¼–è¯‘åŠ¨æ€åº“æˆ–æ‰§è¡Œæ¡£æ—¶,ä½¿compileråˆ é™¤æ‰€æœ‰æœªè¢«ä½¿ç”¨çš„functionå’Œdata,å³ç¼–è¯‘ä¹‹åçš„æ–‡ä»¶æœ€å°åŒ–
 MY_LINK_MINI = -Wl,--gc-sections
 
 

@@ -71,6 +71,11 @@ func (m *Ctx) GetName() string {
 	return m.name
 }
 
+// GetEnv get env
+func (m *Ctx) GetEnv() *Env {
+	return m.env
+}
+
 // DoFile worker do file
 func (m *Ctx) DoFile(loader string) (bool, error) {
 	gCtxMan.wg.Add(1)

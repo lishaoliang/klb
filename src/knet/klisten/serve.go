@@ -22,7 +22,7 @@ type serve struct {
 }
 
 func serveInit(m *serve) {
-	m.lns = kutil.MapIfaceCreate("", "", 0)
+	m.lns = kutil.NewMapIface("", "", 12)
 }
 
 func serveQuit(m *serve) {
@@ -38,7 +38,7 @@ func (m *serve) push(name string, l *listen) error {
 		return nil
 	}
 
-	return errors.New("")
+	return errors.New("klisten.serve.close error,repeat")
 }
 
 func (m *serve) close(name string) error {
@@ -55,8 +55,8 @@ func (m *serve) close(name string) error {
 		}
 
 		kutil.Assert(false)
-		return errors.New("")
+		return errors.New("klisten.serve.close error,type")
 	}
 
-	return errors.New("")
+	return errors.New("klisten.serve.close error,notfound")
 }

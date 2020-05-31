@@ -79,6 +79,16 @@ func (m *Env) DoLibrary(loader string) int {
 	return int(ret)
 }
 
+// GetLuaState GetLuaState
+func (m *Env) GetLuaState() *LuaState {
+	return m.lua
+}
+
+// Report klua_env_report
+func (m *Env) Report(status int) {
+	C.klua_env_report(m.env, C.int(status))
+}
+
 // HasKgo has "kgo" in *.lua file
 func (m *Env) HasKgo() bool {
 	ret := C.klua_env_has_kgo(m.env)

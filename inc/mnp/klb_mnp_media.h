@@ -24,24 +24,25 @@ extern "C" {
 
 #pragma pack(4)
 
-/// @struct klb_mnp_mh_t
+/// @struct klb_mnp_md_t
 /// @brief  media net protocol, media head
-///  \n F包: [klb_mnp_t][klb_mnp_mh_t][data...]
-///  \n B包: [klb_mnp_t][klb_mnp_mh_t][data...]
+///  \n F包: [klb_mnp_t][klb_mnp_md_t][data...]
+///  \n B包: [klb_mnp_t][klb_mnp_md_t][data...]
 ///  \n C包: [klb_mnp_t][data...]
 ///  \n E包: [klb_mnp_t][data...]
 ///  \n 数据包可以被存储, 只描述与数据有关部分
-typedef struct klb_mnp_mh_t_
+typedef struct klb_mnp_md_t_
 {
-    uint32_t         dtype;             ///< 数据类型(data type): ffmpeg AVCodecID
-    //- 4 Byte
-
-    uint16_t         chnn;              ///< 通道(channel)
-    uint16_t         sidx;              ///< 流序号(stream index): klb_mnp_sidx_e
+    uint32_t         size;              ///< 完整数据长度(data size, 包含本结构体)
+    uint32_t         dtype;             ///< 数据类型(data type): klb_mnp_dtype_e
     //- 4 + 4 = 8 Byte
 
-    int64_t          time;               ///< 时间戳(基于1970年基准,微妙)(范围约:[-292471年, 292471年]
+    uint32_t         chnn;              ///< 通道(channel)
+    uint32_t         sidx;              ///< 流序号(stream index): klb_mnp_sidx_e
     //- 8 + 8 = 16 Byte
+
+    int64_t          time;              ///< 时间戳(基于1970年基准,微妙)(范围约:[-292471年, 292471年]
+    //- 16 + 8 = 24 Byte
 
     union
     {
@@ -59,44 +60,12 @@ typedef struct klb_mnp_mh_t_
             uint32_t samples;           ///< 音频采样率; 44100
         };
     };
-    //- 16 + 8 = 24 Byte
-}klb_mnp_mh_t;
+    //- 24 + 8 = 32 Byte
+}klb_mnp_md_t;
 
 #pragma pack()
 
-/*
-
-/// @enum   klb_mnp_dtype_e
-/// @brief  媒体数据类型
-typedef enum klb_mnp_dtype_e_
-{
-    KLB_MNP_DTYPE_NULL  = 0x0000,    ///< NULL
-
-    KLB_MNP_VIDEO_B     = 0x0000,    ///< 视频 Begin
-    KLB_MNP_MJPEG       = 0x0001,    ///< MJPEG
-    KLB_MNP_H264        = 0x0002,    ///< H264
-    KLB_MNP_H265        = 0x0003,    ///< H265
-    KLB_MNP_VIDEO_E     = 0x00FF,    ///< 视频 End
-
-    KLB_MNP_AUDIO_B     = 0x0100,    ///< 音频 Begin
-    KLB_MNP_G711A       = 0x0101,    ///< G711A
-    KLB_MNP_G711U       = 0x0102,    ///< G711U
-    KLB_MNP_AUDIO_E     = 0x01FF,    ///< 音频 End
-
-    KLB_MNP_PIC_B       = 0x0200,    ///< 图片 Begin
-    KLB_MNP_JPEG        = 0x0201,    ///< JPEG
-    KLB_MNP_PIC_E       = 0x02FF,    ///< 图片 End
-
-    KLB_MNP_IMG_B       = 0x0300,    ///< 图像 Begin
-    KLB_MNP_ARGB8888    = 0x0301,    ///< [ARGB][ARGB]...[ARGB]
-    KLB_MNP_IMG_E       = 0x03FF,    ///< 图像 End
-
-    KLB_MNP_DTYPE_MAX   = 0xFFFF     ///< MAX
-}klb_mnp_dtype_e;
-
-*/
-
-/// @enum   klb_mnp_dtype_e
+/// @enum   klb_mnp_vtype_e
 /// @brief  视频帧类型
 typedef enum klb_mnp_vtype_e_
 {
@@ -127,9 +96,25 @@ typedef enum klb_mnp_sidx_e_
     KLB_MNP_SIDX_I1    = 0x0061,    ///< Image 1
     KLB_MNP_SIDX_I2    = 0x0062,    ///< Image 2
     KLB_MNP_SIDX_I3    = 0x0063,    ///< Image 3
-
-    KLB_MNP_SIDX_MAX   = 0xFFFF,    ///< MAX
 }klb_mnp_sidx_e;
+
+
+/// @enum  klb_mnp_dtype_e
+/// @brief 媒体数据类型
+/// @note 原打算使用ffmpeg的AVCodecID, 但其版本更新过程中值会变更,
+///   所以这里重新定义
+typedef enum klb_mnp_dtype_e_
+{
+    KLB_MNP_DTYPE_NULL  = 0x0000,
+    KLB_MNP_DTYPE_H264  = 0x0001,
+    KLB_MNP_DTYPE_H265  = 0x0002,
+
+    KLB_MNP_DTYPE_AAC   = 0x1001,
+
+    KLB_MNP_DTYPE_JPEG  = 0x2001,
+
+    KLB_MNP_DTYPE_MAX   = 0x7FFFFFFF,
+}klb_mnp_dtype_e;
 
 
 #ifdef __cplusplus

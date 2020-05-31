@@ -30,8 +30,11 @@ typedef struct klb_mnp_pack_t_
 ///  \n 数据包: packs[extra_num:extra_num+pack_num]
 typedef struct klb_mnp_stream_t_
 {
-    int             dtype;                      ///< 媒体数据类型: klb_mnp_dtype_e
-    int             vtype;                      ///< 视频(video type): klb_mnp_vtype_e
+    uint32_t        dtype;                      ///< 媒体数据类型: klb_mnp_dtype_e
+    
+    uint8_t         vtype;                      ///< 视频(video type): klb_mnp_vtype_e
+    uint8_t         resv1;
+    uint16_t        resv2;
 
     int64_t         time;                       ///< 时间戳
 
@@ -45,7 +48,7 @@ typedef struct klb_mnp_stream_t_
 /// @param [in] sidx        流序号: klb_mnp_sidx_e
 /// @param [in] *p_stream   码流数据
 /// @return int 0.成功; 非0.失败
-typedef int(*klb_mnp_stream_cb)(int chnn, int sidx, klb_mnp_stream_t* p_stream);
+typedef int(*klb_mnp_stream_cb)(uint32_t chnn, uint32_t sidx, klb_mnp_stream_t* p_stream);
 
 
 #ifdef __cplusplus

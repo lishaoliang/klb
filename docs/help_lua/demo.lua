@@ -1,37 +1,35 @@
 --[[
--- Copyright (c) 2019 , All Rights Reserved
--- Created: 2019/8/10
---
+-- Copyright (c) 2019, LGPL All Rights Reserved
 -- @file  demo.lua
--- @brief ±àÂë¹æÔò, ×¢ÊÍ¹æ·¶
---  \n ´úÂëÎÄµµ±àÂë¹æ·¶
---  \n  ×Ö·û¼¯: [ascii,gbk(ÅÅ³ý±êµã)]
---  \n  Ò»°ã*.luaÎÄ¼þ²ÉÓÃANSI±àÂë, Ö»ÓÐ¹ú¼ÊÓïÑÔ·­Òë²ÉÓÃUTF-8!!!
---  \n ÃüÃû¹æÔò:
---  \n 	LUA±ê×¼¿â:
---  \n  ¿ªÔ´À©Õ¹¿â: "cjson"
---  \n  ´ÓCÌá¹©µÄ¿âÒÔ"k*"¸ñÊ½¶¨Òåµ¼³ö
---  \n  ´ÓGOÌá¹©µÄ¿âÒÔ"kx*"¸ñÊ½¶¨Òåµ¼³ö
---  \n  *.lua½Å±¾ÎÄ¼þ×¢Òâ¹æ±ÜÒÔÉÏÃüÃû
---  \n  ÄÚÖÃÈ«¾Ö±äÁ¿: G, kin, kgo, kexit
---  \n  ½ûÖ¹*.lua½Å±¾Ê¹ÓÃÈ«¾Ö±äÁ¿!!!ËùÓÐ±äÁ¿±ØÐë¹ÚÒÔ local ¶¨Òå
---  \n  µ¼³öº¯Êý, µ¼³ö±äÁ¿ÃüÃû¹æÔò: "xx_xxx_xxx"¸ñÊ½
---  \n  ËùÓÐÄÚ²¿,¾Ö²¿±äÁ¿ÃüÃû¹æÔò: "xx_xx_xxx"¸ñÊ½
---  \n Òì³£´¦Àí:
---  \n  ²ÉÓÃ·µ»ØÖµ,´íÎóÂë·½°¸
---  \n  ½ûÖ¹Ê¹ÓÃÒì³£»úÖÆ,µ«±ØÐë´¦Àí±ê×¼¿âÅ×³öµÄÒì³£
--- @author  ÀîÉÜÁ¼
---  \n  
+-- @brief ç¼–ç è§„åˆ™, æ³¨é‡Šè§„èŒƒ
+--  \n ä»£ç æ–‡æ¡£ç¼–ç è§„èŒƒ
+--  \n  å­—ç¬¦é›†: [ascii,gbk(æŽ’é™¤æ ‡ç‚¹)]
+--  \n  ä¸€èˆ¬*.luaæ–‡ä»¶é‡‡ç”¨ANSIç¼–ç , åªæœ‰å›½é™…è¯­è¨€ç¿»è¯‘é‡‡ç”¨UTF-8!!!
+--  \n å‘½åè§„åˆ™:
+--  \n  LUAæ ‡å‡†åº“:
+--  \n  å¼€æºæ‰©å±•åº“: "cjson"
+--  \n  ä»ŽCæä¾›çš„åº“ä»¥"k*"æ ¼å¼å®šä¹‰å¯¼å‡º
+--  \n  ä»ŽGOæä¾›çš„åº“ä»¥"kx*"æ ¼å¼å®šä¹‰å¯¼å‡º
+--  \n  *.luaè„šæœ¬æ–‡ä»¶æ³¨æ„è§„é¿ä»¥ä¸Šå‘½å
+--  \n  å†…ç½®å…¨å±€å˜é‡: G, kin, kgo, kexit
+--  \n  ç¦æ­¢*.luaè„šæœ¬ä½¿ç”¨å…¨å±€å˜é‡!!!æ‰€æœ‰å˜é‡å¿…é¡»å† ä»¥ local å®šä¹‰
+--  \n  å¯¼å‡ºå‡½æ•°, å¯¼å‡ºå˜é‡å‘½åè§„åˆ™: "xx_xxx_xxx"æ ¼å¼
+--  \n  æ‰€æœ‰å†…éƒ¨,å±€éƒ¨å˜é‡å‘½åè§„åˆ™: "xx_xx_xxx"æ ¼å¼
+--  \n å¼‚å¸¸å¤„ç†:
+--  \n  é‡‡ç”¨è¿”å›žå€¼,é”™è¯¯ç æ–¹æ¡ˆ
+--  \n  ç¦æ­¢ä½¿ç”¨å¼‚å¸¸æœºåˆ¶,ä½†å¿…é¡»å¤„ç†æ ‡å‡†åº“æŠ›å‡ºçš„å¼‚å¸¸
+-- @author  æŽç»è‰¯
+--  \n
 -- @version 0.1
 -- @history
---  \n 2019/8/10 0.1 ÀîÉÜÁ¼
+--  \n 2019/8/10 0.1 æŽç»è‰¯
 --]]
 
 
--- @file ²»ÒªÒýÓÃ´ËÎÄ¼þ
+-- @file ä¸è¦å¼•ç”¨æ­¤æ–‡ä»¶
 assert(false)
 
--- @note LuaÄÚÖÃÀàÐÍÃû³Æ:
+-- @note Luaå†…ç½®ç±»åž‹åç§°:
 -- \n number
 -- \n string
 -- \n boolean
@@ -44,53 +42,51 @@ assert(false)
 
 
 --[[
--- Copyright(c) 2019, All Rights Reserved
--- Created: 2019/8/10
---
+-- Copyright(c) 2019, LGPL All Rights Reserved
 -- @file    xxx.lua
--- @brief   ÎÄ¼þÍ·×¢ÊÍÄ£°å
+-- @brief   æ–‡ä»¶å¤´æ³¨é‡Šæ¨¡æ¿
 -- @author  xxx
 -- @version 0.1
--- @history ÐÞ¸ÄÀúÊ·
---  \n 2019/8/10 0.1 ´´½¨ÎÄ¼þ
--- @warning Ã»ÓÐ¾¯¸æ
+-- @history ä¿®æ”¹åŽ†å²
+--  \n 2019/8/10 0.1 åˆ›å»ºæ–‡ä»¶
+-- @warning æ²¡æœ‰è­¦å‘Š
 --]]
 
 -- @module	 name
--- @brief	 Ä£¿é¶¨Òå
--- @export	 ±êÃ÷Ä£¿éµ¼³ö±äÁ¿, ¿ÉÒÔ±»Íâ²¿·ÃÎÊ
--- @variable ±êÃ÷Ä£¿éÔËÐÐÊ±ÄÚÖÃ±äÁ¿, ²»¿É±»Íâ²¿·ÃÎÊ
--- @note ¶¨ÒåÐÎÈçÍ¬ "M.xxx = xxx",Ò»ÂÉÎªµ¼³ö±äÁ¿,º¯Êý»òÆäËû
---  \n ¶¨ÒåÐÎÈç "local xxx = xxx",Ò»ÂÉÎªÄÚ²¿Êý¾Ý
---  \n ¶¨ÒåÐÎÈç "local M = {a = 'aa',b = false} ... return M", Ò»ÂÉ MÎªµ¼³ö, a,bÎªÄÚ²¿Êý¾Ý
+-- @brief   æ¨¡å—å®šä¹‰
+-- @export  æ ‡æ˜Žæ¨¡å—å¯¼å‡ºå˜é‡, å¯ä»¥è¢«å¤–éƒ¨è®¿é—®
+-- @variable æ ‡æ˜Žæ¨¡å—è¿è¡Œæ—¶å†…ç½®å˜é‡, ä¸å¯è¢«å¤–éƒ¨è®¿é—®
+-- @note å®šä¹‰å½¢å¦‚åŒ "M.xxx = xxx",ä¸€å¾‹ä¸ºå¯¼å‡ºå˜é‡,å‡½æ•°æˆ–å…¶ä»–
+--  \n å®šä¹‰å½¢å¦‚ "local xxx = xxx",ä¸€å¾‹ä¸ºå†…éƒ¨æ•°æ®
+--  \n å®šä¹‰å½¢å¦‚ "local M = {a = 'aa',b = false} ... return M", ä¸€å¾‹ Mä¸ºå¯¼å‡º, a,bä¸ºå†…éƒ¨æ•°æ®
 
 
 -- @name   M.name
--- @export Ä£¿éµ¼³ö±äÁ¿
+-- @export æ¨¡å—å¯¼å‡ºå˜é‡
 
 
--- @brief º¯ÊýÃèÊö
--- @param [in]  	xxx[string]	ÊäÈë²ÎÊý
--- @param [out]		xxx[table]	Êä³ö²ÎÊý
--- @param [in,out]	xxx[table]	ÊäÈëÊä³ö²ÎÊý
--- @param [in]		x_xx[function] Èç¹ûÓÐ»Øµ÷º¯Êý, ±ØÐë±êÃ÷ÔÚseeÖÐ±êÃ÷Ô­ÐÍ
--- @return [nil, table] [boolean] ¼¸¸ö·µ»ØÖµ¼¯ºÏ
--- @note ×¢ÒâÊÂÏî,²Î¼ûxxx
+-- @brief å‡½æ•°æè¿°
+-- @param [in]      xxx[string]	è¾“å…¥å‚æ•°
+-- @param [out]     xxx[table]	è¾“å‡ºå‚æ•°
+-- @param [in,out]  xxx[table]	è¾“å…¥è¾“å‡ºå‚æ•°
+-- @param [in]      x_xx[function] å¦‚æžœæœ‰å›žè°ƒå‡½æ•°, å¿…é¡»æ ‡æ˜Žåœ¨seeä¸­æ ‡æ˜ŽåŽŸåž‹
+-- @return [nil, table] [boolean] å‡ ä¸ªè¿”å›žå€¼é›†åˆ
+-- @note æ³¨æ„äº‹é¡¹,å‚è§xxx
 -- @see [string][table] = x_xx(string, string, table)
 
 
--- @global È«¾Ö±äÁ¿,½öÖ§³Ö G, setup, init, quit
---  \n µÚ¶þÐÐÃèÊö
--- @note ×¢ÒâÊÂÏî,²Î¼ûGetQueryError()
+-- @global å…¨å±€å˜é‡,ä»…æ”¯æŒ G, setup, init, quit
+--  \n ç¬¬äºŒè¡Œæè¿°
+-- @note æ³¨æ„äº‹é¡¹,å‚è§GetQueryError()
 -- @see GetQueryError()
 
 
--- @variable ¾Ö²¿±äÁ¿ÃèÊö
---  \n µÚ¶þÐÐÃèÊö
--- @note ×¢ÒâÊÂÏî,²Î¼ûGetQueryError()
+-- @variable å±€éƒ¨å˜é‡æè¿°
+--  \n ç¬¬äºŒè¡Œæè¿°
+-- @note æ³¨æ„äº‹é¡¹,å‚è§GetQueryError()
 -- @see GetQueryError()
 
 
 -- @def   name
--- @brief ³£Á¿¶¨Òå, ÎÞÌØÊâÇé¿ö²»¿ÉÐÞ¸Ä
+-- @brief å¸¸é‡å®šä¹‰, æ— ç‰¹æ®Šæƒ…å†µä¸å¯ä¿®æ”¹
 

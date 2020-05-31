@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 
-#if !defined(__STM32__)
+#if !defined(__STM32__) && !defined(__EMSCRIPTEN__)
 
 
 /// @struct klb_mutex_t

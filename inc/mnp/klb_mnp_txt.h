@@ -24,21 +24,20 @@ extern "C" {
 
 #pragma pack(4)
 
-/// @struct klb_mnp_txth_t
+/// @struct klb_mnp_txt_t
 /// @brief  media net protocol, text head
-///  \n F包: [klb_mnp_t][klb_mnp_txth_t][extra][data...]
-///  \n B包: [klb_mnp_t][klb_mnp_txth_t][extra][data...]
+///  \n F包: [klb_mnp_t][klb_mnp_txt_t][extra][data...]
+///  \n B包: [klb_mnp_t][klb_mnp_txt_t][extra][data...]
 ///  \n C包: [klb_mnp_t][data...]
 ///  \n E包: [klb_mnp_t][data...]
-typedef struct klb_mnp_txth_t_
+typedef struct klb_mnp_txt_t_
 {
-    uint16_t    extra;      ///< 附加数据长度
-    uint16_t    resv;       ///< 0
-
+    uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
+    uint32_t    extra;      ///< 附加数据长度; 正式数据长度 = size - extra - sizeof(klb_mnp_txt_t)
     uint32_t    sequence;   ///< 序列号
     uint32_t    uid;        ///< 用户自定义ID(user defined id)
-    // - 4 + 4 + 4 = 12 Byte
-}klb_mnp_txth_t;
+    // - 4 + 4 + 4 + 4 = 16 Byte
+}klb_mnp_txt_t;
 
 #pragma pack()
 

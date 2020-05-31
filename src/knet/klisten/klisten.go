@@ -24,14 +24,18 @@ func init() {
 	serveInit(&gServe)
 }
 
+// ListenCb listen callback
+// 监听回调函数
+type ListenCb func(ptr interface{}, conn net.Conn, tls bool) int
+
 // Listen listen
-func Listen(name, network, address string) error {
+func Listen(name, network, address string, cb ListenCb, ptr interface{}) error {
 	ln, err := net.Listen(network, address)
 	if nil != err {
 		return err
 	}
 
-	l := newListen(ln)
+	l := newListen(ln, false, cb, ptr)
 	err = gServe.push(name, l)
 
 	if nil != err {
@@ -42,13 +46,23 @@ func Listen(name, network, address string) error {
 }
 
 // ListenTLS listen tls
-func ListenTLS(name, network, address string, config *tls.Config) error {
-	ln, err := tls.Listen(network, address, config)
+func ListenTLS(name, network, address, certFile, keyFile string, cb ListenCb, ptr interface{}) error {
+	//fmt.Println("ListenTLS:", certFile, keyFile)
+
+	var err error
+	var config tls.Config
+	config.Certificates = make([]tls.Certificate, 1)
+	config.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return err
+	}
+
+	ln, err := tls.Listen(network, address, &config)
 	if nil != err {
 		return err
 	}
 
-	l := newListen(ln)
+	l := newListen(ln, true, cb, ptr)
 	err = gServe.push(name, l)
 
 	if nil != err {

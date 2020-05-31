@@ -12,9 +12,9 @@ package himpp
 
 /*
 #cgo CFLAGS: -std=c11 -D__HI3531DV100__
-#cgo CFLAGS: -I ${SRCDIR}/../../inc -I ${SRCDIR}/../../hisdk/hi3519v101/include
+#cgo CFLAGS: -I ${SRCDIR}/../../inc -I ${SRCDIR}/../../hisdk/hi3531dv100/include
 
-#cgo LDFLAGS: -L ${SRCDIR}/../../lib -L ${SRCDIR}/../../hisdk/hi3519v101/lib
+#cgo LDFLAGS: -L ${SRCDIR}/../../lib -L ${SRCDIR}/../../hisdk/hi3531dv100/lib
 
 #cgo LDFLAGS: -lmpi
 

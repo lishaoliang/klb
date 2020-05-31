@@ -1,10 +1,10 @@
-# 编译命令 : make
+# make
 
 SHELL = /bin/bash
 PWD = `pwd`
 
-# 引入一些环境参数
--include ./mk_def
+# include make param
+-include ./make_define
 
 
 .PHONY: all clean strip doc install
@@ -14,7 +14,8 @@ all:
 	if [ -d ./src_c ]; then $(MAKE) -C ./src_c; fi
 
 ifeq ($(MY_OS), stm32)
-else ifeq ($(MY_OS), emscripten)
+else ifeq ($(MY_OS), js)
+	if [ -d ./src ]; then $(MAKE) -C ./src; fi
 else
 	if [ -d ./src ]; then $(MAKE) -C ./src; fi
 endif
@@ -24,7 +25,8 @@ clean:
 	if [ -d ./src_c ]; then $(MAKE) -C ./src_c clean; fi
 
 ifeq ($(MY_OS), stm32)
-else ifeq ($(MY_OS), emscripten)
+else ifeq ($(MY_OS), js)
+	if [ -d ./src ]; then $(MAKE) -C ./src clean; fi
 else
 	if [ -d ./src ]; then $(MAKE) -C ./src clean; fi
 endif

@@ -7,31 +7,14 @@
 
 package kmnp
 
-/*
-#include "mnp/klb_mnp.h"
-#include "string.h"
-*/
-import "C"
-
 import (
 	"errors"
 	"fmt"
 	"unsafe"
 
-	"github.com/lishaoliang/klb/src/kbuf/kmpool"
 	"github.com/lishaoliang/klb/src/kutil"
+	"github.com/lishaoliang/klb/src/kutil/kbuf"
 )
-
-// KlbMnpStream klb_mnp_stream_t
-// 码流数据(C定义)
-type KlbMnpStream C.klb_mnp_stream_t
-
-// MnpStreamPack stream pack
-// 打包码流数据函数
-type MnpStreamPack interface {
-	PackKmBuf(stream *MnpStream, kp kmpool.Pool, chnn, sidx int) (*kmpool.KmBuf, error) // 打包成内存池格式
-	PackByte(stream *MnpStream, chnn, sidx int) ([]byte, error)                         // 打包成[]byte
-}
 
 // MnpPack klb_mnp_pack_t
 // 码流数据pack
@@ -44,95 +27,49 @@ type MnpPack struct {
 // MnpStream klb_mnp_stream_t
 // 码流数据(go定义),来源高概率为贴近硬件的C代码传递而来
 type MnpStream struct {
-	Dtype int   // 媒体数据类型: klb_mnp_dtype_e
-	Vtype int   // 视频(video type): klb_mnp_vtype_e
-	Time  int64 // 时间戳
+	Dtype uint32 // 媒体数据类型: klb_mnp_dtype_e
+	Vtype uint8  // 视频(video type): klb_mnp_vtype_e
+	Time  int64  // 时间戳
 
 	Packs []MnpPack // 数据
-	size  int       // 总大小: 附加数据 + 媒体数据
-}
-
-// MnpStreamCreate create
-// 通过C码流结构创建go结构
-func MnpStreamCreate(mnpStream *KlbMnpStream) *MnpStream {
-	stream := (*C.klb_mnp_stream_t)(mnpStream)
-
-	var m MnpStream
-
-	m.Dtype = int(stream.dtype)
-	m.Vtype = int(stream.vtype)
-	m.Time = int64(stream.time)
-
-	m.Packs = make([]MnpPack, int(stream.pack_num))
-
-	for i := 0; i < len(m.Packs); i++ {
-		m.Packs[i].Data = unsafe.Pointer(stream.packs[C.int(i)].p_data)
-		m.Packs[i].DataLen = int(stream.packs[C.int(i)].data_len)
-
-		m.size += m.Packs[i].DataLen
-	}
-
-	return &m
+	Size  int       // 总大小: 附加数据 + 媒体数据
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Size size
-// 数据总大小
-func (m *MnpStream) Size() int {
-	return m.size
-}
-
-// PackKmBuf pack
-// 打包数据成内存池格式
-// 内存池中的一串数据, 直接对应于网络发送
-func (m *MnpStream) PackKmBuf(pack MnpStreamPack, kp kmpool.Pool, chnn, sidx int) (*kmpool.KmBuf, error) {
-	if nil != pack {
-		return pack.PackKmBuf(m, kp, chnn, sidx)
-	}
-
-	return m.packKmBuf(kp, chnn, sidx)
+// PackKBuf PackKBuf
+func (m *MnpStream) PackKBuf(malloc kbuf.Malloc, chnn, sidx uint32) (kbuf.KBuf, error) {
+	return m.packKBuf(malloc, chnn, sidx)
 }
 
 // PackByte pack
 // 打包数据成[]byte
-func (m *MnpStream) PackByte(pack MnpStreamPack, chnn, sidx int) ([]byte, error) {
-	if nil != pack {
-		return pack.PackByte(m, chnn, sidx)
-	}
-
-	return nil, errors.New("kmnp.mnp_stream.PackByte error!to do")
-}
+//func (m *MnpStream) PackByte(chnn, sidx uint32) ([]byte, error) {
+//	return nil, errors.New("kmnp.mnp_stream.PackByte error!to do")
+//}
 
 ///////////////////////////////////////////////////////////////////////////////
 
 // 64K - 8
 // mnp.Size为: [0,65535], 这里在末尾空闲几个字节
-const mnpSize64KLess = 1024*64 - 8
+// const mnpSize64KLess = 1024*64 - 8
 
-// packKmBuf pack
+// packKBuf pack
 // Mnp中间格式打包成内存池格式
 // 如果内存池内存不足, 则返回nil, error
-func (m *MnpStream) packKmBuf(kp kmpool.Pool, chnn, sidx int) (*kmpool.KmBuf, error) {
-	size := kp.BlockSize()               //
-	kutil.Assert(size <= mnpSize64KLess) // 内存池块大小 <= mnpSize64KLess
+func (m *MnpStream) packKBuf(malloc kbuf.Malloc, chnn, sidx uint32) (kbuf.KBuf, error) {
+	buf := malloc.Malloc()
 
-	var mh MnpMH
-	mh.Dtype = uint16(m.Dtype)
-	mh.Vtype = uint8(m.Vtype)
-	mh.Resv = 0
-	mh.Chnn = uint16(chnn)
-	mh.Sidx = uint16(sidx)
-	mh.Time = m.Time
-
-	sizeFull := MNPTsize + MNPMHsize + m.size
-	if sizeFull <= mnpSize64KLess && sizeFull <= size {
-		return m.packKmBufFull(kp, &mh) // 完整包: F
-	}
+	var md MnpMedia
+	md.Size = uint32(MnpMediaSize + m.Size)
+	md.Dtype = uint32(m.Dtype)
+	md.Chnn = chnn
+	md.Sidx = sidx
+	md.Time = m.Time
+	md.Vtype = uint8(m.Vtype)
 
 	// 分包: B[C]E
-	// fmt.Println("kmnp.mnp_stream.packKmBuf,m.size:", m.size)
-	buf := kp.Malloc()
+	// fmt.Println("kmnp.mnp_stream.packKBuf,m.size:", m.size)
 	cur := buf
 	end := false
 	idx := 0
@@ -142,19 +79,27 @@ func (m *MnpStream) packKmBuf(kp kmpool.Pool, chnn, sidx int) (*kmpool.KmBuf, er
 		goto ErrMalloc
 	}
 
-	idx, pos = m.packKmBufBegin(buf, &mh)
+	if MnpHeadSize+MnpMediaSize+m.Size <= buf.BufLen() {
+		return m.packKBufFull(buf, &md) // 完整包: F
+	}
+
+	if nil == buf {
+		goto ErrMalloc
+	}
+
+	idx, pos = m.packKBufBegin(buf, &md)
 
 	for {
-		next := kp.Malloc()
+		next := malloc.Malloc()
 		if nil == next {
 			goto ErrMalloc
 		}
 
-		cur.Next = next
-		next.Prev = cur
+		cur.SetNext(next)
+		next.SetPrev(cur)
 		cur = next
 
-		end, idx, pos = m.packKmBufNext(next, &mh, idx, pos)
+		end, idx, pos = m.packKBufNext(next, &md, idx, pos)
 
 		if end {
 			break
@@ -174,51 +119,50 @@ ErrMalloc:
 	return nil, errors.New("kmnp.mnp_stream.packKmBuf [BCE] error!kp.Malloc no mem")
 }
 
-// packKmBufFull pack full
+// packKBufFull pack full
 // Mnp中间格式打包成内存池格式: F包
-func (m *MnpStream) packKmBufFull(kp kmpool.Pool, mh *MnpMH) (*kmpool.KmBuf, error) {
-	buf := kp.Malloc()
-	if nil == buf {
-		return nil, errors.New("kmnp.mnp_stream.packKmBufFull error!kp.Malloc no mem")
-	}
+func (m *MnpStream) packKBufFull(buf kbuf.KBuf, md *MnpMedia) (kbuf.KBuf, error) {
 
-	b := buf.GetBuf()
+	b := buf.Buf()
 
-	mnptB := b[0:MNPTsize]
+	mnpB := b[0:MnpHeadSize]
 
-	mhB := b[MNPTsize : MNPTsize+MNPMHsize]
-	mh.Pack(mhB)
+	mdB := b[MnpHeadSize : MnpHeadSize+MnpMediaSize]
+	md.Pack(mdB)
 
-	dataB := b[MNPTsize+MNPMHsize:]
+	dataB := b[MnpHeadSize+MnpMediaSize:]
 	pos := 0
 	for i := 0; i < len(m.Packs); i++ {
 		kutil.Memcpy(dataB[pos:], m.Packs[i].Data, m.Packs[i].DataLen)
 		pos += m.Packs[i].DataLen
 	}
 
-	var mnpt MnpT
-	mnpt.InitMedia(uint16(pos+MNPTsize+MNPMHsize), MNPfull)
-	mnpt.Pack(mnptB)
+	var mnp Mnp
+	mnp.Default()
+	mnp.Size = uint16(MnpHeadSize + MnpMediaSize + pos)
+	mnp.Opt = MnpOptFull
+	mnp.Packtype = MnpPackMedia
 
-	buf.Start = 0
-	buf.End = pos + MNPTsize + MNPMHsize
+	mnp.Pack(mnpB)
+
+	buf.SetPos(0, MnpHeadSize+MnpMediaSize+pos)
 
 	return buf, nil
 }
 
-// packKmBufBegin pack Begin
+// packKBufBegin pack Begin
 // Mnp中间格式打包成内存池格式: B包
-func (m *MnpStream) packKmBufBegin(buf *kmpool.KmBuf, mh *MnpMH) (int, int) {
+func (m *MnpStream) packKBufBegin(buf kbuf.KBuf, md *MnpMedia) (int, int) {
 
-	b := buf.GetBuf()
+	b := buf.Buf()
 
-	mnptB := b[0:MNPTsize]
+	mnpB := b[0:MnpHeadSize]
 
-	mhB := b[MNPTsize : MNPTsize+MNPMHsize]
-	mh.Pack(mhB) // 写MnpMH
+	mhB := b[MnpHeadSize : MnpHeadSize+MnpMediaSize]
+	md.Pack(mhB) // 写MnpMH
 
 	// 写 h264等媒体 data
-	dataB := b[MNPTsize+MNPMHsize:]
+	dataB := b[MnpHeadSize+MnpMediaSize:]
 	pos := 0
 	for i := 0; i < len(m.Packs); i++ {
 		leftB := dataB[pos:]
@@ -231,12 +175,16 @@ func (m *MnpStream) packKmBufBegin(buf *kmpool.KmBuf, mh *MnpMH) (int, int) {
 			kutil.Memcpy(leftB, m.Packs[i].Data, leftLen)
 			pos += leftLen
 
-			var mnpt MnpT
-			mnpt.InitMedia(uint16(pos+MNPTsize+MNPMHsize), MNPbegin)
-			mnpt.Pack(mnptB) // 写MnpT头
+			var mnp Mnp
+			mnp.Default()
 
-			buf.Start = 0
-			buf.End = pos + MNPTsize + MNPMHsize
+			mnp.Size = uint16(MnpHeadSize + MnpMediaSize + pos)
+			mnp.Opt = MnpOptBegin
+			mnp.Packtype = MnpPackMedia
+
+			mnp.Pack(mnpB) // 写Mnp头
+
+			buf.SetPos(0, MnpHeadSize+MnpMediaSize+pos)
 
 			return i, leftLen
 		}
@@ -247,15 +195,17 @@ func (m *MnpStream) packKmBufBegin(buf *kmpool.KmBuf, mh *MnpMH) (int, int) {
 	return 0, 0
 }
 
-// packKmBufNext pack continue,end
+// packKBufNext pack continue,end
 // Mnp中间格式打包成内存池格式: C,E包
-func (m *MnpStream) packKmBufNext(buf *kmpool.KmBuf, mh *MnpMH, idx, idxPos int) (bool, int, int) {
-	b := buf.GetBuf()
+func (m *MnpStream) packKBufNext(buf kbuf.KBuf, md *MnpMedia, idx, idxPos int) (bool, int, int) {
+	b := buf.Buf()
 
-	var mnpt MnpT
-	mnptB := b[0:MNPTsize]
+	var mnp Mnp
+	mnp.Default()
 
-	dataB := b[MNPTsize:]
+	mnpB := b[0:MnpHeadSize]
+
+	dataB := b[MnpHeadSize:]
 	pos := 0
 	for i := idx; i < len(m.Packs); i++ {
 		leftB := dataB[pos:]
@@ -271,21 +221,25 @@ func (m *MnpStream) packKmBufNext(buf *kmpool.KmBuf, mh *MnpMH, idx, idxPos int)
 			pos += leftLen
 			idxPos += leftLen
 
-			mnpt.InitMedia(uint16(pos+MNPTsize), MNPcontinue)
-			mnpt.Pack(mnptB)
+			mnp.Size = uint16(MnpHeadSize + pos)
+			mnp.Opt = MnpOptContinue
+			mnp.Packtype = MnpPackMedia
 
-			buf.Start = 0
-			buf.End = MNPTsize + pos
+			mnp.Pack(mnpB)
+
+			buf.SetPos(0, MnpHeadSize+pos)
 
 			return false, i, idxPos
 		}
 	}
 
-	mnpt.InitMedia(uint16(pos+MNPTsize), MNPend)
-	mnpt.Pack(mnptB)
+	mnp.Size = uint16(MnpHeadSize + pos)
+	mnp.Opt = MnpOptEnd
+	mnp.Packtype = MnpPackMedia
 
-	buf.Start = 0
-	buf.End = MNPTsize + pos
+	mnp.Pack(mnpB)
+
+	buf.SetPos(0, MnpHeadSize+pos)
 
 	return true, 0, 0
 }

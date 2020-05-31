@@ -8,7 +8,7 @@
 package main
 
 /*
-#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../inc
+#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../inc
 #include "klua/klua.h"
 extern int klua_go_main_openlibs(lua_State* L);
 */
@@ -16,11 +16,10 @@ import "C"
 import (
 	"fmt"
 	"os"
-	"os/signal"
-	"syscall"
 	"unsafe"
 
 	"github.com/lishaoliang/klb/src/klua"
+	"github.com/lishaoliang/klb/src/kutil/kpool"
 )
 
 func usage() {
@@ -44,9 +43,13 @@ func main() {
 		return
 	}
 
+	kpool.Init(4096, 3072)
+
 	c := make(chan os.Signal)
+
+	// 通过编译 windows/linux
 	//signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM, syscall.SIGTSTP)
-	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGINT, syscall.SIGTERM)
+	signalNotify(c)
 
 	klua.PushPreload("klua_go_main_openlibs", (klua.LuaCFunction)(unsafe.Pointer(C.klua_go_main_openlibs)))
 	names := make([]string, 0)
@@ -63,15 +66,17 @@ func main() {
 	}
 
 	s := <-c
-	fmt.Println("main over.", s)
+	//fmt.Println("main over.", s)
 
 	for i := len(names) - 1; i >= 0; i-- {
-		fmt.Println("main close:", names[i], i)
+		//fmt.Println("main close:", names[i], i)
 		klua.Close(names[i])
 	}
 
 	//klua.Cancel()
 	klua.Wait()
 
-	fmt.Println("main over...")
+	kpool.Quit()
+
+	fmt.Println("main over...", s)
 }

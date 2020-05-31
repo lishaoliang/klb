@@ -10,7 +10,7 @@ package kutil
 var gMyRand *Rand
 
 func randInit() {
-	gMyRand = RandCreate()
+	gMyRand = NewRand()
 }
 
 // RandStr 随机长度字符串

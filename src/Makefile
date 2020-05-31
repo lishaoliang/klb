@@ -1,37 +1,36 @@
-# 编译命令 : make
+# make
 
 SHELL = /bin/bash
 PWD = `pwd`
 
 
-# 引入一些环境参数
--include ../mk_def
+# include make param
+-include ../make_define
 MY_LIB_PATH = ../$(MY_LIB_NAME)
-MY_GOPATH = $(PWD)/../../../../../:$(MY_WORK_GOPATH):$(MY_HOME_GOPATH)
+MY_GOPATH = $(PWD)/../../../../../
 MY_MAIN = github.com/lishaoliang/klb/src/main
 
 
-# 编译main目录 
-ifeq ($(findstring hi3519v101,$(TAGS)), hi3519v101)
-	MY_MAIN = github.com/lishaoliang/klb/src/kipc
-else ifeq ($(findstring hi3516av100,$(TAGS)), hi3516av100)
-	MY_MAIN = github.com/lishaoliang/klb/src/kipc
-else
-
-endif
+# go main
 
 
-
-# 编译目标名称
+# target
 MY_TARGET_NAME := klua
 MY_TARGET_EXE := $(MY_LIB_PATH)/$(MY_TARGET_NAME)
 MY_TARGET_A := $(MY_LIB_PATH)/libklua_go.a
 MY_TARGET_SO := $(MY_LIB_PATH)/libklua_go.so
 
-# 静态链接所有库
+ifeq ($(MY_OS), windows)
+MY_TARGET_NAME := klua.exe
+MY_TARGET_EXE := $(MY_LIB_PATH)/$(MY_TARGET_NAME)
+MY_TARGET_A := $(MY_LIB_PATH)/libklua_go.a
+MY_TARGET_SO := $(MY_LIB_PATH)/libklua_go.dll
+endif
+
+# static libs
 MY_EXE_LIBS = -lklua_go -lklb_c -lpthread -ldl -lm
 
-#MY_GO_TAGS = -tags="debug hi3519v101"
+#MY_GO_TAGS = -tags="debug"
 #MY_GO_TAGS = 
 
 .PHONY: all clean

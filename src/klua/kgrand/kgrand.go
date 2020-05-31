@@ -8,7 +8,7 @@
 package kgrand
 
 /*
-#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../../inc
+#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../../inc
 #cgo LDFLAGS: -L ${SRCDIR}/../../../lib -lklb_c -lpthread -lm
 
 #include "klua/klua.h"
@@ -47,7 +47,7 @@ func init() {
 }
 
 func kgRandInit() {
-	gKgRand = kutil.RandCreate()
+	gKgRand = kutil.NewRand()
 }
 
 // OpenKgRand kg_rand

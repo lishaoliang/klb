@@ -8,7 +8,7 @@
 package kdemo
 
 /*
-#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../../inc
+#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../../inc
 #cgo LDFLAGS: -L ${SRCDIR}/../../../lib -lklb_c -lpthread -lm
 
 #include "klua/klua.h"

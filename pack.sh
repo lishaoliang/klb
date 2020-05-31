@@ -15,11 +15,8 @@ PACK_ONE(){
 	make OS=$PACK_OS ARCH=$PACK_ARCH TAGS="$PACK_GO_TAGS"
 }
 
+# make OS=windows ARCH=amd64 TAGS="debug normal"
+PACK_ONE windows amd64 "debug normal"
+
 # make OS=linux ARCH=amd64 TAGS="debug normal"
 PACK_ONE linux amd64 "debug normal"
-
-# make OS=linux ARCH=arm TAGS="debug hi3519v101 himppv3"
-#PACK_ONE linux arm "debug hi3519v101 himppv3"
-
-# make OS=linux ARCH=arm TAGS="debug hi3516av100 himppv2"
-#PACK_ONE linux arm "debug hi3516av100 himppv2"

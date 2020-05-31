@@ -26,9 +26,9 @@ type Rand struct {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// RandCreate create
+// NewRand new
 // 创建
-func RandCreate() *Rand {
+func NewRand() *Rand {
 	var m Rand
 
 	m.r = rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -46,11 +46,11 @@ func RandCreate() *Rand {
 
 // Destroy destroy
 // 销毁
-func (m *Rand) Destroy() {
-	m.r = nil
-	m.chars = nil
-	m.nums = nil
-}
+//func (m *Rand) Destroy() {
+//	m.r = nil
+//	m.chars = nil
+//	m.nums = nil
+//}
 
 // Str 随机长度字符串
 // 字符集[A-Za-z0-9]

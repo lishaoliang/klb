@@ -36,14 +36,14 @@ var gCtxMan ctxMan
 func ctxManInit() {
 	gCtxMan.ctx, gCtxMan.cancel = context.WithCancel(context.Background())
 
-	gCtxMan.rand = kutil.RandCreate()
+	gCtxMan.rand = kutil.NewRand()
 
 	gCtxMan.mapCtx = make(map[string]*Ctx)
 }
 
 // Destroy destroy
 func (m *ctxMan) Destroy() {
-	m.rand.Destroy()
+	//m.rand.Destroy()
 
 	m.rand = nil
 	m.mapCtx = nil
@@ -94,9 +94,10 @@ func (m *ctxMan) Close(name string) bool {
 	if nil != ctx {
 		// 关闭Ctx耗时
 		// 从map中移除之后, 另开线程等待关闭结束
-		go func(c *Ctx) {
-			c.destroy()
-		}(ctx)
+		//go func(c *Ctx) {
+		//	c.destroy()
+		//}(ctx)
+		ctx.destroy()
 
 		return true
 	}

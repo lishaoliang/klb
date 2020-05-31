@@ -21,12 +21,12 @@ type MapIface struct {
 	nameLen int
 }
 
-// MapIfaceCreate create
+// NewMapIface new
 // 创建, 名称格式: preName + split + "随机串"
-func MapIfaceCreate(preName, split string, nameLen int) *MapIface {
+func NewMapIface(preName, split string, nameLen int) *MapIface {
 	var m MapIface
 
-	m.r = RandCreate()
+	m.r = NewRand()
 	m.data = make(map[string]interface{})
 	m.size = 0
 
@@ -41,13 +41,13 @@ func MapIfaceCreate(preName, split string, nameLen int) *MapIface {
 
 // Destroy destroy
 // 销毁
-func (m *MapIface) Destroy() {
-	m.r.Destroy()
-
-	m.r = nil
-	m.data = nil
-	m.size = 0
-}
+//func (m *MapIface) Destroy() {
+//	//m.r.Destroy()
+//
+//	m.r = nil
+//	m.data = nil
+//	m.size = 0
+//}
 
 // Map get map
 // 获取原map
