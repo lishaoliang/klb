@@ -66,6 +66,11 @@ func Stop() {
 	gSimulate.Stop()
 }
 
+// SetPathMedia SetPathMedia
+func SetPathMedia(path string) {
+	gSimulate.SetPathMedia(path)
+}
+
 // SetStreamReceiver set stream receiver
 func SetStreamReceiver(cb unsafe.Pointer) {
 	C.g_cb_klua_go_ksimulate_stream_receiver = (C.klb_mnp_stream_cb)(cb)

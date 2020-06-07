@@ -1,19 +1,19 @@
-local string = require("string")
+ï»¿local string = require("string")
 
 local stringex = {}
 
 
--- È¥³ıÇ°ºó¿Õ°×
+-- å»é™¤å‰åç©ºç™½
 stringex.trim = function (s)
 	return (string.gsub(s, '^%s*(.-)%s*$', '%1'))
 end
 
--- ºöÂÔ´óĞ¡Ğ´Æ¥Åä
+-- å¿½ç•¥å¤§å°å†™åŒ¹é…
 stringex.cmp_ignore_case = function (s1, s2)
 	return (string.lower(s1) == string.lower(s2))
 end
 
--- ºöÂÔ´óĞ¡Ğ´²éÕÒ
+-- å¿½ç•¥å¤§å°å†™æŸ¥æ‰¾
 stringex.find_ignore_case = function (s1, s2)
 	local low_s1 = string.lower(s1)
 	local low_s2 = string.lower(s2)

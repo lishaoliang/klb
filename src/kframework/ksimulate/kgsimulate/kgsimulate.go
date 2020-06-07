@@ -11,6 +11,8 @@ extern int klua_go_kg_simulate_quit(lua_State* L);
 extern int klua_go_kg_simulate_start(lua_State* L);
 extern int klua_go_kg_simulate_stop(lua_State* L);
 
+extern int klua_go_kg_simulate_set_path_media(lua_State* L);
+
 extern int klua_go_kg_simulate_set_stream_receiver(lua_State* L);
 extern int klua_go_kg_simulate_command(lua_State* L);
 
@@ -23,6 +25,8 @@ int klua_go_open_kg_simulate_cgo(lua_State* L)
 		{ "quit",		klua_go_kg_simulate_quit },
 		{ "start",		klua_go_kg_simulate_start },
 		{ "stop",		klua_go_kg_simulate_stop },
+
+		{ "set_path_media", 		klua_go_kg_simulate_set_path_media },
 
 		{ "set_stream_receiver",	klua_go_kg_simulate_set_stream_receiver },
 		{ "command",				klua_go_kg_simulate_command },

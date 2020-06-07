@@ -1,4 +1,4 @@
---[[
+﻿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @file   kos.lua
 -- @brief  C kos

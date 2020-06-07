@@ -1,9 +1,9 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief lsm http
--- @author ÀîÉÜÁ¼
+-- @author æç»è‰¯
 
-ÇëÇó:
+è¯·æ±‚:
 GET / HTTP/1.1
 Host: 127.0.0.1:8000
 Connection: Upgrade
@@ -20,7 +20,7 @@ Sec-WebSocket-Key: LDIFqu7eWcRiGMwOMxAvOg==
 Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
 Sec-WebSocket-Protocol: binary
 
-»Ø¸´:
+å›å¤:
 HTTP/1.1 400 Bad Request
 Connection: close
 X-WebSocket-Reject-Reason: Client must provide a Host header.
@@ -59,14 +59,14 @@ local pack_101 = function (key, protocol)
 	--table.insert(t, 'Sec-WebSocket-Accept: xY9zZMQTFsuY8fI6UBpaOmQ4x0Y=\r\n')
 	table.insert(t, string.format('Sec-WebSocket-Accept: %s\r\n', key))
 	
-	-- Ìí¼Ó¿Í»§¶ËĞ´µÄĞ­Òé, ·ÀÖ¹²»¼æÈİ
+	-- æ·»åŠ å®¢æˆ·ç«¯å†™çš„åè®®, é˜²æ­¢ä¸å…¼å®¹
 	if 0 < string.len(protocol) then
 		--table.insert(t, 'Sec-WebSocket-Protocol: binary\r\n')
 		table.insert(t, string.format('Sec-WebSocket-Accept: %s\r\n', protocol))
 	end
 	
-	table.insert(t, string.format('Content-Length: %d\r\n', 0))			-- Êı¾İ³¤¶È
-	table.insert(t, 'Access-Control-Allow-Origin: *\r\n')				-- Ğí¿É¿çÓòÇëÇó
+	table.insert(t, string.format('Content-Length: %d\r\n', 0))			-- æ•°æ®é•¿åº¦
+	table.insert(t, 'Access-Control-Allow-Origin: *\r\n')				-- è®¸å¯è·¨åŸŸè¯·æ±‚
 	table.insert(t, '\r\n')
 	
 	return table.concat(t)
@@ -86,7 +86,7 @@ lsm_ws.on_receiver = function (name, protocol, sequence, uid, head, body)
 	print(protocol, name, req.method, req.url, body)
 
 	if '' ~= req.method then
-		-- http½×¶Î
+		-- httpé˜¶æ®µ
 		local ws_key = http_serve.header_value(req.header, 'Sec-WebSocket-Key')
 		
 		local key = kg_crypto.ws_encode(ws_key)
@@ -97,7 +97,7 @@ lsm_ws.on_receiver = function (name, protocol, sequence, uid, head, body)
 		
 		kg_lsmfw.send_txt(name, protocol, sequence, uid, res_head, '')
 	else
-		-- websocket ½×¶Î
+		-- websocket é˜¶æ®µ
 		kg_lsmfw.send_txt(name, protocol, sequence, uid, '', body)
 	end
 		

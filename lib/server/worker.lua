@@ -1,7 +1,7 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
--- @brief  ¹¤×÷Ïß³Ì
--- @author ÀîÉÜÁ¼
+-- @brief  å·¥ä½œçº¿ç¨‹
+-- @author æç»è‰¯
 --]]
 local kg_thread = require("kg_thread")
 

@@ -17,7 +17,7 @@
 # 
 OS ?= linux
 ARCH ?= amd64
-TAGS ?= ""
+TAGS ?= debug normal
 
 
 # "linux", "windows", "darwin", "stm32", "js"
@@ -83,8 +83,12 @@ CAR				:= $(MY_TOOL_CHAIN)ar
 CRANLIB			:= $(MY_TOOL_CHAIN)ranlib
 CSTRIP			:= $(MY_TOOL_CHAIN)strip
 MAKE			:= make
-RM				:= -rm -f
-CP				:= cp
+RM				:= -rm -r
+RM_R			:= -rm -r
+RM_RF			:= -rm -rf
+CP				:= -cp
+CP_R			:= -cp -r
+CP_RF			:= -cp -rf
 
 ifeq ($(MY_OS), js)
 CC				= emcc

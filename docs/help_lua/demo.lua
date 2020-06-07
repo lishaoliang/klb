@@ -1,4 +1,4 @@
---[[
+﻿--[[
 -- Copyright (c) 2019, LGPL All Rights Reserved
 -- @file  demo.lua
 -- @brief 编码规则, 注释规范

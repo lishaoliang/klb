@@ -1,4 +1,4 @@
-
+ï»¿
 
 local http_cmd = {}
 
@@ -8,7 +8,7 @@ local user_server = 'KLB Sever (v2020)'
 
 
 ------------------------------------------------------------------------------
--- ÃüÁî
+-- å‘½ä»¤
 
 
 http_cmd.GET = 'GET'
@@ -24,8 +24,8 @@ http_cmd.POST = 'POST'
 --	Accept: */*
 --	Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
 --	Accept-Encoding: gzip, deflate
---	Referer: http://127.0.0.1:3456/page/testflv.html
---	Origin: http://127.0.0.1:3456
+--	Referer: http://127.0.0.1:8000/page/testflv.html
+--	Origin: http://127.0.0.1:8000
 --	Connection: keep-alive
 
 http_cmd.pack_req_get = function (path, host)

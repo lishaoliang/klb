@@ -1,8 +1,8 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief live stream media framework
---  \n ÊµÊ±Á÷Ã½Ìå¿ò¼Ü: ·şÎñ¶Ë
--- @author ÀîÉÜÁ¼
+--  \n å®æ—¶æµåª’ä½“æ¡†æ¶: æœåŠ¡ç«¯
+-- @author æç»è‰¯
 --]]
 
 local kg_lsmfw = require("kg_lsmfw")
@@ -21,12 +21,12 @@ local lsm_http_flv = require("server.lsm.lsm_http_flv")
 local cb_funcs = {}
 
 
--- @brief ×¢²áĞ­Òé´¦Àíº¯Êı
--- @param [in] protocol[string]      Ğ­ÒéÃû³Æ
--- @param [in] newconn[function]     ĞÂÁ¬½Ó½ÓÈë
--- @param [in] receiver[function]    ½ÓÊÕÊı¾İ
--- @param [in] disconnect[function]  Á¬½Ó¶Ï¿ª
--- @return ÎŞ
+-- @brief æ³¨å†Œåè®®å¤„ç†å‡½æ•°
+-- @param [in] protocol[string]      åè®®åç§°
+-- @param [in] newconn[function]     æ–°è¿æ¥æ¥å…¥
+-- @param [in] receiver[function]    æ¥æ”¶æ•°æ®
+-- @param [in] disconnect[function]  è¿æ¥æ–­å¼€
+-- @return æ— 
 local reg_callback = function (protocol, newconn, receiver, disconnect)	
 	local o = cb_funcs[protocol]
 	if nil ~= o then
@@ -60,13 +60,13 @@ local on_newconn = function (name, protocol, ok, err)
 end
 
 
--- @brief ½ÓÊÕÊı¾İ´¦Àíº¯Êı
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] sequence[number] ĞòÁĞºÅ: [0,2^32)
+-- @brief æ¥æ”¶æ•°æ®å¤„ç†å‡½æ•°
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] sequence[number] åºåˆ—å·: [0,2^32)
 -- @param [in] uid[number]      UID: [0,2^32)
--- @param [in] extra[string]    ¸½¼ÓÊı¾İ(»òÍ·Êı¾İ)
--- @param [in] txt[string]      ÕıÊ½ÎÄ±¾Êı¾İ
+-- @param [in] extra[string]    é™„åŠ æ•°æ®(æˆ–å¤´æ•°æ®)
+-- @param [in] txt[string]      æ­£å¼æ–‡æœ¬æ•°æ®
 -- @return 0
 local on_receiver = function (name, protocol, sequence, uid, extra, txt)
 	--print('lsmfw on_receiver', name, protocol, sequence, uid, extra, txt)
@@ -83,9 +83,9 @@ local on_receiver = function (name, protocol, sequence, uid, extra, txt)
 end
 
 
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] err[string]      ´íÎó×Ö·û´®
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] err[string]      é”™è¯¯å­—ç¬¦ä¸²
 -- @return 0
 local on_disconnect = function (name, protocol, err)
 	--print('lsmfw on_disconnect', name, protocol, err)
@@ -105,25 +105,28 @@ end
 kin = function ()
 	print('kin->lsmfw.')
 
-	-- ×¢²áHTTPÍøÂçÄ£¿é: Â·¾¶¶ÔÓ¦µÄ×ÓĞ­Òé
-	kg_lsmfw.register_protocol(pname.HTTPFLV, '/httpflv/')
-	kg_lsmfw.register_protocol(pname.WSMNP, '/wsmnp/')
-	kg_lsmfw.register_protocol(pname.WSFLV, '/wsflv/')
+	-- æ³¨å†ŒHTTPè·¯ç”±
+	kg_lsmfw.register_protocol(pname.HTTPFLV, '/stream/httpflv/')
+	
+	kg_lsmfw.register_protocol(pname.WSFLV, '/stream/wsflv/')	
+	kg_lsmfw.register_protocol(pname.WSMNP, '/stream/wsmnp/')
+	
 
-	-- ×¢²áÖ§³ÖµÄĞ­Òé´¦Àíº¯Êı
+	-- æ³¨å†Œæ”¯æŒçš„åè®®å¤„ç†å‡½æ•°
 	reg_callback(pname.MNP, lsm_mnp.on_newconn, lsm_mnp.on_receiver, lsm_mnp.on_disconnect)
 	reg_callback(pname.MNPS, lsm_mnp.on_newconn, lsm_mnp.on_receiver, lsm_mnp.on_disconnect)
+	
 	reg_callback(pname.HTTP, lsm_http.on_newconn, lsm_http.on_receiver, lsm_http.on_disconnect)
 	reg_callback(pname.HTTPS, lsm_http.on_newconn, lsm_http.on_receiver, lsm_http.on_disconnect)
-	reg_callback(pname.RTSP, lsm_rtsp.on_newconn, lsm_rtsp.on_receiver, lsm_rtsp.on_disconnect)
+	reg_callback(pname.HTTPFLV, lsm_http_flv.on_newconn, lsm_http_flv.on_receiver, lsm_http_flv.on_disconnect)	
+	
 	reg_callback(pname.WS, lsm_ws.on_newconn, lsm_ws.on_receiver, lsm_ws.on_disconnect)
-	
-	reg_callback(pname.HTTPFLV, lsm_http_flv.on_newconn, lsm_http_flv.on_receiver, lsm_http_flv.on_disconnect)
+	reg_callback(pname.WSFLV, lsm_ws_flv.on_newconn, lsm_ws_flv.on_receiver, lsm_ws_flv.on_disconnect)	
 	reg_callback(pname.WSMNP, lsm_ws_mnp.on_newconn, lsm_ws_mnp.on_receiver, lsm_ws_mnp.on_disconnect)
-	reg_callback(pname.WSFLV, lsm_ws_flv.on_newconn, lsm_ws_flv.on_receiver, lsm_ws_flv.on_disconnect)
-	
 
-	-- ÉèÖÃ¸ù»Øµ÷º¯Êı
+	reg_callback(pname.RTSP, lsm_rtsp.on_newconn, lsm_rtsp.on_receiver, lsm_rtsp.on_disconnect)	
+
+	-- è®¾ç½®æ ¹å›è°ƒå‡½æ•°
 	kg_lsmfw.set_newconn(on_newconn)
 	kg_lsmfw.set_receiver(on_receiver)
 	kg_lsmfw.set_disconnect(on_disconnect)	

@@ -1,7 +1,7 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief lsm mnp
--- @author ÀîÉÜÁ¼
+-- @author æç»è‰¯
 --]]
 local cjson = require("cjson.safe")
 local kg_lsmfw = require("kg_lsmfw")

@@ -7,6 +7,7 @@ PWD = `pwd`
 # include make param
 -include ../make_define
 MY_LIB_PATH = ../$(MY_LIB_NAME)
+MY_BIN_PATH = ../$(MY_LIB_NAME)
 MY_GOPATH = $(PWD)/../../../../../
 MY_MAIN = github.com/lishaoliang/klb/src/main
 
@@ -15,16 +16,16 @@ MY_MAIN = github.com/lishaoliang/klb/src/main
 
 
 # target
-MY_TARGET_NAME := klua
-MY_TARGET_EXE := $(MY_LIB_PATH)/$(MY_TARGET_NAME)
-MY_TARGET_A := $(MY_LIB_PATH)/libklua_go.a
-MY_TARGET_SO := $(MY_LIB_PATH)/libklua_go.so
+MY_TARGET_NAME := klb
+MY_TARGET_EXE := $(MY_BIN_PATH)/$(MY_TARGET_NAME)
+MY_TARGET_A := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).so
 
 ifeq ($(MY_OS), windows)
-MY_TARGET_NAME := klua.exe
-MY_TARGET_EXE := $(MY_LIB_PATH)/$(MY_TARGET_NAME)
-MY_TARGET_A := $(MY_LIB_PATH)/libklua_go.a
-MY_TARGET_SO := $(MY_LIB_PATH)/libklua_go.dll
+MY_TARGET_NAME := klb
+MY_TARGET_EXE := $(MY_BIN_PATH)/$(MY_TARGET_NAME).exe
+MY_TARGET_A := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).dll
 endif
 
 # static libs

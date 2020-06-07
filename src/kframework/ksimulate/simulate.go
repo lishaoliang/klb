@@ -13,6 +13,8 @@ type simulate struct {
 
 	chnnNum int
 	chnns   []*channel
+
+	path string
 }
 
 func (m *simulate) Init(cfg string) error {
@@ -25,6 +27,8 @@ func (m *simulate) Init(cfg string) error {
 		chnn := openChnn(uint32(i))
 		m.chnns = append(m.chnns, chnn)
 	}
+
+	m.SetPathMedia(".")
 
 	return nil
 }
@@ -48,6 +52,15 @@ func (m *simulate) Start() error {
 func (m *simulate) Stop() {
 	m.cancel()
 	m.wg.Wait()
+}
+
+// SetPathMedia SetPathMedia
+func (m *simulate) SetPathMedia(path string) {
+	m.path = path
+
+	for i := 0; i < m.chnnNum; i++ {
+		m.chnns[i].SetPath(m.path)
+	}
 }
 
 func (m *simulate) Command(cmd string, chnn, sidx int64, lparam, wparam string) (int64, error) {

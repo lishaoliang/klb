@@ -1,11 +1,12 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief lsm http
--- @author ÀîÉÜÁ¼
+-- @author æç»è‰¯
 --]]
 local cjson = require("cjson.safe")
 local kg_lsmfw = require("kg_lsmfw")
 
+local conf = require("conf")
 local pname = require("base.pname")
 local stringex = require("base.stringex")
 local http_mime = require("http.http_mime")
@@ -16,25 +17,27 @@ local printex = require("base.printex")
 
 local lsm_http = {}
 
+local root_html = conf.path_html -- '/usr/local/lib/klb1.0/html' './html'
+
 local get_filter_path = function (url)
 	local path = string.match(url, '^[^?]*')	-- '/index.html?a=1&b=2&c=3'	
 	if nil == path then
 		return '', ''
 	end
 	
-	-- ·ÀÖ¹Ê¹ÓÃÏà¶ÔÂ·¾¶, ·Ç·¨ÏÂÔØÎÄ¼ş
-	path = string.gsub(path, '~', '')			-- ½«'~' Ìæ»»Îª ''
-	path = string.gsub(path, '\\', '/')			-- ½«'\' Ìæ»»Îª '/'
-	path = string.gsub(path, '[.]+/', '/')		-- ½«'./','../' Ìæ»»Îª '/'
-	path = string.gsub(path, '[/]+/', '/')		-- ½«'//','///' Ìæ»»Îª '/'
+	-- é˜²æ­¢ä½¿ç”¨ç›¸å¯¹è·¯å¾„, éæ³•ä¸‹è½½æ–‡ä»¶
+	path = string.gsub(path, '~', '')			-- å°†'~' æ›¿æ¢ä¸º ''
+	path = string.gsub(path, '\\', '/')			-- å°†'\' æ›¿æ¢ä¸º '/'
+	path = string.gsub(path, '[.]+/', '/')		-- å°†'./','../' æ›¿æ¢ä¸º '/'
+	path = string.gsub(path, '[/]+/', '/')		-- å°†'//','///' æ›¿æ¢ä¸º '/'
 	
-	-- ÌáÈ¡ÎÄ¼şÃû
+	-- æå–æ–‡ä»¶å
 	local filename = string.match(path, '[^/]*$')	-- '/index.html'
 	if nil == filename or 0 == string.len(filename) then
 		return '', ''
 	end
 	
-	return './html' .. path, http_mime(filename)
+	return (root_html .. path), (http_mime(filename)), path
 end
 
 
@@ -48,12 +51,12 @@ lsm_http.on_receiver = function (name, protocol, sequence, uid, head, body)
 
 	local req = http_serve.parser(head)
 	--printex(name, protocol, req)
-	print(protocol, name, req.method, req.url)
+	--print(protocol, name, req.method, req.url)
 
 	local connnection = http_serve.header_value(req.header, 'Connection')
 	local upgrade = http_serve.header_value(req.header, 'Upgrade')
 
-	-- ¸ü»»Ğ­Òé
+	-- æ›´æ¢åè®®
 	local bup, up_protocol = http_serve.is_upgrade(req.header)	
 	if bup then
 		if stringex.find_ignore_case(up_protocol, 'websocket') then
@@ -63,7 +66,7 @@ lsm_http.on_receiver = function (name, protocol, sequence, uid, head, body)
 				kg_lsmfw.switch_protocol(name, pname.WS, head, body)
 			end
 		else
-			kg_lsmfw.close_conn(name, protocol) -- ²»Ö§³ÖµÄ, Ö±½Ó¹Ø±Õ
+			kg_lsmfw.close_conn(name, protocol) -- ä¸æ”¯æŒçš„, ç›´æ¥å…³é—­
 		end
 		
 		return 0
@@ -80,8 +83,8 @@ lsm_http.on_receiver = function (name, protocol, sequence, uid, head, body)
 			url = '/index.html'
 		end
 		
-		local path, mime = get_filter_path(url)
-		print(protocol, name, req.method, mime, path)
+		local path, mime, url_path = get_filter_path(url)
+		print(protocol, name, req.method, mime, url_path, path)
 		
 		bres = kg_lsmfw.send_file(name, protocol, sequence, uid, mime, '', path)
 		

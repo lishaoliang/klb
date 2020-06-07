@@ -106,10 +106,10 @@ typedef enum klb_mnp_sidx_e_
 typedef enum klb_mnp_dtype_e_
 {
     KLB_MNP_DTYPE_NULL  = 0x0000,
-    KLB_MNP_DTYPE_H264  = 0x0001,
-    KLB_MNP_DTYPE_H265  = 0x0002,
+    KLB_MNP_DTYPE_H264  = 0x0001,   ///< AV_CODEC_ID_H264
+    KLB_MNP_DTYPE_H265  = 0x0002,   ///< AV_CODEC_ID_H265
 
-    KLB_MNP_DTYPE_AAC   = 0x1001,
+    KLB_MNP_DTYPE_AAC   = 0x1001,   ///< AV_CODEC_ID_AAC
 
     KLB_MNP_DTYPE_JPEG  = 0x2001,
 

@@ -1,4 +1,4 @@
-local string = require("string")
+ï»¿local string = require("string")
 local stringex = require("base.stringex")
 local printex = require("base.printex")
 
@@ -20,12 +20,12 @@ http_serve.parser = function (head)
 		return req
 	end
 	
-	-- ÌáÈ¡ÇëÇóÍ·ĞÅÏ¢
+	-- æå–è¯·æ±‚å¤´ä¿¡æ¯
 	local first = true
 	for line in string.gmatch(head, '[^\r\n]+[\r\n]*') do
 		--print(line)
 		if first then
-			local method, url, ver = string.match(line, '([^ ]+) +([^ ]+) +([^ ]+)') -- Æ¥ÅäÇëÇóÍ·
+			local method, url, ver = string.match(line, '([^ ]+) +([^ ]+) +([^ ]+)') -- åŒ¹é…è¯·æ±‚å¤´
 			--print(method, url, ver)
 			if nil ~= method and nil ~= url and nil ~= ver then
 				req.method = string.upper(stringex.trim(method))
@@ -34,7 +34,7 @@ http_serve.parser = function (head)
 			
 			first = false
 		else
-			local k, v = string.match(line, '([^:]+):(.*)') -- Æ¥Åä²ÎÊı
+			local k, v = string.match(line, '([^:]+):(.*)') -- åŒ¹é…å‚æ•°
 			if nil ~= k and nil ~= v then
 				parser_kv(req, stringex.trim(k), stringex.trim(v))
 			end
@@ -68,7 +68,7 @@ http_serve.is_upgrade = function (header)
 		return false, ''
 	end
 
-	-- ¼ì²éÍ·ÖĞµÄÉÏÃæÁ½ÏîÖ®Ò»
+	-- æ£€æŸ¥å¤´ä¸­çš„ä¸Šé¢ä¸¤é¡¹ä¹‹ä¸€
 	-- Connection: Upgrade
 	-- Upgrade: websocket
 	local bup = false
@@ -109,11 +109,11 @@ http_serve.pack_404 = function ()
 
 	table.insert(t, 'HTTP/1.1 404 Not Found\r\n')
 	table.insert(t, string.format('Server: %s\r\n', 'KLB'))
-	table.insert(t, 'Connection: close\r\n')									-- ¶ÌÁ¬½Ó¹Ø±Õ
-	table.insert(t, string.format('Content-Type: %s\r\n', 'text/html'))			-- Êı¾İÀàĞÍ
-	table.insert(t, string.format('Content-Length: %d\r\n', string.len(body)))	-- Êı¾İ³¤¶È
-	--table.insert(t, 'Cache-Control: max-age=0\r\n')							-- »º´æÊ±¼ä(Ãë)
-	table.insert(t, 'Access-Control-Allow-Origin: *\r\n')						-- Ğí¿É¿çÓòÇëÇó
+	table.insert(t, 'Connection: close\r\n')									-- çŸ­è¿æ¥å…³é—­
+	table.insert(t, string.format('Content-Type: %s\r\n', 'text/html'))			-- æ•°æ®ç±»å‹
+	table.insert(t, string.format('Content-Length: %d\r\n', string.len(body)))	-- æ•°æ®é•¿åº¦
+	--table.insert(t, 'Cache-Control: max-age=0\r\n')							-- ç¼“å­˜æ—¶é—´(ç§’)
+	table.insert(t, 'Access-Control-Allow-Origin: *\r\n')						-- è®¸å¯è·¨åŸŸè¯·æ±‚
 	table.insert(t, '\r\n')
 	
 	return table.concat(t), body

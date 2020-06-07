@@ -76,6 +76,16 @@ func klua_go_kg_simulate_stop(lua *C.lua_State) C.int {
 	return 0
 }
 
+//export klua_go_kg_simulate_set_path_media
+func klua_go_kg_simulate_set_path_media(lua *C.lua_State) C.int {
+	l := (*klua.LuaState)(lua)
+
+	path := klua.LuaLCheckstring(l, 1) // @1 测试媒体路径
+	ksimulate.SetPathMedia(path)
+
+	return 0
+}
+
 //export klua_go_kg_simulate_set_stream_receiver
 func klua_go_kg_simulate_set_stream_receiver(lua *C.lua_State) C.int {
 	l := (*klua.LuaState)(lua)

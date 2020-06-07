@@ -16,6 +16,8 @@ import "C"
 import (
 	"fmt"
 	"os"
+	"path"
+	"strings"
 	"unsafe"
 
 	"github.com/lishaoliang/klb/src/klua"
@@ -24,7 +26,8 @@ import (
 
 func usage() {
 	fmt.Println("usage")
-	fmt.Println("  klua ./xxx.lua")
+	fmt.Println("  klb ./xxx.lua")
+	fmt.Println("  klb server")
 }
 
 // init
@@ -55,13 +58,20 @@ func main() {
 	names := make([]string, 0)
 
 	for i := 1; i < n; i++ {
-		path := args[i]
+		strPath := args[i]
 
-		_, err := klua.Open(path, path, "klua_go_main_openlibs", "", true)
+		bDoFile := false
+		ext := strings.ToLower(path.Ext(strPath))
+		if 0 <= strings.LastIndex(ext, "lua") {
+			bDoFile = true // 从相对路径加载
+		}
+
+		_, err := klua.Open(strPath, strPath, "klua_go_main_openlibs", "", bDoFile)
+
 		if nil != err {
 			fmt.Println("main", err)
 		} else {
-			names = append(names, path)
+			names = append(names, strPath)
 		}
 	}
 

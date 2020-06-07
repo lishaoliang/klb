@@ -24,3 +24,12 @@ func Min(v1, v2 int) int {
 	}
 	return v2
 }
+
+// SubAbsI64 Sub Abs int64
+func SubAbsI64(v1, v2 int64) int64 {
+	if v1 <= v2 {
+		return v2 - v1
+	}
+
+	return v1 - v2
+}

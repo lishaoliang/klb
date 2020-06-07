@@ -1,8 +1,8 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief stream media client framework
---  \n ÊµÊ±Á÷Ã½Ìå¿ò¼Ü: ¿Í»§¶Ë
--- @author ÀîÉÜÁ¼
+--  \n å®æ—¶æµåª’ä½“æ¡†æ¶: å®¢æˆ·ç«¯
+-- @author æç»è‰¯
 --]]
 local kg_rand = require("kg_rand")
 local kg_smcfw = require("kg_smcfw")
@@ -91,12 +91,12 @@ end
 
 local first = true
 
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] sequence[number] ĞòÁĞºÅ: [0,2^32)
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] sequence[number] åºåˆ—å·: [0,2^32)
 -- @param [in] uid[number]      UID: [0,2^32)
--- @param [in] extra[string]    ¸½¼ÓÊı¾İ(»òÍ·Êı¾İ)
--- @param [in] txt[string]      ÕıÊ½ÎÄ±¾Êı¾İ
+-- @param [in] extra[string]    é™„åŠ æ•°æ®(æˆ–å¤´æ•°æ®)
+-- @param [in] txt[string]      æ­£å¼æ–‡æœ¬æ•°æ®
 -- @return 0
 local on_receiver = function (name, protocol, sequence, uid, extra, txt)
 	--print('smcfw on_receiver', name, protocol, sequence, uid)
@@ -117,9 +117,9 @@ local on_receiver = function (name, protocol, sequence, uid, extra, txt)
 end
 
 
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] err[string]      ´íÎó×Ö·û´®
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] err[string]      é”™è¯¯å­—ç¬¦ä¸²
 -- @return 0
 local on_disconnect = function (name, protocol, err)
 	print('smcfw on_disconnect', name, protocol, err)

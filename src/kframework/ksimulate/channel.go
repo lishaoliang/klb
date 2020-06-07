@@ -1,6 +1,10 @@
 package ksimulate
 
 import (
+	"io/ioutil"
+	"os"
+	"strings"
+
 	"github.com/lishaoliang/klb/src/kfile"
 	"github.com/lishaoliang/klb/src/knet/kflv/kflvreader"
 	"github.com/lishaoliang/klb/src/knet/kmnp"
@@ -8,13 +12,14 @@ import (
 )
 
 type channel struct {
-	id uint32
+	path string
+	id   uint32
 
-	v1  kfile.Reader
-	tV1 int64
+	timeOpen int64
+	files    []string
 
-	v2  kfile.Reader
-	tV2 int64
+	reader kfile.Reader
+	last   int64
 }
 
 func openChnn(id uint32) *channel {
@@ -22,85 +27,127 @@ func openChnn(id uint32) *channel {
 
 	m.id = id
 
-	m.v1, _ = kflvreader.Open("./111.flv")
-	m.v2, _ = kflvreader.Open("./111.flv")
-
-	//md, d, _ := m.v1.ReadNext()
-
-	//fmt.Println("**", md.Time, md.Dtype, d[0:kutil.Min(32, len(d))])
-
 	return &m
 }
 
-func (m *channel) Close() {
-	if nil != m.v2 {
-		m.v2.Close()
-		m.v2 = nil
+func (m *channel) SetPath(path string) {
+	m.path = path
+}
+
+func (m *channel) getNextFile() string {
+	var files []string
+
+	if nil == m.files {
+		m.files, _ = getAllFiles(m.path)
+		//m.files = append(files, "aaa.flv")
 	}
 
-	if nil != m.v1 {
-		m.v1.Close()
-		m.v1 = nil
+	if 0 < len(m.files) {
+		path := m.files[0]
+		m.files = append(files, m.files[1:]...)
+		//fmt.Println("files:", m.files)
+
+		return path
+	}
+
+	return ""
+}
+
+func (m *channel) tryOpen(now int64) bool {
+
+	if kutil.SubAbsI64(now, m.timeOpen) < int64(1000000)*180 {
+		return false
+	}
+
+	if nil != m.reader {
+		m.reader.Close()
+		m.reader = nil
+	}
+
+	path := m.getNextFile()
+	if "" != path {
+		m.reader, _ = kflvreader.Open(path)
+		//fmt.Println("Open", path)
+	}
+
+	if nil != m.reader {
+		m.timeOpen = now - int64(1000000)*180
+	} else {
+		m.timeOpen = now
+	}
+
+	return (nil != m.reader)
+}
+
+func (m *channel) Close() {
+	if nil != m.reader {
+		m.reader.Close()
+		m.reader = nil
 	}
 }
 
 func (m *channel) OnTimer(now int64) {
-	m.onTimerV1(now)
-	m.onTimerV2(now)
+	for {
+		if nil == m.reader {
+			if !m.tryOpen(now) {
+				break
+			}
+		}
+
+		var md kmnp.MnpMedia
+		var d []byte
+		var err error
+
+		md, d, err = m.reader.ReadNext()
+		if nil != err {
+			m.reader.Close()
+			m.reader = nil
+			continue
+		}
+
+		if kmnp.MnpDtypeNil != md.Dtype {
+			kutil.Assert(0 < len(d))
+
+			md.Chnn = m.id
+			md.Sidx = kmnp.MnpSidxV1
+			md.Time = now
+
+			pushStream(md, d)
+		}
+
+		break
+	}
 }
 
-func (m *channel) onTimerV1(now int64) {
-	if nil == m.v1 {
-		return
+func getAllFiles(dirPath string) (files []string, err error) {
+	var dirs []string
+	dir, err := ioutil.ReadDir(dirPath)
+	if err != nil {
+		return nil, err
 	}
 
-	var md kmnp.MnpMedia
-	var d []byte
-	var err error
+	pathSep := string(os.PathSeparator)
 
-	md, d, err = m.v1.ReadNext()
-	if nil != err {
-		m.v1.Reset()
-		md, d, _ = m.v1.ReadNext()
+	for _, fi := range dir {
+		if fi.IsDir() { // 目录, 递归遍历
+			dirs = append(dirs, dirPath+pathSep+fi.Name())
+			getAllFiles(dirPath + pathSep + fi.Name())
+		} else {
+			// 过滤指定格式
+			ok := strings.HasSuffix(fi.Name(), ".flv")
+			if ok {
+				files = append(files, dirPath+pathSep+fi.Name())
+			}
+		}
 	}
 
-	if kmnp.MnpDtypeNil != md.Dtype {
-		kutil.Assert(0 < len(d))
-
-		md.Chnn = m.id
-		md.Sidx = kmnp.MnpSidxV1
-		md.Time = now
-
-		pushStream(md, d)
+	// 读取子目录下文件
+	for _, table := range dirs {
+		temp, _ := getAllFiles(table)
+		for _, temp1 := range temp {
+			files = append(files, temp1)
+		}
 	}
 
-	m.tV1 = now
-}
-
-func (m *channel) onTimerV2(now int64) {
-	if nil == m.v2 {
-		return
-	}
-
-	var md kmnp.MnpMedia
-	var d []byte
-	var err error
-
-	md, d, err = m.v2.ReadNext()
-	if nil != err {
-		m.v2.Reset()
-		md, d, _ = m.v2.ReadNext()
-	}
-
-	if kmnp.MnpDtypeNil != md.Dtype {
-		kutil.Assert(0 < len(d))
-
-		md.Chnn = m.id
-		md.Sidx = kmnp.MnpSidxV2
-		md.Time = now
-
-		pushStream(md, d)
-	}
-
-	m.tV2 = now
+	return files, nil
 }

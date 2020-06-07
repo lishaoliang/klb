@@ -14,7 +14,7 @@
             <div id="streamURL">
                 <div class="url-input">
                     <label for="sURL">Stream URL:</label>
-                    <input id="sURL" type="text" value="/httpflv/flv" />
+                    <input id="sURL" type="text" value="/stream/wsflv/chnn0/sidx1" />
                     <button onclick="switch_mds()">Switch to MediaDataSource</button>
                 </div>
                 <div class="options">
@@ -77,9 +77,8 @@
                 var mediaDataSource = {
                     type: 'flv',
                     isLive : 'true',
-                    //url : '/httpflv'
-                    //url : 'ws://' + window.location.hostname + ':' + window.location.port + '/wsflv/flv'
-                    url : 'http://' + window.location.hostname + ':' + window.location.port + '/httpflv/flv'
+                    url : 'ws://' + window.location.hostname + ':' + window.location.port + '/stream/wsflv/chnn0/sidx1'
+                    //url : 'http://' + window.location.hostname + ':' + window.location.port + '/stream/httpflv/chnn0/sidx1'
                 };
 
                 //for (i = 0; i < checkBoxFields.length; i++) {

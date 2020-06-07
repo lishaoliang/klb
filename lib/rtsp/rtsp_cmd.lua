@@ -1,7 +1,7 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief rtsp commond
--- @author ÀîÉÜÁ¼
+-- @author æç»è‰¯
 --]]
 local table = require("table")
 local string = require("string")
@@ -15,7 +15,7 @@ local user_server = 'KLB Sever (v2020)'
 
 
 ------------------------------------------------------------------------------
--- ÃüÁî
+-- å‘½ä»¤
 
 
 rtsp_cmd.OPTIONS = 'OPTIONS'
@@ -32,30 +32,30 @@ rtsp_cmd.GET_PARAMETER = 'GET_PARAMETER'
 -- Server
 
 
--- @brief ÉèÖÃ'User-Agent'×Ö·û´®
--- @param [in] str[string]     'User-Agent'×Ö·û´®
--- @return ÎŞ
+-- @brief è®¾ç½®'User-Agent'å­—ç¬¦ä¸²
+-- @param [in] str[string]     'User-Agent'å­—ç¬¦ä¸²
+-- @return æ— 
 rtsp_cmd.set_user_agent = function (str)
 	user_agent = str
 end
 
 
--- @brief ÉèÖÃ'Server'×Ö·û´®
--- @param [in] str[string]     'Server'×Ö·û´®
--- @return ÎŞ
+-- @brief è®¾ç½®'Server'å­—ç¬¦ä¸²
+-- @param [in] str[string]     'Server'å­—ç¬¦ä¸²
+-- @return æ— 
 rtsp_cmd.set_server = function (str)
 	user_server = str
 end
 
 
 ------------------------------------------------------------------------------
--- ´ò°üÇëÇó
+-- æ‰“åŒ…è¯·æ±‚
 
 
--- @brief ´ò°üÇëÇó: 'OPTIONS'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] path[string]    ÇëÇóÂ·¾¶: '\xxx'
--- @return [string] ´ò°üºÃµÄÇëÇó´®
+-- @brief æ‰“åŒ…è¯·æ±‚: 'OPTIONS'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] path[string]    è¯·æ±‚è·¯å¾„: '\xxx'
+-- @return [string] æ‰“åŒ…å¥½çš„è¯·æ±‚ä¸²
 rtsp_cmd.pack_req_options = function (cseq, path)
 	local t = {}
 	
@@ -68,10 +68,10 @@ rtsp_cmd.pack_req_options = function (cseq, path)
 end
 
 
--- @brief ´ò°üÇëÇó: 'DESCRIBE'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] path[string]    ÇëÇóÂ·¾¶: '\xxx'
--- @return [string] ´ò°üºÃµÄÇëÇó´®
+-- @brief æ‰“åŒ…è¯·æ±‚: 'DESCRIBE'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] path[string]    è¯·æ±‚è·¯å¾„: '\xxx'
+-- @return [string] æ‰“åŒ…å¥½çš„è¯·æ±‚ä¸²
 rtsp_cmd.pack_req_describe = function (cseq, path)
 	local t = {}
 	
@@ -85,12 +85,12 @@ rtsp_cmd.pack_req_describe = function (cseq, path)
 end
 
 
--- @brief ´ò°üÇëÇó: 'SETUP'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] path[string]    ÇëÇóÂ·¾¶: '\xxx'
--- @param [in] session[string] »á»°×Ö·û´®
--- @return [string] ´ò°üºÃµÄÇëÇó´®
--- @note  TCP·½Ê½
+-- @brief æ‰“åŒ…è¯·æ±‚: 'SETUP'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] path[string]    è¯·æ±‚è·¯å¾„: '\xxx'
+-- @param [in] session[string] ä¼šè¯å­—ç¬¦ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„è¯·æ±‚ä¸²
+-- @note  TCPæ–¹å¼
 rtsp_cmd.pack_req_setup_tcp = function (cseq, path, session)
 	local t = {}
 	
@@ -109,12 +109,12 @@ rtsp_cmd.pack_req_setup_tcp = function (cseq, path, session)
 end
 
 
--- @brief ´ò°üÇëÇó: 'SETUP'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] path[string]    ÇëÇóÂ·¾¶: '\xxx'
--- @param [in] session[string] »á»°×Ö·û´®
--- @return [string] ´ò°üºÃµÄÇëÇó´®
--- @note  UDP·½Ê½
+-- @brief æ‰“åŒ…è¯·æ±‚: 'SETUP'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] path[string]    è¯·æ±‚è·¯å¾„: '\xxx'
+-- @param [in] session[string] ä¼šè¯å­—ç¬¦ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„è¯·æ±‚ä¸²
+-- @note  UDPæ–¹å¼
 rtsp_cmd.pack_req_setup_udp = function (cseq, path, session)
 	local t = {}
 	
@@ -133,11 +133,11 @@ rtsp_cmd.pack_req_setup_udp = function (cseq, path, session)
 end
 
 
--- @brief ´ò°üÇëÇó: 'PLAY'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] path[string]    ÇëÇóÂ·¾¶: '\xxx'
--- @param [in] session[string] »á»°×Ö·û´®
--- @return [string] ´ò°üºÃµÄÇëÇó´®
+-- @brief æ‰“åŒ…è¯·æ±‚: 'PLAY'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] path[string]    è¯·æ±‚è·¯å¾„: '\xxx'
+-- @param [in] session[string] ä¼šè¯å­—ç¬¦ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„è¯·æ±‚ä¸²
 rtsp_cmd.pack_req_play = function (cseq, path, session)
 	local t = {}
 	
@@ -157,12 +157,12 @@ end
 
 
 ------------------------------------------------------------------------------
--- ´ò°ü»Ø¸´
+-- æ‰“åŒ…å›å¤
 
 
--- @brief ´ò°ü»Ø¸´: 'OPTIONS'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
+-- @brief æ‰“åŒ…å›å¤: 'OPTIONS'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
 rtsp_cmd.pack_res_options = function (cseq)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -176,11 +176,11 @@ rtsp_cmd.pack_res_options = function (cseq)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'DESCRIBE'
--- @param [in] cseq[number]	     ĞòÁĞºÅ
--- @param [in] base_path[string] »ù´¡Â·¾¶: '\xxx'
--- @param [in] sdp[string]       SDP×Ö·û´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
+-- @brief æ‰“åŒ…å›å¤: 'DESCRIBE'
+-- @param [in] cseq[number]	     åºåˆ—å·
+-- @param [in] base_path[string] åŸºç¡€è·¯å¾„: '\xxx'
+-- @param [in] sdp[string]       SDPå­—ç¬¦ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
 rtsp_cmd.pack_res_describe = function (cseq, base_path, sdp)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -192,18 +192,18 @@ rtsp_cmd.pack_res_describe = function (cseq, base_path, sdp)
 	table.insert(t, string.format('Content-Length: %d\r\n', string.len(sdp)))
 	table.insert(t, '\r\n')
 
-	-- sdp×Ö·û´®
+	-- sdpå­—ç¬¦ä¸²
 	--table.insert(t, sdp)
 	
 	return table.concat(t)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'SETUP'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] session[string] »á»°´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
--- @note  TCP·½Ê½
+-- @brief æ‰“åŒ…å›å¤: 'SETUP'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] session[string] ä¼šè¯ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
+-- @note  TCPæ–¹å¼
 rtsp_cmd.pack_res_setup_tcp = function (cseq, session)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -219,11 +219,11 @@ rtsp_cmd.pack_res_setup_tcp = function (cseq, session)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'SETUP'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] session[string] »á»°´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
--- @note  UDP·½Ê½
+-- @brief æ‰“åŒ…å›å¤: 'SETUP'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] session[string] ä¼šè¯ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
+-- @note  UDPæ–¹å¼
 rtsp_cmd.pack_res_setup_udp = function (cseq, session)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -239,10 +239,10 @@ rtsp_cmd.pack_res_setup_udp = function (cseq, session)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'PLAY'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] session[string] »á»°´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
+-- @brief æ‰“åŒ…å›å¤: 'PLAY'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] session[string] ä¼šè¯ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
 rtsp_cmd.pack_res_play = function (cseq, session)	
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -258,10 +258,10 @@ rtsp_cmd.pack_res_play = function (cseq, session)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'TEARDOWN'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] session[string] »á»°´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
+-- @brief æ‰“åŒ…å›å¤: 'TEARDOWN'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] session[string] ä¼šè¯ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
 rtsp_cmd.pack_res_teardown = function (cseq, session)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -276,10 +276,10 @@ rtsp_cmd.pack_res_teardown = function (cseq, session)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'PAUSE'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] session[string] »á»°´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
+-- @brief æ‰“åŒ…å›å¤: 'PAUSE'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] session[string] ä¼šè¯ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
 rtsp_cmd.pack_res_pause = function (cseq, session)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')
@@ -294,10 +294,10 @@ rtsp_cmd.pack_res_pause = function (cseq, session)
 end
 
 
--- @brief ´ò°ü»Ø¸´: 'GET_PARAMETER'
--- @param [in] cseq[number]	   ĞòÁĞºÅ
--- @param [in] session[string] »á»°´®
--- @return [string] ´ò°üºÃµÄ»Ø¸´´®
+-- @brief æ‰“åŒ…å›å¤: 'GET_PARAMETER'
+-- @param [in] cseq[number]	   åºåˆ—å·
+-- @param [in] session[string] ä¼šè¯ä¸²
+-- @return [string] æ‰“åŒ…å¥½çš„å›å¤ä¸²
 rtsp_cmd.pack_res_get_parameter = function (cseq, session)
 	local t = {}
 	table.insert(t, 'RTSP/1.0 200 OK\r\n')

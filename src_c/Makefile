@@ -116,7 +116,7 @@ clean:
 	$(RM) $(MY_LIB_SO_OBJS)
 	$(RM) $(MY_TARGET_EXE)
 	$(RM) $(MY_TARGET_A)
-	$(RM) $(MY_TARGET_SO)
+#	$(RM) $(MY_TARGET_SO)
 	@echo "+++++++++++++++++++++++++"
 
 
@@ -129,6 +129,6 @@ define my_tip
 	@echo "+ MY_CFLAGS = $(MY_CFLAGS)"
 	@echo "+ MY_TARGET_EXE = $(MY_TARGET_EXE)"
 	@echo "+ MY_TARGET_A = $(MY_TARGET_A)"
-	@echo "+ MY_TARGET_SO = $(MY_TARGET_SO)"
+#	@echo "+ MY_TARGET_SO = $(MY_TARGET_SO)"
 	@echo "++++++++++++++++++++++"
 endef

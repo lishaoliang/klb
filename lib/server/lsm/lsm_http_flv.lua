@@ -1,7 +1,7 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief lsm http flv
--- @author ÀîÉÜÁ¼
+-- @author æç»è‰¯
 --]]
 local cjson = require("cjson.safe")
 local kg_lsmfw = require("kg_lsmfw")
@@ -22,9 +22,9 @@ local pack_200 = function ()
 	
 	table.insert(t, 'HTTP/1.1 200 OK\r\n')
 	table.insert(t, string.format('Server: %s\r\n', 'KLB'))
-	table.insert(t, 'Connection: close\r\n')				-- ¶ÌÁ¬½Ó¹Ø±Õ
-	table.insert(t, 'Content-Type: video/x-flv\r\n')		-- Êı¾İÀàĞÍ
-	table.insert(t, 'Access-Control-Allow-Origin: *\r\n')	-- Ğí¿É¿çÓòÇëÇó
+	table.insert(t, 'Connection: close\r\n')				-- çŸ­è¿æ¥å…³é—­
+	table.insert(t, 'Content-Type: video/x-flv\r\n')		-- æ•°æ®ç±»å‹
+	table.insert(t, 'Access-Control-Allow-Origin: *\r\n')	-- è®¸å¯è·¨åŸŸè¯·æ±‚
 	table.insert(t, '\r\n')
 	
 	return table.concat(t), ''

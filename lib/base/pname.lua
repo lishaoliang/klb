@@ -1,20 +1,20 @@
-
+я╗┐
 -- from: klb/src/knet/knet.go
 
 local pname = {}
 
 pname.UNKOWN = 'UNKOWN'		-- unkown
-pname.MNP = 'MNP'			-- mnp ╨н╥щ
-pname.MNPS = 'MNPS'			-- mnp ╨н╥щ: TLS
-pname.RTMP = 'RTMP'			-- rtmp ╨н╥щ
-pname.RTSP = 'RTSP'			-- rtsp ╨н╥щ
-pname.HTTP = 'HTTP'			-- http ╨н╥щ
-pname.HTTPS = 'HTTPS'		-- https ╨н╥щ: TLS
-pname.HTTPMNP = 'HTTP-MNP'	-- http mnp ╨н╥щ
-pname.HTTPFLV = 'HTTP-FLV'	-- http flv ╨н╥щ
-pname.WS = 'WS'				-- websocket ╨н╥щ
-pname.WSS = 'WSS'			-- websocket ╨н╥щ: TLS
-pname.WSMNP = 'WS-MNP'		-- websocket mnp ╨н╥щ
-pname.WSFLV = 'WS-FLV'		-- websocket flv ╨н╥щ
+pname.MNP = 'MNP'			-- mnp хНПшоо
+pname.MNPS = 'MNPS'			-- mnp хНПшоо: TLS
+pname.RTMP = 'RTMP'			-- rtmp хНПшоо
+pname.RTSP = 'RTSP'			-- rtsp хНПшоо
+pname.HTTP = 'HTTP'			-- http хНПшоо
+pname.HTTPS = 'HTTPS'		-- https хНПшоо: TLS
+pname.HTTPMNP = 'HTTP-MNP'	-- http mnp хНПшоо
+pname.HTTPFLV = 'HTTP-FLV'	-- http flv хНПшоо
+pname.WS = 'WS'				-- websocket хНПшоо
+pname.WSS = 'WSS'			-- websocket хНПшоо: TLS
+pname.WSMNP = 'WS-MNP'		-- websocket mnp хНПшоо
+pname.WSFLV = 'WS-FLV'		-- websocket flv хНПшоо
 
 return pname

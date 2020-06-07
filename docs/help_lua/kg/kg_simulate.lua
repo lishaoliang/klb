@@ -1,56 +1,56 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
--- @brief   Ä£ÄâÉè±¸Ó²¼ş
+-- @brief   æ¨¡æ‹Ÿè®¾å¤‡ç¡¬ä»¶
 --   \n kg simulate
--- @author  ÀîÉÜÁ¼
+-- @author  æç»è‰¯
 -- @version 0.1
 --]]
 
 local kg_simulate = {}
 
 
--- @brief ³õÊ¼»¯Ä£¿é
--- @param [in] cfg[string]	   json¸ñÊ½ÅäÖÃ²ÎÊı
--- @return [boolean] true.³É¹¦; false.Ê§°Ü
---   \n [string] error  ´íÎó×Ö·û´®
+-- @brief åˆå§‹åŒ–æ¨¡å—
+-- @param [in] cfg[string]	   jsonæ ¼å¼é…ç½®å‚æ•°
+-- @return [boolean] true.æˆåŠŸ; false.å¤±è´¥
+--   \n [string] error  é”™è¯¯å­—ç¬¦ä¸²
 kg_simulate.init = function (cfg)
 	return true, ''
 	--return false, 'error'
 end
 
 
--- @brief ÍË³öÄ£¿é
--- @return ÎŞ
+-- @brief é€€å‡ºæ¨¡å—
+-- @return æ— 
 kg_simulate.quit = function ()
 
 end
 
 
--- @brief Æô¶¯Ä£¿é
--- @return [boolean] true.³É¹¦; false.Ê§°Ü
---   \n [string] error  ´íÎó×Ö·û´®
+-- @brief å¯åŠ¨æ¨¡å—
+-- @return [boolean] true.æˆåŠŸ; false.å¤±è´¥
+--   \n [string] error  é”™è¯¯å­—ç¬¦ä¸²
 kg_simulate.start = function ()
 	return true, ''
 	--return false, 'error'
 end
 
 
--- @brief Í£Ö¹Ä£¿é
--- @return ÎŞ
+-- @brief åœæ­¢æ¨¡å—
+-- @return æ— 
 kg_simulate.stop = function ()
 
 end
 
 
--- @brief ÉèÖÃÃ½ÌåÊı¾İ½ÓÊÕ´¦Àíº¯Êı
--- @param [in] receiver[userdata(lightuserdata,function)]    Êı¾İ½ÓÊÕ´¦Àíº¯Êı(Cº¯Êı)
--- @return ÎŞ
--- @note ½ÓÊÕCº¯ÊıÔ­ĞÍ: 
--- @brief ÂëÁ÷»Øµ÷º¯Êı¶¨Òå
--- @param [in] chnn        Í¨µÀ
--- @param [in] sidx        Á÷ĞòºÅ: klb_mnp_sidx_e
--- @param [in] *p_stream   ÂëÁ÷Êı¾İ
--- @return int 0.³É¹¦; ·Ç0.Ê§°Ü
+-- @brief è®¾ç½®åª’ä½“æ•°æ®æ¥æ”¶å¤„ç†å‡½æ•°
+-- @param [in] receiver[userdata(lightuserdata,function)]    æ•°æ®æ¥æ”¶å¤„ç†å‡½æ•°(Cå‡½æ•°)
+-- @return æ— 
+-- @note æ¥æ”¶Cå‡½æ•°åŸå‹: 
+-- @brief ç æµå›è°ƒå‡½æ•°å®šä¹‰
+-- @param [in] chnn        é€šé“
+-- @param [in] sidx        æµåºå·: klb_mnp_sidx_e
+-- @param [in] *p_stream   ç æµæ•°æ®
+-- @return int 0.æˆåŠŸ; é0.å¤±è´¥
 -- typedef int(*klb_mnp_stream_cb)(int chnn, int sidx, klb_mnp_stream_t* p_stream);
 -- @see klb_mnp_stream.h
 kg_simulate.set_stream_receiver = function (receiver)
@@ -58,14 +58,14 @@ kg_simulate.set_stream_receiver = function (receiver)
 end
 
 
--- @brief ¿ØÖÆÃüÁî: ÉèÖÃµÈ
--- @param [in] cmd[string]      ÃüÁîÃû³Æ
--- @param [in] chnn[number]     Í¨µÀ
--- @param [in] sidx[number]     Á÷ĞòºÅ
--- @param [in] lparam[string]   ²ÎÊı1
--- @param [in] wparam[string]   ²ÎÊı2
--- @return [number] 0.³É¹¦; ·Ç0.´íÎóÂë
---   \n [string] error  ´íÎó×Ö·û´®
+-- @brief æ§åˆ¶å‘½ä»¤: è®¾ç½®ç­‰
+-- @param [in] cmd[string]      å‘½ä»¤åç§°
+-- @param [in] chnn[number]     é€šé“
+-- @param [in] sidx[number]     æµåºå·
+-- @param [in] lparam[string]   å‚æ•°1
+-- @param [in] wparam[string]   å‚æ•°2
+-- @return [number] 0.æˆåŠŸ; é0.é”™è¯¯ç 
+--   \n [string] error  é”™è¯¯å­—ç¬¦ä¸²
 kg_simulate.command = function (cmd, chnn, sidx, lparam, wparam)
 	return 0, ''
 end

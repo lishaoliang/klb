@@ -1,4 +1,4 @@
---[[
+﻿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @file    kg_thread.lua
 -- @brief   go thread

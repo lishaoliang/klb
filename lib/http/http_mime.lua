@@ -1,4 +1,4 @@
-local stringex = require("base.stringex")
+锘縧ocal stringex = require("base.stringex")
 
 local my_mime = {
 	avi = 'video/avi',
@@ -111,7 +111,7 @@ local http_mime = function (filename)
 		end
 	end
 	
-	return 'application/octet-stream' -- 二进制流,未知类型
+	return 'application/octet-stream' -- 浜岃繘鍒舵祦,鏈煡绫诲瀷
 end
 
 return http_mime

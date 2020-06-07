@@ -1,38 +1,38 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
--- @brief   Á÷Ã½Ìå¿Í»§¶Ë
+-- @brief   æµåª’ä½“å®¢æˆ·ç«¯
 --   \n kg stream media client framework
--- @author  ÀîÉÜÁ¼
+-- @author  æç»è‰¯
 -- @version 0.1
 --]]
 
 local kg_smcfw = {}
 
 
--- @brief ³õÊ¼»¯Ä£¿é
--- @param [in] cfg[string]	   json¸ñÊ½ÅäÖÃ²ÎÊı
--- @return [boolean] true.³É¹¦; false.Ê§°Ü
---   \n [string] error  ´íÎó×Ö·û´®
+-- @brief åˆå§‹åŒ–æ¨¡å—
+-- @param [in] cfg[string]	   jsonæ ¼å¼é…ç½®å‚æ•°
+-- @return [boolean] true.æˆåŠŸ; false.å¤±è´¥
+--   \n [string] error  é”™è¯¯å­—ç¬¦ä¸²
 kg_smcfw.init = function (cfg)
 	return true, ''
 	--return false, 'error'
 end
 
 
--- @brief ÍË³öÄ£¿é
--- @return ÎŞ
+-- @brief é€€å‡ºæ¨¡å—
+-- @return æ— 
 kg_smcfw.quit = function ()
 
 end
 
 
--- @brief Æô¶¯Ä£¿é: ¼ÓÔØÆô¶¯½Å±¾
--- @param [in] name[string]	   Ïß³ÌÃû³Æ
--- @param [in] entry[string]   ¼ÓÔØÈë¿Ú½Å±¾; eg.'xxx.lua'
--- @param [in] preload[string] Ô¤¼ÓÔØ¿âº¯ÊıÃû³Æ; ¾ö¶¨Ïß³Ì´´½¨ºóÊ¹ÓÃÄÇĞ©Ô¤¼ÓÔØ¿â
--- @param [in] loader[string]  Lua½Å±¾¼ÓÔØº¯Êı; ´Ó×Ô¶¨Òåº¯Êı¼ÓÔØLua½Å±¾; Ä¬ÈÏÊ¹ÓÃfopen´ÓÎÄ¼ş¼ÓÔØ
--- @return [boolean] true.³É¹¦; false.Ê§°Ü
---   \n [string] error  ´íÎó×Ö·û´®
+-- @brief å¯åŠ¨æ¨¡å—: åŠ è½½å¯åŠ¨è„šæœ¬
+-- @param [in] name[string]	   çº¿ç¨‹åç§°
+-- @param [in] entry[string]   åŠ è½½å…¥å£è„šæœ¬; eg.'xxx.lua'
+-- @param [in] preload[string] é¢„åŠ è½½åº“å‡½æ•°åç§°; å†³å®šçº¿ç¨‹åˆ›å»ºåä½¿ç”¨é‚£äº›é¢„åŠ è½½åº“
+-- @param [in] loader[string]  Luaè„šæœ¬åŠ è½½å‡½æ•°; ä»è‡ªå®šä¹‰å‡½æ•°åŠ è½½Luaè„šæœ¬; é»˜è®¤ä½¿ç”¨fopenä»æ–‡ä»¶åŠ è½½
+-- @return [boolean] true.æˆåŠŸ; false.å¤±è´¥
+--   \n [string] error  é”™è¯¯å­—ç¬¦ä¸²
 -- @note see kg_thread.create
 kg_smcfw.start = function (name, entry, preload, loader)
 	return true, ''
@@ -40,84 +40,84 @@ kg_smcfw.start = function (name, entry, preload, loader)
 end
 
 
--- @brief Í£Ö¹Ä£¿é
--- @return ÎŞ
+-- @brief åœæ­¢æ¨¡å—
+-- @return æ— 
 kg_smcfw.stop = function ()
 
 end
 
 
--- @brief ÉèÖÃĞÂÁ¬½Ó¼ÓÈëµÄÇé¿ö: Õı³£¼ÓÈë, ¼ÓÈëÊ§°Ü
--- @param [in] newconn[function]    ´¦Àíº¯Êı
--- @return ÎŞ
--- @note ½ÓÊÕº¯ÊıÔ­ĞÍ: 
+-- @brief è®¾ç½®æ–°è¿æ¥åŠ å…¥çš„æƒ…å†µ: æ­£å¸¸åŠ å…¥, åŠ å…¥å¤±è´¥
+-- @param [in] newconn[function]    å¤„ç†å‡½æ•°
+-- @return æ— 
+-- @note æ¥æ”¶å‡½æ•°åŸå‹: 
 -- local newconn = function (name, protocol, ok, err)
 --    return 0
 -- end
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] ok[boolean]      true.³É¹¦; false.Ê§°Ü
--- @param [in] err[string]      ´íÎó×Ö·û´®
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] ok[boolean]      true.æˆåŠŸ; false.å¤±è´¥
+-- @param [in] err[string]      é”™è¯¯å­—ç¬¦ä¸²
 -- @return 0
 kg_smcfw.set_newconn = function (newconn)
 
 end
 
 
--- @brief ÉèÖÃtxtÊı¾İ½ÓÊÕ´¦Àíº¯Êı
--- @param [in] receiver[function]    Êı¾İ½ÓÊÕ´¦Àíº¯Êı
--- @return ÎŞ
--- @note ½ÓÊÕº¯ÊıÔ­ĞÍ: 
+-- @brief è®¾ç½®txtæ•°æ®æ¥æ”¶å¤„ç†å‡½æ•°
+-- @param [in] receiver[function]    æ•°æ®æ¥æ”¶å¤„ç†å‡½æ•°
+-- @return æ— 
+-- @note æ¥æ”¶å‡½æ•°åŸå‹: 
 -- local receiver = function (name, protocol, sequence, uid, extra, txt)
 --    return 0
 -- end
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] sequence[number] ĞòÁĞºÅ: [0,2^32)
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] sequence[number] åºåˆ—å·: [0,2^32)
 -- @param [in] uid[number]      UID: [0,2^32)
--- @param [in] extra[string]    ¸½¼ÓÊı¾İ(»òÍ·Êı¾İ)
--- @param [in] txt[string]      ÕıÊ½ÎÄ±¾Êı¾İ
+-- @param [in] extra[string]    é™„åŠ æ•°æ®(æˆ–å¤´æ•°æ®)
+-- @param [in] txt[string]      æ­£å¼æ–‡æœ¬æ•°æ®
 -- @return 0
 kg_smcfw.set_receiver = function (receiver)
 
 end
 
 
--- @brief ÉèÖÃÁ¬½ÓÒì³£µÈ¶Ï¿ª´¦Àíº¯Êı
--- @param [in] disconnect[function]   Òì³£µÈ¶Ï¿ª´¦Àíº¯Êı
--- @return ÎŞ
--- @note ´¦Àíº¯ÊıÔ­ĞÍ: 
+-- @brief è®¾ç½®è¿æ¥å¼‚å¸¸ç­‰æ–­å¼€å¤„ç†å‡½æ•°
+-- @param [in] disconnect[function]   å¼‚å¸¸ç­‰æ–­å¼€å¤„ç†å‡½æ•°
+-- @return æ— 
+-- @note å¤„ç†å‡½æ•°åŸå‹: 
 -- local disconnect = function (name, protocol, err)
 --    return 0
 -- end
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] err[string]      ´íÎó×Ö·û´®
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] err[string]      é”™è¯¯å­—ç¬¦ä¸²
 -- @return 0
 kg_smcfw.set_disconnect = function (disconnect)
 
 end
 
 
--- @brief ·¢ÆğÁ¬½Ó
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] network[string]  ÍøÂçÀàĞÍ: 'tcp'
--- @param [in] address[string]  ÍøÂçµØÖ·: ':8000'
--- @return ÎŞ
+-- @brief å‘èµ·è¿æ¥
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] network[string]  ç½‘ç»œç±»å‹: 'tcp'
+-- @param [in] address[string]  ç½‘ç»œåœ°å€: ':8000'
+-- @return æ— 
 kg_smcfw.dial = function (name, protocol, network, address)
 
 end
 
 
--- @brief ·¢ËÍÎÄ±¾Êı¾İ
--- @param [in] name[string]	    Á¬½ÓÃû³Æ
--- @param [in] protocol[string] Ğ­ÒéÃû³Æ
--- @param [in] sequence[number] ĞòÁĞºÅ: [0,2^32)
+-- @brief å‘é€æ–‡æœ¬æ•°æ®
+-- @param [in] name[string]	    è¿æ¥åç§°
+-- @param [in] protocol[string] åè®®åç§°
+-- @param [in] sequence[number] åºåˆ—å·: [0,2^32)
 -- @param [in] uid[number]      UID: [0,2^32)
--- @param [in] extra[string]    ¸½¼ÓÊı¾İ(»òÍ·Êı¾İ)
--- @param [in] txt[string]      ÕıÊ½ÎÄ±¾Êı¾İ
--- @return [boolean] true.³É¹¦; false.Ê§°Ü
+-- @param [in] extra[string]    é™„åŠ æ•°æ®(æˆ–å¤´æ•°æ®)
+-- @param [in] txt[string]      æ­£å¼æ–‡æœ¬æ•°æ®
+-- @return [boolean] true.æˆåŠŸ; false.å¤±è´¥
 kg_smcfw.send_txt = function (name, protocol, sequence, uid, extra, txt)
 	return true
 	--return false

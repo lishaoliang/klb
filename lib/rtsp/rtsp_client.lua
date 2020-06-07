@@ -1,7 +1,7 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
--- @brief rtsp client ÎÄ±¾½âÎö
--- @author ÀîÉÜÁ¼
+-- @brief rtsp client æ–‡æœ¬è§£æ
+-- @author æç»è‰¯
 --]]
 local table = require("table")
 local string = require("string")
@@ -15,7 +15,7 @@ local parser_frist = function (res, line)
 end
 
 local parser_colon = function (res, line)
-	local k, v = string.match(line, '([^:]+):(.*)') -- Æ¥Åä²ÎÊı
+	local k, v = string.match(line, '([^:]+):(.*)') -- åŒ¹é…å‚æ•°
 	if nil ~= k and nil ~= v then
 		k = trim(k)
 		v = trim(v)
