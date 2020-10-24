@@ -45,6 +45,10 @@ func PackByMnp(parser *PackMnpParser, dst kbuf.KBuf, src kbuf.KBuf) error {
 
 func packFull(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
 
+	if kmnp.MnpDtypeH264 != parser.Media.Dtype {
+		return nil
+	}
+
 	var sps []byte
 	var pps []byte
 	var nalData [][]byte
@@ -127,6 +131,10 @@ func packFull(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
 }
 
 func packBegin(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
+
+	if kmnp.MnpDtypeH264 != parser.Media.Dtype {
+		return nil
+	}
 
 	var sps []byte
 	var pps []byte
@@ -217,6 +225,10 @@ func packBegin(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
 
 func packContinue(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
 
+	if kmnp.MnpDtypeH264 != parser.Media.Dtype {
+		return nil
+	}
+
 	b := dst.Buf()
 	dlen := len(d)
 
@@ -229,6 +241,10 @@ func packContinue(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
 }
 
 func packEnd(parser *PackMnpParser, dst kbuf.KBuf, d []byte) error {
+
+	if kmnp.MnpDtypeH264 != parser.Media.Dtype {
+		return nil
+	}
 
 	b := dst.Buf()
 	dlen := len(d)

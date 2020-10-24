@@ -4,77 +4,101 @@ SHELL = /bin/bash
 PWD = `pwd`
 
 
-# include make param
--include ../make_define
-MY_LIB_PATH = ../$(MY_LIB_NAME)
-MY_BIN_PATH = ../$(MY_LIB_NAME)
-MY_GOPATH = $(PWD)/../../../../../
-MY_MAIN = github.com/lishaoliang/klb/src/main
+OS ?= linux
+ARCH ?= amd64
+TAGS ?= debug normal
+MY_TOOL_CHAIN ?= 
 
 
-# go main
+# "linux", "windows", "darwin", "stm32", "js"
+MY_OS := $(OS)
+
+# "amd64", "386", "arm", "arm64", "wasm"
+MY_ARCH := $(ARCH)
+
+# go编译标签 -tags="debug normal"
+MY_GO_TAGS := -tags="$(TAGS)"
+
+# gcc/cgo静态链接项
+MY_GCC_STATIC := -static
+MY_CGO_STATIC := -ldflags -extldflags=-static
+
+# go main 目录
+MY_GOPATH := $(PWD)/../../../../../
+MY_GO_MAIN := github.com/lishaoliang/klb/src/main
 
 
-# target
+# gcc编译工具链
+CC		:= $(MY_TOOL_CHAIN)gcc
+CXX		:= $(MY_TOOL_CHAIN)g++
+CAR		:= $(MY_TOOL_CHAIN)ar
+CRANLIB	:= $(MY_TOOL_CHAIN)ranlib
+CSTRIP	:= $(MY_TOOL_CHAIN)strip
+MAKE	:= make
+RM		:= -rm
+RM_F	:= -rm -f
+RM_RF	:= -rm -rf
+CP		:= -cp
+CP_F	:= -cp -f
+CP_RF	:= -cp -rf
+
+
+# 编译目标
 MY_TARGET_NAME := klb
-MY_TARGET_EXE := $(MY_BIN_PATH)/$(MY_TARGET_NAME)
-MY_TARGET_A := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).a
-MY_TARGET_SO := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).so
+MY_TARGET_EXE := ../lib/$(MY_TARGET_NAME)
 
-ifeq ($(MY_OS), windows)
-MY_TARGET_NAME := klb
-MY_TARGET_EXE := $(MY_BIN_PATH)/$(MY_TARGET_NAME).exe
-MY_TARGET_A := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).a
-MY_TARGET_SO := $(MY_LIB_PATH)/lib$(MY_TARGET_NAME).dll
+
+# cgo 部分引用的C头文件目录
+MY_CGO_CFLAGS := "
+MY_CGO_CFLAGS += -I $(PWD)/../inc
+MY_CGO_CFLAGS += "
+
+# cgo 部分需要链接的库
+MY_CGO_LDFLAGS := "
+MY_CGO_LDFLAGS += -L $(PWD)/../lib -lklb_c
+ifeq ($(OS), windows)
+MY_CGO_LDFLAGS += -lpthread -lm
+else
+MY_CGO_LDFLAGS += -lpthread -lrt -ldl -lm
 endif
+MY_CGO_LDFLAGS += "
 
-# static libs
-MY_EXE_LIBS = -lklua_go -lklb_c -lpthread -ldl -lm
+# cgo 前置环境
+MY_CGO := CGO_ENABLED=1 CGO_CFLAGS=${MY_CGO_CFLAGS} CGO_LDFLAGS=${MY_CGO_LDFLAGS}
+MY_CGO += GOOS=$(MY_OS) GOARCH=$(MY_ARCH) GOPATH=$(MY_GOPATH)
+MY_CGO += CC=$(CC) CXX=$(CXX)
 
-#MY_GO_TAGS = -tags="debug"
-#MY_GO_TAGS = 
 
-.PHONY: all clean
+.PHONY: all clean strip upx
 
 all: exe
 
 exe: $(MY_TARGET_EXE)
-lib: $(MY_TARGET_A)
-so: $(MY_TARGET_SO)
 
 $(MY_TARGET_EXE):
 	$(my_tip)
-#	$(CC) -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
-	CGO_ENABLED=1 GOOS=$(MY_OS) GOARCH=$(MY_ARCH) GOPATH=$(MY_GOPATH) CC=$(CC) CXX=$(CXX) go build $(MY_GO_TAGS) $(MY_GO_STATIC) -o $@ $(MY_MAIN)
-
-$(MY_TARGET_A):
-	$(my_tip)
-#	$(CAR) rs $(MY_TARGET_A) $(MY_LIB_A_OBJS)
-#	$(CRANLIB) $(MY_TARGET_A)
-	CGO_ENABLED=1 GOOS=$(MY_OS) GOARCH=$(MY_ARCH) GOPATH=$(MY_GOPATH) CC=$(CC) CXX=$(CXX) go build $(MY_GO_TAGS) -buildmode=c-archive -o $@ main
-	$(CC) -o $(MY_TARGET_EXE) ./main.c $(MY_A_PARAMS) $(MY_LIB_MINI) $(MY_EXE_LIBS) $(MY_GCC_STATIC)
-
-$(MY_TARGET_SO):
-	$(my_tip)
-#	$(CC) -shared -fPIC -o $@ $(MY_LIB_SO_OBJS) $(MY_SO_PARAMS) $(CXX_LINK_MINI)
+	${MY_CGO} go build $(MY_GO_TAGS) $(MY_CGO_STATIC) -o $@ $(MY_GO_MAIN)
 
 clean:
 	@echo "++++++ make clean ++++++"
-	@echo "+ MY_DIRS = $(MY_DIRS)"
-	@echo "++ RM = $(RM)"
-	$(RM) $(MY_TARGET_EXE)
-	$(RM) $(MY_TARGET_A)
-	$(RM) $(MY_TARGET_SO)
+	@echo "+ PWD = $(PWD)"
+	@echo "++ RM_F = $(RM_F)"
+	$(RM_F) $(MY_TARGET_EXE)
 	@echo "+++++++++++++++++++++++++"
 
+strip:
+	$(CSTRIP) $(MY_TARGET_EXE)
+
+upx:
+	../upx $(MY_TARGET_EXE)
 
 define my_tip
 	@echo "++++++ make tip ++++++"
+	@echo "+ PWD = $(PWD)"
+	@echo "+ MY_TOOL_CHAIN = $(MY_TOOL_CHAIN)"
 	@echo "+ CC = $(CC)"
 	@echo "+ CXX = $(CXX)"
-	@echo "+ MY_MAIN = $(MY_MAIN)"
+	@echo "+ MY_GO_MAIN = $(MY_GO_MAIN)"
 	@echo "+ MY_TARGET_EXE = $(MY_TARGET_EXE)"
-	@echo "+ MY_TARGET_A = $(MY_TARGET_A)"
-	@echo "+ MY_TARGET_SO = $(MY_TARGET_SO)"
 	@echo "++++++++++++++++++++++"
 endef

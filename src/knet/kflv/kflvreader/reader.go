@@ -26,6 +26,9 @@ type reader struct {
 	sps     []byte            // AVC/SPS
 	pps     []byte            // AVC/PPS
 	avcNalu [][]byte          // AVC的NALU单元
+
+	tagAudio kflv.Audio // Tag audio
+	aacRaw   []byte
 }
 
 func (m *reader) Close() error {
@@ -57,6 +60,7 @@ func (m *reader) ReadNext() (kmnp.MnpMedia, []byte, error) {
 	var data []byte
 
 	bKey := false
+	dtype := 0
 
 	for {
 		err = m.readNextTag()
@@ -83,23 +87,65 @@ func (m *reader) ReadNext() (kmnp.MnpMedia, []byte, error) {
 
 			data = bytes.Join(frame, nil)
 			//fmt.Println("frame", d[0:kutil.Min(128, len(data))])
+			dtype = kmnp.MnpDtypeH264
 
 			m.avcNalu = nil
+			break
+		}
+
+		if nil != m.aacRaw {
+			data = m.aacRaw
+			dtype = kmnp.MnpDtypeAAC
+
+			m.aacRaw = nil
 			break
 		}
 	}
 
 	if nil != data {
+
+		timestamp := ((uint32)(m.tag.TimestampEx) << 24) | (uint32)(m.tag.Timestamp)
+
 		md.Size = uint32(len(data) + kmnp.MnpMediaSize)
-		md.Dtype = kmnp.MnpDtypeH264
+		md.Dtype = uint32(dtype) //kmnp.MnpDtypeH264
 		md.Chnn = 0
 		md.Sidx = kmnp.MnpSidxV1
-		md.Time = int64(m.tag.Timestamp) * 1000
+		md.Time = int64(timestamp) * 1000
 
-		if bKey {
-			md.Vtype = kmnp.MnpVtypeI
-		} else {
-			md.Vtype = kmnp.MnpVtypeP
+		if kmnp.MnpDtypeH264 == md.Dtype {
+			if bKey {
+				md.Vtype = kmnp.MnpVtypeI
+			} else {
+				md.Vtype = kmnp.MnpVtypeP
+			}
+		} else if kmnp.MnpDtypeAAC == md.Dtype {
+
+			// Todo
+
+			if kflv.FlvAudioMono == m.tagAudio.SoundType {
+				md.Tracks = 1
+			} else {
+				md.Tracks = 2
+			}
+
+			if kflv.FlvAudioSamples8Bit == m.tagAudio.SoundSize {
+				md.BitsPerCodedSample = 1
+			} else {
+				md.BitsPerCodedSample = 2
+			}
+
+			switch m.tagAudio.SoundRate {
+			case kflv.FlvAudio5dot5KHZ:
+				md.Samples = 5500
+			case kflv.FlvAudio11KHZ:
+				md.Samples = 11025
+			case kflv.FlvAudio22KHZ:
+				md.Samples = 22050
+			case kflv.FlvAudio44KHZ:
+				md.Samples = 44100
+			default:
+				md.Samples = 44100
+			}
 		}
 	}
 
@@ -181,7 +227,26 @@ func (m *reader) parserTagScript(b []byte) {
 }
 
 func (m *reader) parserTagAudio(b []byte) {
+	var audio kflv.Audio
+	audio.Unpack(b[0:1])
+	b = b[1:]
+	m.tagAudio = audio
 
+	if kflv.FlvAudioAAC == audio.SoundFormat {
+		m.parserTagAudioAAC(b)
+	}
+}
+
+func (m *reader) parserTagAudioAAC(b []byte) {
+	packetType := b[0]
+	b = b[1:]
+
+	if 0 == packetType {
+		// AAC sequence header
+	} else if 1 == packetType {
+		// AAC raw
+		m.aacRaw = b
+	}
 }
 
 func (m *reader) parserTagVideo(b []byte) {

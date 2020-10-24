@@ -21,6 +21,7 @@ import (
 	"github.com/lishaoliang/klb/src/klua"
 	"github.com/lishaoliang/klb/src/klua/kdemo"
 	"github.com/lishaoliang/klb/src/klua/kgcrypto"
+	"github.com/lishaoliang/klb/src/klua/kgctx"
 	"github.com/lishaoliang/klb/src/klua/kgos"
 	"github.com/lishaoliang/klb/src/klua/kgrand"
 	"github.com/lishaoliang/klb/src/klua/kgthread"
@@ -32,10 +33,19 @@ func klua_go_main_openlibs(lua *C.lua_State) C.int {
 
 	l := (*klua.LuaState)(unsafe.Pointer(lua))
 
+	klua.OpenCjson(l, "cjson")
+	klua.OpenCjsonSafe(l, "cjson.safe")
+	klua.OpenLpeg(l, "lpeg")
+	klua.OpenLfs(l, "lfs")
+
 	klua.OpenKos(l, "kos")
 	klua.OpenKtime(l, "ktime")
 	klua.OpenKthread(l, "kthread")
+	klua.OpenKmnpDev(l, "kmnp_dev")
+	klua.OpenKgui(l, "kgui")
+	klua.OpenKwnd(l, "kwnd")
 
+	kgctx.OpenKgCtx(l, "kg_ctx")
 	kgos.OpenKgOs(l, "kg_os")
 	kgtime.OpenKgTime(l, "kg_time")
 	kgrand.OpenKgRand(l, "kg_rand")

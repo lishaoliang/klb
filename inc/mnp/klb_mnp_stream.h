@@ -1,4 +1,15 @@
-﻿#ifndef __KLB_MNP_STREAM_H__
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_mnp_stream.h
+/// @brief   媒体数据流接口接口定义
+/// @author  李绍良
+///  \n https://github.com/lishaoliang/klb
+/// @version 0.1
+/// @history 修改历史
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLB_MNP_STREAM_H__
 #define __KLB_MNP_STREAM_H__
 
 #include "klb_type.h"

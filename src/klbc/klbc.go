@@ -8,8 +8,8 @@
 package klbc
 
 /*
-#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../inc
-#cgo LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -lm
+//#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../inc
+//#cgo LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -lm
 */
 import "C"
 

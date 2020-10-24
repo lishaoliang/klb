@@ -123,7 +123,7 @@ static int klua_pdolibrary(lua_State *L)
     return 0;
 }
 
-int klua_env_dofile(klua_env_t* p_env, char* p_loader)
+int klua_env_dofile(klua_env_t* p_env, const char* p_loader)
 {
     assert(NULL != p_env);
     lua_State* L = p_env->L;
@@ -138,7 +138,7 @@ int klua_env_dofile(klua_env_t* p_env, char* p_loader)
     return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-int klua_env_dolibrary(klua_env_t* p_env, char* p_loader)
+int klua_env_dolibrary(klua_env_t* p_env, const char* p_loader)
 {
     assert(NULL != p_env);
     lua_State* L = p_env->L;

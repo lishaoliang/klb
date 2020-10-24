@@ -10,6 +10,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/lishaoliang/klb/src/knet/kmnp"
 	"github.com/lishaoliang/klb/src/kutil"
 	"github.com/lishaoliang/klb/src/kutil/kbuf"
 	"github.com/lishaoliang/klb/src/kutil/kpool"
@@ -37,6 +38,8 @@ type Conn struct {
 	NetType  string // 网络类型
 	Protocol string // 协议
 	Name     string // 名称
+
+	NeedKeyWrite bool // 写媒体数据是否需要关键帧
 }
 
 // InitConn InitConn
@@ -56,6 +59,8 @@ func InitConn(m *Conn, netType string, conn net.Conn, data []byte, pool kpool.KP
 	m.WriteMdList = list.New()
 
 	m.NetType = netType // SERVE, CLIENT
+
+	m.NeedKeyWrite = true
 }
 
 // Hijack Hijack
@@ -127,11 +132,7 @@ func (m *Conn) Destroy() {
 	for {
 		data := m.GetConnWrite()
 		if nil != data {
-			data.Extra = nil
-			data.Data = nil
-			if nil != data.Buf {
-				data.Buf.UnrefNext()
-			}
+			m.FreeConnWrite(data)
 		} else {
 			break
 		}
@@ -380,6 +381,63 @@ func (m *Conn) Malloc() kbuf.KBuf {
 	return m.Pool.Malloc()
 }
 
+// FreeConnWrite FreeConnWrite
+func (m *Conn) FreeConnWrite(data *ConnWrite) {
+	if nil == data {
+		return
+	}
+
+	data.Extra = nil
+	data.Data = nil
+	if nil != data.Buf {
+		data.Buf.UnrefNext()
+	}
+}
+
+func (m *Conn) isKey(data *ConnWrite) bool {
+	buf := data.Buf
+	if nil == buf {
+		return false
+	}
+
+	d := buf.Data()
+
+	var mnp kmnp.Mnp
+	mnp.Unpack(d)
+
+	d = d[kmnp.MnpHeadSize:]
+
+	if kmnp.MnpOptFull == mnp.Opt || kmnp.MnpOptBegin == mnp.Opt {
+		var media kmnp.MnpMedia
+		media.Unpack(d)
+
+		if kmnp.MnpDtypeH264 == media.Dtype ||
+			kmnp.MnpDtypeH265 == media.Dtype {
+			if kmnp.MnpVtypeI == media.Vtype {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (m *Conn) getConnWriteMedia() *ConnWrite {
+	item := m.WriteMdList.Front()
+	if nil != item {
+		v := item.Value
+		m.WriteMdList.Remove(item)
+
+		if cw, ok := v.(*ConnWrite); ok {
+			return cw
+		}
+
+		kutil.Assert(false)
+	}
+
+	return nil
+}
+
 // GetConnWrite GetConnWrite
 func (m *Conn) GetConnWrite() *ConnWrite {
 	item := m.WriteList.Front()
@@ -394,19 +452,49 @@ func (m *Conn) GetConnWrite() *ConnWrite {
 		kutil.Assert(false)
 	}
 
-	item = m.WriteMdList.Front()
-	if nil != item {
-		v := item.Value
-		m.WriteMdList.Remove(item)
-
-		if cw, ok := v.(*ConnWrite); ok {
-			return cw
+	for true {
+		data := m.getConnWriteMedia()
+		if nil == data {
+			return nil
 		}
 
-		kutil.Assert(false)
+		if !m.NeedKeyWrite {
+			return data
+		}
+
+		if m.isKey(data) {
+			m.NeedKeyWrite = false
+			return data
+		}
+
+		m.FreeConnWrite(data)
 	}
 
 	return nil
+}
+
+// DropWriteMedia 实时流, 满足条件情况下, 丢弃部分待写媒体数据
+// 防止慢速连接,积压过多数据, 从而将媒体内存池耗尽
+func (m *Conn) DropWriteMedia() int {
+	dropNum := 0
+	if 90 < m.WriteMdList.Len() {
+		for 0 < m.WriteMdList.Len() {
+			item := m.WriteMdList.Front()
+			v := item.Value
+			m.WriteMdList.Remove(item)
+
+			if cw, ok := v.(*ConnWrite); ok {
+				m.FreeConnWrite(cw)
+				dropNum++
+			}
+		}
+	}
+
+	if 0 < dropNum {
+		m.NeedKeyWrite = true
+	}
+
+	return dropNum
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -427,12 +515,7 @@ func (m *Conn) Start() {
 func (m *Conn) WriteData(data *ConnWrite) error {
 	// demo 直接释放数据
 
-	data.Extra = nil
-	data.Data = nil
-
-	if nil != data.Buf {
-		data.Buf.UnrefNext()
-	}
+	m.FreeConnWrite(data)
 
 	fmt.Println("kconn.conn.WriteData,not write", m.Name, m.Protocol)
 	return nil
@@ -467,6 +550,7 @@ func (m *Conn) WorkerWrite() error {
 			m.WriteCond.Wait()
 		}
 
+		m.DropWriteMedia()       // 丢数据流程
 		data := m.GetConnWrite() // 获取需要发送的数据
 		m.WriteCond.L.Unlock()
 
@@ -483,11 +567,7 @@ func (m *Conn) WorkerWrite() error {
 			}
 
 			// 释放数据
-			data.Extra = nil
-			data.Data = nil
-			if nil != data.Buf {
-				data.Buf.UnrefNext()
-			}
+			m.FreeConnWrite(data)
 		} else {
 			wait = true // 无数据可写, 则进入等待
 		}

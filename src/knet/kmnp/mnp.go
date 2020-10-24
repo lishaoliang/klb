@@ -28,7 +28,8 @@ const (
 	MnpHeadSize = 8 //Mnp, sizeof(klb_mnp_t)
 
 	// magic
-	MnpMagic = uint32(0x504E4DEB) // KLB_MNP_MAGIC, 魔数
+	MnpMagic        = uint32(0x504E4DEB) // KLB_MNP_MAGIC, 魔数
+	MnpBlockSizeMax = 32 * 1024          // 分包最大32K
 
 	// klb_mnp_opt_e
 	MnpOptBegin    = uint8(0x0) // KLB_MNP_BEGIN,开始包

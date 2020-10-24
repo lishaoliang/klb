@@ -8,10 +8,10 @@
 package klua
 
 /*
-#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../inc
-#cgo windows LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -lm
-#cgo linux LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -ldl -lm
-#cgo darwin LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -ldl -lm
+//#cgo CFLAGS: -std=c11 -I ${SRCDIR}/../../inc
+//#cgo windows LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -lm
+//#cgo linux LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -ldl -lm
+//#cgo darwin LDFLAGS: -L ${SRCDIR}/../../lib -lklb_c -lpthread -ldl -lm
 #include "stdlib.h"
 #include "klua/klua.h"
 */
@@ -36,11 +36,25 @@ func PushPreload(name string, preload LuaCFunction) bool {
 	return gMapFuncs.PushPreload(name, preload)
 }
 
+// GetPreload get preload
+// 获取命名预加载函数[多线程安全]
+// 在lua环境中,预加载库
+func GetPreload(name string) LuaCFunction {
+	return gMapFuncs.FindPreload(name)
+}
+
 // PushLoader push loader
 // 放入自定义加载lua文件函数[多线程安全]
 // 更换lua从文件中加载脚本文件方式, 修改为使用自定义的函数
 func PushLoader(name string, loader LuaCFunction) bool {
 	return gMapFuncs.PushLoader(name, loader)
+}
+
+// GetLoader push loader
+// 获取自定义加载lua文件函数[多线程安全]
+// 更换lua从文件中加载脚本文件方式, 修改为使用自定义的函数
+func GetLoader(name string) LuaCFunction {
+	return gMapFuncs.FindLoader(name)
 }
 
 // Ctx func
@@ -93,6 +107,32 @@ func LoadLib(lua *LuaState, f LuaCFunction, name string) {
 }
 
 // Open C libs
+// 从C部分导出的第三方开源库
+
+// OpenCjson cjson
+// 在Lua环境中加载"cjson"库[Lua线程]
+func OpenCjson(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_cjson)), name)
+}
+
+// OpenCjsonSafe cjson safe
+// 在Lua环境中加载"cjson.safe"库[Lua线程]
+func OpenCjsonSafe(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_cjson_safe)), name)
+}
+
+// OpenLpeg lpeg
+// 在Lua环境中加载"lpeg"库[Lua线程]
+func OpenLpeg(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_lpeg)), name)
+}
+
+// OpenLfs lfs
+// 在Lua环境中加载"lfs"库[Lua线程]
+func OpenLfs(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_lfs)), name)
+}
+
 // eg. "k*"
 // 从C部分导出的库, 命名记为 "k*"
 
@@ -114,8 +154,25 @@ func OpenKthread(lua *LuaState, name string) {
 	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_kthread)), name)
 }
 
-// Open Go libs
-// eg. "kg_*" "ka_*" "kx_*"
-// "kg_*" 表示为通用库
-// "ka_*" 表示适用于资源受限的嵌入式环境
-// "kx_*" 表示适用于资源不受限环境
+// OpenKmnpDev kmnp_dev
+// 在Lua环境中加载"kmnp_dev"库[Lua线程]
+func OpenKmnpDev(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_kmnp_dev)), name)
+}
+
+// OpenKgui kgui
+// 在Lua环境中加载"kgui"库
+func OpenKgui(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_kgui)), name)
+}
+
+// OpenKwnd kwnd
+// 在Lua环境中加载"kwnd"库
+func OpenKwnd(lua *LuaState, name string) {
+	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_kwnd)), name)
+}
+
+// Open Go/C libs
+// eg. "k*", "kg_*"
+// "k*" 表示为c语言编写的库
+// "kg_*" 表示为go语言编写的库

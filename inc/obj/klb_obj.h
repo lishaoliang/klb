@@ -16,6 +16,7 @@
 #define __KLB_OBJ_H__
 
 #include "klb_type.h"
+#include "hash/klb_hash.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -47,11 +48,10 @@ typedef struct klb_obj_t_
     uint32_t                module;         ///< 模块名称(32位哈希值): 函数klb_hash32()
     uint32_t                name;           ///< 对象名称(32位哈希值): 函数klb_hash32()
 
-    struct
-    {
-        klb_obj_ctrl_cb     cb_ctrl;        ///< 控制操作函数
-        klb_obj_destroy_cb  cb_destroy;     ///< 销毁对象函数
-    };
+    klb_obj_destroy_cb      cb_destroy;     ///< 销毁对象函数
+    klb_obj_ctrl_cb         cb_ctrl;        ///< 控制操作函数
+
+    char                    obj[1];         ///< 可变长,附加对象
 }klb_obj_t;
 
 #pragma pack()
@@ -60,6 +60,11 @@ typedef struct klb_obj_t_
 /// @def   KLB_OBJ_DESTROY
 /// @brief 销毁基础对象
 #define KLB_OBJ_DESTROY(KLB_OBJ_)   {if(KLB_OBJ_){klb_obj_destroy_cb cb_destroy=((klb_obj_t*)(KLB_OBJ_))->cb_destroy;cb_destroy(KLB_OBJ_);(KLB_OBJ_)=NULL;}}
+
+
+/// @def   klb_obj_hash
+/// @brief obj hash
+#define klb_obj_hash                klb_hash32
 
 
 #ifdef __cplusplus

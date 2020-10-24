@@ -8,7 +8,7 @@
 package main
 
 /*
-#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../inc
+//#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../inc
 #include "klua/klua.h"
 extern int klua_go_main_openlibs(lua_State* L);
 */
@@ -46,7 +46,7 @@ func main() {
 		return
 	}
 
-	kpool.Init(4096, 3072)
+	kpool.Init(4096, 3072*4)
 
 	c := make(chan os.Signal)
 

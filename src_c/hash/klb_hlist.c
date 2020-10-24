@@ -88,7 +88,7 @@ void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, void* p_o
     }
 }
 
-int klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
+klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -104,7 +104,7 @@ int klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len
         {
             // 放入失败, 已经存在相同的 key
             KLB_FREE(p_iter);
-            return 1;
+            return NULL;
         }
 
         p_iter->p_data = p_data;
@@ -128,13 +128,13 @@ int klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len
         p_list->p_head = p_iter;
         p_list->size += 1;
 
-        return 0;
+        return p_iter;
     }
 
-    return 1;
+    return NULL;
 }
 
-int klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
+klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -150,7 +150,7 @@ int klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len
         {
             // 放入失败, 已经存在相同的 key
             KLB_FREE(p_iter);
-            return 1;
+            return NULL;
         }
 
         p_iter->p_data = p_data;
@@ -174,10 +174,10 @@ int klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len
         p_list->p_tail = p_iter;
         p_list->size += 1;
 
-        return 0;
+        return p_iter;
     }
 
-    return 1;
+    return NULL;
 }
 
 void* klb_hlist_pop_head(klb_hlist_t* p_list)

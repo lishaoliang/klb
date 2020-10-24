@@ -19,7 +19,12 @@ type channel struct {
 	files    []string
 
 	reader kfile.Reader
-	last   int64
+
+	baseTime      int64
+	baseFrameTime int64
+
+	frame     kmnp.MnpMedia
+	frameData []byte
 }
 
 func openChnn(id uint32) *channel {
@@ -76,6 +81,11 @@ func (m *channel) tryOpen(now int64) bool {
 		m.timeOpen = now
 	}
 
+	m.baseTime = 0
+	m.baseFrameTime = 0
+
+	m.frameData = nil
+
 	return (nil != m.reader)
 }
 
@@ -94,25 +104,51 @@ func (m *channel) OnTimer(now int64) {
 			}
 		}
 
-		var md kmnp.MnpMedia
-		var d []byte
-		var err error
+		if nil == m.frameData {
+			var err error
 
-		md, d, err = m.reader.ReadNext()
-		if nil != err {
-			m.reader.Close()
-			m.reader = nil
-			continue
+			m.frame, m.frameData, err = m.reader.ReadNext()
+			if nil != err {
+				m.reader.Close()
+				m.reader = nil
+				continue
+			}
 		}
 
-		if kmnp.MnpDtypeNil != md.Dtype {
-			kutil.Assert(0 < len(d))
+		if nil != m.frameData {
+			if kmnp.MnpDtypeAAC == m.frame.Dtype {
+				md := m.frame
+				md.Chnn = m.id
+				md.Sidx = kmnp.MnpSidxA1
 
-			md.Chnn = m.id
-			md.Sidx = kmnp.MnpSidxV1
-			md.Time = now
+				pushStream(md, m.frameData)
+				m.frameData = nil
+				continue
+			}
 
-			pushStream(md, d)
+			bPush := false
+
+			if 0 == m.baseTime {
+				bPush = true
+				m.baseTime = now
+				m.baseFrameTime = m.frame.Time
+			} else {
+				dtTime := kutil.SubAbsI64(now, m.baseTime)
+				dtFrameTime := kutil.SubAbsI64(m.frame.Time, m.baseFrameTime)
+
+				if dtFrameTime <= dtTime+6000 {
+					bPush = true
+				}
+			}
+
+			if bPush {
+				md := m.frame
+				md.Chnn = m.id
+				md.Sidx = kmnp.MnpSidxV1
+
+				pushStream(md, m.frameData)
+				m.frameData = nil
+			}
 		}
 
 		break

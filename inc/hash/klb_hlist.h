@@ -69,11 +69,11 @@ KLB_API void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, v
 /// @param [in] *p_key      key关键字(非NULL)
 /// @param [in] key_len     key长度(按char计算)
 /// @param [in] *p_data     数据
-/// @return int 0.成功; 非0.失败
+/// @return klb_hlist_iter_t* NULL.失败; 非NULL.成功之后的迭代子
 /// @note 1. hlist并不负责数据释放
 ///  \n   2. hlist采用已解决hash冲突的查找算法, 不存在hash值冲突问题
 ///  \n   3. 因hlist带有链表特性, 对已存在完全一致的key时, 返回失败, 由调用者决定对如何处理完全一致的key
-KLB_API int klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
+KLB_API klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
 
 
 /// @brief 在最后面, 向hlist压入数据
@@ -81,11 +81,11 @@ KLB_API int klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t
 /// @param [in] *p_key      key关键字(非NULL)
 /// @param [in] key_len     key长度(按char计算)
 /// @param [in] *p_data     数据
-/// @return int 0.成功; 非0.失败
+/// @return klb_hlist_iter_t* NULL.失败; 非NULL.成功之后的迭代子
 /// @note 1. hlist并不负责数据释放
 ///  \n   2. hlist采用已解决hash冲突的查找算法, 不存在hash值冲突问题
 ///  \n   3. 因hlist带有链表特性, 对已存在完全一致的key时, 返回失败, 由调用者决定对如何处理完全一致的key
-KLB_API int klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
+KLB_API klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
 
 
 /// @brief 在最前面, 弹出数据

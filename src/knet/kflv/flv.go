@@ -22,6 +22,22 @@ const (
 	FlvCodecAvc  = uint8(7) // AVC视频类型
 	FlvAvcFrameI = uint8(1) // I帧;关键帧(AVC)
 	FlvAvcFrameP = uint8(2) // P帧;非关键帧(AVC)
+
+	FlvAudioSize   = 1 // Audio大小
+	FlvAudioLPCMPE = uint8(0)
+	FlvAudioADPCM  = uint8(1)
+	FlvAudioAAC    = uint8(10)
+
+	FlvAudio5dot5KHZ = uint8(0)
+	FlvAudio11KHZ    = uint8(1)
+	FlvAudio22KHZ    = uint8(2)
+	FlvAudio44KHZ    = uint8(3)
+
+	FlvAudioSamples8Bit  = uint8(0)
+	FlvAudioSamples16Bit = uint8(1)
+
+	FlvAudioMono   = uint8(0)
+	FlvAudioStereo = uint8(1)
 )
 
 // Head flv head
@@ -57,6 +73,14 @@ type Tag struct {
 type Video struct {
 	CodecID   uint8 // 视频类型
 	FrameType uint8 // 帧类型
+}
+
+// Audio flv tag.audio
+type Audio struct {
+	SoundFormat uint8 // 音频格式
+	SoundRate   uint8 // 音频频率
+	SoundSize   uint8 // 8比特,16比特
+	SoundType   uint8 // Mono Stereo
 }
 
 // Pack pack Head
@@ -174,4 +198,30 @@ func (m *Video) Unpack(b []byte) {
 
 	m.CodecID = v & 0xF
 	m.FrameType = (v >> 4) & 0xF
+}
+
+// Pack pack Audio
+// 将结构打包成二进制
+func (m *Audio) Pack(b []byte) []byte {
+	if nil == b {
+		b = make([]byte, FlvAudioSize)
+	}
+
+	// 1
+	b[0] = ((m.SoundFormat & 0xF) << 4) | ((m.SoundRate & 0x3) << 2) | ((m.SoundSize & 0x1) << 1) | (m.SoundType & 0x1)
+
+	return b
+}
+
+// Unpack unpack Audio
+// 将二进制解析为结构体
+func (m *Audio) Unpack(b []byte) {
+	kutil.Assert(FlvAudioSize == len(b))
+
+	v := b[0]
+
+	m.SoundType = v & 0x1
+	m.SoundSize = (v >> 1) & 0x1
+	m.SoundRate = (v >> 2) & 0x3
+	m.SoundFormat = (v >> 4) & 0xF
 }

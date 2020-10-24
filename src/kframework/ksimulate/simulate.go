@@ -70,7 +70,7 @@ func (m *simulate) Command(cmd string, chnn, sidx int64, lparam, wparam string) 
 func (m *simulate) worker() error {
 	defer m.wg.Done()
 
-	interval := (time.Duration)(time.Millisecond * 33)
+	interval := (time.Duration)(time.Millisecond * 10)
 	timer := time.NewTimer(interval)
 	defer timer.Stop()
 

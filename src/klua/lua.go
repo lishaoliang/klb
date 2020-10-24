@@ -236,8 +236,8 @@ func LuaLCheckstringPtr(lua *LuaState, idx int) (unsafe.Pointer, int) {
 
 // LuaLCheckboolean luaL_checkboolean
 func LuaLCheckboolean(lua *LuaState, idx int) bool {
-	b := C.luaL_checkboolean((*C.lua_State)(lua), C.int(idx))
-	return LuaIntToBool(int(b))
+	b := (bool)(C.luaL_checkboolean((*C.lua_State)(lua), C.int(idx)))
+	return b
 }
 
 // LuaLChecklightuserdata luaL_checklightuserdata

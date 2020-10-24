@@ -49,9 +49,6 @@
     <Filter Include="third\lpeg-1.0.2">
       <UniqueIdentifier>{f6fa5ed3-0eac-4121-bc23-72522fb179a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="third\lua-5.3.5">
-      <UniqueIdentifier>{8f58344c-4439-49c3-8b8e-6e8360c4c0c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="third\lua-cjson-2.1.0">
       <UniqueIdentifier>{7f906b2f-3713-47e6-814b-8ea40611d423}</UniqueIdentifier>
     </Filter>
@@ -60,9 +57,6 @@
     </Filter>
     <Filter Include="third\luafilesystem-2.0\src">
       <UniqueIdentifier>{11a6cde3-0cbc-4caa-8566-b6cefc8e4caa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\lua-5.3.5\src">
-      <UniqueIdentifier>{bdc290bf-77a7-4eb7-aced-02c90b7ba38c}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klua">
       <UniqueIdentifier>{b4a9bc1b-0d34-4ca2-8307-0ec033d8d2bc}</UniqueIdentifier>
@@ -112,9 +106,6 @@
     <Filter Include="src">
       <UniqueIdentifier>{3d277b87-7727-4760-88c9-85fcde8aeeca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\main">
-      <UniqueIdentifier>{1593d0c5-d1e7-4d48-a6d0-e0d7d1bf5961}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klua">
       <UniqueIdentifier>{64d42d46-d90e-4014-8b56-da44b48211ca}</UniqueIdentifier>
     </Filter>
@@ -136,9 +127,6 @@
     <Filter Include="src_c\emscripten">
       <UniqueIdentifier>{d1bbcb96-bb3c-423b-8726-f84580a7f1d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\himpp">
-      <UniqueIdentifier>{7257ea32-bfa7-468e-8783-5e560d41d86e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\go">
       <UniqueIdentifier>{9a229c66-9ca9-4cf6-aca0-27db0df549c7}</UniqueIdentifier>
     </Filter>
@@ -151,519 +139,1036 @@
     <Filter Include="third\quickjs">
       <UniqueIdentifier>{9aa72538-46d2-4217-8d53-d535f70e7634}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\libavutil">
+      <UniqueIdentifier>{98dbeb84-0c20-4106-9397-2b7f92be99bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\compat">
+      <UniqueIdentifier>{e7e0a0e3-b568-4969-8550-0531b10456d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\gui">
+      <UniqueIdentifier>{bfb141d0-b61f-44e9-a56f-2a641759eaee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\gui">
+      <UniqueIdentifier>{0850a35e-e0bb-4cef-bc00-fdb47f5334c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\image">
+      <UniqueIdentifier>{9c8978b0-ec4f-4551-b800-55eae80b3570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\image">
+      <UniqueIdentifier>{0dd56755-2777-4366-8ab7-b86f77ea2425}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third\lua-5.4.1">
+      <UniqueIdentifier>{47086ca0-8251-49ad-9424-ae07ef07320f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third\lua-5.4.1\src">
+      <UniqueIdentifier>{4a6873a8-9071-4354-ac8a-9c4f11cea415}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\inc\mem\klb_mem.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klb_type.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\obj\klb_obj.h">
-      <Filter>inc\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\hash\klb_hash_dx.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\list\klb_list.h">
-      <Filter>inc\list</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\list\list.h">
-      <Filter>inc\list</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\thread\klb_thread.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\log\klb_log.h">
-      <Filter>inc\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\thread\klb_atomic.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\thread\klb_mutex.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\thread\klb_rwlock.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\thread\klb_spinlock.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\time\klb_time.h">
-      <Filter>inc\time</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mem\klb_buf.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mem\klb_mpool.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\obj\klb_obj_hash.h">
-      <Filter>inc\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\hash\klb_hash_hgsmi.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\hash\klb_htab.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\hash\klb_hlist.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\string\klb_string.h">
-      <Filter>inc\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\socket\klb_socket.h">
-      <Filter>inc\socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\algorithm\klb_sort_insert.h">
+    <ClInclude Include="..\..\inc\algorithm\klb_algorithm.h">
       <Filter>inc\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\algorithm\klb_algorithm.h">
+    <ClInclude Include="..\..\inc\algorithm\klb_sort_insert.h">
       <Filter>inc\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\algorithm\klb_sort_quick.h">
+    <ClInclude Include="..\..\inc\algorithm\klb_sort_quick.h">
       <Filter>inc\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\hash\klb_hmap.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lpeg-1.0.2\lpcap.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lpeg-1.0.2\lpcode.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lpeg-1.0.2\lpprint.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lpeg-1.0.2\lptree.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lpeg-1.0.2\lptypes.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lpeg-1.0.2\lpvm.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-cjson-2.1.0\fpconv.h">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-cjson-2.1.0\strbuf.h">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\luafilesystem-2.0\src\lfs.h">
-      <Filter>third\luafilesystem-2.0\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lapi.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lauxlib.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lcode.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lctype.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\ldebug.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\ldo.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lfunc.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lgc.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\llex.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\llimits.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lmem.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lobject.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lopcodes.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lparser.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lprefix.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lstate.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lstring.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\ltable.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\ltm.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lua.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lua.hpp">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\luaconf.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lualib.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lundump.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lvm.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\third\lua-5.3.5\src\lzio.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\klua_cfg.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\lauxlib.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\lua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\lua.hpp">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\luaconf.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\lualib.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\klua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src_c\klua\klua_help.h">
-      <Filter>src_c\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\klua\klua_env.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mnp\klb_mnp.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mnp\klb_mnp_media.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mnp\klb_mnp_txt.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\socket\klb_go_socket.h">
-      <Filter>inc\socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mnp\klb_mnp_bin.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mnp\klb_mnp_stream.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_himpp.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3519v101.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3531dv100.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3520dv200.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3520dv300.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3520dv400.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3559av100.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\go\klb_select.h">
+    <ClInclude Include="..\..\inc\go\klb_select.h">
       <Filter>inc\go</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\himpp\klb_hi3516av100.h">
-      <Filter>inc\himpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\quickjs\quickjs.h">
-      <Filter>inc\quickjs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\quickjs\quickjs-libc.h">
-      <Filter>inc\quickjs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\mnp\klb_av_codec.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\hash\klb_hash.h">
+    <ClInclude Include="..\..\inc\hash\klb_hash.h">
       <Filter>inc\hash</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\hash\klb_hash_dx.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\hash\klb_hash_hgsmi.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\hash\klb_hlist.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\hash\klb_hmap.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\hash\klb_htab.h">
+      <Filter>inc\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_env.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lauxlib.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lua.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lua.hpp">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\luaconf.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lualib.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\list\klb_list.h">
+      <Filter>inc\list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\list\list.h">
+      <Filter>inc\list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\log\klb_log.h">
+      <Filter>inc\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\mem\klb_buf.h">
+      <Filter>inc\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\mem\klb_mem.h">
+      <Filter>inc\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\mem\klb_mpool.h">
+      <Filter>inc\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\mnp\klb_mnp.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\mnp\klb_mnp_stream.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\obj\klb_obj.h">
+      <Filter>inc\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\obj\klb_obj_hash.h">
+      <Filter>inc\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\quickjs\quickjs.h">
+      <Filter>inc\quickjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\quickjs\quickjs-libc.h">
+      <Filter>inc\quickjs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\socket\klb_go_socket.h">
+      <Filter>inc\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\socket\klb_socket.h">
+      <Filter>inc\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\string\klb_string.h">
+      <Filter>inc\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\thread\klb_atomic.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\thread\klb_mutex.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\thread\klb_rwlock.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\thread\klb_spinlock.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\thread\klb_thread.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\time\klb_time.h">
+      <Filter>inc\time</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klb_type.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_help.h">
+      <Filter>src_c\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lpeg-1.0.2\lpcap.h">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lpeg-1.0.2\lpcode.h">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lpeg-1.0.2\lpprint.h">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lpeg-1.0.2\lptree.h">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lpeg-1.0.2\lptypes.h">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lpeg-1.0.2\lpvm.h">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-cjson-2.1.0\fpconv.h">
+      <Filter>third\lua-cjson-2.1.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-cjson-2.1.0\strbuf.h">
+      <Filter>third\lua-cjson-2.1.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\luafilesystem-2.0\src\lfs.h">
+      <Filter>third\luafilesystem-2.0\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\mnp\klb_mnp_dev.h">
+      <Filter>inc\mnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\adler32.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\aes.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\aes_ctr.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\aes_internal.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\attributes.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\audio_fifo.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\avassert.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\avconfig.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\avstring.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\avutil.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\base64.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\blowfish.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\bprint.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\bswap.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\camellia.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\cast5.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\channel_layout.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\color_utils.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\colorspace.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\common.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\crc.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\des.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\dict.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\display.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\dovi_meta.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\dynarray.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\encryption_info.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\error.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\ffmath.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\fifo.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\file.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\hash.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\hmac.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\imgutils.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\imgutils_internal.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\integer.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\internal.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\intfloat.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\intmath.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\intreadwrite.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\lfg.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\log.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\lzo.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\macros.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\md5.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\mem.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\mem_internal.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\motion_vector.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\murmur3.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\pca.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\pixdesc.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\pixelutils.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\pixfmt.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\qsort.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\random_seed.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\rational.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\rc4.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\replaygain.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\reverse.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\ripemd.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\samplefmt.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\sha.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\sha512.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\softfloat.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\softfloat_ieee754.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\softfloat_tables.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\spherical.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\tablegen.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\tea.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\time.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\time_internal.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\timecode.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\timer.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\timestamp.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\tree.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\twofish.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\version.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\xtea.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\config.h">
+      <Filter>src_c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\ffversion.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\cpu.h">
+      <Filter>src_c</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\mathematics.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\libm.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\eval.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\parseutils.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\thread.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\threadmessage.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\compat\os2threads.h">
+      <Filter>src_c\compat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\compat\va_copy.h">
+      <Filter>src_c\compat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\compat\w32dlfcn.h">
+      <Filter>src_c\compat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\compat\w32pthreads.h">
+      <Filter>src_c\compat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\gui\klb_gui.h">
+      <Filter>inc\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\image\klb_canvas.h">
+      <Filter>inc\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\image\klb_color.h">
+      <Filter>inc\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\image\klb_rect.h">
+      <Filter>inc\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\gui\klb_msg.h">
+      <Filter>inc\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\gui\klb_gui_in.h">
+      <Filter>src_c\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\image\klb_canvas_in.h">
+      <Filter>src_c\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\image\klb_bitmap.h">
+      <Filter>inc\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\thread\klb_dynamic_link.h">
+      <Filter>inc\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\gui\klb_wnd_in.h">
+      <Filter>src_c\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\gui\klb_wnd.h">
+      <Filter>inc\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\gui\klb_widget.h">
+      <Filter>src_c\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\image\klb_resolution.h">
+      <Filter>inc\image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lapi.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lauxlib.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lcode.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lctype.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ldebug.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ldo.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lfunc.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lgc.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ljumptab.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\llex.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\llimits.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lmem.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lobject.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lopcodes.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lopnames.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lparser.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lprefix.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lstate.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lstring.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ltable.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ltm.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.hpp">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\luaconf.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lualib.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lundump.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lvm.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lzio.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\third\lpeg-1.0.2\lpcap.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lpeg-1.0.2\lpcode.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lpeg-1.0.2\lpprint.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lpeg-1.0.2\lptree.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lpeg-1.0.2\lpvm.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-cjson-2.1.0\fpconv.c">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-cjson-2.1.0\lua_cjson.c">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-cjson-2.1.0\strbuf.c">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\luafilesystem-2.0\src\lfs.c">
-      <Filter>third\luafilesystem-2.0\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lapi.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lauxlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lbaselib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lbitlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lcode.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lcorolib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lctype.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ldblib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ldebug.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ldo.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ldump.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lfunc.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lgc.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\linit.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\liolib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\llex.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lmathlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lmem.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\loadlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lobject.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lopcodes.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\loslib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lparser.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lstate.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lstring.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lstrlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ltable.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ltablib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\ltm.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lundump.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lutf8lib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lvm.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\third\lua-5.3.5\src\lzio.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\algorithm\klb_sort_insert.c">
+    <ClCompile Include="..\..\src_c\algorithm\klb_sort_insert.c">
       <Filter>src_c\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\src_c\algorithm\klb_sort_quick.c">
+    <ClCompile Include="..\..\src_c\algorithm\klb_sort_quick.c">
       <Filter>src_c\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\src_c\hash\klb_hash_dx.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\hash\klb_hash_hgsmi.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\hash\klb_hlist.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\hash\klb_hmap.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\hash\klb_htab.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\list\klb_list.c">
-      <Filter>src_c\list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\mem\klb_buf.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\mem\klb_mem.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\mem\klb_mpool.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\obj\klb_obj.c">
-      <Filter>src_c\obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\socket\klb_socket.c">
-      <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\string\klb_string.c">
-      <Filter>src_c\string</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\thread\klb_atomic.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\thread\klb_mutex.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\thread\klb_rwlock.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\thread\klb_spinlock.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\thread\klb_thread.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\time\klb_time.c">
-      <Filter>src_c\time</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main.c">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\lua.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_env.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_help.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\socket\klb_go_socket.c">
-      <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_kos.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_kthread.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\klua\klua_ktime.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src_c\go\klb_select.c">
+    <ClCompile Include="..\..\src_c\go\klb_select.c">
       <Filter>src_c\go</Filter>
     </ClCompile>
-    <ClCompile Include="..\src_c\hash\klb_hash.c">
+    <ClCompile Include="..\..\src_c\hash\klb_hash.c">
       <Filter>src_c\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\hash\klb_hash_dx.c">
+      <Filter>src_c\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\hash\klb_hash_hgsmi.c">
+      <Filter>src_c\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\hash\klb_hlist.c">
+      <Filter>src_c\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\hash\klb_hmap.c">
+      <Filter>src_c\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\hash\klb_htab.c">
+      <Filter>src_c\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_env.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_help.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_kos.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_kthread.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_ktime.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\list\klb_list.c">
+      <Filter>src_c\list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\mem\klb_buf.c">
+      <Filter>src_c\mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\mem\klb_mem.c">
+      <Filter>src_c\mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\mem\klb_mpool.c">
+      <Filter>src_c\mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\obj\klb_obj.c">
+      <Filter>src_c\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\socket\klb_go_socket.c">
+      <Filter>src_c\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\socket\klb_socket.c">
+      <Filter>src_c\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\string\klb_string.c">
+      <Filter>src_c\string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\thread\klb_atomic.c">
+      <Filter>src_c\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\thread\klb_mutex.c">
+      <Filter>src_c\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\thread\klb_rwlock.c">
+      <Filter>src_c\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\thread\klb_spinlock.c">
+      <Filter>src_c\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\thread\klb_thread.c">
+      <Filter>src_c\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\time\klb_time.c">
+      <Filter>src_c\time</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lpeg-1.0.2\lpcap.c">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lpeg-1.0.2\lpcode.c">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lpeg-1.0.2\lpprint.c">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lpeg-1.0.2\lptree.c">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lpeg-1.0.2\lpvm.c">
+      <Filter>third\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-cjson-2.1.0\fpconv.c">
+      <Filter>third\lua-cjson-2.1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-cjson-2.1.0\lua_cjson.c">
+      <Filter>third\lua-cjson-2.1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-cjson-2.1.0\strbuf.c">
+      <Filter>third\lua-cjson-2.1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\luafilesystem-2.0\src\lfs.c">
+      <Filter>third\luafilesystem-2.0\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\adler32.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\aes.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\aes_ctr.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\audio_fifo.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\avsscanf.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\avstring.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\base64.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\blowfish.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\bprint.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\camellia.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\cast5.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\channel_layout.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\color_utils.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\crc.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\des.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\dict.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\display.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\dovi_meta.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\encryption_info.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\error.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\fifo.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\file.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\file_open.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\hash.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\hmac.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\imgutils.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\integer.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\intmath.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\lfg.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\log.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\log2_tab.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\lzo.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\md5.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\mem.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\murmur3.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\pca.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\pixdesc.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\pixelutils.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\random_seed.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\rational.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\rc4.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\reverse.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\ripemd.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\samplefmt.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\sha.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\sha512.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\spherical.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\tea.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\time.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\timecode.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\tree.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\twofish.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\utils.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\xga_font_data.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\xtea.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\mathematics.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\eval.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\parseutils.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\threadmessage.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\compat\getopt.c">
+      <Filter>src_c\compat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\compat\strtod.c">
+      <Filter>src_c\compat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\gui\klb_gui.c">
+      <Filter>src_c\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\image\klb_rect.c">
+      <Filter>src_c\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\gui\klb_wnd.c">
+      <Filter>src_c\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\gui\klb_button.c">
+      <Filter>src_c\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\gui\klb_dialog.c">
+      <Filter>src_c\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\image\klb_canvas.c">
+      <Filter>src_c\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\image\klb_canvas_argb8888.c">
+      <Filter>src_c\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\image\klb_color.c">
+      <Filter>src_c\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
+      <Filter>src_c\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_kmnp_dev.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\thread\klb_dynamic_link.c">
+      <Filter>src_c\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\gui\klb_gui_in.c">
+      <Filter>src_c\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_kgui.c">
+      <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\image\klb_resolution.c">
+      <Filter>src_c\image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lapi.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lauxlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lbaselib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lcode.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lcorolib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lctype.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldblib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldebug.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldo.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldump.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lfunc.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lgc.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\linit.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\liolib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\llex.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lmathlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lmem.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\loadlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lobject.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lopcodes.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\loslib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lparser.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstate.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstring.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstrlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltable.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltablib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltm.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lundump.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lutf8lib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lvm.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lzio.c">
+      <Filter>third\lua-5.4.1\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\fmt_c.sh" />
-    <None Include="..\Makefile" />
-    <None Include="..\mk_def" />
-    <None Include="..\src_c\Makefile">
-      <Filter>src_c</Filter>
-    </None>
-    <None Include="..\src\Makefile">
+    <None Include="..\..\src\Makefile">
       <Filter>src</Filter>
     </None>
-    <None Include="..\src\main\main.go">
-      <Filter>src\main</Filter>
+    <None Include="..\..\src_c\Makefile">
+      <Filter>src_c</Filter>
     </None>
-    <None Include="..\src\main\thread.go">
-      <Filter>src\main</Filter>
-    </None>
-    <None Include="..\src\main\test.go">
-      <Filter>src\main</Filter>
-    </None>
-    <None Include="..\src\main\test_lua.go">
-      <Filter>src\main</Filter>
-    </None>
-    <None Include="..\pack.sh" />
-    <None Include="..\third\quickjs\Makefile">
+    <None Include="..\..\third\quickjs\Makefile">
       <Filter>third\quickjs</Filter>
     </None>
+    <None Include="..\..\make_define" />
+    <None Include="..\..\Makefile" />
   </ItemGroup>
 </Project>

@@ -17,8 +17,11 @@ type MnpMedia struct {
 
 	Time int64 // 时间戳(基于1970年基准,微妙)(范围约:[-292471年, 292471年]
 
-	Resv  uint64 // 0
-	Vtype uint8  // 视频(video type): klb_mnp_vtype_e
+	Resv               uint64 // 0
+	Vtype              uint8  // 视频(video type): klb_mnp_vtype_e
+	Tracks             uint8  // 音频通道数:1 单声道, 2 立体声
+	BitsPerCodedSample uint8  // 采样位宽: 1, 2, 4
+	Samples            uint32 // 采样率: 44100
 }
 
 // MnpMedia
@@ -30,8 +33,8 @@ const (
 // MnpMedia.Vtype klb_mnp_vtype_e
 // 视频(video type)
 const (
-	MnpVtypeI   = 0x00 // KLB_MNP_VTYPE_I, I帧
-	MnpVtypeP   = 0x01 // KLB_MNP_VTYPE_P, P帧
+	MnpVtypeP   = 0x00 // KLB_MNP_VTYPE_P, P帧
+	MnpVtypeI   = 0x01 // KLB_MNP_VTYPE_I, I帧
 	MnpVtypeB   = 0x02 // KLB_MNP_VTYPE_B, B帧
 	MnpVtypeMax = 0xFF // KLB_MNP_VTYPE_MAX, MAX
 )

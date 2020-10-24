@@ -139,6 +139,7 @@ func (m *Conn) WorkerWrite() error {
 			m.conn.WriteCond.Wait()
 		}
 
+		m.conn.DropWriteMedia()       // 丢数据流程
 		data := m.conn.GetConnWrite() // 获取需要发送的数据
 		m.conn.WriteCond.L.Unlock()
 
@@ -155,11 +156,7 @@ func (m *Conn) WorkerWrite() error {
 			}
 
 			// 释放数据
-			data.Extra = nil
-			data.Data = nil
-			if nil != data.Buf {
-				data.Buf.UnrefNext()
-			}
+			m.conn.FreeConnWrite(data)
 		} else {
 			wait = true // 无数据可写, 则进入等待
 		}

@@ -47,12 +47,36 @@ KLB_API void klua_loadlib(lua_State* L, lua_CFunction openlib, const char* p_nam
 
 /// @brief check boolean
 /// @return int 0.false; 1.true
-KLB_API int luaL_checkboolean(lua_State* L, int arg);
+KLB_API bool luaL_checkboolean(lua_State* L, int arg);
 
 
 /// @brief check lightuserdata
 /// @return void*
 KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
+
+
+/// @brief 扩展库"cjson"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_cjson(lua_State* L);
+
+
+/// @brief 扩展库"cjson.safe"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_cjson_safe(lua_State* L);
+
+
+/// @brief 扩展库"lpeg"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_lpeg(lua_State *L);
+
+
+/// @brief 扩展库"lfs"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_lfs(lua_State *L);
 
 
 /// @brief 扩展库"kos"
@@ -72,6 +96,39 @@ KLB_API int klua_open_ktime(lua_State* L);
 /// @return int 返回1
 KLB_API int klua_open_kthread(lua_State* L);
 
+
+/// @brief 扩展库"kmnp_dev"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kmnp_dev(lua_State* L);
+
+
+/// @brief 扩展库"kgui"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kgui(lua_State* L);
+
+
+/// @brief 扩展库"kwnd"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kwnd(lua_State* L);
+
+
+/// @def   KLB_KLUA_LOADLIBS
+/// @brief 预加载扩展库
+#define KLUA_LOADLIBS(L) {                                  \
+    klua_loadlib(L, klua_open_cjson,        "cjson");       \
+    klua_loadlib(L, klua_open_cjson_safe,   "cjson.safe");  \
+    klua_loadlib(L, klua_open_lpeg,         "lpeg");        \
+    klua_loadlib(L, klua_open_lfs,          "lfs");         \
+    klua_loadlib(L, klua_open_kos,          "kos");         \
+    klua_loadlib(L, klua_open_ktime,        "ktime");       \
+    klua_loadlib(L, klua_open_kthread,      "kthread");     \
+    klua_loadlib(L, klua_open_kmnp_dev,     "kmnp_dev");    \
+    klua_loadlib(L, klua_open_kgui,         "kgui");        \
+    klua_loadlib(L, klua_open_kwnd,         "kwnd");        \
+}
 
 #ifdef __cplusplus
 }

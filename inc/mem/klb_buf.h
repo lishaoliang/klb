@@ -29,19 +29,41 @@ extern "C" {
 /// @brief  简易缓存
 typedef struct klb_buf_t_
 {
-    klb_obj_t   obj;            ///< 基础对象
+    char*   p_buf;          ///< 缓存指针
+    int     buf_len;        ///< 缓存大小
 
-    struct
-    {
-        char*   p_buf;          ///< 缓存指针
-        int     buf_len;        ///< 缓存大小
-
-        int     start;          ///< 有效数据起始位置
-        int     end;            ///< 有效数据末尾
-    };
+    int     start;          ///< 有效数据起始位置
+    int     end;            ///< 有效数据末尾
 }klb_buf_t;
 
 #pragma pack()
+
+
+/// @brief 初始化缓存
+/// @param [in] *p_buf        简易缓存
+/// @param [in] buf_len       目标缓存长度
+/// @param [in] *p_data       按数据源来初始化缓存; NULL表示不初始化
+/// @param [in] data_len      数据源长度
+/// @return klb_buf_t* p_buf
+/// @note 只申请 p_buf->p_buf 的内存
+klb_buf_t* klb_buf_init(klb_buf_t* p_buf, int buf_len, const char* p_data, int data_len);
+
+
+/// @brief 退出缓存
+/// @param [in] *p_buf        简易缓存
+/// @return 无
+/// @note 只释放 p_buf->p_buf 的内存
+void klb_buf_quit(klb_buf_t* p_buf);
+
+
+/// @def   KLB_BUF_INIT
+/// @brief 初始化缓存
+#define KLB_BUF_INIT(P_BUF_, BUF_LEN_, P_DATA_, DATA_LEN_)  klb_buf_init(P_BUF_, BUF_LEN_, P_DATA_, DATA_LEN_)
+
+
+/// @def   KLB_BUF_QUIT
+/// @brief 退出缓存
+#define KLB_BUF_QUIT(P_BUF_)                                klb_buf_quit(P_BUF_)
 
 
 #ifdef __cplusplus

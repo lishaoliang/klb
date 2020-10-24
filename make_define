@@ -15,7 +15,7 @@
 # 
 
 # 
-OS ?= linux
+OS ?= windows
 ARCH ?= amd64
 TAGS ?= debug normal
 
@@ -23,7 +23,7 @@ TAGS ?= debug normal
 # "linux", "windows", "darwin", "stm32", "js"
 MY_OS := $(OS)
 
-# "amd64", "386", "arm", "wasm"
+# "amd64", "386", "arm", "arm64", "wasm"
 MY_ARCH := $(ARCH)
 
 # -tags="debug hi3531dv100"
@@ -35,8 +35,8 @@ ifeq ($(MY_OS), linux)
 	endif
 
 	MY_CFLAGS +=
-	MY_GO_STATIC  ?= -ldflags -extldflags=-static
-	MY_GCC_STATIC ?= -static
+	MY_GO_STATIC  ?= 
+	MY_GCC_STATIC ?= 
 else ifeq ($(MY_OS), windows)
 	ifeq ($(MY_ARCH), 386)
 		MY_TOOL_CHAIN ?= i686-w64-mingw32-
@@ -83,11 +83,11 @@ CAR				:= $(MY_TOOL_CHAIN)ar
 CRANLIB			:= $(MY_TOOL_CHAIN)ranlib
 CSTRIP			:= $(MY_TOOL_CHAIN)strip
 MAKE			:= make
-RM				:= -rm -r
-RM_R			:= -rm -r
+RM				:= -rm
+RM_F			:= -rm -f
 RM_RF			:= -rm -rf
 CP				:= -cp
-CP_R			:= -cp -r
+CP_F			:= -cp -f
 CP_RF			:= -cp -rf
 
 ifeq ($(MY_OS), js)

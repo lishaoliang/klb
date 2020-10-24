@@ -38,7 +38,7 @@ end
 
 -- @brief 启动模块: 加载启动脚本
 -- @param [in] name[string]	   线程名称
--- @param [in] entry[string]   加载入口脚本; eg.'xxx.lua'
+-- @param [in] entry[string]   加载入口脚本; eg.'xxx.xxx'
 -- @param [in] preload[string] 预加载库函数名称; 决定线程创建后使用那些预加载库
 -- @param [in] loader[string]  Lua脚本加载函数; 从自定义函数加载Lua脚本; 默认使用fopen从文件加载
 -- @return [boolean] true.成功; false.失败

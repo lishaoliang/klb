@@ -65,9 +65,17 @@
 /// @brief 导出/导入函数
 #if defined(_WIN32)
     #if defined(__KLB_BUILD_DLL__) || defined(__KLB_CORE_API__)
-        #define KLB_API extern "C" __declspec(dllexport)
+        #ifdef __cplusplus
+            #define KLB_API extern "C" __declspec(dllexport)
+        #else
+            #define KLB_API __declspec(dllexport)
+        #endif
     #elif defined(__KLB_USE_DLL__)
-        #define KLB_API extern "C" __declspec(dllimport)
+        #ifdef __cplusplus
+            #define KLB_API extern "C" __declspec(dllimport)
+        #else
+            #define KLB_API __declspec(dllimport)
+        #endif
     #else
         #define KLB_API
     #endif
@@ -104,6 +112,11 @@
     #define MIN(A_,B_)    (((A_) < (B_)) ? (A_) : (B_))
 #endif
 
+/// @def    ABS_SUB
+/// @brief 差值的绝对值: 适用于无符号类型
+#ifndef ABS_SUB
+    #define ABS_SUB(A_, B_)     (((A_) < (B_)) ? ((B_) - (A_)) : ((A_) - (B_)))
+#endif
 
 
 #endif // __KLB_TYPE_H__
