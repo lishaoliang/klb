@@ -49,9 +49,6 @@
     <Filter Include="third\lpeg-1.0.2">
       <UniqueIdentifier>{f6fa5ed3-0eac-4121-bc23-72522fb179a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="third\lua-5.3.5">
-      <UniqueIdentifier>{8f58344c-4439-49c3-8b8e-6e8360c4c0c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="third\lua-cjson-2.1.0">
       <UniqueIdentifier>{7f906b2f-3713-47e6-814b-8ea40611d423}</UniqueIdentifier>
     </Filter>
@@ -60,9 +57,6 @@
     </Filter>
     <Filter Include="third\luafilesystem-2.0\src">
       <UniqueIdentifier>{11a6cde3-0cbc-4caa-8566-b6cefc8e4caa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\lua-5.3.5\src">
-      <UniqueIdentifier>{bdc290bf-77a7-4eb7-aced-02c90b7ba38c}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klua">
       <UniqueIdentifier>{b4a9bc1b-0d34-4ca2-8307-0ec033d8d2bc}</UniqueIdentifier>
@@ -136,9 +130,6 @@
     <Filter Include="src_c\emscripten">
       <UniqueIdentifier>{d1bbcb96-bb3c-423b-8726-f84580a7f1d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\himpp">
-      <UniqueIdentifier>{7257ea32-bfa7-468e-8783-5e560d41d86e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\go">
       <UniqueIdentifier>{9a229c66-9ca9-4cf6-aca0-27db0df549c7}</UniqueIdentifier>
     </Filter>
@@ -147,9 +138,6 @@
     </Filter>
     <Filter Include="inc\quickjs">
       <UniqueIdentifier>{993edcac-a7e8-465e-842f-bd3b97c0178f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\quickjs">
-      <UniqueIdentifier>{9aa72538-46d2-4217-8d53-d535f70e7634}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\image">
       <UniqueIdentifier>{dc7635f0-ef33-4f7e-910f-f582eddf31cc}</UniqueIdentifier>
@@ -165,6 +153,15 @@
     </Filter>
     <Filter Include="src_c\libavutil">
       <UniqueIdentifier>{63ce6869-ac4f-4773-9a1e-2a9c9d1620a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third\lua-5.4.1">
+      <UniqueIdentifier>{8f58344c-4439-49c3-8b8e-6e8360c4c0c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third\lua-5.4.1\src">
+      <UniqueIdentifier>{bdc290bf-77a7-4eb7-aced-02c90b7ba38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\sds">
+      <UniqueIdentifier>{747ade21-48a2-4800-9f77-65351197f8ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -217,9 +214,6 @@
       <Filter>inc\hash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\klua_cfg.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_env.h">
@@ -344,84 +338,6 @@
     </ClInclude>
     <ClInclude Include="..\..\third\lpeg-1.0.2\lpvm.h">
       <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lapi.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lauxlib.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lcode.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lctype.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ldebug.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ldo.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lfunc.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lgc.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\llex.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\llimits.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lmem.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lobject.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lopcodes.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lparser.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lprefix.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lstate.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lstring.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ltable.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ltm.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lua.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lua.hpp">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\luaconf.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lualib.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lundump.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lvm.h">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lzio.h">
-      <Filter>third\lua-5.3.5\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\third\lua-cjson-2.1.0\fpconv.h">
       <Filter>third\lua-cjson-2.1.0</Filter>
@@ -702,6 +618,99 @@
     <ClInclude Include="..\..\src_c\gui\klb_wnd_in.h">
       <Filter>src_c\gui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lapi.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lauxlib.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lcode.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lctype.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ldebug.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ldo.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lfunc.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lgc.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ljumptab.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\llex.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\llimits.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lmem.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lobject.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lopcodes.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lopnames.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lparser.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lprefix.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lstate.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lstring.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ltable.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ltm.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.hpp">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\luaconf.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lualib.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lundump.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lvm.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lzio.h">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\string\sds.h">
+      <Filter>inc\string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\sds\sdsalloc.h">
+      <Filter>src_c\sds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\sds\testhelp.h">
+      <Filter>src_c\sds</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -838,105 +847,6 @@
     </ClCompile>
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpvm.c">
       <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lapi.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lauxlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lbaselib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lbitlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lcode.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lcorolib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lctype.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldblib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldebug.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldo.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldump.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lfunc.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lgc.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\linit.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\liolib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\llex.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lmathlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lmem.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\loadlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lobject.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lopcodes.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\loslib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lparser.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lstate.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lstring.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lstrlib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ltable.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ltablib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ltm.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lundump.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lutf8lib.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lvm.c">
-      <Filter>third\lua-5.3.5\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lzio.c">
-      <Filter>third\lua-5.3.5\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\third\lua-cjson-2.1.0\fpconv.c">
       <Filter>third\lua-cjson-2.1.0</Filter>
@@ -1133,12 +1043,110 @@
     <ClCompile Include="..\..\src_c\klua\klua_kgui.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lapi.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lauxlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lbaselib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lcode.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lcorolib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lctype.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldblib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldebug.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldo.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldump.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lfunc.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lgc.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\linit.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\liolib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\llex.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lmathlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lmem.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\loadlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lobject.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lopcodes.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\loslib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lparser.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstate.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstring.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstrlib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltable.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltablib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltm.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lundump.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lutf8lib.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lvm.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lzio.c">
+      <Filter>third\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\sds\sds.c">
+      <Filter>src_c\sds</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
       <Filter>src_c</Filter>
     </None>
-    <None Include="..\..\make_define" />
     <None Include="..\..\Makefile" />
     <None Include="..\..\src\Makefile">
       <Filter>src</Filter>

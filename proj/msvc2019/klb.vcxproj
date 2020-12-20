@@ -38,7 +38,6 @@
     <ClInclude Include="..\..\inc\image\klb_rect.h" />
     <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
-    <ClInclude Include="..\..\inc\klua\klua_cfg.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
     <ClInclude Include="..\..\inc\klua\lauxlib.h" />
     <ClInclude Include="..\..\inc\klua\lua.h" />
@@ -61,6 +60,7 @@
     <ClInclude Include="..\..\inc\socket\klb_go_socket.h" />
     <ClInclude Include="..\..\inc\socket\klb_socket.h" />
     <ClInclude Include="..\..\inc\string\klb_string.h" />
+    <ClInclude Include="..\..\inc\string\sds.h" />
     <ClInclude Include="..\..\inc\thread\klb_atomic.h" />
     <ClInclude Include="..\..\inc\thread\klb_dynamic_link.h" />
     <ClInclude Include="..\..\inc\thread\klb_mutex.h" />
@@ -162,38 +162,42 @@
     <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h" />
     <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h" />
     <ClInclude Include="..\..\src_c\libavutil\xtea.h" />
+    <ClInclude Include="..\..\src_c\sds\sdsalloc.h" />
+    <ClInclude Include="..\..\src_c\sds\testhelp.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lpcap.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lpcode.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lpprint.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lptree.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lptypes.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lpvm.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lapi.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lauxlib.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lcode.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lctype.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ldebug.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ldo.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lfunc.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lgc.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\llex.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\llimits.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lmem.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lobject.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lopcodes.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lparser.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lprefix.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lstate.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lstring.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ltable.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\ltm.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lua.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lua.hpp" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\luaconf.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lualib.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lundump.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lvm.h" />
-    <ClInclude Include="..\..\third\lua-5.3.5\src\lzio.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lapi.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lauxlib.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lcode.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lctype.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ldebug.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ldo.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lfunc.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lgc.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ljumptab.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\llex.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\llimits.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lmem.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lobject.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lopcodes.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lopnames.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lparser.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lprefix.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lstate.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lstring.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ltable.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\ltm.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.hpp" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\luaconf.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lualib.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lundump.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lvm.h" />
+    <ClInclude Include="..\..\third\lua-5.4.1\src\lzio.h" />
     <ClInclude Include="..\..\third\lua-cjson-2.1.0\fpconv.h" />
     <ClInclude Include="..\..\third\lua-cjson-2.1.0\strbuf.h" />
     <ClInclude Include="..\..\third\luafilesystem-2.0\src\lfs.h" />
@@ -291,6 +295,7 @@
     <ClCompile Include="..\..\src_c\mem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\mem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\obj\klb_obj.c" />
+    <ClCompile Include="..\..\src_c\sds\sds.c" />
     <ClCompile Include="..\..\src_c\socket\klb_go_socket.c" />
     <ClCompile Include="..\..\src_c\socket\klb_socket.c" />
     <ClCompile Include="..\..\src_c\thread\klb_atomic.c" />
@@ -305,39 +310,38 @@
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpprint.c" />
     <ClCompile Include="..\..\third\lpeg-1.0.2\lptree.c" />
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpvm.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lapi.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lauxlib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lbaselib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lbitlib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lcode.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lcorolib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lctype.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldblib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldebug.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldo.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ldump.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lfunc.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lgc.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\linit.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\liolib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\llex.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lmathlib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lmem.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\loadlib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lobject.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lopcodes.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\loslib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lparser.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lstate.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lstring.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lstrlib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ltable.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ltablib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\ltm.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lundump.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lutf8lib.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lvm.c" />
-    <ClCompile Include="..\..\third\lua-5.3.5\src\lzio.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lapi.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lauxlib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lbaselib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lcode.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lcorolib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lctype.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldblib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldebug.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldo.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ldump.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lfunc.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lgc.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\linit.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\liolib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\llex.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lmathlib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lmem.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\loadlib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lobject.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lopcodes.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\loslib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lparser.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstate.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstring.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lstrlib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltable.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltablib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\ltm.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lundump.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lutf8lib.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lvm.c" />
+    <ClCompile Include="..\..\third\lua-5.4.1\src\lzio.c" />
     <ClCompile Include="..\..\third\lua-cjson-2.1.0\fpconv.c" />
     <ClCompile Include="..\..\third\lua-cjson-2.1.0\lua_cjson.c" />
     <ClCompile Include="..\..\third\lua-cjson-2.1.0\strbuf.c" />
@@ -345,7 +349,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Makefile" />
-    <None Include="..\..\make_define" />
     <None Include="..\..\src\Makefile" />
     <None Include="..\..\src_c\Makefile" />
   </ItemGroup>
@@ -427,7 +430,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.3.5\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -440,7 +443,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.3.5\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -455,7 +458,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.3.5\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -473,7 +476,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.3.5\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

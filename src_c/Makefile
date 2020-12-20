@@ -29,6 +29,7 @@ MY_DIRS := ./hash ./image ./list ./log ./mem ./obj
 MY_DIRS += ./socket ./string ./graph ./media ./file
 MY_DIRS += ./algorithm ./klua ./mnp ./gui
 MY_DIRS += ./libavutil ./compat
+MY_DIRS += ./sds
 
 
 # 第三方库
@@ -52,6 +53,7 @@ MY_INCLUDES += -I ./hash -I./list -I ./log -I ./mem -I ./obj
 MY_INCLUDES += -I ./socket -I ./string -I ./thread -I ./time -I ./graph
 MY_INCLUDES += -I ./media -I ./file -I ./algorithm -I ./klua -I ./mnp -I ./gui
 MY_INCLUDES += -I ./compat
+MY_INCLUDES += -I ./sds
 MY_INCLUDES += -I ./stm32
 
 

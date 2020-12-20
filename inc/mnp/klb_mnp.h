@@ -36,7 +36,7 @@ typedef struct klb_mnp_t_
 #define KLB_MNP_MAGIC           0x504E4DEB  ///< "*MNP"
     //- 4 Byte
 
-    uint16_t size ;             ///< 单个数据包大小(包含本结构体): [0,32K]
+    uint16_t size ;             ///< 单个数据包大小(包含本结构体): [8,32K]
 #define KLB_MNP_BLOCK_SIZE_MAX  0x8000
 
     uint8_t  opt : 2;           ///< 包组合方式: klb_mnp_opt_e
@@ -95,7 +95,7 @@ typedef struct klb_mnp_media_t_
 typedef struct klb_mnp_common_t_
 {
     uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
-    uint32_t    extra;      ///< 附加数据长度; 正式数据长度 = size - extra - sizeof(klb_mnp_txt_t)
+    uint32_t    extra;      ///< 附加数据长度; 正式数据长度 = size - extra - sizeof(klb_mnp_common_t)
     uint32_t    sequence;   ///< 序列号
     uint32_t    uid;        ///< 用户自定义ID(user defined id)
     // - 4 + 4 + 4 + 4 = 16 Byte
