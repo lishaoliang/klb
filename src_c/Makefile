@@ -30,6 +30,7 @@ MY_DIRS += ./socket ./string ./graph ./media ./file
 MY_DIRS += ./algorithm ./klua ./mnp ./gui
 MY_DIRS += ./libavutil ./compat
 MY_DIRS += ./sds
+MY_DIRS += ./pcre2/src
 
 
 # 第三方库
@@ -43,6 +44,9 @@ MY_DIRS += ./go ./thread ./time ../third/luafilesystem-2.0/src
 # 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__
 MY_CFLAGS := -std=c99 -D_GNU_SOURCE $(MY_CFLAGS_EX)
 
+# pcre2的宏
+MY_CFLAGS += -DHAVE_CONFIG_H
+
 # quickjs的宏
 MY_CFLAGS += -DCONFIG_BIGNUM -DCONFIG_VERSION=\"2019-10-27\"
 
@@ -54,6 +58,7 @@ MY_INCLUDES += -I ./socket -I ./string -I ./thread -I ./time -I ./graph
 MY_INCLUDES += -I ./media -I ./file -I ./algorithm -I ./klua -I ./mnp -I ./gui
 MY_INCLUDES += -I ./compat
 MY_INCLUDES += -I ./sds
+MY_INCLUDES += -I ./pcre2/src
 MY_INCLUDES += -I ./stm32
 
 

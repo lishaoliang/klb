@@ -60,6 +60,8 @@
     <ClInclude Include="..\..\inc\socket\klb_go_socket.h" />
     <ClInclude Include="..\..\inc\socket\klb_socket.h" />
     <ClInclude Include="..\..\inc\string\klb_string.h" />
+    <ClInclude Include="..\..\inc\string\pcre2.h" />
+    <ClInclude Include="..\..\inc\string\pcre2posix.h" />
     <ClInclude Include="..\..\inc\string\sds.h" />
     <ClInclude Include="..\..\inc\thread\klb_atomic.h" />
     <ClInclude Include="..\..\inc\thread\klb_dynamic_link.h" />
@@ -162,6 +164,12 @@
     <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h" />
     <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h" />
     <ClInclude Include="..\..\src_c\libavutil\xtea.h" />
+    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_config.h" />
+    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_internal.h" />
+    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_intmodedep.h" />
+    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_jit_neon_inc.h" />
+    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_jit_simd_inc.h" />
+    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_ucp.h" />
     <ClInclude Include="..\..\src_c\sds\sdsalloc.h" />
     <ClInclude Include="..\..\src_c\sds\testhelp.h" />
     <ClInclude Include="..\..\third\lpeg-1.0.2\lpcap.h" />
@@ -295,6 +303,36 @@
     <ClCompile Include="..\..\src_c\mem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\mem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\obj\klb_obj.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2grep.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2posix.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_auto_possess.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_chartables.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_compile.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_config.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_context.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_convert.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_dfa_match.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_error.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_extuni.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_find_bracket.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_fuzzsupport.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_jit_compile.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_maketables.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_match.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_match_data.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_newline.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_ord2utf.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_pattern_info.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_script_run.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_serialize.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_string_utils.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_study.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_substitute.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_substring.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_tables.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_ucd.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_valid_utf.c" />
+    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_xclass.c" />
     <ClCompile Include="..\..\src_c\sds\sds.c" />
     <ClCompile Include="..\..\src_c\socket\klb_go_socket.c" />
     <ClCompile Include="..\..\src_c\socket\klb_socket.c" />
@@ -429,8 +467,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\pcre2\src;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -442,8 +480,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\pcre2\src;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -457,8 +495,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\pcre2\src;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -475,8 +513,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\pcre2\src;..\..\third\lua-5.4.1\src;..\..\third\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
