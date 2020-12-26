@@ -35,8 +35,6 @@ bool klb_str_map_remove(klb_str_map_t* p_map, const char* p_key);
 void klb_str_map_remove_all(klb_str_map_t* p_map);
 
 
-
-
 #ifdef __cplusplus
 }
 #endif

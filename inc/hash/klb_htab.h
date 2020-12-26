@@ -42,6 +42,7 @@ extern "C" {
 /// @brief  hash table node节点
 typedef struct klb_htab_node_t_ klb_htab_node_t;
 
+#pragma pack(4)
 
 /// @struct klb_htab_node_t
 /// @brief  hash table node节点
@@ -55,6 +56,8 @@ typedef struct klb_htab_node_t_
     uint32_t                key_len;    ///< key长度
 }klb_htab_node_t;
 
+#pragma pack()
+
 
 /// @struct klb_htab_t
 /// @brief  hash table查找
@@ -65,13 +68,13 @@ typedef struct klb_htab_t_ klb_htab_t;
 /// @param [in] ht_max       hash table大小
 /// @param [in] auto_malloc  节点内存使用方式: KLB_HTAB_AUTO_MALLOC.内部申请; KLB_HTAB_NOT_MALLOC.调用者传入
 /// @return klb_htab_t* htab对象
-KLB_API klb_htab_t* klb_htab_create(uint32_t ht_max, int auto_malloc);
+klb_htab_t* klb_htab_create(uint32_t ht_max, int auto_malloc);
 
 
 /// @brief 销毁htab对象
 /// @param [in] *p_htab     htab对象
 /// @return 无
-KLB_API void klb_htab_destroy(klb_htab_t* p_htab);
+void klb_htab_destroy(klb_htab_t* p_htab);
 
 
 /// @brief 清空htab回调函数
@@ -82,11 +85,11 @@ typedef int(*klb_htab_clean_cb)(void* p_obj, void* p_data);
 
 
 /// @brief 清空htab
-/// @param [in] *p_list     htab对象
+/// @param [in] *p_htab     htab对象
 /// @param [in] cb_clean    清理回调函数
 /// @param [in] *p_obj      传参对象
 /// @return 无
-KLB_API int klb_htab_clean(klb_htab_t* p_htab, klb_htab_clean_cb cb_clean, void* p_obj);
+int klb_htab_clean(klb_htab_t* p_htab, klb_htab_clean_cb cb_clean, void* p_obj);
 
 
 /// @brief 向htab对象压入数据
@@ -99,29 +102,29 @@ KLB_API int klb_htab_clean(klb_htab_t* p_htab, klb_htab_clean_cb cb_clean, void*
 /// @note 1. htab对象并不负责数据释放
 ///  \n   2. 已经存在完全一致的key时, 返回失败
 ///  \n   3. p_key指针被缓存, 用于hash冲突时匹配
-KLB_API int klb_htab_push(klb_htab_t* p_htab, void* p_key, uint32_t key_len, void* p_data, klb_htab_node_t* p_htab_node);
+int klb_htab_push(klb_htab_t* p_htab, void* p_key, uint32_t key_len, void* p_data, klb_htab_node_t* p_htab_node);
 
 
 /// @brief 按key移除
-/// @param [in] *p_list      htab对象
+/// @param [in] *p_htab      htab对象
 /// @param [in] *p_key       key关键字(非NULL)
 /// @param [in] key_len      key长度
 /// @return void* 数据指针 或 NULL(未找到)
-KLB_API void* klb_htab_remove(klb_htab_t* p_htab, void* p_key, uint32_t key_len);
+void* klb_htab_remove(klb_htab_t* p_htab, void* p_key, uint32_t key_len);
 
 
 /// @brief 按key寻找值
-/// @param [in] *p_list      htab对象
+/// @param [in] *p_htab      htab对象
 /// @param [in] *p_key       key关键字(非NULL)
 /// @param [in] key_len      key长度
 /// @return void* 数据指针 或 NULL(未找到)
-KLB_API void* klb_htab_find(klb_htab_t* p_htab, const void* p_key, uint32_t key_len);
+void* klb_htab_find(klb_htab_t* p_htab, const void* p_key, uint32_t key_len);
 
 
 /// @brief 获取当前节点数目
-/// @param [in] *p_list      htab对象
+/// @param [in] *p_htab      htab对象
 /// @return uint32_t 当前节点数
-KLB_API uint32_t klb_htab_size(klb_htab_t* p_htab);
+uint32_t klb_htab_size(klb_htab_t* p_htab);
 
 
 #ifdef __cplusplus

@@ -9,24 +9,33 @@
 ///////////////////////////////////////////////////////////////////////////
 #include "hash/klb_hlist.h"
 #include "hash/klb_htab.h"
+#include "hash/klb_hmap.h"
 #include "mem/klb_mem.h"
 #include "log/klb_log.h"
 #include <assert.h>
+
+
+#define KLB_HLIST_USE_HMAP      0
+#define KLB_HLIST_USE_HTAB      1
 
 
 /// @struct klb_hlist_iter_t
 /// @brief  hlist节点 OR 迭代子
 typedef struct klb_hlist_iter_t_
 {
-    void*               p_data;        ///< 节点数据
+    void*               p_data;     ///< 节点数据
 
-    klb_hlist_iter_t*   p_prev;        ///< 前一个节点
-    klb_hlist_iter_t*   p_next;        ///< 后一个节点
+    klb_hlist_iter_t*   p_prev;     ///< 前一个节点
+    klb_hlist_iter_t*   p_next;     ///< 后一个节点
 
-    klb_htab_node_t     htab_node;     ///< hash table节点
+    union
+    {
+        klb_hmap_node_t hmap_node;  ///< hash map 节点
+        klb_htab_node_t htab_node;  ///< hash table节点
+    };
 
-    uint32_t            key_len;       ///< 节点key的长度
-    char                key[1];        ///< 可变长key
+    uint32_t            key_len;    ///< 节点key的长度
+    char                key[1];     ///< 可变长key
 }klb_hlist_iter_t;
 
 
@@ -34,12 +43,18 @@ typedef struct klb_hlist_iter_t_
 /// @brief  hlist对象
 typedef struct klb_hlist_t_
 {
-    klb_hlist_iter_t*   p_head;         ///< 起始节点
-    klb_hlist_iter_t*   p_tail;         ///< 末尾节点
+    klb_hlist_iter_t*   p_head;     ///< 起始节点
+    klb_hlist_iter_t*   p_tail;     ///< 末尾节点
 
-    klb_htab_t*         p_htab;         ///< hash table
+    int                 use_type;   ///< KLB_HLIST_USE_HMAP => klb_hmap_t; KLB_HLIST_USE_HTAB => KLB_HLIST_USE_HTAB
 
-    uint32_t            size;           ///< 节点成员数目
+    union
+    {
+        klb_hmap_t*     p_hmap;     ///< hash map
+        klb_htab_t*     p_htab;     ///< hash table
+    };
+
+    uint32_t            size;       ///< 节点成员数目
 }klb_hlist_t;
 
 klb_hlist_t* klb_hlist_create(uint32_t ht_max)
@@ -47,7 +62,16 @@ klb_hlist_t* klb_hlist_create(uint32_t ht_max)
     klb_hlist_t* p_list = KLB_MALLOC(klb_hlist_t, 1, 0);
     KLB_MEMSET(p_list, 0, sizeof(klb_hlist_t));
 
-    p_list->p_htab = klb_htab_create(ht_max, KLB_HTAB_NOT_MALLOC);
+    if (0 == ht_max)
+    {
+        p_list->use_type = KLB_HLIST_USE_HMAP;
+        p_list->p_hmap = klb_hmap_create(KLB_HMAP_NOT_MALLOC);
+    }
+    else
+    {
+        p_list->use_type = KLB_HLIST_USE_HTAB;
+        p_list->p_htab = klb_htab_create(ht_max, KLB_HTAB_NOT_MALLOC);
+    }
 
     return p_list;
 }
@@ -61,7 +85,15 @@ void klb_hlist_destroy(klb_hlist_t* p_list)
 
     // 销毁前必须释放所有节点
 
-    KLB_FREE_BY(p_list->p_htab, klb_htab_destroy);
+    if (KLB_HLIST_USE_HMAP == p_list->use_type)
+    {
+        KLB_FREE_BY(p_list->p_hmap, klb_hmap_destroy);
+    }
+    else
+    {
+        KLB_FREE_BY(p_list->p_htab, klb_htab_destroy);
+    }
+
     KLB_FREE(p_list);
 }
 
@@ -101,11 +133,23 @@ klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, ui
         memcpy(p_iter->key, p_key, key_len);
         p_iter->key_len = key_len;
 
-        if (0 != klb_htab_push(p_list->p_htab, p_iter->key, p_iter->key_len, p_iter, &p_iter->htab_node))
+        if (KLB_HLIST_USE_HMAP == p_list->use_type)
         {
-            // 放入失败, 已经存在相同的 key
-            KLB_FREE(p_iter);
-            return NULL;
+            if (0 != klb_hmap_push(p_list->p_hmap, p_iter->key, p_iter->key_len, p_iter, &p_iter->hmap_node))
+            {
+                // 放入失败, 已经存在相同的 key
+                KLB_FREE(p_iter);
+                return NULL;
+            }
+        }
+        else
+        {
+            if (0 != klb_htab_push(p_list->p_htab, p_iter->key, p_iter->key_len, p_iter, &p_iter->htab_node))
+            {
+                // 放入失败, 已经存在相同的 key
+                KLB_FREE(p_iter);
+                return NULL;
+            }
         }
 
         p_iter->p_data = p_data;
@@ -148,11 +192,23 @@ klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, ui
         memcpy(p_iter->key, p_key, key_len);
         p_iter->key_len = key_len;
 
-        if (0 != klb_htab_push(p_list->p_htab, p_iter->key, p_iter->key_len, p_iter, &p_iter->htab_node))
+        if (KLB_HLIST_USE_HMAP == p_list->use_type)
         {
-            // 放入失败, 已经存在相同的 key
-            KLB_FREE(p_iter);
-            return NULL;
+            if (0 != klb_hmap_push(p_list->p_hmap, p_iter->key, p_iter->key_len, p_iter, &p_iter->hmap_node))
+            {
+                // 放入失败, 已经存在相同的 key
+                KLB_FREE(p_iter);
+                return NULL;
+            }
+        }
+        else
+        {
+            if (0 != klb_htab_push(p_list->p_htab, p_iter->key, p_iter->key_len, p_iter, &p_iter->htab_node))
+            {
+                // 放入失败, 已经存在相同的 key
+                KLB_FREE(p_iter);
+                return NULL;
+            }
         }
 
         p_iter->p_data = p_data;
@@ -206,8 +262,17 @@ void* klb_hlist_pop_head(klb_hlist_t* p_list)
         }
 
         void* p_data = p_iter->p_data;
-        void* p_remove = klb_htab_remove(p_list->p_htab, p_iter->key, p_iter->key_len);
-        assert(p_remove == p_iter);
+
+        if (KLB_HLIST_USE_HMAP == p_list->use_type)
+        {
+            void* p_remove = klb_hmap_remove(p_list->p_hmap, p_iter->key, p_iter->key_len);
+            assert(p_remove == p_iter);
+        }
+        else
+        {
+            void* p_remove = klb_htab_remove(p_list->p_htab, p_iter->key, p_iter->key_len);
+            assert(p_remove == p_iter);
+        }
 
         KLB_FREE(p_iter);
         return p_data;
@@ -240,8 +305,17 @@ void* klb_hlist_pop_tail(klb_hlist_t* p_list)
         }
 
         void* p_data = p_iter->p_data;
-        void* p_remove = klb_htab_remove(p_list->p_htab, p_iter->key, p_iter->key_len);
-        assert(p_remove == p_iter);
+
+        if (KLB_HLIST_USE_HMAP == p_list->use_type)
+        {
+            void* p_remove = klb_hmap_remove(p_list->p_hmap, p_iter->key, p_iter->key_len);
+            assert(p_remove == p_iter);
+        }
+        else
+        {
+            void* p_remove = klb_htab_remove(p_list->p_htab, p_iter->key, p_iter->key_len);
+            assert(p_remove == p_iter);
+        }
 
         KLB_FREE(p_iter);
         return p_data;
@@ -312,8 +386,17 @@ void* klb_hlist_remove(klb_hlist_t* p_list, klb_hlist_iter_t* p_iter)
         assert(0 <= p_list->size);
 
         void* p_data = p_iter->p_data;
-        void* p_remove = klb_htab_remove(p_list->p_htab, p_iter->key, p_iter->key_len);
-        assert(p_remove == p_iter);
+
+        if (KLB_HLIST_USE_HMAP == p_list->use_type)
+        {
+            void* p_remove = klb_hmap_remove(p_list->p_hmap, p_iter->key, p_iter->key_len);
+            assert(p_remove == p_iter);
+        }
+        else
+        {
+            void* p_remove = klb_htab_remove(p_list->p_htab, p_iter->key, p_iter->key_len);
+            assert(p_remove == p_iter);
+        }
 
         KLB_FREE(p_iter);
         return p_data;
@@ -372,7 +455,8 @@ void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, uint32_t key_len,
     assert(NULL != p_list);
     assert(NULL != p_key);
 
-    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
+    klb_hlist_iter_t* p_iter = klb_hlist_find_iter(p_list, p_key, key_len);
+
     if (NULL != p_iter)
     {
         void* p_old = p_iter->p_data;
@@ -389,7 +473,16 @@ klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, ui
     assert(NULL != p_list);
     assert(NULL != p_key);
 
-    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
+    klb_hlist_iter_t* p_iter = NULL;
+
+    if (KLB_HLIST_USE_HMAP == p_list->use_type)
+    {
+        p_iter = (klb_hlist_iter_t*)klb_hmap_find(p_list->p_hmap, p_key, key_len);
+    }
+    else
+    {
+        p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
+    }
 
     return p_iter;
 }
@@ -399,7 +492,7 @@ void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t key_len)
     assert(NULL != p_list);
     assert(NULL != p_key);
 
-    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_htab_find(p_list->p_htab, p_key, key_len);
+    klb_hlist_iter_t* p_iter = klb_hlist_find_iter(p_list, p_key, key_len);
 
     return (NULL != p_iter) ? p_iter->p_data : NULL;
 }
