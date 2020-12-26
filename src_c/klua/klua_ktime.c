@@ -1,5 +1,5 @@
 ﻿#include "klua/klua.h"
-#include "time/klb_time.h"
+#include "platform/klb_time.h"
 
 
 static int klua_ktime_sleep(lua_State* L)

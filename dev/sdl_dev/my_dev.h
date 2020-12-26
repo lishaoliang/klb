@@ -2,7 +2,7 @@
 #define __MY_DEV_H__
 
 #include "klb_type.h"
-#include "thread/klb_thread.h"
+#include "platform/klb_thread.h"
 #include "sdl_canvas.h"
 #include "mnp/klb_mnp_dev.h"
 #include "SDL.h"

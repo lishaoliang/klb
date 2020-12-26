@@ -16,14 +16,8 @@
     <Filter Include="inc\hash">
       <UniqueIdentifier>{83a7ab8d-0460-404f-823f-72148fb307f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\thread">
-      <UniqueIdentifier>{19854936-5871-4d9c-8923-92266be2092d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\log">
       <UniqueIdentifier>{7e3b5e99-7eea-46c5-9985-2f23536c4f97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\time">
-      <UniqueIdentifier>{fb4640d4-9d2f-4701-9e40-dcadb75b5a4a}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\string">
       <UniqueIdentifier>{71fb8924-4147-4df1-bfb6-4a6493cdc601}</UniqueIdentifier>
@@ -76,14 +70,8 @@
     <Filter Include="src_c\hash">
       <UniqueIdentifier>{b88430cb-7593-46bc-9ec0-917a1eb51f3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\thread">
-      <UniqueIdentifier>{b3f81169-36c1-49f5-ba3a-b245487da94f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\log">
       <UniqueIdentifier>{8a99df81-c1ff-43d4-9825-961cce0dd9f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\time">
-      <UniqueIdentifier>{d03963d3-210c-422c-91f5-9b87fddf28da}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\socket">
       <UniqueIdentifier>{4d5e9a4a-ab85-4d86-b9aa-130e87a9b719}</UniqueIdentifier>
@@ -168,6 +156,18 @@
     </Filter>
     <Filter Include="src_c\pcre2\src">
       <UniqueIdentifier>{209dbdae-8c97-45e9-b895-f7629e6839af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\parser">
+      <UniqueIdentifier>{35088798-0780-4a02-857e-c34230fd3710}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\parser">
+      <UniqueIdentifier>{27d3b88a-39d2-4d75-adda-93e15b8f6662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\platform">
+      <UniqueIdentifier>{21e77843-697e-42b2-8a73-1c5dd8bc257a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\platform">
+      <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -299,27 +299,6 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\string\klb_string.h">
       <Filter>inc\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\thread\klb_atomic.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\thread\klb_dynamic_link.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\thread\klb_mutex.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\thread\klb_rwlock.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\thread\klb_spinlock.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\thread\klb_thread.h">
-      <Filter>inc\thread</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\time\klb_time.h">
-      <Filter>inc\time</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klb_type.h">
       <Filter>inc</Filter>
@@ -741,6 +720,36 @@
     <ClInclude Include="..\..\inc\string\pcre2posix.h">
       <Filter>inc\string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\parser\http_parser.h">
+      <Filter>inc\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_atomic.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_dynamic_link.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_mutex.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_rwlock.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_spinlock.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_thread.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_time.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\socket\klb_socket_transmit.h">
+      <Filter>inc\socket</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\socket\klb_socket_base.h">
+      <Filter>inc\socket</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -841,27 +850,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\socket\klb_socket.c">
       <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\thread\klb_atomic.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\thread\klb_dynamic_link.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\thread\klb_mutex.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\thread\klb_rwlock.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\thread\klb_spinlock.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\thread\klb_thread.c">
-      <Filter>src_c\thread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\time\klb_time.c">
-      <Filter>src_c\time</Filter>
     </ClCompile>
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpcap.c">
       <Filter>third\lpeg-1.0.2</Filter>
@@ -1261,6 +1249,36 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\pcre2\src\pcre2_chartables.c">
       <Filter>src_c\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\parser\http_parser.c">
+      <Filter>src_c\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_atomic.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_dynamic_link.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_mutex.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_rwlock.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_spinlock.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_thread.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\platform\klb_time.c">
+      <Filter>src_c\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\socket\klb_socket_transmit.c">
+      <Filter>src_c\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\socket\klb_socket_base.c">
+      <Filter>src_c\socket</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

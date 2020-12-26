@@ -7,7 +7,7 @@
 ///  \n https://github.com/lishaoliang/klb
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
-#include "thread/klb_mutex.h"
+#include "platform/klb_mutex.h"
 #include "mem/klb_mem.h"
 #include <assert.h>
 

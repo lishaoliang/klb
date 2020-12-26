@@ -7,7 +7,7 @@
 ///  \n https://github.com/lishaoliang/klb
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
-#include "thread/klb_thread.h"
+#include "platform/klb_thread.h"
 #include "mem/klb_mem.h"
 #include "log/klb_log.h"
 #include <assert.h>

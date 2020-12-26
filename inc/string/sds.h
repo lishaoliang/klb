@@ -50,6 +50,12 @@
 #define __packed__
 #endif
 
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 typedef char *sds;
 
 
@@ -96,7 +102,7 @@ struct __attribute__ ((__packed__)) sdshdr64 {
 #define SDS_TYPE_64 4
 #define SDS_TYPE_MASK 7
 #define SDS_TYPE_BITS 3
-#define SDS_HDR_VAR(T,s) struct sdshdr##T *sh = (void*)((s)-(sizeof(struct sdshdr##T)));
+#define SDS_HDR_VAR(T,s) struct sdshdr##T *sh = (struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T)));
 #define SDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))
 #define SDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)
 
@@ -277,6 +283,11 @@ void *sdsAllocPtr(sds s);
 
 #ifdef REDIS_TEST
 int sdsTest(int argc, char *argv[]);
+#endif
+
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif
