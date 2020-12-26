@@ -70,16 +70,16 @@ void klb_socket_quit()
 
 //////////////////////////////////////////////////////////////////////////
 
-void klb_socket_destroy(klb_socket_t* p_socket)
-{
-    assert(NULL != p_socket);
-    assert(NULL != p_socket->vtable.cb_destroy);
-
-    klb_socket_destroy_cb cb_destroy = p_socket->vtable.cb_destroy;
-    assert(NULL != cb_destroy);
-
-    cb_destroy(p_socket);
-}
+//void klb_socket_destroy(klb_socket_t* p_socket)
+//{
+//    assert(NULL != p_socket);
+//    assert(NULL != p_socket->vtable.cb_destroy);
+//
+//    klb_socket_destroy_cb cb_destroy = p_socket->vtable.cb_destroy;
+//    assert(NULL != cb_destroy);
+//
+//    cb_destroy(p_socket);
+//}
 
 int klb_socket_send(klb_socket_t* p_socket, const uint8_t* p_data, int len)
 {
@@ -228,6 +228,9 @@ static klb_socket_fd connect_tcp(struct sockaddr_in* p_addr, int time_out)
         return INVALID_SOCKET;
     }
 
+    // 先设置为非阻塞方式连接服务器,防止在 connect 中耗时, 不可控制
+    // 连接完毕后, 等待耗时 time_out
+    // 最后将 0 <= time_out 的连接还原为阻塞方式
     klb_socket_set_block(fd, false);
 
     if (0 != connect(fd, p_addr, sizeof(struct sockaddr_in)))

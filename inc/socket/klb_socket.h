@@ -57,7 +57,7 @@ typedef int(*klb_socket_recvfrom_cb)(klb_socket_t* p_socket, uint8_t* p_buf, int
 /// @brief  socket虚表
 typedef struct klb_socket_vtable_t_
 {
-    klb_socket_destroy_cb   cb_destroy;
+    //klb_socket_destroy_cb   cb_destroy;
     klb_socket_send_cb      cb_send;
     klb_socket_recv_cb      cb_recv;
     klb_socket_sendto_cb    cb_sendto;
@@ -100,7 +100,7 @@ void klb_socket_quit();
 
 
 /// @brief 销毁
-void klb_socket_destroy(klb_socket_t* p_socket);
+//void klb_socket_destroy(klb_socket_t* p_socket);
 
 /// @brief TCP发送数据
 int klb_socket_send(klb_socket_t* p_socket, const uint8_t* p_data, int len);

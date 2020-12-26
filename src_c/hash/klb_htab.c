@@ -43,7 +43,7 @@ klb_htab_t* klb_htab_create(uint32_t ht_max, int auto_malloc)
 
     // 常驻内存量: sizeof(void*) * ht_max
     p_htab->p_idx = KLB_MALLOC(klb_htab_node_t*, p_htab->idx_max, 0);
-    KLB_MEMSET(p_htab->p_idx, 0, sizeof(klb_htab_node_t*) * p_htab->idx_max);
+    KLB_MEMSET(p_htab->p_idx, 0, p_htab->idx_max * sizeof(klb_htab_node_t*));
 
     return p_htab;
 }

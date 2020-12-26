@@ -21,8 +21,8 @@ extern "C" {
 #endif
 
 
-void klb_socket_base_init(klb_socket_t* p_socket);
-void klb_socket_base_quit(klb_socket_t* p_socket);
+void klb_socket_base_construct(klb_socket_t* p_socket);
+klb_socket_fd klb_socket_base_destruct(klb_socket_t* p_socket);
 
 
 #ifdef __cplusplus

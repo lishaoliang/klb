@@ -70,6 +70,7 @@
     <ClInclude Include="..\..\inc\socket\klb_socket_base.h" />
     <ClInclude Include="..\..\inc\socket\klb_socket_transmit.h" />
     <ClInclude Include="..\..\inc\string\klb_string.h" />
+    <ClInclude Include="..\..\inc\string\klb_str_map.h" />
     <ClInclude Include="..\..\inc\string\pcre2.h" />
     <ClInclude Include="..\..\inc\string\pcre2posix.h" />
     <ClInclude Include="..\..\inc\string\sds.h" />
@@ -349,6 +350,8 @@
     <ClCompile Include="..\..\src_c\socket\klb_socket.c" />
     <ClCompile Include="..\..\src_c\socket\klb_socket_base.c" />
     <ClCompile Include="..\..\src_c\socket\klb_socket_transmit.c" />
+    <ClCompile Include="..\..\src_c\string\klb_string.c" />
+    <ClCompile Include="..\..\src_c\string\klb_str_map.c" />
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpcap.c" />
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpcode.c" />
     <ClCompile Include="..\..\third\lpeg-1.0.2\lpprint.c" />

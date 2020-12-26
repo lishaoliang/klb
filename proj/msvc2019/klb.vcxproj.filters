@@ -750,6 +750,9 @@
     <ClInclude Include="..\..\inc\socket\klb_socket_base.h">
       <Filter>inc\socket</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\string\klb_str_map.h">
+      <Filter>inc\string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -1279,6 +1282,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\socket\klb_socket_base.c">
       <Filter>src_c\socket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\string\klb_str_map.c">
+      <Filter>src_c\string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\string\klb_string.c">
+      <Filter>src_c\string</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

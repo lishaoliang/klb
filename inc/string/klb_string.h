@@ -17,6 +17,7 @@
 
 #include "klb_type.h"
 #include "string/sds.h"
+#include "list/klb_list.h"
 
 
 #if defined(__cplusplus)
@@ -28,9 +29,6 @@ typedef struct klb_string_t_
 {
     sds     p_sds;
 }klb_string_t;
-
-
-
 
 
 #ifdef __cplusplus
