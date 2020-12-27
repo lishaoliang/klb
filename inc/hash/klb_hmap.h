@@ -6,6 +6,8 @@
 /// @author  李绍良
 ///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
 ///  \n https://github.com/lishaoliang/klb
+///  \n 槽(slot)大小自适应过程中不可避免产生hash重排等动作; 较klb_htab_t而言,这些时间消耗是额外的
+///  \n 适用于: 小数量级, 槽(slot)不固定
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告

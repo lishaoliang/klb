@@ -164,7 +164,7 @@ int klb_htab_push(klb_htab_t* p_htab, void* p_key, uint32_t key_len, void* p_dat
 
     if (NULL != p_prev)
     {
-        // 首位已存在值
+        // 插入中间/末尾
         if (KLB_HTAB_AUTO_MALLOC == p_htab->auto_malloc)
         {
             assert(NULL == p_htab_node);
@@ -179,7 +179,8 @@ int klb_htab_push(klb_htab_t* p_htab, void* p_key, uint32_t key_len, void* p_dat
     }
     else
     {
-        // 占第一个坑位
+        // 插入首位
+        // 注意: 首位可能已有数据
         if (KLB_HTAB_AUTO_MALLOC == p_htab->auto_malloc)
         {
             assert(NULL == p_htab_node);

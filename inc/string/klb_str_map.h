@@ -14,6 +14,7 @@
 #define __KLB_STR_MAP_H__
 
 #include "klb_type.h"
+#include "string/sds.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -29,7 +30,7 @@ void klb_str_map_destroy(klb_str_map_t* p_map);
 uint32_t klb_str_map_size(klb_str_map_t* p_map);
 
 void klb_str_map_set(klb_str_map_t* p_map, const char* p_key, const char* p_value);
-const char* klb_str_map_get(klb_str_map_t* p_map, const char* p_key);
+const sds klb_str_map_get(klb_str_map_t* p_map, const char* p_key);
 
 bool klb_str_map_remove(klb_str_map_t* p_map, const char* p_key);
 void klb_str_map_remove_all(klb_str_map_t* p_map);

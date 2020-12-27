@@ -55,7 +55,7 @@ void klb_str_map_set(klb_str_map_t* p_map, const char* p_key, const char* p_valu
     }
 }
 
-const char* klb_str_map_get(klb_str_map_t* p_map, const char* p_key)
+const sds klb_str_map_get(klb_str_map_t* p_map, const char* p_key)
 {
     assert(NULL != p_map);
 
