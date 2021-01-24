@@ -77,11 +77,10 @@ static int klb_socket_base_recvfrom(klb_socket_t* p_socket, uint8_t* p_buf, int 
     return ret;
 }
 
-void klb_socket_base_construct(klb_socket_t* p_socket)
+void klb_socket_base_construct(klb_socket_t* p_socket, klb_socket_fd fd)
 {
     assert(NULL != p_socket);
-
-    KLB_MEMSET(p_socket, 0, sizeof(klb_socket_t));
+    //KLB_MEMSET(p_socket, 0, sizeof(klb_socket_t));
 
     //p_socket->vtable.cb_destroy = klb_socket_base_destroy;
     p_socket->vtable.cb_send = klb_socket_base_send;
@@ -89,7 +88,7 @@ void klb_socket_base_construct(klb_socket_t* p_socket)
     p_socket->vtable.cb_sendto = klb_socket_base_sendto;
     p_socket->vtable.cb_recvfrom = klb_socket_base_recvfrom;
 
-    p_socket->fd = INVALID_SOCKET;
+    p_socket->fd = fd;
 }
 
 klb_socket_fd klb_socket_base_destruct(klb_socket_t* p_socket)

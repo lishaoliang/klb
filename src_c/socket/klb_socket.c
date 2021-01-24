@@ -18,6 +18,10 @@
 #pragma comment(lib, "ws2_32.lib")
 #else
 #include <signal.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <fcntl.h>
+#include <errno.h>
 #endif
 
 
@@ -220,7 +224,7 @@ static int connect_check_wait(klb_socket_fd fd, int time_out)
     return 0;
 }
 
-static klb_socket_fd connect_tcp(struct sockaddr_in* p_addr, int time_out)
+static klb_socket_fd connect_tcp(const struct sockaddr_in* p_addr, int time_out)
 {
     klb_socket_fd fd = socket(p_addr->sin_family/*AF_INET*/, SOCK_STREAM, IPPROTO_TCP);
     if (INVALID_SOCKET == fd)
@@ -284,15 +288,17 @@ klb_socket_fd klb_socket_connect(const char* p_host, int port, int time_out)
 
     klb_socket_fd fd = INVALID_SOCKET;
     struct addrinfo* p_result = NULL;
-    sds p_port = sdsfromlonglong(port); // 服务端口
 
-    int ret = getaddrinfo(p_host, p_port, NULL, &p_result);
+    char str_port[16] = { 0 };
+    snprintf(str_port, 12, "%d", port); // 服务端口
+
+    int ret = getaddrinfo(p_host, str_port, NULL, &p_result);
     if (0 == ret)
     {
         struct addrinfo* p_next = p_result;
         while (NULL != p_next)
         {
-            fd = connect_tcp((struct sockaddr_in*)p_next->ai_addr, time_out);
+            fd = connect_tcp((struct sockaddr_in*)(p_next->ai_addr), time_out);
             if (INVALID_SOCKET != fd)
             {
                 break;
@@ -304,10 +310,9 @@ klb_socket_fd klb_socket_connect(const char* p_host, int port, int time_out)
     else
     {
         const char* p_err = gai_strerror(ret);
-        KLB_LOG("socket connect:[%s:%d] error!gai_strerror:%s\n", p_host, port, p_err);
+        //KLB_LOG("socket connect:[%s:%d] error!gai_strerror:%s\n", p_host, port, p_err);
     }
 
-    KLB_FREE_BY(p_port, sdsfree);
     KLB_FREE_BY(p_result, freeaddrinfo);
     return fd;
 }

@@ -48,7 +48,7 @@ void klb_str_map_set(klb_str_map_t* p_map, const char* p_key, const char* p_valu
     sds p_str = sdsnew(p_value);
     if (NULL == klb_hlist_push_tail(p_map->p_hlist, p_key, key_len, p_str))
     {
-        sds p_old = klb_hlist_update(p_map->p_hlist, p_key, key_len, p_str);
+        sds p_old = (sds)klb_hlist_update(p_map->p_hlist, p_key, key_len, p_str);
         assert(NULL != p_old);
 
         KLB_FREE_BY(p_old, sdsfree);
@@ -66,7 +66,7 @@ bool klb_str_map_remove(klb_str_map_t* p_map, const char* p_key)
 {
     assert(NULL != p_map);
 
-    sds p_old = klb_hlist_remove_bykey(p_map->p_hlist, p_key, strlen(p_key));
+    sds p_old = (sds)klb_hlist_remove_bykey(p_map->p_hlist, p_key, strlen(p_key));
     if (NULL != p_old)
     {
         sdsfree(p_old);
@@ -82,7 +82,32 @@ void klb_str_map_remove_all(klb_str_map_t* p_map)
 
     while (0 < klb_hlist_size(p_map->p_hlist))
     {
-        sds p_old = klb_hlist_pop_head(p_map->p_hlist);
+        sds p_old = (sds)klb_hlist_pop_head(p_map->p_hlist);
         KLB_FREE_BY(p_old, sdsfree);
     }
+}
+
+klb_str_map_iter_t* klb_str_map_begin(klb_str_map_t* p_map)
+{
+    return klb_hlist_begin(p_map);
+}
+
+klb_str_map_iter_t* klb_str_map_end(klb_str_map_t* p_map)
+{
+    return klb_hlist_end(p_map);
+}
+
+klb_str_map_iter_t* klb_str_map_next(klb_str_map_iter_t* p_iter)
+{
+    return klb_hlist_next(p_iter);
+}
+
+klb_str_map_iter_t* klb_str_map_prev(klb_str_map_iter_t* p_iter)
+{
+    return klb_hlist_prev(p_iter);
+}
+
+const sds klb_str_map_data(klb_str_map_iter_t* p_iter)
+{
+    return (sds)klb_hlist_data(p_iter);
 }

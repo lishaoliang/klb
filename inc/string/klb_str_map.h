@@ -15,12 +15,13 @@
 
 #include "klb_type.h"
 #include "string/sds.h"
+#include "hash/klb_hlist.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-
+typedef klb_hlist_iter_t klb_str_map_iter_t;
 typedef struct klb_str_map_t_ klb_str_map_t;
 
 
@@ -34,6 +35,13 @@ const sds klb_str_map_get(klb_str_map_t* p_map, const char* p_key);
 
 bool klb_str_map_remove(klb_str_map_t* p_map, const char* p_key);
 void klb_str_map_remove_all(klb_str_map_t* p_map);
+
+
+klb_str_map_iter_t* klb_str_map_begin(klb_str_map_t* p_map);
+klb_str_map_iter_t* klb_str_map_end(klb_str_map_t* p_map);
+klb_str_map_iter_t* klb_str_map_next(klb_str_map_iter_t* p_iter);
+klb_str_map_iter_t* klb_str_map_prev(klb_str_map_iter_t* p_iter);
+const sds klb_str_map_data(klb_str_map_iter_t* p_iter);
 
 
 #ifdef __cplusplus

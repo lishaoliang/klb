@@ -30,7 +30,7 @@
 
 
 #if defined(__cplusplus)
-    extern "C" {
+extern "C" {
 #endif
 
 
@@ -123,7 +123,7 @@ klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket);
 
 /// @brief 关闭socket
 void klb_socket_close(klb_socket_fd fd);
-#define KLB_SOCKET_CLOSE(FD_) {if(INVALID_SOCKET!=(FD_)){klb_socket_close((FD_));(FD_)=NULL;}}
+#define KLB_SOCKET_CLOSE(FD_) {if(INVALID_SOCKET!=(FD_)){klb_socket_close((FD_));(FD_)=INVALID_SOCKET;}}
 
 
 /// @brief 设置阻塞/非阻塞

@@ -31,7 +31,7 @@ klb_socket_transmit_t* klb_socket_transmit_create();
 void klb_socket_transmit_destroy(klb_socket_transmit_t* p_transmit);
 
 
-int klb_socket_transmit_start(klb_socket_transmit_t* p_transmit);
+int klb_socket_transmit_start(klb_socket_transmit_t* p_transmit, int cpu_idx, const char* p_name);
 void klb_socket_transmit_stop(klb_socket_transmit_t* p_transmit);
 
 

@@ -169,6 +169,30 @@
     <Filter Include="src_c\platform">
       <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\async">
+      <UniqueIdentifier>{861f01db-9ca2-42ec-8ad4-b7aabdf864a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\sync">
+      <UniqueIdentifier>{18675695-4030-47ab-9be3-cb9c569524e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\async">
+      <UniqueIdentifier>{85fd20cd-8a97-4351-863a-3c583bd52e56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\sync">
+      <UniqueIdentifier>{b840ed20-f226-4c89-b669-5270e726221d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\zip">
+      <UniqueIdentifier>{7afa99bd-85ec-419d-9191-4facdbed5606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\compress">
+      <UniqueIdentifier>{a24e6eef-44f6-4ad9-a7f5-b976b471d544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\db">
+      <UniqueIdentifier>{3df54c77-9f71-4ece-acca-59e1996844cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\sqlite3">
+      <UniqueIdentifier>{3c5c0fba-5cde-4bda-bf95-dd4d9b765488}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\gui\klb_gui.h">
@@ -753,6 +777,54 @@
     <ClInclude Include="..\..\inc\string\klb_str_map.h">
       <Filter>inc\string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\crc32.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\deflate.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\gzguts.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inffast.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inffixed.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inflate.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inftrees.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\trees.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\zconf.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\zlib.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h">
+      <Filter>src_c\zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\compress\zconf.h">
+      <Filter>inc\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\compress\zlib.h">
+      <Filter>inc\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\db\sqlite3.h">
+      <Filter>inc\db</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\sqlite3\sqlite3.h">
+      <Filter>src_c\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\sqlite3\sqlite3ext.h">
+      <Filter>src_c\sqlite3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -1288,6 +1360,57 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\string\klb_string.c">
       <Filter>src_c\string</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\adler32.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\compress.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\crc32.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\deflate.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzclose.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzlib.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzread.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzwrite.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\infback.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\inffast.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\inflate.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\inftrees.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\trees.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\uncompr.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c">
+      <Filter>src_c\zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\sqlite3\shell.c">
+      <Filter>src_c\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\sqlite3\sqlite3.c">
+      <Filter>src_c\sqlite3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -31,12 +31,12 @@ void klb_socket_transmit_destroy(klb_socket_transmit_t* p_transmit)
 }
 
 
-int klb_socket_transmit_start(klb_socket_transmit_t* p_transmit)
+int klb_socket_transmit_start(klb_socket_transmit_t* p_transmit, int cpu_idx, const char* p_name)
 {
     assert(NULL != p_transmit);
     assert(NULL == p_transmit->p_thread);
 
-    p_transmit->p_thread = klb_thread_create(klb_socket_transmit_thread, p_transmit, -1, "socket transmit");
+    p_transmit->p_thread = klb_thread_create(klb_socket_transmit_thread, p_transmit, cpu_idx, p_name);
 
     return (NULL != p_transmit->p_thread) ? 0 : 1;
 }
