@@ -10,6 +10,7 @@ int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd);
 klb_wnd_t* klb_wnd_get_top(klb_wnd_t* p_wnd);
 
 int klb_wnd_set_top(klb_wnd_t* p_wnd, klb_gui_t* p_gui);
+bool klb_wnd_is_top(klb_wnd_t* p_wnd);
 
 void klb_wnd_set_hide(klb_wnd_t* p_wnd, bool hide);
 void klb_wnd_set_focus(klb_wnd_t* p_wnd, bool focus);

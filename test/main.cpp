@@ -15,11 +15,22 @@
 #include <stdio.h>
 
 #include "klb_type.h"
-#include "thread/klb_thread.h"
+#include "platform/klb_thread.h"
 #include "mem/klb_mem.h"
 #include "gui/klb_gui.h"
 #include "image/klb_canvas.h"
 #include "klbt_canvas.h"
+
+#include "socket/klb_socket.h"
+#include "socket/klb_socket_base.h"
+#include "string/sds.h"
+#include "mem/klb_mem.h"
+
+#include "string/klb_str_map.h"
+#include "platform/klb_time.h"
+#include "log/klb_log.h"
+
+#include <WS2tcpip.h>
 
 #if !defined(NDEBUG)
 //#include "vld.h"
@@ -139,6 +150,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     KLB_FREE_BY(g_canvas, klb_canvas_destroy);
 
+
+    klb_socket_quit();
     return 0;
 }
 
@@ -287,10 +300,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 static int test_my_dlgs_btn_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
+    klb_gui_t* p_gui = g_gui;
+
     switch (msg)
     {
     case KLB_WM_LBUTTONDOWN:
         LOG("klb_button_on_command,[%d],[%d,%d]\n", msg, p_pt1->x, p_pt1->y);
+        klb_gui_do_model(p_gui, "/aaaa");
+        break;
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+static int test_my_dlgs_btn_222_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_gui_t* p_gui = g_gui;
+
+    switch (msg)
+    {
+    case KLB_WM_LBUTTONDOWN:
+        LOG("klb_button_on_command,[%d],[%d,%d]\n", msg, p_pt1->x, p_pt1->y);
+        klb_gui_end_model(p_gui, "");
         break;
     default:
         break;
@@ -303,13 +336,20 @@ static void init_my_dlgs()
 {
     klb_gui_t* p_gui = g_gui;
 
-    klb_gui_append(p_gui, "kdialog", "/home", 0, 0, DLG_W, DLG_H);
-    klb_gui_append(p_gui, "kbutton", "/home/btn1", 10, 10, 100, 24);
-    klb_gui_append(p_gui, "kbutton", "/home/btn2", 10, 40, 100, 24);
-    klb_gui_append(p_gui, "kbutton", "/home/btn3", 10, 70, 100, 24);
-    klb_gui_append(p_gui, "kbutton", "/home/btn4", 10, 100, 100, 24);
+    klb_gui_append(p_gui, "kdialog", "/home", 0, 0, DLG_W / 2, DLG_H - 20, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn1", 10, 10, 100, 24, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn2", 10, 40, 100, 24, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn3", 10, 70, 100, 24, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn4", 10, 100, 100, 24, NULL);
 
-    klb_gui_bind(p_gui, "/home/btn4", test_my_dlgs_btn_on_command, NULL);
+    klb_gui_append(p_gui, "kdialog", "/aaaa", DLG_W / 2, 0, DLG_W / 2, DLG_H - 10, NULL);
+    klb_gui_append(p_gui, "kbutton", "/aaaa/btn1", 10, 10, 100, 24, NULL);
+    klb_gui_append(p_gui, "kbutton", "/aaaa/btn2", 10, 40, 100, 24, NULL);
+
+    klb_gui_bind_command(p_gui, "/home/btn1", test_my_dlgs_btn_on_command, NULL);
+    klb_gui_bind_command(p_gui, "/aaaa/btn1", test_my_dlgs_btn_222_on_command, NULL);
+
+    klb_gui_do_model(p_gui, "/home");
 }
 
 
@@ -395,6 +435,6 @@ static void my_pre_dispatch_message(const MSG* p_msg)
 
     if (0 != msg)
     {
-        klb_gui_push_msg(g_gui, msg, &pt1, NULL, 0, 0);
+        klb_gui_push(g_gui, msg, pt1.x, pt1.y, 0, 0, 0, 0);
     }
 }

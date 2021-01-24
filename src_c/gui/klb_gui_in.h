@@ -50,29 +50,28 @@ typedef struct klb_gui_t_
     // 窗口管理
     struct
     {
-        klb_list_t*     p_top_list;         ///< 顶层对话框列表
-
         /// @brief 窗口类型查找表
         ///  \n 通过"klb_gui_register"函数注册
         ///  \n 查找指定类型的创建函数
-        klb_hlist_t* p_wnd_type_hlist;
+        klb_hlist_t*    p_wnd_type_hlist;
 
         /// @brief 窗口查找表
         ///  \n 存储通过"klb_gui_append"函数加入进来的窗口
         ///  \n 在需要的时候通过路径名提取
-        klb_hlist_t* p_wnd_hlist;
+        klb_hlist_t*    p_wnd_hlist;
 
         /// @brief 当前显示的弹出窗口栈
         ///  \n 绘制UI,系统消息等
-        klb_wnd_t* p_wnd_popup[KLB_GUI_POPUP_WND_MAX];
+        klb_wnd_t*      p_wnd_popup[KLB_GUI_POPUP_WND_MAX];
 
         /// @brief 当前显示的弹出窗口数
-        int wnd_popup_num;
+        int             wnd_popup_num;
     };
 
     // 聚焦等
     struct
     {
+        klb_wnd_t*      p_focus_top;
         klb_wnd_t*      p_focus;
     };
 

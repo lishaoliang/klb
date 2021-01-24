@@ -20,9 +20,8 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
     p_gui->p_canvas = p_canvas;
 
-    p_gui->p_top_list = klb_list_create();
-    p_gui->p_wnd_hlist = klb_hlist_create(100000);
-    p_gui->p_wnd_type_hlist = klb_hlist_create(3000);
+    p_gui->p_wnd_hlist = klb_hlist_create(0);
+    p_gui->p_wnd_type_hlist = klb_hlist_create(0);
 
     p_gui->p_msg_list = klb_list_create();
     p_gui->p_msg_mutex = klb_mutex_create();
@@ -58,12 +57,6 @@ void klb_gui_destroy(klb_gui_t* p_gui)
         KLB_FREE(p_msg);
     }
 
-    while (0 < klb_list_size(p_gui->p_top_list))
-    {
-        klb_wnd_t* p_wnd = (klb_wnd_t*)klb_list_pop_tail(p_gui->p_top_list);
-        klb_gui_destroy_wnd(p_wnd);
-    }
-
     while (0 < klb_hlist_size(p_gui->p_wnd_type_hlist))
     {
         klb_hlist_pop_head(p_gui->p_wnd_type_hlist);
@@ -74,7 +67,6 @@ void klb_gui_destroy(klb_gui_t* p_gui)
         klb_hlist_pop_head(p_gui->p_wnd_hlist);
     }
 
-    KLB_FREE_BY(p_gui->p_top_list, klb_list_destroy);
     KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_gui->p_wnd_hlist, klb_hlist_destroy);
 
@@ -99,7 +91,7 @@ void klb_gui_stop(klb_gui_t* p_gui)
     KLB_FREE_BY(p_gui->p_thread1, klb_thread_destroy);
 }
 
-int klb_gui_process_message(klb_gui_t* p_gui, uint64_t tick_count)
+int klb_gui_process_message(klb_gui_t* p_gui, uint32_t tick_count)
 {
     int ret = 0;
 
@@ -228,10 +220,10 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
         klb_wnd_set_top(p_wnd, p_gui);
         klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
 
-        klb_list_push_tail(p_gui->p_top_list, p_wnd);
+        //klb_list_push_tail(p_gui->p_top_list, p_wnd);
     }
 
-    p_gui->redraw = true;
+    //p_gui->redraw = true;
 
     if (NULL != p_out_wnd)
     {
@@ -247,11 +239,58 @@ int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)
 
 int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
 {
-    return 0;
+    if (KLB_GUI_POPUP_WND_MAX <= p_gui->wnd_popup_num)
+    {
+        return 1; // 超过最大弹出数目
+    }
+
+    int path_len = strlen(p_path_name);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, path_len);
+
+    if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
+    {
+        for (int i = 0; i < p_gui->wnd_popup_num; i++)
+        {
+            if (p_wnd == p_gui->p_wnd_popup[i])
+            {
+                return 1; // 已经被弹出
+            }
+        }
+
+        p_gui->p_wnd_popup[p_gui->wnd_popup_num] = p_wnd;
+        p_gui->wnd_popup_num += 1;
+
+        p_gui->redraw = true;
+
+        return 0;
+    }
+
+    return 1;
 }
 
 int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
 {
+    if (p_gui->wnd_popup_num <= 0)
+    {
+        return 1;
+    }
+
+    int index = p_gui->wnd_popup_num - 1;
+
+    klb_wnd_t* p_top = p_gui->p_wnd_popup[index];
+    if (NULL != p_gui->p_focus_top && p_top == p_gui->p_focus_top)
+    {
+        klb_wnd_set_focus(p_gui->p_focus, false);
+
+        p_gui->p_focus_top = NULL;
+        p_gui->p_focus = NULL;
+    }
+
+    p_gui->p_wnd_popup[index] = NULL;
+    p_gui->wnd_popup_num = index;
+
+    p_gui->redraw = true;
+
     return 0;
 }
 
@@ -328,20 +367,21 @@ int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg)
     return 1;
 }
 
-static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y)
+static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t** p_top)
 {
-    klb_list_iter_t* p_iter = klb_list_end(p_gui->p_top_list);
-    while (NULL != p_iter)
+    for (int i = p_gui->wnd_popup_num - 1; 0 <= i; i--)
     {
-        klb_wnd_t* p_top = (klb_wnd_t*)klb_list_data(p_iter);
-        klb_wnd_t* p_focus = klb_wnd_pt_in(p_top, x, y);
+        klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_wnd_popup[i], x, y);
 
         if (NULL != p_focus)
         {
+            if (NULL != p_top)
+            {
+                *p_top = p_gui->p_wnd_popup[i];
+            }
+
             return p_focus;
         }
-
-        p_iter = klb_list_prev(p_iter);
     }
 
     return NULL;
@@ -351,7 +391,8 @@ int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 {
     if (KLB_WM_MOUSEMOVE == p_msg->msg)
     {
-        klb_wnd_t* p_focus = klb_gui_find_focus(p_gui, p_msg->pt1.x, p_msg->pt1.y);
+        klb_wnd_t* p_focus_top = NULL;
+        klb_wnd_t* p_focus = klb_gui_find_focus(p_gui, p_msg->pt1.x, p_msg->pt1.y, &p_focus_top);
 
         if (NULL != p_gui->p_focus && p_focus != p_gui->p_focus)
         {
@@ -379,6 +420,7 @@ int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
             klb_gui_update_rect(p_gui, NULL);
         }
 
+        p_gui->p_focus_top = p_focus_top;
         p_gui->p_focus = p_focus;
     }
 
@@ -415,13 +457,9 @@ int klb_gui_redraw(klb_gui_t* p_gui)
         {
             klb_canvas_draw_clear(p_gui->p_canvas, 0, 0, p_gui->p_canvas->rect.w, p_gui->p_canvas->rect.h);
 
-            klb_list_iter_t* p_iter = klb_list_end(p_gui->p_top_list);
-            while (NULL != p_iter)
+            for (int i = 0; i < p_gui->wnd_popup_num; i++)
             {
-                klb_wnd_t* p_wnd = (klb_wnd_t*)klb_list_data(p_iter);
-                klb_wnd_draw(p_wnd);
-
-                p_iter = klb_list_prev(p_iter);
+                klb_wnd_draw(p_gui->p_wnd_popup[i]);
             }
 
             KLB_CANVAS_UNLOCK(p_gui->p_canvas);

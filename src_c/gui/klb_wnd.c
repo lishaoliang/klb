@@ -89,6 +89,11 @@ int klb_wnd_set_top(klb_wnd_t* p_wnd, klb_gui_t* p_gui)
     return 0;
 }
 
+bool klb_wnd_is_top(klb_wnd_t* p_wnd)
+{
+    return (p_wnd->state.style & KLB_WND_STYLE_TOP) ? true : false;
+}
+
 void klb_wnd_set_hide(klb_wnd_t* p_wnd, bool hide)
 {
     if (hide)
