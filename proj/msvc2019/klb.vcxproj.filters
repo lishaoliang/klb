@@ -193,6 +193,12 @@
     <Filter Include="src_c\sqlite3">
       <UniqueIdentifier>{3c5c0fba-5cde-4bda-bf95-dd4d9b765488}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\net">
+      <UniqueIdentifier>{055e52c1-48fb-4a4e-9079-3a3fea4dcc44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\net">
+      <UniqueIdentifier>{7404cafb-0879-4dad-8775-7803d26846f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\gui\klb_gui.h">
@@ -825,6 +831,9 @@
     <ClInclude Include="..\..\src_c\sqlite3\sqlite3ext.h">
       <Filter>src_c\sqlite3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\net\klb_ncm.h">
+      <Filter>inc\net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -1411,6 +1420,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\sqlite3\sqlite3.c">
       <Filter>src_c\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\net\klb_ncm.c">
+      <Filter>src_c\net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

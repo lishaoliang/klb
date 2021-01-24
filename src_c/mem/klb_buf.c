@@ -21,6 +21,8 @@ klb_buf_t* klb_buf_init(klb_buf_t* p_buf, int buf_len, const char* p_data, int d
     p_buf->buf_len = buf_len;
     p_buf->start = 0;
     p_buf->end = 0;
+    p_buf->type = KLB_BUF_NORMAL;
+    p_buf->p_next = NULL;
 
     if (NULL != p_data && 0 < data_len)
     {

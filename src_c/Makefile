@@ -27,7 +27,7 @@ CP_RF	:= -cp -rf
 # 从目录检索需要编译的c文件
 MY_DIRS := ./algorithm ./async ./hash ./image ./list ./log ./mem ./obj 
 MY_DIRS += ./socket ./string ./graph ./media ./file ./platform
-MY_DIRS += ./klua ./mnp ./gui
+MY_DIRS += ./klua ./mnp ./gui ./net
 MY_DIRS += ./libavutil ./compat
 MY_DIRS += ./sds
 MY_DIRS += ./pcre2/src

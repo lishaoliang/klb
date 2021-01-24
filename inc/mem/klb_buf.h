@@ -26,6 +26,14 @@ extern "C" {
 
 
 /// @struct klb_buf_t
+/// @brief  缓存类型
+typedef enum klb_buf_type_e_
+{
+    KLB_BUF_NORMAL      = 0,    ///< 常规缓存
+}klb_buf_type_e;
+
+
+/// @struct klb_buf_t
 /// @brief  简易缓存
 typedef struct klb_buf_t_
 {
@@ -34,6 +42,12 @@ typedef struct klb_buf_t_
 
     int     start;          ///< 有效数据起始位置
     int     end;            ///< 有效数据末尾
+
+    int     type;           ///< 缓存类型: klb_buf_type_e
+
+    struct klb_buf_t_* p_next;  ///< 下一个节点
+
+    char    extra[];        ///< 附加数据
 }klb_buf_t;
 
 #pragma pack()
