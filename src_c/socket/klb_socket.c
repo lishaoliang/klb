@@ -22,6 +22,7 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <sys/un.h>
 #endif
 
 
@@ -147,8 +148,21 @@ void klb_socket_close(klb_socket_fd fd)
     }
 }
 
+int klb_socket_set_reuseaddr(klb_socket_fd fd)
+{
+    assert(INVALID_SOCKET != fd);
+
+    int opt = 1;
+    int ret = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt, sizeof(int));
+
+    assert(0 == ret);
+    return ret;
+}
+
 void klb_socket_set_block(klb_socket_fd fd, bool blocking)
 {
+    assert(INVALID_SOCKET != fd);
+
 #ifdef _WIN32
     u_long value = blocking ? 0 : 1;    // 0. 阻塞模式; 非0,非阻塞模式
     ioctlsocket(fd, FIONBIO, &value);
@@ -230,6 +244,12 @@ static klb_socket_fd connect_tcp(const struct sockaddr_in* p_addr, int time_out)
     if (INVALID_SOCKET == fd)
     {
         return INVALID_SOCKET;
+    }
+
+    // 端口释放后立即就可以被再次使用
+    if (0 != klb_socket_set_reuseaddr(fd))
+    {
+        goto err_connect;
     }
 
     // 先设置为非阻塞方式连接服务器,防止在 connect 中耗时, 不可控制
@@ -314,5 +334,112 @@ klb_socket_fd klb_socket_connect(const char* p_host, int port, int time_out)
     }
 
     KLB_FREE_BY(p_result, freeaddrinfo);
+    return fd;
+}
+
+klb_socket_fd klb_socket_listen(int port, int max_connect)
+{
+    klb_socket_fd fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (INVALID_SOCKET == fd)
+    {
+        return INVALID_SOCKET;
+    }
+
+    // 端口释放后立即就可以被再次使用
+    if (0 != klb_socket_set_reuseaddr(fd))
+    {
+        goto err_listen;
+    }
+
+    // 非阻塞
+    klb_socket_set_block(fd, false);
+
+    // 绑定
+    struct sockaddr_in addr = { 0 };
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY); // INADDR_ANY表示占用该设备所有网卡, 不需要知道设备IP地址
+    addr.sin_port = htons(port);
+
+    int ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+    if (0 != ret)
+    {
+        goto err_listen;
+    }
+
+    // 监听
+    ret = listen(fd, max_connect);
+    if (0 != ret)
+    {
+        goto err_listen;
+    }
+
+    return fd; // 监听成功
+
+err_listen:
+    KLB_SOCKET_CLOSE(fd);
+    return INVALID_SOCKET; // 失败
+}
+
+klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect)
+{
+#ifdef _WIN32
+    return INVALID_SOCKET;
+#else
+    klb_socket_fd fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (INVALID_SOCKET == fd)
+    {
+        return INVALID_SOCKET;
+    }
+
+    // 端口释放后立即就可以被再次使用
+    if (0 != klb_socket_set_reuseaddr(fd))
+    {
+        goto err_listen;
+    }
+
+    // 非阻塞
+    klb_socket_set_block(fd, false);
+
+    // 绑定
+    struct sockaddr_un addr = { 0 };
+    addr.sun_family = AF_INET;
+    strncpy(addr.sun_path, p_path, sizeof(addr.sun_path) - 1);
+
+    unlink(p_path);
+
+    int ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+    if (0 != ret)
+    {
+        goto err_listen;
+    }
+
+    // 监听
+    ret = listen(fd, max_connect);
+    if (0 != ret)
+    {
+        goto err_listen;
+    }
+
+    return fd; // 监听成功
+
+err_listen:
+    KLB_SOCKET_CLOSE(fd);
+    return INVALID_SOCKET; // 失败
+#endif
+}
+
+klb_socket_fd klb_socket_accept(klb_socket_fd fd_listen, struct sockaddr_in* p_addr)
+{
+    assert(INVALID_SOCKET != fd_listen);
+
+    int addr_size = sizeof(struct sockaddr_in);
+    klb_socket_fd fd = accept(fd_listen, (struct sockaddr*)p_addr, &addr_size);
+
+    if (0 < fd)
+    {
+        // 端口释放后立即就可以被再次使用
+        klb_socket_set_reuseaddr(fd);
+    }
+
     return fd;
 }

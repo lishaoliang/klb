@@ -27,9 +27,7 @@ kin = function ()
 	
 	
 	if 'windows' == kos.os then
-		--kmnp_dev.dlopen('./libsdl_dev.dll')
-	else
-		--kmnp_dev.dlopen('./libf801w.so')
+		kmnp_dev.dlopen('./libsdl_dev.dll')
 	end
 
 	print(kmnp_dev.version(), kmnp_dev.project())

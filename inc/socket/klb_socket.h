@@ -126,16 +126,46 @@ void klb_socket_close(klb_socket_fd fd);
 #define KLB_SOCKET_CLOSE(FD_) {if(INVALID_SOCKET!=(FD_)){klb_socket_close((FD_));(FD_)=INVALID_SOCKET;}}
 
 
+/// @brief 端口释放后立即就可以被再次使用
+/// @param [in]  fd             socket fd
+/// @return int 0.成功; 非0.失败
+int klb_socket_set_reuseaddr(klb_socket_fd fd);
+
+
 /// @brief 设置阻塞/非阻塞
+/// @param [in]  fd             socket fd
+/// @param [in]  blocking       true.阻塞; false.非阻塞
+/// @return 无
 void klb_socket_set_block(klb_socket_fd fd, bool blocking);
 
 
 /// @brief 使用TCP连接服务器 域名:端口
-/// @param [in] *p_host     域名: eg. "www.baidu.com", "127.0.0.1"
-/// @param [in] port        端口: eg. 80
-/// @param [in] time_out    超时(毫秒): -1. 表示创建非阻塞socket; 大于等于0. 表示创建阻塞socket并等待超时
+/// @param [in]  *p_host        域名: eg. "www.baidu.com", "127.0.0.1"
+/// @param [in]  port           端口: eg. 80
+/// @param [in]  time_out       超时(毫秒): -1. 表示创建非阻塞socket; 大于等于0. 表示创建阻塞socket并等待超时
 /// @return klb_socket_fd INVALID_SOCKET, 大于0
 klb_socket_fd klb_socket_connect(const char* p_host, int port, int time_out);
+
+
+/// @brief 使用TCP监听端口
+/// @param [in]  port           端口: eg. 80
+/// @param [in]  max_connect    监听列表最大数目
+/// @return klb_socket_fd INVALID_SOCKET, 大于0
+klb_socket_fd klb_socket_listen(int port, int max_connect);
+
+
+/// @brief 使用TCP监听unix节点
+/// @param [in]  *p_path        unix节点路径
+/// @param [in]  max_connect    监听列表最大数目
+/// @return klb_socket_fd INVALID_SOCKET, 大于0
+klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect);
+
+
+/// @brief 接收监听到的连接
+/// @param [in]  fd_listen      监听fd
+/// @param [out] *p_addr        输出监听到的地址
+/// @return klb_socket_fd INVALID_SOCKET, 大于0
+klb_socket_fd klb_socket_accept(klb_socket_fd fd_listen, struct sockaddr_in* p_addr);
 
 
 #ifdef __cplusplus
