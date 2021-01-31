@@ -25,6 +25,8 @@
     <ClInclude Include="..\..\inc\compress\zconf.h" />
     <ClInclude Include="..\..\inc\compress\zlib.h" />
     <ClInclude Include="..\..\inc\db\sqlite3.h" />
+    <ClInclude Include="..\..\inc\framework\klb_lsmfw.h" />
+    <ClInclude Include="..\..\inc\framework\klb_smcfw.h" />
     <ClInclude Include="..\..\inc\go\klb_select.h" />
     <ClInclude Include="..\..\inc\gui\klb_gui.h" />
     <ClInclude Include="..\..\inc\gui\klb_msg.h" />
@@ -80,6 +82,7 @@
     <ClInclude Include="..\..\inc\string\sds.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
+    <ClInclude Include="..\..\src_c\framework\lsmfw\klb_lsm.h" />
     <ClInclude Include="..\..\src_c\gui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\gui\klb_widget.h" />
     <ClInclude Include="..\..\src_c\gui\klb_wnd_in.h" />
@@ -234,6 +237,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\src_c\algorithm\klb_sort_insert.c" />
     <ClCompile Include="..\..\src_c\algorithm\klb_sort_quick.c" />
+    <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsm.c" />
+    <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsmfw.c" />
+    <ClCompile Include="..\..\src_c\framework\smcfw\klb_smcfw.c" />
     <ClCompile Include="..\..\src_c\go\klb_select.c" />
     <ClCompile Include="..\..\src_c\gui\klb_button.c" />
     <ClCompile Include="..\..\src_c\gui\klb_dialog.c" />

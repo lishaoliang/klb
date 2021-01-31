@@ -13,6 +13,7 @@ typedef struct klb_ncm_t_
 klb_ncm_t* klb_ncm_create()
 {
     klb_ncm_t* p_ncm = KLB_MALLOC(klb_ncm_t, 1, 0);
+    KLB_MEMSET(p_ncm, 0, sizeof(klb_ncm_t));
 
     return p_ncm;
 }

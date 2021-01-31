@@ -33,6 +33,7 @@ MY_DIRS += ./sds
 MY_DIRS += ./pcre2/src
 MY_DIRS += ./sqlite3
 MY_DIRS += ./zlib-1.2.11
+MY_DIRS += ./framework/lsmfw ./framework/smcfw
 
 
 # 第三方库

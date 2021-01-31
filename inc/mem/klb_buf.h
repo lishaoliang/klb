@@ -29,7 +29,7 @@ extern "C" {
 /// @brief  缓存类型
 typedef enum klb_buf_type_e_
 {
-    KLB_BUF_NORMAL      = 0,    ///< 常规缓存
+    KLB_BUF_NORMAL      = 0,    ///< 常规缓存; 直接使用 malloc/free 分配释放
 }klb_buf_type_e;
 
 
