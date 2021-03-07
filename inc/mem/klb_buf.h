@@ -16,7 +16,6 @@
 #define __KLB_BUF_H__
 
 #include "klb_type.h"
-#include "obj/klb_obj.h"
 
 #if defined(__cplusplus)
 extern "C" {

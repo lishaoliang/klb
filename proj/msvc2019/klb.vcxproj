@@ -58,7 +58,9 @@
     <ClInclude Include="..\..\inc\mnp\klb_mnp.h" />
     <ClInclude Include="..\..\inc\mnp\klb_mnp_dev.h" />
     <ClInclude Include="..\..\inc\mnp\klb_mnp_stream.h" />
+    <ClInclude Include="..\..\inc\net\klb_http.h" />
     <ClInclude Include="..\..\inc\net\klb_ncm.h" />
+    <ClInclude Include="..\..\inc\net\klb_websocket.h" />
     <ClInclude Include="..\..\inc\obj\klb_obj.h" />
     <ClInclude Include="..\..\inc\obj\klb_obj_hash.h" />
     <ClInclude Include="..\..\inc\parser\http_parser.h" />
@@ -329,7 +331,9 @@
     <ClCompile Include="..\..\src_c\mem\klb_buf.c" />
     <ClCompile Include="..\..\src_c\mem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\mem\klb_mpool.c" />
+    <ClCompile Include="..\..\src_c\net\klb_http.c" />
     <ClCompile Include="..\..\src_c\net\klb_ncm.c" />
+    <ClCompile Include="..\..\src_c\net\klb_websocket.c" />
     <ClCompile Include="..\..\src_c\obj\klb_obj.c" />
     <ClCompile Include="..\..\src_c\parser\http_parser.c" />
     <ClCompile Include="..\..\src_c\pcre2\src\pcre2grep.c" />

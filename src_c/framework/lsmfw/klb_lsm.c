@@ -2,6 +2,7 @@
 #include "klb_type.h"
 #include "mem/klb_mem.h"
 #include "log/klb_log.h"
+#include "socket/klb_socket.h"
 #include <assert.h>
 
 static int klb_thread_lsm_listen(void* p_obj, int* p_run);
@@ -68,11 +69,23 @@ static int klb_thread_lsm_listen(void* p_obj, int* p_run)
     KLB_LOG("start thread,klb_thread_lsm_listen.\n");
     klb_lsm_t* p_lsm = (klb_lsm_t*)p_obj;
 
+    klb_socket_fd fd = klb_socket_listen(1234, 20);
+
     while (0 != *p_run)
     {
+        struct sockaddr_in addr = { 0 };
+
+        klb_socket_fd client = klb_socket_accept(fd, &addr);
+        if (INVALID_SOCKET != client)
+        {
+            KLB_SOCKET_CLOSE(client);
+        }
+
 
         klb_sleep(10);
     }
+
+    KLB_SOCKET_CLOSE(fd);
 
     KLB_LOG("stop thread,klb_thread_lsm_listen.\n");
     return 0;

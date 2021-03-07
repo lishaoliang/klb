@@ -855,6 +855,12 @@
     <ClInclude Include="..\..\src_c\framework\lsmfw\klb_lsm.h">
       <Filter>src_c\framework\lsmfw</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\net\klb_http.h">
+      <Filter>inc\net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\net\klb_websocket.h">
+      <Filter>inc\net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -1453,6 +1459,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsm.c">
       <Filter>src_c\framework\lsmfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\net\klb_http.c">
+      <Filter>src_c\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\net\klb_websocket.c">
+      <Filter>src_c\net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -435,7 +435,7 @@ klb_socket_fd klb_socket_accept(klb_socket_fd fd_listen, struct sockaddr_in* p_a
     int addr_size = sizeof(struct sockaddr_in);
     klb_socket_fd fd = accept(fd_listen, (struct sockaddr*)p_addr, &addr_size);
 
-    if (0 < fd)
+    if (INVALID_SOCKET != fd)
     {
         // 端口释放后立即就可以被再次使用
         klb_socket_set_reuseaddr(fd);
