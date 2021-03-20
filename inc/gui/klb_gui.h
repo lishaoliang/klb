@@ -52,12 +52,12 @@ void klb_gui_stop(klb_gui_t* p_gui);
 
 /// @brief 处理消息(事件)流程
 /// @param [in] *p_gui          GUI对象
-/// @param [in] tick_count      系统滴答数(毫秒)
+/// @param [in] tc              系统滴答数(毫秒)
 /// @return int 0.有消息(事件处理); 非0.无消息处理
 /// @note 此函数为替代 start/stop 流程, 由外部申请线程, 处理UI流程
 ///  \n 与 start/stop 不能同时使用
 ///  \n 当有消息(事件)时调用; 定时器定时调用
-int klb_gui_process_message(klb_gui_t* p_gui, uint32_t tick_count);
+int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc);
 
 
 /// @brief 附加到某个显存画布

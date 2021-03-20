@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klb_test", "klb_test.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sdl_dev", "sdl_dev.vcxproj", "{3D9DADE6-F97F-409B-BD15-F3D5E8DA44F0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klua", "klua.vcxproj", "{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{3D9DADE6-F97F-409B-BD15-F3D5E8DA44F0}.Release|x64.Build.0 = Release|x64
 		{3D9DADE6-F97F-409B-BD15-F3D5E8DA44F0}.Release|x86.ActiveCfg = Release|Win32
 		{3D9DADE6-F97F-409B-BD15-F3D5E8DA44F0}.Release|x86.Build.0 = Release|Win32
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Debug|x64.ActiveCfg = Debug|x64
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Debug|x64.Build.0 = Debug|x64
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Debug|x86.ActiveCfg = Debug|Win32
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Debug|x86.Build.0 = Debug|Win32
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Release|x64.ActiveCfg = Release|x64
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Release|x64.Build.0 = Release|x64
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Release|x86.ActiveCfg = Release|Win32
+		{AC9A2F7B-137B-4D34-A9EE-FCE9C32BADD3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

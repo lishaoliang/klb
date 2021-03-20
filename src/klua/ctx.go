@@ -10,6 +10,7 @@ package klua
 import (
 	"context"
 	"sync"
+	"time"
 )
 
 // ctxMsg msg []byte
@@ -120,13 +121,20 @@ func (m *Ctx) worker(ctx context.Context, wg *sync.WaitGroup, loader string, bDo
 		env.DoLibrary(loader)
 	}
 
+	tick := time.NewTicker(time.Millisecond * 10)
+	defer tick.Stop()
+
 	for {
 		select {
 		case msg := <-m.msgs:
 			env.CallKgoB(msg.msg, msg.msgex, msg.lparam, msg.wparam, nil) // post []byte
+		case <-tick.C:
+			env.LoopOnce()
 		case <-ctx.Done():
+			env.DoEnd()
 			return ctx.Err() // 超时或强制退出
 		case <-m.ctx.Done():
+			env.DoEnd()
 			return ctx.Err() // 超时或强制退出
 		}
 	}

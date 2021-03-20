@@ -65,9 +65,16 @@ typedef struct klb_socket_vtable_t_
 }klb_socket_vtable_t;
 
 
+typedef enum klb_socket_user_status_e_
+{
+    KLB_SOCKET_OK,
+}klb_socket_user_status_e;
+
 typedef struct klb_socket_user_t_
 {
-    uint32_t    tick_count;
+    int64_t             recv_tc;
+    int64_t             send_tc;
+    int                 status;         ///< klb_socket_user_status_e
 }klb_socket_user_t;
 
 
@@ -79,7 +86,8 @@ typedef struct klb_socket_t_
     klb_socket_fd       fd;             ///< socket fd
 
     uint32_t            nonblock : 1;   ///< 0(false). 阻塞模式; 1(true),非阻塞
-    uint32_t            resv : 31;
+    uint32_t            sending : 1;    ///< 0.无数据发送; 1.有数据发送
+    uint32_t            resv : 30;
 
     klb_socket_user_t   user;           ///< 一些参数
 

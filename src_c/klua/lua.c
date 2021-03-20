@@ -597,7 +597,7 @@ static int pmain (lua_State *L) {
 }
 
 
-int klua_main (int argc, char **argv, klua_openlibs_cb cb) {
+int klua_std_main (int argc, char **argv, klua_openlibs_cb cb) {
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
   if (L == NULL) {

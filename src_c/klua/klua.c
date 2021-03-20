@@ -37,6 +37,27 @@ void* luaL_checklightuserdata(lua_State* L, int arg)
     return lua_touserdata(L, arg);
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+int klua_ref_registryindex(lua_State* L, int arg)
+{
+    lua_pushvalue(L, arg);
+    int reg = luaL_ref(L, LUA_REGISTRYINDEX);
+    assert(0 < reg);
+
+    return reg;
+}
+
+void klua_unref_registryindex(lua_State* L, int reg)
+{
+    if (0 < reg)
+    {
+        luaL_unref(L, LUA_REGISTRYINDEX, reg);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 // from ./klb/third/lua-cjson-2.1.0/lua_cjson.c
 extern int luaopen_cjson(lua_State *l);
 extern int luaopen_cjson_safe(lua_State *l);

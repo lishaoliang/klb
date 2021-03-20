@@ -91,7 +91,7 @@ void klb_gui_stop(klb_gui_t* p_gui)
     KLB_FREE_BY(p_gui->p_thread1, klb_thread_destroy);
 }
 
-int klb_gui_process_message(klb_gui_t* p_gui, uint32_t tick_count)
+int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 {
     int ret = 0;
 
@@ -544,7 +544,7 @@ static int klb_gui_thread(void* p_obj, int* p_run)
 
     while (*p_run)
     {
-        klb_gui_process_message(p_gui, 0);
+        klb_gui_loop_once(p_gui, 0);
 
         klb_sleep(10);
     }

@@ -79,6 +79,14 @@ func (m *Env) DoLibrary(loader string) int {
 	return int(ret)
 }
 
+// DoEnd call C.klua_env_doend
+func (m *Env) DoEnd() int {
+	// do end
+	ret := C.klua_env_doend(m.env)
+
+	return int(ret)
+}
+
 // GetLuaState GetLuaState
 func (m *Env) GetLuaState() *LuaState {
 	return m.lua
@@ -146,4 +154,12 @@ func (m *Env) CallKgoB(msg, msgex, lparam, wparam []byte, ptr unsafe.Pointer) in
 	}
 
 	return 1
+}
+
+// LoopOnce call C.klua_env_loop_once
+func (m *Env) LoopOnce() int {
+	// do end
+	ret := C.klua_env_loop_once(m.env)
+
+	return int(ret)
 }

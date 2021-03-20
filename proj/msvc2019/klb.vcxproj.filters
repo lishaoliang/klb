@@ -211,6 +211,12 @@
     <Filter Include="src_c\framework\smcfw">
       <UniqueIdentifier>{e62deb9e-8795-4d90-9416-e7a88c3aa6ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klua\extension">
+      <UniqueIdentifier>{28b7ead6-e649-4fbd-8f57-e26be0881052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\net">
+      <UniqueIdentifier>{ddfca7b1-46d9-470e-8337-6dcef7c7f97b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\gui\klb_gui.h">
@@ -861,6 +867,18 @@
     <ClInclude Include="..\..\inc\net\klb_websocket.h">
       <Filter>inc\net</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -1465,6 +1483,24 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\net\klb_websocket.c">
       <Filter>src_c\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\net\klua_khttp.c">
+      <Filter>src_c\klua\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_main.c">
+      <Filter>src_c\klua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

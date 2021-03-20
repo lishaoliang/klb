@@ -17,10 +17,15 @@
 
 #include "klb_type.h"
 #include "klua/klua_env.h"
+#include <assert.h>
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+#define KLUA_HELP_TOP_B(L_)     int klua_tb_ = lua_gettop(L_);
+#define KLUA_HELP_TOP_E(L_)     int klua_te_ = lua_gettop(L_); assert(klua_tb_ == klua_te_);
 
 
 /// @brief 自定义预加载Lua库
@@ -53,6 +58,20 @@ KLB_API bool luaL_checkboolean(lua_State* L, int arg);
 /// @brief check lightuserdata
 /// @return void*
 KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
+
+
+/// @brief 在LUA_REGISTRYINDEX上引用
+/// @param [in] *L          Lua状态
+/// @param [in] arg         第几个参数[1,N]
+/// @return int 大于0
+KLB_API int klua_ref_registryindex(lua_State* L, int arg);
+
+
+/// @brief 在LUA_REGISTRYINDEX上解除引用
+/// @param [in] *L          Lua状态
+/// @param [in] ref         klua_ref_registryindex函数的返回值
+/// @return 无
+KLB_API void klua_unref_registryindex(lua_State* L, int reg);
 
 
 /// @brief 扩展库"cjson"
@@ -115,6 +134,12 @@ KLB_API int klua_open_kgui(lua_State* L);
 KLB_API int klua_open_kwnd(lua_State* L);
 
 
+/// @brief 扩展库"khttp"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_khttp(lua_State* L);
+
+
 /// @def   KLB_KLUA_LOADLIBS
 /// @brief 预加载扩展库
 #define KLUA_LOADLIBS(L) {                                  \
@@ -128,6 +153,7 @@ KLB_API int klua_open_kwnd(lua_State* L);
     klua_loadlib(L, klua_open_kmnp_dev,     "kmnp_dev");    \
     klua_loadlib(L, klua_open_kgui,         "kgui");        \
     klua_loadlib(L, klua_open_kwnd,         "kwnd");        \
+    klua_loadlib(L, klua_open_khttp,        "khttp");       \
 }
 
 #ifdef __cplusplus

@@ -89,6 +89,10 @@
     <ClInclude Include="..\..\src_c\gui\klb_widget.h" />
     <ClInclude Include="..\..\src_c\gui\klb_wnd_in.h" />
     <ClInclude Include="..\..\src_c\image\klb_canvas_in.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\libavutil\adler32.h" />
     <ClInclude Include="..\..\src_c\libavutil\aes.h" />
@@ -259,6 +263,10 @@
     <ClCompile Include="..\..\src_c\image\klb_canvas_argb8888.c" />
     <ClCompile Include="..\..\src_c\image\klb_color.c" />
     <ClCompile Include="..\..\src_c\image\klb_rect.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />
     <ClCompile Include="..\..\src_c\klua\klua_env.c" />
     <ClCompile Include="..\..\src_c\klua\klua_help.c" />
@@ -267,7 +275,9 @@
     <ClCompile Include="..\..\src_c\klua\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_kthread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_ktime.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_main.c" />
     <ClCompile Include="..\..\src_c\klua\lua.c" />
+    <ClCompile Include="..\..\src_c\klua\net\klua_khttp.c" />
     <ClCompile Include="..\..\src_c\libavutil\adler32.c" />
     <ClCompile Include="..\..\src_c\libavutil\aes.c" />
     <ClCompile Include="..\..\src_c\libavutil\aes_ctr.c" />

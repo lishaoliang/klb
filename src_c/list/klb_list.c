@@ -86,6 +86,7 @@ void klb_list_push_head(klb_list_t* p_list, void* p_data)
     if (NULL != p_data)
     {
         klb_list_iter_t* p_iter = KLB_MALLOC(klb_list_iter_t, 1, 0);
+        KLB_MEMSET(p_iter, 0, sizeof(klb_list_iter_t));
 
         p_iter->p_data = p_data;
 
@@ -117,6 +118,7 @@ void klb_list_push_tail(klb_list_t* p_list, void* p_data)
     if (NULL != p_data)
     {
         klb_list_iter_t* p_iter = KLB_MALLOC(klb_list_iter_t, 1, 0);
+        KLB_MEMSET(p_iter, 0, sizeof(klb_list_iter_t));
 
         p_iter->p_data = p_data;
 

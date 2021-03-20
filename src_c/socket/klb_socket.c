@@ -285,13 +285,14 @@ static klb_socket_fd connect_tcp(const struct sockaddr_in* p_addr, int time_out)
 #endif
     }
 
-    if (0 != connect_check_wait(fd, time_out))
-    {
-        goto err_connect;
-    }
 
     if (0 <= time_out)
     {
+        if (0 != connect_check_wait(fd, time_out))
+        {
+            goto err_connect;
+        }
+
         klb_socket_set_block(fd, true);
     }
 

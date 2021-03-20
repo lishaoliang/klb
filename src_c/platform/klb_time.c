@@ -51,3 +51,10 @@ uint64_t klb_tick_count64()
 }
 
 #endif
+
+int64_t klb_tick_counti64()
+{
+    uint64_t u64 = klb_tick_count64();
+
+    return (int64_t)(u64 & 0x7fffffffffffffff);
+}

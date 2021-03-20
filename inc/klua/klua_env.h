@@ -54,6 +54,12 @@ KLB_API void klua_env_set_udata(klua_env_t* p_env, void* p_udata);
 KLB_API void* klua_env_get_udata(klua_env_t* p_env);
 
 
+/// @brief 获取当前lua环境滴答数
+/// @param [in] *p_env             lua环境 
+/// @return int64_t tc
+KLB_API int64_t klua_env_get_tc(klua_env_t* p_env);
+
+
 /// @brief 按路径方式加载一个脚本文件
 /// @param [in] *p_env             lua环境
 /// @param [in] *p_entry           入口lua文件路径; eg. "./test.lua"
@@ -66,6 +72,12 @@ KLB_API int klua_env_dofile(klua_env_t* p_env, const char* p_entry);
 /// @param [in] *p_entry           入口lua文件; eg. "server.entry_gui"
 /// @return int 0.成功; 非0.失败
 KLB_API int klua_env_dolibrary(klua_env_t* p_env, const char* p_entry);
+
+
+/// @brief 结束dofile/dolibrary
+/// @param [in] *p_env             lua环境
+/// @return int 0.成功; 非0.失败
+KLB_API int klua_env_doend(klua_env_t* p_env);
 
 
 /// @brief 从lua_State*获取klua_env_t*指针
@@ -108,6 +120,51 @@ KLB_API int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* 
 /// @param [in] status              非0时, 报错
 /// @return int status
 KLB_API int klua_env_report(klua_env_t* p_env, int status);
+
+
+/// @struct klua_env_extension_t
+/// @brief  lua环境扩展
+typedef struct klua_env_extension_t_
+{
+    /// @brief 创建扩展
+    /// @param [in] *p_env          lua环境
+    /// @return void* 扩展的指针
+    void* (*cb_create)(klua_env_t* p_env);
+
+    /// @brief 销毁扩展
+    /// @param [in] *ptr            扩展的指针
+    /// @return 无
+    void  (*cb_destroy)(void* ptr);
+
+    /// @brief 调用一次
+    /// @param [in] *ptr            扩展的指针
+    /// @param [in] *p_env          lua环境
+    /// @param [in] last_tc         上一次的滴答数
+    /// @param [in] now             当前滴答数
+    /// @return 无
+    int   (*cb_loop_once)(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now);
+}klua_env_extension_t;
+
+
+/// @brief 注册lua环境扩展
+/// @param [in] *p_env              lua环境
+/// @param [in] *p_name             名称
+/// @param [in] *p_extension        扩展的接口函数
+/// @return int 0
+KLB_API int klua_env_register_extension(klua_env_t* p_env, const char* p_name, const klua_env_extension_t* p_extension);
+
+
+/// @brief 获取lua环境扩展
+/// @param [in] *p_env              lua环境
+/// @param [in] *p_name             名称
+/// @return void* 扩展的指针
+KLB_API void* klua_env_get_extension(klua_env_t* p_env, const char* p_name);
+
+
+/// @brief 调用一次lua环境; 需要定期调用
+/// @param [in] *p_env              lua环境
+/// @return int 0
+KLB_API int klua_env_loop_once(klua_env_t* p_env);
 
 
 #ifdef __cplusplus
