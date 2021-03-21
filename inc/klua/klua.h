@@ -60,6 +60,13 @@ KLB_API bool luaL_checkboolean(lua_State* L, int arg);
 KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
 
 
+/// @brief setfield
+/// 返回 lua_newtable(L);
+KLB_API void klua_setfield_boolean(lua_State* L, const char* p_key, bool b);
+KLB_API void klua_setfield_integer(lua_State* L, const char* p_key, lua_Integer n);
+KLB_API void klua_setfield_string(lua_State* L, const char* p_key, const char* p_value);
+KLB_API void klua_setfield_lstring(lua_State* L, const char* p_key, const char* p_value, size_t v_len);
+
 /// @brief 在LUA_REGISTRYINDEX上引用
 /// @param [in] *L          Lua状态
 /// @param [in] arg         第几个参数[1,N]

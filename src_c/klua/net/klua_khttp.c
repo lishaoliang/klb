@@ -490,11 +490,53 @@ static void klua_khttp_createmeta(lua_State* L)
     lua_pop(L, 1);                          /* pop metatable */
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+static const char s_klua_khttp_url_key[UF_MAX][12] = {
+    "schema",
+    "host",
+    "port",
+    "path",
+    "query",
+    "fragment",
+    "userinfo"
+};
+
+static int klua_khttp_parse_url(lua_State* L)
+{
+    size_t url_len = 0;
+    const char* p_url = luaL_checklstring(L, 1, &url_len);
+
+    struct http_parser_url url = { 0 };
+
+    // eg. http://username:password@127.0.0.1:8080/test/test.aspx?name=sviergn&x=true#stuff
+    if (0 != http_parser_parse_url(p_url, url_len, 0, &url))
+    {
+        lua_newtable(L);
+        return 1;
+    }
+
+    // table
+    lua_newtable(L);
+
+    for (int i = 0; i < UF_MAX; i++)
+    {
+        if (url.field_set & (1 << i))
+        {
+            klua_setfield_lstring(L, s_klua_khttp_url_key[i], p_url + url.field_data[i].off, url.field_data[i].len);
+        }
+    }
+
+    return 1;
+}
+
 int klua_open_khttp(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
         { "connect",    klua_khttp_connect },
+
+        { "parse_url",  klua_khttp_parse_url },
 
         { NULL,         NULL }
     };

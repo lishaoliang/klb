@@ -39,6 +39,36 @@ void* luaL_checklightuserdata(lua_State* L, int arg)
 
 //////////////////////////////////////////////////////////////////////////
 
+void klua_setfield_boolean(lua_State* L, const char* p_key, bool b)
+{
+    assert(NULL != p_key);
+    lua_pushboolean(L, b);
+    lua_setfield(L, -2, p_key);
+}
+
+void klua_setfield_integer(lua_State* L, const char* p_key, lua_Integer n)
+{
+    assert(NULL != p_key);
+    lua_pushinteger(L, n);
+    lua_setfield(L, -2, p_key);
+}
+
+void klua_setfield_string(lua_State* L, const char* p_key, const char* p_value)
+{
+    assert(NULL != p_key);
+    assert(NULL != p_value);
+    lua_pushstring(L, p_value);
+    lua_setfield(L, -2, p_key);
+}
+
+void klua_setfield_lstring(lua_State* L, const char* p_key, const char* p_value, size_t v_len)
+{
+    assert(NULL != p_key);
+    assert(NULL != p_value);
+    lua_pushlstring(L, p_value, v_len);
+    lua_setfield(L, -2, p_key);
+}
+
 int klua_ref_registryindex(lua_State* L, int arg)
 {
     lua_pushvalue(L, arg);

@@ -2,6 +2,15 @@
 
 local stringex = {}
 
+stringex.url_encode = function (s)
+	s = string.gsub(s, '([^%w%.%- ])', function(c) return string.format('%%%02X', string.byte(c)) end)
+    return string.gsub(s, ' ', '+')
+end
+
+stringex.url_decode = function (s)
+	s = string.gsub(s, '%%(%x%x)', function(h) return string.char(tonumber(h, 16)) end)
+	return s
+end
 
 -- 去除前后空白
 stringex.trim = function (s)
