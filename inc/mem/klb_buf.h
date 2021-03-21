@@ -28,7 +28,8 @@ extern "C" {
 /// @brief  缓存类型
 typedef enum klb_buf_type_e_
 {
-    KLB_BUF_NORMAL      = 0,    ///< 常规缓存; 直接使用 malloc/free 分配释放
+    KLB_BUF_NORMAL = 0,    ///< 常规缓存; 直接使用 malloc/free 分配释放
+    KLB_BUF_EXTRA = 1,     ///< 常规缓存; klb_buf_t + [data]分配在一起
 }klb_buf_type_e;
 
 
@@ -50,6 +51,14 @@ typedef struct klb_buf_t_
 }klb_buf_t;
 
 #pragma pack()
+
+
+/// @brief 初始化缓存: 类型KLB_BUF_EXTRA
+/// @param [in] buf_len       目标缓存长度
+/// @param [in] zero          是否初始化
+/// @return klb_buf_t* p_buf
+/// @note 直接通过 free 释放
+klb_buf_t* klb_buf_malloc(int buf_len, bool zero);
 
 
 /// @brief 初始化缓存

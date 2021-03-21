@@ -6,6 +6,10 @@
 
 #define KLUA_EX_MULTIPLEX_NAME      "_KLUA_EX_MULTIPLEX_"
 
+#define KLUA_EX_MULTIPLEX_ID_MIN    1000
+#define KLUA_EX_MULTIPLEX_ID_MAX    0x7FFF0000
+
+
 typedef struct klua_ex_multiplex_item_t_
 {
     int                     id;
@@ -19,10 +23,39 @@ typedef struct klua_ex_multiplex_t_
     klua_env_t*     p_env;          ///< Lua环境
 
     klb_hlist_t*    p_items_hlist;  ///< klua_ex_multiplex_item_t*
+
+    int             next_id;
 }klua_ex_multiplex_t;
 
 
 //////////////////////////////////////////////////////////////////////////
+static int klua_ex_multiplex_next_id(klua_ex_multiplex_t* p_ex)
+{
+    int id = p_ex->next_id;
+
+    p_ex->next_id++;
+    if (KLUA_EX_MULTIPLEX_ID_MAX <= p_ex->next_id)
+    {
+        p_ex->next_id = KLUA_EX_MULTIPLEX_ID_MIN;
+    }
+
+    return id;
+}
+
+static int klua_ex_multiplex_get_id(klua_ex_multiplex_t* p_ex)
+{
+    while (true)
+    {
+        int id = klua_ex_multiplex_next_id(p_ex);
+        if (NULL == klb_hlist_find_iter(p_ex->p_items_hlist, &id, sizeof(id)))
+        {
+            return id;
+        }
+    }
+
+    assert(false);
+    return KLUA_EX_MULTIPLEX_ID_MIN;
+}
 
 static void* klua_ex_multiplex_create(klua_env_t* p_env)
 {
@@ -32,6 +65,8 @@ static void* klua_ex_multiplex_create(klua_env_t* p_env)
     p_ex->p_env = p_env;
 
     p_ex->p_items_hlist = klb_hlist_create(0);
+
+    p_ex->next_id = KLUA_EX_MULTIPLEX_ID_MIN;
 
     return p_ex;
 }
@@ -103,13 +138,13 @@ static int klua_ex_multiplex_loop_once(void* ptr, klua_env_t* p_env, int64_t las
             klua_ex_multiplex_item_t* p_item = (klua_ex_multiplex_item_t*)klb_hlist_data(p_iter);
             klb_socket_t* p_socket = p_item->p_socket;
 
-            if (KLB_SOCKET_OK == p_socket->user.status)
+            if (KLB_SOCKET_OK == p_socket->status)
             {
                 // 正常的连接
                 if (FD_ISSET(p_socket->fd, &r_fds))
                 {
                     // 注意读取数据前, 须把缓存中的数据处理完毕
-                    int recv = p_item->obj.cb_recv(p_env, p_item->obj.p_lparam, p_item->obj.p_wparam, p_socket, now);
+                    int recv = p_item->obj.cb_recv(p_env, p_item->obj.p_lparam, p_item->obj.p_wparam, p_item->id, now);
 
                     if (0 < recv)
                     {
@@ -119,7 +154,7 @@ static int klua_ex_multiplex_loop_once(void* ptr, klua_env_t* p_env, int64_t las
 
                 if (FD_ISSET(p_socket->fd, &w_fds))
                 {
-                    int send = p_item->obj.cb_send(p_env, p_item->obj.p_lparam, p_item->obj.p_wparam, p_socket, now);
+                    int send = p_item->obj.cb_send(p_env, p_item->obj.p_lparam, p_item->obj.p_wparam, p_item->id, now);
 
                     if (0 < send)
                     {
@@ -147,8 +182,10 @@ static int klua_ex_multiplex_loop_once(void* ptr, klua_env_t* p_env, int64_t las
 
 //////////////////////////////////////////////////////////////////////////
 
-int klua_ex_multiplex_push_socket(klua_ex_multiplex_t* p_ex, int id, klb_socket_t* p_socket, const klua_ex_multiplex_obj_t* p_obj)
+int klua_ex_multiplex_push_socket(klua_ex_multiplex_t* p_ex, klb_socket_t* p_socket, const klua_ex_multiplex_obj_t* p_obj)
 {
+    int id = klua_ex_multiplex_get_id(p_ex);
+
     klua_ex_multiplex_item_t* p_item = KLB_MALLOC(klua_ex_multiplex_item_t, 1, 0);
     KLB_MEMSET(p_item, 0, sizeof(klua_ex_multiplex_item_t));
 
@@ -158,13 +195,9 @@ int klua_ex_multiplex_push_socket(klua_ex_multiplex_t* p_ex, int id, klb_socket_
     memcpy(&p_item->obj, p_obj, sizeof(klua_ex_multiplex_obj_t));
 
     klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_items_hlist, &id, sizeof(id), p_item);
-    if (NULL == p_iter)
-    {
-        KLB_FREE(p_item);
-        return 1; // 放入失败
-    }
+    assert(NULL != p_iter);
 
-    return 0;
+    return id;
 }
 
 int klua_ex_multiplex_remove(klua_ex_multiplex_t* p_ex, int id)

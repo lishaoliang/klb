@@ -39,7 +39,7 @@ typedef struct klua_ex_multiplex_obj_t_
     void* p_wparam;
 }klua_ex_multiplex_obj_t;
 
-int klua_ex_multiplex_push_socket(klua_ex_multiplex_t* p_ex, int id, klb_socket_t* p_socket, const klua_ex_multiplex_obj_t* p_obj);
+int klua_ex_multiplex_push_socket(klua_ex_multiplex_t* p_ex, klb_socket_t* p_socket, const klua_ex_multiplex_obj_t* p_obj);
 
 int klua_ex_multiplex_remove(klua_ex_multiplex_t* p_ex, int id);
 

@@ -132,6 +132,23 @@ klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket)
     return fd;
 }
 
+void klb_socket_set_sending(klb_socket_t* p_socket, bool sending)
+{
+    if (sending)
+    {
+        p_socket->sending = 0x1;
+    }
+    else
+    {
+        p_socket->sending = 0x0;
+    }
+}
+
+bool klb_socket_is_sending(klb_socket_t* p_socket)
+{
+    return (0x0 == p_socket->sending) ? false : true;
+}
+
 //////////////////////////////////////////////////////////////////////////
 void klb_socket_close(klb_socket_fd fd)
 {
@@ -185,6 +202,9 @@ void klb_socket_set_block(klb_socket_fd fd, bool blocking)
 
 static int connect_check_wait(klb_socket_fd fd, int time_out)
 {
+    assert(INVALID_SOCKET != fd);
+    assert(0 < time_out);
+
     // 检查socket是否连接上
     int ret = -1;
 
@@ -192,20 +212,10 @@ static int connect_check_wait(klb_socket_fd fd, int time_out)
     FD_ZERO(&w_fds);
     FD_SET(fd, &w_fds);
 
-    if (time_out <= 0)
-    {
-        struct timeval tv;
-        tv.tv_sec = 0;
-        tv.tv_usec = 0;
-        ret = select(fd + 1, NULL, &w_fds, NULL, &tv);
-    }
-    else
-    {
-        struct timeval tv;
-        tv.tv_sec = time_out / 1000;  //取秒
-        tv.tv_usec = (time_out % 1000) * 1000; //取微妙
-        ret = select(fd + 1, NULL, &w_fds, NULL, &tv);
-    }
+    struct timeval tv;
+    tv.tv_sec = time_out / 1000;  //取秒
+    tv.tv_usec = (time_out % 1000) * 1000; //取微妙
+    ret = select(fd + 1, NULL, &w_fds, NULL, &tv);
 
     if (ret <= 0) //异常或者超时
     {
@@ -285,8 +295,7 @@ static klb_socket_fd connect_tcp(const struct sockaddr_in* p_addr, int time_out)
 #endif
     }
 
-
-    if (0 <= time_out)
+    if (0 < time_out)
     {
         if (0 != connect_check_wait(fd, time_out))
         {

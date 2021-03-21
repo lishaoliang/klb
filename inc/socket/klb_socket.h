@@ -65,16 +65,16 @@ typedef struct klb_socket_vtable_t_
 }klb_socket_vtable_t;
 
 
-typedef enum klb_socket_user_status_e_
+typedef enum klb_socket_status_e_
 {
     KLB_SOCKET_OK,
-}klb_socket_user_status_e;
+    KLB_SOCKET_ERR,
+}klb_socket_status_e;
 
 typedef struct klb_socket_user_t_
 {
     int64_t             recv_tc;
     int64_t             send_tc;
-    int                 status;         ///< klb_socket_user_status_e
 }klb_socket_user_t;
 
 
@@ -85,9 +85,12 @@ typedef struct klb_socket_t_
 
     klb_socket_fd       fd;             ///< socket fd
 
-    uint32_t            nonblock : 1;   ///< 0(false). 阻塞模式; 1(true),非阻塞
-    uint32_t            sending : 1;    ///< 0.无数据发送; 1.有数据发送
-    uint32_t            resv : 30;
+    uint16_t            nonblock : 1;   ///< 0(false). 阻塞模式; 1(true),非阻塞
+    uint16_t            sending : 1;    ///< 0.无数据发送; 1.有数据发送
+    uint16_t            rsv1 : 14;
+
+    uint16_t            status : 4;     ///< 状态: klb_socket_status_e
+    uint16_t            rsv2 : 12;
 
     klb_socket_user_t   user;           ///< 一些参数
 
@@ -128,6 +131,11 @@ void klb_socket_attach_fd(klb_socket_t* p_socket, klb_socket_fd fd);
 /// @brief 分离出socket fd
 klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket);
 
+/// @brief 设置是否在发送
+void klb_socket_set_sending(klb_socket_t* p_socket, bool sending);
+
+/// @brief 获取是否需要发送数据
+bool klb_socket_is_sending(klb_socket_t* p_socket);
 
 /// @brief 关闭socket
 void klb_socket_close(klb_socket_fd fd);
@@ -150,7 +158,7 @@ void klb_socket_set_block(klb_socket_fd fd, bool blocking);
 /// @brief 使用TCP连接服务器 域名:端口
 /// @param [in]  *p_host        域名: eg. "www.baidu.com", "127.0.0.1"
 /// @param [in]  port           端口: eg. 80
-/// @param [in]  time_out       超时(毫秒): -1. 表示创建非阻塞socket; 大于等于0. 表示创建阻塞socket并等待超时
+/// @param [in]  time_out       超时(毫秒): 0. 表示创建非阻塞socket; 大于0. 表示创建阻塞socket并等待超时
 /// @return klb_socket_fd INVALID_SOCKET, 大于0
 klb_socket_fd klb_socket_connect(const char* p_host, int port, int time_out);
 

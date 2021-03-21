@@ -119,5 +119,16 @@
 #endif
 
 
+/// @def   KLB_PADDING
+/// @brief 4字节对齐且保证末尾有多余至少[1,4]字节
+#define KLB_PADDING_4(LEN_) ( (0 == ((LEN_) & 0x3)) ? ((LEN_) + 4) : (((LEN_) + 0x03) & (~0x03)) )
+
+
+#define KLB_FOURCC(CH0_, CH1_, CH2_, CH3_) ( \
+                    (uint32_t)(uint8_t)(CH0_) | \
+                    ( (uint32_t)(uint8_t)(CH1_) << 8 )  | \
+                    ( (uint32_t)(uint8_t)(CH2_) << 16 ) | \
+                    ( (uint32_t)(uint8_t)(CH3_) << 24 )  )
+
 #endif // __KLB_TYPE_H__
 //end
