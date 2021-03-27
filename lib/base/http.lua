@@ -27,16 +27,21 @@ http.get = function (url, data, cb)
 	local schema = u['schema'] or 'http'
 	local host = u['host'] or ''	
 	local port = '80'
+	local tls = false
+
+	if cmp_ignore_case('https', schema) then
+		tls = true
+	end
 	
 	if u['port'] then
 		port = u['port']
 	else
-		if cmp_ignore_case('https', schema) then
+		if tls then
 			port = '443'
 		end
 	end
 	
-	local conn = khttp.connect(host, tonumber(port))
+	local conn = khttp.connect(host, tonumber(port), tls)
 	
 	if nil == conn then
 		cb('', 'error')
@@ -44,7 +49,13 @@ http.get = function (url, data, cb)
 	end
 	
 	conn:set_on_recv(function (msg, s1, s2)
-		if 'data' == msg then
+		if 'http' == msg then
+			print(msg, s1, s2)
+		elseif 'header' == msg then
+			print(msg, s1, s2)
+		elseif 'header_complete' == msg then
+			print(msg, s1, s2)
+		elseif 'body' == msg then
 			cb(s2, 'success')
 		else
 			--print(msg, s1, s2)

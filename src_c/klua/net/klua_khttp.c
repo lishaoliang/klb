@@ -5,6 +5,7 @@
 #include "klua/extension/klua_ex_multiplex.h"
 #include "mem/klb_mem.h"
 #include "mem/klb_buf.h"
+#include "mem/klb_buffer.h"
 #include "parser/http_parser.h"
 #include "list/klb_list.h"
 #include "log/klb_log.h"
@@ -65,7 +66,7 @@ typedef struct klua_khttp_t_
         http_parser_settings    settings;
 
         sds                     header;
-        klb_buf_t*              p_body;
+        klb_buffer_t*           p_body;
         int                     body_len;
 
         sds                     header_field;
@@ -173,8 +174,7 @@ static int on_headers_complete_klua_khttp(http_parser* p_parser)
     p_khttp->header = sdscat(p_khttp->header, "\r\n");
     p_khttp->content_length = p_parser->content_length;
 
-    int buf_len = (0 == p_khttp->content_length) ? 32 * 1024 : KLB_PADDING_4(p_khttp->content_length);
-    p_khttp->p_body = klb_buf_malloc(buf_len, false);
+    call_lua_reg_on_recv_klua_khttp(p_khttp->p_env, p_khttp->reg_on_recv, "header_complete", NULL, 0, NULL, 0);
 
     return 0;
 }
@@ -184,10 +184,7 @@ static int on_body_klua_khttp(http_parser* p_parser, const char* at, size_t leng
     klua_khttp_t* p_khttp = (klua_khttp_t*)p_parser->data;
     //KLB_LOG("on_body\n");
 
-    klb_buf_t* p_buf = p_khttp->p_body;
-
-    memcpy(p_buf->p_buf + p_buf->end, at, length);
-    p_buf->end += length;
+    klb_buffer_write(p_khttp->p_body, at, length);
 
     return 0;
 }
@@ -250,14 +247,14 @@ static int cb_klua_khttp_recv(klua_env_t* p_env, void* p_lparam, void* p_wparam,
                 if (KLUA_KHTTP_PARSER_OVER == p_khttp->parser_status)
                 {
                     //
-                    int a = 0;
+                    klb_buf_t* p_body = klb_buffer_join(p_khttp->p_body);
 
-                    klb_buf_t* p_body = p_khttp->p_body;
-
-                    call_lua_reg_on_recv_klua_khttp(p_env, p_khttp->reg_on_recv, "data",
+                    call_lua_reg_on_recv_klua_khttp(p_env, p_khttp->reg_on_recv, "body",
                                                 p_khttp->header, sdslen(p_khttp->header),
                                                 p_body->p_buf + p_body->start, p_body->end - p_body->start);
+                    KLB_FREE(p_body);
 
+                    klb_buffer_reset(p_khttp->p_body);
                 }
 
                 if (p_buf->end <= p_buf->start)
@@ -343,7 +340,7 @@ static void free_klua_khttp(klua_khttp_t* p_khttp)
 
     // r
     
-
+    KLB_FREE_BY(p_khttp->p_body, klb_buffer_destroy);
     KLB_FREE_BY(p_khttp->p_w_cur, free);
     KLB_FREE_BY(p_khttp->p_w_list, klb_list_destroy);
     KLB_FREE_BY(p_khttp->p_r_buf, free);
@@ -353,6 +350,12 @@ static int klua_khttp_connect(lua_State* L)
 {
     const char* p_host = luaL_checkstring(L, 1);
     lua_Integer port = luaL_checkinteger(L, 2);
+
+    bool tls = false;
+    if (lua_isboolean(L, 3))
+    {
+        tls = lua_toboolean(L, 3);
+    }
 
     klua_env_t* p_env = klua_env_get_by_L(L);
 
@@ -377,6 +380,8 @@ static int klua_khttp_connect(lua_State* L)
     p_khttp->p_w_list = klb_list_create();
 
     p_khttp->p_r_buf = klb_buf_malloc(1024 * 16, false);
+
+    p_khttp->p_body = klb_buffer_create(1024 * 16);
 
     // http
     http_parser_init(&p_khttp->parser, HTTP_RESPONSE);

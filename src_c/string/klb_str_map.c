@@ -89,22 +89,22 @@ void klb_str_map_remove_all(klb_str_map_t* p_map)
 
 klb_str_map_iter_t* klb_str_map_begin(klb_str_map_t* p_map)
 {
-    return klb_hlist_begin(p_map);
+    return (klb_str_map_iter_t*)klb_hlist_begin(p_map);
 }
 
 klb_str_map_iter_t* klb_str_map_end(klb_str_map_t* p_map)
 {
-    return klb_hlist_end(p_map);
+    return (klb_str_map_iter_t*)klb_hlist_end(p_map);
 }
 
 klb_str_map_iter_t* klb_str_map_next(klb_str_map_iter_t* p_iter)
 {
-    return klb_hlist_next(p_iter);
+    return (klb_str_map_iter_t*)klb_hlist_next(p_iter);
 }
 
 klb_str_map_iter_t* klb_str_map_prev(klb_str_map_iter_t* p_iter)
 {
-    return klb_hlist_prev(p_iter);
+    return (klb_str_map_iter_t*)klb_hlist_prev(p_iter);
 }
 
 const sds klb_str_map_data(klb_str_map_iter_t* p_iter)

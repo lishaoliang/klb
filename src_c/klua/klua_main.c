@@ -31,7 +31,7 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
         goto end;
     }
 
-    while (true)
+    while (!klua_env_is_exit(p_env))
     {
         klua_env_loop_once(p_env);
 

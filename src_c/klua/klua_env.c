@@ -17,6 +17,7 @@
 #include "hash/klb_hlist.h"
 #include "string/sds.h"
 #include "klua/extension/klua_extension.h"
+#include "klua/extension_single/klua_extension_single.h"
 #include <assert.h>
 
 
@@ -57,6 +58,11 @@ typedef struct klua_env_t
 
     struct
     {
+        bool            is_exit;        ///< 是否退出
+    };
+
+    struct
+    {
         int64_t         tc;             ///< 当前时间
 
         int64_t         gc_tc;          ///< 上次gc时间
@@ -80,6 +86,7 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     klua_env_t* p_env = KLB_MALLOC(klua_env_t, 1, 0);
     KLB_MEMSET(p_env, 0, sizeof(klua_env_t));
 
+    p_env->is_exit = false;
     p_env->p_extension_hlist = klb_hlist_create(0);
     p_env->p_extension_activate_hlist = klb_hlist_create(0);
 
@@ -92,6 +99,9 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
 
     // 注册标准扩展
     klua_register_extension_std(p_env);
+
+    // 标准lua扩展(进程唯一, 即多了lua环境之间共享)
+    klua_register_extension_single_std(p_env);
 
     // lua环境初始化
     klua_env_init(p_env, cb_pre_load);
@@ -145,12 +155,12 @@ static int klua_pdofile(lua_State *L)
         klua_pref(p_env, L);        // 保存地址
         klua_env_call_kin(p_env);   // 调用"kin"
 
-        lua_pushinteger(L, 0);
+        lua_pushboolean(L, true);
     }
     else
     {
         KLB_LOG_E("klua_env dofile error!path:%s\n", p_loader);
-        lua_pushinteger(L, 1);
+        lua_pushboolean(L, false);
     }
 
     return 1;
@@ -166,12 +176,12 @@ static int klua_pdolibrary(lua_State *L)
         klua_pref(p_env, L);        // 保存地址
         klua_env_call_kin(p_env);   // 调用"kin"
 
-        lua_pushinteger(L, 0);
+        lua_pushboolean(L, true);
     }
     else
     {
         KLB_LOG_E("klua_env dofile error!path:%s\n", p_loader);
-        lua_pushinteger(L, 1);
+        lua_pushboolean(L, false);
     }
 
     return 1;
@@ -194,7 +204,13 @@ int klua_env_dofile(klua_env_t* p_env, const char* p_loader)
     klua_help_report(L, status);
     if (LUA_OK == status) { lua_pop(L, 1); }
 
-    return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    int ret = (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    if (EXIT_SUCCESS != ret)
+    {
+        p_env->is_exit = true;
+    }
+
+    return ret;
 }
 
 int klua_env_dolibrary(klua_env_t* p_env, const char* p_loader)
@@ -214,7 +230,13 @@ int klua_env_dolibrary(klua_env_t* p_env, const char* p_loader)
     klua_help_report(L, status);
     if (LUA_OK == status) { lua_pop(L, 1); }
 
-    return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    int ret = (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    if (EXIT_SUCCESS != ret)
+    {
+        p_env->is_exit = true;
+    }
+
+    return ret;
 }
 
 int klua_env_doend(klua_env_t* p_env)
@@ -383,6 +405,15 @@ static void klua_punref(klua_env_t* p_env, lua_State* L)
     }
 }
 
+static int klua_exit(lua_State* L)
+{
+    klua_env_t* p_env = klua_env_get_by_L(L);
+
+    p_env->is_exit = true;
+
+    return 0;
+}
+
 static int klua_pmain(lua_State *L)
 {
     klua_env_t* p_env = (klua_env_t*)lua_touserdata(L, 1);
@@ -395,6 +426,9 @@ static int klua_pmain(lua_State *L)
     // 加载标准库
     luaL_openlibs(L);
 
+    // 退出函数
+    lua_register(L, "exit", klua_exit);
+
     // 加载"k*"系列额外库
     //klua_loadlib(L, klua_open_kos, "kos");
     //klua_loadlib(L, klua_open_ktime, "ktime");
@@ -403,7 +437,8 @@ static int klua_pmain(lua_State *L)
     // 加载自定义库
     if (cb_pre_load) { cb_pre_load(L); }
 
-    return 0;
+    lua_pushboolean(L, true);
+    return 1;
 }
 
 static int klua_pquit(lua_State *L)
@@ -426,7 +461,9 @@ static int klua_pquit(lua_State *L)
     // unref
     klua_punref(p_env, L);
 
-    return 0;
+    p_env->is_exit = true;
+    lua_pushboolean(L, true);
+    return 1;
 }
 
 static int klua_env_init(klua_env_t* p_env, lua_CFunction cb_pre_load)
@@ -544,3 +581,9 @@ int klua_env_loop_once(klua_env_t* p_env)
 
     return 0;
 }
+
+bool klua_env_is_exit(klua_env_t* p_env)
+{
+    return p_env->is_exit;
+}
+

@@ -141,10 +141,22 @@ KLB_API int klua_open_kgui(lua_State* L);
 KLB_API int klua_open_kwnd(lua_State* L);
 
 
+/// @brief 扩展库"kurl"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kurl(lua_State* L);
+
+
 /// @brief 扩展库"khttp"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_khttp(lua_State* L);
+
+
+/// @brief 扩展库"kwebsocket"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kwebsocket(lua_State* L);
 
 
 /// @def   KLB_KLUA_LOADLIBS
@@ -160,7 +172,9 @@ KLB_API int klua_open_khttp(lua_State* L);
     klua_loadlib(L, klua_open_kmnp_dev,     "kmnp_dev");    \
     klua_loadlib(L, klua_open_kgui,         "kgui");        \
     klua_loadlib(L, klua_open_kwnd,         "kwnd");        \
+    klua_loadlib(L, klua_open_kurl,         "kurl");        \
     klua_loadlib(L, klua_open_khttp,        "khttp");       \
+    klua_loadlib(L, klua_open_kwebsocket,   "kwebsocket");  \
 }
 
 #ifdef __cplusplus

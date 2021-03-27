@@ -124,6 +124,11 @@
 #define KLB_PADDING_4(LEN_) ( (0 == ((LEN_) & 0x3)) ? ((LEN_) + 4) : (((LEN_) + 0x03) & (~0x03)) )
 
 
+/// @def   KLB_ALIGNED_4
+/// @brief 4字节对齐
+#define KLB_ALIGNED_4(LEN_) ( (0 == ((LEN_) & 0x3)) ? (LEN_) : (((LEN_) + 0x03) & (~0x03)) )
+
+
 #define KLB_FOURCC(CH0_, CH1_, CH2_, CH3_) ( \
                     (uint32_t)(uint8_t)(CH0_) | \
                     ( (uint32_t)(uint8_t)(CH1_) << 8 )  | \

@@ -217,6 +217,12 @@
     <Filter Include="src_c\klua\net">
       <UniqueIdentifier>{ddfca7b1-46d9-470e-8337-6dcef7c7f97b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klua\extension_single">
+      <UniqueIdentifier>{6b4fcc7a-493e-484b-ad95-c5c5ec2716a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\multithread">
+      <UniqueIdentifier>{30bfeae6-9d91-4a97-890d-8173aa26e75b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\gui\klb_gui.h">
@@ -879,6 +885,18 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\mem\klb_buffer.h">
+      <Filter>inc\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension_single\klua_extension_single.h">
+      <Filter>src_c\klua\extension_single</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_mcache.h">
+      <Filter>src_c\klua\extension_single</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_thread.h">
+      <Filter>src_c\klua\extension_single</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
@@ -948,9 +966,6 @@
       <Filter>src_c\klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_kos.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_kthread.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_ktime.c">
@@ -1501,6 +1516,30 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_main.c">
       <Filter>src_c\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\mem\klb_buffer.c">
+      <Filter>src_c\mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\net\klua_kwebsocket.c">
+      <Filter>src_c\klua\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension_single\klua_extension_single.c">
+      <Filter>src_c\klua\extension_single</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\net\klua_kurl.c">
+      <Filter>src_c\klua\net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\multithread\klua_kmcache.c">
+      <Filter>src_c\klua\multithread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\multithread\klua_kthread.c">
+      <Filter>src_c\klua\multithread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_mcache.c">
+      <Filter>src_c\klua\extension_single</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_thread.c">
+      <Filter>src_c\klua\extension_single</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -167,6 +167,12 @@ KLB_API void* klua_env_get_extension(klua_env_t* p_env, const char* p_name);
 KLB_API int klua_env_loop_once(klua_env_t* p_env);
 
 
+/// @brief 是否退出
+/// @param [in] *p_env              lua环境
+/// @return bool true.退出; false.不退出
+KLB_API bool klua_env_is_exit(klua_env_t* p_env);
+
+
 #ifdef __cplusplus
 }
 #endif
