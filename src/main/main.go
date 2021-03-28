@@ -10,6 +10,7 @@ package main
 /*
 //#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../inc
 #include "klua/klua.h"
+#include "klbnet/klb_socket.h"
 extern int klua_go_main_openlibs(lua_State* L);
 */
 import "C"
@@ -45,6 +46,8 @@ func main() {
 		usage()
 		return
 	}
+
+	C.klb_socket_init()
 
 	kpool.Init(4096, 3072*4)
 

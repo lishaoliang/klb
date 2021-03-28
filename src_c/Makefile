@@ -25,27 +25,24 @@ CP_RF	:= -cp -rf
 
 
 # 从目录检索需要编译的c文件
-MY_DIRS := ./algorithm ./async ./hash ./image ./list ./log ./mem ./obj 
-MY_DIRS += ./socket ./string ./graph ./media ./file ./platform
-MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/net ./mnp ./gui ./net
-MY_DIRS += ./libavutil ./compat
-MY_DIRS += ./sds
-MY_DIRS += ./pcre2/src
-MY_DIRS += ./sqlite3
-MY_DIRS += ./zlib-1.2.11
+MY_DIRS := ./algorithm ./klbbase ./klbgui ./klbmem ./klbnet ./klbutil ./platform
 MY_DIRS += ./framework/lsmfw ./framework/smcfw
 
+# klua
+MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/klua_net ./klua/multithread
+MY_DIRS += ./klua/lua-5.4.1/src ./klua/lua-cjson-2.1.0 ./klua/lpeg-1.0.2 ./klua/luafilesystem-2.0/src
+
+# libavutil
+MY_DIRS += ./compat ./libavutil
 
 # 第三方库
-MY_DIRS += ../third/lua-5.4.1/src ../third/lua-cjson-2.1.0 ../third/lpeg-1.0.2
-#MY_DIRS += ../third/quickjs
+MY_DIRS += ./klbthird ./klbthird/sds ./klbthird/pcre2/src ./klbthird/sqlite3
+MY_DIRS += ./zlib-1.2.11
 
-# 其他
-MY_DIRS += ./go ./thread ./time ../third/luafilesystem-2.0/src
 
 
 # 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__
-MY_CFLAGS := -std=c99 -D_GNU_SOURCE $(MY_CFLAGS_EX)
+MY_CFLAGS := -g -std=c99 -D_GNU_SOURCE $(MY_CFLAGS_EX)
 
 # pcre2的宏
 MY_CFLAGS += -DHAVE_CONFIG_H
@@ -56,18 +53,14 @@ MY_CFLAGS += -DCONFIG_BIGNUM -DCONFIG_VERSION=\"2019-10-27\"
 
 # 引用头文件
 MY_INCLUDES := -I ../inc -I .
-MY_INCLUDES += -I ./hash -I./list -I ./log -I ./mem -I ./obj 
-MY_INCLUDES += -I ./socket -I ./string -I ./thread -I ./time -I ./graph
-MY_INCLUDES += -I ./media -I ./file -I ./algorithm -I ./klua -I ./mnp -I ./gui
 MY_INCLUDES += -I ./compat
-MY_INCLUDES += -I ./sds
-MY_INCLUDES += -I ./pcre2/src
-MY_INCLUDES += -I ./stm32
+MY_INCLUDES += -I ./klbthird/sds
+MY_INCLUDES += -I ./klbthird/pcre2/src
+MY_INCLUDES += -I ./klbthird/sqlite3
 
 
 # 第三方库头文件
-MY_INCLUDES += -I ../third/lua-5.4.1/src
-MY_INCLUDES += -I ../third/quickjs
+MY_INCLUDES += -I ./klua/lua-5.4.1/src
 
 
 # 引用的静态库

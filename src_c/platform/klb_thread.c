@@ -8,8 +8,10 @@
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
 #include "platform/klb_thread.h"
-#include "mem/klb_mem.h"
-#include "log/klb_log.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_log.h"
+#include "platform/klb_time.h"
+#include <stdlib.h>
 #include <assert.h>
 
 #ifdef _WIN32
@@ -34,6 +36,9 @@ typedef struct klb_thread_t_
 static DWORD WINAPI cb_klb_thread(void* p_obj)
 {
     klb_thread_t* p_thread = (klb_thread_t*)(p_obj);
+
+    // 初始随机值
+    srand(klb_tick_count() + klb_thread_tid());
 
     if (NULL != p_thread->cb_thread)
     {
@@ -80,6 +85,19 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 
     KLB_FREE(p_thread->p_name);
     KLB_FREE(p_thread);
+}
+
+/// @brief 获取进程ID
+int klb_thread_pid()
+{
+    return GetProcessIdOfThread(GetCurrentThread());
+}
+
+
+/// @brief 获取线程ID
+int klb_thread_tid()
+{
+    return GetCurrentThreadId();
 }
 
 void klb_sleep(uint32_t ms)
@@ -147,6 +165,9 @@ static void* cb_klb_thread(void* p_obj)
     }
 #endif
 
+    // 初始随机值
+    srand(klb_tick_count() + klb_thread_tid());
+
     if (NULL != p_thread->cb_thread)
     {
         p_thread->cb_thread(p_thread->p_obj, &p_thread->run);
@@ -189,6 +210,21 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 
     KLB_FREE(p_thread->p_name);
     KLB_FREE(p_thread);
+}
+
+/// @brief 获取进程ID
+int klb_thread_pid()
+{
+    int pid = getpid();
+    return pid;
+}
+
+
+/// @brief 获取线程ID
+int klb_thread_tid()
+{
+    int tid = syscall(__NR_gettid);
+    return tid;
 }
 
 void klb_sleep(uint32_t ms)

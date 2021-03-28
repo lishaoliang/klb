@@ -3,7 +3,7 @@ package kgsmcfw
 /*
 #include "klb_type.h"
 #include "klua/klua.h"
-#include "mnp/klb_mnp.h"
+#include "klbbase/klb_mnp.h"
 
 extern int klua_go_open_kg_smcfw_cgo(lua_State* L);
 */

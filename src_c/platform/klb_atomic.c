@@ -8,7 +8,7 @@
 /// @brief   原子变量
 ///////////////////////////////////////////////////////////////////////////
 #include "platform/klb_atomic.h"
-#include "mem/klb_mem.h"
+#include "klbmem/klb_mem.h"
 #include <assert.h>
 
 

@@ -1,8 +1,8 @@
 ﻿#include "klua/klua.h"
-#include "mnp/klb_mnp_stream.h"
-#include "mnp/klb_mnp_dev.h"
-#include "mem/klb_mem.h"
-#include "log/klb_log.h"
+#include "klbbase/klb_mnp_stream.h"
+#include "klbbase/klb_mnp_dev.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_log.h"
 #include "platform/klb_dynamic_link.h"
 #include <string.h>
 

@@ -19,7 +19,7 @@
 ///      A[i + 1] = key
 ///////////////////////////////////////////////////////////////////////////
 #include "algorithm/klb_sort_insert.h"
-#include "mem/klb_mem.h"
+#include "klbmem/klb_mem.h"
 #include <string.h>
 #include <assert.h>
 

@@ -16,19 +16,19 @@
 
 #include "klb_type.h"
 #include "platform/klb_thread.h"
-#include "mem/klb_mem.h"
-#include "gui/klb_gui.h"
-#include "image/klb_canvas.h"
+#include "klbmem/klb_mem.h"
+#include "klbgui/klb_gui.h"
+#include "klbutil/klb_canvas.h"
 #include "klbt_canvas.h"
 
-#include "socket/klb_socket.h"
-#include "socket/klb_socket_base.h"
-#include "string/sds.h"
-#include "mem/klb_mem.h"
+#include "klbnet/klb_socket.h"
+#include "klbnet/klb_socket_base.h"
+#include "klbthird/sds.h"
+#include "klbmem/klb_mem.h"
 
-#include "string/klb_str_map.h"
+#include "klbbase/klb_str_map.h"
 #include "platform/klb_time.h"
-#include "log/klb_log.h"
+#include "klbutil/klb_log.h"
 
 #include <WS2tcpip.h>
 

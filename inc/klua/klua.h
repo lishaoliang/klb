@@ -159,6 +159,12 @@ KLB_API int klua_open_khttp(lua_State* L);
 KLB_API int klua_open_kwebsocket(lua_State* L);
 
 
+/// @brief 预加载 宏KLUA_LOADLIBS 定义的所有库
+/// @param [in] *L          Lua状态
+/// @return int 返回0
+KLB_API int klua_loadlib_all(lua_State* L);
+
+
 /// @def   KLB_KLUA_LOADLIBS
 /// @brief 预加载扩展库
 #define KLUA_LOADLIBS(L) {                                  \

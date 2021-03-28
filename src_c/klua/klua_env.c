@@ -9,13 +9,14 @@
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
 #include "klua/klua_env.h"
+#include "lstate.h"
 #include "klua/klua.h"
 #include "klua_help.h"
-#include "mem/klb_mem.h"
-#include "log/klb_log.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_log.h"
 #include "platform/klb_time.h"
-#include "hash/klb_hlist.h"
-#include "string/sds.h"
+#include "klbutil/klb_hlist.h"
+#include "klbthird/sds.h"
 #include "klua/extension/klua_extension.h"
 #include "klua/extension_single/klua_extension_single.h"
 #include <assert.h>
@@ -91,6 +92,7 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     p_env->p_extension_activate_hlist = klb_hlist_create(0);
 
     p_env->L = luaL_newstate(); // Lua运行环境
+    p_env->L->udata = p_env;
 
     p_env->tc = klb_tick_counti64();
 
@@ -257,6 +259,10 @@ int klua_env_doend(klua_env_t* p_env)
 klua_env_t* klua_env_get_by_L(lua_State* L)
 {
     assert(NULL != L);
+
+    return (klua_env_t*)L->udata;
+
+#if 0
     lua_getglobal(L, KLUA_ENV_PTR);
 
     if (LUA_TLIGHTUSERDATA == lua_type(L, -1))
@@ -266,6 +272,7 @@ klua_env_t* klua_env_get_by_L(lua_State* L)
 
     assert(false);
     return NULL;
+#endif
 }
 
 lua_State* klua_env_get_L(klua_env_t* p_env)
@@ -419,9 +426,11 @@ static int klua_pmain(lua_State *L)
     klua_env_t* p_env = (klua_env_t*)lua_touserdata(L, 1);
     lua_CFunction cb_pre_load = (lua_CFunction)lua_touserdata(L, 2);
 
+#if 0
     // 将环境指针保存到全局, 如果有更好的方法则可换掉
     lua_pushlightuserdata(L, p_env);
     lua_setglobal(L, KLUA_ENV_PTR);
+#endif
 
     // 加载标准库
     luaL_openlibs(L);

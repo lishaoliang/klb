@@ -1,8 +1,8 @@
 ﻿#include "klb_lsm.h"
 #include "klb_type.h"
-#include "mem/klb_mem.h"
-#include "log/klb_log.h"
-#include "socket/klb_socket.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_log.h"
+#include "klbnet/klb_socket.h"
 #include <assert.h>
 
 static int klb_thread_lsm_listen(void* p_obj, int* p_run);

@@ -1,6 +1,6 @@
 ﻿#include "klua/extension/klua_ex_gui.h"
-#include "gui/klb_gui.h"
-#include "mem/klb_mem.h"
+#include "klbgui/klb_gui.h"
+#include "klbmem/klb_mem.h"
 #include <assert.h>
 
 

@@ -130,6 +130,11 @@ func (m *Ctx) worker(ctx context.Context, wg *sync.WaitGroup, loader string, bDo
 			env.CallKgoB(msg.msg, msg.msgex, msg.lparam, msg.wparam, nil) // post []byte
 		case <-tick.C:
 			env.LoopOnce()
+
+			if env.IsExit() {
+				env.DoEnd()
+				return ctx.Err() // 超时或强制退出
+			}
 		case <-ctx.Done():
 			env.DoEnd()
 			return ctx.Err() // 超时或强制退出

@@ -14,7 +14,7 @@
 #define __KLB_LSM_H__
 
 #include "klb_type.h"
-#include "net/klb_ncm.h"
+#include "klbnet/klb_ncm.h"
 #include "platform/klb_thread.h"
 
 #if defined(__cplusplus)

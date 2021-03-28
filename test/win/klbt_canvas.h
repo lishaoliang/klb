@@ -2,7 +2,7 @@
 #define __KLBT_CANVAS_H__
 
 #include "klb_type.h"
-#include "image/klb_canvas.h"
+#include "klbutil/klb_canvas.h"
 #include <windows.h>
 
 

@@ -59,6 +59,7 @@ MY_CGO_LDFLAGS += -L $(PWD)/../lib -lklb_c
 ifeq ($(OS), windows)
 MY_CGO_LDFLAGS += -lpthread -lm
 else
+MY_CGO_LDFLAGS += -g -lssl -lcrypto
 MY_CGO_LDFLAGS += -lpthread -lrt -ldl -lm
 endif
 MY_CGO_LDFLAGS += "

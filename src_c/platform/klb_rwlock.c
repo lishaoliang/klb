@@ -8,7 +8,7 @@
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
 #include "platform/klb_rwlock.h"
-#include "mem/klb_mem.h"
+#include "klbmem/klb_mem.h"
 #include <assert.h>
 
 

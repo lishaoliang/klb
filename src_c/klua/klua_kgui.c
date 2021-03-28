@@ -1,10 +1,10 @@
 ﻿#include "klb_type.h"
 #include "klua/klua.h"
-#include "gui/klb_gui.h"
-#include "obj/klb_obj.h"
-#include "mem/klb_mem.h"
+#include "klbgui/klb_gui.h"
+#include "klbutil/klb_obj.h"
+#include "klbmem/klb_mem.h"
 #include "klua/klua_help.h"
-#include "hash/klb_hlist.h"
+#include "klbutil/klb_hlist.h"
 #include <assert.h>
 
 

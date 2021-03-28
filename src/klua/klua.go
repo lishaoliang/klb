@@ -172,6 +172,12 @@ func OpenKwnd(lua *LuaState, name string) {
 	LoadLib(lua, (LuaCFunction)(unsafe.Pointer(C.klua_open_kwnd)), name)
 }
 
+// LoadLibAll load lib all
+// 在Lua环境中预加载所有klbc提供的库
+func LoadLibAll(lua *LuaState) {
+	C.klua_loadlib_all((*C.lua_State)(unsafe.Pointer(lua)))
+}
+
 // Open Go/C libs
 // eg. "k*", "kg_*"
 // "k*" 表示为c语言编写的库

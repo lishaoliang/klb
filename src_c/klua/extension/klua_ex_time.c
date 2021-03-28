@@ -1,9 +1,9 @@
 ﻿#include "klua/extension/klua_ex_time.h"
 #include "klua/klua.h"
-#include "mem/klb_mem.h"
-#include "list/klb_list.h"
-#include "hash/klb_hlist.h"
-#include "log/klb_log.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_list.h"
+#include "klbutil/klb_hlist.h"
+#include "klbutil/klb_log.h"
 #include <assert.h>
 
 

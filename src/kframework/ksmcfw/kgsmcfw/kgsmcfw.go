@@ -6,7 +6,7 @@ package kgsmcfw
 
 #include "klb_type.h"
 #include "klua/klua.h"
-#include "mnp/klb_mnp.h"
+#include "klbbase/klb_mnp.h"
 
 extern int klua_go_kg_smcfw_init(lua_State* L);
 extern int klua_go_kg_smcfw_quit(lua_State* L);

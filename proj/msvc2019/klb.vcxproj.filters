@@ -4,89 +4,14 @@
     <Filter Include="inc">
       <UniqueIdentifier>{fdcb7959-f2ea-4bba-86d6-8b5babe09ba0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\mem">
-      <UniqueIdentifier>{6f2fed0f-558b-4f40-a9e6-324ac897a1d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\list">
-      <UniqueIdentifier>{c389ea9f-d4a1-4135-aa9e-4fe8c95338ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\obj">
-      <UniqueIdentifier>{1e8cb316-ade3-4ae1-99be-96542c30a37e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\hash">
-      <UniqueIdentifier>{83a7ab8d-0460-404f-823f-72148fb307f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\log">
-      <UniqueIdentifier>{7e3b5e99-7eea-46c5-9985-2f23536c4f97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\string">
-      <UniqueIdentifier>{71fb8924-4147-4df1-bfb6-4a6493cdc601}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\socket">
-      <UniqueIdentifier>{c9fb4038-4e0a-458a-ac49-fc5c00ade629}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\graph">
-      <UniqueIdentifier>{037341e1-35b4-4ff3-b60c-bb5d3427091f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\media">
-      <UniqueIdentifier>{e9be01f8-bb7a-47b8-a6d2-669dd7efeba6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\file">
-      <UniqueIdentifier>{c717de08-99c2-4f4b-a657-15c1792fb731}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\algorithm">
       <UniqueIdentifier>{6669c56b-988a-4ccc-bf96-b97609e327cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="third">
       <UniqueIdentifier>{37ca18f8-40ee-4c83-9e9a-26ad6d761286}</UniqueIdentifier>
     </Filter>
-    <Filter Include="third\lpeg-1.0.2">
-      <UniqueIdentifier>{f6fa5ed3-0eac-4121-bc23-72522fb179a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\lua-cjson-2.1.0">
-      <UniqueIdentifier>{7f906b2f-3713-47e6-814b-8ea40611d423}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\luafilesystem-2.0">
-      <UniqueIdentifier>{3082501f-cc97-4591-af70-df50b6421778}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\luafilesystem-2.0\src">
-      <UniqueIdentifier>{11a6cde3-0cbc-4caa-8566-b6cefc8e4caa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\klua">
-      <UniqueIdentifier>{b4a9bc1b-0d34-4ca2-8307-0ec033d8d2bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c">
       <UniqueIdentifier>{bc0c271a-e6fc-46dd-a1d9-aed36e981ed6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\mem">
-      <UniqueIdentifier>{3c9397a3-3453-486b-96eb-1abeeeb4a1ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\list">
-      <UniqueIdentifier>{154f0c5d-bf32-4f9c-9c3e-96922a946653}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\obj">
-      <UniqueIdentifier>{545e2d90-a8c8-44f6-b3e8-b505646d0972}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\hash">
-      <UniqueIdentifier>{b88430cb-7593-46bc-9ec0-917a1eb51f3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\log">
-      <UniqueIdentifier>{8a99df81-c1ff-43d4-9825-961cce0dd9f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\socket">
-      <UniqueIdentifier>{4d5e9a4a-ab85-4d86-b9aa-130e87a9b719}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\string">
-      <UniqueIdentifier>{610828a8-6a4a-4fa9-a70d-2265012b5b4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\graph">
-      <UniqueIdentifier>{8fd73350-c5f6-4aed-8cac-cb0b1fee310e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\media">
-      <UniqueIdentifier>{24bb1dbf-dc21-41f7-b355-f66bcd66bf85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\file">
-      <UniqueIdentifier>{b52b8d51-d5fd-4bb9-8be3-f621c49b5eef}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\algorithm">
       <UniqueIdentifier>{66eed854-3e6d-45b1-bcf7-4bc315229bde}</UniqueIdentifier>
@@ -100,104 +25,14 @@
     <Filter Include="src_c\klua">
       <UniqueIdentifier>{64d42d46-d90e-4014-8b56-da44b48211ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\mnp">
-      <UniqueIdentifier>{e7c9f057-e7ac-4e80-ac15-cefdd6f776a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\mnp">
-      <UniqueIdentifier>{7ced7e64-87f6-45e1-82b6-89752ae99645}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\stm32">
-      <UniqueIdentifier>{c92e65e8-492e-4c79-81f0-5512c30de96e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\stm32">
-      <UniqueIdentifier>{861a7278-4fc1-4a0a-b346-528723e7f797}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\emscripten">
-      <UniqueIdentifier>{e4e42425-ee4d-45e6-8484-300f047f8d37}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\emscripten">
-      <UniqueIdentifier>{d1bbcb96-bb3c-423b-8726-f84580a7f1d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\go">
-      <UniqueIdentifier>{9a229c66-9ca9-4cf6-aca0-27db0df549c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\go">
-      <UniqueIdentifier>{c24fe285-69ac-45c2-8239-c63e51376dbe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\quickjs">
-      <UniqueIdentifier>{993edcac-a7e8-465e-842f-bd3b97c0178f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\image">
-      <UniqueIdentifier>{dc7635f0-ef33-4f7e-910f-f582eddf31cc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\gui">
-      <UniqueIdentifier>{e63fd808-2323-4053-ab73-930658cfdcb7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\image">
-      <UniqueIdentifier>{f673e569-5c9a-4e92-aa49-f289bf772f14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\gui">
-      <UniqueIdentifier>{5e5690b1-11b3-4333-bc17-983ca347e094}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\libavutil">
       <UniqueIdentifier>{63ce6869-ac4f-4773-9a1e-2a9c9d1620a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\lua-5.4.1">
-      <UniqueIdentifier>{8f58344c-4439-49c3-8b8e-6e8360c4c0c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="third\lua-5.4.1\src">
-      <UniqueIdentifier>{bdc290bf-77a7-4eb7-aced-02c90b7ba38c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\sds">
-      <UniqueIdentifier>{747ade21-48a2-4800-9f77-65351197f8ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\pcre2">
-      <UniqueIdentifier>{53f5cd3b-0fd8-41ad-9977-deec394471e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\pcre2\src">
-      <UniqueIdentifier>{209dbdae-8c97-45e9-b895-f7629e6839af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\parser">
-      <UniqueIdentifier>{35088798-0780-4a02-857e-c34230fd3710}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\parser">
-      <UniqueIdentifier>{27d3b88a-39d2-4d75-adda-93e15b8f6662}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\platform">
-      <UniqueIdentifier>{21e77843-697e-42b2-8a73-1c5dd8bc257a}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\platform">
       <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\async">
-      <UniqueIdentifier>{861f01db-9ca2-42ec-8ad4-b7aabdf864a6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\sync">
-      <UniqueIdentifier>{18675695-4030-47ab-9be3-cb9c569524e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\async">
-      <UniqueIdentifier>{85fd20cd-8a97-4351-863a-3c583bd52e56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\sync">
-      <UniqueIdentifier>{b840ed20-f226-4c89-b669-5270e726221d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\zip">
       <UniqueIdentifier>{7afa99bd-85ec-419d-9191-4facdbed5606}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\compress">
-      <UniqueIdentifier>{a24e6eef-44f6-4ad9-a7f5-b976b471d544}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\db">
-      <UniqueIdentifier>{3df54c77-9f71-4ece-acca-59e1996844cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\sqlite3">
-      <UniqueIdentifier>{3c5c0fba-5cde-4bda-bf95-dd4d9b765488}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\net">
-      <UniqueIdentifier>{055e52c1-48fb-4a4e-9079-3a3fea4dcc44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\net">
-      <UniqueIdentifier>{7404cafb-0879-4dad-8775-7803d26846f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\framework">
       <UniqueIdentifier>{ea17dcff-ed7c-4846-ac78-0193c6a48b9b}</UniqueIdentifier>
@@ -214,29 +49,89 @@
     <Filter Include="src_c\klua\extension">
       <UniqueIdentifier>{28b7ead6-e649-4fbd-8f57-e26be0881052}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klua\net">
-      <UniqueIdentifier>{ddfca7b1-46d9-470e-8337-6dcef7c7f97b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klua\extension_single">
       <UniqueIdentifier>{6b4fcc7a-493e-484b-ad95-c5c5ec2716a3}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klua\multithread">
       <UniqueIdentifier>{30bfeae6-9d91-4a97-890d-8173aa26e75b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbutil">
+      <UniqueIdentifier>{a3b8ce22-6ca6-4d93-800a-09be1b63d76e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbgui">
+      <UniqueIdentifier>{e86aefcf-ceff-44b9-82e8-d21a9e0e40a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbmem">
+      <UniqueIdentifier>{96a51c39-ddc8-4e53-a596-8ebe7711291a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet">
+      <UniqueIdentifier>{cf142ae7-743e-40eb-a39b-b8891ae75d79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbthird">
+      <UniqueIdentifier>{beacbfb1-c004-467c-9efd-b9f7673a024e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbutil">
+      <UniqueIdentifier>{5e4df055-c680-43e8-b287-6e2079e66e7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klua">
+      <UniqueIdentifier>{631795a4-3d26-4495-89d7-37772358e841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\platform">
+      <UniqueIdentifier>{42373333-3778-48e5-a9f1-41255e951bb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbbase">
+      <UniqueIdentifier>{8e69626e-6d5a-4cec-8611-8d7461a71600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbbase">
+      <UniqueIdentifier>{005e5d97-f602-458f-a51d-7de7a965e44e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbgui">
+      <UniqueIdentifier>{9dd815d3-b9db-468a-b84a-f958bd0fed70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbmem">
+      <UniqueIdentifier>{7ca3c33e-7c47-43b3-bdb3-c04212fd9592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet">
+      <UniqueIdentifier>{a06527f2-a3e5-4f01-9b68-f056c9b15517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbthird">
+      <UniqueIdentifier>{ae949276-836f-48b0-8296-f5101a1a4871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbthird\pcre2">
+      <UniqueIdentifier>{89dabc1e-3d1f-49cf-91fa-dfd8a3af278c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbthird\sds">
+      <UniqueIdentifier>{656abf3a-a001-4e2c-b3ec-602c929d4f7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbthird\sqlite3">
+      <UniqueIdentifier>{2b287cae-fa20-4380-b36d-6a96f5b2024f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbthird\pcre2\src">
+      <UniqueIdentifier>{e8276ec9-749a-45df-ae8f-16e009423ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lpeg-1.0.2">
+      <UniqueIdentifier>{5b655d0b-e0f2-4d10-904c-2cef344eac46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lua-5.4.1">
+      <UniqueIdentifier>{a155072f-cb39-41be-b4ba-2b1011062921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lua-cjson-2.1.0">
+      <UniqueIdentifier>{6d9c3c29-bc6f-4146-81a5-9f1e6ea3e606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\luafilesystem-2.0">
+      <UniqueIdentifier>{bdd7ad5a-1fcd-443b-bf56-7ce8ac3b7ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\luafilesystem-2.0\src">
+      <UniqueIdentifier>{3632eda0-dfd5-42c9-a625-03377fd4d810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lua-5.4.1\src">
+      <UniqueIdentifier>{0551d619-4c84-400d-b492-926d02fd5fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\klua_net">
+      <UniqueIdentifier>{f5866d6c-ce5b-4a09-8678-6b6e7d8a8816}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\inc\gui\klb_gui.h">
-      <Filter>inc\gui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\gui\klb_msg.h">
-      <Filter>inc\gui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\image\klb_canvas_in.h">
-      <Filter>src_c\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\gui\klb_gui_in.h">
-      <Filter>src_c\gui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\config.h">
       <Filter>src_c</Filter>
     </ClInclude>
@@ -252,140 +147,11 @@
     <ClInclude Include="..\..\inc\algorithm\klb_sort_quick.h">
       <Filter>inc\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\go\klb_select.h">
-      <Filter>inc\go</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\hash\klb_hash.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\hash\klb_hash_dx.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\hash\klb_hash_hgsmi.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\hash\klb_hlist.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\hash\klb_hmap.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\hash\klb_htab.h">
-      <Filter>inc\hash</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\klua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\klua_env.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lauxlib.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lua.hpp">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\luaconf.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lualib.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\list\klb_list.h">
-      <Filter>inc\list</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\list\list.h">
-      <Filter>inc\list</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\log\klb_log.h">
-      <Filter>inc\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\mem\klb_buf.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\mem\klb_mem.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\mem\klb_mpool.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\mnp\klb_mnp.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\mnp\klb_mnp_dev.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\mnp\klb_mnp_stream.h">
-      <Filter>inc\mnp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\image\klb_bitmap.h">
-      <Filter>inc\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\image\klb_canvas.h">
-      <Filter>inc\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\image\klb_color.h">
-      <Filter>inc\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\image\klb_rect.h">
-      <Filter>inc\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\obj\klb_obj.h">
-      <Filter>inc\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\obj\klb_obj_hash.h">
-      <Filter>inc\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\quickjs\quickjs.h">
-      <Filter>inc\quickjs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\quickjs\quickjs-libc.h">
-      <Filter>inc\quickjs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\socket\klb_go_socket.h">
-      <Filter>inc\socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\socket\klb_socket.h">
-      <Filter>inc\socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\string\klb_string.h">
-      <Filter>inc\string</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klb_type.h">
       <Filter>inc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klua\klua_help.h">
       <Filter>src_c\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lpeg-1.0.2\lpcap.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lpeg-1.0.2\lpcode.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lpeg-1.0.2\lpprint.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lpeg-1.0.2\lptree.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lpeg-1.0.2\lptypes.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lpeg-1.0.2\lpvm.h">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-cjson-2.1.0\fpconv.h">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-cjson-2.1.0\strbuf.h">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\luafilesystem-2.0\src\lfs.h">
-      <Filter>third\luafilesystem-2.0\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\adler32.h">
       <Filter>src_c\libavutil</Filter>
@@ -648,165 +414,6 @@
     <ClInclude Include="..\..\src_c\libavutil\xtea.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\gui\klb_wnd.h">
-      <Filter>inc\gui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\gui\klb_widget.h">
-      <Filter>src_c\gui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\gui\klb_wnd_in.h">
-      <Filter>src_c\gui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lapi.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lauxlib.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lcode.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lctype.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\ldebug.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\ldo.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lfunc.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lgc.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\ljumptab.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\llex.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\llimits.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lmem.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lobject.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lopcodes.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lopnames.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lparser.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lprefix.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lstate.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lstring.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\ltable.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\ltm.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lua.hpp">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\luaconf.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lualib.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lundump.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lvm.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\third\lua-5.4.1\src\lzio.h">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\string\sds.h">
-      <Filter>inc\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\sds\sdsalloc.h">
-      <Filter>src_c\sds</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\sds\testhelp.h">
-      <Filter>src_c\sds</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_internal.h">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_intmodedep.h">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_jit_neon_inc.h">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_jit_simd_inc.h">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_ucp.h">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\pcre2\src\pcre2_config.h">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\string\pcre2.h">
-      <Filter>inc\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\string\pcre2posix.h">
-      <Filter>inc\string</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\parser\http_parser.h">
-      <Filter>inc\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_atomic.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_dynamic_link.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_mutex.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_rwlock.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_spinlock.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_thread.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_time.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\socket\klb_socket_transmit.h">
-      <Filter>inc\socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\socket\klb_socket_base.h">
-      <Filter>inc\socket</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\string\klb_str_map.h">
-      <Filter>inc\string</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\zlib-1.2.11\crc32.h">
       <Filter>src_c\zip</Filter>
     </ClInclude>
@@ -840,24 +447,6 @@
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h">
       <Filter>src_c\zip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\compress\zconf.h">
-      <Filter>inc\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\compress\zlib.h">
-      <Filter>inc\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\db\sqlite3.h">
-      <Filter>inc\db</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\sqlite3\sqlite3.h">
-      <Filter>src_c\sqlite3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\sqlite3\sqlite3ext.h">
-      <Filter>src_c\sqlite3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\net\klb_ncm.h">
-      <Filter>inc\net</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\framework\klb_lsmfw.h">
       <Filter>inc\framework</Filter>
     </ClInclude>
@@ -866,12 +455,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src_c\framework\lsmfw\klb_lsm.h">
       <Filter>src_c\framework\lsmfw</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\net\klb_http.h">
-      <Filter>inc\net</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\net\klb_websocket.h">
-      <Filter>inc\net</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h">
       <Filter>src_c\klua\extension</Filter>
@@ -885,9 +468,6 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\mem\klb_buffer.h">
-      <Filter>inc\mem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\klua\extension_single\klua_extension_single.h">
       <Filter>src_c\klua\extension_single</Filter>
     </ClInclude>
@@ -897,61 +477,340 @@
     <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_thread.h">
       <Filter>src_c\klua\extension_single</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klb_gui.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klb_msg.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_buf.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_buffer.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_mem.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_mpool.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_go_socket.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_http.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_ncm.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_socket.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_socket_transmit.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_websocket.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\sqlite3.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\zconf.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\zlib.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_bitmap.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_canvas.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_color.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_hash.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_hash_dx.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_hash_hgsmi.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_hlist.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_hmap.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_htab.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_list.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_log.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_rect.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_resolution.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\list.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_env.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lauxlib.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lua.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lua.hpp">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\luaconf.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\lualib.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_atomic.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_dynamic_link.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_mutex.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_rwlock.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_spinlock.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_thread.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\platform\klb_time.h">
+      <Filter>inc\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_mnp.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_mnp_dev.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_mnp_stream.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_obj.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_obj_hash.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\http_parser.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\pcre2.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\pcre2posix.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\sds.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_str_map.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_string.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h">
+      <Filter>src_c\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\klb_widget.h">
+      <Filter>src_c\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h">
+      <Filter>src_c\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h">
+      <Filter>src_c\klbthird\sds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h">
+      <Filter>src_c\klbthird\sds</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_intmodedep.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_neon_inc.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_simd_inc.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_ucp.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\sqlite3\sqlite3ext.h">
+      <Filter>src_c\klbthird\sqlite3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbutil\klb_canvas_in.h">
+      <Filter>src_c\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.h">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.h">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.h">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lptree.h">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lptypes.h">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.h">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.h">
+      <Filter>src_c\klua\luafilesystem-2.0\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.h">
+      <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.h">
+      <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lapi.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lcode.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lctype.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ldebug.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ldo.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lfunc.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lgc.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ljumptab.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\llex.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\llimits.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lmem.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lobject.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lopcodes.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lopnames.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lparser.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lprefix.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lstate.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lstring.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ltable.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ltm.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lua.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lua.hpp">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\luaconf.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lualib.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lundump.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lvm.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lzio.h">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_mnp.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src_c\image\klb_bitmap.c">
-      <Filter>src_c\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\image\klb_canvas.c">
-      <Filter>src_c\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\image\klb_canvas_argb8888.c">
-      <Filter>src_c\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\image\klb_color.c">
-      <Filter>src_c\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\image\klb_rect.c">
-      <Filter>src_c\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\gui\klb_button.c">
-      <Filter>src_c\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\gui\klb_dialog.c">
-      <Filter>src_c\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\gui\klb_gui.c">
-      <Filter>src_c\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\gui\klb_wnd.c">
-      <Filter>src_c\gui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\algorithm\klb_sort_insert.c">
       <Filter>src_c\algorithm</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\algorithm\klb_sort_quick.c">
       <Filter>src_c\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\go\klb_select.c">
-      <Filter>src_c\go</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\hash\klb_hash.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\hash\klb_hash_dx.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\hash\klb_hash_hgsmi.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\hash\klb_hlist.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\hash\klb_hmap.c">
-      <Filter>src_c\hash</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\hash\klb_htab.c">
-      <Filter>src_c\hash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua.c">
       <Filter>src_c\klua</Filter>
@@ -973,54 +832,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lua.c">
       <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\list\klb_list.c">
-      <Filter>src_c\list</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\mem\klb_buf.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\mem\klb_mem.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\mem\klb_mpool.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\obj\klb_obj.c">
-      <Filter>src_c\obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\socket\klb_go_socket.c">
-      <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\socket\klb_socket.c">
-      <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lpeg-1.0.2\lpcap.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lpeg-1.0.2\lpcode.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lpeg-1.0.2\lpprint.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lpeg-1.0.2\lptree.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lpeg-1.0.2\lpvm.c">
-      <Filter>third\lpeg-1.0.2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-cjson-2.1.0\fpconv.c">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-cjson-2.1.0\lua_cjson.c">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-cjson-2.1.0\strbuf.c">
-      <Filter>third\lua-cjson-2.1.0</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\luafilesystem-2.0\src\lfs.c">
-      <Filter>third\luafilesystem-2.0\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\adler32.c">
       <Filter>src_c\libavutil</Filter>
@@ -1199,203 +1010,8 @@
     <ClCompile Include="..\..\src_c\libavutil\xtea.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\gui\klb_gui_in.c">
-      <Filter>src_c\gui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_kgui.c">
       <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lapi.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lauxlib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lbaselib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lcode.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lcorolib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lctype.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ldblib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ldebug.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ldo.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ldump.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lfunc.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lgc.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\linit.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\liolib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\llex.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lmathlib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lmem.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\loadlib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lobject.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lopcodes.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\loslib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lparser.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lstate.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lstring.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lstrlib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ltable.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ltablib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\ltm.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lundump.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lutf8lib.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lvm.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\third\lua-5.4.1\src\lzio.c">
-      <Filter>third\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\sds\sds.c">
-      <Filter>src_c\sds</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_auto_possess.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_compile.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_config.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_context.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_convert.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_dfa_match.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_error.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_extuni.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_find_bracket.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_fuzzsupport.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_jit_compile.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_maketables.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_match.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_match_data.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_newline.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_ord2utf.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_pattern_info.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_script_run.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_serialize.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_string_utils.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_study.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_substitute.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_substring.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_tables.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_ucd.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_valid_utf.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_xclass.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2grep.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2posix.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\pcre2\src\pcre2_chartables.c">
-      <Filter>src_c\pcre2\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\parser\http_parser.c">
-      <Filter>src_c\parser</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\platform\klb_atomic.c">
       <Filter>src_c\platform</Filter>
@@ -1417,18 +1033,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\platform\klb_time.c">
       <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\socket\klb_socket_transmit.c">
-      <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\socket\klb_socket_base.c">
-      <Filter>src_c\socket</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\string\klb_str_map.c">
-      <Filter>src_c\string</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\string\klb_string.c">
-      <Filter>src_c\string</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\zlib-1.2.11\adler32.c">
       <Filter>src_c\zip</Filter>
@@ -1475,15 +1079,6 @@
     <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c">
       <Filter>src_c\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\sqlite3\shell.c">
-      <Filter>src_c\sqlite3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\sqlite3\sqlite3.c">
-      <Filter>src_c\sqlite3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\net\klb_ncm.c">
-      <Filter>src_c\net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsmfw.c">
       <Filter>src_c\framework\lsmfw</Filter>
     </ClCompile>
@@ -1492,12 +1087,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsm.c">
       <Filter>src_c\framework\lsmfw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\net\klb_http.c">
-      <Filter>src_c\net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\net\klb_websocket.c">
-      <Filter>src_c\net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c">
       <Filter>src_c\klua\extension</Filter>
@@ -1511,23 +1100,11 @@
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\net\klua_khttp.c">
-      <Filter>src_c\klua\net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_main.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\mem\klb_buffer.c">
-      <Filter>src_c\mem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\net\klua_kwebsocket.c">
-      <Filter>src_c\klua\net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension_single\klua_extension_single.c">
       <Filter>src_c\klua\extension_single</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\net\klua_kurl.c">
-      <Filter>src_c\klua\net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\multithread\klua_kmcache.c">
       <Filter>src_c\klua\multithread</Filter>
@@ -1540,6 +1117,345 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_thread.c">
       <Filter>src_c\klua\extension_single</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c">
+      <Filter>src_c\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbbase\klb_string.c">
+      <Filter>src_c\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klb_button.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klb_gui.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klb_gui_in.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_buf.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_mem.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_go_socket.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_http.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_socket.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_socket_transmit.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\http_parser.c">
+      <Filter>src_c\klbthird</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\sds\sds.c">
+      <Filter>src_c\klbthird\sds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_auto_possess.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_chartables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_compile.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_context.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_convert.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_dfa_match.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_dftables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_error.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_extuni.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_find_bracket.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_fuzzsupport.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_compile.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_maketables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_match.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_match_data.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_newline.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_ord2utf.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_pattern_info.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_script_run.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_serialize.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_string_utils.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_study.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_substitute.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_substring.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_tables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_ucd.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_valid_utf.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_xclass.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2grep.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2posix.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\sqlite3\shell.c">
+      <Filter>src_c\klbthird\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\sqlite3\sqlite3.c">
+      <Filter>src_c\klbthird\sqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_bitmap.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_canvas.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_canvas_argb8888.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_color.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_hash.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_hash_dx.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_hash_hgsmi.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_hlist.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_hmap.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_htab.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_list.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_obj.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_rect.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_resolution.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.c">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.c">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.c">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lptree.c">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.c">
+      <Filter>src_c\klua\lpeg-1.0.2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.c">
+      <Filter>src_c\klua\luafilesystem-2.0\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.c">
+      <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\lua_cjson.c">
+      <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.c">
+      <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lapi.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lbaselib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lcode.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lcorolib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lctype.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldblib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldebug.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldo.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldump.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lfunc.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lgc.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\linit.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\liolib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\llex.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lmathlib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lmem.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\loadlib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lobject.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lopcodes.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\loslib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lparser.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstate.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstring.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstrlib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltable.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltablib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltm.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lua.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\luac.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lundump.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lutf8lib.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lvm.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lzio.c">
+      <Filter>src_c\klua\lua-5.4.1\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c">
+      <Filter>src_c\klbnet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

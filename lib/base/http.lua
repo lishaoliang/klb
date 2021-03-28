@@ -1,4 +1,5 @@
 ﻿local table = require("table")
+local kurl = require("kurl")
 local khttp = require("khttp")
 
 local http = {}
@@ -22,7 +23,7 @@ end
 --	end
 http.get = function (url, data, cb)
 	-- eg. http://username:password@127.0.0.1:8080/test/test.aspx?name=sviergn&x=true#stuff
-	local u = khttp.parse_url(url)
+	local u = kurl.parse(url)
 	
 	local schema = u['schema'] or 'http'
 	local host = u['host'] or ''	
@@ -48,15 +49,19 @@ http.get = function (url, data, cb)
 		return
 	end
 	
-	conn:set_on_recv(function (msg, s1, s2)
-		if 'http' == msg then
-			print(msg, s1, s2)
+	conn:set_on_recv(function (msg, s1, s2)		
+		if 'disconnect' == msg then
+			cb('', 'error')
+			conn:close()
+		elseif 'http' == msg then
+			--print(msg, s1, s2)
 		elseif 'header' == msg then
-			print(msg, s1, s2)
+			--print(msg, s1, s2)
 		elseif 'header_complete' == msg then
-			print(msg, s1, s2)
+			--print(msg, s1, s2)
 		elseif 'body' == msg then
-			cb(s2, 'success')
+			cb(s1, 'success')	
+			conn:close()
 		else
 			--print(msg, s1, s2)
 		end

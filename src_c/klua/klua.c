@@ -9,7 +9,7 @@
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
 #include "klua/klua.h"
-#include "mem/klb_mem.h"
+#include "klbmem/klb_mem.h"
 #include <assert.h>
 
 
@@ -88,7 +88,7 @@ void klua_unref_registryindex(lua_State* L, int reg)
 
 //////////////////////////////////////////////////////////////////////////
 
-// from ./klb/third/lua-cjson-2.1.0/lua_cjson.c
+// from ./klb/src_c/klua/lua-cjson-2.1.0/lua_cjson.c
 extern int luaopen_cjson(lua_State *l);
 extern int luaopen_cjson_safe(lua_State *l);
 
@@ -102,7 +102,7 @@ int klua_open_cjson_safe(lua_State* L)
     return luaopen_cjson_safe(L);
 }
 
-// from ./klb/third/lpeg-1.0.2/lptree.c
+// from ./klb/src_c/klua/lpeg-1.0.2/lptree.c
 extern int luaopen_lpeg(lua_State *L);
 
 int klua_open_lpeg(lua_State *L)
@@ -110,10 +110,20 @@ int klua_open_lpeg(lua_State *L)
     return luaopen_lpeg(L);
 }
 
-// from ./klb/third/luafilesystem-2.0/src/lfs.c
+// from ./klb/src_c/klua/luafilesystem-2.0/src/lfs.c
 extern int luaopen_lfs(lua_State *L);
 
 int klua_open_lfs(lua_State *L)
 {
     return luaopen_lfs(L);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+
+int klua_loadlib_all(lua_State* L)
+{
+    KLUA_LOADLIBS(L);
+
+    return 0;
 }

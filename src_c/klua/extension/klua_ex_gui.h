@@ -15,7 +15,7 @@
 
 #include "klb_type.h"
 #include "klua/klua_env.h"
-#include "gui/klb_gui.h"
+#include "klbgui/klb_gui.h"
 
 #if defined(__cplusplus)
 extern "C" {

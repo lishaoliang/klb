@@ -158,8 +158,18 @@ func (m *Env) CallKgoB(msg, msgex, lparam, wparam []byte, ptr unsafe.Pointer) in
 
 // LoopOnce call C.klua_env_loop_once
 func (m *Env) LoopOnce() int {
-	// do end
+	// do klua_env_loop_once
 	ret := C.klua_env_loop_once(m.env)
 
 	return int(ret)
+}
+
+// IsExit call C.klua_env_is_exit
+func (m *Env) IsExit() bool {
+	// do klua_env_is_exit
+	if C.klua_env_is_exit(m.env) {
+		return true
+	}
+
+	return false
 }

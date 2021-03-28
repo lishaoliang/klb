@@ -33,17 +33,7 @@ func klua_go_main_openlibs(lua *C.lua_State) C.int {
 
 	l := (*klua.LuaState)(unsafe.Pointer(lua))
 
-	klua.OpenCjson(l, "cjson")
-	klua.OpenCjsonSafe(l, "cjson.safe")
-	klua.OpenLpeg(l, "lpeg")
-	klua.OpenLfs(l, "lfs")
-
-	klua.OpenKos(l, "kos")
-	klua.OpenKtime(l, "ktime")
-	klua.OpenKthread(l, "kthread")
-	klua.OpenKmnpDev(l, "kmnp_dev")
-	klua.OpenKgui(l, "kgui")
-	klua.OpenKwnd(l, "kwnd")
+	klua.LoadLibAll(l)
 
 	kgctx.OpenKgCtx(l, "kg_ctx")
 	kgos.OpenKgOs(l, "kg_os")

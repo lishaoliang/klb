@@ -1,5 +1,5 @@
 ﻿#include "klbt_canvas.h"
-#include "mem/klb_mem.h"
+#include "klbmem/klb_mem.h"
 #include "platform/klb_mutex.h"
 #include <assert.h>
 

@@ -7,7 +7,7 @@ package ksimulate
 #cgo LDFLAGS: -L ${SRCDIR}/../../../lib -lklb_c -lpthread -lm
 
 #include "klb_type.h"
-#include "mnp/klb_mnp.h"
+#include "klbbase/klb_mnp.h"
 
 klb_mnp_stream_cb g_cb_klua_go_ksimulate_stream_receiver = NULL;
 

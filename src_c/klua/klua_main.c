@@ -1,19 +1,19 @@
 ﻿#include "klua/klua.h"
-#include "socket/klb_socket.h"
+#include "klbnet/klb_socket.h"
 #include "klua/klua_env.h"
-#include "log/klb_log.h"
-#include "mem/klb_mem.h"
+#include "klbutil/klb_log.h"
+#include "klbmem/klb_mem.h"
+#include "platform/klb_time.h"
 #include "platform/klb_thread.h"
 #include <assert.h>
 
 
 static int klua_openlibs_std(lua_State* L)
 {
-    KLUA_LOADLIBS(L);
+    klua_loadlib_all(L);
 
     return 0;
 }
-
 
 int klua_main(int argc, char** argv, klua_openlibs_cb cb)
 {
@@ -24,6 +24,8 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
     }
 
     klb_socket_init();
+    srand(klb_tick_count() + klb_thread_tid());     // 初始随机值
+
     klua_env_t* p_env = klua_env_create(klua_openlibs_std);
 
     if (0 != klua_env_dofile(p_env, argv[1]))
@@ -31,11 +33,21 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
         goto end;
     }
 
-    while (!klua_env_is_exit(p_env))
+    if (!klua_env_is_exit(p_env))
     {
-        klua_env_loop_once(p_env);
+        while (true)
+        {
+            klua_env_loop_once(p_env);
 
-        klb_sleep(10);
+            if (klua_env_is_exit(p_env))
+            {
+                break;
+            }
+            else
+            {
+                klb_sleep(10);
+            }
+        }
     }
 
     klua_env_doend(p_env);
