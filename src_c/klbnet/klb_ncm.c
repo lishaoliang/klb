@@ -27,6 +27,9 @@ typedef struct klb_ncm_t_
     
     klb_hlist_t*        p_parser_hlist;     ///< 注册的解析器列表: klb_ncm_parser_t*
     klb_hlist_t*        p_item_hlist;       ///< 连接项列表: klb_ncm_item_t*
+
+    klb_ncm_parser_recv_cb  cb_receiver;
+    void*                   p_obj_receiver;
 }klb_ncm_t;
 
 
@@ -63,6 +66,14 @@ void klb_ncm_destroy(klb_ncm_t* p_ncm)
     KLB_FREE_BY(p_ncm->p_parser_hlist, klb_hlist_destroy);
 
     KLB_FREE(p_ncm);
+}
+
+int klb_ncm_add_receiver(klb_ncm_t* p_ncm, klb_ncm_parser_recv_cb cb_recv, void* p_obj)
+{
+    p_ncm->cb_receiver = cb_recv;
+    p_ncm->p_obj_receiver = p_obj;
+
+    return 0;
 }
 
 int klb_ncm_register(klb_ncm_t* p_ncm, int protocol, const klb_ncm_parser_t* p_parser)
@@ -136,6 +147,23 @@ static int on_send_klb_ncm_item(void* p_lparam, void* p_wparam, int id, int64_t 
     return send;
 }
 
+
+/// @brief 连接解析收到数据时,回调
+/// @return int 0
+static int cb_klb_ncm_parser_recv(void* ptr, int protocol, int id, int code, int packtype, klb_buf_t* p_data)
+{
+    klb_ncm_t* p_ncm = ptr;
+
+    if (NULL != p_ncm->cb_receiver)
+    {
+        p_ncm->cb_receiver(p_ncm->p_obj_receiver, protocol, id, code, packtype, p_data);
+    }
+
+    KLB_FREE(p_data);
+
+    return 0;
+}
+
 int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const uint8_t* p_data, int data_len)
 {
     klb_ncm_parser_t* p_parser = (klb_ncm_parser_t*)klb_hlist_find(p_ncm->p_parser_hlist, &protocol, sizeof(protocol));
@@ -160,7 +188,7 @@ int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const u
 
     int id = klb_multiplex_push_socket(p_ncm->p_multi, p_socket, &o);
 
-    p_item->ptr = p_parser->cb_create(p_ncm, protocol, id);
+    p_item->ptr = p_parser->cb_create(p_ncm, cb_klb_ncm_parser_recv, protocol, id);
     p_item->id = id;
 
     // 所有的id从 klb_multiplex_t 中来, 不会冲突 

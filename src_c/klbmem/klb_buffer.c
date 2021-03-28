@@ -57,6 +57,9 @@ void klb_buffer_reset(klb_buffer_t* p_buffer)
     }
 
     p_buffer->p_head->p_next = NULL;
+    p_buffer->p_head->start = 0;
+    p_buffer->p_head->end = 0;
+
     p_buffer->p_tail = p_buffer->p_head;
     p_buffer->p_write = p_buffer->p_head;
     p_buffer->block_num = 1;

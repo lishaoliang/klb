@@ -59,6 +59,14 @@ KLB_API klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi);
 KLB_API void klb_ncm_destroy(klb_ncm_t* p_ncm);
 
 
+/// @brief 连接解析收到数据时,回调
+/// @return int 0
+typedef int (*klb_ncm_parser_recv_cb)(void* ptr, int protocol, int id, int code, int packtype, klb_buf_t* p_data);
+
+
+KLB_API int klb_ncm_add_receiver(klb_ncm_t* p_ncm, klb_ncm_parser_recv_cb cb_recv, void* p_obj);
+
+
 /// @struct klb_ncm_obj_t
 /// @brief  ncm连接
 typedef struct klb_ncm_parser_t
@@ -66,7 +74,7 @@ typedef struct klb_ncm_parser_t
     /// @brief 创建连接
     /// @param [in] *p_ncm          ncm模块
     /// @return void* 连接的指针
-    void* (*cb_create)(klb_ncm_t* p_ncm, int protocol, int id);
+    void* (*cb_create)(klb_ncm_t* p_ncm, klb_ncm_parser_recv_cb cb_recv, int protocol, int id);
 
     /// @brief 销毁连接
     /// @param [in] *ptr            连接的指针

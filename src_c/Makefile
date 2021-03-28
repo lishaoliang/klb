@@ -28,10 +28,10 @@ CP_RF	:= -cp -rf
 MY_DIRS := ./klbplatform ./klbmem ./klbutil ./klbbase
 
 # klbnet
-MY_DIRS := ./klbnet ./klbnet/klbncm_parser
+MY_DIRS += ./klbnet ./klbnet/klbncm_parser
 
 # klbgui
-MY_DIRS := ./klbgui
+MY_DIRS += ./klbgui
 
 # klua
 MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/klua_platform ./klua/klua_util ./klua/klua_base
