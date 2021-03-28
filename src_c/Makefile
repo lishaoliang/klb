@@ -25,7 +25,13 @@ CP_RF	:= -cp -rf
 
 
 # 从目录检索需要编译的c文件
-MY_DIRS := ./klbplatform ./klbmem ./klbutil ./klbbase ./klbnet ./klbgui  
+MY_DIRS := ./klbplatform ./klbmem ./klbutil ./klbbase
+
+# klbnet
+MY_DIRS := ./klbnet ./klbnet/klbncm_parser
+
+# klbgui
+MY_DIRS := ./klbgui
 
 # klua
 MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/klua_platform ./klua/klua_util ./klua/klua_base
@@ -38,7 +44,6 @@ MY_DIRS += ./compat ./libavutil
 # 第三方库
 MY_DIRS += ./klbthird ./klbthird/sds ./klbthird/pcre2/src ./klbthird/sqlite3
 MY_DIRS += ./zlib-1.2.11
-
 
 
 # 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__

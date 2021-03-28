@@ -15,11 +15,14 @@
 
 #include "klb_type.h"
 #include "klbnet/klb_socket.h"
+#include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_buf.h"
+#include "klbbase/klb_multiplex.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
 
 typedef enum klb_protocol_e_
 {
@@ -47,7 +50,7 @@ typedef struct klb_ncm_t_ klb_ncm_t;
 /// @brief 创建ncm(net connect manage); 网络媒体长链接管理模块
 /// @param [in]  *p_json_cfg            json配置
 /// @return klb_ncm_t* 管理模块
-KLB_API klb_ncm_t* klb_ncm_create(const char* p_json_cfg);
+KLB_API klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi);
 
 
 /// @brief 销毁ncm
@@ -56,9 +59,51 @@ KLB_API klb_ncm_t* klb_ncm_create(const char* p_json_cfg);
 KLB_API void klb_ncm_destroy(klb_ncm_t* p_ncm);
 
 
-/// @brief 向ncm放入一个socket
+/// @struct klb_ncm_obj_t
+/// @brief  ncm连接
+typedef struct klb_ncm_parser_t
+{
+    /// @brief 创建连接
+    /// @param [in] *p_ncm          ncm模块
+    /// @return void* 连接的指针
+    void* (*cb_create)(klb_ncm_t* p_ncm, int protocol, int id);
+
+    /// @brief 销毁连接
+    /// @param [in] *ptr            连接的指针
+    /// @return 无
+    void  (*cb_destroy)(void* ptr);
+
+    /// @brief 主动发送数据(非媒体数据)
+    /// @param [in] *ptr            连接的指针
+    /// @return int
+    int   (*cb_send)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
+    
+    /// @brief 主动发送媒体数据
+    /// @param [in] *ptr            连接的指针
+    /// @return int
+    int   (*cb_send_media)(void* ptr, klb_socket_t* p_socket, klb_buf_t* p_data);
+
+    /// @brief 当网络上可以发送数据时
+    /// @param [in] *ptr            连接的指针
+    /// @return int
+    int   (*on_send)(void* ptr, klb_socket_t* p_socket, int64_t now);
+
+    /// @brief 当网络上可以接收数据时
+    /// @param [in] *ptr            连接的指针
+    /// @return int
+    int   (*on_recv)(void* ptr, klb_socket_t* p_socket, int64_t now);
+}klb_ncm_parser_t;
+
+
+/// @brief 向ncm注册一个协议解析器
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_register(klb_ncm_t* p_ncm, int protocol, const klb_ncm_parser_t* p_parser);
+
+
+/// @brief 向ncm放入一个socket
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int -1.放入失败; 大于0.为id号
 KLB_API int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const uint8_t* p_data, int data_len);
 
 

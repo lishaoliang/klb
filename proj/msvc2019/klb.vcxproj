@@ -77,6 +77,7 @@
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_widget.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
+    <ClInclude Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_intmodedep.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser_mnp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />

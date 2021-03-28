@@ -173,6 +173,18 @@ bool klb_socket_is_reading(klb_socket_t* p_socket)
     return (0x0 == p_socket->reading) ? false : true;
 }
 
+/// @brief 设置状态
+void klb_socket_set_status(klb_socket_t* p_socket, int status)
+{
+    p_socket->status = status;
+}
+
+/// @brief 获取状态
+int  klb_socket_get_status(klb_socket_t* p_socket)
+{
+    return p_socket->status;
+}
+
 //////////////////////////////////////////////////////////////////////////
 void klb_socket_close(klb_socket_fd fd)
 {

@@ -148,6 +148,12 @@ void klb_socket_set_reading(klb_socket_t* p_socket, bool reading);
 /// @brief 获取是否需要读取数据
 bool klb_socket_is_reading(klb_socket_t* p_socket);
 
+/// @brief 设置状态
+void klb_socket_set_status(klb_socket_t* p_socket, int status);
+
+/// @brief 获取状态
+int  klb_socket_get_status(klb_socket_t* p_socket);
+
 /// @brief 关闭socket
 void klb_socket_close(klb_socket_fd fd);
 #define KLB_SOCKET_CLOSE(FD_) {if(INVALID_SOCKET!=(FD_)){klb_socket_close((FD_));(FD_)=INVALID_SOCKET;}}

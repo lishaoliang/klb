@@ -33,10 +33,13 @@ typedef struct klua_khttp_t_
         lua_State*              L;              ///< L
         klua_env_t*             p_env;          ///< lua环境
 
+        int                     reg_on_recv;    ///< Lua脚本函数
+    };
+
+    struct
+    {
         klua_ex_multiplex_t*    p_ex;           ///< 复用扩展
         klb_multiplex_t*        p_multi;        ///< 复用
-
-        int                     reg_on_recv;    ///< Lua脚本函数
     };
 
     // socket相关

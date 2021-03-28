@@ -121,6 +121,9 @@
     <Filter Include="src_c\klbplatform">
       <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbnet\klbncm_parser">
+      <UniqueIdentifier>{5368565e-4e56-47ee-83bd-d77a7b03526e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src_c\config.h">
@@ -755,6 +758,9 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbbase\klb_multiplex.h">
       <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser.h">
+      <Filter>src_c\klbnet\klbncm_parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1399,6 +1405,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c">
       <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser_mnp.c">
+      <Filter>src_c\klbnet\klbncm_parser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,6 @@
     <LocalDebuggerCommand>D:\work\gopath\src\github.com\lishaoliang\klb\lib\klua.exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>..\..\lib</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>.\test.lua</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>.\test_ncm.lua</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>
