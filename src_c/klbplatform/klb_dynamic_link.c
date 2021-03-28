@@ -1,4 +1,4 @@
-﻿#include "platform/klb_dynamic_link.h"
+﻿#include "klbplatform/klb_dynamic_link.h"
 #include "klbmem/klb_mem.h"
 
 #if defined(_WIN32)

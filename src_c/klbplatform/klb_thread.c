@@ -7,10 +7,10 @@
 ///  \n https://github.com/lishaoliang/klb
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
-#include "platform/klb_thread.h"
+#include "klbplatform/klb_thread.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
-#include "platform/klb_time.h"
+#include "klbplatform/klb_time.h"
 #include <stdlib.h>
 #include <assert.h>
 

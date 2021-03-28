@@ -4,17 +4,11 @@
     <Filter Include="inc">
       <UniqueIdentifier>{fdcb7959-f2ea-4bba-86d6-8b5babe09ba0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\algorithm">
-      <UniqueIdentifier>{6669c56b-988a-4ccc-bf96-b97609e327cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="third">
       <UniqueIdentifier>{37ca18f8-40ee-4c83-9e9a-26ad6d761286}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c">
       <UniqueIdentifier>{bc0c271a-e6fc-46dd-a1d9-aed36e981ed6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\algorithm">
-      <UniqueIdentifier>{66eed854-3e6d-45b1-bcf7-4bc315229bde}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{3d277b87-7727-4760-88c9-85fcde8aeeca}</UniqueIdentifier>
@@ -28,32 +22,14 @@
     <Filter Include="src_c\libavutil">
       <UniqueIdentifier>{63ce6869-ac4f-4773-9a1e-2a9c9d1620a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\platform">
-      <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\zip">
       <UniqueIdentifier>{7afa99bd-85ec-419d-9191-4facdbed5606}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\framework">
-      <UniqueIdentifier>{ea17dcff-ed7c-4846-ac78-0193c6a48b9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\framework">
-      <UniqueIdentifier>{d4e59b4d-aa0a-43be-a8e2-a11157374e42}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\framework\lsmfw">
-      <UniqueIdentifier>{3fa0bfaf-a2d9-4b93-a363-8384b5c8696d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\framework\smcfw">
-      <UniqueIdentifier>{e62deb9e-8795-4d90-9416-e7a88c3aa6ba}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klua\extension">
       <UniqueIdentifier>{28b7ead6-e649-4fbd-8f57-e26be0881052}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klua\extension_single">
       <UniqueIdentifier>{6b4fcc7a-493e-484b-ad95-c5c5ec2716a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klua\multithread">
-      <UniqueIdentifier>{30bfeae6-9d91-4a97-890d-8173aa26e75b}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klbutil">
       <UniqueIdentifier>{a3b8ce22-6ca6-4d93-800a-09be1b63d76e}</UniqueIdentifier>
@@ -75,9 +51,6 @@
     </Filter>
     <Filter Include="inc\klua">
       <UniqueIdentifier>{631795a4-3d26-4495-89d7-37772358e841}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\platform">
-      <UniqueIdentifier>{42373333-3778-48e5-a9f1-41255e951bb3}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbbase">
       <UniqueIdentifier>{8e69626e-6d5a-4cec-8611-8d7461a71600}</UniqueIdentifier>
@@ -130,6 +103,24 @@
     <Filter Include="src_c\klua\klua_net">
       <UniqueIdentifier>{f5866d6c-ce5b-4a09-8678-6b6e7d8a8816}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klua\klua_base">
+      <UniqueIdentifier>{5abe8395-278f-4db6-a679-1d2346eab61c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\klua_util">
+      <UniqueIdentifier>{2f4eb08b-0ed3-43a1-9961-029572d238bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\klua_platform">
+      <UniqueIdentifier>{1887fd0d-b09b-4bb7-b00b-e2b43abfe079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\klua_multithread">
+      <UniqueIdentifier>{d28af56c-5fd9-4bb3-bd4f-36c3227b0962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbplatform">
+      <UniqueIdentifier>{42373333-3778-48e5-a9f1-41255e951bb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbplatform">
+      <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src_c\config.h">
@@ -137,15 +128,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src_c\cpu.h">
       <Filter>src_c</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\algorithm\klb_algorithm.h">
-      <Filter>inc\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\algorithm\klb_sort_insert.h">
-      <Filter>inc\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\algorithm\klb_sort_quick.h">
-      <Filter>inc\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klb_type.h">
       <Filter>inc</Filter>
@@ -447,15 +429,6 @@
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h">
       <Filter>src_c\zip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\framework\klb_lsmfw.h">
-      <Filter>inc\framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\framework\klb_smcfw.h">
-      <Filter>inc\framework</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\framework\lsmfw\klb_lsm.h">
-      <Filter>src_c\framework\lsmfw</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
@@ -497,9 +470,6 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbmem\klb_mpool.h">
       <Filter>inc\klbmem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_go_socket.h">
-      <Filter>inc\klbnet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_http.h">
       <Filter>inc\klbnet</Filter>
@@ -561,9 +531,6 @@
     <ClInclude Include="..\..\inc\klbutil\klb_rect.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_resolution.h">
-      <Filter>inc\klbutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\list.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
@@ -572,51 +539,6 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_env.h">
       <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lauxlib.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lua.hpp">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\luaconf.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\lualib.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_atomic.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_dynamic_link.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_mutex.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_rwlock.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_spinlock.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_thread.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\platform\klb_time.h">
-      <Filter>inc\platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_mnp.h">
-      <Filter>inc\klbutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_mnp_dev.h">
-      <Filter>inc\klbutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_mnp_stream.h">
-      <Filter>inc\klbutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_obj.h">
       <Filter>inc\klbutil</Filter>
@@ -804,14 +726,32 @@
     <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_resolution.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_atomic.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_dynamic_link.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_mutex.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_rwlock.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_spinlock.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_thread.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_time.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src_c\algorithm\klb_sort_insert.c">
-      <Filter>src_c\algorithm</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\algorithm\klb_sort_quick.c">
-      <Filter>src_c\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
@@ -819,15 +759,6 @@
       <Filter>src_c\klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_help.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_kmnp_dev.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_kos.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_ktime.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lua.c">
@@ -1010,30 +941,6 @@
     <ClCompile Include="..\..\src_c\libavutil\xtea.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_kgui.c">
-      <Filter>src_c\klua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_atomic.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_dynamic_link.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_mutex.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_rwlock.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_spinlock.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_thread.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\platform\klb_time.c">
-      <Filter>src_c\platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\zlib-1.2.11\adler32.c">
       <Filter>src_c\zip</Filter>
     </ClCompile>
@@ -1079,15 +986,6 @@
     <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c">
       <Filter>src_c\zip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsmfw.c">
-      <Filter>src_c\framework\lsmfw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\framework\smcfw\klb_smcfw.c">
-      <Filter>src_c\framework\smcfw</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\framework\lsmfw\klb_lsm.c">
-      <Filter>src_c\framework\lsmfw</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
@@ -1105,12 +1003,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension_single\klua_extension_single.c">
       <Filter>src_c\klua\extension_single</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\multithread\klua_kmcache.c">
-      <Filter>src_c\klua\multithread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\multithread\klua_kthread.c">
-      <Filter>src_c\klua\multithread</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_mcache.c">
       <Filter>src_c\klua\extension_single</Filter>
@@ -1150,9 +1042,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c">
       <Filter>src_c\klbmem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_go_socket.c">
-      <Filter>src_c\klbnet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c">
       <Filter>src_c\klbnet</Filter>
@@ -1313,9 +1202,6 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbutil\klb_resolution.c">
-      <Filter>src_c\klbutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.c">
       <Filter>src_c\klua\lpeg-1.0.2</Filter>
     </ClCompile>
@@ -1456,6 +1342,48 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c">
       <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c">
+      <Filter>src_c\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c">
+      <Filter>src_c\klua\klua_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c">
+      <Filter>src_c\klua\klua_platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c">
+      <Filter>src_c\klua\klua_base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c">
+      <Filter>src_c\klua\klua_base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c">
+      <Filter>src_c\klua\klua_multithread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c">
+      <Filter>src_c\klua\klua_multithread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_atomic.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_dynamic_link.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_mutex.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_rwlock.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_spinlock.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_thread.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_time.c">
+      <Filter>src_c\klbplatform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

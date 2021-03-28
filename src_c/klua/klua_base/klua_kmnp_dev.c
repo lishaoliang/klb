@@ -3,7 +3,7 @@
 #include "klbbase/klb_mnp_dev.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
-#include "platform/klb_dynamic_link.h"
+#include "klbplatform/klb_dynamic_link.h"
 #include <string.h>
 
 

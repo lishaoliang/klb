@@ -5,6 +5,11 @@
 
 klb_buffer_t* klb_buffer_create(int suggest_len)
 {
+    if (suggest_len < 4096)
+    {
+        suggest_len = 4096; // 最小4K
+    }
+
     int buf_len = KLB_ALIGNED_4(suggest_len);
 
     klb_buffer_t* p_buffer = KLB_MALLOC(klb_buffer_t, 1, 0);
@@ -110,14 +115,14 @@ int klb_buffer_write(klb_buffer_t* p_buffer, const char* p_data, int data_len)
     return 0;
 }
 
-int64_t klb_buffer_data_len(klb_buffer_t* p_buffer)
+int klb_buffer_data_len(klb_buffer_t* p_buffer)
 {
     return p_buffer->total_data_len;
 }
 
 klb_buf_t* klb_buffer_join(klb_buffer_t* p_buffer)
 {
-    int64_t buf_len = KLB_ALIGNED_4(p_buffer->total_data_len);
+    int buf_len = KLB_ALIGNED_4(p_buffer->total_data_len);
     klb_buf_t* p_buf = klb_buf_malloc(buf_len, false);
 
     klb_buf_t* ptr = p_buffer->p_head;

@@ -7,7 +7,7 @@
 ///  \n https://github.com/lishaoliang/klb
 /// @brief   原子变量
 ///////////////////////////////////////////////////////////////////////////
-#include "platform/klb_atomic.h"
+#include "klbplatform/klb_atomic.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 

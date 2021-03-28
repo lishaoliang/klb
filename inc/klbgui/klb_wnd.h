@@ -158,7 +158,6 @@ typedef struct klb_wnd_vtable_t_
 typedef struct klb_wnd_t_
 {
     klb_wnd_vtable_t vtable;    ///< 窗口虚表
-    void*            p_obj;     ///< vtable附加对象, [用户数据]
 
     klb_wnd_t*      p_parent;   ///< 父节点, 二叉树
     klb_wnd_t*      p_child;    ///< 子节点
@@ -176,7 +175,9 @@ typedef struct klb_wnd_t_
     uint16_t        name_len;   ///< 窗口名称长度
     uint16_t        type_len;   ///< 窗口类型长度
 
-    char            ctrl[1];    ///< 控件私有数据域, (控件数据)
+    void*           p_udata;    ///< publi user data, [公共用户数据]
+
+    char            ctrl[];     ///< 控件私有数据域, (控件数据)
 }klb_wnd_t;
 
 

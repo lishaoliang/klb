@@ -3,8 +3,8 @@
 #include "klua/klua_env.h"
 #include "klbutil/klb_log.h"
 #include "klbmem/klb_mem.h"
-#include "platform/klb_time.h"
-#include "platform/klb_thread.h"
+#include "klbplatform/klb_time.h"
+#include "klbplatform/klb_thread.h"
 #include <assert.h>
 
 

@@ -17,8 +17,8 @@
 #include "klbgui/klb_wnd.h"
 #include "klbutil/klb_list.h"
 #include "klbutil/klb_hlist.h"
-#include "platform/klb_mutex.h"
-#include "platform/klb_thread.h"
+#include "klbplatform/klb_mutex.h"
+#include "klbplatform/klb_thread.h"
 
 #if defined(__cplusplus)
 extern "C" {

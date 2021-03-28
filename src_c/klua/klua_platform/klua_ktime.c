@@ -1,6 +1,6 @@
 ﻿#include "klua/klua.h"
-#include "platform/klb_time.h"
-#include "platform/klb_thread.h"
+#include "klbplatform/klb_time.h"
+#include "klbplatform/klb_thread.h"
 #include "klua/extension/klua_ex_time.h"
 
 

@@ -307,7 +307,7 @@ int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_c
         return 1;
     }
 
-    p_wnd->p_obj = p_obj;
+    p_wnd->p_udata= p_obj;
     p_wnd->vtable.on_command = on_command;
 
     return 0;

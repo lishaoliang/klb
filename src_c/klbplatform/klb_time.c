@@ -7,7 +7,7 @@
 ///  \n https://github.com/lishaoliang/klb
 /// @brief   文件简要描述
 ///////////////////////////////////////////////////////////////////////////
-#include "platform/klb_time.h"
+#include "klbplatform/klb_time.h"
 #include <assert.h>
 
 #ifdef _WIN32

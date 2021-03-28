@@ -4,7 +4,7 @@
 //
 /// @file    klb_socket_tls.h
 /// @brief   加密socket
-///         __KLB_USE_OPEN_SSL__
+///         __KLB_USE_OPENSSL__
 /// @author  李绍良
 ///  \n https://github.com/lishaoliang/klb
 ///  \n https://gitee.com/lishaoliang/klb
@@ -24,7 +24,11 @@ extern "C" {
 #endif
 
 
+/// @brief openssl库初始化
 int klb_socket_tls_init();
+
+
+/// @brief openssl库退出
 void klb_socket_tls_quit();
 
 

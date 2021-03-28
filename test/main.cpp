@@ -22,7 +22,6 @@
 #include "klbt_canvas.h"
 
 #include "klbnet/klb_socket.h"
-#include "klbnet/klb_socket_base.h"
 #include "klbthird/sds.h"
 #include "klbmem/klb_mem.h"
 

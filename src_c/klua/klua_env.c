@@ -14,7 +14,7 @@
 #include "klua_help.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
-#include "platform/klb_time.h"
+#include "klbplatform/klb_time.h"
 #include "klbutil/klb_hlist.h"
 #include "klbthird/sds.h"
 #include "klua/extension/klua_extension.h"

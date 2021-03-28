@@ -25,11 +25,11 @@ CP_RF	:= -cp -rf
 
 
 # 从目录检索需要编译的c文件
-MY_DIRS := ./algorithm ./klbbase ./klbgui ./klbmem ./klbnet ./klbutil ./platform
-MY_DIRS += ./framework/lsmfw ./framework/smcfw
+MY_DIRS := ./klbplatform ./klbmem ./klbutil ./klbbase ./klbnet ./klbgui  
 
 # klua
-MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/klua_net ./klua/multithread
+MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/klua_platform ./klua/klua_util ./klua/klua_base
+MY_DIRS += ./klua/klua_multithread ./klua/klua_net
 MY_DIRS += ./klua/lua-5.4.1/src ./klua/lua-cjson-2.1.0 ./klua/lpeg-1.0.2 ./klua/luafilesystem-2.0/src
 
 # libavutil

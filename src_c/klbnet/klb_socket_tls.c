@@ -35,19 +35,25 @@ void klb_socket_tls_quit()
 //////////////////////////////////////////////////////////////////////////
 static void klb_socket_openssl_async_init(klb_socket_openssl_t* p_ssl, klb_socket_fd fd)
 {
+    // 先需要握手
     p_ssl->is_handshake = true;
 
+    // ssl方法
     const SSL_METHOD* p_method = SSLv23_client_method();
     //const SSL_METHOD* p_method = TLSv1_2_client_method();
 
+    //环境
     p_ssl->p_ssl_ctx = SSL_CTX_new(p_method);
     assert(NULL != p_ssl->p_ssl_ctx);
 
+    // 新建一个
     p_ssl->p_ssl = SSL_new(p_ssl->p_ssl_ctx);
 
+    // 设置可读写
     int set_fd = SSL_set_fd(p_ssl->p_ssl, fd);
     assert(1 == set_fd);
 
+    // connect方式
     SSL_set_connect_state(p_ssl->p_ssl);
 }
 
@@ -84,6 +90,7 @@ static int klb_socket_openssl_async_send(klb_socket_t* p_socket, const uint8_t* 
     
     if (p_ssl->is_handshake)
     {
+        // ssl握手阶段
         int handshake = SSL_do_handshake(p_ssl->p_ssl);
         if (1 == handshake)
         {
@@ -96,6 +103,7 @@ static int klb_socket_openssl_async_send(klb_socket_t* p_socket, const uint8_t* 
     int send = SSL_write(p_ssl->p_ssl, p_data, len);
     if (send < 0)
     {
+        // ssl握手阶段
         int err = SSL_get_error(p_ssl->p_ssl, send);
         if (SSL_ERROR_WANT_WRITE == err)
         {

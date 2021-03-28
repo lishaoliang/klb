@@ -79,7 +79,7 @@ static void klua_kgui_destroy(klua_kgui_t* p_kgui)
 static int cb_klua_kgui_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     assert(NULL != p_wnd);
-    klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)p_wnd->p_obj;
+    klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)p_wnd->p_udata;
     assert(NULL != p_bind);
 
     if (p_bind->on_command <= 0)
