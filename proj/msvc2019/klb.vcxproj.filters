@@ -750,6 +750,12 @@
     <ClInclude Include="..\..\inc\klbplatform\klb_time.h">
       <Filter>inc\klbplatform</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_base.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_multiplex.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1384,6 +1390,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbplatform\klb_time.c">
       <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbbase\klb_base.c">
+      <Filter>src_c\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbbase\klb_multiplex.c">
+      <Filter>src_c\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c">
+      <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

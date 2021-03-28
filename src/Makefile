@@ -50,7 +50,7 @@ MY_TARGET_EXE := ../lib/$(MY_TARGET_NAME)
 
 # cgo 部分引用的C头文件目录
 MY_CGO_CFLAGS := "
-MY_CGO_CFLAGS += -I $(PWD)/../inc
+MY_CGO_CFLAGS += -I $(PWD)/../inc -I $(PWD)/../src_c/klua/lua-5.4.1/src
 MY_CGO_CFLAGS += "
 
 # cgo 部分需要链接的库

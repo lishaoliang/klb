@@ -159,6 +159,12 @@ KLB_API int klua_open_khttp(lua_State* L);
 KLB_API int klua_open_kwebsocket(lua_State* L);
 
 
+/// @brief 扩展库"kncm": 网络媒体长链接管理模块
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kncm(lua_State* L);
+
+
 /// @brief 预加载 宏KLUA_LOADLIBS 定义的所有库
 /// @param [in] *L          Lua状态
 /// @return int 返回0
@@ -181,6 +187,7 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_kurl,         "kurl");        \
     klua_loadlib(L, klua_open_khttp,        "khttp");       \
     klua_loadlib(L, klua_open_kwebsocket,   "kwebsocket");  \
+    klua_loadlib(L, klua_open_kncm,         "kncm");        \
 }
 
 #ifdef __cplusplus

@@ -32,7 +32,9 @@ typedef struct klua_khttp_t_
     {
         lua_State*              L;              ///< L
         klua_env_t*             p_env;          ///< lua环境
-        klua_ex_multiplex_t*    p_multiplex;    ///< 复用
+
+        klua_ex_multiplex_t*    p_ex;           ///< 复用扩展
+        klb_multiplex_t*        p_multi;        ///< 复用
 
         int                     reg_on_recv;    ///< Lua脚本函数
     };
@@ -258,7 +260,7 @@ static void klua_khttp_error(klua_khttp_t* p_khttp, klb_socket_status_e err)
     call_lua_reg_on_recv_klua_khttp_error(p_khttp, "disconnect", s_klua_khttp_error_str[err]);
 }
 
-static int cb_klua_khttp_remove(klua_env_t* p_env, void* p_lparam, void* p_wparam, int id)
+static int cb_klua_khttp_remove(void* p_lparam, void* p_wparam, int id)
 {
     klua_khttp_t* p_khttp = (klua_khttp_t*)p_lparam;
 
@@ -267,7 +269,7 @@ static int cb_klua_khttp_remove(klua_env_t* p_env, void* p_lparam, void* p_wpara
     return 0;
 }
 
-static int cb_klua_khttp_recv(klua_env_t* p_env, void* p_lparam, void* p_wparam, int id, int64_t now)
+static int cb_klua_khttp_recv(void* p_lparam, void* p_wparam, int id, int64_t now)
 {
     klua_khttp_t* p_khttp = (klua_khttp_t*)p_lparam;
     klb_socket_t* p_socket = p_khttp->p_socket;
@@ -328,7 +330,7 @@ static int cb_klua_khttp_recv(klua_env_t* p_env, void* p_lparam, void* p_wparam,
     return r;
 }
 
-static int cb_klua_khttp_send(klua_env_t* p_env, void* p_lparam, void* p_wparam, int id, int64_t now)
+static int cb_klua_khttp_send(void* p_lparam, void* p_wparam, int id, int64_t now)
 {
     klua_khttp_t* p_khttp = (klua_khttp_t*)p_lparam;
     klb_socket_t* p_socket = p_khttp->p_socket;
@@ -493,7 +495,7 @@ static int klua_khttp_close(lua_State* L)
 {
     klua_khttp_t* p_khttp = to_klua_khttp(L, 1);
 
-    klua_ex_multiplex_remove(p_khttp->p_multiplex, p_khttp->id);
+    klb_multiplex_remove(p_khttp->p_multi, p_khttp->id);
 
     return 0;
 }
@@ -536,9 +538,7 @@ static int klua_khttp_connect(lua_State* L)
     if (lua_isboolean(L, 3))
     {
         tls = lua_toboolean(L, 3);
-    }
-
-    klua_env_t* p_env = klua_env_get_by_L(L);
+    }   
 
     klb_socket_fd fd = klb_socket_connect(p_host, (int)port, 0);
     if (INVALID_SOCKET == fd)
@@ -561,9 +561,10 @@ static int klua_khttp_connect(lua_State* L)
 
     klua_khttp_t* p_khttp = new_klua_khttp(L);
     p_khttp->L = L;
-    p_khttp->p_env = p_env;
+    p_khttp->p_env = klua_env_get_by_L(L);;
     p_khttp->p_socket = p_socket;
-    p_khttp->p_multiplex = klua_ex_get_multiplex(p_khttp->p_env);
+    p_khttp->p_ex = klua_ex_get_multiplex(p_khttp->p_env);
+    p_khttp->p_multi = klua_ex_multiplex_get(p_khttp->p_ex);
 
     p_khttp->p_w_list = klb_list_create();
 
@@ -588,13 +589,13 @@ static int klua_khttp_connect(lua_State* L)
     p_khttp->settings.on_chunk_header = on_chunk_header_klua_khttp;
     p_khttp->settings.on_chunk_complete = on_chunk_complete_klua_khttp;
 
-    klua_ex_multiplex_obj_t o = { 0 };
+    klb_multiplex_obj_t o = { 0 };
     o.cb_remove = cb_klua_khttp_remove;
     o.cb_recv = cb_klua_khttp_recv;
     o.cb_send = cb_klua_khttp_send;
     o.p_lparam = p_khttp;
 
-    p_khttp->id = klua_ex_multiplex_push_socket(p_khttp->p_multiplex, p_khttp->p_socket, &o);
+    p_khttp->id = klb_multiplex_push_socket(p_khttp->p_multi, p_khttp->p_socket, &o);
     assert(0 <= p_khttp->id);
 
     

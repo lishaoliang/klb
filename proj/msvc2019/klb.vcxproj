@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h" />
+    <ClInclude Include="..\..\inc\klbbase\klb_multiplex.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_string.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_str_map.h" />
@@ -230,6 +232,8 @@
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
+    <ClCompile Include="..\..\src_c\klbbase\klb_multiplex.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c" />
@@ -319,6 +323,7 @@
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />

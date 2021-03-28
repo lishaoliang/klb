@@ -23,9 +23,6 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
         return 0;
     }
 
-    klb_socket_init();
-    srand(klb_tick_count() + klb_thread_tid());     // 初始随机值
-
     klua_env_t* p_env = klua_env_create(klua_openlibs_std);
 
     if (0 != klua_env_dofile(p_env, argv[1]))
@@ -54,7 +51,6 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
 
 end:
     KLB_FREE_BY(p_env, klua_env_destroy);
-    klb_socket_quit();
 
     return 0;
 }

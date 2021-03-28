@@ -36,27 +36,66 @@ typedef enum klb_protocol_e_
     KLB_PROTOCOL_HTTP_MNP   = 9,    ///< http mnp 协议
     KLB_PROTOCOL_HTTP_FLV   = 10,   ///< http flv 协议
     KLB_PROTOCOL_WS_MNP     = 11,   ///< websocket mnp 协议
-    KLB_PROTOCOL_WS_FLV     = 12    ///< websocket flv 协议
+    KLB_PROTOCOL_WS_FLV     = 12,   ///< websocket flv 协议
+    KLB_PROTOCOL_MAX        = 13
 }klb_protocol_e;
 
 
 typedef struct klb_ncm_t_ klb_ncm_t;
 
 
-klb_ncm_t* klb_ncm_create();
-void klb_ncm_destroy(klb_ncm_t* p_ncm);
+/// @brief 创建ncm(net connect manage); 网络媒体长链接管理模块
+/// @param [in]  *p_json_cfg            json配置
+/// @return klb_ncm_t* 管理模块
+KLB_API klb_ncm_t* klb_ncm_create(const char* p_json_cfg);
 
 
-int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, int id, klb_socket_t* p_socket, const uint8_t* p_data, int data_len);
-int klb_ncm_close(klb_ncm_t* p_ncm, int id);
+/// @brief 销毁ncm
+/// @param [in]  *p_ncm                 ncm模块
+/// @return 无
+KLB_API void klb_ncm_destroy(klb_ncm_t* p_ncm);
 
 
-int klb_ncm_send(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
-int klb_ncm_recv(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, int* p_code, uint32_t* p_sequence, uint32_t* p_uid, klb_buf_t** p_extra, klb_buf_t** p_data);
+/// @brief 向ncm放入一个socket
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const uint8_t* p_data, int data_len);
 
 
-int klb_ncm_send_media(klb_ncm_t* p_ncm, int id, klb_buf_t* p_data);
-int klb_ncm_recv_media(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, klb_buf_t** p_data);
+/// @brief 关闭socket
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_close(klb_ncm_t* p_ncm, int id);
+
+
+/// @brief 发送数据(非媒体数据)
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_send(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
+
+
+/// @brief 接收数据(非媒体数据)
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_recv(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, int* p_code, uint32_t* p_sequence, uint32_t* p_uid, klb_buf_t** p_extra, klb_buf_t** p_data);
+
+
+/// @brief 发送媒体数据
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_send_media(klb_ncm_t* p_ncm, int id, klb_buf_t* p_data);
+
+
+/// @brief 接收媒体数据
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_recv_media(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, klb_buf_t** p_data);
+
+
+/// @brief 调用一次ncm; 需要定期调用
+/// @param [in] *p_ncm              ncm模块
+/// @return int 0
+KLB_API int klb_ncm_loop_once(klb_ncm_t* p_ncm, int64_t now);
 
 
 #ifdef __cplusplus

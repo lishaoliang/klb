@@ -10,7 +10,7 @@ package main
 /*
 //#cgo CFLAGS: -std=c99 -I ${SRCDIR}/../../inc
 #include "klua/klua.h"
-#include "klbnet/klb_socket.h"
+#include "klbbase/klb_base.h"
 extern int klua_go_main_openlibs(lua_State* L);
 */
 import "C"
@@ -47,7 +47,7 @@ func main() {
 		return
 	}
 
-	C.klb_socket_init()
+	C.klb_base_init(nil)
 
 	kpool.Init(4096, 3072*4)
 
@@ -90,6 +90,8 @@ func main() {
 	klua.Wait()
 
 	kpool.Quit()
+
+	C.klb_base_quit()
 
 	fmt.Println("main over...", s)
 }
