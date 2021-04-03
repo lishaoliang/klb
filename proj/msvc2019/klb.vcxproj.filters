@@ -750,6 +750,9 @@
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h">
       <Filter>src_c\klua\klua_multithread</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_rand.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1387,6 +1390,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c">
       <Filter>src_c\klua\klua_multithread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_rand.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c">
+      <Filter>src_c\klua\klua_util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

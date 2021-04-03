@@ -53,6 +53,13 @@ void klua_setfield_integer(lua_State* L, const char* p_key, lua_Integer n)
     lua_setfield(L, -2, p_key);
 }
 
+void klua_setfield_number(lua_State* L, const char* p_key, lua_Number num)
+{
+    assert(NULL != p_key);
+    lua_pushnumber(L, num);
+    lua_setfield(L, -2, p_key);
+}
+
 void klua_setfield_string(lua_State* L, const char* p_key, const char* p_value)
 {
     assert(NULL != p_key);

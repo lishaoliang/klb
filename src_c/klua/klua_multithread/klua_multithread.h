@@ -3,7 +3,7 @@
 //  Created: 2021/04/03
 //
 /// @file    klua_multithread.h
-/// @brief   文件简要描述
+/// @brief   klua与多线程相关的部分: 注意进程内唯一
 /// @author  李绍良
 ///  \n https://github.com/lishaoliang/klb
 ///  \n https://gitee.com/lishaoliang/klb

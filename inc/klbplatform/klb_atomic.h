@@ -25,7 +25,10 @@ extern "C" {
 
 /// @struct klb_atomic_t
 /// @brief  原子变量
-typedef struct klb_atomic_t_ klb_atomic_t;
+typedef struct klb_atomic_t_
+{
+    int volatile    count;      ///< 原子变量地址必须为对齐的地址
+}klb_atomic_t;
 
 
 /// @brief 创建原子变量

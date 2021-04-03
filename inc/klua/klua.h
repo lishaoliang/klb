@@ -64,6 +64,7 @@ KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
 /// 返回 lua_newtable(L);
 KLB_API void klua_setfield_boolean(lua_State* L, const char* p_key, bool b);
 KLB_API void klua_setfield_integer(lua_State* L, const char* p_key, lua_Integer n);
+KLB_API void klua_setfield_number(lua_State* L, const char* p_key, lua_Number num);
 KLB_API void klua_setfield_string(lua_State* L, const char* p_key, const char* p_value);
 KLB_API void klua_setfield_lstring(lua_State* L, const char* p_key, const char* p_value, size_t v_len);
 
@@ -111,10 +112,22 @@ KLB_API int klua_open_lfs(lua_State *L);
 KLB_API int klua_open_kos(lua_State* L);
 
 
+/// @brief 扩展库"krand"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_krand(lua_State* L);
+
+
 /// @brief 扩展库"ktime"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_ktime(lua_State* L);
+
+
+/// @brief 扩展库"kmcache"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kmcache(lua_State* L);
 
 
 /// @brief 扩展库"kthread"
@@ -179,7 +192,9 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_lpeg,         "lpeg");        \
     klua_loadlib(L, klua_open_lfs,          "lfs");         \
     klua_loadlib(L, klua_open_kos,          "kos");         \
+    klua_loadlib(L, klua_open_krand,        "krand");       \
     klua_loadlib(L, klua_open_ktime,        "ktime");       \
+    klua_loadlib(L, klua_open_kmcache,      "kmcache");     \
     klua_loadlib(L, klua_open_kthread,      "kthread");     \
     klua_loadlib(L, klua_open_kmnp_dev,     "kmnp_dev");    \
     klua_loadlib(L, klua_open_kgui,         "kgui");        \

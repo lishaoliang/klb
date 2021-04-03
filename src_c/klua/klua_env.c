@@ -101,9 +101,6 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     // 注册标准扩展
     klua_register_extension_std(p_env);
 
-    // 标准lua扩展(进程唯一, 即多了lua环境之间共享)
-    klua_register_extension_single_std(p_env);
-
     // lua环境初始化
     klua_env_init(p_env, cb_pre_load);
 

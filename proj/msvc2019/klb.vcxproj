@@ -66,6 +66,7 @@
     <ClInclude Include="..\..\inc\klbutil\klb_log.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj_hash.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_rand.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rect.h" />
     <ClInclude Include="..\..\inc\klbutil\list.h" />
     <ClInclude Include="..\..\inc\klb_type.h" />
@@ -304,6 +305,7 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_htab.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_list.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_obj.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
@@ -324,6 +326,7 @@
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.c" />
