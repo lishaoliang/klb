@@ -28,13 +28,13 @@ CP_RF	:= -cp -rf
 MY_DIRS := ./klbplatform ./klbmem ./klbutil ./klbbase
 
 # klbnet
-MY_DIRS += ./klbnet ./klbnet/klbncm_parser
+MY_DIRS += ./klbnet ./klbnet/klb_ncm_opt
 
 # klbgui
 MY_DIRS += ./klbgui
 
 # klua
-MY_DIRS += ./klua ./klua/extension ./klua/extension_single ./klua/klua_platform ./klua/klua_util ./klua/klua_base
+MY_DIRS += ./klua ./klua/extension ./klua/klua_platform ./klua/klua_util ./klua/klua_base
 MY_DIRS += ./klua/klua_multithread ./klua/klua_net
 MY_DIRS += ./klua/lua-5.4.1/src ./klua/lua-cjson-2.1.0 ./klua/lpeg-1.0.2 ./klua/luafilesystem-2.0/src
 

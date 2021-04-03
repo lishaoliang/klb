@@ -18,7 +18,6 @@
 #include "klbutil/klb_hlist.h"
 #include "klbthird/sds.h"
 #include "klua/extension/klua_extension.h"
-#include "klua/extension_single/klua_extension_single.h"
 #include <assert.h>
 
 

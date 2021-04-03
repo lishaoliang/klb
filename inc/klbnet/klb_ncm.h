@@ -24,6 +24,8 @@ extern "C" {
 #endif
 
 
+/// @enum  klb_protocol_e
+/// @brief 协议类型
 typedef enum klb_protocol_e_
 {
     KLB_PROTOCOL_UNKOWN     = 0,    ///< unkown
@@ -59,22 +61,43 @@ KLB_API klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi);
 KLB_API void klb_ncm_destroy(klb_ncm_t* p_ncm);
 
 
-/// @brief 连接解析收到数据时,回调
+/// @enum  klb_ncm_packtype_e
+/// @brief 数据包类型
+typedef enum klb_ncm_packtype_e_
+{
+    KLB_NCM_PACK_TEXT,                  ///< 文本数据
+    KLB_NCM_PACK_BINARY,                ///< 二进制数据
+    KLB_NCM_PACK_MEDIA,                 ///< 媒体数据
+}klb_ncm_packtype_e;
+
+
+/// @brief 当前连接接收到数据/错误等信息,后调用此函数
+/// @param [in]  *ptr                   用户指针
+/// @param [in]  protocol               协议号: klb_protocol_e
+/// @param [in]  id                     连接号: 正整数
+/// @param [in]  code                   错误码: 0.成功; klb_socket_status_e
+/// @param [in]  packtype               数据类型: klb_ncm_packtype_e
+/// @param [in]  *p_data                数据体
 /// @return int 0
-typedef int (*klb_ncm_parser_recv_cb)(void* ptr, int protocol, int id, int code, int packtype, klb_buf_t* p_data);
+typedef int (*klb_ncm_ops_recv_cb)(void* ptr, int protocol, int id, int code, int packtype, klb_buf_t* p_data);
 
 
-KLB_API int klb_ncm_add_receiver(klb_ncm_t* p_ncm, klb_ncm_parser_recv_cb cb_recv, void* p_obj);
+/// @brief 添加数据接收函数
+/// @param [in]  *p_ncm                 ncm模块
+/// @param [in]  cb_recv                数据接收函数
+/// @param [in]  *p_obj                 用户指针
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_add_receiver(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, void* p_obj);
 
 
-/// @struct klb_ncm_obj_t
+/// @struct klb_ncm_ops_t
 /// @brief  ncm连接
-typedef struct klb_ncm_parser_t
+typedef struct klb_ncm_ops_t_
 {
     /// @brief 创建连接
     /// @param [in] *p_ncm          ncm模块
     /// @return void* 连接的指针
-    void* (*cb_create)(klb_ncm_t* p_ncm, klb_ncm_parser_recv_cb cb_recv, int protocol, int id);
+    void* (*cb_create)(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, int protocol, int id);
 
     /// @brief 销毁连接
     /// @param [in] *ptr            连接的指针
@@ -100,13 +123,13 @@ typedef struct klb_ncm_parser_t
     /// @param [in] *ptr            连接的指针
     /// @return int
     int   (*on_recv)(void* ptr, klb_socket_t* p_socket, int64_t now);
-}klb_ncm_parser_t;
+}klb_ncm_ops_t;
 
 
 /// @brief 向ncm注册一个协议解析器
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_register(klb_ncm_t* p_ncm, int protocol, const klb_ncm_parser_t* p_parser);
+KLB_API int klb_ncm_register(klb_ncm_t* p_ncm, int protocol, const klb_ncm_ops_t* p_ops);
 
 
 /// @brief 向ncm放入一个socket
@@ -143,12 +166,6 @@ KLB_API int klb_ncm_send_media(klb_ncm_t* p_ncm, int id, klb_buf_t* p_data);
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
 KLB_API int klb_ncm_recv_media(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, klb_buf_t** p_data);
-
-
-/// @brief 调用一次ncm; 需要定期调用
-/// @param [in] *p_ncm              ncm模块
-/// @return int 0
-KLB_API int klb_ncm_loop_once(klb_ncm_t* p_ncm, int64_t now);
 
 
 #ifdef __cplusplus

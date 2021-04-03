@@ -28,9 +28,6 @@
     <Filter Include="src_c\klua\extension">
       <UniqueIdentifier>{28b7ead6-e649-4fbd-8f57-e26be0881052}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klua\extension_single">
-      <UniqueIdentifier>{6b4fcc7a-493e-484b-ad95-c5c5ec2716a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klbutil">
       <UniqueIdentifier>{a3b8ce22-6ca6-4d93-800a-09be1b63d76e}</UniqueIdentifier>
     </Filter>
@@ -121,7 +118,7 @@
     <Filter Include="src_c\klbplatform">
       <UniqueIdentifier>{e5b7825e-ee0e-4407-a71b-79d7eef047c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klbnet\klbncm_parser">
+    <Filter Include="src_c\klbnet\klb_ncm_ops">
       <UniqueIdentifier>{5368565e-4e56-47ee-83bd-d77a7b03526e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -444,15 +441,6 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\extension_single\klua_extension_single.h">
-      <Filter>src_c\klua\extension_single</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_mcache.h">
-      <Filter>src_c\klua\extension_single</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_thread.h">
-      <Filter>src_c\klua\extension_single</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
@@ -481,9 +469,6 @@
       <Filter>inc\klbnet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_socket_transmit.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_websocket.h">
@@ -759,8 +744,11 @@
     <ClInclude Include="..\..\inc\klbbase\klb_multiplex.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser.h">
-      <Filter>src_c\klbnet\klbncm_parser</Filter>
+    <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h">
+      <Filter>src_c\klua\klua_multithread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1013,15 +1001,6 @@
     <ClCompile Include="..\..\src_c\klua\klua_main.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\extension_single\klua_extension_single.c">
-      <Filter>src_c\klua\extension_single</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_mcache.c">
-      <Filter>src_c\klua\extension_single</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_thread.c">
-      <Filter>src_c\klua\extension_single</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c">
       <Filter>src_c\klbbase</Filter>
     </ClCompile>
@@ -1062,9 +1041,6 @@
       <Filter>src_c\klbnet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c">
-      <Filter>src_c\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_socket_transmit.c">
       <Filter>src_c\klbnet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c">
@@ -1406,8 +1382,11 @@
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c">
       <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser_mnp.c">
-      <Filter>src_c\klbnet\klbncm_parser</Filter>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_mnp.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c">
+      <Filter>src_c\klua\klua_multithread</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

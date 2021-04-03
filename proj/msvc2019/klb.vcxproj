@@ -38,7 +38,6 @@
     <ClInclude Include="..\..\inc\klbnet\klb_ncm.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_socket_transmit.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_websocket.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_atomic.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_dynamic_link.h" />
@@ -77,7 +76,7 @@
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_widget.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
-    <ClInclude Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser.h" />
+    <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_intmodedep.h" />
@@ -92,10 +91,8 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
-    <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_mcache.h" />
-    <ClInclude Include="..\..\src_c\klua\extension_single\klua_exs_thread.h" />
-    <ClInclude Include="..\..\src_c\klua\extension_single\klua_extension_single.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
+    <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.h" />
@@ -247,12 +244,11 @@
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbncm_parser\klb_ncm_parser_mnp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_mnp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_socket_transmit.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_atomic.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_dynamic_link.c" />
@@ -313,9 +309,6 @@
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
-    <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_mcache.c" />
-    <ClCompile Include="..\..\src_c\klua\extension_single\klua_exs_thread.c" />
-    <ClCompile Include="..\..\src_c\klua\extension_single\klua_extension_single.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c" />
@@ -324,6 +317,7 @@
     <ClCompile Include="..\..\src_c\klua\klua_main.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />

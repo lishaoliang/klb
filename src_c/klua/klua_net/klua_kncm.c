@@ -33,14 +33,14 @@ typedef struct klua_kncm_t_
 //////////////////////////////////////////////////////////////////////////
 
 /// @brief 从C调用Lua脚本注册的的函数
-/// @param [in]  *p_khttp       khttp指针
-/// @param [in]  *p_msg         消息类型: "http", "header", "header_complete", "body"
+/// @param [in]  *p_kncm        kncm指针
+/// @param [in]  *p_msg         消息类型: "text", "binary"
 /// @param [in]  *p_s1          字符串1
 /// @param [in]  s1_len         字符串1长度
 /// @param [in]  *p_s2          字符串2
 /// @param [in]  s2_len         字符串2长度
 /// @return int  0.成功; 非0.失败
-static int call_lua_reg_on_recv_klua_kncm(klua_kncm_t* p_kncm, const char* p_msg, const char* p_s1, int s1_len, const char* p_s2, int s2_len, int protocol, int id, int code)
+static int call_lua_reg_on_recv_klua_kncm(klua_kncm_t* p_kncm, const char* p_msg, int id, int protocol, const char* p_s1, int s1_len, const char* p_s2, int s2_len, uint32_t sequence, uint32_t uid)
 {
     assert(NULL != p_kncm);
     if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
@@ -49,19 +49,24 @@ static int call_lua_reg_on_recv_klua_kncm(klua_kncm_t* p_kncm, const char* p_msg
     KLUA_HELP_TOP_B(L);
     lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);    /* to call reg in protected mode */
     lua_pushstring(L, p_msg);                                  /* 1st argument */
-    lua_pushlstring(L, p_s1, s1_len);                          /* 2st argument */
-    lua_pushlstring(L, p_s2, s2_len);                          /* 3st argument */
-    lua_pushinteger(L, protocol);                              /* 4st argument */
-    lua_pushinteger(L, id);                                    /* 5st argument */
-    lua_pushinteger(L, code);                                  /* 6st argument */
-    int status = lua_pcall(L, 6, 0, 0);                        /* do the call */
+    lua_pushinteger(L, id);                                    /* 2st argument */
+    lua_pushinteger(L, protocol);                              /* 3st argument */
+    lua_pushlstring(L, p_s1, s1_len);                          /* 4st argument */
+    lua_pushlstring(L, p_s2, s2_len);                          /* 5st argument */
+    lua_pushinteger(L, sequence);                              /* 6st argument */
+    lua_pushinteger(L, uid);                                   /* 7st argument */
+    int status = lua_pcall(L, 7, 0, 0);                        /* do the call */
     klua_env_report(p_kncm->p_env, status);
 
     KLUA_HELP_TOP_E(L);
     return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-static int call_lua_reg_on_recv_klua_kncm_error(klua_kncm_t* p_kncm, const char* p_msg, const char* p_s1)
+/// @brief 从C调用Lua脚本注册的的函数
+/// @param [in]  *p_kncm        kncm指针
+/// @param [in]  *p_msg         消息类型: "media"
+/// @return int  0.成功; 非0.失败
+static int call_lua_reg_on_recv_klua_kncm_media(klua_kncm_t* p_kncm, const char* p_msg, int id, int protocol, klb_buf_t* p_data)
 {
     assert(NULL != p_kncm);
     if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
@@ -69,10 +74,34 @@ static int call_lua_reg_on_recv_klua_kncm_error(klua_kncm_t* p_kncm, const char*
     lua_State* L = p_kncm->L;
     KLUA_HELP_TOP_B(L);
     lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);    /* to call reg in protected mode */
+    lua_pushstring(L, p_msg);                                  /* 1st argument */
+    lua_pushinteger(L, id);                                    /* 2st argument */
+    lua_pushinteger(L, protocol);                              /* 3st argument */
+    lua_pushlstring(L, p_data->p_buf + p_data->start, p_data->end - p_data->start); /* 4st argument */
+    int status = lua_pcall(L, 4, 0, 0);                        /* do the call */
+    klua_env_report(p_kncm->p_env, status);
+
+    KLUA_HELP_TOP_E(L);
+    return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+/// @brief 从C调用Lua脚本注册的的函数
+/// @param [in]  *p_kncm        kncm指针
+/// @param [in]  *p_msg         消息类型: "connect", "disconnect"
+/// @return int  0.成功; 非0.失败
+static int call_lua_reg_on_recv_klua_kncm_tip(klua_kncm_t* p_kncm, const char* p_msg, int id, int protocol, int code)
+{
+    assert(NULL != p_kncm);
+    if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
+
+    lua_State* L = p_kncm->L;
+    KLUA_HELP_TOP_B(L);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);     /* to call reg in protected mode */
     lua_pushstring(L, p_msg);                                   /* 1st argument */
-    lua_pushstring(L, p_s1);                                    /* 2st argument */
-    lua_pushstring(L, "");                                      /* 3st argument */
-    int status = lua_pcall(L, 3, 0, 0);                         /* do the call */
+    lua_pushinteger(L, id);                                     /* 2st argument */
+    lua_pushinteger(L, protocol);                               /* 3st argument */
+    lua_pushinteger(L, code);                                   /* 4st argument */
+    int status = lua_pcall(L, 4, 0, 0);                         /* do the call */
     klua_env_report(p_kncm->p_env, status);
 
     KLUA_HELP_TOP_E(L);
@@ -86,23 +115,52 @@ static int on_klb_ncm_recv_klua_kncm(void* ptr, int protocol, int id, int code, 
 {
     klua_kncm_t* p_kncm = (klua_kncm_t*)ptr;
 
-    if (0 == code)
+    if (KLB_SOCKET_CONNECT == code)
     {
-        if (KLB_MNP_TXT == packtype)
-        {
-            char* ptr = p_data->p_buf + p_data->start;
-            int data_len = p_data->end - p_data->start;
+        call_lua_reg_on_recv_klua_kncm_tip(p_kncm, "connect", id, protocol, 0);
+    }
+    else if (KLB_SOCKET_OK == code)
+    {
+        char* ptr = p_data->p_buf + p_data->start;
+        int data_len = p_data->end - p_data->start;
 
+        if (KLB_NCM_PACK_TEXT == packtype)
+        {
             klb_mnp_common_t* p_common = (klb_mnp_common_t*)ptr;
 
             ptr += sizeof(klb_mnp_common_t);
             data_len -= sizeof(klb_mnp_common_t);
 
-            call_lua_reg_on_recv_klua_kncm(p_kncm, "text",
+            call_lua_reg_on_recv_klua_kncm(p_kncm, "text", id, protocol,
                 ptr, p_common->extra,
                 ptr + p_common->extra, data_len - p_common->extra,
-                protocol, id, code);
+                p_common->sequence, p_common->uid);
         }
+        else if (KLB_NCM_PACK_BINARY == packtype)
+        {
+            klb_mnp_common_t* p_common = (klb_mnp_common_t*)ptr;
+
+            ptr += sizeof(klb_mnp_common_t);
+            data_len -= sizeof(klb_mnp_common_t);
+
+            call_lua_reg_on_recv_klua_kncm(p_kncm, "binary", id, protocol,
+                ptr, p_common->extra,
+                ptr + p_common->extra, data_len - p_common->extra,
+                p_common->sequence, p_common->uid);
+        }
+        else if (KLB_NCM_PACK_MEDIA == packtype)
+        {
+            call_lua_reg_on_recv_klua_kncm_media(p_kncm, "media", id, protocol, p_data);
+        }
+    }
+    else if (KLB_SOCKET_CLOSEING == code)
+    {
+        // 主动断开连接, 啥也不做
+    }
+    else
+    {
+        // 需要断开连接
+        call_lua_reg_on_recv_klua_kncm_tip(p_kncm, "disconnect", id, protocol, code);
     }
 
     return 0;
@@ -195,8 +253,18 @@ static int klua_kncm_connect(lua_State* L)
 static int klua_kncm_close(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    int id = (int)luaL_checkinteger(L, 2);
 
-    return 0;
+    if (0 == klb_ncm_close(p_kncm->p_ncm, id))
+    {
+        lua_pushboolean(L, true);
+    }
+    else
+    {
+        lua_pushboolean(L, false);
+    }
+
+    return 1;
 }
 
 static int klua_kncm_send(lua_State* L)
@@ -211,7 +279,16 @@ static int klua_kncm_send(lua_State* L)
     const char* p_s2 = luaL_checklstring(L, 4, &s2_len);
 
     uint32_t sequence = 0;
+    if (lua_isinteger(L, 5))
+    {
+        sequence = (uint32_t)luaL_checkinteger(L, 5);
+    }
+
     uint32_t uid = 0;
+    if (lua_isinteger(L, 6))
+    {
+        uid = (uint32_t)luaL_checkinteger(L, 6);
+    }
 
     bool ok = false;
     if (0 < s1_len + s2_len)

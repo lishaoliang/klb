@@ -74,7 +74,10 @@ typedef enum klb_socket_status_e_
     KLB_SOCKET_DISCONN,                 ///< 连接已断开(读写socket返回0引发): 对方已经断开连接
     KLB_SOCKET_TIMEOUT,                 ///< 超时错误: 读写数据超时
     KLB_SOCKET_ERR_PROTOCOL,            ///< 协议解析错误: 不符合协议规范的数据或格式等
-    KLB_SOCKET_ERR_MAX,                 ///< 最大值
+    KLB_SOCKET_ERR_MAX,                 ///< 错误最大值
+
+    KLB_SOCKET_CLOSEING         = 98,   ///< 主动关闭
+    KLB_SOCKET_CONNECT          = 99,   ///< 正在连接/连接成功
 }klb_socket_status_e;
 
 
