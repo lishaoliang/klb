@@ -35,7 +35,7 @@ typedef struct klb_hlist_iter_t_
     };
 
     uint32_t            key_len;    ///< 节点key的长度
-    char                key[1];     ///< 可变长key
+    char                key[];      ///< 可变长key
 }klb_hlist_iter_t;
 
 

@@ -20,6 +20,8 @@ static int klua_krand_rand(lua_State* L)
     if (lua_isinteger(L, 1))
     {
         int r_max = (int)lua_tointeger(L, 1);
+        r_max -= 1;
+
         if (RAND_MAX < r_max)
         {
             r_max = RAND_MAX;
@@ -27,19 +29,20 @@ static int klua_krand_rand(lua_State* L)
 
         if (0 < r_max)
         {
-            lua_pushinteger(L, rand() % r_max);
-            lua_pushinteger(L, RAND_MAX);
+            lua_pushinteger(L, (lua_Integer)1 + (rand() % r_max));
+            lua_pushinteger(L, (lua_Integer)1 + r_max);
         }
         else
         {
-            lua_pushinteger(L, 0);
-            lua_pushinteger(L, 0);
+            lua_pushinteger(L, 1);
+            lua_pushinteger(L, 1);
         }
     }
     else
     {
-        lua_pushinteger(L, rand());
-        lua_pushinteger(L, RAND_MAX);
+        // 区间[1, 1 + RAND_MAX]
+        lua_pushinteger(L, (lua_Integer)1 + rand());
+        lua_pushinteger(L, (lua_Integer)1 + RAND_MAX);
     }
 
     return 2;

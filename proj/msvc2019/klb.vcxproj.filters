@@ -753,6 +753,15 @@
     <ClInclude Include="..\..\inc\klbutil\klb_rand.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_shmem.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_semlock.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_kthread.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1396,6 +1405,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c">
       <Filter>src_c\klua\klua_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_semlock.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_shmem.c">
+      <Filter>src_c\klbplatform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -28,7 +28,7 @@ CP_RF	:= -cp -rf
 MY_DIRS := ./klbplatform ./klbmem ./klbutil ./klbbase
 
 # klbnet
-MY_DIRS += ./klbnet ./klbnet/klb_ncm_opt
+MY_DIRS += ./klbnet ./klbnet/klb_ncm_ops
 
 # klbgui
 MY_DIRS += ./klbgui

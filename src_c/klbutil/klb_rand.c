@@ -12,11 +12,12 @@ char* klb_rand_string(char* p_dest, int str_len, bool set_end)
 {
     static const char s_chars[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    static const int s_chars_len = sizeof(s_chars) - 1;
 
     char* ptr = p_dest;
     for (int i = 0; i < str_len; i++)
     {
-        *ptr = s_chars[rand() % sizeof(s_chars)];
+        *ptr = s_chars[rand() % s_chars_len];
         ptr++;
     }
 
@@ -36,13 +37,14 @@ char* klb_rand_string(char* p_dest, int str_len, bool set_end)
 char* klb_rand_integer(char* p_dest, int str_len, bool set_end)
 {
     static const char s_num10[] = "0123456789";
+    static const int  s_num10_len = sizeof(s_num10) - 1;
 
     char* ptr = p_dest;
 
     // 第一位, 不为0
     while (0 < str_len)
     {
-        int idx = rand() % sizeof(s_num10);
+        int idx = rand() % s_num10_len;
         if (0 != idx)
         {
             *ptr = s_num10[idx];
@@ -53,7 +55,7 @@ char* klb_rand_integer(char* p_dest, int str_len, bool set_end)
 
     for (int i = 1; i < str_len; i++)
     {
-        *ptr = s_num10[rand() % sizeof(s_num10)];
+        *ptr = s_num10[rand() % s_num10_len];
         ptr++;
     }
 

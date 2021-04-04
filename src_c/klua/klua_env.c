@@ -21,7 +21,9 @@
 #include <assert.h>
 
 
+#if 0
 #define KLUA_ENV_PTR            "_KLUA_ENV_PTR_"
+#endif
 
 #define KLUA_ENV_GC_TIME_OUT    600000
 

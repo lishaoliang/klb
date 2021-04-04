@@ -43,6 +43,8 @@
     <ClInclude Include="..\..\inc\klbplatform\klb_dynamic_link.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_mutex.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_rwlock.h" />
+    <ClInclude Include="..\..\inc\klbplatform\klb_semlock.h" />
+    <ClInclude Include="..\..\inc\klbplatform\klb_shmem.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_spinlock.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_thread.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_time.h" />
@@ -72,6 +74,7 @@
     <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
+    <ClInclude Include="..\..\inc\klua\klua_kthread.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
@@ -255,6 +258,8 @@
     <ClCompile Include="..\..\src_c\klbplatform\klb_dynamic_link.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_mutex.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_rwlock.c" />
+    <ClCompile Include="..\..\src_c\klbplatform\klb_semlock.c" />
+    <ClCompile Include="..\..\src_c\klbplatform\klb_shmem.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_spinlock.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_thread.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_time.c" />

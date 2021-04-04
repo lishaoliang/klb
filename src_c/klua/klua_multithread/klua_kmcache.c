@@ -1,7 +1,6 @@
 ﻿#include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbplatform/klb_mutex.h"
-#include "klbplatform/klb_atomic.h"
 #include "klbutil/klb_hlist.h"
 #include "klbmem/klb_mem.h"
 #include "klbthird/sds.h"
