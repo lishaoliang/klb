@@ -23,7 +23,7 @@
 typedef struct klb_thread_t_
 {
     HANDLE          hnd;            ///< 线程句柄
-    int             run;            ///< 是否运行: TRUE.在运行; FALSE.未运行
+    volatile int    run;            ///< 是否运行: true.在运行; false.未运行
 
     klb_thread_cb   cb_thread;      ///< 线程启动入口
     void*           p_obj;          ///< 传递的对象参数
@@ -128,7 +128,7 @@ void klb_sleep_ns(uint32_t ns)
 typedef struct klb_thread_t_
 {
     pthread_t       hnd;            ///< 线程句柄
-    int             run;            ///< 是否运行: TRUE.在运行; FALSE.未运行
+    volatile int    run;            ///< 是否运行: true.在运行; false.未运行
 
     klb_thread_cb   cb_thread;      ///< 线程启动入口
     void*           p_obj;          ///< 传递的对象参数

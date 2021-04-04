@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-static int klb_gui_thread(void* p_obj, int* p_run);
+static int klb_gui_thread(void* p_obj, volatile int* p_run);
 
 //////////////////////////////////////////////////////////////////////////
 // klb_gui.h
@@ -537,7 +537,7 @@ static int test_dlg(klb_gui_t* p_gui)
     return 0;
 }
 
-static int klb_gui_thread(void* p_obj, int* p_run)
+static int klb_gui_thread(void* p_obj, volatile int* p_run)
 {
     KLB_LOG("start klb gui thread.\n");
     klb_gui_t* p_gui = (klb_gui_t*)(p_obj);

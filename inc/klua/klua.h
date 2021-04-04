@@ -136,6 +136,12 @@ KLB_API int klua_open_kmcache(lua_State* L);
 KLB_API int klua_open_kthread(lua_State* L);
 
 
+/// @brief 扩展库"klpc"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_klpc(lua_State* L);
+
+
 /// @brief 扩展库"kmnp_dev"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -196,6 +202,7 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_ktime,        "ktime");       \
     klua_loadlib(L, klua_open_kmcache,      "kmcache");     \
     klua_loadlib(L, klua_open_kthread,      "kthread");     \
+    klua_loadlib(L, klua_open_klpc,         "klpc");        \
     klua_loadlib(L, klua_open_kmnp_dev,     "kmnp_dev");    \
     klua_loadlib(L, klua_open_kgui,         "kgui");        \
     klua_loadlib(L, klua_open_kwnd,         "kwnd");        \

@@ -762,6 +762,9 @@
     <ClInclude Include="..\..\inc\klua\klua_kthread.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1411,6 +1414,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbplatform\klb_shmem.c">
       <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c">
+      <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

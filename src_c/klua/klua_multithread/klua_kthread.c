@@ -88,7 +88,7 @@ void klua_kthread_quit()
 // klua_kthread_t 部分C函数
 
 
-static int cb_klb_thread_klua_kthread(void* p_obj, int* p_run)
+static int cb_klb_thread_klua_kthread(void* p_obj, volatile int* p_run)
 {
     klua_kthread_item_t* p_item = (klua_kthread_item_t*)p_obj;
     klua_env_t* p_env = p_item->p_env;

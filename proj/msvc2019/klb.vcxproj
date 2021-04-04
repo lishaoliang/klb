@@ -94,6 +94,7 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
@@ -315,9 +316,11 @@
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c" />
     <ClCompile Include="..\..\src_c\klua\klua_env.c" />
     <ClCompile Include="..\..\src_c\klua\klua_help.c" />

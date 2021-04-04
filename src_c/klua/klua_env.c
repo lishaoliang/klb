@@ -485,7 +485,6 @@ static int klua_env_init(klua_env_t* p_env, lua_CFunction cb_pre_load)
     klua_help_report(L, status);
     if (LUA_OK == status) { lua_pop(L, 1); }
 
-    //lua_close(L);
     return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

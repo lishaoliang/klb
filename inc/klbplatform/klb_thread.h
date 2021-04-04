@@ -34,7 +34,7 @@ typedef struct klb_thread_t_ klb_thread_t;
 /// @param [in] *p_obj      传入的对象
 /// @param [in] *p_run      是否在运行
 /// @return int 返回值
-typedef int(*klb_thread_cb)(void* p_obj, int* p_run);
+typedef int(*klb_thread_cb)(void* p_obj, volatile int* p_run);
 
 
 /// @brief 创建并启动线程
