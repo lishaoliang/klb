@@ -19,11 +19,41 @@
 
 #include "klb_type.h"
 #include "klua/klua.h"
+#include "klbutil/klb_list.h"
+#include "klbthird/sds.h"
+#include "klua/klua_data.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+
+typedef struct klua_env_t klua_env_t;
+
+
+//typedef struct klua_thread_msg_t_
+//{
+//    int         flag;           // 0, 1, 2
+//    sds         ex_name;
+//    sds         func_name;
+//    sds         sequence;
+//}klua_thread_msg_t;
+
+
+/// @brief 放入消息
+/// @return int 0
+KLB_API int klua_kthread_push_msg(const char* p_name, klua_msg_t* p_msg);
+
+
+/// @brief 取消息
+/// @return int 0
+KLB_API int klua_kthread_get_msg(const char* p_name, klb_list_t* p_list);
+
+
+
+KLB_API int klua_kthread_register(const char* p_name, klua_env_t* p_env);
+
+KLB_API int klua_kthread_unregister(const char* p_name);
 
 
 #ifdef __cplusplus

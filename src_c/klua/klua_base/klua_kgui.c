@@ -1,5 +1,6 @@
 ﻿#include "klb_type.h"
 #include "klua/klua.h"
+#include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"
 #include "klbutil/klb_obj.h"
 #include "klbmem/klb_mem.h"

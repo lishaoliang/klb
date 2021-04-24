@@ -300,3 +300,8 @@ int klb_ncm_recv_media(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, klb_buf_t**
 {
     return 0;
 }
+
+int klb_ncm_ctrl(klb_ncm_t* p_ncm, int id, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num)
+{
+    return 0;
+}

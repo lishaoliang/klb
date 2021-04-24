@@ -10,6 +10,7 @@ package klua
 /*
 #include "stdlib.h"
 #include "klua/klua.h"
+#include "klua/klua_env.h"
 */
 import "C"
 import (

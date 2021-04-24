@@ -14,7 +14,7 @@ typedef struct klb_socket_openssl_t_
     SSL_CTX*        p_ssl_ctx;          ///< ctx
     SSL*            p_ssl;              ///< ssl
 
-    bool            is_handshake;       ///< 握手阶段
+    int             is_handshake;       ///< 握手阶段; true.握手阶段; false.已经完成握手
 }klb_socket_openssl_t;
 
 

@@ -16,13 +16,15 @@
 #define __KLUA_H__
 
 #include "klb_type.h"
-#include "klua/klua_env.h"
 #include <assert.h>
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
 
 #define KLUA_HELP_TOP_B(L_)     int klua_tb_ = lua_gettop(L_);
 #define KLUA_HELP_TOP_E(L_)     int klua_te_ = lua_gettop(L_); assert(klua_tb_ == klua_te_);

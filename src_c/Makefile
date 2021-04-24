@@ -62,6 +62,7 @@ MY_INCLUDES += -I ./compat
 MY_INCLUDES += -I ./klbthird/sds
 MY_INCLUDES += -I ./klbthird/pcre2/src
 MY_INCLUDES += -I ./klbthird/sqlite3
+MY_INCLUDES += -I ../inc/klbthird
 
 
 # 第三方库头文件

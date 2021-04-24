@@ -5,6 +5,7 @@
 #include "klbutil/klb_log.h"
 #include "klbmem/klb_mem.h"
 #include "klbbase/klb_mnp.h"
+#include "klua/klua_data.h"
 #include <assert.h>
 
 
@@ -182,7 +183,7 @@ static klua_kncm_t* to_klua_kncm(lua_State* L, int index)
     return p_kncm;
 }
 
-static void free_klua_kncm(klua_kncm_t* p_khttp)
+static void free_klua_kncm(klua_kncm_t* p_kncm)
 {
 
 }
@@ -192,6 +193,8 @@ static void free_klua_kncm(klua_kncm_t* p_khttp)
 static int klua_kncm_gc(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+
+    free_klua_kncm(p_kncm);
 
     return 0;
 }
@@ -204,11 +207,21 @@ static int klua_kncm_tostring(lua_State* L)
     return 1;
 }
 
+static int klua_kncm_close(lua_State* L)
+{
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+
+    free_klua_kncm(p_kncm);
+
+    return 0;
+}
+
 static int klua_kncm_set_on_recv(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
     luaL_checktype(L, 2, LUA_TFUNCTION);
 
+    klua_unref_registryindex(L, p_kncm->reg_on_recv);
     p_kncm->reg_on_recv = klua_ref_registryindex(L, 2);
 
     return 0;
@@ -250,7 +263,7 @@ static int klua_kncm_connect(lua_State* L)
     return 1;
 }
 
-static int klua_kncm_close(lua_State* L)
+static int klua_kncm_disconnect(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
     int id = (int)luaL_checkinteger(L, 2);
@@ -319,19 +332,66 @@ static int klua_kncm_recv_media(lua_State* L)
     return 0;
 }
 
+/// @brief 对连接进行控制操作
+static int klua_kncm_ctrl(lua_State* L)
+{
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    int id = (int)luaL_checkinteger(L, 2);
+
+    int argc = lua_gettop(L);
+    int data_num = argc - 2;
+
+    klua_data_t data[LUA_MINSTACK];
+    memset(data, 0, sizeof(klua_data_t) * LUA_MINSTACK);
+
+    for (int i = 0; i < data_num; i++)
+    {
+        klua_checkdata(L, &data[i], i + 3);
+    }
+
+    klua_data_t* p_out = NULL;
+    int out_num = 0;
+    if (0 == klb_ncm_ctrl(p_kncm->p_ncm, id, &data, data_num, &p_out, &out_num))
+    {
+        lua_pushboolean(L, true);
+
+        for (int i = 0; i < out_num; i++)
+        {
+            klua_pushdata(L, &p_out[i]);
+        }
+    }
+    else
+    {
+        assert(0 == out_num);
+        lua_pushboolean(L, false);
+    }
+
+    for (int i = 0; i < out_num; i++)
+    {
+        klua_emptydata(&p_out[i]);
+    }
+
+    KLB_FREE(p_out);
+    return out_num + 1;
+}
+
 static void klua_kncm_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
+        { "close",          klua_kncm_close },
+
         { "set_on_recv",    klua_kncm_set_on_recv },
 
-        { "connect",        klua_kncm_connect }, 
-        { "close",          klua_kncm_close },
+        { "connect",        klua_kncm_connect },
+        { "disconnect",     klua_kncm_disconnect },
 
         { "send",           klua_kncm_send },
         { "recv",           klua_kncm_recv },
 
         { "send_media",     klua_kncm_send_media },
         { "recv_media",     klua_kncm_recv_media },
+
+        { "ctrl",           klua_kncm_ctrl },
 
         { NULL,             NULL }
     };

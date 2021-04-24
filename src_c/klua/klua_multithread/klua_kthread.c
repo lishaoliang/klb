@@ -22,6 +22,8 @@ typedef struct klua_kthread_item_t_
     {
         sds         name;               ///< 线程名称
         sds         entry_path;         ///< Lua脚本入口
+
+        klb_list_t* p_msg_list;         ///< 暂存的消息队列
     };
 
     struct
@@ -87,7 +89,6 @@ void klua_kthread_quit()
 //////////////////////////////////////////////////////////////////////////
 // klua_kthread_t 部分C函数
 
-
 static int cb_klb_thread_klua_kthread(void* p_obj, volatile int* p_run)
 {
     klua_kthread_item_t* p_item = (klua_kthread_item_t*)p_obj;
@@ -131,8 +132,27 @@ static klua_kthread_item_t* klua_kthread_item_create(const char* p_name, size_t 
     p_item->flag = KLUA_KTHREAD_OWNER;
     p_item->name = sdsnewlen(p_name, name_len);
     p_item->entry_path = sdsnew(p_entry);
+    p_item->p_msg_list = klb_list_create();
 
     p_item->p_env = klua_env_create(klua_loadlib_all);
+    klua_env_set_name(p_item->p_env, p_name, name_len);
+
+    return p_item;
+}
+
+static klua_kthread_item_t* klua_kthread_item_create_other(const char* p_name, size_t name_len, klua_env_t* p_env)
+{
+    klua_kthread_item_t* p_item = KLB_MALLOC(klua_kthread_item_t, 1, 0);
+    KLB_MEMSET(p_item, 0, sizeof(klua_kthread_item_t));
+
+    p_item->flag = KLUA_KTHREAD_OTHER;
+    p_item->name = sdsnewlen(p_name, name_len);
+    p_item->entry_path = sdsnew("");
+    p_item->p_msg_list = klb_list_create();
+
+    p_item->p_env = p_env;
+
+    klua_env_set_name(p_item->p_env, p_name, name_len);
 
     return p_item;
 }
@@ -140,6 +160,8 @@ static klua_kthread_item_t* klua_kthread_item_create(const char* p_name, size_t 
 static void klua_kthread_item_destroy(klua_kthread_item_t* p_item)
 {
     assert(NULL == p_item->p_thread);
+
+    KLB_FREE_BY(p_item->p_msg_list, klb_list_destroy);
 
     KLB_FREE_BY(p_item->name, sdsfree);
     KLB_FREE_BY(p_item->entry_path, sdsfree);
@@ -181,8 +203,11 @@ static int klua_kthread_destroy(klua_kthread_t* p_kthread, const char* p_name, s
     {
         klua_kthread_item_t* p_item = (klua_kthread_item_t*)klb_hlist_data(p_iter);
 
-        // 关闭线程
-        KLB_FREE_BY(p_item->p_thread, klb_thread_destroy);
+        if (KLUA_KTHREAD_OWNER == p_item->flag)
+        {
+            // 关闭线程
+            KLB_FREE_BY(p_item->p_thread, klb_thread_destroy);
+        }
 
         // 移除
         klb_hlist_remove(p_kthread->p_hlist, p_iter);
@@ -194,6 +219,85 @@ static int klua_kthread_destroy(klua_kthread_t* p_kthread, const char* p_name, s
     }
 
     klb_mutex_unlock(p_kthread->p_mutex);
+    return ret;
+}
+
+
+static int klua_kthread_register_in(klua_kthread_t* p_kthread, const char* p_name, size_t name_len, klua_env_t* p_env)
+{
+    int ret = 1;
+    klb_mutex_lock(p_kthread->p_mutex);
+
+    if (NULL == klb_hlist_find_iter(p_kthread->p_hlist, p_name, name_len))
+    {
+        // 没有被占用名称
+
+        // 创建, 并加入hlist
+        klua_kthread_item_t* p_item = klua_kthread_item_create_other(p_name, name_len, p_env);
+        klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_kthread->p_hlist, p_name, name_len, p_item);
+        assert(NULL != p_iter);
+
+        ret = 0;
+    }
+
+    klb_mutex_unlock(p_kthread->p_mutex);
+    return ret;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 公共接口函数
+
+int klua_kthread_register(const char* p_name, klua_env_t* p_env)
+{
+    klua_kthread_register_in(g_klua_kthread, p_name, strlen(p_name), p_env);
+
+    return 0;
+}
+
+int klua_kthread_unregister(const char* p_name)
+{
+    klua_kthread_destroy(g_klua_kthread, p_name, strlen(p_name));
+    return 0;
+}
+
+int klua_kthread_push_msg(const char* p_name, klua_msg_t* p_msg)
+{
+    int ret = 1;
+    klb_mutex_lock(g_klua_kthread->p_mutex);
+
+    klua_kthread_item_t* p_item = klb_hlist_find(g_klua_kthread->p_hlist, p_name, strlen(p_name));
+    if (NULL != p_item)
+    {
+        klb_list_push_tail(p_item->p_msg_list, p_msg);
+        klua_env_set_msg_flag(p_item->p_env);
+        ret = 0;
+    }
+
+    klb_mutex_unlock(g_klua_kthread->p_mutex);
+    return ret;
+}
+
+int klua_kthread_get_msg(const char* p_name, klb_list_t* p_list)
+{
+    int ret = 1;
+    klb_mutex_lock(g_klua_kthread->p_mutex);
+
+    klua_kthread_item_t* p_item = klb_hlist_find(g_klua_kthread->p_hlist, p_name, strlen(p_name));
+    if (NULL != p_item)
+    {
+        while (0 < klb_list_size(p_item->p_msg_list))
+        {
+            // 取出
+            klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_item->p_msg_list);
+
+            // 移到输出列表
+            klb_list_push_tail(p_list, p_msg);
+        }
+
+        ret = 0;
+    }
+
+    klb_mutex_unlock(g_klua_kthread->p_mutex);
     return ret;
 }
 
@@ -232,6 +336,10 @@ static int lib_klua_kthread_post(lua_State* L)
     size_t name_len = 0;
     const char* p_name = luaL_checklstring(L, 1, &name_len);    ///< @1. 线程名称: eg. "aaa"
 
+    //klua_thread_msg_t* p_msg = KLB_MALLOC(klua_thread_msg_t, 1, 0);
+    //KLB_MEMSET(p_msg, 0, sizeof(klua_thread_msg_t));
+
+    //klua_kthread_push_msg(p_name, p_msg);
 
     lua_pushboolean(L, true);                                   ///< #1. true.成功; false.失败
     return 1;

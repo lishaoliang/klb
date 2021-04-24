@@ -765,6 +765,9 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_data.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1420,6 +1423,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c">
       <Filter>src_c\klua\klua_base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_data.c">
+      <Filter>src_c\klua\klua_util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

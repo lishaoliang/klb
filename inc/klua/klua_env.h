@@ -16,6 +16,8 @@
 #define __KLUA_ENV_H__
 
 #include "klb_type.h"
+#include "klbthird/sds.h"
+#include "klua/klua_data.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -136,12 +138,27 @@ typedef struct klua_env_extension_t_
     /// @return 无
     void  (*cb_destroy)(void* ptr);
 
-    /// @brief 调用一次
+    /// @brief 对扩展直接控制设置
+    /// @param [in] *ptr            扩展的指针
+    /// @param [in] *p_env          lua环境
+    /// @param [in] *p_param        控制参数
+    /// @return klua_ctrlex_msg_t* 返回信息
+    /// @note eg. 设置扩展的参数, 获取扩展的参数等.
+    klua_ctrlex_msg_t* (*cb_ctrlex)(void* ptr, klua_env_t* p_env, klua_ctrlex_msg_t* p_param);
+
+    /// @brief 消息处理
+    /// @param [in] *ptr            扩展的指针
+    /// @param [in] *p_env          lua环境
+    /// @param [in] now             当前滴答数
+    /// @return int 0
+    int   (*cb_msg)(void* ptr, klua_env_t* p_env, int64_t now, klua_msg_t* p_msg);
+
+    /// @brief 常规调用一次
     /// @param [in] *ptr            扩展的指针
     /// @param [in] *p_env          lua环境
     /// @param [in] last_tc         上一次的滴答数
     /// @param [in] now             当前滴答数
-    /// @return 无
+    /// @return int 0
     int   (*cb_loop_once)(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now);
 }klua_env_extension_t;
 
@@ -171,6 +188,24 @@ KLB_API int klua_env_loop_once(klua_env_t* p_env);
 /// @param [in] *p_env              lua环境
 /// @return bool true.退出; false.不退出
 KLB_API bool klua_env_is_exit(klua_env_t* p_env);
+
+
+/// @brief 设置名称
+/// @param [in] *p_env              lua环境
+/// @return 无
+KLB_API void klua_env_set_name(klua_env_t* p_env, const char* p_name, size_t name_len);
+
+
+/// @brief 获取名称
+/// @param [in] *p_env              lua环境
+/// @return sds 名称
+KLB_API const sds klua_env_get_name(klua_env_t* p_env);
+
+
+/// @brief 设置获取消息标记
+/// @param [in] *p_env              lua环境
+/// @return sds 名称
+KLB_API void klua_env_set_msg_flag(klua_env_t* p_env);
 
 
 #ifdef __cplusplus

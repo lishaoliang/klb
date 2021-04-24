@@ -1,7 +1,4 @@
-﻿// 引用select之前定义
-#define FD_SETSIZE                  1024
-
-#include "klua/extension/klua_ex_multiplex.h"
+﻿#include "klua/extension/klua_ex_multiplex.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 

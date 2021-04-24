@@ -16,7 +16,9 @@
 #include "klbutil/klb_log.h"
 #include "klbplatform/klb_time.h"
 #include "klbutil/klb_hlist.h"
+#include "klbutil/klb_list.h"
 #include "klbthird/sds.h"
+#include "klua/klua_kthread.h"
 #include "klua/extension/klua_extension.h"
 #include <assert.h>
 
@@ -60,15 +62,19 @@ typedef struct klua_env_t
 
     struct
     {
-        bool            is_exit;        ///< 是否退出
-    };
+        sds             name;           ///< 线程名称
+        int             is_exit;        ///< 是否退出
 
-    struct
-    {
         int64_t         tc;             ///< 当前时间
 
         int64_t         gc_tc;          ///< 上次gc时间
         int64_t         gc_interval;    ///< gc间隔
+    };
+
+    struct
+    {
+        volatile int    is_get_msg;     ///< 是否从公共区, 取消息
+        klb_list_t*     p_msg_list;     ///< 消息列表
     };
 
     struct
@@ -88,17 +94,20 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     klua_env_t* p_env = KLB_MALLOC(klua_env_t, 1, 0);
     KLB_MEMSET(p_env, 0, sizeof(klua_env_t));
 
-    p_env->is_exit = false;
     p_env->p_extension_hlist = klb_hlist_create(0);
     p_env->p_extension_activate_hlist = klb_hlist_create(0);
 
-    p_env->L = luaL_newstate(); // Lua运行环境
-    p_env->L->udata = p_env;
+    p_env->p_msg_list = klb_list_create();
+    p_env->is_exit = false;
+    p_env->is_get_msg = false;
 
     p_env->tc = klb_tick_counti64();
 
     p_env->gc_interval = KLUA_ENV_GC_TIME_OUT;
     p_env->gc_tc = p_env->tc;
+
+    p_env->L = luaL_newstate(); // Lua运行环境
+    p_env->L->udata = p_env;
 
     // 注册标准扩展
     klua_register_extension_std(p_env);
@@ -121,6 +130,7 @@ void klua_env_destroy(klua_env_t* p_env)
     }
 
     KLB_FREE_BY(p_env->L, lua_close);
+    KLB_FREE_BY(p_env->p_msg_list, klb_list_destroy);
     KLB_FREE_BY(p_env->p_extension_activate_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_env->p_extension_hlist, klb_hlist_destroy);
     KLB_FREE(p_env);
@@ -515,7 +525,7 @@ int klua_env_register_extension(klua_env_t* p_env, const char* p_name, const klu
     return 0;
 }
 
-void* klua_env_get_extension(klua_env_t* p_env, const char* p_name)
+static klua_env_extension_activate_t* klua_env_get_extension_activate(klua_env_t* p_env, const char* p_name)
 {
     assert(NULL != p_env);
     assert(NULL != p_name);
@@ -525,8 +535,7 @@ void* klua_env_get_extension(klua_env_t* p_env, const char* p_name)
     klua_env_extension_activate_t* p_activate = (klua_env_extension_activate_t*)klb_hlist_find(p_env->p_extension_activate_hlist, p_name, name_len);
     if (NULL != p_activate)
     {
-        assert(NULL != p_activate->ptr);
-        return p_activate->ptr;
+        return p_activate;
     }
 
     klua_env_extension_t* p_extension = (klua_env_extension_t*)klb_hlist_find(p_env->p_extension_hlist, p_name, name_len);
@@ -544,10 +553,48 @@ void* klua_env_get_extension(klua_env_t* p_env, const char* p_name)
         klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_env->p_extension_activate_hlist, p_name, name_len, p_tmp);
         assert(NULL != p_iter);
 
-        return p_tmp->ptr;
+        return p_tmp;
     }
 
     return NULL;
+}
+
+void* klua_env_get_extension(klua_env_t* p_env, const char* p_name)
+{
+    klua_env_extension_activate_t* p_activate = klua_env_get_extension_activate(p_env, p_name);
+
+    if (NULL != p_activate)
+    {
+        return p_activate->ptr;
+    }
+
+    return NULL;
+}
+
+static int klua_env_loop_msg(klua_env_t* p_env, int64_t now)
+{
+    while (0 < klb_list_size(p_env->p_msg_list))
+    {
+        klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_env->p_msg_list);
+        assert(NULL != p_msg);
+        assert(NULL != p_msg->cb_destroy);
+
+        klua_env_extension_activate_t* p_activate = klua_env_get_extension_activate(p_env, p_msg->ex_name);
+        if (NULL != p_activate && NULL != p_activate->ex.cb_msg)
+        {
+            p_activate->ex.cb_msg(p_activate->ptr, p_env, now, p_msg);
+        }
+        else
+        {
+            assert(false);
+        }
+
+        // 销毁
+        klua_msg_destroy_cb cb_destroy = p_msg->cb_destroy;
+        cb_destroy(p_msg);
+    }
+
+    return 0;
 }
 
 int klua_env_loop_once(klua_env_t* p_env)
@@ -555,7 +602,15 @@ int klua_env_loop_once(klua_env_t* p_env)
     assert(NULL != p_env);
     int64_t now = klb_tick_counti64();
 
-    //KLB_LOG("klua_env_loop_once now=%lld\n", now);
+    // 获取消息
+    if (p_env->is_get_msg && NULL != p_env->name)
+    {
+        klua_kthread_get_msg(p_env->name, p_env->p_msg_list);
+        p_env->is_get_msg = false;
+    }
+
+    // 处理消息
+    klua_env_loop_msg(p_env, now);
 
     // loop once extension
     klb_hlist_iter_t* p_iter = klb_hlist_begin(p_env->p_extension_activate_hlist);
@@ -593,3 +648,32 @@ bool klua_env_is_exit(klua_env_t* p_env)
     return p_env->is_exit;
 }
 
+/// @brief 设置名称
+/// @param [in] *p_env              lua环境
+/// @return 无
+void klua_env_set_name(klua_env_t* p_env, const char* p_name, size_t name_len)
+{
+    assert(NULL != p_env);
+    KLB_FREE_BY(p_env->name, sdsfree);
+    p_env->name = sdsnewlen(p_name, name_len);
+}
+
+
+/// @brief 获取名称
+/// @param [in] *p_env              lua环境
+/// @return sds 名称
+const sds klua_env_get_name(klua_env_t* p_env)
+{
+    assert(NULL != p_env);
+    return p_env->name;
+}
+
+
+/// @brief 设置获取消息标记
+/// @param [in] *p_env              lua环境
+/// @return sds 名称
+void klua_env_set_msg_flag(klua_env_t* p_env)
+{
+    assert(NULL != p_env);
+    p_env->is_get_msg = true;
+}

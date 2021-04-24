@@ -27,14 +27,14 @@
 #endif
 
 
-static int s_klb_socket_init = 0;
+static int s_klb_socket_count = 0;
 
 
 int klb_socket_init()
 {
-    if (0 < s_klb_socket_init)
+    if (0 < s_klb_socket_count)
     {
-        s_klb_socket_init += 1;
+        s_klb_socket_count += 1;
 
         return 0;
     }
@@ -57,21 +57,21 @@ int klb_socket_init()
     // tls
     klb_socket_tls_init();
 
-    s_klb_socket_init += 1;
+    s_klb_socket_count += 1;
     return 0;
 }
 
 void klb_socket_quit()
 {
-    if (0 < s_klb_socket_init)
+    if (0 < s_klb_socket_count)
     {
-        s_klb_socket_init -= 1;
+        s_klb_socket_count -= 1;
 
         // tls
         klb_socket_tls_quit();
 
 #ifdef _WIN32
-        if (0 == s_klb_socket_init)
+        if (0 == s_klb_socket_count)
         {
             //windows上需要清除WS2_32.DLL库
             WSACleanup();

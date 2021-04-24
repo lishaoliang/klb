@@ -73,6 +73,7 @@
     <ClInclude Include="..\..\inc\klbutil\list.h" />
     <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
+    <ClInclude Include="..\..\inc\klua\klua_data.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
     <ClInclude Include="..\..\inc\klua\klua_kthread.h" />
     <ClInclude Include="..\..\src_c\config.h" />
@@ -334,6 +335,7 @@
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_data.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.c" />
@@ -537,7 +539,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;__KLB_USE_OPEN_SSL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\third\openssl-1.1.1b\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -550,7 +552,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\third\openssl-1.1.1b\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -565,7 +567,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\third\openssl-1.1.1b\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -583,7 +585,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;HAVE_CONFIG_H;PCRE2_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\third\openssl-1.1.1b\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
