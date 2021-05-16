@@ -90,7 +90,6 @@
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_ucp.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h" />
-    <ClInclude Include="..\..\src_c\klbthird\sqlite3\sqlite3ext.h" />
     <ClInclude Include="..\..\src_c\klbutil\klb_canvas_in.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
@@ -105,6 +104,7 @@
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lptree.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lptypes.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.h" />
+    <ClInclude Include="..\..\src_c\klua\lsqlite3\sqlite3.h" />
     <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lapi.h" />
     <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.h" />
     <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lcode.h" />
@@ -298,8 +298,6 @@
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_valid_utf.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_xclass.c" />
     <ClCompile Include="..\..\src_c\klbthird\sds\sds.c" />
-    <ClCompile Include="..\..\src_c\klbthird\sqlite3\shell.c" />
-    <ClCompile Include="..\..\src_c\klbthird\sqlite3\sqlite3.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_bitmap.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas_argb8888.c" />
@@ -342,6 +340,8 @@
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lptree.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.c" />
+    <ClCompile Include="..\..\src_c\klua\lsqlite3\lsqlite3.c" />
+    <ClCompile Include="..\..\src_c\klua\lsqlite3\sqlite3.c" />
     <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lapi.c" />
     <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.c" />
     <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lbaselib.c" />

@@ -108,6 +108,12 @@ KLB_API int klua_open_lpeg(lua_State *L);
 KLB_API int klua_open_lfs(lua_State *L);
 
 
+/// @brief 扩展库"lsqlite3"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_lsqlite3(lua_State* L);
+
+
 /// @brief 扩展库"kos"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -199,6 +205,7 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_cjson_safe,   "cjson.safe");  \
     klua_loadlib(L, klua_open_lpeg,         "lpeg");        \
     klua_loadlib(L, klua_open_lfs,          "lfs");         \
+    klua_loadlib(L, klua_open_lsqlite3,     "lsqlite3");    \
     klua_loadlib(L, klua_open_kos,          "kos");         \
     klua_loadlib(L, klua_open_krand,        "krand");       \
     klua_loadlib(L, klua_open_ktime,        "ktime");       \

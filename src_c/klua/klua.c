@@ -126,6 +126,13 @@ int klua_open_lfs(lua_State *L)
 }
 
 
+// from ./klb/src_c/klua/lsqlite3/src/lsqlite3.c
+int klua_open_lsqlite3(lua_State* L)
+{
+    return luaopen_lsqlite3(L);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 
 int klua_loadlib_all(lua_State* L)

@@ -37,12 +37,13 @@ MY_DIRS += ./klbgui
 MY_DIRS += ./klua ./klua/extension ./klua/klua_platform ./klua/klua_util ./klua/klua_base
 MY_DIRS += ./klua/klua_multithread ./klua/klua_net
 MY_DIRS += ./klua/lua-5.4.1/src ./klua/lua-cjson-2.1.0 ./klua/lpeg-1.0.2 ./klua/luafilesystem-2.0/src
+MY_DIRS += ./klua/lsqlite3
 
 # libavutil
 MY_DIRS += ./compat ./libavutil
 
 # 第三方库
-MY_DIRS += ./klbthird ./klbthird/sds ./klbthird/pcre2/src ./klbthird/sqlite3
+MY_DIRS += ./klbthird ./klbthird/sds ./klbthird/pcre2/src
 MY_DIRS += ./zlib-1.2.11
 
 
@@ -57,11 +58,10 @@ MY_CFLAGS += -DCONFIG_BIGNUM -DCONFIG_VERSION=\"2019-10-27\"
 
 
 # 引用头文件
-MY_INCLUDES := -I ../inc -I .
-MY_INCLUDES += -I ./compat
+MY_INCLUDES := -I . -I ../inc -I ./compat
+MY_INCLUDES += -I ./klua/lsqlite3
 MY_INCLUDES += -I ./klbthird/sds
 MY_INCLUDES += -I ./klbthird/pcre2/src
-MY_INCLUDES += -I ./klbthird/sqlite3
 MY_INCLUDES += -I ../inc/klbthird
 
 
