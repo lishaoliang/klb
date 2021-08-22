@@ -1,6 +1,6 @@
 ﻿#include "sdl_dev.h"
 #include "SDL.h"
-#include "mem/klb_mem.h"
+#include "klbmem/klb_mem.h"
 #include "my_dev.h"
 #include <assert.h>
 

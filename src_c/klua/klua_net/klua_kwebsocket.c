@@ -36,6 +36,8 @@ typedef struct klua_kwebsocket_t_
 
 //////////////////////////////////////////////////////////////////////////
 
+#include "klua/klua_net/klua_kwebsocket_server.c"
+
 int klua_open_kwebsocket(lua_State* L)
 {
     static luaL_Reg lib[] =

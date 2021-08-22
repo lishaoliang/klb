@@ -768,6 +768,18 @@
     <ClInclude Include="..\..\src_c\klua\lsqlite3\sqlite3.h">
       <Filter>src_c\klua\lsqlite3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_nsp.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_listen.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_fix_pool.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1426,6 +1438,30 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lsqlite3\sqlite3.c">
       <Filter>src_c\klua\lsqlite3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_listen.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_nsp.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_server.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket_server.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_websocket.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_fix_pool.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c">
+      <Filter>src_c\klbmem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

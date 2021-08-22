@@ -2,8 +2,8 @@
 #define __SDL_DEV_H__
 
 #include "klb_type.h"
-#include "image/klb_canvas.h"
-#include "mnp/klb_mnp_dev.h"
+#include "klbutil/klb_canvas.h"
+#include "klbbase/klb_mnp_dev.h"
 
 #if defined(_WIN32)
 #if defined(__SDL_DEV_DLL__)

@@ -2,9 +2,9 @@
 #define __MY_DEV_H__
 
 #include "klb_type.h"
-#include "platform/klb_thread.h"
+#include "klbplatform/klb_thread.h"
 #include "sdl_canvas.h"
-#include "mnp/klb_mnp_dev.h"
+#include "klbbase/klb_mnp_dev.h"
 #include "SDL.h"
 
 typedef struct my_dev_t_

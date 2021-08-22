@@ -1,12 +1,12 @@
 ﻿#include "my_dev.h"
-#include "mem/klb_mem.h"
-#include "log/klb_log.h"
-#include "image/klb_color.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_log.h"
+#include "klbutil/klb_color.h"
 #include "sdl_canvas.h"
-#include "gui/klb_gui.h"
+#include "klbgui/klb_gui.h"
 #include <assert.h>
 
-static int my_dev_thread(void* p_obj, int* p_run);
+static int my_dev_thread(void* p_obj, volatile int* p_run);
 
 
 my_dev_t* my_dev_create()
@@ -77,7 +77,7 @@ static void my_dev_push_msg(my_dev_t* p_dev, int msg, int x1, int y1, int x2, in
     }
 }
 
-static int my_dev_thread(void* p_obj, int* p_run)
+static int my_dev_thread(void* p_obj, volatile int* p_run)
 {
     KLB_LOG("start thread,name:[sdl dev window]\n");
     my_dev_t* p_dev = (my_dev_t*)p_obj;

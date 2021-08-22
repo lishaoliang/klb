@@ -34,3 +34,12 @@ void* _aligned_malloc(size_t size, size_t align)
 }
 
 #endif
+
+
+void* klb_mallocz(size_t size)
+{
+    void* p = KLB_MALLOC(char, size, 0);
+    KLB_MEMSET(p, 0, size);
+
+    return p;
+}

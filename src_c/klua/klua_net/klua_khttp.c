@@ -10,10 +10,11 @@
 #include "klbutil/klb_list.h"
 #include "klbutil/klb_log.h"
 #include "klbthird/sds.h"
+#include "klbnet/klb_listen.h"
 #include <assert.h>
 
 
-#define KLUA_KHTTP_HANDLE     "KLUA_KHTTP_HANDLE*"
+#define KLUA_KHTTP_HANDLE           "KLUA_KHTTP_HANDLE*"
 
 
 typedef enum klua_khttp_parser_status_e_
@@ -396,7 +397,7 @@ static int cb_klua_khttp_send(void* p_lparam, void* p_wparam, int id, int64_t no
     return send;
 }
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
 static klua_khttp_t* new_klua_khttp(lua_State* L)
 {
     klua_khttp_t* p_khttp = (klua_khttp_t*)lua_newuserdata(L, sizeof(klua_khttp_t));
@@ -610,11 +611,16 @@ static int klua_khttp_connect(lua_State* L)
 
 //////////////////////////////////////////////////////////////////////////
 
+#include "klua/klua_net/klua_khttp_server.c"
+
+
 int klua_open_khttp(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
         { "connect",    klua_khttp_connect },
+
+        { "listen",     klua_khttp_listen },
 
         { NULL,         NULL }
     };
@@ -622,7 +628,10 @@ int klua_open_khttp(lua_State* L)
     // 创建导出库函数
     luaL_newlib(L, lib);
 
-    // KLUA_KHTTP_META
+    // KLUA_KHTTP_LISTEN_HANDLE
+    klua_khttp_listen_createmeta(L);
+
+    // KLUA_KHTTP_HANDLE
     klua_khttp_createmeta(L);
 
     return 1;

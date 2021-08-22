@@ -30,3 +30,18 @@ klb_buf_t* klb_buf_malloc(int buf_len, bool zero)
 
     return p_buf;
 }
+
+klb_buf_t* klb_buf_join(klb_buf_t* p_head)
+{
+    return NULL;
+}
+
+int klb_buf_ref(klb_buf_t* p_buf)
+{
+    return 0;
+}
+
+int klb_buf_unref(klb_buf_t* p_buf)
+{
+    return 0;
+}

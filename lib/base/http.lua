@@ -63,7 +63,7 @@ http.get = function (url, data, cb)
 			cb(s1, 'success')	
 			conn:close()
 		else
-			--print(msg, s1, s2)
+			print(msg, s1, s2)
 		end
 	end)
 	

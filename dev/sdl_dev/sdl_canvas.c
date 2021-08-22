@@ -1,6 +1,6 @@
 ﻿#include "sdl_canvas.h"
-#include "mem/klb_mem.h"
-#include "log/klb_log.h"
+#include "klbmem/klb_mem.h"
+#include "klbutil/klb_log.h"
 #include <assert.h>
 
 

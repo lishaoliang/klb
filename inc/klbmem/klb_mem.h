@@ -43,6 +43,12 @@ void* _aligned_malloc(size_t size, size_t align);
 #endif
 
 
+/// @brief 申请内存并清零
+/// @param [in] size        需要申请的内存大小
+/// @return void* 申请到的内存
+KLB_API void* klb_mallocz(size_t size);
+
+
 /// @def   KLB_MALLOC
 /// @brief 内存申请; 按结构体数目 + 对齐字节
 #define KLB_MALLOC(ST_, NUM_, PADDING_)     (ST_*)malloc(sizeof(ST_) * (NUM_) + (PADDING_))
@@ -51,6 +57,11 @@ void* _aligned_malloc(size_t size, size_t align);
 /// @def   KLB_MEMSET
 /// @brief memset, 加入了断言
 #define KLB_MEMSET(PTR_, VAL_, SIZE_)       {assert(NULL!=(PTR_));memset(PTR_,VAL_,SIZE_);}
+
+
+/// @def   KLB_MALLOCZ
+/// @brief 内存申请(清零); 按结构体数目 + 对齐字节
+#define KLB_MALLOCZ(ST_, NUM_, PADDING_)    (ST_*)klb_mallocz(sizeof(ST_) * (NUM_) + (PADDING_))
 
 
 /// @def   KLB_FREE

@@ -6,6 +6,7 @@
 #include "klbmem/klb_mem.h"
 #include "klbbase/klb_mnp.h"
 #include "klua/klua_data.h"
+#include "klbnet/klb_listen.h"
 #include <assert.h>
 
 
@@ -28,6 +29,11 @@ typedef struct klua_kncm_t_
         klua_ex_multiplex_t*    p_ex;           ///< 复用扩展
         klb_multiplex_t*        p_multi;        ///< 复用
         klb_ncm_t*              p_ncm;          ///< ncm模块
+    };
+
+    struct
+    {
+        klb_listen_t*           p_listen;       ///< 监听
     };
 }klua_kncm_t;
 
@@ -227,6 +233,41 @@ static int klua_kncm_set_on_recv(lua_State* L)
     return 0;
 }
 
+static int on_accept_klua_kncm_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr)
+{
+    klua_kncm_t* p_kncm = (klua_kncm_t*)ptr;
+
+    klb_socket_t* p_socket = klb_socket_async_create(fd);
+
+    int id = klb_ncm_push(p_kncm->p_ncm, KLB_PROTOCOL_MNP, p_socket, NULL, 0);
+
+    if (id < 0)
+    {
+        klb_socket_destroy(p_socket);
+    }
+
+    return 0;
+}
+
+static int klua_kncm_listen(lua_State* L)
+{
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    lua_Integer port = luaL_checkinteger(L, 2);
+
+    p_kncm->p_listen = klb_listen_create(p_kncm->p_multi);
+
+    klb_listen_set_accept(p_kncm->p_listen, on_accept_klua_kncm_listen, p_kncm);
+
+    klb_listen_open(p_kncm->p_listen, port, 20);
+
+    return 0;
+}
+
+static int klua_kncm_close_listen(lua_State* L)
+{
+    return 0;
+}
+
 static int klua_kncm_connect(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
@@ -381,6 +422,9 @@ static void klua_kncm_createmeta(lua_State* L)
         { "close",          klua_kncm_close },
 
         { "set_on_recv",    klua_kncm_set_on_recv },
+
+        { "listen",         klua_kncm_listen },
+        { "close_listen",   klua_kncm_close_listen },
 
         { "connect",        klua_kncm_connect },
         { "disconnect",     klua_kncm_disconnect },
