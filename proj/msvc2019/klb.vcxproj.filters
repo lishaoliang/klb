@@ -121,6 +121,12 @@
     <Filter Include="src_c\klua\lsqlite3">
       <UniqueIdentifier>{bd392173-38bb-4fb5-94e0-bc746614519f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\klbformat">
+      <UniqueIdentifier>{6817cc46-4aa3-4d94-a714-027e9c1b4b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbformat">
+      <UniqueIdentifier>{ebae2019-708b-462f-9343-208c16593670}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src_c\config.h">
@@ -459,9 +465,6 @@
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h">
       <Filter>inc\klbmem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbmem\klb_mpool.h">
-      <Filter>inc\klbmem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_http.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
@@ -738,9 +741,6 @@
     <ClInclude Include="..\..\inc\klbbase\klb_base.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbbase\klb_multiplex.h">
-      <Filter>inc\klbbase</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h">
       <Filter>src_c\klbnet\klb_ncm_ops</Filter>
     </ClInclude>
@@ -774,11 +774,26 @@
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbmem\klb_fix_pool.h">
-      <Filter>inc\klbmem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h">
       <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_mem_pool.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbformat\klb_flv.h">
+      <Filter>inc\klbformat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbformat\klb_flv_demux.h">
+      <Filter>inc\klbformat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_fpool.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_vector.h">
+      <Filter>inc\klbutil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1059,9 +1074,6 @@
       <Filter>src_c\klbmem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c">
-      <Filter>src_c\klbmem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c">
       <Filter>src_c\klbmem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c">
@@ -1400,9 +1412,6 @@
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c">
       <Filter>src_c\klbbase</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbbase\klb_multiplex.c">
-      <Filter>src_c\klbbase</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c">
       <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
@@ -1457,11 +1466,26 @@
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_websocket.c">
       <Filter>src_c\klbnet\klb_ncm_ops</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbmem\klb_fix_pool.c">
-      <Filter>src_c\klbmem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c">
       <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_mem_pool.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbformat\klb_flv.c">
+      <Filter>src_c\klbformat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c">
+      <Filter>src_c\klbformat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_fpool.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_vector.c">
+      <Filter>src_c\klbutil</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

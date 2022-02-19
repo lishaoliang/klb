@@ -24,6 +24,7 @@ extern "C" {
 
 
 int klb_ncm_register_ops_mnp(klb_ncm_t* p_ncm, int protocol);
+int klb_ncm_register_ops_http(klb_ncm_t* p_ncm, int protocol);
 
 
 /// @def   KLB_NCM_REGISTER_PARSER_STD
@@ -31,6 +32,8 @@ int klb_ncm_register_ops_mnp(klb_ncm_t* p_ncm, int protocol);
 #define KLB_NCM_REGISTER_OPS_STD(NCM_) {                            \
     klb_ncm_register_ops_mnp((NCM_), KLB_PROTOCOL_MNP);             \
     klb_ncm_register_ops_mnp((NCM_), KLB_PROTOCOL_MNPS);            \
+    klb_ncm_register_ops_http((NCM_), KLB_PROTOCOL_HTTP);           \
+    klb_ncm_register_ops_http((NCM_), KLB_PROTOCOL_HTTPS);          \
 }
 
 #ifdef __cplusplus

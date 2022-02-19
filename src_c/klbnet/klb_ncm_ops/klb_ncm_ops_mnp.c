@@ -58,7 +58,7 @@ static void klb_ncm_ops_mnp_send_heart(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p
     p_buf->end = sizeof(klb_mnp_t);
 
     klb_list_push_tail(p_ops->p_w_list, p_buf);
-    klb_socket_set_sending(p_socket, true);   // 有数据可写
+    klb_socket_set_writing(p_socket, true);   // 有数据可写
 }
 
 static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socket)
@@ -239,7 +239,7 @@ static int cb_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint32_t s
 
     klb_list_push_tail(p_ops->p_w_list, p_buf);
 
-    klb_socket_set_sending(p_socket, true);   // 有数据可写
+    klb_socket_set_writing(p_socket, true);   // 有数据可写
 
     return 0;
 }
@@ -308,7 +308,7 @@ static int on_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
 
     if (NULL == p_ops->p_w_cur && klb_list_size(p_ops->p_w_list) <= 0)
     {
-        klb_socket_set_sending(p_socket, false);   // 无数据可写
+        klb_socket_set_writing(p_socket, false);   // 无数据可写
     }
 
     if (KLB_SOCKET_OK != err)

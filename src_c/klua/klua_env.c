@@ -122,6 +122,17 @@ void klua_env_destroy(klua_env_t* p_env)
 {
     assert(NULL != p_env);
 
+    // 注销激活的扩展
+    while (0 < klb_hlist_size(p_env->p_extension_activate_hlist))
+    {
+        klua_env_extension_activate_t* p_tmp = (klua_env_extension_activate_t*)klb_hlist_pop_head(p_env->p_extension_activate_hlist);
+        
+        p_tmp->ex.cb_destroy(p_tmp->ptr);
+        
+        KLB_FREE_BY(p_tmp->name, sdsfree);
+        KLB_FREE(p_tmp);
+    }
+
     // 销毁注册的扩展
     while (0 < klb_hlist_size(p_env->p_extension_hlist))
     {
@@ -130,6 +141,7 @@ void klua_env_destroy(klua_env_t* p_env)
     }
 
     KLB_FREE_BY(p_env->L, lua_close);
+    KLB_FREE_BY(p_env->name, sdsfree);
     KLB_FREE_BY(p_env->p_msg_list, klb_list_destroy);
     KLB_FREE_BY(p_env->p_extension_activate_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_env->p_extension_hlist, klb_hlist_destroy);

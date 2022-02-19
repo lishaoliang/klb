@@ -50,7 +50,7 @@ static int klb_button_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p
     switch (msg)
     {
     case KLB_WM_LBUTTONDOWN:
-        KLB_LOG("klb_button_on_command\n");
+        //KLB_LOG("klb_button_on_command\n");
         break;
     default:
         break;

@@ -16,7 +16,7 @@
 #include "klb_type.h"
 #include "klua/klua_env.h"
 #include "klbnet/klb_socket.h"
-#include "klbbase/klb_multiplex.h"
+#include "klbnet/klb_multiplex.h"
 
 #if defined(__cplusplus)
 extern "C" {

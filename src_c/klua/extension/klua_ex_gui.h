@@ -28,6 +28,13 @@ typedef struct klua_ex_gui_t_ klua_ex_gui_t;
 int klua_ex_register_gui(klua_env_t* p_env);
 
 klua_ex_gui_t* klua_ex_get_gui(klua_env_t* p_env);
+klua_ex_gui_t* klua_ex_get_gui_by_L(lua_State* L);
+
+
+klb_gui_t* klua_ex_gui_get(klua_ex_gui_t* p_ex);
+
+
+int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int idx);
 
 
 #ifdef __cplusplus

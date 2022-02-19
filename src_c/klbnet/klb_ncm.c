@@ -1,6 +1,6 @@
 ﻿#include "klbnet/klb_ncm.h"
 #include "klbmem/klb_mem.h"
-#include "klbbase/klb_multiplex.h"
+#include "klbnet/klb_multiplex.h"
 #include "klbutil/klb_hlist.h"
 #include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbutil/klb_log.h"
@@ -31,7 +31,7 @@ typedef struct klb_ncm_t_
     struct
     {
         klb_ncm_ops_recv_cb     cb_receiver;        ///< 来数据后的接收函数
-        void*                   p_obj_receiver;     ///< 用户纸质
+        void*                   p_obj_receiver;     ///< 用户数据
     };
 }klb_ncm_t;
 
@@ -214,7 +214,7 @@ int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const u
     memcpy(&p_item->ops, p_ops, sizeof(klb_ncm_ops_t));
     p_item->p_socket = p_socket;
 
-    klb_multiplex_obj_t o = { 0 };
+    klb_multiplex_ops_t o = { 0 };
     o.cb_remove = cb_remove_klb_ncm_item;
     o.cb_recv = on_recv_klb_ncm_item;
     o.cb_send = on_send_klb_ncm_item;
@@ -227,6 +227,9 @@ int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const u
     p_item->ptr = p_ops->cb_create(p_ncm, cb_klb_ncm_opt_recv, protocol, id);
     p_item->id = id;
 
+    assert(NULL != p_item->ptr);
+    assert(0 < p_item->id);
+
     // 所有的id从 klb_multiplex_t 中来, 不会冲突 
     klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ncm->p_item_hlist, &id, sizeof(id), p_item);
     assert(NULL != p_iter);
@@ -235,6 +238,10 @@ int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const u
 
     assert(NULL != p_item->ptr);
     assert(0 < p_item->id);
+
+    // 初始
+    p_ops->cb_init(p_item->ptr, p_data, data_len);
+
     return id;
 }
 

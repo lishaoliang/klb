@@ -17,7 +17,7 @@
 #include "klb_type.h"
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_socket_tls.h"
-#include "klbbase/klb_multiplex.h"
+#include "klbnet/klb_multiplex.h"
 
 
 #if defined(__cplusplus)

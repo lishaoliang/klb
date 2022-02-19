@@ -17,6 +17,8 @@
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_msg.h"
+#include "klbutil/klb_hlist.h"
+#include "klbthird/sds.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,7 +37,7 @@ typedef struct klb_wnd_pos_t_
 }klb_wnd_pos_t;
 
 
-/// @enum  klb_ui_style_e
+/// @enum  klb_wnd_style_e
 /// @brief 窗口样式标记
 typedef enum klb_wnd_style_e_
 {
@@ -57,8 +59,8 @@ typedef enum klb_wnd_status_e_
 /// @brief  窗口状态参数
 typedef struct klb_wnd_state_t_
 {
-    uint32_t    style;                      ///< 典型窗口样式: klb_ui_style_e
-    uint32_t    status;                     ///< 窗口状态: klb_ui_status_e
+    uint32_t    style;                      ///< 典型窗口样式: klb_wnd_style_e
+    uint32_t    status;                     ///< 窗口状态: klb_wnd_status_e
 }klb_wnd_state_t;
 
 
@@ -66,7 +68,7 @@ typedef struct klb_wnd_state_t_
 /// @brief  窗口环境
 typedef struct klb_wnd_env_t_
 {
-    klb_gui_t*  p_gui;
+    klb_gui_t*  p_gui;                      ///< 窗口所属的gui
 }klb_wnd_env_t;
 
 
@@ -157,9 +159,9 @@ typedef struct klb_wnd_vtable_t_
 /// @brief  窗口
 typedef struct klb_wnd_t_
 {
-    klb_wnd_vtable_t vtable;    ///< 窗口虚表
+    klb_wnd_vtable_t vtable;    ///< 窗口"虚表"
 
-    klb_wnd_t*      p_parent;   ///< 父节点, 二叉树
+    klb_wnd_t*      p_parent;   ///< 父节点, 树形结构
     klb_wnd_t*      p_child;    ///< 子节点
 
     klb_wnd_t*      p_prev;     ///< 前一个兄弟节点
@@ -170,12 +172,11 @@ typedef struct klb_wnd_t_
 
     klb_wnd_env_t   env;        ///< 窗口运行环境
 
-    void*           p_name;     ///< 窗口名称
-    void*           p_type;     ///< 窗口类型
-    uint16_t        name_len;   ///< 窗口名称长度
-    uint16_t        type_len;   ///< 窗口类型长度
+    sds             name;       ///< 窗口名称
+    sds             type;       ///< 窗口类型
+    klb_hlist_t*    p_hlist;    ///< 仅顶层窗口拥有的子窗口查找表
 
-    void*           p_udata;    ///< publi user data, [公共用户数据]
+    void*           p_udata;    ///< public user data, [公共用户数据]
 
     char            ctrl[];     ///< 控件私有数据域, (控件数据)
 }klb_wnd_t;

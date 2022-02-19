@@ -67,23 +67,37 @@
     #if defined(__KLB_BUILD_DLL__) || defined(__KLB_CORE_API__)
         #ifdef __cplusplus
             #define KLB_API extern "C" __declspec(dllexport)
+            #define KLB_EXTERN   
+            #define KLB_API_CPP __declspec(dllexport)
         #else
             #define KLB_API __declspec(dllexport)
+            #define KLB_EXTERN
+            #define KLB_API_CPP __declspec(dllexport)
         #endif
     #elif defined(__KLB_USE_DLL__)
         #ifdef __cplusplus
             #define KLB_API extern "C" __declspec(dllimport)
+            #define KLB_EXTERN
+            #define KLB_API_CPP __declspec(dllimport)
         #else
             #define KLB_API __declspec(dllimport)
+            #define KLB_EXTERN
+            #define KLB_API_CPP __declspec(dllimport)
         #endif
     #else
         #define KLB_API
+        #define KLB_EXTERN
+        #define KLB_API_CPP 
     #endif
 #else
     #ifdef __cplusplus
         #define KLB_API extern "C"
+        #define KLB_EXTERN
+        #define KLB_API_CPP 
     #else
         #define KLB_API extern
+        #define KLB_EXTERN extern
+        #define KLB_API_CPP 
     #endif
 #endif
 

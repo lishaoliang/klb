@@ -17,7 +17,7 @@
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_buf.h"
-#include "klbbase/klb_multiplex.h"
+#include "klbnet/klb_multiplex.h"
 #include "klua/klua_data.h"
 
 #if defined(__cplusplus)
@@ -105,28 +105,35 @@ typedef struct klb_ncm_ops_t_
     /// @return 无
     void  (*cb_destroy)(void* ptr);
 
+    /// @brief 初始数据等
+    /// @param [in] *ptr            ops对象
+    /// @param [in] *p_data         初始已经读取的数据
+    /// @param [in] data_len        数据长度
+    /// @return int 0.成功; 非0.失败
+    int   (*cb_init)(void* ptr, const uint8_t* p_data, int data_len);
+
     /// @brief 对连接进行控制操作: get/set,etc.
-    /// @param [in] *ptr            连接的指针
+    /// @param [in] *ptr            ops对象
     /// @return int 0.成功; 非0.失败
     int   (*cb_ctrl)(void* ptr, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num);
 
     /// @brief 主动发送数据(非媒体数据)
-    /// @param [in] *ptr            连接的指针
+    /// @param [in] *ptr            ops对象
     /// @return int
     int   (*cb_send)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
     
     /// @brief 主动发送媒体数据
-    /// @param [in] *ptr            连接的指针
+    /// @param [in] *ptr            ops对象
     /// @return int
     int   (*cb_send_media)(void* ptr, klb_socket_t* p_socket, klb_buf_t* p_data);
 
     /// @brief 当网络上可以发送数据时
-    /// @param [in] *ptr            连接的指针
+    /// @param [in] *ptr            ops对象
     /// @return int
     int   (*on_send)(void* ptr, klb_socket_t* p_socket, int64_t now);
 
     /// @brief 当网络上可以接收数据时
-    /// @param [in] *ptr            连接的指针
+    /// @param [in] *ptr            ops对象
     /// @return int
     int   (*on_recv)(void* ptr, klb_socket_t* p_socket, int64_t now);
 }klb_ncm_ops_t;

@@ -91,9 +91,10 @@ typedef struct klb_socket_t_
     klb_socket_fd       fd;             ///< socket fd
 
     uint16_t            nonblock : 1;   ///< 0(false).阻塞模式; 1(true).非阻塞
-    uint16_t            sending : 1;    ///< 0(false).无数据发送; 1(true).有数据发送
-    uint16_t            reading : 1;    ///< 0(false).无需读取; 1(true).需读取
-    uint16_t            rsv1 : 13;
+    uint16_t            writing : 1;    ///< 0(false).无数据写; 1(true).有数据写; 从缓存写向网络
+    uint16_t            reading : 1;    ///< 0(false).无需读取; 1(true).需读取; 从网络读取
+    uint16_t            tls : 1;        ///< 0(false).非加密; 1(true).TLS加密
+    uint16_t            rsv1 : 12;
 
     uint16_t            status : 6;     ///< 状态: klb_socket_status_e
     uint16_t            rsv2 : 10;
@@ -141,10 +142,10 @@ KLB_API void klb_socket_attach_fd(klb_socket_t* p_socket, klb_socket_fd fd);
 KLB_API klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket);
 
 /// @brief 设置发送
-KLB_API void klb_socket_set_sending(klb_socket_t* p_socket, bool sending);
+KLB_API void klb_socket_set_writing(klb_socket_t* p_socket, bool sending);
 
 /// @brief 获取是否需要发送数据
-KLB_API bool klb_socket_is_sending(klb_socket_t* p_socket);
+KLB_API bool klb_socket_is_writing(klb_socket_t* p_socket);
 
 /// @brief 设置读取
 KLB_API void klb_socket_set_reading(klb_socket_t* p_socket, bool reading);
@@ -156,7 +157,7 @@ KLB_API bool klb_socket_is_reading(klb_socket_t* p_socket);
 KLB_API void klb_socket_set_status(klb_socket_t* p_socket, int status);
 
 /// @brief 获取状态
-KLB_API int  klb_socket_get_status(klb_socket_t* p_socket);
+KLB_API uint16_t klb_socket_get_status(klb_socket_t* p_socket);
 
 /// @brief 关闭socket
 KLB_API void klb_socket_close(klb_socket_fd fd);

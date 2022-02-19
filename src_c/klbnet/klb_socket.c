@@ -139,21 +139,21 @@ klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket)
     return fd;
 }
 
-void klb_socket_set_sending(klb_socket_t* p_socket, bool sending)
+void klb_socket_set_writing(klb_socket_t* p_socket, bool sending)
 {
     if (sending)
     {
-        p_socket->sending = 0x1;
+        p_socket->writing = 0x1;
     }
     else
     {
-        p_socket->sending = 0x0;
+        p_socket->writing = 0x0;
     }
 }
 
-bool klb_socket_is_sending(klb_socket_t* p_socket)
+bool klb_socket_is_writing(klb_socket_t* p_socket)
 {
-    return (0x0 == p_socket->sending) ? false : true;
+    return (0x0 == p_socket->writing) ? false : true;
 }
 
 void klb_socket_set_reading(klb_socket_t* p_socket, bool reading)
@@ -180,7 +180,7 @@ void klb_socket_set_status(klb_socket_t* p_socket, int status)
 }
 
 /// @brief 获取状态
-int  klb_socket_get_status(klb_socket_t* p_socket)
+uint16_t  klb_socket_get_status(klb_socket_t* p_socket)
 {
     return p_socket->status;
 }

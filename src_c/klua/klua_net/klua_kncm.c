@@ -7,6 +7,7 @@
 #include "klbbase/klb_mnp.h"
 #include "klua/klua_data.h"
 #include "klbnet/klb_listen.h"
+#include "klbnet/klb_nsp.h"
 #include <assert.h>
 
 
@@ -28,12 +29,13 @@ typedef struct klua_kncm_t_
     {
         klua_ex_multiplex_t*    p_ex;           ///< 复用扩展
         klb_multiplex_t*        p_multi;        ///< 复用
-        klb_ncm_t*              p_ncm;          ///< ncm模块
     };
 
     struct
     {
         klb_listen_t*           p_listen;       ///< 监听
+        klb_nsp_t*              p_nsp;          ///< 连接预处理: 识别协议类型
+        klb_ncm_t*              p_ncm;          ///< ncm模块
     };
 }klua_kncm_t;
 
@@ -239,8 +241,20 @@ static int on_accept_klua_kncm_listen(void* ptr, klb_socket_fd fd, const struct 
 
     klb_socket_t* p_socket = klb_socket_async_create(fd);
 
-    int id = klb_ncm_push(p_kncm->p_ncm, KLB_PROTOCOL_MNP, p_socket, NULL, 0);
+    klb_nsp_push(p_kncm->p_nsp, p_socket);
 
+    return 0;
+}
+
+static int on_accept_klua_kncm_nsp(void* ptr, int protocol, klb_socket_t* p_socket, const klb_buf_t* p_buf)
+{
+    klua_kncm_t* p_kncm = (klua_kncm_t*)ptr;
+
+    uint8_t* p_data = p_buf->p_buf + p_buf->start;
+    int data_len = p_buf->end - p_buf->start;
+
+    int id = klb_ncm_push(p_kncm->p_ncm, protocol, p_socket, p_data, data_len);
+    
     if (id < 0)
     {
         klb_socket_destroy(p_socket);
@@ -253,10 +267,6 @@ static int klua_kncm_listen(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
     lua_Integer port = luaL_checkinteger(L, 2);
-
-    p_kncm->p_listen = klb_listen_create(p_kncm->p_multi);
-
-    klb_listen_set_accept(p_kncm->p_listen, on_accept_klua_kncm_listen, p_kncm);
 
     klb_listen_open(p_kncm->p_listen, port, 20);
 
@@ -466,9 +476,20 @@ static int klua_kncm_new(lua_State* L)
     p_kncm->p_env = klua_env_get_by_L(L);;
     p_kncm->p_ex = klua_ex_get_multiplex(p_kncm->p_env);
     p_kncm->p_multi = klua_ex_multiplex_get(p_kncm->p_ex);
+
+    p_kncm->p_listen = klb_listen_create(p_kncm->p_multi);
+    p_kncm->p_nsp = klb_nsp_create(p_kncm->p_multi);
     p_kncm->p_ncm = klb_ncm_create(p_kncm->p_multi);
 
+
+    // 数据
     klb_ncm_add_receiver(p_kncm->p_ncm, on_klb_ncm_recv_klua_kncm, p_kncm);
+
+    // nsp预处理
+    klb_nsp_set_accept(p_kncm->p_nsp, on_accept_klua_kncm_nsp, p_kncm);
+
+    // 监听
+    klb_listen_set_accept(p_kncm->p_listen, on_accept_klua_kncm_listen, p_kncm);
 
     return 1;
 }

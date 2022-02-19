@@ -35,7 +35,7 @@ extern "C" {
 /// @param [in] lparam      参数1
 /// @param [in] lparam      参数2
 /// @return 无
-typedef void(*klb_mnp_msg_cb)(int msg, int x1, int y1, int x2, int y2, int lparam, int wparam);
+typedef void(*klb_mnp_msg_cb)(void* p_obj, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam);
 
 
 /// @struct klb_mnp_dev_interface_t
@@ -117,7 +117,7 @@ typedef struct klb_mnp_dev_interface_t_
     /// @param [in] cb_msg    当有消息事件时回调函数: 来源于鼠标,按键,键盘等
     /// @return 无
     ///  gui相关
-    void(*set_msg_receiver)(int index, klb_mnp_msg_cb cb_msg);
+    void(*set_msg_receiver)(int index, klb_mnp_msg_cb cb_msg, void* p_obj);
 }klb_mnp_dev_interface_t;
 
 

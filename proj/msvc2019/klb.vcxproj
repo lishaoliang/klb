@@ -23,21 +23,23 @@
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h" />
-    <ClInclude Include="..\..\inc\klbbase\klb_multiplex.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_string.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_str_map.h" />
+    <ClInclude Include="..\..\inc\klbformat\klb_flv_demux.h" />
+    <ClInclude Include="..\..\inc\klbformat\klb_flv.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
-    <ClInclude Include="..\..\inc\klbmem\klb_fix_pool.h" />
+    <ClInclude Include="..\..\inc\klbmem\klb_fpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h" />
-    <ClInclude Include="..\..\inc\klbmem\klb_mpool.h" />
+    <ClInclude Include="..\..\inc\klbmem\klb_mem_pool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_http.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
+    <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_ncm.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_nsp.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h" />
@@ -74,6 +76,7 @@
     <ClInclude Include="..\..\inc\klbutil\klb_obj_hash.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rand.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rect.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_vector.h" />
     <ClInclude Include="..\..\inc\klbutil\list.h" />
     <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
@@ -241,10 +244,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
-    <ClCompile Include="..\..\src_c\klbbase\klb_multiplex.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c" />
+    <ClCompile Include="..\..\src_c\klbformat\klb_flv.c" />
+    <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_button.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />
@@ -252,12 +256,13 @@
     <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
-    <ClCompile Include="..\..\src_c\klbmem\klb_fix_pool.c" />
+    <ClCompile Include="..\..\src_c\klbmem\klb_fpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
-    <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
+    <ClCompile Include="..\..\src_c\klbmem\klb_mem_pool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_listen.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_mnp.c" />
@@ -322,6 +327,7 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_obj.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />

@@ -100,7 +100,7 @@ int klb_listen_open(klb_listen_t* p_listen, int port, int max_connect)
     p_listen->fd_listen = fd;
     p_listen->p_socket = p_socket;
 
-    klb_multiplex_obj_t ops = { 0 };
+    klb_multiplex_ops_t ops = { 0 };
     ops.cb_remove = cb_remove_klb_listen;
     ops.cb_recv = on_recv_klb_listen;
     ops.cb_send = on_send_klb_listen;

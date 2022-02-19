@@ -386,7 +386,7 @@ static int cb_klua_khttp_send(void* p_lparam, void* p_wparam, int id, int64_t no
 
     if (NULL == p_khttp->p_w_cur && klb_list_size(p_khttp->p_w_list) <= 0)
     {
-        klb_socket_set_sending(p_khttp->p_socket, false);   // 无数据可写
+        klb_socket_set_writing(p_khttp->p_socket, false);   // 无数据可写
     }
 
     if (KLB_SOCKET_OK != err)
@@ -490,7 +490,7 @@ static int klua_khttp_send(lua_State* L)
     p_buf->end = len;
 
     klb_list_push_tail(p_khttp->p_w_list, p_buf);
-    klb_socket_set_sending(p_khttp->p_socket, true);
+    klb_socket_set_writing(p_khttp->p_socket, true);
 
     return 0;
 }
@@ -593,7 +593,7 @@ static int klua_khttp_connect(lua_State* L)
     p_khttp->settings.on_chunk_header = on_chunk_header_klua_khttp;
     p_khttp->settings.on_chunk_complete = on_chunk_complete_klua_khttp;
 
-    klb_multiplex_obj_t o = { 0 };
+    klb_multiplex_ops_t o = { 0 };
     o.cb_remove = cb_klua_khttp_remove;
     o.cb_recv = cb_klua_khttp_recv;
     o.cb_send = cb_klua_khttp_send;

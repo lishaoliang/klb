@@ -27,10 +27,10 @@ typedef struct klb_buffer_t_
     klb_buf_t*  p_head;
     klb_buf_t*  p_tail;
     klb_buf_t*  p_write;
-    int         block_num;
+    size_t      block_num;
 
-    int         total_buf_len;
-    int         total_data_len;
+    size_t      total_buf_len;
+    size_t      total_data_len;
 }klb_buffer_t;
 
 
@@ -71,6 +71,14 @@ int klb_buffer_data_len(klb_buffer_t* p_buffer);
 /// @param [in]  *p_buffer          缓存指针
 /// @return klb_buf_t* KLB_BUF_EXTRA类型缓存; [klb_buf_t][data...]
 klb_buf_t* klb_buffer_join(klb_buffer_t* p_buffer);
+
+
+/// @brief 将有效数据拼接在一起
+/// @param [in]  *p_buffer          缓存指针
+/// @param [in]  *offset_x          起始偏移
+/// @param [in]  *offset_y          末尾偏移
+/// @return klb_buf_t* KLB_BUF_EXTRA类型缓存; [klb_buf_t][data...]
+klb_buf_t* klb_buffer_join_offset(klb_buffer_t* p_buffer, size_t offset_x, size_t offset_y);
 
 
 #ifdef __cplusplus

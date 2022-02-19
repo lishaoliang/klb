@@ -1,31 +1,33 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/05/26
+//  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
-/// @file    klb_mpool.h
-/// @brief   内存池
+/// @file    CThread.hpp
+/// @brief   线程
 /// @author  李绍良
 ///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
 ///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/05/26 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __KLB_MPOOL_H__
-#define __KLB_MPOOL_H__
+#ifndef __CTHREAD_HPP__
+#define __CTHREAD_HPP__
 
 #include "klb_type.h"
-#include "klbmem/klb_buf.h"
+#include "klbplatform/klb_thread.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
+namespace klb {
 
+    KLB_EXTERN class KLB_API_CPP CThread
+    {
+    public:
+        CThread();
+        ~CThread();
 
-#ifdef __cplusplus
+    private:
+
+    };
+
 }
-#endif
 
-#endif // __KLB_MPOOL_H__
-//end
+#endif // __CTHREAD_HPP__

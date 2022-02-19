@@ -202,10 +202,11 @@ static int klua_kmnp_dev_set_msg_receiver(lua_State* L)
 {
     int index = (int)luaL_checkinteger(L, 1);       ///< @1. 序号
     void* ptr = luaL_checklightuserdata(L, 2);      ///< @2. 消息回调函数
+    void* p_obj = luaL_checklightuserdata(L, 3);    ///< @3. 消息回调函数
 
     if (g_mnp_dev_interface.set_msg_receiver)
     {
-        g_mnp_dev_interface.set_msg_receiver(index, (klb_mnp_msg_cb)ptr);
+        g_mnp_dev_interface.set_msg_receiver(index, (klb_mnp_msg_cb)ptr, p_obj);
     }
 
     return 0;

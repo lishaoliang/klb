@@ -145,3 +145,29 @@ klb_buf_t* klb_buffer_join(klb_buffer_t* p_buffer)
     assert(p_buf->end == p_buffer->total_data_len);
     return p_buf;
 }
+
+klb_buf_t* klb_buffer_join_offset(klb_buffer_t* p_buffer, size_t offset_x, size_t offset_y)
+{
+    size_t total_len = p_buffer->total_data_len + offset_x + offset_y;
+    size_t buf_len = KLB_ALIGNED_4(total_len);
+    klb_buf_t* p_buf = klb_buf_malloc(buf_len, false);
+
+    klb_buf_t* ptr = p_buffer->p_head + offset_x;
+    p_buf->start = offset_x;
+    p_buf->end = offset_x;
+
+    while (NULL != ptr)
+    {
+        int data_len = ptr->end - ptr->start;
+        if (0 < data_len)
+        {
+            memcpy(p_buf->p_buf + p_buf->end, ptr->p_buf + ptr->start, data_len);
+            p_buf->end += data_len;
+        }
+
+        ptr = ptr->p_next;
+    }
+
+    assert(p_buf->end + offset_y <= p_buf->buf_len);
+    return p_buf;
+}

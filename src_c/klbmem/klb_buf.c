@@ -45,3 +45,13 @@ int klb_buf_unref(klb_buf_t* p_buf)
 {
     return 0;
 }
+
+int klb_buf_ref_next(klb_buf_t* p_buf)
+{
+    return 0;
+}
+
+int klb_buf_unref_next(klb_buf_t* p_buf)
+{
+    return 0;
+}
