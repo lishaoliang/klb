@@ -57,14 +57,14 @@ KLB_API void klb_vector_clean(klb_vector_t* p_vector, klb_vector_clean_cb cb_cle
 /// @param [in] *p_data     数据
 /// @return 无
 /// @note vector并不负责数据释放
-KLB_API void klb_vector_push_head(klb_vector_t* p_vector, void* p_data);
+//KLB_API void klb_vector_push_head(klb_vector_t* p_vector, void* p_data);
 
 
 /// @brief 在最后面, 向vector压入数据
 /// @param [in] *p_vector   vector对象
 /// @param [in] *p_data     数据
 /// @return 无
-KLB_API void klb_vector_push_tail(klb_vector_t* p_vector, void* p_data);
+KLB_API int klb_vector_push_tail(klb_vector_t* p_vector, void* p_data);
 
 
 /// @brief 在最前面, 弹出数据
@@ -95,6 +95,12 @@ KLB_API void* klb_vector_tail(klb_vector_t* p_vector);
 /// @param [in] *p_vector   vector对象
 /// @return void* 数据指针
 KLB_API void* klb_vector_get(klb_vector_t* p_vector, int index);
+
+
+/// @brief 更换第index的数据: 必须已存在
+/// @param [in] *p_vector   vector对象
+/// @return void* 数据指针
+KLB_API void* klb_vector_update(klb_vector_t* p_vector, int index, void* p_data);
 
 
 /// @brief 移除第index的数据

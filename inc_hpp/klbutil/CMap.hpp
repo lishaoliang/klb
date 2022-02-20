@@ -14,12 +14,14 @@
 #define __CMAP_HPP__
 
 #include "klb_type.h"
+#include "klbutil/klb_vector.h"
 #include "klbutil/klb_hlist.h"
 #include <string>
 
 namespace klb {
 
     class CMapObj;
+    class CArray;
     class CMap;
 
     KLB_EXTERN class KLB_API_CPP CMapIter
@@ -58,11 +60,13 @@ namespace klb {
 
     KLB_EXTERN class KLB_API_CPP CMapObj
     {
+        friend class CArray;
         friend class CMap;
     public:
         CMapObj();
         CMapObj(const CMapObj& t);
         CMapObj(const std::string& key);
+        CMapObj(const std::string& key, const CArray& v);
         CMapObj(const std::string& key, const CMap& v);
         CMapObj(const std::string& key, const void* func, const void* o);
         CMapObj(const std::string& key, const void* v);
@@ -75,6 +79,7 @@ namespace klb {
         ~CMapObj();
 
         // =
+        CMapObj& operator=(const CArray& v);
         CMapObj& operator=(const CMap& v);
         CMapObj& operator=(const void* v);
         CMapObj& operator=(const char* v);
@@ -91,6 +96,7 @@ namespace klb {
         bool operator==(const int64_t& v);
 
         // 获取值
+        bool Get(CArray& v);
         bool Get(CMap& v);
         bool Get(void** func, void** o);
         bool Get(void** v);
@@ -104,6 +110,7 @@ namespace klb {
         CMapObjType Type();
         bool IsType(CMapObjType t);
 
+        CArray GetArray();
         CMap GetMap();
         void* GetFunc(void** o, const void* p_default = NULL);
         void* GetPtr(const void* p_default = NULL);
@@ -114,6 +121,7 @@ namespace klb {
         int64_t GetInt64(const int64_t v_default = 0);
 
         // 设置值
+        CMapObj& Set(const CArray& v);
         CMapObj& Set(const CMap& v);
         CMapObj& Set(const void* func, const void* o);
         CMapObj& Set(const void* v);
@@ -134,6 +142,7 @@ namespace klb {
         void Init();
         void Quit();
         void Reset();
+        void SetArray(CArray* p_array, int idx);
         void SetMap(CMap* p_map);
         void SetKey(const std::string& key);
 
@@ -141,6 +150,9 @@ namespace klb {
 
     protected:
         void CopyTo(const CMapObj& t);
+
+        CArray*         m_array;
+        int             m_array_idx;
 
         CMap*           m_map;
         std::string     m_key;
@@ -173,9 +185,11 @@ namespace klb {
         CMapObj& operator[](int idx);
 
         // 获取值
+        bool Get(int idx, CArray& v);
         bool Get(int idx, CMap& v);
         bool Get(int idx, void** func, void** o);
         bool Get(int idx, void** v);
+        bool Get(int idx, char** data, int* size);
         bool Get(int idx, std::string& v);
         bool Get(int idx, bool& v);
         bool Get(int idx, double& v);
@@ -185,38 +199,56 @@ namespace klb {
         CMapObjType Type(int idx);
         bool IsType(int idx, CMapObjType t);
 
+        CArray GetArray(int idx);
         CMap GetMap(int idx);
         void* GetFunc(int idx, void** o, const void* p_default = NULL);
         void* GetPtr(int idx, const void* p_default = NULL);
+        char* GetBuf(int idx, int* size, const char* p_default = NULL);
         std::string GetString(int idx, const std::string v_default = "");
         bool GetBool(int idx, const bool v_default = false);
         double GetDouble(int idx, const double v_default = 0.0);
         int64_t GetInt64(int idx, const int64_t v_default = 0);
 
         // 设置值
+        CArray& Set(int idx, const CArray& v);
         CArray& Set(int idx, const CMap& v);
         CArray& Set(int idx, const void* func, const void* o);
         CArray& Set(int idx, const void* v);
         CArray& Set(int idx, const char* v);
+        CArray& Set(int idx, const char* data, int size);
         CArray& Set(int idx, const std::string& v);
         CArray& Set(int idx, bool v);
         CArray& Set(int idx, double v);
         CArray& Set(int idx, int64_t v);
 
+        // 追加值: 在末尾追加一个值
+        CArray& Append(const CArray& v);
+        CArray& Append(const CMap& v);
+        CArray& Append(const void* func, const void* o);
+        CArray& Append(const void* v);
+        CArray& Append(const char* v);
+        CArray& Append(const char* data, int size);
+        CArray& Append(const std::string& v);
+        CArray& Append(bool v);
+        CArray& Append(double v);
+        CArray& Append(int64_t v);
+
         // dump
         std::string Dump();
+
+    protected:
+        CArray& SetValue(int idx, CMapObj* p_v);
+        CArray& AppendValue(CMapObj* p_v);
 
     private:
         void Init();
         void Quit();
-        void ReSize(int n);
 
+        CMapObj* Find(int idx);
         void CopyTo(const CArray& t); // 拷贝
 
-        int         m_max;
-        int         m_size;
-        CMapObj**   m_items;
-        CMapObj     m_none;
+        klb_vector_t*   m_vector;
+        CMapObj         m_none;
     };
 
     KLB_EXTERN class KLB_API_CPP CMap
@@ -239,6 +271,7 @@ namespace klb {
         CMapObj& operator[](const std::string& key);
 
         // 获取值
+        bool Get(const std::string& key, CArray& v);
         bool Get(const std::string& key, CMap& v);
         bool Get(const std::string& key, void** func, void** o);
         bool Get(const std::string& key, void** v);
@@ -252,16 +285,18 @@ namespace klb {
         CMapObjType Type(const std::string& key);
         bool IsType(const std::string& key, CMapObjType t);
 
+        CArray GetArray(const std::string& key);
         CMap GetMap(const std::string& key);
         void* GetFunc(const std::string& key, void** obj, const void* p_default = NULL);
         void* GetPtr(const std::string& key, const void* p_default = NULL);
-        char* GetBuf(const std::string& key, int* size, const void* p_default = NULL);
+        char* GetBuf(const std::string& key, int* size, const char* p_default = NULL);
         std::string GetString(const std::string& key, const std::string v_default = "");
         bool GetBool(const std::string& key, const bool v_default = false);
         double GetDouble(const std::string& key, const double v_default = 0.0);
         int64_t GetInt64(const std::string& key, const int64_t v_default = 0);
 
         // 设置值
+        CMap& Set(const std::string& key, const CArray& v);
         CMap& Set(const std::string& key, const CMap& v);
         CMap& Set(const std::string& key, const void* func, const void* o);
         CMap& Set(const std::string& key, const void* v);

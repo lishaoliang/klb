@@ -81,6 +81,13 @@ CMapObj::CMapObj(const std::string& key)
     m_key = key;
 }
 
+CMapObj::CMapObj(const std::string& key, const CArray& v)
+{
+    Init();
+    m_key = key;
+    Set(v);
+}
+
 CMapObj::CMapObj(const std::string& key, const CMap& v)
 {
     Init();
@@ -147,6 +154,14 @@ CMapObj::CMapObj(const std::string& key, int64_t v)
 CMapObj::~CMapObj()
 {
     Quit();
+}
+
+CMapObj& CMapObj::operator=(const CArray& v)
+{
+    ClearValue();
+    Set(v);
+
+    return (*this);
 }
 
 CMapObj& CMapObj::operator=(const CMap& v)
@@ -260,6 +275,17 @@ bool CMapObj::operator==(const int64_t& v)
     if (Get(i))
     {
         return (i == v);
+    }
+
+    return false;
+}
+
+bool CMapObj::Get(CArray& v)
+{
+    if (CMAP_CArray == m_type)
+    {
+        v = *((CArray*)m_value);
+        return true;
     }
 
     return false;
@@ -384,6 +410,16 @@ bool CMapObj::IsType(CMapObjType t)
     return (m_type == t);
 }
 
+CArray CMapObj::GetArray()
+{
+    if (CMAP_CArray == m_type)
+    {
+        return *((CArray*)m_value);
+    }
+
+    return CArray();
+}
+
 CMap CMapObj::GetMap()
 {
     if (CMAP_CMap == m_type)
@@ -473,6 +509,25 @@ int64_t CMapObj::GetInt64(const int64_t v_default)
     return v_default;
 }
 
+CMapObj& CMapObj::Set(const CArray& v)
+{
+    ClearValue();
+
+    m_value = new CArray(v);
+    m_type = CMAP_CArray;
+
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
+    {
+        m_map->Set(m_key, v);
+    }
+
+    return (*this);
+}
+
 CMapObj& CMapObj::Set(const CMap& v)
 {
     ClearValue();
@@ -480,7 +535,11 @@ CMapObj& CMapObj::Set(const CMap& v)
     m_value = new CMap(v);
     m_type = CMAP_CMap;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -496,7 +555,11 @@ CMapObj& CMapObj::Set(const void* func, const void* o)
     m_obj = (void*)o;
     m_type = CMAP_Func;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, func, o);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, func, o);
     }
@@ -511,7 +574,11 @@ CMapObj& CMapObj::Set(const void* v)
     m_value = (void*)v;
     m_type = CMAP_Ptr;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -526,7 +593,11 @@ CMapObj& CMapObj::Set(const char* v)
     m_value = new std::string(v ? v : "");
     m_type = CMAP_String;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -548,7 +619,11 @@ CMapObj& CMapObj::Set(const char* data, int size)
     m_value_int64 = size;
     m_type = CMAP_Buf;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, data, size);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, data, size);
     }
@@ -563,7 +638,11 @@ CMapObj& CMapObj::Set(const std::string& v)
     m_value = new std::string(v);
     m_type = CMAP_String;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -578,7 +657,11 @@ CMapObj& CMapObj::Set(bool v)
     m_value_bool = v;
     m_type = CMAP_Bool;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -593,7 +676,11 @@ CMapObj& CMapObj::Set(double v)
     m_value_double = v;
     m_type = CMAP_Double;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -608,7 +695,11 @@ CMapObj& CMapObj::Set(int64_t v)
     m_value_int64 = v;
     m_type = CMAP_Int64;
 
-    if (NULL != m_map)
+    if (NULL != m_array)
+    {
+        m_array->Set(m_array_idx, v);
+    }
+    else if (NULL != m_map)
     {
         m_map->Set(m_key, v);
     }
@@ -628,6 +719,14 @@ std::string CMapObj::Dump()
 
     switch (m_type)
     {
+    case CMAP_CArray:
+        {
+            CArray v;
+            Get(v);
+
+            ss << "[" << m_key << ":" << v.Dump() << "]";
+        }
+        break;
     case CMAP_CMap:
         {
             CMap v;
@@ -697,6 +796,9 @@ std::string CMapObj::Dump()
 
 void CMapObj::Init()
 {
+    m_array = NULL;
+    m_array_idx = -1;
+
     m_map = NULL;
     m_key = "";
 
@@ -714,6 +816,12 @@ void CMapObj::Reset()
 {
     ClearValue();
     Init();
+}
+
+void CMapObj::SetArray(CArray* p_array, int idx)
+{
+    m_array = p_array;
+    m_array_idx = idx;
 }
 
 void CMapObj::SetMap(CMap* p_map)
@@ -839,12 +947,23 @@ CArray& CArray::operator=(const CArray& t)
 // 大小
 int CArray::Size()
 {
-    return m_size;
+    return klb_vector_size(m_vector);
 }
 
 CMapObj& CArray::Get(int idx)
 {
-    return m_none;
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return *p_obj;
+    }
+    else
+    {
+        m_none.Reset();
+        m_none.SetArray(this, -1);
+
+        return m_none;
+    }
 }
 
 CMapObj& CArray::operator[](int idx)
@@ -852,188 +971,420 @@ CMapObj& CArray::operator[](int idx)
     return Get(idx);
 }
 
+bool CArray::Get(int idx, CArray& v)
+{
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
+    return false;
+}
+
 bool CArray::Get(int idx, CMap& v)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
     return false;
 }
 
 bool CArray::Get(int idx, void** func, void** o)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(func, o);
+    }
+
     return false;
 }
 
 bool CArray::Get(int idx, void** v)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
+    return false;
+}
+
+bool CArray::Get(int idx, char** data, int* size)
+{
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(data, size);
+    }
+
     return false;
 }
 
 bool CArray::Get(int idx, std::string& v)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
     return false;
 }
 
 bool CArray::Get(int idx, bool& v)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
     return false;
 }
 
 bool CArray::Get(int idx, double& v)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
     return false;
 }
 
 bool CArray::Get(int idx, int64_t& v)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Get(v);
+    }
+
     return false;
 }
 
 CMapObjType CArray::Type(int idx)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->Type();
+    }
+
     return CMAP_None;
 }
 
 bool CArray::IsType(int idx, CMapObjType t)
 {
+    CMapObj* p_obj = Find(idx);
+    if (NULL != p_obj)
+    {
+        return p_obj->IsType(t);
+    }
+
     return false;
+}
+
+CArray CArray::GetArray(int idx)
+{
+    CArray v;
+    if (Get(idx, v))
+    {
+        return v;
+    }
+
+    return CArray();
 }
 
 CMap CArray::GetMap(int idx)
 {
+    CMap v;
+    if (Get(idx, v))
+    {
+        return v;
+    }
+
     return CMap();
 }
 
 void* CArray::GetFunc(int idx, void** o, const void* p_default)
 {
+    void* func = NULL;
+    if (Get(idx, &func, o))
+    {
+        return func;
+    }
+
     return (void*)p_default;
 }
 
 void* CArray::GetPtr(int idx, const void* p_default)
 {
+    void* ptr = NULL;
+    if (Get(idx, &ptr))
+    {
+        return ptr;
+    }
+
     return (void*)p_default;
+}
+
+char* CArray::GetBuf(int idx, int* size, const char* p_default)
+{
+    char* ptr = NULL;
+    if (Get(idx, &ptr, size))
+    {
+        return ptr;
+    }
+
+    return (char*)p_default;
 }
 
 std::string CArray::GetString(int idx, const std::string v_default)
 {
+    std::string s;
+    if (Get(idx, s))
+    {
+        return s;
+    }
+
     return v_default;
 }
 
 bool CArray::GetBool(int idx, const bool v_default)
 {
+    bool b;
+    if (Get(idx, b))
+    {
+        return b;
+    }
+
     return v_default;
 }
 
 double CArray::GetDouble(int idx, const double v_default)
 {
+    double d;
+    if (Get(idx, d))
+    {
+        return d;
+    }
+
     return v_default;
 }
 
 int64_t CArray::GetInt64(int idx, const int64_t v_default)
 {
+    int64_t n;
+    if (Get(idx, n))
+    {
+        return n;
+    }
+
     return v_default;
+}
+
+CArray& CArray::Set(int idx, const CArray& v)
+{
+    return SetValue(idx, new CMapObj("", v));
 }
 
 CArray& CArray::Set(int idx, const CMap& v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
 }
 
 CArray& CArray::Set(int idx, const void* func, const void* o)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", func, o));
 }
 
 CArray& CArray::Set(int idx, const void* v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
 }
 
 CArray& CArray::Set(int idx, const char* v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
+}
+
+CArray& CArray::Set(int idx, const char* data, int size)
+{
+    return SetValue(idx, new CMapObj("", data, size));
 }
 
 CArray& CArray::Set(int idx, const std::string& v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
 }
 
 CArray& CArray::Set(int idx, bool v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
 }
 
 CArray& CArray::Set(int idx, double v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
 }
 
 CArray& CArray::Set(int idx, int64_t v)
 {
-    return (*this);
+    return SetValue(idx, new CMapObj("", v));
+}
+
+CArray& CArray::Append(const CArray& v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(const CMap& v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(const void* func, const void* o)
+{
+    return AppendValue(new CMapObj("", func, o));
+}
+
+CArray& CArray::Append(const void* v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(const char* v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(const char* data, int size)
+{
+    return AppendValue(new CMapObj("", data, size));
+}
+
+CArray& CArray::Append(const std::string& v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(bool v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(double v)
+{
+    return AppendValue(new CMapObj("", v));
+}
+
+CArray& CArray::Append(int64_t v)
+{
+    return AppendValue(new CMapObj("", v));
 }
 
 // dump
 std::string CArray::Dump()
 {
-    return "";
+    std::ostringstream ss;
+
+    for (int i = 0; i < Size();i++)
+    {
+        CMapObj& item = Get(i);
+        ss << item.Dump() << "\n";
+    }
+
+    return ss.str();
+}
+
+CArray& CArray::SetValue(int idx, CMapObj* p_v)
+{
+    assert(NULL != p_v);
+    assert(CMAP_None != p_v->m_type);
+
+    if (0 <= idx && idx < klb_vector_size(m_vector))
+    {
+        // 替换
+        p_v->SetArray(this, idx);
+
+        CMapObj* p_obj = (CMapObj*)klb_vector_update(m_vector, idx, p_v);
+        assert(NULL != p_obj);
+
+        delete p_obj;
+    }
+    else
+    {
+        // 追加
+        int idx_push = klb_vector_push_tail(m_vector, p_v);
+        p_v->SetArray(this, idx_push);
+    }
+
+    return *this;
+}
+
+CArray& CArray::AppendValue(CMapObj* p_v)
+{
+    assert(NULL != p_v);
+    assert(CMAP_None != p_v->m_type);
+
+    int idx = klb_vector_push_tail(m_vector, p_v);
+    p_v->SetArray(this, idx);
+
+    return *this;
 }
 
 void CArray::Init()
 {
-    m_max = 0;
-    m_size = 0;
-    m_items = NULL;
+    m_vector = klb_vector_create();
 }
 
 void CArray::Quit()
 {
-    if (NULL != m_items)
+    while (0 < klb_vector_size(m_vector))
     {
-        for (int i = 0; i < m_size; i++)
-        {
-            if (NULL != m_items[i])
-            {
-                delete m_items[i];
-            }
-        }
-
-        delete [] m_items;
-        m_items = NULL;
+        CMapObj* p_obj = (CMapObj*)klb_vector_pop_tail(m_vector);
+        delete p_obj;
     }
 
-    m_max = 0;
-    m_size = 0;
+    KLB_FREE_BY(m_vector, klb_vector_destroy);
+
+    m_none.Reset();
 }
 
-void CArray::ReSize(int n)
+CMapObj* CArray::Find(int idx)
 {
-    if (m_max < n)
+    if (0 <= idx && idx < klb_vector_size(m_vector))
     {
-        int num = n + 512;
-        
-        CMapObj** ptr = new CMapObj*[num];
-        memset(ptr, 0, sizeof(CMapObj*) * num);
+        CMapObj* p_obj = (CMapObj*)klb_vector_get(m_vector, idx);
+        assert(NULL != p_obj);
 
-        if (0 < m_size)
-        {
-            memcpy(ptr, m_items, m_size);
-        }
-
-        m_max = num;
-
-        CMapObj** p_old = m_items;
-        m_items = ptr;
-
-        if (NULL != p_old)
-        {
-            delete[] p_old;
-        }
+        return p_obj;
     }
+
+    return NULL;
 }
 
 void CArray::CopyTo(const CArray& t)
 {
+    int size = klb_vector_size(t.m_vector);
+    for (int i = 0; i < size; i++)
+    {
+        CMapObj* p_obj = (CMapObj*)klb_vector_get(t.m_vector, i);
+        assert(NULL != p_obj);
 
+        CMapObj* p_new = new CMapObj(*p_obj);
+
+        int idx = klb_vector_push_tail(m_vector, p_new);
+        assert(idx == i);
+    }
 }
 
 
@@ -1115,13 +1466,23 @@ CMapObj& CMap::operator[](const std::string& key)
 //////////////////////////////////
 // get value
 
+bool CMap::Get(const std::string& key, CArray& v)
+{
+    CMapObj* ptr = Find(key);
+    if (NULL != ptr)
+    {
+        return ptr->Get(v);
+    }
+
+    return false;
+}
+
 bool CMap::Get(const std::string& key, CMap& v)
 {
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(v);
-        return true;
+        return ptr->Get(v);
     }
 
     return false;
@@ -1132,8 +1493,7 @@ bool CMap::Get(const std::string& key, void** func, void** o)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(func, o);
-        return true;
+        return ptr->Get(func, o);
     }
 
     return false;
@@ -1144,8 +1504,7 @@ bool CMap::Get(const std::string& key, void** v)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(v);
-        return true;
+        return ptr->Get(v);
     }
 
     return false;
@@ -1156,8 +1515,7 @@ bool CMap::Get(const std::string& key, char** data, int* size)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(data, size);
-        return true;
+        return ptr->Get(data, size);
     }
 
     return false;
@@ -1168,8 +1526,7 @@ bool CMap::Get(const std::string& key, std::string& v)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(v);
-        return true;
+        return ptr->Get(v);
     }
 
     return false;
@@ -1180,8 +1537,7 @@ bool CMap::Get(const std::string& key, bool& v)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(v);
-        return true;
+        return ptr->Get(v);
     }
 
     return false;
@@ -1192,8 +1548,7 @@ bool CMap::Get(const std::string& key, double& v)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(v);
-        return true;
+        return ptr->Get(v);
     }
 
     return false;
@@ -1204,8 +1559,7 @@ bool CMap::Get(const std::string& key, int64_t& v)
     CMapObj* ptr = Find(key);
     if (NULL != ptr)
     {
-        ptr->Get(v);
-        return true;
+        return ptr->Get(v);
     }
 
     return false;
@@ -1235,6 +1589,17 @@ bool CMap::IsType(const std::string& key, CMapObjType t)
     }
 
     return (CMAP_None == t);
+}
+
+CArray CMap::GetArray(const std::string& key)
+{
+    CArray v;
+    if (Get(key, v))
+    {
+        return v;
+    }
+
+    return CArray();
 }
 
 CMap CMap::GetMap(const std::string& key)
@@ -1270,7 +1635,7 @@ void* CMap::GetPtr(const std::string& key, const void* p_default)
     return (void*)p_default;
 }
 
-char* CMap::GetBuf(const std::string& key, int* size, const void* p_default)
+char* CMap::GetBuf(const std::string& key, int* size, const char* p_default)
 {
     char* buf = NULL;
     if (Get(key, &buf, size))
@@ -1327,6 +1692,11 @@ int64_t CMap::GetInt64(const std::string& key, const int64_t v_default)
 
 //////////////////////////////////
 // set
+
+CMap& CMap::Set(const std::string& key, const CArray& v)
+{
+    return SetValue(key, new CMapObj(key, v));
+}
 
 CMap& CMap::Set(const std::string& key, const CMap& v)
 {
@@ -1501,6 +1871,7 @@ int CMap::Test()
     b["b5"] = 3.1415926;
     b["b6"].Set((void*)CMap::Test, &b);
 
+
     a["b"] = b;
 
     double e = a["5"].GetDouble();
@@ -1510,8 +1881,19 @@ int CMap::Test()
         std::string s1 = a["1"].Dump();
     }
 
-    std::string s = a.Dump();
+    CArray arr;
+    arr[0] = int64_t(100);
+    arr[1] = true;
+    arr[2] = 3.1415926;
+    arr[-1] = "poiefsf";
 
+    arr.Append(int64_t(100)).Append("sdfef").Append("112313");
+
+    arr[0] = "r 100";
+
+    a["array"] = arr;
+
+    std::string s = a.Dump();
 
     CMap tb = a["1"].GetMap();
 

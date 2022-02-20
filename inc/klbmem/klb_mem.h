@@ -51,7 +51,12 @@ KLB_API void* klb_mallocz(size_t size);
 
 /// @def   KLB_MALLOC
 /// @brief 内存申请; 按结构体数目 + 对齐字节
-#define KLB_MALLOC(ST_, NUM_, PADDING_)     (ST_*)malloc(sizeof(ST_) * (NUM_) + (PADDING_))
+#define KLB_MALLOC(ST_, NUM_, PADDING_)             (ST_*)malloc(sizeof(ST_) * (NUM_) + (PADDING_))
+
+
+/// @def   KLB_REALLOC
+/// @brief realloc内存申请; 按结构体数目 + 对齐字节
+#define KLB_REALLOC(OLD_PTR_, ST_, NUM_, PADDING_)  (ST_*)realloc((OLD_PTR_), sizeof(ST_) * (NUM_) + (PADDING_))
 
 
 /// @def   KLB_MEMSET
