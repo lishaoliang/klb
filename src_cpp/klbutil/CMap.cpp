@@ -158,7 +158,6 @@ CMapObj::~CMapObj()
 
 CMapObj& CMapObj::operator=(const CArray& v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -166,7 +165,6 @@ CMapObj& CMapObj::operator=(const CArray& v)
 
 CMapObj& CMapObj::operator=(const CMap& v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -174,7 +172,6 @@ CMapObj& CMapObj::operator=(const CMap& v)
 
 CMapObj& CMapObj::operator=(const void* v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -182,7 +179,6 @@ CMapObj& CMapObj::operator=(const void* v)
 
 CMapObj& CMapObj::operator=(const char* v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -190,7 +186,6 @@ CMapObj& CMapObj::operator=(const char* v)
 
 CMapObj& CMapObj::operator=(const std::string& v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -198,7 +193,6 @@ CMapObj& CMapObj::operator=(const std::string& v)
 
 CMapObj& CMapObj::operator=(const bool& v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -206,7 +200,6 @@ CMapObj& CMapObj::operator=(const bool& v)
 
 CMapObj& CMapObj::operator=(const double& v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -214,7 +207,6 @@ CMapObj& CMapObj::operator=(const double& v)
 
 CMapObj& CMapObj::operator=(const int64_t& v)
 {
-    ClearValue();
     Set(v);
 
     return (*this);
@@ -838,6 +830,18 @@ void CMapObj::ClearValue()
 {
     switch (m_type)
     {
+    case CMAP_CArray:
+        {
+            CArray* ptr = (CArray*)m_value;
+            delete ptr;
+        }
+        break;
+    case CMAP_CMap:
+        {
+            CMap* ptr = (CMap*)m_value;
+            delete ptr;
+        }
+        break;
     case CMAP_Buf:
         {
             char* ptr = (char*)m_value;
@@ -847,12 +851,6 @@ void CMapObj::ClearValue()
     case CMAP_String:
         {
             std::string* ptr = (std::string*)m_value;
-            delete ptr;
-        }
-        break;
-    case CMAP_CMap:
-        {
-            CMap* ptr = (CMap*)m_value;
             delete ptr;
         }
         break;
@@ -874,6 +872,12 @@ void CMapObj::CopyTo(const CMapObj& t)
     m_type = t.m_type;
     switch (t.m_type)
     {
+    case CMAP_CArray:
+        {
+            const CArray* p_v = (const CArray*)t.m_value;
+            m_value = new CArray(*p_v);
+        }
+        break;
     case CMAP_CMap:
         {
             const CMap* p_v = (const CMap*)t.m_value;
@@ -1355,8 +1359,6 @@ void CArray::Quit()
     }
 
     KLB_FREE_BY(m_vector, klb_vector_destroy);
-
-    m_none.Reset();
 }
 
 CMapObj* CArray::Find(int idx)
@@ -1383,6 +1385,8 @@ void CArray::CopyTo(const CArray& t)
         CMapObj* p_new = new CMapObj(*p_obj);
 
         int idx = klb_vector_push_tail(m_vector, p_new);
+        p_new->SetArray(this, idx);
+
         assert(idx == i);
     }
 }
@@ -1396,6 +1400,19 @@ CMap::CMap()
     Init();
 }
 
+CMap::CMap(bool is_array)
+{
+    Init();
+
+    m_is_array = true;
+}
+
+CMap::CMap(const CArray& t)
+{
+    Init();
+    CopyTo(t);
+}
+
 CMap::CMap(const CMap& t)
 {
     Init();
@@ -1405,6 +1422,14 @@ CMap::CMap(const CMap& t)
 CMap::~CMap()
 {
     Quit();
+}
+
+CMap& CMap::operator=(const CArray& t)
+{
+    Quit();
+    Init();
+    CopyTo(t);
+    return (*this);
 }
 
 CMap& CMap::operator=(const CMap& t)
@@ -1417,6 +1442,16 @@ CMap& CMap::operator=(const CMap& t)
 
 //////////////////////////////////
 // 
+
+bool CMap::IsArray()
+{
+    return m_is_array;
+}
+
+CArray& CMap::Array()
+{
+    return m_array;
+}
 
 int CMap::Size()
 {
@@ -1797,6 +1832,7 @@ CMap& CMap::SetValue(const std::string& key, CMapObj* p_v)
 
 void CMap::Init()
 {
+    m_is_array = false;
     m_hlist = klb_hlist_create(0);
 }
 
@@ -1832,6 +1868,13 @@ void CMap::CopyTo(const CMap& t)
 
         p_iter = klb_hlist_next(p_iter);
     }
+    m_is_array = false;
+}
+
+void CMap::CopyTo(const CArray& t)
+{
+    m_array = t;
+    m_is_array = true;
 }
 
 //////////////////////////////////

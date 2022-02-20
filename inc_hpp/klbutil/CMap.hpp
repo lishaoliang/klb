@@ -170,6 +170,7 @@ namespace klb {
 
     KLB_EXTERN class KLB_API_CPP CArray
     {
+        friend class CMap;
     public:
         CArray();
         CArray(const CArray& t);
@@ -255,10 +256,17 @@ namespace klb {
     {
     public:
         CMap();
+        CMap(bool is_array);
+        CMap(const CArray& t);
         CMap(const CMap& t);
         ~CMap();
 
+        CMap& operator=(const CArray& t);
         CMap& operator=(const CMap& t);
+
+        // 是否为数组
+        bool IsArray();
+        CArray& Array();
 
         // 大小
         int Size();
@@ -322,7 +330,11 @@ namespace klb {
 
         CMapObj* Find(const std::string& key);
 
-        void CopyTo(const CMap& t); // 拷贝
+        void CopyTo(const CMap& t);     // 拷贝
+        void CopyTo(const CArray& t);   // 拷贝
+
+        bool            m_is_array;
+        CArray          m_array;
 
         klb_hlist_t*    m_hlist;
         CMapObj         m_none;

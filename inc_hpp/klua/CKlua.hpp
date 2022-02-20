@@ -27,6 +27,7 @@ namespace klb {
 
 
         static bool ParseToMap(lua_State* L, int idx, CMap& map);
+        static void PushMapToLua(lua_State* L, CMap& map);
 
     private:
 
