@@ -176,12 +176,18 @@ namespace klb {
                 switch (item.Type())
                 {
                 case CMAP_CArray:
-                    cklua_push_map_to_lua(L, CMap(item.GetArray()));
-                    lua_rawseti(L, -2, i + 1);
+                    {
+                        CMap sub(item.GetArray());
+                        cklua_push_map_to_lua(L, sub);
+                        lua_rawseti(L, -2, i + 1);
+                    }
                     break;
                 case CMAP_CMap:
-                    cklua_push_map_to_lua(L, item.GetMap());
-                    lua_rawseti(L, -2, i + 1);
+                    {
+                        CMap sub = item.GetMap();
+                        cklua_push_map_to_lua(L, sub);
+                        lua_rawseti(L, -2, i + 1);
+                    }
                     break;
                 case CMAP_String:
                     lua_pushstring(L, item.GetString().c_str());
@@ -214,16 +220,22 @@ namespace klb {
                 switch (item.Type())
                 {
                 case CMAP_CArray:
-                    cklua_push_map_to_lua(L, CMap(item.GetArray()));
-                    lua_pushstring(L, item.GetKey().c_str());
-                    lua_insert(L, -2);
-                    lua_settable(L, -3);
+                    {
+                        CMap sub(item.GetArray());
+                        cklua_push_map_to_lua(L, sub);
+                        lua_pushstring(L, item.GetKey().c_str());
+                        lua_insert(L, -2);
+                        lua_settable(L, -3);
+                    }
                     break;
                 case CMAP_CMap:
-                    cklua_push_map_to_lua(L, item.GetMap());
-                    lua_pushstring(L, item.GetKey().c_str());
-                    lua_insert(L, -2);
-                    lua_settable(L, -3);
+                    {
+                        CMap sub = item.GetMap();
+                        cklua_push_map_to_lua(L, sub);
+                        lua_pushstring(L, item.GetKey().c_str());
+                        lua_insert(L, -2);
+                        lua_settable(L, -3);
+                    }
                     break;
                 case CMAP_String:
                     lua_pushstring(L, item.GetString().c_str());

@@ -165,6 +165,9 @@
     <Filter Include="inc_hpp\klbplatform">
       <UniqueIdentifier>{5eb25485-c8b1-461b-9f2c-e88037bf8e3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klua\LuaXML_130610">
+      <UniqueIdentifier>{8d9394db-fc17-4dc9-bb1f-e4ce3218761c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1697,6 +1700,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_cpp\klua\CKlua.cpp">
       <Filter>src_cpp\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c">
+      <Filter>src_c\klua\LuaXML_130610</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

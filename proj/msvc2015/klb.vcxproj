@@ -602,6 +602,7 @@
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.c" />
     <ClCompile Include="..\..\src_c\klua\lua.c" />
     <ClCompile Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.c" />
+    <ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c" />
     <ClCompile Include="..\..\src_c\libavutil\adler32.c" />
     <ClCompile Include="..\..\src_c\libavutil\aes.c" />
     <ClCompile Include="..\..\src_c\libavutil\aes_ctr.c" />

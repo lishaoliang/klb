@@ -133,6 +133,13 @@ int klua_open_lsqlite3(lua_State* L)
 }
 
 
+// from ./klb/src_c/klua/LuaXML_130610/LuaXML_lib.c
+int klua_open_LuaXML_lib(lua_State* L)
+{
+    return luaopen_LuaXML_lib(L);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 
 int klua_loadlib_all(lua_State* L)

@@ -40,7 +40,7 @@ MY_DIRS += ./klbgui
 MY_DIRS += ./klua ./klua/extension ./klua/klua_platform ./klua/klua_util ./klua/klua_base
 MY_DIRS += ./klua/klua_multithread ./klua/klua_net
 MY_DIRS += ./klua/lua-5.4.1/src ./klua/lua-cjson-2.1.0 ./klua/lpeg-1.0.2 ./klua/luafilesystem-2.0/src
-MY_DIRS += ./klua/lsqlite3
+MY_DIRS += ./klua/lsqlite3 ./klua/LuaXML_130610
 
 # libavutil
 MY_DIRS += ./compat ./libavutil

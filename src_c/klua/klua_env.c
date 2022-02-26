@@ -477,6 +477,12 @@ static int klua_pquit(lua_State *L)
     // exit
     klua_env_call_kexit(p_env);
 
+    // unref
+    klua_punref(p_env, L);
+
+    // gc
+    lua_gc(L, LUA_GCCOLLECT, 0);
+
     // 销毁激活的 extension
     while (0 < klb_hlist_size(p_env->p_extension_activate_hlist))
     {
@@ -486,9 +492,6 @@ static int klua_pquit(lua_State *L)
         KLB_FREE_BY(p_tmp->name, sdsfree);
         KLB_FREE(p_tmp);
     }
-
-    // unref
-    klua_punref(p_env, L);
 
     p_env->is_exit = true;
     lua_pushboolean(L, true);
