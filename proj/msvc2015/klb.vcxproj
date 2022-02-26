@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h" />
+    <ClInclude Include="..\..\inc\klbbase\klb_package.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_string.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_str_map.h" />
@@ -480,6 +481,7 @@
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
+    <ClCompile Include="..\..\src_c\klbbase\klb_package.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c" />
@@ -542,6 +544,7 @@
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_package.c" />
     <ClCompile Include="..\..\src_c\klua\klua_env.c" />
     <ClCompile Include="..\..\src_c\klua\klua_help.c" />
     <ClCompile Include="..\..\src_c\klua\klua_main.c" />

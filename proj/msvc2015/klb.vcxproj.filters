@@ -1121,6 +1121,9 @@
     <ClInclude Include="..\..\inc_hpp\klua\CKlua.hpp">
       <Filter>inc_hpp\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbbase\klb_package.h">
+      <Filter>inc\klbbase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -1703,6 +1706,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c">
       <Filter>src_c\klua\LuaXML_130610</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbbase\klb_package.c">
+      <Filter>src_c\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_package.c">
+      <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
