@@ -3,6 +3,7 @@
 #include "klbmem/klb_buf.h"
 #include "klbutil/klb_list.h"
 #include "klbutil/klb_hlist.h"
+#include "klbutil/klb_rand.h"
 #include "klbmem/klb_mem.h"
 
 #include "libavutil/base64.h"
@@ -44,7 +45,9 @@ typedef struct klb_package_head_t_
     int64_t     idx_len;                            ///< 索引区长度
     uint8_t     idx_md5[KLB_PACKAGE_MD5_MAX];       ///< 索引区域md5值
 
-    uint8_t     resv[40];                           ///< 预留区域
+#define KLB_PACKAGE_RAND_MAX        8
+    uint8_t     rand[KLB_PACKAGE_RAND_MAX];         ///< 随机"盐值"
+
     uint32_t    head_hash;                          ///< 头部哈希校验值
 }klb_package_head_t;
 
@@ -170,6 +173,7 @@ void klb_package_w_close(klb_package_w_t* p_kpa)
     av_md5_final(p_kpa->p_avmd5, p_kpa->head.idx_md5);
 
     // 文件头
+    klb_rand_string(p_kpa->head.rand, KLB_PACKAGE_RAND_MAX, false);
     p_kpa->head.head_hash = klb_hash32(&p_kpa->head, sizeof(klb_package_head_t) - sizeof(uint32_t));
 
     fseek(p_kpa->pf, p_kpa->offset, SEEK_SET);
@@ -331,27 +335,130 @@ int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, int key_
 //////////////////////////////////////////////////////////////////////////
 // 读
 
+
+/// @struct klb_package_r_t
+/// @brief  读包
 typedef struct klb_package_r_t_
 {
-    int a;
+    FILE*               pf;             ///< 文件指针
+    int64_t             offset;         ///< 文件头偏移
+
+    klb_package_head_t  head;           ///< 文件头参数
+
+    int64_t             idx_count;      ///< 索引个数
+    klb_package_idx_t*  p_index;        ///< 索引
 }klb_package_r_t;
+
+
+static bool read_head_klb_package_r(FILE* pf, int64_t offset, klb_package_head_t* p_head)
+{
+    fseek(pf, 0, SEEK_END);
+    int64_t filelen = ftell(pf);
+
+    fseek(pf, offset, SEEK_SET);
+    fread(p_head, sizeof(klb_package_head_t), 1, pf);
+
+    return true;
+}
+
+static void read_idx_klb_package_r(klb_package_r_t* p_kpa)
+{
+    if (p_kpa->idx_count <= 0)
+    {
+        return;
+    }
+
+    int64_t idx_len = p_kpa->idx_count * sizeof(klb_package_idx_t);
+
+    fseek(p_kpa->pf, p_kpa->offset + p_kpa->head.idx_pos, SEEK_SET);
+    fread(p_kpa->p_index, idx_len, 1, p_kpa->pf);
+}
 
 klb_package_r_t* klb_package_r_open(const char* p_path)
 {
-    return NULL;
+    FILE* pf = fopen(p_path, "rb");
+    if (NULL == pf)
+    {
+        return NULL;
+    }
+
+    klb_package_head_t head = { 0 };
+    int64_t offset = 0;
+
+    if (!read_head_klb_package_r(pf, offset, &head))
+    {
+        fclose(pf);
+        return NULL;
+    }
+
+    klb_package_r_t* p_kpa = KLB_MALLOCZ(klb_package_r_t, 1, 0);
+    p_kpa->pf = pf;
+
+    p_kpa->offset = offset;
+    memcpy(&p_kpa->head, &head, sizeof(klb_package_head_t));
+
+    p_kpa->idx_count = head.idx_len / sizeof(klb_package_idx_t);
+    p_kpa->p_index = KLB_MALLOC(klb_package_idx_t, p_kpa->idx_count, 4);
+
+    read_idx_klb_package_r(p_kpa);
+
+    return p_kpa;
 }
 
 void klb_package_r_close(klb_package_r_t* p_kpa)
 {
+    assert(NULL != p_kpa);
+    assert(NULL != p_kpa->pf);
 
+    KLB_FREE(p_kpa->p_index);
+    KLB_FREE_BY(p_kpa->pf, fclose);
+    KLB_FREE(p_kpa);
 }
 
 int64_t klb_package_r_size(klb_package_r_t* p_kpa)
 {
-    return 0;
+    return p_kpa->idx_count;
 }
 
 int klb_package_r_read(klb_package_r_t* p_kpa, int64_t idx, char** p_key, klb_buf_t** p_value)
 {
+    if (idx < 0 || p_kpa->idx_count <= idx)
+    {
+        return 1;
+    }
+
+    klb_package_idx_t* p_info = &p_kpa->p_index[idx];
+
+    if (0 < p_info->key_len)
+    {
+        char* ptr = KLB_MALLOC(char, p_info->key_len, 4);
+
+        fseek(p_kpa->pf, p_kpa->offset + p_info->key_pos, SEEK_SET);
+        fread(ptr, p_info->key_len, 1, p_kpa->pf);
+
+        ptr[p_info->key_len] = 0;
+        *p_key = ptr;
+    }
+    else
+    {
+        *p_key = KLB_MALLOCZ(char, 4, 0);
+    }
+
+    if (0 < p_info->value_len)
+    {
+        klb_buf_t* p_tmp = klb_buf_malloc(p_info->value_len, false);
+
+        fseek(p_kpa->pf, p_kpa->offset + p_info->value_pos, SEEK_SET);
+        fread(p_tmp->p_buf, p_info->value_len, 1, p_kpa->pf);
+
+        p_tmp->end = p_info->value_len;
+
+        *p_value = p_tmp;
+    }
+    else
+    {
+        *p_value = NULL;
+    }
+
     return 0; 
 }

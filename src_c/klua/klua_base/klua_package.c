@@ -10,6 +10,9 @@
 
 #define KLUA_KKPA_W_HANDLE     "KLUA_KKPA_W_HANDLE*"
 
+
+/// @struct klua_kkpa_r_t
+/// @brief  写
 typedef struct klua_kkpa_w_t_
 {
     klua_env_t*             p_env;          ///< lua环境
@@ -152,10 +155,15 @@ static void klua_kkpa_w_createmeta(lua_State* L)
 
 #define KLUA_KKPA_R_HANDLE     "KLUA_KKPA_R_HANDLE*"
 
+
+/// @struct klua_kkpa_r_t
+/// @brief  读
 typedef struct klua_kkpa_r_t_
 {
     klua_env_t*             p_env;          ///< lua环境
     lua_State*              L;              ///< L
+
+    klb_package_r_t*        p_package;      ///< 读
 }klua_kkpa_r_t;
 
 
@@ -164,6 +172,10 @@ static klua_kkpa_r_t* new_klua_kkpa_r(lua_State* L)
     klua_kkpa_r_t* p_kkpa = (klua_kkpa_r_t*)lua_newuserdata(L, sizeof(klua_kkpa_r_t));
     KLB_MEMSET(p_kkpa, 0, sizeof(klua_kkpa_r_t));
     luaL_setmetatable(L, KLUA_KKPA_R_HANDLE);
+
+    p_kkpa->L = L;
+    p_kkpa->p_env = klua_env_get_by_L(L);
+
     return p_kkpa;
 }
 
@@ -174,29 +186,88 @@ static klua_kkpa_r_t* to_klua_kkpa_r(lua_State* L, int index)
     return p_kkpa;
 }
 
+static void close_klua_kkpa_r(klua_kkpa_r_t* p_kkpa)
+{
+    KLB_FREE_BY(p_kkpa->p_package, klb_package_r_close);
+}
 
 static int klua_kkpa_r_open(lua_State* L)
 {
-    return 0;
+    const char* p_path = luaL_checkstring(L, 1);
+
+    klb_package_r_t* p_package = klb_package_r_open(p_path);
+    if (NULL != p_package)
+    {
+        klua_kkpa_r_t* p_kkpa = new_klua_kkpa_r(L);
+        p_kkpa->p_package = p_package;
+    }
+    else
+    {
+        lua_pushnil(L);
+    }
+
+    return 1;
 }
 
 static int klua_kkpa_r_close(lua_State* L)
 {
+    klua_kkpa_r_t* p_kkpa = to_klua_kkpa_r(L, 1);
+    close_klua_kkpa_r(p_kkpa);
     return 0;
+}
+
+static int klua_kkpa_r_size(lua_State* L)
+{
+    klua_kkpa_r_t* p_kkpa = to_klua_kkpa_r(L, 1);
+
+    lua_pushinteger(L, klb_package_r_size(p_kkpa->p_package));
+    return 1;
 }
 
 static int klua_kkpa_r_read(lua_State* L)
 {
-    return 0;
+    klua_kkpa_r_t* p_kkpa = to_klua_kkpa_r(L, 1);
+    int64_t idx = luaL_checkinteger(L, 2);
+
+    char* p_key = NULL;
+    klb_buf_t* p_value = NULL;
+
+    if (0 == klb_package_r_read(p_kkpa->p_package, idx - 1, &p_key, &p_value))
+    {
+        lua_pushstring(L, p_key);
+
+        if (NULL != p_value)
+        {
+            lua_pushlstring(L, p_value->p_buf + p_value->start, p_value->end - p_value->start);
+        }
+        else
+        {
+            lua_pushnil(L);
+        }
+
+        KLB_FREE(p_key);
+        KLB_FREE(p_value);
+    }
+    else
+    {
+        lua_pushnil(L);
+        lua_pushnil(L);
+    }
+
+    return 2;
 }
 
 static int klua_kkpa_r_gc(lua_State* L)
 {
+    klua_kkpa_r_t* p_kkpa = to_klua_kkpa_r(L, 1);
+    close_klua_kkpa_r(p_kkpa);
     return 0;
 }
 
 static int klua_kkpa_r_tostring(lua_State* L)
 {
+    klua_kkpa_r_t* p_kkpa = to_klua_kkpa_r(L, 1);
+    lua_pushfstring(L, "kkpa_r:%p", p_kkpa);
     return 1;
 }
 
@@ -204,6 +275,8 @@ static void klua_kkpa_r_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
         { "close",          klua_kkpa_r_close },
+
+        { "size",           klua_kkpa_r_size },
         { "read",           klua_kkpa_r_read },
 
         { NULL,             NULL }
