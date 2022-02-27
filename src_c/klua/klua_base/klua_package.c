@@ -1,4 +1,5 @@
 ﻿#include "klb_type.h"
+#include "klbmem/klb_mem.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbbase/klb_package.h"
@@ -13,13 +14,20 @@ typedef struct klua_kkpa_w_t_
 {
     klua_env_t*             p_env;          ///< lua环境
     lua_State*              L;              ///< L
+
+    klb_package_w_t*        p_package;      ///< 写包
 }klua_kkpa_w_t;
+
 
 static klua_kkpa_w_t* new_klua_kkpa_w(lua_State* L)
 {
     klua_kkpa_w_t* p_kkpa = (klua_kkpa_w_t*)lua_newuserdata(L, sizeof(klua_kkpa_w_t));
     KLB_MEMSET(p_kkpa, 0, sizeof(klua_kkpa_w_t));
     luaL_setmetatable(L, KLUA_KKPA_W_HANDLE);
+
+    p_kkpa->L = L;
+    p_kkpa->p_env = klua_env_get_by_L(L);
+
     return p_kkpa;
 }
 
@@ -30,28 +38,85 @@ static klua_kkpa_w_t* to_klua_kkpa_w(lua_State* L, int index)
     return p_kkpa;
 }
 
+static void close_klua_kkpa_w(klua_kkpa_w_t* p_kkpa)
+{
+    KLB_FREE_BY(p_kkpa->p_package, klb_package_w_close);
+}
+
 static int klua_kkpa_w_open(lua_State* L)
 {
-    return 0;
+    const char* p_path = luaL_checkstring(L, 1);
+
+    klb_package_w_t* p_package = klb_package_w_open(p_path);
+    if (NULL != p_package)
+    {
+        klua_kkpa_w_t* p_kkpa = new_klua_kkpa_w(L);
+        p_kkpa->p_package = p_package;
+    }
+    else
+    {
+        lua_pushnil(L);
+    }
+
+    return 1;
 }
 
 static int klua_kkpa_w_close(lua_State* L)
 {
+    klua_kkpa_w_t* p_kkpa = to_klua_kkpa_w(L, 1);
+    close_klua_kkpa_w(p_kkpa);
     return 0;
 }
 
 static int klua_kkpa_w_write(lua_State* L)
 {
-    return 0;
+    klua_kkpa_w_t* p_kkpa = to_klua_kkpa_w(L, 1);
+
+    size_t key_len = 0;
+    const char* p_key = luaL_checklstring(L, 2, &key_len);
+
+    size_t value_len = 0;
+    const char* p_value = luaL_checklstring(L, 3, &value_len);
+
+    int ret = 1;
+    if (NULL != p_kkpa->p_package)
+    {
+        ret = klb_package_w_write(p_kkpa->p_package, p_key, key_len, p_value, value_len);
+    }
+
+    lua_pushboolean(L, (0 == ret) ? 1 : 0);
+    return 1;
+}
+
+static int klua_kkpa_w_write_file(lua_State* L)
+{
+    klua_kkpa_w_t* p_kkpa = to_klua_kkpa_w(L, 1);
+
+    size_t key_len = 0;
+    const char* p_key = luaL_checklstring(L, 2, &key_len);
+    const char* p_filepath = luaL_checkstring(L, 3);
+
+    int ret = 1;
+    if (NULL != p_kkpa->p_package)
+    {
+        ret = klb_package_w_write_file(p_kkpa->p_package, p_key, key_len, p_filepath);
+    }
+
+    lua_pushboolean(L, (0 == ret) ? 1 : 0);
+    return 1;
 }
 
 static int klua_kkpa_w_gc(lua_State* L)
 {
+    klua_kkpa_w_t* p_kkpa = to_klua_kkpa_w(L, 1);
+    close_klua_kkpa_w(p_kkpa);
     return 0;
 }
 
 static int klua_kkpa_w_tostring(lua_State* L)
 {
+    klua_kkpa_w_t* p_kkpa = to_klua_kkpa_w(L, 1);
+    lua_pushfstring(L, "kkpa_w:%p", p_kkpa);
     return 1;
 }
 
@@ -60,6 +125,7 @@ static void klua_kkpa_w_createmeta(lua_State* L)
     static luaL_Reg meth[] = {
         { "close",          klua_kkpa_w_close },
         { "write",          klua_kkpa_w_write },
+        { "write_file",     klua_kkpa_w_write_file },
 
         { NULL,             NULL }
     };
@@ -160,12 +226,8 @@ static void klua_kkpa_r_createmeta(lua_State* L)
 }
 
 //////////////////////////////////////////////////////////////////////////
+//
 
-
-static int lib_klua_kkpa_open(lua_State* L)
-{
-    return 1;
-}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -173,7 +235,8 @@ int klua_open_kkpa(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
-        { "open",               lib_klua_kkpa_open },
+        { "open_w",             klua_kkpa_w_open },
+        { "open_r",             klua_kkpa_r_open },
 
         { NULL,                 NULL }
     };

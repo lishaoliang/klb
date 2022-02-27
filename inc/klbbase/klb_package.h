@@ -41,14 +41,14 @@ KLB_API void klb_package_w_close(klb_package_w_t* p_kpa);
 /// @brief 写入打包文件: 数据源为缓存
 /// @param [in]  *p_kpa        模块
 /// @return int 0.成功; 非0.错误
-KLB_API int klb_package_w_write(klb_package_w_t* p_kpa, const char* p_key, const char* p_data, int data_len);
+KLB_API int klb_package_w_write(klb_package_w_t* p_kpa, const char* p_key, int key_len, const char* p_data, int data_len);
 
 
 
 /// @brief 写入文件: 数据源为文件
 /// @param [in]  *p_kpa        模块
 /// @return int 0.成功; 非0.错误
-KLB_API int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, const char* p_path);
+KLB_API int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, int key_len, const char* p_path);
 
 
 /// @struct klb_package_r_t

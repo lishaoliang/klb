@@ -1713,5 +1713,8 @@
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_package.c">
       <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_ksys.c">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

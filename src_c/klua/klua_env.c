@@ -663,6 +663,11 @@ bool klua_env_is_exit(klua_env_t* p_env)
     return p_env->is_exit;
 }
 
+void klua_env_exit(klua_env_t* p_env)
+{
+    p_env->is_exit = true;
+}
+
 /// @brief 设置名称
 /// @param [in] *p_env              lua环境
 /// @return 无

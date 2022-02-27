@@ -190,6 +190,12 @@ KLB_API int klua_env_loop_once(klua_env_t* p_env);
 KLB_API bool klua_env_is_exit(klua_env_t* p_env);
 
 
+/// @brief 退出
+/// @param [in] *p_env              lua环境
+/// @return 无
+KLB_API void klua_env_exit(klua_env_t* p_env);
+
+
 /// @brief 设置名称
 /// @param [in] *p_env              lua环境
 /// @return 无

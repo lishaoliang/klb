@@ -15,7 +15,7 @@ local ktime = {}
 -- @param [in]  	ms[number(int)]	休眠毫秒
 -- @return 无
 ktime.sleep = function (ms)
-	
+	return
 end
 
 
@@ -23,7 +23,7 @@ end
 -- @param [in]  	ns[number(int)]	休眠纳秒
 -- @return 无
 ktime.sleep_ns = function (ns)
-	
+	return
 end
 
 
