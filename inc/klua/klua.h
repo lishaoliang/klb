@@ -84,6 +84,10 @@ KLB_API int klua_ref_registryindex(lua_State* L, int arg);
 KLB_API void klua_unref_registryindex(lua_State* L, int reg);
 
 
+/// @brief 是否为协程
+KLB_API bool klua_is_coroutine(lua_State* L);
+
+
 /// @brief 扩展库"cjson"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -118,6 +122,12 @@ KLB_API int klua_open_lsqlite3(lua_State* L);
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_LuaXML_lib(lua_State* L);
+
+
+/// @brief 扩展库"kco", 协程库
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kco(lua_State* L);
 
 
 /// @brief 扩展库"kos"
@@ -225,6 +235,7 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_lfs,          "lfs");         \
     klua_loadlib(L, klua_open_lsqlite3,     "lsqlite3");    \
     klua_loadlib(L, klua_open_LuaXML_lib,   "LuaXML_lib");  \
+    klua_loadlib(L, klua_open_kco,          "kco");         \
     klua_loadlib(L, klua_open_kos,          "kos");         \
     klua_loadlib(L, klua_open_ksys,         "ksys");        \
     klua_loadlib(L, klua_open_krand,        "krand");       \

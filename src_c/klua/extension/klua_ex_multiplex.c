@@ -22,7 +22,7 @@ static void* klua_ex_multiplex_create(klua_env_t* p_env)
 
     p_ex->p_env = p_env;
 
-    p_ex->p_multi = klb_multiplex_create();
+    p_ex->p_multi = klb_multiplex_create(klua_env_get_tick_count(p_env));
 
     return p_ex;
 }

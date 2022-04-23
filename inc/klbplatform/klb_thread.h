@@ -52,6 +52,10 @@ KLB_API klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, in
 KLB_API void klb_thread_destroy(klb_thread_t* p_thread);
 
 
+/// @brief 等待线程启动
+KLB_API void klb_thread_wait(klb_thread_t* p_thread);
+
+
 /// @brief 获取进程ID
 KLB_API int klb_thread_pid();
 

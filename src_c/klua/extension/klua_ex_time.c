@@ -173,7 +173,7 @@ int klua_ex_time_new_timer_once(klua_ex_time_t* p_time, lua_State* L, lua_Intege
     KLB_MEMSET(p_once, 0, sizeof(klua_ex_time_reg_t));
 
     p_once->status = KLUA_EX_TIME_REG_RUN;
-    p_once->tc = klua_env_get_tc(p_time->p_env);
+    p_once->tc = klua_env_get_tick_count(p_time->p_env);
     p_once->interval = wait;
     p_once->reg = reg;
 
@@ -195,7 +195,7 @@ int klua_ex_time_new_ticker(klua_ex_time_t* p_time, lua_State* L, const char* p_
     KLB_MEMSET(p_ticker, 0, sizeof(klua_ex_time_reg_t));
 
     p_ticker->status = KLUA_EX_TIME_REG_RUN;
-    p_ticker->tc = klua_env_get_tc(p_time->p_env);
+    p_ticker->tc = klua_env_get_tick_count(p_time->p_env);
     p_ticker->interval = interval;
     p_ticker->reg = reg;
 

@@ -10,6 +10,8 @@
 #define KLB_MULTIPLEX_ID_MIN        1000
 #define KLB_MULTIPLEX_ID_MAX        0x7FFF0000
 
+#define KLB_MULTIPLEX_TIMER         (2 * 1000)
+
 
 typedef struct klb_multiplex_remove_t_
 {
@@ -32,6 +34,8 @@ typedef struct klb_multiplex_t_
     klb_list_t*         p_remove_list;  ///< 待移除列表: klb_multiplex_remove_t*
 
     int                 next_id;        ///< 下一个ID号
+    int64_t             tc;             ///< 计时: 当前时间
+    int64_t             timer_tc;       ///< 上一次定时器时间
 }klb_multiplex_t;
 
 
@@ -64,7 +68,7 @@ static int klb_multiplex_get_id(klb_multiplex_t* p_ex)
     return KLB_MULTIPLEX_ID_MIN;
 }
 
-klb_multiplex_t* klb_multiplex_create()
+klb_multiplex_t* klb_multiplex_create(int64_t tc)
 {
     klb_multiplex_t* p_multi = KLB_MALLOC(klb_multiplex_t, 1, 0);
     KLB_MEMSET(p_multi, 0, sizeof(klb_multiplex_t));
@@ -73,6 +77,8 @@ klb_multiplex_t* klb_multiplex_create()
     p_multi->p_remove_list = klb_list_create();
 
     p_multi->next_id = KLB_MULTIPLEX_ID_MIN;
+    p_multi->tc = tc;
+    p_multi->timer_tc = tc;
 
     return p_multi;
 }
@@ -174,7 +180,7 @@ static int klb_multiplex_loop_once_do(klb_multiplex_t* p_multi, int64_t now)
             if (KLB_SOCKET_OK == p_socket->status)
             {
                 // 正常的连接
-                if (FD_ISSET(p_socket->fd, &r_fds))
+                if (p_socket->reading && FD_ISSET(p_socket->fd, &r_fds))
                 {
                     // 注意读取数据前, 须把缓存中的数据处理完毕
                     int recv = p_item->ops.cb_recv(p_item->ops.p_lparam, p_item->ops.p_wparam, p_item->id, now);
@@ -185,7 +191,7 @@ static int klb_multiplex_loop_once_do(klb_multiplex_t* p_multi, int64_t now)
                     }
                 }
 
-                if (FD_ISSET(p_socket->fd, &w_fds))
+                if (p_socket->writing && FD_ISSET(p_socket->fd, &w_fds))
                 {
                     int send = p_item->ops.cb_send(p_item->ops.p_lparam, p_item->ops.p_wparam, p_item->id, now);
 
@@ -238,13 +244,43 @@ static int klb_multiplex_loop_once_remove(klb_multiplex_t* p_multi, int64_t now)
     return 0;
 }
 
+static int klb_multiplex_loop_once_timer(klb_multiplex_t* p_multi, int64_t now)
+{
+    // timer 流程, 可用于检查超时等
+
+    klb_hlist_iter_t* p_iter = (klb_hlist_iter_t*)klb_hlist_begin(p_multi->p_items_hlist);
+    while (NULL != p_iter)
+    {
+        klb_multiplex_item_t* p_item = (klb_multiplex_item_t*)klb_hlist_data(p_iter);
+
+        if (p_item && p_item->ops.cb_timer && KLB_SOCKET_OK == p_item->p_socket->status)
+        {            
+            p_item->ops.cb_timer(p_item->ops.p_lparam, p_item->ops.p_wparam, p_item->id, now);
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+
+    return 0;
+}
+
 int klb_multiplex_loop_once(klb_multiplex_t* p_multi, int64_t now)
 {
+    // 更新计时
+    p_multi->tc = now;
+
     // 执行主体业务
     klb_multiplex_loop_once_do(p_multi, now);
 
     // 可移除对象
     klb_multiplex_loop_once_remove(p_multi, now);
+
+    // 定时器
+    if (KLB_MULTIPLEX_TIMER <= ABS_SUB(now, p_multi->timer_tc))
+    {
+        klb_multiplex_loop_once_timer(p_multi, now);
+        p_multi->timer_tc = now;
+    }
 
     return 0;
 }

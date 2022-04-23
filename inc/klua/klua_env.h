@@ -59,7 +59,7 @@ KLB_API void* klua_env_get_udata(klua_env_t* p_env);
 /// @brief 获取当前lua环境滴答数
 /// @param [in] *p_env             lua环境 
 /// @return int64_t tc
-KLB_API int64_t klua_env_get_tc(klua_env_t* p_env);
+KLB_API int64_t klua_env_get_tick_count(klua_env_t* p_env);
 
 
 /// @brief 按路径方式加载一个脚本文件
@@ -122,6 +122,12 @@ KLB_API int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* 
 /// @param [in] status              非0时, 报错
 /// @return int status
 KLB_API int klua_env_report(klua_env_t* p_env, int status);
+
+/// @brief 报错
+/// @param [in] *p_env              lua环境
+/// @param [in] status              非0时, 报错
+/// @return int status
+KLB_API int klua_env_report_by_L(lua_State* L, int status);
 
 
 /// @struct klua_env_extension_t

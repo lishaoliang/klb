@@ -10,8 +10,8 @@
 /// @history 修改历史
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __CMUTEX_HPP__
-#define __CMUTEX_HPP__
+#ifndef __KLB_CMUTEX_HPP__
+#define __KLB_CMUTEX_HPP__
 
 #include "klb_type.h"
 #include "klbplatform/klb_mutex.h"
@@ -43,4 +43,4 @@ namespace klb {
     };
 }
 
-#endif // __CMUTEX_HPP__
+#endif // __KLB_CMUTEX_HPP__

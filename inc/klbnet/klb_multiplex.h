@@ -27,7 +27,7 @@ typedef struct klb_multiplex_t_ klb_multiplex_t;
 
 /// @brief 创建
 /// @return klb_multiplex_t* 复用对象
-KLB_API klb_multiplex_t* klb_multiplex_create();
+KLB_API klb_multiplex_t* klb_multiplex_create(int64_t tc);
 
 
 /// @brief 销毁
@@ -63,6 +63,14 @@ typedef struct klb_multiplex_ops_t_
     /// @param [in] now                 当前系统滴答(毫秒)
     /// @return int 发送的数据量
     int (*cb_send)(void* p_lparam, void* p_wparam, int id, int64_t now);
+
+    /// @brief 定时调用: eg.处理连接超时检查等
+    /// @param [in] *p_lparam           调用者指定的参数1
+    /// @param [in] *p_wparam           调用者指定的参数2
+    /// @param [in] id                  ID编号
+    /// @param [in] now                 当前系统滴答(毫秒)
+    /// @return int 0
+    int(*cb_timer)(void* p_lparam, void* p_wparam, int id, int64_t now);
 
     /// @brief 调用者设置的参数1
     /// @param [in] *p_lparam           调用者指定的参数1

@@ -10,11 +10,14 @@
 /// @history 修改历史
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __CTHREAD_HPP__
-#define __CTHREAD_HPP__
+#ifndef __KLB_CTHREAD_HPP__
+#define __KLB_CTHREAD_HPP__
+
 
 #include "klb_type.h"
 #include "klbplatform/klb_thread.h"
+#include "klbthird/sds.h"
+
 
 namespace klb {
 
@@ -22,12 +25,18 @@ namespace klb {
     {
     public:
         CThread();
+        CThread(const char* p_name);
+        CThread(const char* p_name, int cpu_idx);
         ~CThread();
 
+    bool Start(klb_thread_cb cb_thread, void* p_obj, bool wait = true);
+    void Stop();
+
     private:
-
+        klb_thread_t*   m_thread;
+        sds             m_name;
+        int             m_cpu_idx;
     };
-
 }
 
-#endif // __CTHREAD_HPP__
+#endif // __KLB_CTHREAD_HPP__

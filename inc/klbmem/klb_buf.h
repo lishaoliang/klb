@@ -60,37 +60,37 @@ typedef struct klb_buf_t_
 /// @param [in] zero            是否初始化
 /// @return klb_buf_t* p_buf
 /// @note 直接通过 free 释放
-klb_buf_t* klb_buf_malloc(int buf_len, bool zero);
+KLB_API klb_buf_t* klb_buf_malloc(int buf_len, bool zero);
 
 
 /// @brief 将有效数据拼接在一起
 /// @param [in]  *p_head        缓存头指针
 /// @return klb_buf_t* KLB_BUF_EXTRA类型缓存; [klb_buf_t][data...]
-klb_buf_t* klb_buf_join(klb_buf_t* p_head);
+KLB_API klb_buf_t* klb_buf_join(klb_buf_t* p_head);
 
 
 /// @brief 引用加一
 /// @param [in]  *p_buf         目标缓存
 /// @return int 
-int klb_buf_ref(klb_buf_t* p_buf);
+KLB_API int klb_buf_ref(klb_buf_t* p_buf);
 
 
 /// @brief 引用减一
 /// @param [in]  *p_buf         目标缓存
 /// @return int 
-int klb_buf_unref(klb_buf_t* p_buf);
+KLB_API int klb_buf_unref(klb_buf_t* p_buf);
 
 
 /// @brief 引用加一: 当前节点及后续节点
 /// @param [in]  *p_buf         目标缓存
 /// @return int 
-int klb_buf_ref_next(klb_buf_t* p_buf);
+KLB_API int klb_buf_ref_next(klb_buf_t* p_buf);
 
 
 /// @brief 引用减一: 当前节点及后续节点
 /// @param [in]  *p_buf         目标缓存
 /// @return int 
-int klb_buf_unref_next(klb_buf_t* p_buf);
+KLB_API int klb_buf_unref_next(klb_buf_t* p_buf);
 
 
 #ifdef __cplusplus

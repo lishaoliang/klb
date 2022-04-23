@@ -20,6 +20,7 @@
 #include "klbthird/sds.h"
 #include "klua/klua_kthread.h"
 #include "klua/extension/klua_extension.h"
+#include "lstate.h"
 #include <assert.h>
 
 
@@ -27,7 +28,7 @@
 #define KLUA_ENV_PTR            "_KLUA_ENV_PTR_"
 #endif
 
-#define KLUA_ENV_GC_TIME_OUT    600000
+#define KLUA_ENV_GC_TIME_OUT    0/*600000*/
 
 
 /// @struct klua_env_extension_activate_t
@@ -161,7 +162,7 @@ void* klua_env_get_udata(klua_env_t* p_env)
     return p_env->p_udata;
 }
 
-int64_t klua_env_get_tc(klua_env_t* p_env)
+int64_t klua_env_get_tick_count(klua_env_t* p_env)
 {
     assert(NULL != p_env);
     return p_env->tc;
@@ -280,7 +281,7 @@ klua_env_t* klua_env_get_by_L(lua_State* L)
 {
     assert(NULL != L);
 
-    return (klua_env_t*)L->udata;
+    return (klua_env_t*)G(L)->mainthread->udata;
 
 #if 0
     lua_getglobal(L, KLUA_ENV_PTR);
@@ -363,6 +364,11 @@ int klua_env_report(klua_env_t* p_env, int status)
 {
     assert(NULL != p_env);
     return klua_help_report(p_env->L, status);
+}
+
+int klua_env_report_by_L(lua_State* L, int status)
+{
+    return klua_help_report(L, status);
 }
 
 static int klua_env_call_kexit(klua_env_t* p_env)
@@ -456,7 +462,7 @@ static int klua_pmain(lua_State *L)
     luaL_openlibs(L);
 
     // 退出函数
-    lua_register(L, "exit", klua_exit);
+    //lua_register(L, "exit", klua_exit);
 
     // 加载"k*"系列额外库
     //klua_loadlib(L, klua_open_kos, "kos");

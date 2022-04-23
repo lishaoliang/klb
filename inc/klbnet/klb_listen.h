@@ -43,9 +43,10 @@ KLB_API int klb_listen_open(klb_listen_t* p_listen, int port, int max_connect);
 KLB_API int klb_listen_open_unix(klb_listen_t* p_listen, int port, int max_connect);
 KLB_API int klb_listen_close(klb_listen_t* p_listen);
 
+/// @brief 获取鉴定端口
+KLB_API int klb_listen_port(klb_listen_t* p_listen);
 
 typedef int(*klb_listen_accept_cb)(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr);
-
 
 KLB_API int klb_listen_set_accept(klb_listen_t* p_listen, klb_listen_accept_cb cb_accept, void* ptr);
 

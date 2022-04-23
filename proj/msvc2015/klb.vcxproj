@@ -73,7 +73,7 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libklb</TargetName>
     <IntDir>$(ProjectName)_$(Configuration)</IntDir>
-    <OutDir>..\..\lib</OutDir>
+    <OutDir>$(ProjectName)_$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -90,7 +90,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_USE_OPEN_SSL__;__KLB_BUILD_DLL__;DEBUG_VLD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_USE_OPEN_SSL__;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -99,6 +99,10 @@
       <AdditionalLibraryDirectories>..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y $(ProjectName)_$(Configuration)\libklb.dll ..\..\lib
+xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -317,6 +321,8 @@
     <ClInclude Include="..\..\inc\klua\klua_data.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
     <ClInclude Include="..\..\inc\klua\klua_kthread.h" />
+    <ClInclude Include="..\..\inc_hpp\klbnet\CListen.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbnet\CMultiplex.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CMutex.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CThread.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CMap.hpp" />
@@ -335,6 +341,7 @@
     <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h" />
     <ClInclude Include="..\..\src_c\klbutil\klb_canvas_in.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_coroutine.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
@@ -474,6 +481,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_cpp\klbmain\CKlbMain.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CMutex.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CThread.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CMap.cpp" />
@@ -536,11 +545,13 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_coroutine.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_kcoro.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c" />

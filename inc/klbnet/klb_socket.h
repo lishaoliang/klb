@@ -119,9 +119,11 @@ KLB_API int klb_socket_init();
 /// @note WIN32网络退出
 KLB_API void klb_socket_quit();
 
-
 /// @brief 销毁
 KLB_API void klb_socket_destroy(klb_socket_t* p_socket);
+
+/// @brief 进入关闭状态, 调用者不再接收/发送此socket的数据, 进入等待被销毁
+KLB_API void klb_socket_closeing(klb_socket_t* p_socket);
 
 /// @brief TCP发送数据
 KLB_API int klb_socket_send(klb_socket_t* p_socket, const uint8_t* p_data, int len);

@@ -30,6 +30,8 @@ typedef struct klb_thread_t_
 
     int             cpu_idx;        ///< 需要设置CPU序号
     char*           p_name;         ///< 需要设置的线程名称
+
+    bool            wait;           ///< 需创建者等待
 }klb_thread_t;
 
 
@@ -39,6 +41,9 @@ static DWORD WINAPI cb_klb_thread(void* p_obj)
 
     // 初始随机值
     srand(klb_tick_count() + klb_thread_tid());
+
+    // 等待标记
+    p_thread->wait = false;
 
     if (NULL != p_thread->cb_thread)
     {
@@ -60,6 +65,8 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     p_thread->cpu_idx = cpu_idx;
 
     p_thread->run = true;
+    p_thread->wait = true;
+
     p_thread->hnd = CreateThread(0, 0, cb_klb_thread, (void *)p_thread, 0, NULL);
 
     if (NULL == p_thread->hnd)
@@ -85,6 +92,16 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 
     KLB_FREE(p_thread->p_name);
     KLB_FREE(p_thread);
+}
+
+void klb_thread_wait(klb_thread_t* p_thread)
+{
+    assert(NULL != p_thread);
+
+    while (p_thread->wait)
+    {
+        klb_sleep(1);
+    }
 }
 
 /// @brief 获取进程ID
@@ -135,6 +152,8 @@ typedef struct klb_thread_t_
 
     int             cpu_idx;        ///< 需要设置CPU序号
     char*           p_name;         ///< 需要设置的线程名称
+
+    bool            wait;           ///< 需创建者等待
 }klb_thread_t;
 
 
@@ -168,6 +187,9 @@ static void* cb_klb_thread(void* p_obj)
     // 初始随机值
     srand(klb_tick_count() + klb_thread_tid());
 
+    // 等待标记
+    p_thread->wait = false;
+
     if (NULL != p_thread->cb_thread)
     {
         p_thread->cb_thread(p_thread->p_obj, &p_thread->run);
@@ -188,6 +210,7 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     p_thread->cpu_idx = cpu_idx;
 
     p_thread->run = true;
+    p_thread->wait = true;
 
     if (0 != pthread_create(&(p_thread->hnd), 0, cb_klb_thread, p_thread))
     {

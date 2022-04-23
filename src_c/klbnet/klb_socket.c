@@ -93,6 +93,18 @@ void klb_socket_destroy(klb_socket_t* p_socket)
     }
 }
 
+void klb_socket_closeing(klb_socket_t* p_socket)
+{
+    // 主动关闭状态
+    if (KLB_SOCKET_OK == p_socket->status)
+    {
+        p_socket->status = KLB_SOCKET_CLOSEING;
+    }
+
+    klb_socket_set_reading(p_socket, false);    // 关闭读
+    klb_socket_set_writing(p_socket, false);    // 关闭写
+}
+
 int klb_socket_send(klb_socket_t* p_socket, const uint8_t* p_data, int len)
 {
     assert(NULL != p_socket);

@@ -10,6 +10,7 @@
 ///////////////////////////////////////////////////////////////////////////
 #include "klua/klua.h"
 #include "klbmem/klb_mem.h"
+#include "lstate.h"
 #include <assert.h>
 
 
@@ -78,8 +79,15 @@ void klua_setfield_lstring(lua_State* L, const char* p_key, const char* p_value,
 
 int klua_ref_registryindex(lua_State* L, int arg)
 {
+    int reg = 0;
     lua_pushvalue(L, arg);
-    int reg = luaL_ref(L, LUA_REGISTRYINDEX);
+
+    if (klua_is_coroutine(L))
+    {
+        lua_xmove(L, G(L)->mainthread, 1);    /* move function from L to mainthread */
+    }
+
+    reg = luaL_ref(G(L)->mainthread, LUA_REGISTRYINDEX);
     assert(0 < reg);
 
     return reg;
@@ -89,8 +97,13 @@ void klua_unref_registryindex(lua_State* L, int reg)
 {
     if (0 < reg)
     {
-        luaL_unref(L, LUA_REGISTRYINDEX, reg);
+        luaL_unref(G(L)->mainthread, LUA_REGISTRYINDEX, reg);
     }
+}
+
+bool klua_is_coroutine(lua_State* L)
+{
+    return (G(L)->mainthread == L) ? false : true;
 }
 
 //////////////////////////////////////////////////////////////////////////

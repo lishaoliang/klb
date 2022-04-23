@@ -42,18 +42,18 @@ http.get = function (url, data, cb)
 		end
 	end
 	
-	local conn = khttp.connect(host, tonumber(port), tls)
+	local conn = khttp.connect(host, tonumber(port), 'tls', tls, 'timeout', 20 * 1000)
 	
 	if nil == conn then
 		cb('', 'error')
 		return
 	end
 	
-	conn:set_on_recv(function (msg, s1, s2)		
+	conn:on_recv(function (msg, s1, s2)		
 		if 'disconnect' == msg then
 			cb('', 'error')
 			conn:close()
-		elseif 'http' == msg then
+		elseif 'status' == msg then
 			--print(msg, s1, s2)
 		elseif 'header' == msg then
 			--print(msg, s1, s2)
@@ -109,6 +109,101 @@ end
 -- 参考 jQuery.post() https://www.runoob.com/jquery/ajax-post.html
 http.post = function (url, data, cb)
 	
+end
+
+
+http.co_get = function (url)	
+	-- eg. http://username:password@127.0.0.1:8080/test/test.aspx?name=sviergn&x=true#stuff
+	local u = kurl.parse(url)
+	
+	local schema = u['schema'] or 'http'
+	local host = u['host'] or ''	
+	local port = '80'
+	local tls = false
+
+	if cmp_ignore_case('https', schema) then
+		tls = true
+	end
+	
+	if u['port'] then
+		port = u['port']
+	else
+		if tls then
+			port = '443'
+		end
+	end
+	
+	local conn = khttp.connect(host, tonumber(port), 'tls', tls, 'timeout', 20 * 1000)
+	
+	if nil == conn then
+		return '', 'error'
+	end
+	
+	local get_request_str = function ()	
+		local path = u['path'] or '/'
+		local query = u['query']
+		local fragment = u['fragment']
+		
+		local t = {}
+		
+		table.insert(t, path)
+		
+		if query then
+			table.insert(t, '?')
+			table.insert(t, query)
+		end
+		
+		if fragment then
+			table.insert(t, '#')
+			table.insert(t, fragment)
+		end
+		
+		return table.concat(t)
+	end
+
+	local pack_get_header = function ()
+		local t = {}
+		
+		table.insert(t, string.format('GET %s HTTP/1.1\r\n', get_request_str()))
+		table.insert(t, string.format('Host: %s:%s\r\n', host, port))
+		table.insert(t, string.format('User-Agent: %s\r\n', user_agent))
+		table.insert(t, 'Connection: close\r\n')	-- close,keep-alive
+		table.insert(t, 'Content-Length: 0\r\n')
+		table.insert(t, '\r\n')
+		
+		return table.concat(t)
+	end
+	
+	conn:send(pack_get_header())
+
+	local body = ''
+	local status = 'error'
+	
+	while true do
+		local msg, s1, s2 = conn:recv()
+		
+		if 'status' == msg then
+			--print(msg, s1, s2)
+		elseif 'header' == msg then
+			--print(msg, s1, s2)
+		elseif 'header_complete' == msg then
+			--break
+			--print(msg, s1, s2)
+		elseif 'disconnect' == msg then
+			--print(msg, s1, s2)
+			break
+		elseif 'body' == msg then
+			body = s1
+			status = 'success'
+			break
+		else
+			--print(msg, s1, s2)
+		end
+	end
+	
+	conn:close()
+	
+	return body, status
 end
 
 return http
