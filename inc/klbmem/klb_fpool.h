@@ -3,9 +3,6 @@
 //
 /// @file    klb_fpool.h
 /// @brief   klb fix pool固定大小内存池
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -24,11 +21,15 @@ extern "C" {
 typedef struct klb_fpool_t_ klb_fpool_t;
 
 
-klb_fpool_t* klb_fpool_create();
-void klb_fpool_destroy(klb_fpool_t* p_pool);
+KLB_API klb_fpool_t* klb_fpool_create(int item_size, int item_num);
+KLB_API void klb_fpool_destroy(klb_fpool_t* p_pool);
 
 
-klb_buf_t* klb_fpool_malloc(klb_fpool_t* p_pool);
+KLB_API klb_buf_t* klb_fpool_malloc(void* p_pool, size_t size);
+
+
+KLB_API int klb_fpool_ref(klb_buf_t* p_buf);
+KLB_API int klb_fpool_unref(klb_buf_t* p_buf);
 
 
 #ifdef __cplusplus

@@ -73,7 +73,7 @@ static void my_dev_push_msg(my_dev_t* p_dev, int msg, int x1, int y1, int x2, in
 {
     if (NULL != p_dev->cb_msg)
     {
-        p_dev->cb_msg(msg, x1, y1, x2, y2, lparam, wparam);
+        p_dev->cb_msg(p_dev->p_obj, msg, x1, y1, x2, y2, lparam, wparam);
     }
 }
 

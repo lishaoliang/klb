@@ -1,12 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//
-/// @file    klb_socket.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   文件简要描述
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_mem.h"
@@ -93,7 +85,7 @@ void klb_socket_destroy(klb_socket_t* p_socket)
     }
 }
 
-void klb_socket_closeing(klb_socket_t* p_socket)
+void klb_socket_closing(klb_socket_t* p_socket)
 {
     // 主动关闭状态
     if (KLB_SOCKET_OK == p_socket->status)
@@ -315,7 +307,7 @@ static klb_socket_fd connect_tcp(const struct sockaddr_in* p_addr, int time_out)
     // 最后将 0 <= time_out 的连接还原为阻塞方式
     klb_socket_set_block(fd, false);
 
-    if (0 != connect(fd, p_addr, sizeof(struct sockaddr_in)))
+    if (0 != connect(fd, (const struct sockaddr*)p_addr, sizeof(struct sockaddr_in)))
     {
 #ifdef _WIN32
         int err = WSAGetLastError();
@@ -500,6 +492,36 @@ klb_socket_fd klb_socket_accept(klb_socket_fd fd_listen, struct sockaddr_in* p_a
     }
 
     return fd;
+}
+
+klb_socket_fd klb_socket_udp()
+{
+    klb_socket_fd fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (INVALID_SOCKET == fd)
+    {
+        return INVALID_SOCKET;
+    }
+
+    // 端口释放后立即就可以被再次使用
+    if (0 != klb_socket_set_reuseaddr(fd))
+    {
+        goto err_udp;
+    }
+
+    return fd;
+
+err_udp:
+    KLB_SOCKET_CLOSE(fd);
+    return INVALID_SOCKET;
+}
+
+/// @brief 绑定socket
+int klb_socket_bind(klb_socket_fd fd, const struct sockaddr* p_addr, int addrlen)
+{
+    int ret = bind(fd, p_addr, addrlen);
+    assert(0 == ret);
+
+    return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////

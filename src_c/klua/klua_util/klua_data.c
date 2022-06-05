@@ -1,4 +1,5 @@
-﻿#include "klua/klua_data.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua_data.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
@@ -102,33 +103,17 @@ void klua_pushdata(lua_State* L, const klua_data_t* p_data)
     }
 }
 
-void klua_ctrlex_msg_destroy(klua_msg_t* p_msg)
-{
-    klua_ctrlex_msg_t* p_ctrlex_msg = (klua_ctrlex_msg_t*)p_msg;
+//void klua_ctrlex_msg_destroy(klua_msg_t* p_msg)
+//{
+//    klua_ctrlex_msg_t* p_ctrlex_msg = (klua_ctrlex_msg_t*)p_msg;
+//
+//    KLB_FREE_BY(p_ctrlex_msg->ex_name, sdsfree);
+//
+//    for (int i = 0; i < p_ctrlex_msg->data_num; i++)
+//    {
+//        klua_emptydata(&p_ctrlex_msg->data[i]);
+//    }
+//
+//    KLB_FREE(p_ctrlex_msg);
+//}
 
-    KLB_FREE_BY(p_ctrlex_msg->ex_name, sdsfree);
-
-    for (int i = 0; i < p_ctrlex_msg->data_num; i++)
-    {
-        klua_emptydata(&p_ctrlex_msg->data[i]);
-    }
-
-    KLB_FREE(p_ctrlex_msg);
-}
-
-void klua_lpc_msg_destroy(klua_msg_t* p_msg)
-{
-    klua_lpc_msg_t* p_lpc_msg = (klua_lpc_msg_t*)p_msg;
-
-    KLB_FREE_BY(p_lpc_msg->ex_name, sdsfree);
-    KLB_FREE_BY(p_lpc_msg->src_name, sdsfree);
-    KLB_FREE_BY(p_lpc_msg->func_name, sdsfree);
-    KLB_FREE_BY(p_lpc_msg->sequence, sdsfree);
-
-    for (int i = 0; i < p_lpc_msg->data_num; i++)
-    {
-        klua_emptydata(&p_lpc_msg->data[i]);
-    }
-
-    KLB_FREE(p_lpc_msg);
-}

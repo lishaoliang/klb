@@ -1,4 +1,5 @@
-﻿#include "klua/klua_multithread/klua_multithread.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua_multithread/klua_multithread.h"
 #include <assert.h>
 
 

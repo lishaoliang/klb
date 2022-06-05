@@ -1,4 +1,5 @@
-﻿#include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbnet/klb_ncm.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_list.h"
@@ -28,15 +29,14 @@ typedef struct klb_ncm_ops_http_t_
 /// @brief 创建连接
 /// @param [in] *p_ncm          ncm模块
 /// @return void* 连接的指针
-static void* cb_create_klb_ncm_ops_http(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, int protocol, int id)
+static void* cb_create_klb_ncm_ops_http(klb_ncm_ops_lparam_t* p_lparam, klb_ncm_ops_wparam_t* p_wparam)
 {
-    klb_ncm_ops_http_t* p_ops = KLB_MALLOC(klb_ncm_ops_http_t, 1, 0);
-    KLB_MEMSET(p_ops, 0, sizeof(klb_ncm_ops_http_t));
+    klb_ncm_ops_http_t* p_ops = KLB_MALLOCZ(klb_ncm_ops_http_t, 1, 0);
 
-    p_ops->p_ncm = p_ncm;
-    p_ops->protocol = protocol;
-    p_ops->id = id;
-    p_ops->cb_recv_to_ncm = cb_recv;
+    p_ops->p_ncm = p_lparam->p_ncm;
+    p_ops->protocol = p_lparam->protocol;
+    p_ops->id = p_lparam->id;
+    p_ops->cb_recv_to_ncm = p_lparam->cb_recv;
 
     p_ops->p_http = klb_http_create(HTTP_REQUEST);
 
@@ -62,7 +62,7 @@ static void cb_destroy_klb_ncm_ops_http(void* ptr)
 /// @param [in] *p_data         初始已经读取的数据
 /// @param [in] data_len        数据长度
 /// @return int 0.成功; 非0.失败
-static int cb_init_klb_ncm_ops_http(void* ptr, const uint8_t* p_data, int data_len)
+static int cb_init_klb_ncm_ops_http(void* ptr, klb_socket_t* p_socket, const uint8_t* p_data, int data_len)
 {
     klb_ncm_ops_http_t* p_ops = (klb_ncm_ops_http_t*)ptr;
 
@@ -87,7 +87,7 @@ static int cb_init_klb_ncm_ops_http(void* ptr, const uint8_t* p_data, int data_l
 /// @brief 主动发送数据(非媒体数据)
 /// @param [in] *ptr            连接的指针
 /// @return int
-static int cb_send_klb_ncm_ops_http(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+static int cb_send_text_klb_ncm_ops_http(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     klb_ncm_ops_http_t* p_ops = (klb_ncm_ops_http_t*)ptr;
 
@@ -156,7 +156,7 @@ int klb_ncm_register_ops_http(klb_ncm_t* p_ncm, int protocol)
 
     ops.cb_init = cb_init_klb_ncm_ops_http;
 
-    ops.cb_send = cb_send_klb_ncm_ops_http;
+    ops.cb_send_text = cb_send_text_klb_ncm_ops_http;
     ops.cb_send_media = cb_send_media_klb_ncm_ops_http;
 
     ops.on_send = on_send_klb_ncm_ops_http;

@@ -1,4 +1,5 @@
-﻿#include "klbutil/klb_bitmap.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbutil/klb_bitmap.h"
 #include "klbmem/klb_mem.h"
 #include <stdio.h>
 #include <assert.h>

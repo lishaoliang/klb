@@ -1,12 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//
-/// @file    klb_mem.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   基础内存申请/释放
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbmem/klb_mem.h"
 #include <stdio.h>
 #include <stdlib.h>

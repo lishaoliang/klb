@@ -1,21 +1,17 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/05/26
 //
 /// @file    klb_buf.h
 /// @brief   简易缓存
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/05/26 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_BUF_H__
 #define __KLB_BUF_H__
 
 #include "klb_type.h"
+#include <stdlib.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -31,7 +27,8 @@ typedef enum klb_buf_type_e_
     KLB_BUF_NORMAL      = 0,        ///< 常规缓存; 直接使用 malloc/free 分配释放
     KLB_BUF_EXTRA       = 1,        ///< 常规缓存; klb_buf_t + [data]分配在一起
 
-    KLB_BUF_FIX_POOL    = 2,        ///< 固定大小内存池分配: klb_fix_pool_t
+    KLB_BUF_ATOM        = 10,       ///< 带原子变量(引用计数)的缓存
+    KLB_BUF_FIX_POOL    = 11,       ///< 固定大小内存池分配: klb_fpool_t
 }klb_buf_type_e;
 
 
@@ -53,6 +50,10 @@ typedef struct klb_buf_t_
 }klb_buf_t;
 
 #pragma pack()
+
+
+/// @brief 缓存池获取缓存的 函数指针
+typedef klb_buf_t*(*klb_buf_malloc_cb)(void* p_pool, size_t size);
 
 
 /// @brief 初始化缓存: 类型KLB_BUF_EXTRA

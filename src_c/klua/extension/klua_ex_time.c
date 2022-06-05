@@ -1,4 +1,5 @@
-﻿#include "klua/extension/klua_ex_time.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/extension/klua_ex_time.h"
 #include "klua/klua.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_list.h"

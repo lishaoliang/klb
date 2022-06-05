@@ -1,12 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//
-/// @file    klb_thread.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   文件简要描述
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbplatform/klb_thread.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
@@ -233,6 +225,16 @@ void klb_thread_destroy(klb_thread_t* p_thread)
 
     KLB_FREE(p_thread->p_name);
     KLB_FREE(p_thread);
+}
+
+void klb_thread_wait(klb_thread_t* p_thread)
+{
+    assert(NULL != p_thread);
+
+    while (p_thread->wait)
+    {
+        klb_sleep(1);
+    }
 }
 
 /// @brief 获取进程ID

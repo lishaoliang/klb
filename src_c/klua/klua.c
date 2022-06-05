@@ -1,13 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/06/30
-//
-/// @file    klua.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   文件简要描述
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klua/klua.h"
 #include "klbmem/klb_mem.h"
 #include "lstate.h"
@@ -36,6 +27,53 @@ void* luaL_checklightuserdata(lua_State* L, int arg)
     luaL_checktype(L, arg, LUA_TLIGHTUSERDATA);
 
     return lua_touserdata(L, arg);
+}
+
+bool klua_check_coroutine(lua_State* L, const char* p_tip_msg)
+{
+    if (!klua_is_coroutine(L))
+    {
+        luaL_error(L, p_tip_msg);
+        return false;
+    }
+
+    return true;
+}
+
+bool klua_check_option_boolean(lua_State* L, int idx, bool v_default)
+{
+    bool v = v_default;
+
+    if (LUA_TBOOLEAN == lua_type(L, idx))
+    {
+        v = lua_toboolean(L, idx);
+    }
+
+    return v;
+}
+
+lua_Integer klua_check_option_integer(lua_State* L, int idx, lua_Integer v_default)
+{
+    lua_Integer v = v_default;
+
+    if (LUA_TNUMBER == lua_type(L, idx) && lua_isinteger(L, idx))
+    {
+        v = lua_tointeger(L, idx);
+    }
+
+    return v;
+}
+
+lua_Number klua_check_option_number(lua_State* L, int idx, lua_Number v_default)
+{
+    lua_Number v = v_default;
+
+    if (LUA_TNUMBER == lua_type(L, idx) && !lua_isinteger(L, idx))
+    {
+        v = lua_tonumber(L, idx);
+    }
+
+    return v;
 }
 
 //////////////////////////////////////////////////////////////////////////

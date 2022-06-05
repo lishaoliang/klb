@@ -1,4 +1,5 @@
-﻿#include "klb_type.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klb_type.h"
 #include "klbbase/klb_base.h"
 
 #if defined(WIN32) && defined(DEBUG_VLD)

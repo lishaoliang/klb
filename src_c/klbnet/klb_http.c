@@ -1,4 +1,5 @@
-﻿#include "klbnet/klb_http.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_http.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_list.h"
 #include "klbmem/klb_rbuf.h"
@@ -247,7 +248,7 @@ static void klb_http_push_pack(klb_http_t* p_http)
 
     if (NULL != p_http->p_body)
     {
-        p_data = klb_buffer_join_offset(p_http->p_body, head_len + sizeof(klb_mnp_common_t), 0);
+        p_data = klb_buffer_join_offset(p_http->p_body, head_len + sizeof(klb_mnp_common_t), 0, NULL, NULL);
         klb_buffer_reset(p_http->p_body);
 
         body_len = p_data->end - p_data->start;

@@ -1,15 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/07/06
 //
 /// @file    klb_mnp.h
 /// @brief   media net protocol, 媒体网络协议
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/07/06 0.1 创建文件
+///  \n 2019 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_MNP_H__
@@ -37,7 +33,7 @@ typedef struct klb_mnp_t_
     //- 4 Byte
 
     uint16_t size ;             ///< 单个数据包大小(包含本结构体): [8,32K]
-#define KLB_MNP_BLOCK_SIZE_MAX  0x8000
+#define KLB_MNP_BLOCK_SIZE_MAX  (0x8000)
 
     uint8_t  opt : 2;           ///< 包组合方式: klb_mnp_opt_e
     uint8_t  packtype : 5;      ///< 包类型: klb_mnp_packtype_e
@@ -46,7 +42,7 @@ typedef struct klb_mnp_t_
     //- 4 + 4 = 8 Byte
 }klb_mnp_t;
 
-/// @struct klb_mnp_md_t
+/// @struct klb_mnp_media_t
 /// @brief  media net protocol, media head
 ///  \n F包: [klb_mnp_t][klb_mnp_media_t][data...]
 ///  \n B包: [klb_mnp_t][klb_mnp_media_t][data...]
@@ -134,10 +130,11 @@ typedef enum klb_mnp_packtype_e_
 /// @brief  视频帧类型
 typedef enum klb_mnp_vtype_e_
 {
-    KLB_MNP_VTYPE_P = 0x00,   ///< P帧
-    KLB_MNP_VTYPE_I = 0x01,   ///< I帧
-    KLB_MNP_VTYPE_B = 0x02,   ///< B帧
-    KLB_MNP_VTYPE_MAX = 0xFF    ///< MAX
+    KLB_MNP_VTYPE_P     = 0x00,     ///< P帧
+    KLB_MNP_VTYPE_I     = 0x01,     ///< I帧
+    KLB_MNP_VTYPE_B     = 0x02,     ///< B帧
+    KLB_MNP_VTYPE_CFG   = 0x03,     ///< 视频配置(config)数据: vps, sps, pps, sei, eg.
+    KLB_MNP_VTYPE_MAX   = 0xFF      ///< MAX
 }klb_mnp_vtype_e;
 
 

@@ -1,4 +1,5 @@
-﻿#include "klbmem/klb_rbuf.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbmem/klb_rbuf.h"
 #include <stdint.h>             /// int*_t uint*_t
 #include <stddef.h>             /// intptr_t uintptr_t size_t
 #include <stdbool.h>            /// bool false true

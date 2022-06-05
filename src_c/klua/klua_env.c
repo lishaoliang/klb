@@ -1,13 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/06/30
-//
-/// @file    klua_env.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   文件简要描述
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klua/klua_env.h"
 #include "lstate.h"
 #include "klua/klua.h"
@@ -19,7 +10,9 @@
 #include "klbutil/klb_list.h"
 #include "klbthird/sds.h"
 #include "klua/klua_kthread.h"
+#include "klbplatform/klb_atomic.h"
 #include "klua/extension/klua_extension.h"
+#include "klua/extension/klua_ex_lpc.h"
 #include "lstate.h"
 #include <assert.h>
 
@@ -28,7 +21,7 @@
 #define KLUA_ENV_PTR            "_KLUA_ENV_PTR_"
 #endif
 
-#define KLUA_ENV_GC_TIME_OUT    0/*600000*/
+#define KLUA_ENV_GC_TIME_OUT    600000
 
 
 /// @struct klua_env_extension_activate_t
@@ -43,15 +36,22 @@ typedef struct klua_env_extension_activate_t_
 
 /// @struct klua_env_t
 /// @brief  Lua环境
-typedef struct klua_env_t
+typedef struct klua_env_t_
 {
+    struct
+    {
+        long volatile   is_get_lpc_msg; ///< 是否 取 LPC 消息
+        long volatile   lpc_msg_lock;   ///< p_lpc_msg_list锁
+        klb_list_t*     p_lpc_msg_list; ///< LPC 消息列表
+
+        klb_list_t*     p_msg_list;     ///< 待处理消息列表
+    };
+
     struct
     {
         lua_State*      L;              ///< Lua环境
 
         int             G;              ///< "G"
-        int             kin;            ///< "kin"
-        int             kgo;            ///< "kgo"
         int             kexit;          ///< "kexit"
     };
 
@@ -63,6 +63,8 @@ typedef struct klua_env_t
 
     struct
     {
+        klb_buf_t*      p_arg;          ///< 全局参数(启动参数)
+
         sds             name;           ///< 线程名称
         int             is_exit;        ///< 是否退出
 
@@ -74,12 +76,6 @@ typedef struct klua_env_t
 
     struct
     {
-        volatile int    is_get_msg;     ///< 是否从公共区, 取消息
-        klb_list_t*     p_msg_list;     ///< 消息列表
-    };
-
-    struct
-    {
         void*           p_udata;        ///< user data
     };
 }klua_env_t;
@@ -87,20 +83,22 @@ typedef struct klua_env_t
 static int klua_env_init(klua_env_t* p_env, lua_CFunction cb_pre_load);
 static int klua_pquit(lua_State *L);
 static void klua_pref(klua_env_t* p_env, lua_State* L);
-static int klua_env_call_kin(klua_env_t* p_env);
 
 
 klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
 {
-    klua_env_t* p_env = KLB_MALLOC(klua_env_t, 1, 0);
-    KLB_MEMSET(p_env, 0, sizeof(klua_env_t));
+    klua_env_t* p_env = KLB_MALLOCZ(klua_env_t, 1, 0);
 
     p_env->p_extension_hlist = klb_hlist_create(0);
     p_env->p_extension_activate_hlist = klb_hlist_create(0);
 
+    klb_atomic_set_zero(&p_env->is_get_lpc_msg);
+    klb_atomic_set_zero(&p_env->lpc_msg_lock);
+
+    p_env->p_lpc_msg_list = klb_list_create();
     p_env->p_msg_list = klb_list_create();
+    
     p_env->is_exit = false;
-    p_env->is_get_msg = false;
 
     p_env->tc = klb_tick_counti64();
 
@@ -127,12 +125,17 @@ void klua_env_destroy(klua_env_t* p_env)
     while (0 < klb_hlist_size(p_env->p_extension_activate_hlist))
     {
         klua_env_extension_activate_t* p_tmp = (klua_env_extension_activate_t*)klb_hlist_pop_head(p_env->p_extension_activate_hlist);
-        
+
         p_tmp->ex.cb_destroy(p_tmp->ptr);
-        
+
         KLB_FREE_BY(p_tmp->name, sdsfree);
         KLB_FREE(p_tmp);
     }
+
+    // 销毁Lua环境
+    // Bug. lua_close调用后, 加载的动态库, 也会被卸载
+    // 扩展的 销毁函数 cb_destroy 可能处于动态库中
+    KLB_FREE_BY(p_env->L, lua_close);
 
     // 销毁注册的扩展
     while (0 < klb_hlist_size(p_env->p_extension_hlist))
@@ -141,9 +144,10 @@ void klua_env_destroy(klua_env_t* p_env)
         KLB_FREE(p_extension);
     }
 
-    KLB_FREE_BY(p_env->L, lua_close);
+    KLB_FREE(p_env->p_arg);
     KLB_FREE_BY(p_env->name, sdsfree);
     KLB_FREE_BY(p_env->p_msg_list, klb_list_destroy);
+    KLB_FREE_BY(p_env->p_lpc_msg_list, klb_list_destroy);
     KLB_FREE_BY(p_env->p_extension_activate_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_env->p_extension_hlist, klb_hlist_destroy);
     KLB_FREE(p_env);
@@ -176,8 +180,6 @@ static int klua_pdofile(lua_State *L)
     if (LUA_OK == klua_help_dofile(p_env->L, p_loader))
     {
         klua_pref(p_env, L);        // 保存地址
-        klua_env_call_kin(p_env);   // 调用"kin"
-
         lua_pushboolean(L, true);
     }
     else
@@ -197,8 +199,6 @@ static int klua_pdolibrary(lua_State *L)
     if (LUA_OK == klua_help_dolibrary(p_env->L, p_loader))
     {
         klua_pref(p_env, L);        // 保存地址
-        klua_env_call_kin(p_env);   // 调用"kin"
-
         lua_pushboolean(L, true);
     }
     else
@@ -302,64 +302,6 @@ lua_State* klua_env_get_L(klua_env_t* p_env)
     return p_env->L;
 }
 
-static int klua_env_call_kin(klua_env_t* p_env)
-{
-    assert(NULL != p_env);
-    if (p_env->kin <= 0) return EXIT_FAILURE;
-
-    lua_State* L = p_env->L;
-    KLUA_HELP_TOP_B(L);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, p_env->kin);  /* to call 'kin' in protected mode */
-    int status = lua_pcall(L, 0, 1, 0);             /* do the call */
-    int result = lua_toboolean(L, -1);              /* get result */
-    klua_help_report(L, status);
-    if (LUA_OK == status) { lua_pop(L, 1); }
-
-    KLUA_HELP_TOP_E(L);
-    return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-int klua_env_has_kgo(klua_env_t* p_env)
-{
-    assert(NULL != p_env);
-
-    if (0 < p_env->kgo)
-    {
-        return 0;
-    }
-
-    return 1;
-}
-
-int klua_env_kgo(klua_env_t* p_env)
-{
-    assert(NULL != p_env);
-
-    return p_env->kgo;
-}
-
-int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_msgex, const char* p_lparam, const char* p_wparam, void* ptr)
-{
-    assert(NULL != p_env);
-    if (p_env->kgo <= 0) return EXIT_FAILURE;
-
-    lua_State* L = p_env->L;
-    KLUA_HELP_TOP_B(L);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, p_env->kgo);  /* to call 'kgo' in protected mode */
-    lua_pushstring(L, p_msg);                       /* 1st argument */
-    lua_pushstring(L, p_msgex);                     /* 2st argument */
-    lua_pushstring(L, p_lparam);                    /* 3st argument */
-    lua_pushstring(L, p_wparam);                    /* 4st argument */
-    lua_pushlightuserdata(L, ptr);                  /* 5st argument */
-    int status = lua_pcall(L, 5, 1, 0);             /* do the call */
-    int result = lua_toboolean(L, -1);              /* get result */
-    klua_help_report(L, status);
-    if (LUA_OK == status) { lua_pop(L, 1); }
-
-    KLUA_HELP_TOP_E(L);
-    return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
 int klua_env_report(klua_env_t* p_env, int status)
 {
     assert(NULL != p_env);
@@ -398,12 +340,6 @@ static void klua_pref(klua_env_t* p_env, lua_State* L)
     int id = lua_getglobal(L, "G");
     if (0 < id) { p_env->G = luaL_ref(L, LUA_REGISTRYINDEX); }
 
-    id = lua_getglobal(L, "kin");
-    if (0 < id) { p_env->kin = luaL_ref(L, LUA_REGISTRYINDEX); }
-
-    id = lua_getglobal(L, "kgo");
-    if (0 < id) { p_env->kgo = luaL_ref(L, LUA_REGISTRYINDEX); }
-
     id = lua_getglobal(L, "kexit");
     if (0 < id) { p_env->kexit = luaL_ref(L, LUA_REGISTRYINDEX); }
 }
@@ -417,18 +353,6 @@ static void klua_punref(klua_env_t* p_env, lua_State* L)
     {
         luaL_unref(L, LUA_REGISTRYINDEX, p_env->kexit);
         p_env->kexit = 0;
-    }
-
-    if (0 < p_env->kgo)
-    {
-        luaL_unref(L, LUA_REGISTRYINDEX, p_env->kgo);
-        p_env->kgo = 0;
-    }
-
-    if (0 < p_env->kin)
-    {
-        luaL_unref(L, LUA_REGISTRYINDEX, p_env->kin);
-        p_env->kin = 0;
     }
 
     if (0 < p_env->G)
@@ -461,9 +385,6 @@ static int klua_pmain(lua_State *L)
     // 加载标准库
     luaL_openlibs(L);
 
-    // 退出函数
-    //lua_register(L, "exit", klua_exit);
-
     // 加载"k*"系列额外库
     //klua_loadlib(L, klua_open_kos, "kos");
     //klua_loadlib(L, klua_open_ktime, "ktime");
@@ -489,16 +410,6 @@ static int klua_pquit(lua_State *L)
     // gc
     lua_gc(L, LUA_GCCOLLECT, 0);
 
-    // 销毁激活的 extension
-    while (0 < klb_hlist_size(p_env->p_extension_activate_hlist))
-    {
-        klua_env_extension_activate_t* p_tmp = (klua_env_extension_activate_t*)klb_hlist_pop_head(p_env->p_extension_activate_hlist);
-
-        KLB_FREE_BY(p_tmp->ptr, p_tmp->ex.cb_destroy);
-        KLB_FREE_BY(p_tmp->name, sdsfree);
-        KLB_FREE(p_tmp);
-    }
-
     p_env->is_exit = true;
     lua_pushboolean(L, true);
     return 1;
@@ -517,6 +428,26 @@ static int klua_env_init(klua_env_t* p_env, lua_CFunction cb_pre_load)
     if (LUA_OK == status) { lua_pop(L, 1); }
 
     return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
+void klua_msg_free(klua_msg_t* p_msg)
+{
+    assert(NULL != p_msg);
+
+    switch (p_msg->type)
+    {
+    case KLUA_LPC_POST:
+    case KLUA_LPC_REQUEST:
+    case KLUA_LPC_RESPONSE:
+        {
+            KLB_FREE(p_msg->p_msg);
+        }
+        break;
+    default:
+        break;
+    }
+
+    KLB_FREE(p_msg);
 }
 
 int klua_env_register_extension(klua_env_t* p_env, const char* p_name, const klua_env_extension_t* p_extension)
@@ -562,8 +493,7 @@ static klua_env_extension_activate_t* klua_env_get_extension_activate(klua_env_t
     klua_env_extension_t* p_extension = (klua_env_extension_t*)klb_hlist_find(p_env->p_extension_hlist, p_name, name_len);
     if (NULL != p_extension)
     {
-        klua_env_extension_activate_t* p_tmp = KLB_MALLOC(klua_env_extension_activate_t, 1, 0);
-        KLB_MEMSET(p_tmp, 0, sizeof(klua_env_extension_activate_t));
+        klua_env_extension_activate_t* p_tmp = KLB_MALLOCZ(klua_env_extension_activate_t, 1, 0);
 
         memcpy(&p_tmp->ex, p_extension, sizeof(klua_env_extension_t));
         p_tmp->name = sdsnewlen(p_name, name_len);
@@ -598,24 +528,42 @@ static int klua_env_loop_msg(klua_env_t* p_env, int64_t now)
     {
         klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_env->p_msg_list);
         assert(NULL != p_msg);
-        assert(NULL != p_msg->cb_destroy);
 
-        klua_env_extension_activate_t* p_activate = klua_env_get_extension_activate(p_env, p_msg->ex_name);
-        if (NULL != p_activate && NULL != p_activate->ex.cb_msg)
+        switch (p_msg->type)
         {
-            p_activate->ex.cb_msg(p_activate->ptr, p_env, now, p_msg);
-        }
-        else
-        {
-            assert(false);
-        }
+        case KLUA_LPC_POST:
+        case KLUA_LPC_REQUEST:
+        case KLUA_LPC_RESPONSE:
+            {
+                klua_env_extension_activate_t* p_ex_lpc = klua_env_get_extension_activate(p_env, KLUA_EX_LPC_NAME);
+                assert(NULL != p_ex_lpc);
+                assert(NULL != p_ex_lpc->ex.cb_msg);
 
-        // 销毁
-        klua_msg_destroy_cb cb_destroy = p_msg->cb_destroy;
-        cb_destroy(p_msg);
+                p_ex_lpc->ex.cb_msg(p_ex_lpc->ptr, p_env, now, p_msg);
+            }
+            break;
+        default:
+            {
+                klua_msg_free(p_msg);
+            }
+            break;
+        }
     }
 
     return 0;
+}
+
+static void klua_env_get_msg(klua_env_t* p_env)
+{
+    klb_atomic_lock(&p_env->lpc_msg_lock);
+
+    while (0 < klb_list_size(p_env->p_lpc_msg_list))
+    {
+        klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_env->p_lpc_msg_list);
+        klb_list_push_tail(p_env->p_msg_list, p_msg);
+    }
+
+    klb_atomic_unlock(&p_env->lpc_msg_lock);
 }
 
 int klua_env_loop_once(klua_env_t* p_env)
@@ -624,14 +572,16 @@ int klua_env_loop_once(klua_env_t* p_env)
     int64_t now = klb_tick_counti64();
 
     // 获取消息
-    if (p_env->is_get_msg && NULL != p_env->name)
+    if (!klb_atomic_is_zero(&p_env->is_get_lpc_msg))
     {
-        klua_kthread_get_msg(p_env->name, p_env->p_msg_list);
-        p_env->is_get_msg = false;
+        klua_env_get_msg(p_env);
+        klb_atomic_set_zero(&p_env->is_get_lpc_msg);
     }
 
     // 处理消息
     klua_env_loop_msg(p_env, now);
+
+    int n = 0;
 
     // loop once extension
     klb_hlist_iter_t* p_iter = klb_hlist_begin(p_env->p_extension_activate_hlist);
@@ -641,7 +591,7 @@ int klua_env_loop_once(klua_env_t* p_env)
 
         if (NULL != p_activate->ex.cb_loop_once)
         {
-            p_activate->ex.cb_loop_once(p_activate->ptr, p_env, p_env->tc, now);
+            n += p_activate->ex.cb_loop_once(p_activate->ptr, p_env, p_env->tc, now);
         }
 
         p_iter = klb_hlist_next(p_iter);
@@ -661,7 +611,7 @@ int klua_env_loop_once(klua_env_t* p_env)
 
     p_env->tc = now;
 
-    return 0;
+    return 5 - n;
 }
 
 bool klua_env_is_exit(klua_env_t* p_env)
@@ -694,12 +644,37 @@ const sds klua_env_get_name(klua_env_t* p_env)
     return p_env->name;
 }
 
-
-/// @brief 设置获取消息标记
+/// @brief 设置全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
 /// @param [in] *p_env              lua环境
-/// @return sds 名称
-void klua_env_set_msg_flag(klua_env_t* p_env)
+/// @return 无
+void klua_env_set_arg(klua_env_t* p_env, const char* p_data, int data_len)
 {
     assert(NULL != p_env);
-    p_env->is_get_msg = true;
+
+    KLB_FREE(p_env->p_arg);
+
+    if (NULL != p_data && 0 < data_len)
+    {
+        p_env->p_arg = klb_buf_malloc(KLB_PADDING_4(data_len), false);
+        memcpy(p_env->p_arg->p_buf, p_data, data_len);
+        p_env->p_arg->end = data_len;
+    }
+}
+
+
+/// @brief 获取全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
+/// @param [in] *p_env              lua环境
+/// @return 无
+const klb_buf_t* klua_env_get_arg(klua_env_t* p_env)
+{
+    return p_env->p_arg;
+}
+
+void klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg)
+{
+    klb_atomic_lock(&p_env->lpc_msg_lock);
+    klb_list_push_tail(p_env->p_lpc_msg_list, p_msg);
+    klb_atomic_unlock(&p_env->lpc_msg_lock);
+
+    klb_atomic_set_value(&p_env->is_get_lpc_msg, 1);
 }

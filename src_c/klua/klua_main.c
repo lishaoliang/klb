@@ -1,4 +1,5 @@
-﻿#include "klua/klua.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua.h"
 #include "klbnet/klb_socket.h"
 #include "klua/klua_env.h"
 #include "klbutil/klb_log.h"
@@ -35,15 +36,15 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
     {
         while (true)
         {
-            klua_env_loop_once(p_env);
+            int sleep = klua_env_loop_once(p_env);
 
             if (klua_env_is_exit(p_env))
             {
                 break;
             }
-            else
+            else if(0 < sleep)
             {
-                klb_sleep(10);
+                klb_sleep(sleep);
             }
         }
     }

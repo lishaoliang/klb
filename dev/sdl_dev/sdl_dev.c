@@ -64,11 +64,12 @@ static klb_canvas_t* my_get_canvas(int index)
     return NULL;
 }
 
-static void my_set_msg_receiver(int index, klb_mnp_msg_cb cb_msg)
+static void my_set_msg_receiver(int index, klb_mnp_msg_cb cb_msg, void* p_obj)
 {
     if (NULL != g_my_dev && g_my_dev->init_thread_ok)
     {
         g_my_dev->cb_msg = cb_msg;
+        g_my_dev->p_obj = p_obj;
     }
 }
 

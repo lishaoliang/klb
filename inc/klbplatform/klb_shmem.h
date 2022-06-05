@@ -1,16 +1,12 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2021, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2021/04/03
 //
 /// @file    klb_shmem.h
 /// @brief   (IPC)进程之间共享内存
 ///         shmget,shmat,shmdt,shmctl
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2021/04/03 0.1 创建文件
+///  \n 2021 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_SHMEM_H__
@@ -38,11 +34,17 @@ typedef enum klb_shmem_e_
 
 
 /// @brief 创建进程之间共享内存
-/// @param [in]  flag           创建标记: klb_shmem_e
 /// @param [in]  *p_name        名称: eg."aaa"
 /// @param [in]  size           大小: 推荐4K整数倍
 /// @return klb_shmem_t* 对象指针
 klb_shmem_t* klb_shmem_create(int flag, const char* p_name, size_t size);
+
+
+/// @brief 创建进程之间共享内存
+/// @param [in]  *p_name        名称: eg."aaa"
+/// @param [in]  size           大小: 推荐4K整数倍
+/// @return klb_shmem_t* 对象指针
+klb_shmem_t* klb_shmem_open(const char* p_name, size_t size);
 
 
 /// @brief 销毁

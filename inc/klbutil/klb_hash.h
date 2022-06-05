@@ -1,4 +1,13 @@
-﻿#ifndef __KLB_HASH_H__
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_hash.h
+/// @brief   哈希
+/// @version 0.1
+/// @history 修改历史
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLB_HASH_H__
 #define __KLB_HASH_H__
 
 #include "klb_type.h"

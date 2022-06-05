@@ -1,18 +1,14 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/06/01
 //
 /// @file    klb_hlist.h
 /// @brief   hash table 与 list组合使用
 ///  \n 弥补list不适合查找的应用场景
 ///  \n 适用场景: 按k:v格式, 快速查找, 删除数据, 大中型场景
 ///  \n 每个节点需额外 sizeof(klb_hlist_iter_t) + key_len 的内存
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/06/01 0.1 创建文件
+///  \n 2019 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_HLIST_H__

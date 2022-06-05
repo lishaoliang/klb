@@ -1,15 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/06/02
 //
 /// @file    klb_socket.h
 /// @brief   文件简要描述
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/06/02 0.1 创建文件
+///  \n 2019 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_SOCKET_H__
@@ -70,10 +66,9 @@ typedef struct klb_socket_vtable_t_
 typedef enum klb_socket_status_e_
 {
     KLB_SOCKET_OK,                      ///< 正常
-    KLB_SOCKET_ERR,                     ///< 网络错误(读写socket返回-1引发): 通用错误
-    KLB_SOCKET_DISCONN,                 ///< 连接已断开(读写socket返回0引发): 对方已经断开连接
-    KLB_SOCKET_TIMEOUT,                 ///< 超时错误: 读写数据超时
-    KLB_SOCKET_ERR_PROTOCOL,            ///< 协议解析错误: 不符合协议规范的数据或格式等
+    KLB_SOCKET_DISCONNECT,              ///< 连接断开(读写socket错误引发)
+    KLB_SOCKET_TIMEOUT,                 ///< 超时
+    KLB_SOCKET_ERR_PROTOCOL,            ///< 协议错误
     KLB_SOCKET_ERR_MAX,                 ///< 错误最大值
 
     KLB_SOCKET_CLOSEING         = 62,   ///< 主动关闭
@@ -123,7 +118,7 @@ KLB_API void klb_socket_quit();
 KLB_API void klb_socket_destroy(klb_socket_t* p_socket);
 
 /// @brief 进入关闭状态, 调用者不再接收/发送此socket的数据, 进入等待被销毁
-KLB_API void klb_socket_closeing(klb_socket_t* p_socket);
+KLB_API void klb_socket_closing(klb_socket_t* p_socket);
 
 /// @brief TCP发送数据
 KLB_API int klb_socket_send(klb_socket_t* p_socket, const uint8_t* p_data, int len);
@@ -206,6 +201,14 @@ KLB_API klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect
 /// @param [out] *p_addr        输出监听到的地址
 /// @return klb_socket_fd INVALID_SOCKET, 大于0
 KLB_API klb_socket_fd klb_socket_accept(klb_socket_fd fd_listen, struct sockaddr_in* p_addr);
+
+
+/// @brief 创建udp
+KLB_API klb_socket_fd klb_socket_udp();
+
+
+/// @brief 绑定socket
+KLB_API int klb_socket_bind(klb_socket_fd fd, const struct sockaddr* p_addr, int addrlen);
 
 
 /// @brief 创建一个异步socket

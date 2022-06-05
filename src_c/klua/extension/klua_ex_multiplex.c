@@ -1,4 +1,5 @@
-﻿#include "klua/extension/klua_ex_multiplex.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/extension/klua_ex_multiplex.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
@@ -50,6 +51,17 @@ static int klua_ex_multiplex_loop_once(void* ptr, klua_env_t* p_env, int64_t las
 
 klb_multiplex_t* klua_ex_multiplex_get(klua_ex_multiplex_t* p_ex)
 {
+    return p_ex->p_multi;
+}
+
+klb_multiplex_t* klua_ex_multiplex_get_by_L(lua_State* L)
+{
+    klua_env_t* p_env = klua_env_get_by_L(L);
+    assert(NULL != p_env);
+
+    klua_ex_multiplex_t* p_ex = klua_ex_get_multiplex(p_env);
+    assert(NULL != p_ex);
+
     return p_ex->p_multi;
 }
 

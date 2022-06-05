@@ -3,9 +3,6 @@
 //
 /// @file    klb_ncm.h
 /// @brief   net connect manage: ./klb/src/knet/ncm.go
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -50,8 +47,8 @@ typedef enum klb_protocol_e_
 typedef struct klb_ncm_t_ klb_ncm_t;
 
 
-/// @brief 创建ncm(net connect manage); 网络媒体长链接管理模块
-/// @param [in]  *p_json_cfg            json配置
+/// @brief 创建ncm(net connect manage); 网络媒体连接管理模块
+/// @param [in]  *p_multi               socekt复用模块
 /// @return klb_ncm_t* 管理模块
 KLB_API klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi);
 
@@ -91,14 +88,43 @@ typedef int (*klb_ncm_ops_recv_cb)(void* ptr, int protocol, int id, int code, in
 KLB_API int klb_ncm_add_receiver(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, void* p_obj);
 
 
+/// @struct klb_ncm_ops_lparam_t
+/// @brief  ncm ops 连接参数1: 关键参数
+typedef struct klb_ncm_ops_lparam_t_
+{
+    klb_ncm_t*          p_ncm;              ///< ncm模块
+    klb_socket_t*       p_socket;           ///< socket
+
+    int                 protocol;           ///< 协议号
+    int                 id;                 ///< ID
+
+    klb_buf_malloc_cb   cb_malloc;          ///< 文本(TEXT)/二进制(BINARY)数据类型的内存池分配函数
+    void*               p_pool;             ///< cb_malloc函数的操作对象(内存池)
+
+    klb_buf_malloc_cb   cb_malloc_media;    ///< 媒体(MEDIA)数据类型的内存池分配函数
+    void*               p_pool_media;       ///< cb_malloc_media函数的操作对象(内存池)
+
+    klb_ncm_ops_recv_cb cb_recv;            ///< 当收到数据后, 通过此回调函数将数据交给ncm模块
+}klb_ncm_ops_lparam_t;
+
+
+/// @struct klb_ncm_ops_lparam_t
+/// @brief  ncm ops 连接参数2: 辅助参数, 读写缓存建议大小等
+typedef struct klb_ncm_ops_wparam_t_
+{
+    int read_buffer_size;                   ///< 读缓存建议大小
+}klb_ncm_ops_wparam_t;
+
+
 /// @struct klb_ncm_ops_t
 /// @brief  ncm连接
 typedef struct klb_ncm_ops_t_
 {
     /// @brief 创建连接
-    /// @param [in] *p_ncm          ncm模块
+    /// @param [in] *p_lparam    ncm连接关键参数1
+    /// @param [in] *p_wparam    ncm连接辅助参数2
     /// @return void* 连接的指针
-    void* (*cb_create)(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, int protocol, int id);
+    void* (*cb_create)(klb_ncm_ops_lparam_t* p_lparam, klb_ncm_ops_wparam_t* p_wparam);
 
     /// @brief 销毁连接
     /// @param [in] *ptr            连接的指针
@@ -110,18 +136,23 @@ typedef struct klb_ncm_ops_t_
     /// @param [in] *p_data         初始已经读取的数据
     /// @param [in] data_len        数据长度
     /// @return int 0.成功; 非0.失败
-    int   (*cb_init)(void* ptr, const uint8_t* p_data, int data_len);
+    int   (*cb_init)(void* ptr, klb_socket_t* p_socket, const uint8_t* p_data, int data_len);
 
     /// @brief 对连接进行控制操作: get/set,etc.
     /// @param [in] *ptr            ops对象
     /// @return int 0.成功; 非0.失败
     int   (*cb_ctrl)(void* ptr, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num);
 
-    /// @brief 主动发送数据(非媒体数据)
+    /// @brief 主动发送文本数据
     /// @param [in] *ptr            ops对象
     /// @return int
-    int   (*cb_send)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
+    int   (*cb_send_text)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
     
+    /// @brief 主动发送二进制数据
+    /// @param [in] *ptr            ops对象
+    /// @return int
+    int   (*cb_send_binary)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+
     /// @brief 主动发送媒体数据
     /// @param [in] *ptr            ops对象
     /// @return int
@@ -157,28 +188,22 @@ KLB_API int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket,
 KLB_API int klb_ncm_close(klb_ncm_t* p_ncm, int id);
 
 
-/// @brief 发送数据(非媒体数据)
+/// @brief 发送文本数据
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_send(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
+KLB_API int klb_ncm_send_text(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
 
 
-/// @brief 接收数据(非媒体数据)
+/// @brief 发送二进制数据
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_recv(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, int* p_code, uint32_t* p_sequence, uint32_t* p_uid, klb_buf_t** p_extra, klb_buf_t** p_data);
+KLB_API int klb_ncm_send_binary(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
 
 
 /// @brief 发送媒体数据
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
 KLB_API int klb_ncm_send_media(klb_ncm_t* p_ncm, int id, klb_buf_t* p_data);
-
-
-/// @brief 接收媒体数据
-/// @param [in]  *p_ncm                 ncm模块
-/// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_recv_media(klb_ncm_t* p_ncm, int* p_protocol, int* p_id, klb_buf_t** p_data);
 
 
 /// @brief 对某个连接进行控制操作: get/set,etc.

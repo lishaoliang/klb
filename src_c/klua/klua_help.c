@@ -1,4 +1,5 @@
-﻿#include "klua_help.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua_help.h"
 
 
 #define report klua_help_report

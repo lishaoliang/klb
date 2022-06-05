@@ -3,9 +3,6 @@
 //
 /// @file    CMap.hpp
 /// @brief   klb_hlist_t的CPP封装与扩展
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告

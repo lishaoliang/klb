@@ -1,4 +1,5 @@
-﻿#include "klbutil/klb_vector.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbutil/klb_vector.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 

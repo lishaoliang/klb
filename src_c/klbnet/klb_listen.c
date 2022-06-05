@@ -1,4 +1,5 @@
-﻿#include "klbnet/klb_listen.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_listen.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
 #include <assert.h>
@@ -149,7 +150,7 @@ int klb_listen_close(klb_listen_t* p_listen)
         // 采用延时销毁机制
 
         // socket 正常, 则设置为主动关闭: 防止关闭后, 还有数据产生
-        klb_socket_closeing(p_listen->p_socket);
+        klb_socket_closing(p_listen->p_socket);
 
         // socket 交给 multiplex 流程销毁
         klb_multiplex_remove(p_listen->p_multi, p_listen->id);

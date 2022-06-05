@@ -1,4 +1,5 @@
-﻿#include "klbbase/klb_package.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbbase/klb_package.h"
 #include "klbutil/klb_hash.h"
 #include "klbmem/klb_buf.h"
 #include "klbutil/klb_list.h"

@@ -1,14 +1,8 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//
-/// @file    klb_buf.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   简易缓存
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_mem.h"
+#include "klbmem/klb_fpool.h"
+#include "klbmem/klb_buf_atom.h"
 #include <assert.h>
 
 
@@ -38,20 +32,72 @@ klb_buf_t* klb_buf_join(klb_buf_t* p_head)
 
 int klb_buf_ref(klb_buf_t* p_buf)
 {
+    switch (p_buf->type)
+    {
+    case KLB_BUF_ATOM:
+        return klb_buf_atom_ref(p_buf);
+        break;
+    case KLB_BUF_FIX_POOL:
+        return klb_fpool_ref(p_buf);
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
     return 0;
 }
 
 int klb_buf_unref(klb_buf_t* p_buf)
 {
+    switch (p_buf->type)
+    {
+    case KLB_BUF_ATOM:
+        return klb_buf_atom_unref(p_buf);
+        break;
+    case KLB_BUF_FIX_POOL:
+        return klb_fpool_unref(p_buf);
+        break;
+    default:
+        assert(false);
+        break;
+    }
+
     return 0;
 }
 
 int klb_buf_ref_next(klb_buf_t* p_buf)
 {
+    assert(NULL != p_buf);
+
+    klb_buf_t* p_cur = p_buf;
+    while (NULL != p_cur)
+    {
+        klb_buf_t* p_next = p_cur->p_next;
+
+        klb_buf_ref(p_cur);
+
+        // next
+        p_cur = p_next;
+    }
+
     return 0;
 }
 
 int klb_buf_unref_next(klb_buf_t* p_buf)
 {
+    assert(NULL != p_buf);
+
+    klb_buf_t* p_cur = p_buf;
+    while (NULL != p_cur)
+    {
+        klb_buf_t* p_next = p_cur->p_next;
+
+        klb_buf_unref(p_cur);
+
+        // next
+        p_cur = p_next;
+    }
+
     return 0;
 }

@@ -1,4 +1,5 @@
-﻿#include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbnet/klb_ncm.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_list.h"
@@ -11,18 +12,28 @@
 
 typedef struct klb_ncm_ops_mnp_t_
 {
-    klb_ncm_t*          p_ncm;          ///< ncm模块
-    int                 protocol;       ///< 协议编号
-    int                 id;             ///< id编号
+    // ncm 参数
+    struct
+    {
+        klb_ncm_t*          p_ncm;              ///< ncm模块
+        int                 protocol;           ///< 协议编号
+        int                 id;                 ///< id编号
 
-    klb_ncm_ops_recv_cb  cb_recv_to_ncm; ///< 收到数据后, 交给ncm
+        klb_ncm_ops_recv_cb cb_recv_to_ncm;     ///< 收到数据后, 交给ncm
+
+        klb_buf_malloc_cb   cb_malloc;          ///< 文本(TEXT)/二进制(BINARY)数据类型的内存池分配函数
+        void*               p_pool;             ///< cb_malloc函数的操作对象
+
+        klb_buf_malloc_cb   cb_malloc_media;    ///< 媒体(MEDIA)数据类型的内存池分配函数
+        void*               p_pool_media;       ///< b_malloc_media函数的操作对象
+    };
 
     // send发送相关
     struct
     {
         klb_list_t*     p_w_list;       ///< 待发送列表: klb_buf_t*
         klb_buf_t*      p_w_cur;        ///< 当前正在发送的缓存
-        int             w_len;          ///< 当前等待发送的缓存量
+        int             w_start;        ///< 当前发送的起始点
     };
 
     // recv接收相关
@@ -46,7 +57,7 @@ typedef struct klb_ncm_ops_mnp_t_
 //////////////////////////////////////////////////////////////////////////
 static void klb_ncm_ops_mnp_send_heart(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socket)
 {
-    klb_buf_t* p_buf = klb_buf_malloc(sizeof(klb_mnp_t), false);
+    klb_buf_t* p_buf = p_ops->cb_malloc(p_ops->p_pool, sizeof(klb_mnp_t));
 
     klb_mnp_t* p_mnp = (klb_mnp_t*)p_buf->p_buf;
 
@@ -90,7 +101,6 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
         }
 
         p_ops->mnp = mnp;
-        //KLB_LOG("packtype:[%d],opt:[%d],size:[%d]\n", mnp.packtype, mnp.opt, mnp.size);
 
         p_ops->left_len = mnp.size - sizeof(klb_mnp_t);
         return 0;
@@ -108,14 +118,33 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
             {
                 if (KLB_MNP_FULL == p_ops->mnp.opt || KLB_MNP_END == p_ops->mnp.opt)
                 {
-                    // 数完整了
-                    klb_buf_t* p_txt = klb_buffer_join(p_ops->p_txt);
+                    // 完整了
+                    klb_buf_t* p_txt = klb_buffer_join(p_ops->p_txt, p_ops->cb_malloc, p_ops->p_pool);
+
                     klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_txt->p_buf + p_txt->start);
                     assert(p_txt->end - p_txt->start == p_com->size);
-
-                    //KLB_LOG("extra=[%d],data len=[%d]\n", p_com->extra, p_com->size - p_com->extra - sizeof(klb_mnp_common_t));
-                    //KLB_FREE(p_txt);
                     p_ops->cb_recv_to_ncm(p_ops->p_ncm, p_ops->protocol, p_ops->id, 0, KLB_NCM_PACK_TEXT, p_txt);
+                    klb_buf_unref_next(p_txt);
+
+                    klb_buffer_reset(p_ops->p_txt);
+                }
+            }
+        }
+        else if (KLB_MNP_BIN == p_ops->mnp.packtype)
+        {
+            klb_buffer_write(p_ops->p_txt, p_buf->p_buf + p_buf->start, r_len);
+
+            if (p_ops->left_len <= 0)
+            {
+                if (KLB_MNP_FULL == p_ops->mnp.opt || KLB_MNP_END == p_ops->mnp.opt)
+                {
+                    // 完整了
+                    klb_buf_t* p_bin = klb_buffer_join(p_ops->p_txt, p_ops->cb_malloc, p_ops->p_pool);
+                    klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_bin->p_buf + p_bin->start);
+                    assert(p_bin->end - p_bin->start == p_com->size);
+
+                    p_ops->cb_recv_to_ncm(p_ops->p_ncm, p_ops->protocol, p_ops->id, 0, KLB_NCM_PACK_BINARY, p_bin);
+                    klb_buf_unref_next(p_bin);
 
                     klb_buffer_reset(p_ops->p_txt);
                 }
@@ -130,9 +159,10 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
                 if (KLB_MNP_FULL == p_ops->mnp.opt || KLB_MNP_END == p_ops->mnp.opt)
                 {
                     // 数完整了
-                    klb_buf_t* p_media = klb_buffer_join(p_ops->p_media);
+                    klb_buf_t* p_media = klb_buffer_join(p_ops->p_media, p_ops->cb_malloc_media, p_ops->p_pool_media);
 
                     p_ops->cb_recv_to_ncm(p_ops->p_ncm, p_ops->protocol, p_ops->id, 0, KLB_NCM_PACK_MEDIA, p_media);
+                    klb_buf_unref_next(p_media);
 
                     klb_buffer_reset(p_ops->p_media);
                 }
@@ -150,15 +180,18 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
 /// @brief 创建连接
 /// @param [in] *p_ncm          ncm模块
 /// @return void* 连接的指针
-static void* cb_create_klb_ncm_ops_mnp(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, int protocol, int id)
+static void* cb_create_klb_ncm_ops_mnp(klb_ncm_ops_lparam_t* p_lparam, klb_ncm_ops_wparam_t* p_wparam)
 {
-    klb_ncm_ops_mnp_t* p_ops = KLB_MALLOC(klb_ncm_ops_mnp_t, 1, 0);
-    KLB_MEMSET(p_ops, 0, sizeof(klb_ncm_ops_mnp_t));
+    klb_ncm_ops_mnp_t* p_ops = KLB_MALLOCZ(klb_ncm_ops_mnp_t, 1, 0);
 
-    p_ops->p_ncm = p_ncm;
-    p_ops->protocol = protocol;
-    p_ops->id = id;
-    p_ops->cb_recv_to_ncm = cb_recv;
+    p_ops->p_ncm = p_lparam->p_ncm;
+    p_ops->protocol = p_lparam->protocol;
+    p_ops->id = p_lparam->id;
+    p_ops->cb_recv_to_ncm = p_lparam->cb_recv;
+    p_ops->cb_malloc = p_lparam->cb_malloc;
+    p_ops->p_pool = p_lparam->p_pool;
+    p_ops->cb_malloc_media = p_lparam->cb_malloc_media;
+    p_ops->p_pool_media = p_lparam->p_pool_media;
 
     // send发送相关
     p_ops->p_w_list = klb_list_create();
@@ -186,23 +219,51 @@ static void cb_destroy_klb_ncm_ops_mnp(void* ptr)
     while (0 < klb_list_size(p_opt->p_w_list))
     {
         klb_buf_t* p_tmp = klb_list_pop_head(p_opt->p_w_list);
-        KLB_FREE(p_tmp);
+        klb_buf_unref_next(p_tmp);
+    }
+
+    if (NULL != p_opt->p_w_cur)
+    {
+        klb_buf_unref_next(p_opt->p_w_cur);
+        p_opt->p_w_cur = NULL;
     }
 
     // 销毁
     KLB_FREE_BY(p_opt->p_media, klb_buffer_destroy);
     KLB_FREE_BY(p_opt->p_txt, klb_buffer_destroy);
-    KLB_FREE_BY(p_opt->p_w_cur, free);
     KLB_FREE_BY(p_opt->p_w_list, klb_list_destroy);
     KLB_FREE_BY(p_opt->p_r_buf, free);
 
     KLB_FREE(p_opt);
 }
 
-/// @brief 主动发送数据(非媒体数据)
+
+static int cb_init_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, const uint8_t* p_data, int data_len)
+{
+    klb_ncm_ops_mnp_t* p_ops = (klb_ncm_ops_mnp_t*)ptr;
+
+    klb_buf_t* p_buf = p_ops->p_r_buf;
+    assert(data_len <= p_buf->buf_len);
+
+    memcpy(p_buf->p_buf, p_data, data_len);
+    p_buf->end = data_len;
+
+
+    while (true)
+    {
+        if (0 != klb_ncm_ops_mnp_parse(p_ops, p_socket))
+        {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+/// @brief 主动发送文本数据
 /// @param [in] *ptr            连接的指针
 /// @return int
-static int cb_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len)
+static int cb_send_text_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len)
 {
     klb_ncm_ops_mnp_t* p_ops = (klb_ncm_ops_mnp_t*)ptr;
 
@@ -210,7 +271,7 @@ static int cb_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint32_t s
     int totol_len = head_len + extra_len + data_len;
     assert(totol_len <= KLB_MNP_BLOCK_SIZE_MAX);
 
-    klb_buf_t* p_buf = klb_buf_malloc(KLB_ALIGNED_4(totol_len), false);
+    klb_buf_t* p_buf = p_ops->cb_malloc(p_ops->p_pool, KLB_ALIGNED_4(totol_len));
 
     klb_mnp_t* p_mnp = (klb_mnp_t*)p_buf->p_buf;
     klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_buf->p_buf + sizeof(klb_mnp_t));
@@ -244,12 +305,62 @@ static int cb_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint32_t s
     return 0;
 }
 
+/// @brief 主动发送二进制数据
+/// @param [in] *ptr            连接的指针
+/// @return int
+static int cb_send_binary_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len)
+{
+    klb_ncm_ops_mnp_t* p_ops = (klb_ncm_ops_mnp_t*)ptr;
+
+    int head_len = sizeof(klb_mnp_t) + sizeof(klb_mnp_common_t);
+    int totol_len = head_len + extra_len + data_len;
+    assert(totol_len <= KLB_MNP_BLOCK_SIZE_MAX);
+
+    klb_buf_t* p_buf = p_ops->cb_malloc(p_ops->p_pool, KLB_ALIGNED_4(totol_len));
+
+    klb_mnp_t* p_mnp = (klb_mnp_t*)p_buf->p_buf;
+    klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_buf->p_buf + sizeof(klb_mnp_t));
+
+    p_mnp->magic = KLB_MNP_MAGIC;
+    p_mnp->size = totol_len;
+    p_mnp->opt = KLB_MNP_FULL;
+    p_mnp->packtype = KLB_MNP_BIN;
+
+    p_com->size = totol_len - sizeof(klb_mnp_t);
+    p_com->extra = extra_len;
+    p_com->sequence = sequence;
+    p_com->uid = uid;
+
+    if (0 < extra_len)
+    {
+        memcpy(p_buf->p_buf + head_len, p_extra, extra_len);
+    }
+
+    if (0 < data_len)
+    {
+        memcpy(p_buf->p_buf + head_len + extra_len, p_data, data_len);
+    }
+
+    p_buf->end = totol_len;
+
+    klb_list_push_tail(p_ops->p_w_list, p_buf);
+
+    klb_socket_set_writing(p_socket, true);   // 有数据可写
+
+    return 0;
+}
+
 /// @brief 主动发送媒体数据
 /// @param [in] *ptr            连接的指针
 /// @return int
 static int cb_send_media_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, klb_buf_t* p_data)
 {
     klb_ncm_ops_mnp_t* p_ops = (klb_ncm_ops_mnp_t*)ptr;
+
+    klb_buf_ref_next(p_data);
+
+    klb_list_push_tail(p_ops->p_w_list, p_data);
+    klb_socket_set_writing(p_socket, true);   // 有数据可写
 
     return 0;
 }
@@ -268,12 +379,17 @@ static int on_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
 
     klb_socket_status_e err = KLB_SOCKET_OK;
     int send = 0;
+    bool first = true;
 
     while (true)
     {
         if (NULL == p_ops->p_w_cur && 0 < klb_list_size(p_ops->p_w_list))
         {
             p_ops->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_ops->p_w_list);
+            if (NULL != p_ops->p_w_cur)
+            {
+                p_ops->w_start = p_ops->p_w_cur->start;
+            }
         }
 
         klb_buf_t* p_buf = p_ops->p_w_cur;
@@ -283,27 +399,35 @@ static int on_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
             break;
         }
 
-        int w = klb_socket_send(p_socket, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+        int w = klb_socket_send(p_socket, p_buf->p_buf + p_ops->w_start, p_buf->end - p_ops->w_start);
         if (0 < w)
         {
+            p_ops->w_start += w;
             send += w;
-            p_buf->start += w;
 
-            if (p_buf->end <= p_buf->start)
+            if (p_buf->end <= p_ops->w_start)
             {
-                p_ops->p_w_cur = NULL;
-                KLB_FREE(p_buf);
+                p_ops->p_w_cur = p_buf->p_next;
+                if (NULL != p_ops->p_w_cur)
+                {
+                    p_ops->w_start = p_ops->p_w_cur->start;
+                }
+
+                klb_buf_unref(p_buf);
             }
-        }
-        else if (0 == w)
-        {
-            break; // 无法再发送
         }
         else
         {
-            err = KLB_SOCKET_ERR;
-            break; // 出现错误
+            if (first)
+            {
+                // select成功, 却第一次无法写, 表明对方已经断开
+                err = KLB_SOCKET_DISCONNECT;
+            }
+
+            break; // 无法再发送
         }
+
+        first = false;
     }
 
     if (NULL == p_ops->p_w_cur && klb_list_size(p_ops->p_w_list) <= 0)
@@ -313,7 +437,8 @@ static int on_send_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
 
     if (KLB_SOCKET_OK != err)
     {
-        //klua_khttp_error(p_khttp, err);
+        klb_socket_set_status(p_socket, err);
+        p_ops->cb_recv_to_ncm(p_ops->p_ncm, p_ops->protocol, p_ops->id, err, 0, NULL);
     }
 
     return send;
@@ -333,6 +458,7 @@ static int on_recv_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
 
     klb_socket_status_e err = KLB_SOCKET_OK;
     int recv = 0;
+    bool first = true;
 
     while (true)
     {
@@ -343,6 +469,7 @@ static int on_recv_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
         if (0 < r)
         {
             p_buf->end += r;
+            recv += r;
 
             while (true)
             {
@@ -364,20 +491,23 @@ static int on_recv_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, int64_t no
                 p_buf->start = 0;
             }
         }
-        else if (0 == r)
-        {
-            break; // 无法再接收
-        }
         else
         {
-            err = KLB_SOCKET_ERR;
-            break; // 出现错误
+            if (first)
+            {
+                // select成功, 却第一次读不到数据, 表明对方已断开 
+                err = KLB_SOCKET_DISCONNECT;
+            }
+            break; // 无法再接收
         }
+
+        first = false;
     }
 
     if (KLB_SOCKET_OK != err)
     {
-        //klua_khttp_error(p_khttp, err);
+        klb_socket_set_status(p_socket, err);
+        p_ops->cb_recv_to_ncm(p_ops->p_ncm, p_ops->protocol, p_ops->id, err, 0, NULL);
     }
 
     return recv;
@@ -393,7 +523,11 @@ int klb_ncm_register_ops_mnp(klb_ncm_t* p_ncm, int protocol)
     ops.cb_create = cb_create_klb_ncm_ops_mnp;
     ops.cb_destroy = cb_destroy_klb_ncm_ops_mnp;
 
-    ops.cb_send = cb_send_klb_ncm_ops_mnp;
+    ops.cb_init = cb_init_klb_ncm_ops_mnp;
+    ops.cb_ctrl = NULL;
+
+    ops.cb_send_text = cb_send_text_klb_ncm_ops_mnp;
+    ops.cb_send_binary = cb_send_binary_klb_ncm_ops_mnp;
     ops.cb_send_media = cb_send_media_klb_ncm_ops_mnp;
 
     ops.on_send = on_send_klb_ncm_ops_mnp;

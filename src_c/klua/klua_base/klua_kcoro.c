@@ -1,4 +1,5 @@
-﻿#include "klb_type.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klb_type.h"
 #include "klbmem/klb_mem.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
@@ -294,7 +295,7 @@ static int klua_kco_timeout(lua_State* L)
     return 0;
 }
 
-static int klua_kco_sleep(lua_State* L)
+static int klua_kco_co_sleep(lua_State* L)
 {
     lua_Integer tc = 0;
 
@@ -323,7 +324,7 @@ int klua_open_kco(lua_State* L)
         { "fork",           klua_kco_fork },
         { "timeout",        klua_kco_timeout },
 
-        { "sleep",          klua_kco_sleep },
+        { "co_sleep",       klua_kco_co_sleep },
 
         { NULL,             NULL }
     };

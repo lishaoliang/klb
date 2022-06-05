@@ -3,9 +3,6 @@
 //
 /// @file    klb_flv.h
 /// @brief   FLV相关定义
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -125,8 +122,8 @@ typedef struct klb_flv_audio_tag_t_
 #define KLB_FLV_AUDIO_SAMPLES_16BIT  1   ///<  16-bit samples
 
     uint8_t sound_type : 1;
-#define KLB_FLV_AUDIO_MONO           0   ///< Mono sound
-#define KLB_FLV_AUDIO_STEREO         1   ///< Stereo sound
+#define KLB_FLV_AUDIO_MONO           0   ///< 单声道; Mono sound
+#define KLB_FLV_AUDIO_STEREO         1   ///< 立体声; Stereo sound
 }klb_flv_audio_tag_t;
 
 

@@ -1,4 +1,5 @@
-﻿#include "klbgui/klb_wnd.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbgui/klb_wnd.h"
 #include "klbgui/klb_wnd_in.h"
 #include "klbgui/klb_gui_in.h"
 #include <string.h>

@@ -90,7 +90,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_USE_OPEN_SSL__;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_OPENSSL__;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -155,6 +155,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h" />
+    <ClInclude Include="..\..\inc\klbbase\klb_mnp_help.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_package.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
@@ -167,9 +168,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
+    <ClInclude Include="..\..\inc\klbmem\klb_buf_atom.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_fpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h" />
-    <ClInclude Include="..\..\inc\klbmem\klb_mem_pool.h" />
+    <ClInclude Include="..\..\inc\klbmem\klb_mpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_http.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
@@ -302,6 +304,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbutil\klb_bitmap.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_canvas.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_color.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_h26x.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_hash.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_hash_dx.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_hash_hgsmi.h" />
@@ -385,6 +388,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lzio.h" />
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.h" />
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-skynet\lua-seri.h" />
     <ClInclude Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.h" />
     <ClInclude Include="..\..\src_c\libavutil\adler32.h" />
     <ClInclude Include="..\..\src_c\libavutil\aes.h" />
@@ -490,6 +494,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
+    <ClCompile Include="..\..\src_c\klbbase\klb_mnp_help.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_package.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
@@ -503,17 +508,23 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
+    <ClCompile Include="..\..\src_c\klbmem\klb_buf_atom.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_fpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
-    <ClCompile Include="..\..\src_c\klbmem\klb_mem_pool.c" />
+    <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_listen.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_flv.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_mnp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_mnp.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_websocket.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rtsp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_flv.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_mnp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_nsp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
@@ -544,6 +555,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_h26x.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_coroutine.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
@@ -555,19 +567,26 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_base\klua_package.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_base\klua_kpackage.c" />
     <ClCompile Include="..\..\src_c\klua\klua_env.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_format\klua_kh26x.c" />
     <ClCompile Include="..\..\src_c\klua\klua_help.c" />
     <ClCompile Include="..\..\src_c\klua\klua_main.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_server.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_flv.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_mnp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kmnp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kwebsocket_server.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_flv.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_mnp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_data.c" />
@@ -615,6 +634,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\lua_cjson.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-skynet\lua-seri.c" />
     <ClCompile Include="..\..\src_c\klua\lua.c" />
     <ClCompile Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.c" />
     <ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c" />

@@ -1,4 +1,5 @@
-﻿#include "klbutil/klb_canvas.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbutil/klb_canvas.h"
 #include "klbutil/klb_canvas_in.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>

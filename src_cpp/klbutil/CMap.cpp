@@ -1,4 +1,5 @@
-﻿#include "klbutil/CMap.hpp"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbutil/CMap.hpp"
 #include "klbmem/klb_mem.h"
 #include <sstream>
 #include <assert.h>

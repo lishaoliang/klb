@@ -1,4 +1,5 @@
-﻿#include "klbnet/klb_nsp.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_nsp.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
 #include "klbutil/klb_hlist.h"
@@ -6,7 +7,16 @@
 #include "klbnet/klb_ncm.h"
 #include "klbbase/klb_mnp.h"
 #include "libavutil/avstring.h"
+#include "klbthird/sds.h"
 #include <assert.h>
+
+
+/// @brief URL路径 对应的协议
+typedef struct klb_nsp_route_t_
+{
+    int             protocol;
+    int             tls_protocol;
+}klb_nsp_route_t;
 
 
 typedef struct klb_nsp_item_t_
@@ -17,13 +27,21 @@ typedef struct klb_nsp_item_t_
     klb_buf_t*      p_buf;                  ///< 读取缓存
 
     int             protocol;               ///< 协议类型: klb_protocol_e/KLB_PROTOCOL_UNKOWN
+
+    struct
+    {
+        klb_nsp_accept_cb   cb_accept;
+        void*               p_udata;
+    };
 }klb_nsp_item_t;
 
 
 typedef struct klb_nsp_t_
 {
-    klb_multiplex_t*        p_multi;            ///< 复用模块
-    klb_hlist_t*            p_socket_hlist;     ///< socket列表: klb_nsp_socket_t*
+    klb_multiplex_t*        p_multi;                ///< 复用模块
+    klb_hlist_t*            p_socket_hlist;         ///< socket列表: klb_nsp_item_t*
+
+    klb_hlist_t*            p_route_hlist;          ///< URL路径对应的协议
 
     struct
     {
@@ -41,6 +59,7 @@ klb_nsp_t* klb_nsp_create(klb_multiplex_t* p_multi)
     p_nsp->p_multi = p_multi;
 
     p_nsp->p_socket_hlist = klb_hlist_create(0);
+    p_nsp->p_route_hlist = klb_hlist_create(0);
 
     return p_nsp;
 }
@@ -52,10 +71,42 @@ void klb_nsp_destroy(klb_nsp_t* p_nsp)
     assert(NULL != p_nsp);
 
     // 清空
+    while (0 < klb_hlist_size(p_nsp->p_socket_hlist))
+    {
+        klb_nsp_item_t* p_item = (klb_nsp_item_t*)klb_hlist_pop_head(p_nsp->p_socket_hlist);
 
+        klb_socket_closing(p_item->p_socket);
+        klb_multiplex_remove(p_nsp->p_multi, p_item->id);
+    }
+
+    // 清空
+    while (0 < klb_hlist_size(p_nsp->p_route_hlist))
+    {
+        klb_nsp_route_t* p_route = (klb_nsp_route_t*)klb_hlist_pop_head(p_nsp->p_route_hlist);
+        KLB_FREE(p_route);
+    }
 
     KLB_FREE_BY(p_nsp->p_socket_hlist, klb_hlist_destroy);
     KLB_FREE(p_nsp);
+}
+
+void klb_nsp_route(klb_nsp_t* p_nsp, const char* p_path, int protocol)
+{
+    klb_nsp_route_t* p_route = (klb_nsp_route_t*)klb_hlist_find(p_nsp->p_route_hlist, p_path, strlen(p_path));
+    if (NULL != p_route)
+    {
+        p_route->protocol = protocol;
+        p_route->tls_protocol = protocol;
+    }
+    else
+    {
+        klb_nsp_route_t* p_tmp = KLB_MALLOCZ(klb_nsp_route_t, 1, 0);
+        p_tmp->protocol = protocol;
+        p_tmp->tls_protocol = protocol;
+
+        klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_nsp->p_route_hlist, p_path, strlen(p_path), p_tmp);
+        assert(NULL != p_iter);
+    }
 }
 
 int klb_nsp_set_accept(klb_nsp_t* p_nsp, klb_nsp_accept_cb cb_accept, void* ptr)
@@ -66,7 +117,25 @@ int klb_nsp_set_accept(klb_nsp_t* p_nsp, klb_nsp_accept_cb cb_accept, void* ptr)
     return 0;
 }
 
-static int klb_nsp_check_protocol(klb_buf_t* p_buf, bool tls)
+static int check_protocol_route_klb_nsp(klb_nsp_t* p_nsp, const char* p_path, bool tls)
+{
+    klb_nsp_route_t* p_route = (klb_nsp_route_t*)klb_hlist_find(p_nsp->p_route_hlist, p_path, strlen(p_path));
+    if (NULL != p_route)
+    {
+        if (tls)
+        {
+            return p_route->tls_protocol;
+        }
+        else
+        {
+            return p_route->protocol;
+        }
+    }
+
+    return KLB_PROTOCOL_UNKOWN;
+}
+
+static int klb_nsp_check_protocol(klb_nsp_t* p_nsp, klb_buf_t* p_buf, bool tls)
 {
     char* ptr = p_buf->p_buf;
     int data_len = p_buf->end - p_buf->start;
@@ -81,17 +150,33 @@ static int klb_nsp_check_protocol(klb_buf_t* p_buf, bool tls)
     if (NULL != p_rn)
     {
         int line_len = p_rn - ptr;
-        char* p_http = av_strnstr(ptr, "HTTP", line_len);
+        sds line = sdsnewlen(ptr, line_len); // eg. "GET / HTTP/1.1"
+
+        char path[1024] = { 0 };
+        sscanf(line, "%*[^ ] %1000s", path);
+
+        char* p_http = av_strnstr(line, "HTTP", sdslen(line));
         if (NULL != p_http)
         {
-            return tls ? KLB_PROTOCOL_HTTPS : KLB_PROTOCOL_HTTP;
+            sdsfree(line);
+
+            int protocol = check_protocol_route_klb_nsp(p_nsp, path, tls);
+            if (KLB_PROTOCOL_UNKOWN == protocol)
+            {
+                return tls ? KLB_PROTOCOL_HTTPS : KLB_PROTOCOL_HTTP;
+            }
+
+            return protocol;
         }
 
-        char* p_rtsp = av_strnstr(ptr, "RTSP", line_len);
+        char* p_rtsp = av_strnstr(line, "RTSP", sdslen(line));
         if (NULL != p_rtsp)
         {
+            sdsfree(line);
             return KLB_PROTOCOL_RTSP;
         }
+
+        sdsfree(line);
     }
 
     return KLB_PROTOCOL_UNKOWN;
@@ -100,20 +185,18 @@ static int klb_nsp_check_protocol(klb_buf_t* p_buf, bool tls)
 /// @brief 当移除之后
 static int cb_remove_klb_nsp(void* p_lparam, void* p_wparam, int id)
 {
-    klb_nsp_t* p_nsp = (klb_nsp_t*)p_lparam;
+    //klb_nsp_t* p_nsp = (klb_nsp_t*)p_lparam;
     klb_nsp_item_t* p_item = (klb_nsp_item_t*)p_wparam;
 
-    // 从 klb_multiplex_remove 移除之后, 可交给对应处理模块
+    bool close = true;
 
-    // 移除
-    void* ptr = klb_hlist_remove_bykey(p_nsp->p_socket_hlist, &id, sizeof(id));
-    assert(ptr == p_item);
-
-    if (NULL != p_nsp->cb_accept)
+    if (KLB_PROTOCOL_UNKOWN != p_item->protocol && NULL != p_item->cb_accept)
     {
-        p_nsp->cb_accept(p_nsp->p_udata, p_item->protocol, p_item->p_socket, p_item->p_buf);
+        p_item->cb_accept(p_item->p_udata, p_item->protocol, p_item->p_socket, p_item->p_buf);
+        close = false;
     }
-    else
+    
+    if(close)
     {
         KLB_FREE_BY(p_item->p_socket, klb_socket_destroy);
     }
@@ -142,17 +225,23 @@ static int cb_recv_klb_nsp(void* p_lparam, void* p_wparam, int id, int64_t now)
         {
             p_buf->end += r;
 
-            p_item->protocol = klb_nsp_check_protocol(p_buf, false);
+            p_item->protocol = klb_nsp_check_protocol(p_nsp, p_buf, false);
 
             if (KLB_PROTOCOL_UNKOWN != p_item->protocol)
             {
+                // 识别到了协议
+                p_item->cb_accept = p_nsp->cb_accept;
+                p_item->p_udata = p_nsp->p_udata;
+
+                klb_hlist_remove_bykey(p_nsp->p_socket_hlist, &p_item->id, sizeof(p_item->id));
                 klb_multiplex_remove(p_nsp->p_multi, id);
             }
         }
     }
     else
     {
-        // 已经满了
+        // 数据满了, 还未识别到协议
+        klb_hlist_remove_bykey(p_nsp->p_socket_hlist, &p_item->id, sizeof(p_item->id));
         klb_multiplex_remove(p_nsp->p_multi, id);
     }
 

@@ -1,6 +1,8 @@
-﻿#include "klua/klua.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klua/extension/klua_ex_multiplex.h"
+#include "klua/extension/klua_ex_coroutine.h"
 #include "klbnet/klb_ncm.h"
 #include "klbutil/klb_log.h"
 #include "klbmem/klb_mem.h"
@@ -8,6 +10,7 @@
 #include "klua/klua_data.h"
 #include "klbnet/klb_listen.h"
 #include "klbnet/klb_nsp.h"
+#include <stdlib.h>
 #include <assert.h>
 
 
@@ -23,6 +26,7 @@ typedef struct klua_kncm_t_
         klua_env_t*             p_env;          ///< lua环境
 
         int                     reg_on_recv;    ///< Lua脚本函数
+        lua_State*              co_recv;        ///< "recv"函数对应的协程
     };
 
     struct
@@ -37,9 +41,41 @@ typedef struct klua_kncm_t_
         klb_nsp_t*              p_nsp;          ///< 连接预处理: 识别协议类型
         klb_ncm_t*              p_ncm;          ///< ncm模块
     };
+
+    bool                        is_close;       ///< 是否关闭: true.关闭; false.未关闭
 }klua_kncm_t;
 
 //////////////////////////////////////////////////////////////////////////
+
+// KLB_PROTOCOL_MAX
+static const char* s_klua_kncm_protocols[] = { 
+    "unkown", "mnp", "mnps", "rtmp", "rtsp", 
+    "http", "https", "ws", "wss", "http-mnp",
+    "http-flv", "ws-mnp", "ws-flv", NULL };
+
+static int check_protocol_klua_kncm(const char* p_protocol)
+{
+    for (int i = 0; s_klua_kncm_protocols[i]; i++)
+    {
+        if (strcmp(s_klua_kncm_protocols[i], p_protocol) == 0)
+        {
+            return i;
+        }
+    }
+
+    return KLB_PROTOCOL_UNKOWN;
+}
+
+static const char* get_protocol_klua_kncm(int protocol, char* p_buf, int buf_len)
+{
+    if (0 <= protocol && protocol < KLB_PROTOCOL_MAX)
+    {
+        return s_klua_kncm_protocols[protocol];
+    }
+
+    snprintf(p_buf, buf_len - 1, "%d", protocol);
+    return p_buf;
+}
 
 /// @brief 从C调用Lua脚本注册的的函数
 /// @param [in]  *p_kncm        kncm指针
@@ -52,23 +88,50 @@ typedef struct klua_kncm_t_
 static int call_lua_reg_on_recv_klua_kncm(klua_kncm_t* p_kncm, const char* p_msg, int id, int protocol, const char* p_s1, int s1_len, const char* p_s2, int s2_len, uint32_t sequence, uint32_t uid)
 {
     assert(NULL != p_kncm);
-    if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
 
-    lua_State* L = p_kncm->L;
-    KLUA_HELP_TOP_B(L);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);    /* to call reg in protected mode */
-    lua_pushstring(L, p_msg);                                  /* 1st argument */
-    lua_pushinteger(L, id);                                    /* 2st argument */
-    lua_pushinteger(L, protocol);                              /* 3st argument */
-    lua_pushlstring(L, p_s1, s1_len);                          /* 4st argument */
-    lua_pushlstring(L, p_s2, s2_len);                          /* 5st argument */
-    lua_pushinteger(L, sequence);                              /* 6st argument */
-    lua_pushinteger(L, uid);                                   /* 7st argument */
-    int status = lua_pcall(L, 7, 0, 0);                        /* do the call */
-    klua_env_report(p_kncm->p_env, status);
+    if (p_kncm->co_recv)
+    {
+        lua_State* L = klua_ex_coroutine_rawgeti(klua_ex_get_coroutine(p_kncm->p_env), p_kncm->co_recv);
+        if (NULL == L) return EXIT_FAILURE;
 
-    KLUA_HELP_TOP_E(L);
-    return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+        p_kncm->co_recv = NULL; // 清空
+
+        char buf[32] = { 0 };
+
+        lua_pushstring(L, p_msg);                                  /* 1st argument */
+        lua_pushinteger(L, id);                                    /* 2st argument */
+        lua_pushstring(L, get_protocol_klua_kncm(protocol, buf, sizeof(buf)));/* 3st argument */
+        lua_pushlstring(L, p_s1, s1_len);                          /* 4st argument */
+        lua_pushlstring(L, p_s2, s2_len);                          /* 5st argument */
+        lua_pushinteger(L, sequence);                              /* 6st argument */
+        lua_pushinteger(L, uid);                                   /* 7st argument */
+        int status = lua_pcall(L, 7, 0, 0);                        /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
+    else
+    {
+        if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
+
+        char buf[32] = { 0 };
+
+        lua_State* L = p_kncm->L;
+        KLUA_HELP_TOP_B(L);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);    /* to call reg in protected mode */
+        lua_pushstring(L, p_msg);                                  /* 1st argument */
+        lua_pushinteger(L, id);                                    /* 2st argument */
+        lua_pushstring(L, get_protocol_klua_kncm(protocol, buf, sizeof(buf)));/* 3st argument */
+        lua_pushlstring(L, p_s1, s1_len);                          /* 4st argument */
+        lua_pushlstring(L, p_s2, s2_len);                          /* 5st argument */
+        lua_pushinteger(L, sequence);                              /* 6st argument */
+        lua_pushinteger(L, uid);                                   /* 7st argument */
+        int status = lua_pcall(L, 7, 0, 0);                        /* do the call */
+        klua_env_report_by_L(L, status);
+
+        KLUA_HELP_TOP_E(L);
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
 }
 
 /// @brief 从C调用Lua脚本注册的的函数
@@ -78,20 +141,44 @@ static int call_lua_reg_on_recv_klua_kncm(klua_kncm_t* p_kncm, const char* p_msg
 static int call_lua_reg_on_recv_klua_kncm_media(klua_kncm_t* p_kncm, const char* p_msg, int id, int protocol, klb_buf_t* p_data)
 {
     assert(NULL != p_kncm);
-    if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
 
-    lua_State* L = p_kncm->L;
-    KLUA_HELP_TOP_B(L);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);    /* to call reg in protected mode */
-    lua_pushstring(L, p_msg);                                  /* 1st argument */
-    lua_pushinteger(L, id);                                    /* 2st argument */
-    lua_pushinteger(L, protocol);                              /* 3st argument */
-    lua_pushlstring(L, p_data->p_buf + p_data->start, p_data->end - p_data->start); /* 4st argument */
-    int status = lua_pcall(L, 4, 0, 0);                        /* do the call */
-    klua_env_report(p_kncm->p_env, status);
+    if (p_kncm->co_recv)
+    {
+        lua_State* L = klua_ex_coroutine_rawgeti(klua_ex_get_coroutine(p_kncm->p_env), p_kncm->co_recv);
+        if (NULL == L) return EXIT_FAILURE;
 
-    KLUA_HELP_TOP_E(L);
-    return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+        p_kncm->co_recv = NULL; // 清空
+
+        char buf[32] = { 0 };
+
+        lua_pushstring(L, p_msg);                                  /* 1st argument */
+        lua_pushinteger(L, id);                                    /* 2st argument */
+        lua_pushstring(L, get_protocol_klua_kncm(protocol, buf, sizeof(buf)));  /* 3st argument */
+        lua_pushlightuserdata(L, p_data);                          /* 4st argument */
+        int status = lua_pcall(L, 4, 0, 0);                        /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
+    else
+    {
+        if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
+
+        char buf[32] = { 0 };
+
+        lua_State* L = p_kncm->L;
+        KLUA_HELP_TOP_B(L);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);    /* to call reg in protected mode */
+        lua_pushstring(L, p_msg);                                  /* 1st argument */
+        lua_pushinteger(L, id);                                    /* 2st argument */
+        lua_pushstring(L, get_protocol_klua_kncm(protocol, buf, sizeof(buf)));  /* 3st argument */
+        lua_pushlightuserdata(L, p_data);                          /* 4st argument */
+        int status = lua_pcall(L, 4, 0, 0);                        /* do the call */
+        klua_env_report_by_L(L, status);
+
+        KLUA_HELP_TOP_E(L);
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
 }
 
 /// @brief 从C调用Lua脚本注册的的函数
@@ -101,22 +188,46 @@ static int call_lua_reg_on_recv_klua_kncm_media(klua_kncm_t* p_kncm, const char*
 static int call_lua_reg_on_recv_klua_kncm_tip(klua_kncm_t* p_kncm, const char* p_msg, int id, int protocol, int code)
 {
     assert(NULL != p_kncm);
-    if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
 
-    lua_State* L = p_kncm->L;
-    KLUA_HELP_TOP_B(L);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);     /* to call reg in protected mode */
-    lua_pushstring(L, p_msg);                                   /* 1st argument */
-    lua_pushinteger(L, id);                                     /* 2st argument */
-    lua_pushinteger(L, protocol);                               /* 3st argument */
-    lua_pushinteger(L, code);                                   /* 4st argument */
-    int status = lua_pcall(L, 4, 0, 0);                         /* do the call */
-    klua_env_report(p_kncm->p_env, status);
+    if (p_kncm->co_recv)
+    {
+        lua_State* L = klua_ex_coroutine_rawgeti(klua_ex_get_coroutine(p_kncm->p_env), p_kncm->co_recv);
+        if (NULL == L) return EXIT_FAILURE;
 
-    KLUA_HELP_TOP_E(L);
-    return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+        p_kncm->co_recv = NULL; // 清空
+
+        char buf[32] = { 0 };
+
+        lua_pushstring(L, p_msg);                                   /* 1st argument */
+        lua_pushinteger(L, id);                                     /* 2st argument */
+        lua_pushstring(L, get_protocol_klua_kncm(protocol, buf, sizeof(buf)));  /* 3st argument */
+        lua_pushinteger(L, code);                                   /* 4st argument */
+        int status = lua_pcall(L, 4, 0, 0);                         /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
+    else
+    {
+
+        if (p_kncm->reg_on_recv <= 0) return EXIT_FAILURE;
+
+        char buf[32] = { 0 };
+
+        lua_State* L = p_kncm->L;
+        KLUA_HELP_TOP_B(L);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, p_kncm->reg_on_recv);     /* to call reg in protected mode */
+        lua_pushstring(L, p_msg);                                   /* 1st argument */
+        lua_pushinteger(L, id);                                     /* 2st argument */
+        lua_pushstring(L, get_protocol_klua_kncm(protocol, buf, sizeof(buf)));  /* 3st argument */
+        lua_pushinteger(L, code);                                   /* 4st argument */
+        int status = lua_pcall(L, 4, 0, 0);                         /* do the call */
+        klua_env_report_by_L(L, status);
+
+        KLUA_HELP_TOP_E(L);
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
 }
-
 
 /// @brief 连接解析收到数据时,回调
 /// @return int 0
@@ -126,6 +237,7 @@ static int on_klb_ncm_recv_klua_kncm(void* ptr, int protocol, int id, int code, 
 
     if (KLB_SOCKET_CONNECT == code)
     {
+        // 仅仅表示 创建socket成功, 连接中
         call_lua_reg_on_recv_klua_kncm_tip(p_kncm, "connect", id, protocol, 0);
     }
     else if (KLB_SOCKET_OK == code)
@@ -159,6 +271,8 @@ static int on_klb_ncm_recv_klua_kncm(void* ptr, int protocol, int id, int code, 
         }
         else if (KLB_NCM_PACK_MEDIA == packtype)
         {
+            //klb_mnp_media_t* p_media = (klb_mnp_media_t*)ptr;
+            //KLB_LOG("dtype=%d,vtype=%d,size=%d\n", p_media->dtype, p_media->vtype, p_media->size);
             call_lua_reg_on_recv_klua_kncm_media(p_kncm, "media", id, protocol, p_data);
         }
     }
@@ -168,7 +282,10 @@ static int on_klb_ncm_recv_klua_kncm(void* ptr, int protocol, int id, int code, 
     }
     else
     {
-        // 需要断开连接
+        // 断开连接
+        klb_ncm_close(p_kncm->p_ncm, id);
+
+        // 通知脚本断开连接
         call_lua_reg_on_recv_klua_kncm_tip(p_kncm, "disconnect", id, protocol, code);
     }
 
@@ -191,9 +308,20 @@ static klua_kncm_t* to_klua_kncm(lua_State* L, int index)
     return p_kncm;
 }
 
-static void free_klua_kncm(klua_kncm_t* p_kncm)
+static void close_klua_kncm(klua_kncm_t* p_kncm)
 {
+    if (!p_kncm->is_close)
+    {
+        klb_listen_close(p_kncm->p_listen);
 
+        KLB_FREE_BY(p_kncm->p_listen, klb_listen_destroy);
+        KLB_FREE_BY(p_kncm->p_nsp, klb_nsp_destroy);
+        KLB_FREE_BY(p_kncm->p_ncm, klb_ncm_destroy);
+
+        klua_unref_registryindex(p_kncm->L, p_kncm->reg_on_recv);
+
+        p_kncm->is_close = true;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -202,7 +330,7 @@ static int klua_kncm_gc(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
 
-    free_klua_kncm(p_kncm);
+    close_klua_kncm(p_kncm);
 
     return 0;
 }
@@ -219,12 +347,12 @@ static int klua_kncm_close(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
 
-    free_klua_kncm(p_kncm);
+    close_klua_kncm(p_kncm);
 
     return 0;
 }
 
-static int klua_kncm_set_on_recv(lua_State* L)
+static int klua_kncm_on_recv(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
     luaL_checktype(L, 2, LUA_TFUNCTION);
@@ -266,7 +394,7 @@ static int on_accept_klua_kncm_nsp(void* ptr, int protocol, klb_socket_t* p_sock
 static int klua_kncm_listen(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
-    lua_Integer port = luaL_checkinteger(L, 2);
+    int port = (int)luaL_checkinteger(L, 2);
 
     klb_listen_open(p_kncm->p_listen, port, 20);
 
@@ -275,20 +403,53 @@ static int klua_kncm_listen(lua_State* L)
 
 static int klua_kncm_close_listen(lua_State* L)
 {
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    klb_listen_close(p_kncm->p_listen);
+    return 0;
+}
+
+static int klua_kncm_check_protocol(lua_State* L, int idx)
+{
+    int protocol = KLB_PROTOCOL_MNP;
+    if (lua_isstring(L, idx))
+    {
+        protocol = check_protocol_klua_kncm(luaL_checkstring(L, idx));
+    }
+    else if(lua_isinteger(L, idx))
+    {
+        protocol = (int)luaL_checkinteger(L, idx);
+    }
+
+    return protocol;
+}
+
+static int klua_kncm_route(lua_State* L)
+{
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    const char* p_path = luaL_checkstring(L, 2);
+    int protocol = klua_kncm_check_protocol(L, 3); // klb_protocol_e
+
+    klb_nsp_route(p_kncm->p_nsp, p_path, protocol);
+
     return 0;
 }
 
 static int klua_kncm_connect(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
-    lua_Integer protocol = luaL_checkinteger(L, 2);
+    int protocol = klua_kncm_check_protocol(L, 2); // klb_protocol_e
     const char* p_host = luaL_checkstring(L, 3);
     lua_Integer port = luaL_checkinteger(L, 4);
 
     bool tls = false;
-    if (lua_isboolean(L, 5))
+
+    switch (protocol)
     {
-        tls = lua_toboolean(L, 5);
+    case KLB_PROTOCOL_MNPS:
+    case KLB_PROTOCOL_HTTPS:
+    case KLB_PROTOCOL_WSS:
+        tls = true;
+        break;
     }
 
     klb_socket_fd fd = klb_socket_connect(p_host, (int)port, 0);
@@ -331,7 +492,7 @@ static int klua_kncm_disconnect(lua_State* L)
     return 1;
 }
 
-static int klua_kncm_send(lua_State* L)
+static int klua_kncm_send_text(lua_State* L)
 {
     klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
     int id = (int)luaL_checkinteger(L, 2);
@@ -357,7 +518,7 @@ static int klua_kncm_send(lua_State* L)
     bool ok = false;
     if (0 < s1_len + s2_len)
     {
-        if (0 == klb_ncm_send(p_kncm->p_ncm, id, sequence, uid, p_s1, s1_len, p_s2, s2_len))
+        if (0 == klb_ncm_send_text(p_kncm->p_ncm, id, sequence, uid, p_s1, s1_len, p_s2, s2_len))
         {
             ok = true;
         }
@@ -367,20 +528,69 @@ static int klua_kncm_send(lua_State* L)
     return 1;
 }
 
-
-static int klua_kncm_recv(lua_State* L)
+static int klua_kncm_send_binary(lua_State* L)
 {
-    return 0;
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    int id = (int)luaL_checkinteger(L, 2);
+
+    size_t s1_len = 0;
+    const char* p_s1 = luaL_checklstring(L, 3, &s1_len);
+
+    size_t s2_len = 0;
+    const char* p_s2 = luaL_checklstring(L, 4, &s2_len);
+
+    uint32_t sequence = 0;
+    if (lua_isinteger(L, 5))
+    {
+        sequence = (uint32_t)luaL_checkinteger(L, 5);
+    }
+
+    uint32_t uid = 0;
+    if (lua_isinteger(L, 6))
+    {
+        uid = (uint32_t)luaL_checkinteger(L, 6);
+    }
+
+    bool ok = false;
+    if (0 < s1_len + s2_len)
+    {
+        if (0 == klb_ncm_send_binary(p_kncm->p_ncm, id, sequence, uid, p_s1, s1_len, p_s2, s2_len))
+        {
+            ok = true;
+        }
+    }
+
+    lua_pushboolean(L, ok);
+    return 1;
+}
+
+static int klua_kncm_co_recv(lua_State* L)
+{
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+
+    if (!klua_is_coroutine(L))
+    {
+        luaL_error(L, "kncm.new():recv() must in coroutine!");
+        return 0;
+    }
+
+    // todo. 未能及时 recv 数据时的处理
+    assert(NULL == p_kncm->co_recv);
+    p_kncm->co_recv = L;
+
+    return lua_yield(L, lua_gettop(L));
 }
 
 static int klua_kncm_send_media(lua_State* L)
 {
-    return 0;
-}
+    klua_kncm_t* p_kncm = to_klua_kncm(L, 1);
+    int id = (int)luaL_checkinteger(L, 2);
+    klb_buf_t* p_frame = (klb_buf_t*)luaL_checklightuserdata(L, 3);
 
-static int klua_kncm_recv_media(lua_State* L)
-{
-    return 0;
+    int ret = klb_ncm_send_media(p_kncm->p_ncm, id, p_frame);
+
+    lua_pushinteger(L, ret);
+    return 1;
 }
 
 /// @brief 对连接进行控制操作
@@ -402,7 +612,7 @@ static int klua_kncm_ctrl(lua_State* L)
 
     klua_data_t* p_out = NULL;
     int out_num = 0;
-    if (0 == klb_ncm_ctrl(p_kncm->p_ncm, id, &data, data_num, &p_out, &out_num))
+    if (0 == klb_ncm_ctrl(p_kncm->p_ncm, id, data, data_num, &p_out, &out_num))
     {
         lua_pushboolean(L, true);
 
@@ -431,19 +641,21 @@ static void klua_kncm_createmeta(lua_State* L)
     static luaL_Reg meth[] = {
         { "close",          klua_kncm_close },
 
-        { "set_on_recv",    klua_kncm_set_on_recv },
+        //{ "on_recv",        klua_kncm_on_recv },
 
         { "listen",         klua_kncm_listen },
         { "close_listen",   klua_kncm_close_listen },
 
+        { "route",          klua_kncm_route },
+
         { "connect",        klua_kncm_connect },
         { "disconnect",     klua_kncm_disconnect },
 
-        { "send",           klua_kncm_send },
-        { "recv",           klua_kncm_recv },
-
+        { "send_text",      klua_kncm_send_text },
+        { "send_binary",    klua_kncm_send_binary },
         { "send_media",     klua_kncm_send_media },
-        { "recv_media",     klua_kncm_recv_media },
+
+        { "co_recv",        klua_kncm_co_recv },
 
         { "ctrl",           klua_kncm_ctrl },
 
@@ -473,14 +685,14 @@ static int klua_kncm_new(lua_State* L)
     klua_kncm_t* p_kncm = new_klua_kncm(L);
 
     p_kncm->L = L;
-    p_kncm->p_env = klua_env_get_by_L(L);;
+    p_kncm->p_env = klua_env_get_by_L(L);
     p_kncm->p_ex = klua_ex_get_multiplex(p_kncm->p_env);
     p_kncm->p_multi = klua_ex_multiplex_get(p_kncm->p_ex);
 
     p_kncm->p_listen = klb_listen_create(p_kncm->p_multi);
     p_kncm->p_nsp = klb_nsp_create(p_kncm->p_multi);
     p_kncm->p_ncm = klb_ncm_create(p_kncm->p_multi);
-
+    p_kncm->is_close = false;
 
     // 数据
     klb_ncm_add_receiver(p_kncm->p_ncm, on_klb_ncm_recv_klua_kncm, p_kncm);

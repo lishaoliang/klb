@@ -1,15 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2021, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2021/04/03
 //
 /// @file    klb_rand.h
 /// @brief   文件简要描述
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2021/04/03 0.1 创建文件
+///  \n 2021 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_RAND_H__

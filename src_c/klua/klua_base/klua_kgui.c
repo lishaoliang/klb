@@ -1,4 +1,5 @@
-﻿#include "klb_type.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klb_type.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"

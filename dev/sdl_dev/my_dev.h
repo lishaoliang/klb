@@ -19,6 +19,7 @@ typedef struct my_dev_t_
 
     sdl_canvas_t*       p_sdl_canvas;
     klb_mnp_msg_cb      cb_msg;
+    void*               p_obj;
 
     bool                init_thread_ok;
 }my_dev_t;

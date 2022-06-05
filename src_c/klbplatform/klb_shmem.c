@@ -1,4 +1,5 @@
-﻿#include "klbplatform/klb_shmem.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbplatform/klb_shmem.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
@@ -62,6 +63,10 @@ klb_shmem_t* klb_shmem_create(int flag, const char* p_name, size_t size)
     return p_shmem;
 }
 
+klb_shmem_t* klb_shmem_open(const char* p_name, size_t size)
+{
+    return NULL;
+}
 
 /// @brief 销毁
 /// @return 无

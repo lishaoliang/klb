@@ -3,8 +3,6 @@
 //
 /// @file    klb_dynamic_link.h
 /// @brief   动态链接库
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告

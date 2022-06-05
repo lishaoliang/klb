@@ -1,4 +1,6 @@
-﻿#include "klua/extension/klua_ex_gui.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/extension/klua_ex_gui.h"
+#include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
@@ -106,7 +108,7 @@ static int on_command_klua_ex_gui(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
 
     if (LUA_OK != lua_pcall(L, 8, 1, 0))
     {
-        klua_help_report(L, LUA_ERRRUN);
+        klua_env_report_by_L(L, LUA_ERRRUN);
         KLUA_HELP_TOP_E(L);
         return -1;
     }

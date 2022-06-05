@@ -4,9 +4,6 @@
 /// @file    klb_nsp.h
 /// @brief   net server preprocess, 网络连接预处理模块
 ///          处理监听等,主要为识别协议
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -37,6 +34,10 @@ KLB_API klb_nsp_t* klb_nsp_create(klb_multiplex_t* p_multi);
 /// @param [in]  *p_nsp                 nsp模块
 /// @return 无
 KLB_API void klb_nsp_destroy(klb_nsp_t* p_nsp);
+
+
+/// @brief 设置url路径对应的协议
+KLB_API void klb_nsp_route(klb_nsp_t* p_nsp, const char* p_path, int protocol);
 
 
 typedef int(*klb_nsp_accept_cb)(void* ptr, int protocol, klb_socket_t* p_socket, const klb_buf_t* p_buf);

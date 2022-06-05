@@ -1,13 +1,15 @@
-﻿#include "klbnet/klb_socket_tls.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_mem.h"
 #include <klbutil/klb_log.h>
 #include <assert.h>
+
+#if defined(__KLB_OPENSSL__)
 
 #include "openssl/ssl.h"
 #include "openssl/err.h"
 #include "openssl/conf.h"
 #include "openssl/x509v3.h"
-
 
 typedef struct klb_socket_openssl_t_
 {
@@ -184,3 +186,29 @@ klb_socket_t* klb_socket_tls_async_create(klb_socket_fd fd)
 
     return p_socket;
 }
+
+#else
+
+/// @brief openssl库初始化
+int klb_socket_tls_init()
+{
+    return 0;
+}
+
+
+/// @brief openssl库退出
+void klb_socket_tls_quit()
+{
+
+}
+
+/// @brief 创建一个加密异步socket
+/// @param [in]  fd             socket fd
+/// @return klb_socket_t* NULL.创建失败; 非NULL
+klb_socket_t* klb_socket_tls_async_create(klb_socket_fd fd)
+{
+    assert(false);
+    return NULL;
+}
+
+#endif

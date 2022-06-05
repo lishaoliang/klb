@@ -3,9 +3,6 @@
 //
 /// @file    klua_ex_multiplex.h
 /// @brief   复用
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -45,6 +42,9 @@ klua_ex_multiplex_t* klua_ex_get_multiplex(klua_env_t* p_env);
 /// @param [in] *p_ex            扩展的指针
 /// @return klb_multiplex_t* 复用的指针
 klb_multiplex_t* klua_ex_multiplex_get(klua_ex_multiplex_t* p_ex);
+
+
+klb_multiplex_t* klua_ex_multiplex_get_by_L(lua_State* L);
 
 
 #ifdef __cplusplus

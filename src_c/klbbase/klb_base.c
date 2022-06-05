@@ -1,4 +1,5 @@
-﻿#include "klbbase/klb_base.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbbase/klb_base.h"
 #include "klbnet/klb_socket.h"
 #include "klbplatform/klb_thread.h"
 #include "klbplatform/klb_time.h"

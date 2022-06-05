@@ -1,4 +1,5 @@
-﻿#include "klbutil/klb_hash.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbutil/klb_hash.h"
 
 /*-
 * SPDX-License-Identifier: (BSD-2-Clause-FreeBSD AND RSA-MD)

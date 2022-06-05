@@ -1,15 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/06/30
 //
 /// @file    klua.h
 /// @brief   文件简要描述
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/06/30 0.1 创建文件
+///  \n 2019 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLUA_H__
@@ -51,7 +47,6 @@ KLB_API int klua_main(int argc, char** argv, klua_openlibs_cb cb);
 /// @return 无
 KLB_API void klua_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name);
 
-
 /// @brief check boolean
 /// @return int 0.false; 1.true
 KLB_API bool luaL_checkboolean(lua_State* L, int arg);
@@ -60,6 +55,12 @@ KLB_API bool luaL_checkboolean(lua_State* L, int arg);
 /// @brief check lightuserdata
 /// @return void*
 KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
+
+KLB_API bool klua_check_coroutine(lua_State* L, const char* p_tip_msg);
+
+KLB_API bool klua_check_option_boolean(lua_State* L, int idx, bool v_default);
+KLB_API lua_Integer klua_check_option_integer(lua_State* L, int idx, lua_Integer v_default);
+KLB_API lua_Number  klua_check_option_number(lua_State* L, int idx, lua_Number v_default);
 
 
 /// @brief setfield
@@ -202,22 +203,54 @@ KLB_API int klua_open_kwnd(lua_State* L);
 KLB_API int klua_open_kurl(lua_State* L);
 
 
+/// @brief 扩展库"ktcp"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_ktcp(lua_State* L);
+
+
+/// @brief 扩展库"kudp"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kudp(lua_State* L);
+
+
 /// @brief 扩展库"khttp"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_khttp(lua_State* L);
 
 
-/// @brief 扩展库"kwebsocket"
+/// @brief 扩展库"kws"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
-KLB_API int klua_open_kwebsocket(lua_State* L);
+KLB_API int klua_open_kws(lua_State* L);
+
+
+/// @brief 扩展库"kmnp"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kmnp(lua_State* L);
 
 
 /// @brief 扩展库"kncm": 网络媒体长链接管理模块
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_kncm(lua_State* L);
+
+
+/// @brief 实时流媒体模块
+KLB_API int klua_open_krtsp(lua_State* L);
+KLB_API int klua_open_khttp_flv(lua_State* L);
+KLB_API int klua_open_khttp_mnp(lua_State* L);
+KLB_API int klua_open_kws_flv(lua_State* L);
+KLB_API int klua_open_kws_mnp(lua_State* L);
+
+
+/// @brief 扩展库"kh26x": h26x文件读取
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kh26x(lua_State* L);
 
 
 /// @brief 预加载 宏KLUA_LOADLIBS 定义的所有库
@@ -248,9 +281,18 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_kgui,         "kgui");        \
     klua_loadlib(L, klua_open_kwnd,         "kwnd");        \
     klua_loadlib(L, klua_open_kurl,         "kurl");        \
+    klua_loadlib(L, klua_open_ktcp,         "ktcp");        \
+    klua_loadlib(L, klua_open_kudp,         "kudp");        \
     klua_loadlib(L, klua_open_khttp,        "khttp");       \
-    klua_loadlib(L, klua_open_kwebsocket,   "kwebsocket");  \
+    klua_loadlib(L, klua_open_kws,          "kws");         \
+    klua_loadlib(L, klua_open_kmnp,         "kmnp");        \
     klua_loadlib(L, klua_open_kncm,         "kncm");        \
+    klua_loadlib(L, klua_open_krtsp,        "krtsp");       \
+    klua_loadlib(L, klua_open_khttp_flv,    "khttp_flv");   \
+    klua_loadlib(L, klua_open_khttp_mnp,    "khttp_mnp");   \
+    klua_loadlib(L, klua_open_kws_flv,      "kws_flv");     \
+    klua_loadlib(L, klua_open_kws_mnp,      "kws_mnp");     \
+    klua_loadlib(L, klua_open_kh26x,        "kh26x");       \
 }
 
 #ifdef __cplusplus

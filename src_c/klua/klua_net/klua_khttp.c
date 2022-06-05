@@ -1,4 +1,5 @@
-﻿#include "klua/klua.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua.h"
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_socket_tls.h"
 #include "klua/klua.h"
@@ -441,7 +442,6 @@ static int on_chunk_complete_klua_khttp(http_parser* p_parser)
 
 static char s_klua_khttp_error_str[KLB_SOCKET_ERR_MAX][16] = {
     "Ok",
-    "Error",
     "Disconnect",
     "Timeout",
     "Protocol"
@@ -501,11 +501,12 @@ static int cb_klua_khttp_recv(void* p_lparam, void* p_wparam, int id, int64_t no
                 if (KLUA_KHTTP_PARSER_OVER == p_inter->parser_status)
                 {
                     //
-                    klb_buf_t* p_body = klb_buffer_join(p_inter->p_body);
+                    klb_buf_t* p_body = klb_buffer_join(p_inter->p_body, NULL, NULL);
 
                     call_lua_reg_on_recv_klua_khttp(p_khttp, "body",
-                                                p_body->p_buf + p_body->start, p_body->end - p_body->start,
-                                                NULL, 0);
+                                p_body->p_buf + p_body->start, p_body->end - p_body->start,
+                                NULL, 0);
+
                     KLB_FREE(p_body);
 
                     klb_buffer_reset(p_inter->p_body);
@@ -580,7 +581,7 @@ static int cb_klua_khttp_send(void* p_lparam, void* p_wparam, int id, int64_t no
         }
         else
         {
-            err = KLB_SOCKET_ERR;
+            err = KLB_SOCKET_DISCONNECT;
             break; // 出现错误
         }
     }
@@ -687,7 +688,7 @@ static int klua_khttp_send(lua_State* L)
     return 0;
 }
 
-static int klua_khttp_close(lua_State* L)
+static int klua_khttp_disconnect(lua_State* L)
 {
     klua_khttp_t* p_khttp = to_klua_khttp(L, 1);
 
@@ -696,7 +697,7 @@ static int klua_khttp_close(lua_State* L)
     return 0;
 }
 
-static int klua_khttp_recv(lua_State* L)
+static int klua_khttp_co_recv(lua_State* L)
 {
     klua_khttp_t* p_khttp = to_klua_khttp(L, 1);
 
@@ -717,12 +718,12 @@ static int klua_khttp_recv(lua_State* L)
 static void klua_khttp_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
-        { "on_recv",        klua_khttp_on_recv },
+        { "disconnect",     klua_khttp_disconnect },
 
         { "send",           klua_khttp_send },
-        { "close",          klua_khttp_close },
 
-        { "recv",           klua_khttp_recv },
+        { "on_recv",        klua_khttp_on_recv },
+        { "co_recv",        klua_khttp_co_recv },
 
         { NULL,             NULL }
     };

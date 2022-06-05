@@ -1,4 +1,5 @@
-﻿#include "klua/klua.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua.h"
 #include "klbbase/klb_mnp_stream.h"
 #include "klbbase/klb_mnp_dev.h"
 #include "klbmem/klb_mem.h"

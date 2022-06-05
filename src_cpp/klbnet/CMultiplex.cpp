@@ -1,4 +1,5 @@
-﻿#include "klbnet/CMultiplex.hpp"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/CMultiplex.hpp"
 #include "klbmem/klb_mem.h"
 #include "klbplatform/klb_time.h"
 #include <assert.h>

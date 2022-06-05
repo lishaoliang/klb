@@ -1,4 +1,6 @@
-﻿// 引用select之前定义
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+
+// 引用select之前定义
 #define FD_SETSIZE                  1024
 
 #include "klbnet/klb_multiplex.h"
@@ -216,7 +218,7 @@ static int klb_multiplex_loop_once_do(klb_multiplex_t* p_multi, int64_t now)
         //assert(false);
     }
 
-    return 0;
+    return 4;
 }
 
 static int klb_multiplex_loop_once_remove(klb_multiplex_t* p_multi, int64_t now)
@@ -270,7 +272,7 @@ int klb_multiplex_loop_once(klb_multiplex_t* p_multi, int64_t now)
     p_multi->tc = now;
 
     // 执行主体业务
-    klb_multiplex_loop_once_do(p_multi, now);
+    int ret = klb_multiplex_loop_once_do(p_multi, now);
 
     // 可移除对象
     klb_multiplex_loop_once_remove(p_multi, now);
@@ -282,7 +284,7 @@ int klb_multiplex_loop_once(klb_multiplex_t* p_multi, int64_t now)
         p_multi->timer_tc = now;
     }
 
-    return 0;
+    return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////

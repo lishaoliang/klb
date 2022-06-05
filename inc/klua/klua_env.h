@@ -1,15 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2019/06/30
 //
 /// @file    klua_env.h
 /// @brief   lua_State简易封装
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2019/06/30 0.1 创建文件
+///  \n 2019 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLUA_ENV_H__
@@ -17,6 +13,7 @@
 
 #include "klb_type.h"
 #include "klbthird/sds.h"
+#include "klbmem/klb_buf.h"
 #include "klua/klua_data.h"
 
 #if defined(__cplusplus)
@@ -28,7 +25,7 @@ extern "C" {
 #include "lauxlib.h"
 
 
-typedef struct klua_env_t klua_env_t;
+typedef struct klua_env_t_ klua_env_t;
 
 
 /// @brief 创建一个lua环境
@@ -94,29 +91,6 @@ KLB_API klua_env_t* klua_env_get_by_L(lua_State* L);
 KLB_API lua_State* klua_env_get_L(klua_env_t* p_env);
 
 
-/// @brief 脚本中是否有"kgo"函数
-/// @param [in] *p_env             lua环境
-/// @return 0.有; 非0.无
-KLB_API int klua_env_has_kgo(klua_env_t* p_env);
-
-
-/// @brief 脚本中"kgo"函数的引用值
-/// @param [in] *p_env             lua环境
-/// @return 0.无引用值; 大于0.引用值
-KLB_API int klua_env_kgo(klua_env_t* p_env);
-
-
-/// @brief 调用脚本中的"kgo"函数
-/// @param [in] *p_env              lua环境
-/// @param [in] *p_msg              消息
-/// @param [in] *p_msgex            扩展消息
-/// @param [in] *p_lparam           参数1
-/// @param [in] *p_wparam           参数2
-/// @param [in] *ptr                C指针
-/// @return int 0.成功; 非0.失败
-KLB_API int klua_env_call_kgo(klua_env_t* p_env, const char* p_msg, const char* p_msgex, const char* p_lparam, const char* p_wparam, void* ptr);
-
-
 /// @brief 报错
 /// @param [in] *p_env              lua环境
 /// @param [in] status              非0时, 报错
@@ -128,6 +102,37 @@ KLB_API int klua_env_report(klua_env_t* p_env, int status);
 /// @param [in] status              非0时, 报错
 /// @return int status
 KLB_API int klua_env_report_by_L(lua_State* L, int status);
+
+
+#define KLUA_LPC_NAME_LEN           15
+#define KLUA_LPC_NAME_BUF           16
+
+
+/// @struct klua_msg_t
+/// @brief  消息
+typedef struct klua_msg_t_
+{
+#define KLUA_LPC_POST                   10                  ///< POST消息: 无响应
+#define KLUA_LPC_REQUEST                11                  ///< 请求消息
+#define KLUA_LPC_RESPONSE               12                  ///< 响应消息
+    int                     type;                           ///< 消息类型
+
+    union
+    {
+        // POST / REQUEST / RESPONSE
+        struct
+        {
+            char            dst_name[KLUA_LPC_NAME_BUF];    ///< 目标(模块等)名称
+            char            src_name[KLUA_LPC_NAME_BUF];    ///< 来源(模块等)名称
+
+            int             msg_size;
+            char*           p_msg;
+        };
+    };
+}klua_msg_t;
+
+
+KLB_API void klua_msg_free(klua_msg_t* p_msg);
 
 
 /// @struct klua_env_extension_t
@@ -148,16 +153,16 @@ typedef struct klua_env_extension_t_
     /// @param [in] *ptr            扩展的指针
     /// @param [in] *p_env          lua环境
     /// @param [in] *p_param        控制参数
-    /// @return klua_ctrlex_msg_t* 返回信息
+    /// @return klua_msg_t* 返回信息
     /// @note eg. 设置扩展的参数, 获取扩展的参数等.
-    klua_ctrlex_msg_t* (*cb_ctrlex)(void* ptr, klua_env_t* p_env, klua_ctrlex_msg_t* p_param);
+    klua_msg_t* (*cb_ctrl)(void* ptr, klua_env_t* p_env, klua_msg_t* p_msg);
 
     /// @brief 消息处理
     /// @param [in] *ptr            扩展的指针
     /// @param [in] *p_env          lua环境
     /// @param [in] now             当前滴答数
     /// @return int 0
-    int   (*cb_msg)(void* ptr, klua_env_t* p_env, int64_t now, klua_msg_t* p_msg);
+    int  (*cb_msg)(void* ptr, klua_env_t* p_env, int64_t now, klua_msg_t* p_msg);
 
     /// @brief 常规调用一次
     /// @param [in] *ptr            扩展的指针
@@ -165,7 +170,7 @@ typedef struct klua_env_extension_t_
     /// @param [in] last_tc         上一次的滴答数
     /// @param [in] now             当前滴答数
     /// @return int 0
-    int   (*cb_loop_once)(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now);
+    int  (*cb_loop_once)(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now);
 }klua_env_extension_t;
 
 
@@ -214,10 +219,22 @@ KLB_API void klua_env_set_name(klua_env_t* p_env, const char* p_name, size_t nam
 KLB_API const sds klua_env_get_name(klua_env_t* p_env);
 
 
-/// @brief 设置获取消息标记
+/// @brief 设置全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
+/// @param [in] *p_env              lua环境
+/// @return 无
+KLB_API void klua_env_set_arg(klua_env_t* p_env, const char* p_data, int data_len);
+
+
+/// @brief 获取全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
+/// @param [in] *p_env              lua环境
+/// @return const klb_buf_t*
+KLB_API const klb_buf_t* klua_env_get_arg(klua_env_t* p_env);
+
+
+/// @brief 放入消息: p_msg 交给
 /// @param [in] *p_env              lua环境
 /// @return sds 名称
-KLB_API void klua_env_set_msg_flag(klua_env_t* p_env);
+KLB_API void klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg);
 
 
 #ifdef __cplusplus

@@ -1,88 +1,179 @@
-﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//
-/// @file    klb_atomic.c
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb/blob/master/LICENSE
-///  \n https://github.com/lishaoliang/klb
-/// @brief   原子变量
-///////////////////////////////////////////////////////////////////////////
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbplatform/klb_atomic.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
 
-
-klb_atomic_t* klb_atomic_create()
-{
-    klb_atomic_t* p_atomic = KLB_MALLOC_ALIGNED(klb_atomic_t, 1, 0, sizeof(void*));
-    KLB_MEMSET(p_atomic, 0, sizeof(klb_atomic_t));
-
-    return p_atomic;
-}
-
-void klb_atomic_destroy(klb_atomic_t* p_atomic)
-{
-    assert(NULL != p_atomic);
-    KLB_FREE_ALIGNED(p_atomic);
-}
-
-#if defined(_WIN32)
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <pthread.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/prctl.h>
+#endif
 
-int klb_atomic_ref(klb_atomic_t* p_atomic)
+
+#ifdef _WIN32
+
+void klb_atomic_set_zero(long volatile* p_atomic)
 {
     assert(NULL != p_atomic);
-
-    return InterlockedExchangeAdd(&p_atomic->count, 1);
+    InterlockedExchange(p_atomic, 0);
 }
 
-int klb_atomic_unref(klb_atomic_t* p_atomic)
+int klb_atomic_set_value(long volatile* p_atomic, int value)
 {
     assert(NULL != p_atomic);
-
-    return InterlockedExchangeAdd(&p_atomic->count, -1);
+    return InterlockedExchange(p_atomic, value);
 }
 
-int klb_atomic_is_zero(klb_atomic_t* p_atomic)
+int klb_atomic_get_value(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    return InterlockedExchangeAdd(p_atomic, 0);
+}
+
+int klb_atomic_add(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    return InterlockedExchangeAdd(p_atomic, 1);
+}
+
+int klb_atomic_sub(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    return InterlockedExchangeAdd(p_atomic, -1);
+}
+
+bool klb_atomic_is_zero(long volatile* p_atomic)
 {
     assert(NULL != p_atomic);
 
-    // 为0时, 返回0
-    if (0 == InterlockedCompareExchange(&p_atomic->count, 0, 0))
+    if (0 == InterlockedCompareExchange(p_atomic, 0, 0))
     {
-        return 0;
+        return true;
     }
+    else
+    {
+        return false;
+    }
+}
 
-    return 1;
+void klb_atomic_lock(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+
+    int wait = 0;
+
+    while (0 != InterlockedCompareExchange(p_atomic, 1, 0))
+    {
+#if 0
+        wait += 1;
+
+        if (4096 < wait)
+        {
+            assert(false);
+        }
+#endif
+    };
+}
+
+bool klb_atomic_try_lock(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+
+    if (0 != InterlockedCompareExchange(p_atomic, 1, 0))
+    {
+        // 没有锁成功
+        return false;
+    }
+    else
+    {
+        // 锁成功
+        return true;
+    }
+}
+
+void klb_atomic_unlock(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    InterlockedExchange(p_atomic, 0);
 }
 
 #else
 
-int klb_atomic_ref(klb_atomic_t* p_atomic)
+void klb_atomic_set_zero(long volatile* p_atomic)
 {
     assert(NULL != p_atomic);
-
-    return __sync_fetch_and_add(&p_atomic->count, 1);
+    __sync_lock_release(p_atomic);
 }
 
-int klb_atomic_unref(klb_atomic_t* p_atomic)
+int klb_atomic_set_value(long volatile* p_atomic, int value)
 {
     assert(NULL != p_atomic);
-
-    return __sync_fetch_and_sub(&p_atomic->count, 1);
+    return __sync_lock_test_and_set(p_atomic, value);
 }
 
-int klb_atomic_is_zero(klb_atomic_t* p_atomic)
+int klb_atomic_get_value(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    return __sync_fetch_and_and(p_atomic, 0xffffffff);
+}
+
+int klb_atomic_add(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    return __sync_fetch_and_add(p_atomic, 1);
+}
+
+int klb_atomic_sub(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    return __sync_fetch_and_sub(p_atomic, 1);
+}
+
+bool klb_atomic_is_zero(long volatile* p_atomic)
 {
     assert(NULL != p_atomic);
 
-    if (__sync_bool_compare_and_swap(&p_atomic->count, 0, 0))
+    if (__sync_bool_compare_and_swap(p_atomic, 0, 0))
     {
-        return 0;
+        return true;
     }
+    else
+    {
+        return false;
+    }
+}
 
-    return 1;
+void klb_atomic_lock(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    while (!__sync_bool_compare_and_swap(p_atomic, 0, 1));
+}
+
+bool klb_atomic_try_lock(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    if (__sync_bool_compare_and_swap(p_atomic, 0, 1))
+    {
+        // 加锁成功
+        return true;
+    }
+    else
+    {
+        // 锁失败
+        return false;
+    }
+}
+
+void klb_atomic_unlock(long volatile* p_atomic)
+{
+    assert(NULL != p_atomic);
+    __sync_lock_release(p_atomic);
 }
 
 #endif

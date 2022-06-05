@@ -3,9 +3,6 @@
 //
 /// @file    klb_listen.h
 /// @brief   网路监听
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告

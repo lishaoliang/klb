@@ -30,7 +30,7 @@
  */
 
 /*
- *  2020,李绍良
+ *  2020
  *  修改通过Visual Studio 2019编译
  *  https://github.com/antirez/sds
  *  https://codeload.github.com/antirez/sds/zip/2.0.0

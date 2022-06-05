@@ -1,15 +1,11 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2021, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-//  Created: 2021/03/28
 //
 /// @file    klb_ncm_ops.h
 /// @brief   文件简要描述
-/// @author  李绍良
-///  \n https://github.com/lishaoliang/klb
-///  \n https://gitee.com/lishaoliang/klb
 /// @version 0.1
 /// @history 修改历史
-///  \n 2021/03/28 0.1 创建文件
+///  \n 2021 0.1 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_NCM_OPS_H__
@@ -25,6 +21,7 @@ extern "C" {
 
 int klb_ncm_register_ops_mnp(klb_ncm_t* p_ncm, int protocol);
 int klb_ncm_register_ops_http(klb_ncm_t* p_ncm, int protocol);
+int klb_ncm_register_ops_http_flv(klb_ncm_t* p_ncm, int protocol);
 
 
 /// @def   KLB_NCM_REGISTER_PARSER_STD
@@ -34,6 +31,7 @@ int klb_ncm_register_ops_http(klb_ncm_t* p_ncm, int protocol);
     klb_ncm_register_ops_mnp((NCM_), KLB_PROTOCOL_MNPS);            \
     klb_ncm_register_ops_http((NCM_), KLB_PROTOCOL_HTTP);           \
     klb_ncm_register_ops_http((NCM_), KLB_PROTOCOL_HTTPS);          \
+    klb_ncm_register_ops_http_flv((NCM_), KLB_PROTOCOL_HTTP_FLV);   \
 }
 
 #ifdef __cplusplus
