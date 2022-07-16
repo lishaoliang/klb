@@ -60,13 +60,25 @@ typedef struct klb_multiplex_ops_t_
     /// @return int 发送的数据量
     int (*cb_send)(void* p_lparam, void* p_wparam, int id, int64_t now);
 
+    /// @brief 其他处理过程消息
+    /// @param [in] *p_lparam           调用者指定的参数1
+    /// @param [in] *p_wparam           调用者指定的参数2
+    /// @param [in] msg                 消息
+    /// @param [in] id                  ID编号
+    /// @param [in] *p_socket           socket
+    /// @param [in] now                 当前系统滴答(毫秒)
+    /// @return int 0
+    int(*cb_proc)(void* p_lparam, void* p_wparam, int msg, int id, klb_socket_t* p_socket, int64_t now);
+#define KLB_MULTIPLEX_MSG_connect   1   ///< connect握手完成
+#define KLB_MULTIPLEX_MSG_timeout   2   ///< connect超时
+
     /// @brief 定时调用: eg.处理连接超时检查等
     /// @param [in] *p_lparam           调用者指定的参数1
     /// @param [in] *p_wparam           调用者指定的参数2
     /// @param [in] id                  ID编号
     /// @param [in] now                 当前系统滴答(毫秒)
     /// @return int 0
-    int(*cb_timer)(void* p_lparam, void* p_wparam, int id, int64_t now);
+    int (*cb_timer)(void* p_lparam, void* p_wparam, int id, int64_t now);
 
     /// @brief 调用者设置的参数1
     /// @param [in] *p_lparam           调用者指定的参数1

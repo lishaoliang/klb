@@ -479,8 +479,8 @@ int klb_ncm_register_ops_http_flv(klb_ncm_t* p_ncm, int protocol)
     ops.cb_init = init_klb_ncm_ops_http_flv;
     ops.cb_ctrl = NULL;
 
-    ops.cb_send_text = send_text_klb_ncm_ops_http_flv;
-    ops.cb_send_binary = send_binary_klb_ncm_ops_http_flv;
+    //ops.cb_send_text = send_text_klb_ncm_ops_http_flv;
+    //ops.cb_send_binary = send_binary_klb_ncm_ops_http_flv;
     ops.cb_send_media = send_media_klb_ncm_ops_http_flv;
 
     ops.on_send = on_send_klb_ncm_ops_http_flv;

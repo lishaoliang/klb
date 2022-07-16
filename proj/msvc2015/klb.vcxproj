@@ -177,6 +177,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_ncm.h" />
+    <ClInclude Include="..\..\inc\klbnet\klb_nsc.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_nsp.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h" />
@@ -190,6 +191,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbplatform\klb_spinlock.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_thread.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_time.h" />
+    <ClInclude Include="..\..\inc\klbthird\cJSON.h" />
     <ClInclude Include="..\..\inc\klbthird\http_parser.h" />
     <ClInclude Include="..\..\inc\klbthird\openssl\aes.h" />
     <ClInclude Include="..\..\inc\klbthird\openssl\asn1.h" />
@@ -351,6 +353,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
+    <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.h" />
@@ -484,7 +487,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <None Include="..\..\src_c\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src_cpp\klbmain\CKlbMain.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CMutex.cpp" />
@@ -520,11 +522,20 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_flv.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_mnp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_rtp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_mnp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_http_json.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_http_lua.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_mnp_json.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_mnp_lua.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_ws_json.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_ws_lua.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rtsp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_flv.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_mnp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_rtp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_nsc.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_nsp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
@@ -538,6 +549,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbplatform\klb_spinlock.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_thread.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_time.c" />
+    <ClCompile Include="..\..\src_c\klbthird\cJSON.c" />
     <ClCompile Include="..\..\src_c\klbthird\http_parser.c" />
     <ClCompile Include="..\..\src_c\klbthird\sds\sds.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_bitmap.c" />
@@ -578,8 +590,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_flv.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_mnp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_rtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kmnp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kncm.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krpc.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c" />
@@ -587,11 +602,13 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_flv.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_mnp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_data.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_ksys.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_seri_json.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.c" />

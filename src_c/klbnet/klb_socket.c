@@ -143,6 +143,25 @@ klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket)
     return fd;
 }
 
+/// @brief 设置是否首次次连接上
+void klb_socket_set_connected(klb_socket_t* p_socket, bool connected)
+{
+    if (connected)
+    {
+        p_socket->connected = 0x1;
+    }
+    else
+    {
+        p_socket->connected = 0x0;
+    }
+}
+
+/// @brief 获取是否首次次连接上
+bool klb_socket_is_connected(klb_socket_t* p_socket)
+{
+    return (0x0 == p_socket->connected) ? false : true;
+}
+
 void klb_socket_set_writing(klb_socket_t* p_socket, bool sending)
 {
     if (sending)
@@ -175,6 +194,16 @@ void klb_socket_set_reading(klb_socket_t* p_socket, bool reading)
 bool klb_socket_is_reading(klb_socket_t* p_socket)
 {
     return (0x0 == p_socket->reading) ? false : true;
+}
+
+void klb_socket_set_tls(klb_socket_t* p_socket, bool tls)
+{
+    p_socket->tls = tls ? 0x1 : 0x0;
+}
+
+bool klb_socket_is_tls(klb_socket_t* p_socket)
+{
+    return (0x0 == p_socket->tls) ? false : true;
 }
 
 /// @brief 设置状态

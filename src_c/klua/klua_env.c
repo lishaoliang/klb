@@ -121,21 +121,19 @@ void klua_env_destroy(klua_env_t* p_env)
 {
     assert(NULL != p_env);
 
+    // 销毁Lua环境
+    KLB_FREE_BY(p_env->L, lua_close);
+
     // 注销激活的扩展
     while (0 < klb_hlist_size(p_env->p_extension_activate_hlist))
     {
         klua_env_extension_activate_t* p_tmp = (klua_env_extension_activate_t*)klb_hlist_pop_head(p_env->p_extension_activate_hlist);
-
+        
         p_tmp->ex.cb_destroy(p_tmp->ptr);
-
+        
         KLB_FREE_BY(p_tmp->name, sdsfree);
         KLB_FREE(p_tmp);
     }
-
-    // 销毁Lua环境
-    // Bug. lua_close调用后, 加载的动态库, 也会被卸载
-    // 扩展的 销毁函数 cb_destroy 可能处于动态库中
-    KLB_FREE_BY(p_env->L, lua_close);
 
     // 销毁注册的扩展
     while (0 < klb_hlist_size(p_env->p_extension_hlist))
@@ -578,6 +576,10 @@ int klua_env_loop_once(klua_env_t* p_env)
         klb_atomic_set_zero(&p_env->is_get_lpc_msg);
     }
 
+    // bug. 后续流程可能依赖计时器tc, 这里需要先更新当前时钟
+    // eg. 若在后面更新tc, 则kco.co_sleep()时会导致计时函数死循环
+    p_env->tc = now;
+
     // 处理消息
     klua_env_loop_msg(p_env, now);
 
@@ -608,8 +610,6 @@ int klua_env_loop_once(klua_env_t* p_env)
 
         //KLB_LOG("klua_env_loop_once gc:[%dKB]\n", pre_used_kb - after_used_kb);
     }
-
-    p_env->tc = now;
 
     return 5 - n;
 }

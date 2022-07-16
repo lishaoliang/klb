@@ -147,5 +147,68 @@
                     ( (uint32_t)(uint8_t)(CH2_) << 16 ) | \
                     ( (uint32_t)(uint8_t)(CH3_) << 24 )  )
 
+
+/////////////////////////////////////////////////
+// copy/modify from libavutil/intreadwrite.h
+
+#ifndef KLB_RB16
+#define KLB_RB16(x)                             \
+    ((((const uint8_t*)(x))[0] << 8) |          \
+      ((const uint8_t*)(x))[1])
+#endif
+
+#ifndef KLB_WB16
+#define KLB_WB16(p, val) do {                   \
+        uint16_t d = (val);                     \
+        ((uint8_t*)(p))[1] = (d);               \
+        ((uint8_t*)(p))[0] = (d)>>8;            \
+    } while(0)
+#endif
+
+#ifndef KLB_RB32
+#define KLB_RB32(x)                                  \
+    (((uint32_t)((const uint8_t*)(x))[0] << 24) |    \
+               (((const uint8_t*)(x))[1] << 16) |    \
+               (((const uint8_t*)(x))[2] <<  8) |    \
+                ((const uint8_t*)(x))[3])
+#endif
+
+#ifndef KLB_WB32
+#define KLB_WB32(p, val) do {                   \
+        uint32_t d = (val);                     \
+        ((uint8_t*)(p))[3] = (d);               \
+        ((uint8_t*)(p))[2] = (d)>>8;            \
+        ((uint8_t*)(p))[1] = (d)>>16;           \
+        ((uint8_t*)(p))[0] = (d)>>24;           \
+    } while(0)
+#endif
+
+#ifndef KLB_RB64
+#define KLB_RB64(x)                                     \
+    (((uint64_t)((const uint8_t*)(x))[0] << 56) |       \
+     ((uint64_t)((const uint8_t*)(x))[1] << 48) |       \
+     ((uint64_t)((const uint8_t*)(x))[2] << 40) |       \
+     ((uint64_t)((const uint8_t*)(x))[3] << 32) |       \
+     ((uint64_t)((const uint8_t*)(x))[4] << 24) |       \
+     ((uint64_t)((const uint8_t*)(x))[5] << 16) |       \
+     ((uint64_t)((const uint8_t*)(x))[6] <<  8) |       \
+      (uint64_t)((const uint8_t*)(x))[7])
+#endif
+
+#ifndef KLB_WB64
+#define KLB_WB64(p, val) do {                   \
+        uint64_t d = (val);                     \
+        ((uint8_t*)(p))[7] = (d);               \
+        ((uint8_t*)(p))[6] = (d)>>8;            \
+        ((uint8_t*)(p))[5] = (d)>>16;           \
+        ((uint8_t*)(p))[4] = (d)>>24;           \
+        ((uint8_t*)(p))[3] = (d)>>32;           \
+        ((uint8_t*)(p))[2] = (d)>>40;           \
+        ((uint8_t*)(p))[1] = (d)>>48;           \
+        ((uint8_t*)(p))[0] = (d)>>56;           \
+    } while(0)
+#endif
+
+
 #endif // __KLB_TYPE_H__
 //end

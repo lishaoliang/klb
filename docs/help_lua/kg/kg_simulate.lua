@@ -2,7 +2,6 @@
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief   模拟设备硬件
 --   \n kg simulate
--- @author  李绍良
 -- @version 0.1
 --]]
 

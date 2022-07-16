@@ -2,9 +2,11 @@
 //  Copyright(c) 2021, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_ncm.h
-/// @brief   net connect manage: ./klb/src/knet/ncm.go
-/// @version 0.1
+/// @brief   net connect manage: 多个网路连接
+///  \n 一般用于服务端
+/// @version 0.2
 /// @history 修改历史
+///  \n 2022 0.2 加入直接支持RPC
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_NCM_H__
@@ -26,22 +28,37 @@ extern "C" {
 /// @brief 协议类型
 typedef enum klb_protocol_e_
 {
-    KLB_PROTOCOL_UNKOWN     = 0,    ///< unkown
-    KLB_PROTOCOL_MNP        = 1,    ///< mnp 协议
-    KLB_PROTOCOL_MNPS       = 2,    ///< mnp 协议: TLS
-    KLB_PROTOCOL_RTMP       = 3,    ///< rtmp 协议
-    KLB_PROTOCOL_RTSP       = 4,    ///< rtsp 协议
-    KLB_PROTOCOL_HTTP       = 5,    ///< http 协议
-    KLB_PROTOCOL_HTTPS      = 6,    ///< https 协议: TLS
-    KLB_PROTOCOL_WS         = 7,    ///< websocket 协议
-    KLB_PROTOCOL_WSS        = 8,    ///< websocket 协议: TLS
+    KLB_PROTOCOL_UNKOWN         = 0,    ///< unkown
+    KLB_PROTOCOL_MNP            = 1,    ///< mnp 协议
+    KLB_PROTOCOL_RTMP           = 2,    ///< rtmp 协议
+    KLB_PROTOCOL_RTSP           = 3,    ///< rtsp 协议
 
-    KLB_PROTOCOL_HTTP_MNP   = 9,    ///< http mnp 协议
-    KLB_PROTOCOL_HTTP_FLV   = 10,   ///< http flv 协议
-    KLB_PROTOCOL_WS_MNP     = 11,   ///< websocket mnp 协议
-    KLB_PROTOCOL_WS_FLV     = 12,   ///< websocket flv 协议
-    KLB_PROTOCOL_MAX        = 13
+    KLB_PROTOCOL_HTTP_MNP       = 4,    ///< http mnp 协议
+    KLB_PROTOCOL_HTTP_FLV       = 5,   ///< http flv 协议
+    KLB_PROTOCOL_WS_MNP         = 6,   ///< websocket mnp 协议
+    KLB_PROTOCOL_WS_FLV         = 7,   ///< websocket flv 协议
+
+    KLB_PROTOCOL_HTTP           = 8,    ///< http 协议
+    KLB_PROTOCOL_WS             = 9,    ///< websocket 协议
+
+    KLB_PROTOCOL_RPC_MNP_LUA    = 10,   ///< RPC mnp-lua
+    KLB_PROTOCOL_RPC_MNP_JSON   = 11,   ///< RPC mnp-json
+
+    KLB_PROTOCOL_RPC_HTTP_LUA   = 12,   ///< RPC http-lua
+    KLB_PROTOCOL_RPC_HTTP_JSON  = 13,   ///< RPC http-json
+
+    KLB_PROTOCOL_RPC_WS_LUA     = 14,   ///< RPC ws-lua
+    KLB_PROTOCOL_RPC_WS_JSON    = 15,   ///< RPC ws-json
+
+    KLB_PROTOCOL_MAX,
 }klb_protocol_e;
+
+
+typedef enum klb_protocol_preload_e_
+{
+    KLB_PROTOCOL_LOAD_STD       = 0x0001,
+    KLB_PROTOCOL_LOAD_RPC       = 0x0002,
+}klb_protocol_preload_e;
 
 
 typedef struct klb_ncm_t_ klb_ncm_t;
@@ -49,8 +66,9 @@ typedef struct klb_ncm_t_ klb_ncm_t;
 
 /// @brief 创建ncm(net connect manage); 网络媒体连接管理模块
 /// @param [in]  *p_multi               socekt复用模块
+/// @param [in]  preload                预加载的解析器: klb_protocol_preload_e
 /// @return klb_ncm_t* 管理模块
-KLB_API klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi);
+KLB_API klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi, uint32_t preload);
 
 
 /// @brief 销毁ncm
@@ -66,6 +84,8 @@ typedef enum klb_ncm_packtype_e_
     KLB_NCM_PACK_TEXT,                  ///< 文本数据
     KLB_NCM_PACK_BINARY,                ///< 二进制数据
     KLB_NCM_PACK_MEDIA,                 ///< 媒体数据
+    KLB_NCM_PACK_RPC_LUA,               ///< rpc/lua 二进制数据
+    KLB_NCM_PACK_RPC_JSON,              ///< rpc/json json文本数据
 }klb_ncm_packtype_e;
 
 
@@ -92,7 +112,7 @@ KLB_API int klb_ncm_add_receiver(klb_ncm_t* p_ncm, klb_ncm_ops_recv_cb cb_recv, 
 /// @brief  ncm ops 连接参数1: 关键参数
 typedef struct klb_ncm_ops_lparam_t_
 {
-    klb_ncm_t*          p_ncm;              ///< ncm模块
+    void*               p_ncm;              ///< ncm模块
     klb_socket_t*       p_socket;           ///< socket
 
     int                 protocol;           ///< 协议号
@@ -143,15 +163,11 @@ typedef struct klb_ncm_ops_t_
     /// @return int 0.成功; 非0.失败
     int   (*cb_ctrl)(void* ptr, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num);
 
-    /// @brief 主动发送文本数据
+    /// @brief 主动发送常规数据: 文本/二进制/RPC数据等,非媒体数据
     /// @param [in] *ptr            ops对象
+    /// @param [in] packtype        包类型: KLB_MNP_TEXT,KLB_MNP_BINARY,KLB_MNP_RPC_LUA,KLB_MNP_RPC_JSON
     /// @return int
-    int   (*cb_send_text)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
-    
-    /// @brief 主动发送二进制数据
-    /// @param [in] *ptr            ops对象
-    /// @return int
-    int   (*cb_send_binary)(void* ptr, klb_socket_t* p_socket, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+    int   (*cb_send_normal)(void* ptr, klb_socket_t* p_socket, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
     /// @brief 主动发送媒体数据
     /// @param [in] *ptr            ops对象
@@ -167,6 +183,11 @@ typedef struct klb_ncm_ops_t_
     /// @param [in] *ptr            ops对象
     /// @return int
     int   (*on_recv)(void* ptr, klb_socket_t* p_socket, int64_t now);
+
+    /// @brief 当网络上有消息传来时
+    /// @param [in] *ptr            ops对象
+    /// @return int
+    int   (*on_proc)(void* ptr, klb_socket_t* p_socket, int msg, int64_t now);
 }klb_ncm_ops_t;
 
 
@@ -191,19 +212,31 @@ KLB_API int klb_ncm_close(klb_ncm_t* p_ncm, int id);
 /// @brief 发送文本数据
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_send_text(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
+KLB_API int klb_ncm_send_text(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 发送二进制数据
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_send_binary(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len);
+KLB_API int klb_ncm_send_binary(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 发送媒体数据
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
 KLB_API int klb_ncm_send_media(klb_ncm_t* p_ncm, int id, klb_buf_t* p_data);
+
+
+/// @brief 发送RPC-Lua数据
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_send_rpc(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+
+
+/// @brief 发送RPC-Json数据
+/// @param [in]  *p_ncm                 ncm模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_ncm_send_rpc_json(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 对某个连接进行控制操作: get/set,etc.

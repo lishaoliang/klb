@@ -247,6 +247,10 @@ KLB_API int klua_open_kws_flv(lua_State* L);
 KLB_API int klua_open_kws_mnp(lua_State* L);
 
 
+/// @brief RPC模块
+KLB_API int klua_open_krpc(lua_State* L);
+
+
 /// @brief 扩展库"kh26x": h26x文件读取
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -292,6 +296,7 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_khttp_mnp,    "khttp_mnp");   \
     klua_loadlib(L, klua_open_kws_flv,      "kws_flv");     \
     klua_loadlib(L, klua_open_kws_mnp,      "kws_mnp");     \
+    klua_loadlib(L, klua_open_krpc,         "krpc");        \
     klua_loadlib(L, klua_open_kh26x,        "kh26x");       \
 }
 

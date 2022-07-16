@@ -15,6 +15,7 @@
 #include "klua/klua_env.h"
 #include "klua/extension/klua_ex_coroutine.h"
 #include "klua/extension/klua_ex_multiplex.h"
+#include "klbmem/klb_buf_atom.h"
 #include <assert.h>
 
 
@@ -53,7 +54,7 @@ typedef struct klua_kmnp_inter_t_
     // send发送相关
     struct
     {
-        klb_list_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
+        klb_list_t*             p_w_list;       ///< 待发送数据(非媒体,文本/二进制等)列表: klb_buf_t*
         klb_buf_t*              p_w_cur;        ///< 当前正在发送的缓存
         int                     w_start;        ///< 当前发送的起始点
     };
@@ -115,8 +116,32 @@ static int call_lua_co_recv_klua_kmnp(klua_kmnp_t* p_kmnp, const char* p_type, k
         assert(p_buf->end - p_buf->start == p_com->size);
 
         lua_pushstring(L, p_type);                                                  // 类型
-        lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t), p_com->extra); // head
-        lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t) + p_com->extra, p_com->size - p_com->extra - sizeof(klb_mnp_common_t)); // body
+        lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t), p_com->head); // head
+        lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t) + p_com->head, p_com->size - p_com->head - sizeof(klb_mnp_common_t)); // body
+
+        int status = lua_pcall(L, 3, 0, 0);                   /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? 0 : 1;
+    }
+
+    return -1; // 未处理
+}
+
+static int call_lua_co_recv_media_klua_kmnp(klua_kmnp_t* p_kmnp, const char* p_type, klb_buf_t* p_buf)
+{
+    assert(NULL != p_kmnp);
+
+    if (NULL != p_kmnp->co_recv)
+    {
+        lua_State* L = klua_ex_coroutine_rawgeti(klua_ex_get_coroutine(p_kmnp->p_env), p_kmnp->co_recv);
+        if (NULL == L) return -1; // 未处理
+
+        p_kmnp->co_recv = NULL; // 清空
+
+        lua_pushstring(L, p_type);         // 类型
+        lua_pushnil(L);                     // nil
+        lua_pushlightuserdata(L, p_buf);    // media
 
         int status = lua_pcall(L, 3, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
@@ -194,7 +219,7 @@ static int klua_kmnp_parse(klua_kmnp_t* p_kmnp, klua_kmnp_inter_t* p_inter, klb_
 
         p_buf->start += sizeof(klb_mnp_t);
 
-        if (KLB_MNP_HEART == mnp.packtype)
+        if (KLB_MNP_PONG == mnp.packtype)
         {
             //klb_ncm_ops_mnp_send_heart(p_inter, p_socket);
         }
@@ -209,7 +234,7 @@ static int klua_kmnp_parse(klua_kmnp_t* p_kmnp, klua_kmnp_inter_t* p_inter, klb_
         int r_len = MIN(p_inter->remain_len, data_len);
         p_inter->remain_len -= r_len;
 
-        if (KLB_MNP_TXT == p_inter->mnp.packtype)
+        if (KLB_MNP_TEXT == p_inter->mnp.packtype)
         {
             klb_buffer_write(p_inter->p_txt, p_buf->p_buf + p_buf->start, r_len);
 
@@ -218,8 +243,8 @@ static int klua_kmnp_parse(klua_kmnp_t* p_kmnp, klua_kmnp_inter_t* p_inter, klb_
                 if (KLB_MNP_FULL == p_inter->mnp.opt || KLB_MNP_END == p_inter->mnp.opt)
                 {
                     // 完整了
-                    klb_buf_t* p_txt = klb_buffer_join_offset(p_inter->p_txt, sizeof(int), 0, NULL, NULL);
-                    *((int*)p_txt->p_buf) = KLB_MNP_TXT;
+                    klb_buf_t* p_txt = klb_buffer_join(p_inter->p_txt, NULL, NULL);
+                    p_txt->udata = KLB_MNP_TEXT;
 
                     if (call_lua_co_recv_klua_kmnp(p_kmnp, "text", p_txt) < 0)
                     {
@@ -234,7 +259,7 @@ static int klua_kmnp_parse(klua_kmnp_t* p_kmnp, klua_kmnp_inter_t* p_inter, klb_
                 }
             }
         }
-        else if (KLB_MNP_BIN == p_inter->mnp.packtype)
+        else if (KLB_MNP_BINARY == p_inter->mnp.packtype)
         {
             klb_buffer_write(p_inter->p_txt, p_buf->p_buf + p_buf->start, r_len);
 
@@ -243,8 +268,8 @@ static int klua_kmnp_parse(klua_kmnp_t* p_kmnp, klua_kmnp_inter_t* p_inter, klb_
                 if (KLB_MNP_FULL == p_inter->mnp.opt || KLB_MNP_END == p_inter->mnp.opt)
                 {
                     // 完整了
-                    klb_buf_t* p_bin = klb_buffer_join_offset(p_inter->p_txt, sizeof(int), 0, NULL, NULL);
-                    *((int*)p_bin->p_buf) = KLB_MNP_BIN;
+                    klb_buf_t* p_bin = klb_buffer_join(p_inter->p_txt, NULL, NULL);
+                    p_bin->udata = KLB_MNP_BINARY;
 
                     if(call_lua_co_recv_klua_kmnp(p_kmnp, "binary", p_bin) < 0)
                     {
@@ -261,27 +286,29 @@ static int klua_kmnp_parse(klua_kmnp_t* p_kmnp, klua_kmnp_inter_t* p_inter, klb_
         }
         else if (KLB_MNP_MEDIA == p_inter->mnp.packtype)
         {
-            assert(false);
-
             klb_buffer_write(p_inter->p_media, p_buf->p_buf + p_buf->start, r_len);
 
             if (p_inter->remain_len <= 0)
             {
                 if (KLB_MNP_FULL == p_inter->mnp.opt || KLB_MNP_END == p_inter->mnp.opt)
                 {
-                    // 数完整了
-                    //klb_buf_t* p_media = klb_buffer_join(p_inter->p_media, p_inter->cb_malloc_media, p_inter->p_pool_media);
+                    // 媒体数据完整了
+                    klb_buf_t* p_media = klb_buffer_join(p_inter->p_media, klb_buf_atom_malloc, NULL);
+                    p_media->udata = KLB_MNP_MEDIA;
+                    p_media->format = KLB_BUF_FMT_FRAME;
 
-                    //p_inter->cb_recv_to_ncm(p_inter->p_ncm, p_inter->protocol, p_inter->id, 0, KLB_NCM_PACK_MEDIA, p_media);
-                    //klb_buf_unref_next(p_media);
+                    if (call_lua_co_recv_media_klua_kmnp(p_kmnp, "media", p_media) < 0)
+                    {
+                        klb_list_push_tail(p_inter->p_r_list, p_media);
+                    }
+                    else
+                    {
+                        klb_buf_unref_next(p_media);
+                    }        
 
                     klb_buffer_reset(p_inter->p_media);
                 }
             }
-        }
-        else
-        {
-            assert(false);
         }
 
         p_buf->start += r_len;
@@ -379,6 +406,7 @@ static int cb_send_klua_kmnp(void* p_lparam, void* p_wparam, int id, int64_t now
         if (NULL == p_inter->p_w_cur && 0 < klb_list_size(p_inter->p_w_list))
         {
             p_inter->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+            p_inter->w_start = p_inter->p_w_cur->start;
         }
 
         klb_buf_t* p_buf = p_inter->p_w_cur;
@@ -388,17 +416,19 @@ static int cb_send_klua_kmnp(void* p_lparam, void* p_wparam, int id, int64_t now
             break;
         }
 
-        int w = klb_socket_send(p_socket, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+        int w = klb_socket_send(p_socket, p_buf->p_buf + p_inter->w_start, p_buf->end - p_inter->w_start);
 
         if (0 < w)
         {
             send += w;
-            p_buf->start += w;
+            p_inter->w_start += w;
 
-            if (p_buf->end <= p_buf->start)
+            if (p_buf->end <= p_inter->w_start)
             {
-                p_inter->p_w_cur = NULL;
-                KLB_FREE(p_buf);
+                p_inter->p_w_cur = p_buf->p_next;
+                p_inter->w_start = 0;
+
+                klb_buf_unref(p_buf);
             }
         }
         else
@@ -528,6 +558,11 @@ static int klua_kmnp_send_binary(lua_State* L)
 static int klua_kmnp_send_media(lua_State* L)
 {
     klua_kmnp_t* p_kmnp = to_klua_kmnp(L, 1);
+    klb_buf_t* p_frame = (klb_buf_t*)luaL_checklightuserdata(L, 2);
+
+    klb_buf_ref_next(p_frame);
+    klb_list_push_tail(p_kmnp->p_inter->p_w_list, p_frame);
+    klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
 
     return 0;
 }
@@ -541,18 +576,31 @@ static int klua_kmnp_co_recv(lua_State* L)
     {
         klb_buf_t* p_buf = (klb_buf_t*)klb_list_pop_head(p_kmnp->p_inter->p_r_list);
 
-        klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_buf->p_buf + p_buf->start);
-        assert(p_buf->end - p_buf->start == p_com->size);
+        if (KLB_MNP_TEXT == p_buf->udata ||
+            KLB_MNP_BINARY == p_buf->udata)
+        {
+            klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_buf->p_buf + p_buf->start);
+            assert(p_buf->end - p_buf->start == p_com->size);
 
-        int t = *((int*)p_buf->p_buf);
+            lua_pushstring(L, (KLB_MNP_TEXT == p_buf->udata) ? "text" : "binary");   // 类型
 
-        lua_pushstring(L, (KLB_MNP_TXT == t) ? "text" : "binary");      // 类型
+            lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t), p_com->head); // head
+            lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t) + p_com->head, p_com->size - p_com->head - sizeof(klb_mnp_common_t)); // body
 
-        lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t), p_com->extra); // head
-        lua_pushlstring(L, p_buf->p_buf + p_buf->start + sizeof(klb_mnp_common_t) + p_com->extra, p_com->size - p_com->extra - sizeof(klb_mnp_common_t)); // body
+            KLB_FREE(p_buf);
+        }
+        else if(KLB_MNP_MEDIA == p_buf->udata)
+        {
+            lua_pushstring(L, "media");         // 类型 "media"
+            lua_pushnil(L);                     // nil
+            lua_pushlightuserdata(L, p_buf);    // ptr
 
-        KLB_FREE(p_buf->p_buf);
-        KLB_FREE(p_buf);
+            klb_buf_unref_next(p_buf);
+        }
+        else
+        {
+            assert(false);
+        }
 
         return 3;
     }
@@ -747,7 +795,7 @@ klua_kmnp_t* new_connect_klua_kmnp(lua_State* L, klb_socket_fd fd, klua_kmnp_par
     klb_socket_t* p_socket = NULL;
     if (p_param->tls)
     {
-        p_socket = klb_socket_tls_async_create(fd);
+        p_socket = klb_socket_tls_async_create(fd, false, NULL);
     }
     else
     {
@@ -818,7 +866,7 @@ static int lib_klua_kmnp_connect(lua_State* L)
 
 //////////////////////////////////////////////////////////////////////////
 
-static int on_accept_klua_kmnp_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr)
+static int on_accept_klua_kmnp_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
 {
     klua_kmnp_listen_t* p_listen = (klua_kmnp_listen_t*)ptr;
 

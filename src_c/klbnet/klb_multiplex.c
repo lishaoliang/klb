@@ -9,10 +9,11 @@
 #include "klbutil/klb_list.h"
 #include <assert.h>
 
-#define KLB_MULTIPLEX_ID_MIN        1000
-#define KLB_MULTIPLEX_ID_MAX        0x7FFF0000
+#define KLB_MULTIPLEX_ID_MIN            1000            ///< 分配id的最小值
+#define KLB_MULTIPLEX_ID_MAX            0x7FFF0000      ///< 分配id的最大值
 
-#define KLB_MULTIPLEX_TIMER         (2 * 1000)
+#define KLB_MULTIPLEX_TIMER             (2 * 1000)      ///< 定时检查间隔(ms)
+#define KLB_MULTIPLEX_connect_timeout   (30 * 1000)     ///< 首次发起connect超时时间
 
 
 typedef struct klb_multiplex_remove_t_
@@ -184,6 +185,16 @@ static int klb_multiplex_loop_once_do(klb_multiplex_t* p_multi, int64_t now)
                 // 正常的连接
                 if (p_socket->reading && FD_ISSET(p_socket->fd, &r_fds))
                 {
+                    if (0 == p_socket->connected)
+                    {
+                        klb_socket_set_connected(p_socket, true);
+
+                        if (p_item->ops.cb_proc)
+                        {
+                            p_item->ops.cb_proc(p_item->ops.p_lparam, p_item->ops.p_wparam, KLB_MULTIPLEX_MSG_connect, p_item->id, p_item->p_socket, now);
+                        }
+                    }
+
                     // 注意读取数据前, 须把缓存中的数据处理完毕
                     int recv = p_item->ops.cb_recv(p_item->ops.p_lparam, p_item->ops.p_wparam, p_item->id, now);
 
@@ -195,6 +206,16 @@ static int klb_multiplex_loop_once_do(klb_multiplex_t* p_multi, int64_t now)
 
                 if (p_socket->writing && FD_ISSET(p_socket->fd, &w_fds))
                 {
+                    if (0 == p_socket->connected)
+                    {
+                        klb_socket_set_connected(p_socket, true);
+
+                        if (p_item->ops.cb_proc)
+                        {
+                            p_item->ops.cb_proc(p_item->ops.p_lparam, p_item->ops.p_wparam, KLB_MULTIPLEX_MSG_connect, p_item->id, p_item->p_socket, now);
+                        }
+                    }
+
                     int send = p_item->ops.cb_send(p_item->ops.p_lparam, p_item->ops.p_wparam, p_item->id, now);
 
                     if (0 < send)
@@ -254,8 +275,17 @@ static int klb_multiplex_loop_once_timer(klb_multiplex_t* p_multi, int64_t now)
     while (NULL != p_iter)
     {
         klb_multiplex_item_t* p_item = (klb_multiplex_item_t*)klb_hlist_data(p_iter);
+        assert(NULL != p_item);
 
-        if (p_item && p_item->ops.cb_timer && KLB_SOCKET_OK == p_item->p_socket->status)
+        if (0 == p_item->p_socket->connected && 
+            p_item->ops.cb_proc &&
+            KLB_SOCKET_OK == p_item->p_socket->status &&
+            KLB_MULTIPLEX_connect_timeout < ABS_SUB(now, p_item->p_socket->last_recv_tc))
+        {
+            p_item->ops.cb_proc(p_item->ops.p_lparam, p_item->ops.p_wparam, KLB_MULTIPLEX_MSG_timeout, p_item->id, p_item->p_socket, now);
+        }
+
+        if (p_item->ops.cb_timer && KLB_SOCKET_OK == p_item->p_socket->status)
         {            
             p_item->ops.cb_timer(p_item->ops.p_lparam, p_item->ops.p_wparam, p_item->id, now);
         }
@@ -293,11 +323,14 @@ int klb_multiplex_push_socket(klb_multiplex_t* p_multi, klb_socket_t* p_socket, 
 {
     int id = klb_multiplex_get_id(p_multi);
 
-    klb_multiplex_item_t* p_item = KLB_MALLOC(klb_multiplex_item_t, 1, 0);
-    KLB_MEMSET(p_item, 0, sizeof(klb_multiplex_item_t));
+    klb_multiplex_item_t* p_item = KLB_MALLOCZ(klb_multiplex_item_t, 1, 0);
 
     p_item->id = id;
     p_item->p_socket = p_socket;
+
+    // 更新计时
+    p_socket->last_send_tc = p_multi->tc;
+    p_socket->last_recv_tc = p_multi->tc;
 
     memcpy(&p_item->ops, p_ops, sizeof(klb_multiplex_ops_t));
 
@@ -309,8 +342,7 @@ int klb_multiplex_push_socket(klb_multiplex_t* p_multi, klb_socket_t* p_socket, 
 
 int klb_multiplex_remove(klb_multiplex_t* p_multi, int id)
 {
-    klb_multiplex_remove_t* p_remove = KLB_MALLOC(klb_multiplex_remove_t, 1, 0);
-    KLB_MEMSET(p_remove, 0, sizeof(klb_multiplex_remove_t));
+    klb_multiplex_remove_t* p_remove = KLB_MALLOCZ(klb_multiplex_remove_t, 1, 0);
 
     p_remove->id = id;
 

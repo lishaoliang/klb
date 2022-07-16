@@ -50,7 +50,7 @@ typedef int(*klb_socket_recvfrom_cb)(klb_socket_t* p_socket, uint8_t* p_buf, int
 
 
 /// @struct klb_socket_vtable_t
-/// @brief  socket虚表
+/// @brief  socket虚表/类socket操作
 typedef struct klb_socket_vtable_t_
 {
     klb_socket_destroy_cb   cb_destroy;     ///< 销毁
@@ -62,7 +62,7 @@ typedef struct klb_socket_vtable_t_
 
 
 /// @struct klb_socket_status_e
-/// @brief  状态
+/// @brief  基本状态
 typedef enum klb_socket_status_e_
 {
     KLB_SOCKET_OK,                      ///< 正常
@@ -72,10 +72,18 @@ typedef enum klb_socket_status_e_
     KLB_SOCKET_ERR_MAX,                 ///< 错误最大值
 
     KLB_SOCKET_CLOSEING         = 62,   ///< 主动关闭
-    KLB_SOCKET_CONNECT          = 63,   ///< 正在连接/连接成功
+    KLB_SOCKET_CONNECT          = 63,   ///< 连接成功
     KLB_SOCKET_STATUS_MAX       = 64,   ///< 最大值: 2^6
 }klb_socket_status_e;
 
+/// @struct klb_socket_status_rw_e
+/// @brief  读写状态
+typedef enum klb_socket_status_rw_e_
+{
+    KLB_SOCKET_RW_OK,
+    KLB_SOCKET_WANT_READ,
+    KLB_SOCKET_WANT_WRITE,
+}klb_socket_status_rw_e;
 
 /// @struct klb_socket_t
 /// @brief  socket基础定义
@@ -85,14 +93,16 @@ typedef struct klb_socket_t_
 
     klb_socket_fd       fd;             ///< socket fd
 
+    uint16_t            connected : 1;  ///< 0(false).首次未连接; 1(true).已连接; 对于TCP指握手完成
     uint16_t            nonblock : 1;   ///< 0(false).阻塞模式; 1(true).非阻塞
     uint16_t            writing : 1;    ///< 0(false).无数据写; 1(true).有数据写; 从缓存写向网络
     uint16_t            reading : 1;    ///< 0(false).无需读取; 1(true).需读取; 从网络读取
     uint16_t            tls : 1;        ///< 0(false).非加密; 1(true).TLS加密
-    uint16_t            rsv1 : 12;
+    uint16_t            rsv1 : 11;
 
-    uint16_t            status : 6;     ///< 状态: klb_socket_status_e
-    uint16_t            rsv2 : 10;
+    uint16_t            status : 6;     ///< 基本状态(依据状态断开等): klb_socket_status_e
+    uint16_t            status_rw : 4;  ///< 读写状态: klb_socket_status_rw_e
+    uint16_t            rsv2 : 6;
 
     int64_t             last_recv_tc;   ///< 上次接收数据时间
     int64_t             last_send_tc;   ///< 上次发送数据时间
@@ -138,6 +148,12 @@ KLB_API void klb_socket_attach_fd(klb_socket_t* p_socket, klb_socket_fd fd);
 /// @brief 分离出socket fd
 KLB_API klb_socket_fd klb_socket_detach_fd(klb_socket_t* p_socket);
 
+/// @brief 设置是否首次次连接上
+KLB_API void klb_socket_set_connected(klb_socket_t* p_socket, bool connected);
+
+/// @brief 获取是否首次次连接上
+KLB_API bool klb_socket_is_connected(klb_socket_t* p_socket);
+
 /// @brief 设置发送
 KLB_API void klb_socket_set_writing(klb_socket_t* p_socket, bool sending);
 
@@ -149,6 +165,12 @@ KLB_API void klb_socket_set_reading(klb_socket_t* p_socket, bool reading);
 
 /// @brief 获取是否需要读取数据
 KLB_API bool klb_socket_is_reading(klb_socket_t* p_socket);
+
+/// @brief 设置LS
+KLB_API void klb_socket_set_tls(klb_socket_t* p_socket, bool tls);
+
+/// @brief 获取是否为tls
+KLB_API bool klb_socket_is_tls(klb_socket_t* p_socket);
 
 /// @brief 设置状态
 KLB_API void klb_socket_set_status(klb_socket_t* p_socket, int status);

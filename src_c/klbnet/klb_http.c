@@ -260,7 +260,7 @@ static void klb_http_push_pack(klb_http_t* p_http)
 
     klb_mnp_common_t com = { 0 };
     com.size = head_len + body_len + sizeof(klb_mnp_common_t);
-    com.extra = head_len;
+    com.head = head_len;
 
     memcpy(p_data->p_buf, &com, sizeof(klb_mnp_common_t));
 

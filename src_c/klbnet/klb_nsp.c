@@ -15,7 +15,6 @@
 typedef struct klb_nsp_route_t_
 {
     int             protocol;
-    int             tls_protocol;
 }klb_nsp_route_t;
 
 
@@ -96,13 +95,11 @@ void klb_nsp_route(klb_nsp_t* p_nsp, const char* p_path, int protocol)
     if (NULL != p_route)
     {
         p_route->protocol = protocol;
-        p_route->tls_protocol = protocol;
     }
     else
     {
         klb_nsp_route_t* p_tmp = KLB_MALLOCZ(klb_nsp_route_t, 1, 0);
         p_tmp->protocol = protocol;
-        p_tmp->tls_protocol = protocol;
 
         klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_nsp->p_route_hlist, p_path, strlen(p_path), p_tmp);
         assert(NULL != p_iter);
@@ -117,33 +114,37 @@ int klb_nsp_set_accept(klb_nsp_t* p_nsp, klb_nsp_accept_cb cb_accept, void* ptr)
     return 0;
 }
 
-static int check_protocol_route_klb_nsp(klb_nsp_t* p_nsp, const char* p_path, bool tls)
+static int check_protocol_route_klb_nsp(klb_nsp_t* p_nsp, const char* p_path)
 {
     klb_nsp_route_t* p_route = (klb_nsp_route_t*)klb_hlist_find(p_nsp->p_route_hlist, p_path, strlen(p_path));
     if (NULL != p_route)
     {
-        if (tls)
-        {
-            return p_route->tls_protocol;
-        }
-        else
-        {
-            return p_route->protocol;
-        }
+        return p_route->protocol;
     }
 
     return KLB_PROTOCOL_UNKOWN;
 }
 
-static int klb_nsp_check_protocol(klb_nsp_t* p_nsp, klb_buf_t* p_buf, bool tls)
+static int klb_nsp_check_protocol(klb_nsp_t* p_nsp, klb_buf_t* p_buf)
 {
     char* ptr = p_buf->p_buf;
     int data_len = p_buf->end - p_buf->start;
 
-    if ((sizeof(uint32_t) <= data_len) && 
+    if ((sizeof(klb_mnp_t) <= data_len) &&
         (KLB_MNP_MAGIC == *((uint32_t*)(ptr))))
     {
-        return tls ? KLB_PROTOCOL_MNPS : KLB_PROTOCOL_MNP;
+        klb_mnp_t* p_mnp = (klb_mnp_t*)ptr;
+
+        if (KLB_MNP_RPC_LUA == p_mnp->packtype)
+        {
+            return KLB_PROTOCOL_RPC_MNP_LUA;
+        }
+        else if(KLB_MNP_RPC_JSON == p_mnp->packtype)
+        {
+            return KLB_PROTOCOL_RPC_MNP_JSON;
+        }
+
+        return KLB_PROTOCOL_MNP;
     }
 
     char* p_rn = av_strnstr(ptr, "\r\n", data_len);
@@ -160,10 +161,10 @@ static int klb_nsp_check_protocol(klb_nsp_t* p_nsp, klb_buf_t* p_buf, bool tls)
         {
             sdsfree(line);
 
-            int protocol = check_protocol_route_klb_nsp(p_nsp, path, tls);
+            int protocol = check_protocol_route_klb_nsp(p_nsp, path);
             if (KLB_PROTOCOL_UNKOWN == protocol)
             {
-                return tls ? KLB_PROTOCOL_HTTPS : KLB_PROTOCOL_HTTP;
+                return KLB_PROTOCOL_HTTP;
             }
 
             return protocol;
@@ -225,7 +226,7 @@ static int cb_recv_klb_nsp(void* p_lparam, void* p_wparam, int id, int64_t now)
         {
             p_buf->end += r;
 
-            p_item->protocol = klb_nsp_check_protocol(p_nsp, p_buf, false);
+            p_item->protocol = klb_nsp_check_protocol(p_nsp, p_buf);
 
             if (KLB_PROTOCOL_UNKOWN != p_item->protocol)
             {

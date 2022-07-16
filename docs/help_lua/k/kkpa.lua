@@ -1,14 +1,15 @@
---[[
--- Copyright(c) 2022, LGPL v3 All Rights Reserved
---
--- @file    kkpa.lua
--- @brief   kkpa
--- @author  ÀîÉÜÁ¼
+ï»¿--[[
+-- Copyright(c) 2022, LGPL All Rights Reserved
+-- @file   kkpa.lua
+-- @brief  C kkpa, package
+--   \n require("kkpa")
+--   \n Cå¯¼å‡ºæ–‡ä»¶: ./klb/src_c/klua/klua_base/klua_kpackage.c
+--   \n æ‰“åŒ…/è§£åŒ…æ–‡ä»¶
 -- @version 0.1
--- @history ĞŞ¸ÄÀúÊ·
--- @warning Ã»ÓĞ¾¯¸æ
 --]]
 local kkpa = {}
+
+
 
 
 

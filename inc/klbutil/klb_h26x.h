@@ -28,7 +28,7 @@ extern "C" {
 /// @param [out] *p_is_end    是否为末尾: XT_TRUE.是末尾; XT_FALSE.不是末尾
 /// @return int 返回 0.成功; 非0 失败,没有nal单元
 /// @note 注意如果为数据块最后一个nal单元, 返回的长度为: *p_nal_len = h26x_len - *p_nal_start
-KLB_API int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_len, int* p_nal_h_len, int8_t* p_is_end);
+KLB_API int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_len, int* p_nal_h_len, bool* p_is_end);
 
 
 /// @enum  klb_h264_nalu_type_e

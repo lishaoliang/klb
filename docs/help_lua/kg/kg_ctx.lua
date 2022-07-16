@@ -1,7 +1,6 @@
 ﻿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief   kg环境(go提供的环境)
--- @author  李绍良
 -- @version 0.1
 --]]
 

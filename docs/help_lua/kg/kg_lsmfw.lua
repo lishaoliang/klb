@@ -2,7 +2,6 @@
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief   实时流媒体框架
 --   \n kg live stream media framework
--- @author  李绍良
 -- @version 0.1
 --]]
 

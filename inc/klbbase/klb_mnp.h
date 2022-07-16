@@ -6,13 +6,14 @@
 /// @version 0.1
 /// @history 修改历史
 ///  \n 2019 0.1 创建文件
+///  \n 2022 0.2 a.修改心跳机制: 由ping发起, pong回应
+///              b.添加 RPC Lua, RPC Json数据分包, 在底层协议直接支持RPC
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_MNP_H__
 #define __KLB_MNP_H__
 
 #include "klb_type.h"
-#include "klbbase/klb_mnp_stream.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -24,8 +25,8 @@ extern "C" {
 /// @struct klb_mnp_t
 /// @brief  网络封包头
 ///  \n 固定8字节, 封包头可以被写入文件, 需要精简大小
-///  \n 缓存大小:
-///  \n  媒体包缓存: [4K, 8K, 16K, 32K]
+///  \n 小端序:
+///  \n 媒体包缓存: [4K, 8K, 16K, 32K]
 typedef struct klb_mnp_t_
 {
     uint32_t magic;             ///< 魔数: KLB_MNP_MAGIC
@@ -74,7 +75,7 @@ typedef struct klb_mnp_media_t_
         struct
         {
             uint8_t  tracks;                ///< 音频声道数; 1, 2, 5.1;
-            uint8_t  bits_per_coded_sample; ///< 音频编码数; 1(8比特), 2(16比特)
+            uint8_t  bits_per_sample;       ///< 音频编码数; 1(8比特), 2(16比特)
             uint16_t resv2;
             uint32_t samples;               ///< 音频采样率; 44100
         };
@@ -91,7 +92,7 @@ typedef struct klb_mnp_media_t_
 typedef struct klb_mnp_common_t_
 {
     uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
-    uint32_t    extra;      ///< 附加数据长度; 正式数据长度 = size - extra - sizeof(klb_mnp_common_t)
+    uint32_t    head;       ///< 数据头部长度; 正式数据长度 = size - extra - sizeof(klb_mnp_common_t)
     uint32_t    sequence;   ///< 序列号
     uint32_t    uid;        ///< 用户自定义ID(user defined id)
     // - 4 + 4 + 4 + 4 = 16 Byte
@@ -115,14 +116,19 @@ typedef enum klb_mnp_opt_e_
 
 /// @struct klb_mnp_packtype_e
 /// @brief  包类型
+/// @note 将心跳包修改参考websocket: 由ping发起, pong回应
 typedef enum klb_mnp_packtype_e_
 {
-    KLB_MNP_HEART        = 0x0, ///< 心跳包: 附加数据为0; 否则协议错误
-    KLB_MNP_TXT          = 0x1, ///< 文本数据
-    KLB_MNP_BIN          = 0x2, ///< 二进制数据
-    KLB_MNP_MEDIA        = 0x3, ///< 媒体数据
+    KLB_MNP_PONG            = 0x0, ///< 心跳包(回应): 附加数据为0; 否则协议错误
+    KLB_MNP_TEXT            = 0x1, ///< 文本数据
+    KLB_MNP_BINARY          = 0x2, ///< 二进制数据
+    KLB_MNP_MEDIA           = 0x3, ///< 媒体数据
+    KLB_MNP_PING            = 0x4, ///< 心跳包(发起): 附加数据为0; 否则协议错误
 
-    KLB_MNP_PACKTYPE_MAX = 0x1F ///< MAX
+    KLB_MNP_RPC_LUA         = 0x10,///< RPC Lua包;
+    KLB_MNP_RPC_JSON        = 0x11,///< RPC Json包;
+
+    KLB_MNP_PACKTYPE_MAX    = 0x1F ///< MAX
 }klb_mnp_packtype_e;
 
 
@@ -142,22 +148,22 @@ typedef enum klb_mnp_vtype_e_
 /// @brief  媒体流序号
 typedef enum klb_mnp_sidx_e_
 {
-    KLB_MNP_SIDX_NULL = 0x0000,    ///< NULL
-    KLB_MNP_SIDX_V1 = 0x0001,    ///< Video 1
-    KLB_MNP_SIDX_V2 = 0x0002,    ///< Video 2
-    KLB_MNP_SIDX_V3 = 0x0003,    ///< Video 3
+    KLB_MNP_SIDX_NULL   = 0x0000,    ///< NULL
+    KLB_MNP_SIDX_V1     = 0x0001,    ///< Video 1
+    KLB_MNP_SIDX_V2     = 0x0002,    ///< Video 2
+    KLB_MNP_SIDX_V3     = 0x0003,    ///< Video 3
 
-    KLB_MNP_SIDX_A1 = 0x0021,    ///< Audio 1
-    KLB_MNP_SIDX_A2 = 0x0022,    ///< Audio 2
-    KLB_MNP_SIDX_A3 = 0x0023,    ///< Audio 3
+    KLB_MNP_SIDX_A1     = 0x0021,    ///< Audio 1
+    KLB_MNP_SIDX_A2     = 0x0022,    ///< Audio 2
+    KLB_MNP_SIDX_A3     = 0x0023,    ///< Audio 3
 
-    KLB_MNP_SIDX_P1 = 0x0041,    ///< Picture 1
-    KLB_MNP_SIDX_P2 = 0x0042,    ///< Picture 2
-    KLB_MNP_SIDX_P3 = 0x0043,    ///< Picture 3
+    KLB_MNP_SIDX_P1     = 0x0041,    ///< Picture 1
+    KLB_MNP_SIDX_P2     = 0x0042,    ///< Picture 2
+    KLB_MNP_SIDX_P3     = 0x0043,    ///< Picture 3
 
-    KLB_MNP_SIDX_I1 = 0x0061,    ///< Image 1
-    KLB_MNP_SIDX_I2 = 0x0062,    ///< Image 2
-    KLB_MNP_SIDX_I3 = 0x0063,    ///< Image 3
+    KLB_MNP_SIDX_I1     = 0x0061,    ///< Image 1
+    KLB_MNP_SIDX_I2     = 0x0062,    ///< Image 2
+    KLB_MNP_SIDX_I3     = 0x0063,    ///< Image 3
 }klb_mnp_sidx_e;
 
 

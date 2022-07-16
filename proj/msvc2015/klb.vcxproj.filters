@@ -144,9 +144,6 @@
     <Filter Include="inc_hpp\klbutil">
       <UniqueIdentifier>{28dd7f4b-097d-46cf-8953-1c65b8667af5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_cpp\klbmain">
-      <UniqueIdentifier>{09ab4a7a-8873-49a1-8a7f-368fcd1db0e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_cpp\klbplatform">
       <UniqueIdentifier>{7b608c6a-d94a-45d5-b18a-f3cc727f19f1}</UniqueIdentifier>
     </Filter>
@@ -1157,6 +1154,15 @@
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_help.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_nsc.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbthird\cJSON.h">
+      <Filter>inc\klbthird</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -1707,9 +1713,6 @@
     <ClCompile Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.c">
       <Filter>src_c\klua\luafilesystem-2.0\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbmain\CKlbMain.cpp">
-      <Filter>src_cpp\klbmain</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_cpp\klbutil\CMap.cpp">
       <Filter>src_cpp\klbutil</Filter>
     </ClCompile>
@@ -1807,6 +1810,51 @@
       <Filter>src_c\klbnet\klb_ncm_ops</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_mnp.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_rtp.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_rtp.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_rtp.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krpc.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_nsc.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\cJSON.c">
+      <Filter>src_c\klbthird</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_seri_json.c">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_mnp_json.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_mnp_lua.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_http_json.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_http_lua.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_ws_json.c">
+      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_ws_lua.c">
       <Filter>src_c\klbnet\klb_ncm_ops</Filter>
     </ClCompile>
   </ItemGroup>

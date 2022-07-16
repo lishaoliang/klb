@@ -578,7 +578,7 @@ klua_ktcp_t* new_connect_klua_ktcp(lua_State* L, klb_socket_fd fd, klua_ktcp_par
     klb_socket_t* p_socket = NULL;
     if (p_param->tls)
     {
-        p_socket = klb_socket_tls_async_create(fd);
+        p_socket = klb_socket_tls_async_create(fd, false, NULL);
     }
     else
     {
@@ -644,7 +644,7 @@ static int lib_klua_ktcp_connect(lua_State* L)
 
 //////////////////////////////////////////////////////////////////////////
 
-static int on_accept_klua_ktcp_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr)
+static int on_accept_klua_ktcp_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
 {
     klua_ktcp_listen_t* p_listen = (klua_ktcp_listen_t*)ptr;
 

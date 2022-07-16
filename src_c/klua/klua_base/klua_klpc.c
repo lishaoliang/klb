@@ -44,27 +44,9 @@ static int call_lua_reg_on_recv_klua_klpc_module(klua_klpc_module_t* p_mo, klua_
         p_mo->co_recv = NULL; // 清空
 
         lua_pushstring(L, p_msg->src_name);
-        lua_pushlstring(L, p_msg->p_msg, p_msg->msg_size);
-        int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
-        klua_env_report_by_L(L, status);
-
-        return (status == LUA_OK) ? 0 : 1;
-    }
-    else
-    {
-        if (p_mo->reg_on_recv <= 0) return -1; // 未处理
-
-        lua_State* L = p_mo->L;
-        KLUA_HELP_TOP_B(L);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, p_mo->reg_on_recv);   /* to call reg in protected mode */
-
-        lua_pushstring(L, p_msg->src_name);
         int num = luaseri_unpack_by_buffer(L, 2, p_msg->p_msg, p_msg->msg_size);
-
         int status = lua_pcall(L, num + 1, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
-
-        KLUA_HELP_TOP_E(L);
 
         return (status == LUA_OK) ? 0 : 1;
     }
@@ -173,10 +155,10 @@ static int klua_klpc_module_co_recv(lua_State* L)
         klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_mo->p_msg_list);
 
         lua_pushstring(L, p_msg->src_name);
-        lua_pushlstring(L, p_msg->p_msg, p_msg->msg_size);
+        int num = luaseri_unpack_by_buffer(L, 2, p_msg->p_msg, p_msg->msg_size);
 
         klua_msg_free(p_msg);
-        return 2;
+        return num + 1;
     }
     else
     {
@@ -224,9 +206,7 @@ static void klua_klpc_module_createmeta(lua_State* L)
     static luaL_Reg meth[] = {
         { "close",          klua_klpc_module_close },
 
-        //{ "on_recv",        klua_klpc_module_on_recv },
         { "co_recv",        klua_klpc_module_co_recv },
-
         { "response",       klua_klpc_module_response },
 
         { NULL,             NULL }
@@ -284,22 +264,6 @@ static int call_lua_reg_on_call_klua_klpc(klua_klpc_t* p_klpc, klua_msg_t* p_msg
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
-        return (status == LUA_OK) ? 0 : 1;
-    }
-    else
-    {
-        if (p_klpc->co_call <= 0) return -1; // 未处理
-
-        lua_State* L = p_klpc->L;
-        KLUA_HELP_TOP_B(L);
-        lua_rawgeti(L, LUA_REGISTRYINDEX, p_klpc->co_call);     /* to call reg in protected mode */
-
-        int num = luaseri_unpack_by_buffer(L, 1, p_msg->p_msg, p_msg->msg_size);
-
-        int status = lua_pcall(L, num, 0, 0);                   /* do the call */
-        klua_env_report_by_L(L, status);
-
-        KLUA_HELP_TOP_E(L);
         return (status == LUA_OK) ? 0 : 1;
     }
 

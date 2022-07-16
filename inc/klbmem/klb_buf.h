@@ -20,7 +20,7 @@ extern "C" {
 #pragma pack(4)
 
 
-/// @struct klb_buf_t
+/// @struct klb_buf_type_e
 /// @brief  缓存类型
 typedef enum klb_buf_type_e_
 {
@@ -29,11 +29,25 @@ typedef enum klb_buf_type_e_
 
     KLB_BUF_ATOM        = 10,       ///< 带原子变量(引用计数)的缓存
     KLB_BUF_FIX_POOL    = 11,       ///< 固定大小内存池分配: klb_fpool_t
+
+    KLB_BUF_MAX         = 0x1F,     ///< buffer 类型最大值
 }klb_buf_type_e;
 
 
+/// @struct klb_buf_format_e
+/// @brief  数据类型与组织格式
+typedef enum klb_buf_format_e_
+{
+    KLB_BUF_FMT_NORMAL  = 0,        ///< 常规非媒体组包格式
+    KLB_BUF_FMT_SLICE   = 1,        ///< 媒体分片格式
+    KLB_BUF_FMT_FRAME   = 2,        ///< 媒体完整帧
+
+    KLB_BUF_FMT_MAX     = 0x7,      ///< max
+}klb_buf_format_e;
+
+
 /// @struct klb_buf_t
-/// @brief  简易缓存
+/// @brief  缓存
 typedef struct klb_buf_t_
 {
     char*   p_buf;              ///< 缓存指针
@@ -42,7 +56,10 @@ typedef struct klb_buf_t_
     int     start;              ///< 有效数据起始位置
     int     end;                ///< 有效数据末尾
 
-    int     type;               ///< 缓存类型: klb_buf_type_e
+    int32_t type : 5;           ///< 缓存类型: klb_buf_type_e
+    int32_t format : 3;         ///< 数据类型与组织格式: klb_buf_format_e
+    int32_t vtype : 8;          ///< 媒体数据帧类型: klb_mnp_vtype_e, format=KLB_BUF_FMT_SLICE/KLB_BUF_FMT_FRAME时有效
+    int32_t udata : 16;         ///< 用户数据: user data
 
     struct klb_buf_t_* p_next;  ///< 下一个节点
 

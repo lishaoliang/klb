@@ -176,7 +176,7 @@ static void close_klua_khttp(klua_khttp_t* p_khttp)
 
 /// @brief 从C调用Lua脚本注册的的函数
 /// @param [in]  *p_khttp       khttp指针
-/// @param [in]  *p_msg         消息类型: "http", "header", "header_complete", "body"
+/// @param [in]  *p_msg         消息类型: "url", "header", "header_complete", "body"
 /// @param [in]  *p_s1          字符串1
 /// @param [in]  s1_len         字符串1长度
 /// @param [in]  *p_s2          字符串2
@@ -790,7 +790,7 @@ klua_khttp_t* new_connect_klua_khttp(lua_State* L, klb_socket_fd fd, klua_khttp_
     klb_socket_t* p_socket = NULL;
     if (p_param->tls)
     {
-        p_socket = klb_socket_tls_async_create(fd);
+        p_socket = klb_socket_tls_async_create(fd, false, NULL);
     }
     else
     {
@@ -995,7 +995,7 @@ static void klua_khttp_listen_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
         { "on_accept",      klua_khttp_listen_on_accept },  ///< async
-        { "accept",         klua_khttp_listen_accept },     ///< sync
+        { "co_accept",      klua_khttp_listen_accept },     ///< sync
         { "close",          klua_khttp_listen_close },      ///< async/sync
 
         { NULL,             NULL }
@@ -1019,7 +1019,7 @@ static void klua_khttp_listen_createmeta(lua_State* L)
 
 ///////////////////////////////////////
 
-static int on_accept_klua_khttp_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr)
+static int on_accept_klua_khttp_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
 {
     klua_khttp_listen_t* p_listen = (klua_khttp_listen_t*)ptr;
     lua_State* L = klua_env_get_L(p_listen->p_env);

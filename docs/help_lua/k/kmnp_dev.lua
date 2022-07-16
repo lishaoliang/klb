@@ -2,7 +2,6 @@
 -- Copyright(c) 2020, LGPL v3 All Rights Reserved
 -- @brief	设备硬件接口
 --   \n "kmnp_dev"
--- @author  李绍良
 -- @version 0.1
 --]]
 

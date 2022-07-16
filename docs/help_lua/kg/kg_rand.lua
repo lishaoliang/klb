@@ -4,7 +4,6 @@
 --
 -- @file    kg_rand.lua
 -- @brief   go rand
--- @author  李绍良
 -- @version 0.1
 -- @history 修改历史
 --  \n 2019/8/11 0.1 创建文件

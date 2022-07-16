@@ -641,6 +641,15 @@ int luaseri_pack_from(lua_State *L, int idx)
     return 2;
 }
 
+char* luaseri_pack_buffer(lua_State *L, int idx, int* p_size)
+{
+    assert(NULL != p_size);
+    luaseri_pack_from(L, idx);
+
+    *p_size = lua_tointeger(L, -1);
+    return (char*)lua_topointer(L, -2);
+}
+
 int luaseri_unpack_by_buffer(lua_State *L, int base_idx, char* p_data, int data_size)
 {
     void * buffer = p_data;

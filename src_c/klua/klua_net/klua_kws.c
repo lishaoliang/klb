@@ -858,7 +858,7 @@ static klua_kwebsocket_t* new_connect_klua_kwebsocket(lua_State* L, klb_socket_f
     klb_socket_t* p_socket = NULL;
     if (p_param->tls)
     {
-        p_socket = klb_socket_tls_async_create(fd);
+        p_socket = klb_socket_tls_async_create(fd, false, NULL);
     }
     else
     {
@@ -1058,7 +1058,7 @@ static void klua_kwebsocket_listen_createmeta(lua_State* L)
 
 ///////////////////////////////////////
 
-static int on_accept_klua_kwebsocket_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr)
+static int on_accept_klua_kwebsocket_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
 {
     klua_kwebsocket_listen_t* p_listen = (klua_kwebsocket_listen_t*)ptr;
 

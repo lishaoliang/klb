@@ -215,6 +215,12 @@ static int klua_kco_auxwrap(lua_State *L)
     lua_State *co = lua_tothread(L, lua_upvalueindex(1));
     klua_coroutine_env_t* p_co_env = lua_touserdata(L, lua_upvalueindex(2));
 
+    // 附加参数
+    for (int i = 0; i < p_co_env->param_num; i++)
+    {
+        lua_pushvalue(L, lua_upvalueindex(i + 3));
+    }
+
     int r = auxresume(L, co, lua_gettop(L));
     if (r < 0) {  /* error? */
         // 异常结束
@@ -242,7 +248,7 @@ static int klua_kco_auxwrap(lua_State *L)
     return r;
 }
 
-static klua_coroutine_env_t* new_cowrap_klua_kco(lua_State* L, int idx)
+static klua_coroutine_env_t* new_cowrap_klua_kco(lua_State* L, int idx, int from, int to)
 {
     klua_coroutine_env_t* ptr = KLB_MALLOCZ(klua_coroutine_env_t, 1, 0);
 
@@ -254,8 +260,15 @@ static klua_coroutine_env_t* new_cowrap_klua_kco(lua_State* L, int idx)
     lua_pushvalue(L, idx);  /* move function to top */
     lua_xmove(L, NL, 1);    /* move function from L to NL */
 
-    lua_pushlightuserdata(L, ptr);
-    lua_pushcclosure(L, klua_kco_auxwrap, 2);
+    lua_pushlightuserdata(L, ptr); // 参数2
+
+    for (int i = from; i <= to; i++)
+    {
+        lua_pushvalue(L, i);
+        ptr->param_num++;
+    }
+
+    lua_pushcclosure(L, klua_kco_auxwrap, 2 + ptr->param_num);
 
     // 在主程中记录(ref)
     lua_xmove(L, ptr->p_main, 1);  /* move function from L to NL */
@@ -271,7 +284,7 @@ static klua_coroutine_env_t* new_cowrap_klua_kco(lua_State* L, int idx)
 
 static int klua_kco_fork(lua_State* L)
 {
-    klua_coroutine_env_t* ptr = new_cowrap_klua_kco(L, 1);
+    klua_coroutine_env_t* ptr = new_cowrap_klua_kco(L, 1, 2, lua_gettop(L));
     klua_ex_coroutine_wakeup(klua_ex_get_coroutine_by_L(G(L)->mainthread), ptr->p_co);
 
     return 0;
@@ -280,8 +293,7 @@ static int klua_kco_fork(lua_State* L)
 static int klua_kco_timeout(lua_State* L)
 {
     lua_Integer tc = luaL_checkinteger(L, 1);
-
-    klua_coroutine_env_t* ptr = new_cowrap_klua_kco(L, 2);
+    klua_coroutine_env_t* ptr = new_cowrap_klua_kco(L, 2, 3, lua_gettop(L));
 
     if (0 < tc)
     {
@@ -329,7 +341,7 @@ int klua_open_kco(lua_State* L)
         { NULL,             NULL }
     };
 
-#if 0
+#if 1
     // 创建导出库函数
     luaL_newlib(L, kco_lib);
 #else

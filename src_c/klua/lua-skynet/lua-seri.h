@@ -14,6 +14,8 @@ int luaseri_unpack(lua_State *L);
 //////////////////////////////////
 
 int luaseri_pack_from(lua_State *L, int idx);
+char* luaseri_pack_buffer(lua_State *L, int idx, int* p_size);
+
 int luaseri_unpack_by_buffer(lua_State *L, int base_idx, char* p_data, int data_size);
 
 

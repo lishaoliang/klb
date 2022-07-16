@@ -118,7 +118,7 @@ namespace klb {
                     lua_Integer d = lua_tointegerx(L, -1, &isnum);
                     if (isnum)
                     {
-                        r[p_key] = d;
+                        r[p_key] = (int64_t)d;
                     }
                     else
                     {

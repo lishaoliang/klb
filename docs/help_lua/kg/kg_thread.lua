@@ -2,7 +2,6 @@
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @file    kg_thread.lua
 -- @brief   go thread
--- @author  李绍良
 -- @version 0.1
 -- @history 修改历史
 --  \n 2019/8/11 0.1 创建文件

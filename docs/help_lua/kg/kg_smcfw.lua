@@ -2,7 +2,6 @@
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @brief   流媒体客户端
 --   \n kg stream media client framework
--- @author  李绍良
 -- @version 0.1
 --]]
 

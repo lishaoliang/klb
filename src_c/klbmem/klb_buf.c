@@ -52,6 +52,13 @@ int klb_buf_unref(klb_buf_t* p_buf)
 {
     switch (p_buf->type)
     {
+    case KLB_BUF_NORMAL:
+        KLB_FREE(p_buf->p_buf);
+        KLB_FREE(p_buf);
+        break;
+    case KLB_BUF_EXTRA:
+        KLB_FREE(p_buf);
+        break;
     case KLB_BUF_ATOM:
         return klb_buf_atom_unref(p_buf);
         break;

@@ -156,8 +156,8 @@ int klb_ncm_register_ops_http(klb_ncm_t* p_ncm, int protocol)
 
     ops.cb_init = cb_init_klb_ncm_ops_http;
 
-    ops.cb_send_text = cb_send_text_klb_ncm_ops_http;
-    ops.cb_send_media = cb_send_media_klb_ncm_ops_http;
+    //ops.cb_send_text = cb_send_text_klb_ncm_ops_http;
+    //ops.cb_send_media = cb_send_media_klb_ncm_ops_http;
 
     ops.on_send = on_send_klb_ncm_ops_http;
     ops.on_recv = on_recv_klb_ncm_ops_http;

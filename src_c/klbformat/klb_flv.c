@@ -1,24 +1,8 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbformat/klb_flv.h"
 #include "klbutil/klb_log.h"
+#include <string.h>
 #include <assert.h>
-
-
-#ifndef MNP_READ_BE16
-#define MNP_READ_BE16(x)                            \
-        ((((const uint8_t*)(x))[0] << 8) |          \
-        ((const uint8_t*)(x))[1])
-#endif
-
-
-#ifndef MNP_READ_BE32
-#define MNP_READ_BE32(x)                            \
-    (((uint32_t)((const uint8_t*)(x))[0] << 24) |   \
-              (((const uint8_t*)(x))[1] << 16) |    \
-              (((const uint8_t*)(x))[2] <<  8) |    \
-              ((const uint8_t*)(x))[3])
-#endif
-
 
 int klb_flv_parser_header(klb_flv_header_t* p_header, const char* p_data, int data_len)
 {
@@ -32,18 +16,18 @@ int klb_flv_parser_header(klb_flv_header_t* p_header, const char* p_data, int da
 
     uint8_t* ptr = (uint8_t*)p_data;
 
-    p_header->signature_f = *ptr;       ptr += 1;
-    p_header->signature_l = *ptr;       ptr += 1;
-    p_header->signature_v = *ptr;       ptr += 1;
-    p_header->version = *ptr;           ptr += 1;
+    p_header->signature_f = *ptr;           ptr += 1;
+    p_header->signature_l = *ptr;           ptr += 1;
+    p_header->signature_v = *ptr;           ptr += 1;
+    p_header->version = *ptr;               ptr += 1;
 
-    uint8_t flags = *ptr;               ptr += 1;
+    uint8_t flags = *ptr;                   ptr += 1;
     p_header->type_flags_video = flags & 0x1;
     p_header->type_flags_audio = (flags >> 3) & 0x1;
 
-    p_header->data_offset = MNP_READ_BE32(ptr);     ptr += 4;
+    p_header->data_offset = KLB_RB32(ptr);  ptr += 4;
 
-    uint32_t tag_size0 = MNP_READ_BE32(ptr);        ptr += 4;
+    uint32_t tag_size0 = KLB_RB32(ptr);     ptr += 4;
 
     //KLB_LOG("flv parser header:[%d,%d,%d,%d]-[%d,%d]-[%d]", p_header->signature_f, p_header->signature_l, p_header->signature_v, p_header->version,
     //    p_header->type_flags_video, p_header->type_flags_audio, 
@@ -77,18 +61,18 @@ int klb_flv_parser_tag(klb_flv_tag_t* p_tag, const char* p_data, int data_len)
 
     uint8_t* ptr = (uint8_t*)p_data;
 
-    uint32_t b1 = MNP_READ_BE32(ptr);       ptr += 4;
+    uint32_t b1 = KLB_RB32(ptr);        ptr += 4;
     p_tag->data_size = b1 & 0xFFFFFF;
     p_tag->tag_type = (b1 >> 24) & 0x1F;
     p_tag->filter = (b1 >> 29) & 0x1;
 
-    uint32_t b2 = MNP_READ_BE32(ptr);       ptr += 4;
+    uint32_t b2 = KLB_RB32(ptr);        ptr += 4;
     p_tag->timestamp_extended = b2 & 0xFF;
     p_tag->timestamp = (b2 >> 8) & 0xFFFFFF;
 
-    p_tag->stream_id[0] = *ptr;             ptr += 1;
-    p_tag->stream_id[1] = *ptr;             ptr += 1;
-    p_tag->stream_id[2] = *ptr;             ptr += 1;
+    p_tag->stream_id[0] = *ptr;         ptr += 1;
+    p_tag->stream_id[1] = *ptr;         ptr += 1;
+    p_tag->stream_id[2] = *ptr;         ptr += 1;
 
 
     //KLB_LOG("C flv parser tag:[%d,%d,%d]-[%d,%d]-[%d,%d,%d]", p_tag->filter, p_tag->tag_type, p_tag->data_size,
@@ -113,7 +97,7 @@ int klb_flv_parser_tag_video(klb_flv_video_info_t* p_info, const char* p_data, i
     if (KLB_FLV_CODEC_AVC == p_info->video.codec_id ||
         KLB_FLV_CODEC_AVC_H265 == p_info->video.codec_id)
     {
-        uint32_t avc = MNP_READ_BE32(ptr);  ptr += 4;
+        uint32_t avc = KLB_RB32(ptr);  ptr += 4;
         p_info->avc.composition_time = avc & 0xFFFFFF;
         p_info->avc.avc_packet_type = (avc >> 24) & 0xFF;
 
@@ -141,11 +125,11 @@ int klb_flv_parser_tag_video(klb_flv_video_info_t* p_info, const char* p_data, i
             if (KLB_FLV_CODEC_AVC_H265 == p_info->video.codec_id)
             {
                 // VPS
-                uint8_t num_of_vps = *ptr;                  ptr += 1;   // numOfSequenceParameterSets
+                uint8_t num_of_vps = *ptr;              ptr += 1;   // numOfSequenceParameterSets
                 uint8_t vps_count = num_of_vps & 0x1F;
                 for (int i = 0; i < vps_count; i++)
                 {
-                    uint16_t vps_len = MNP_READ_BE16(ptr);  ptr += 2;   // sequenceParameterSetLength
+                    uint16_t vps_len = KLB_RB16(ptr);   ptr += 2;   // sequenceParameterSetLength
                     if (0 == vps_len)
                     {
                         continue;
@@ -161,7 +145,7 @@ int klb_flv_parser_tag_video(klb_flv_video_info_t* p_info, const char* p_data, i
             uint8_t sps_count = num_of_sps & 0x1F;
             for (int i = 0; i < sps_count; i++)
             {
-                uint16_t sps_len = MNP_READ_BE16(ptr);  ptr += 2;   // sequenceParameterSetLength
+                uint16_t sps_len = KLB_RB16(ptr);       ptr += 2;   // sequenceParameterSetLength
                 if (0 == sps_len)
                 {
                     continue;
@@ -175,7 +159,7 @@ int klb_flv_parser_tag_video(klb_flv_video_info_t* p_info, const char* p_data, i
             uint8_t pps_count = *ptr;                   ptr += 1;   // numOfPictureParameterSets
             for (int i = 0; i < pps_count; i++)
             {
-                uint16_t pps_len = MNP_READ_BE16(ptr);  ptr += 2;   // pictureParameterSetLength
+                uint16_t pps_len = KLB_RB16(ptr);       ptr += 2;   // pictureParameterSetLength
                 if (0 == pps_len)
                 {
                     continue;
@@ -204,7 +188,7 @@ int klb_flv_parser_tag_video(klb_flv_video_info_t* p_info, const char* p_data, i
 
                 while (offset + 4 < spare_len)
                 {
-                    uint32_t nalu_size = MNP_READ_BE32(ptr);
+                    uint32_t nalu_size = KLB_RB32(ptr);
                     if (3 == size_minus_one)
                     {
                         nalu_size = nalu_size >> 8;
@@ -300,4 +284,309 @@ int klb_flv_parser_tag_audio(klb_flv_audio_info_t* p_info, const char* p_data, i
     }
 
     return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+int klb_flv_pack_head(char* p_buf, int buf_len, bool video, bool audio)
+{
+    assert(NULL != p_buf);
+    assert(KLB_FLV_HEAD_AND_ZERO <= buf_len);
+
+    uint8_t v = video ? 0x1 : 0x0;
+    uint8_t a = audio ? 0x1 : 0x0;
+
+    uint8_t* ptr = (uint8_t*)p_buf;
+
+    uint8_t audio_video = (a << 3) | v;
+    uint32_t offset = 9;
+    uint32_t pre_tag_size = 0;
+
+    *ptr = 0x46;                ptr += 1;
+    *ptr = 0x4C;                ptr += 1;
+    *ptr = 0x56;                ptr += 1;
+    *ptr = KLB_FLV_VERSION_1;   ptr += 1;
+
+    *ptr = audio_video;         ptr += 1;
+    KLB_WB32(ptr, offset);      ptr += 4;
+    KLB_WB32(ptr, pre_tag_size);ptr += 4;
+
+    return KLB_FLV_HEAD_AND_ZERO;
+}
+
+int klb_flv_pack_tag_h264_sequence_header(char* p_buf, int buf_len, char* p_sps, int sps_len, char* p_pps, int pps_len, uint32_t timestamp)
+{
+    assert(NULL != p_buf);
+    int head_size = sps_len + pps_len + sizeof(klb_flv_tag_t) + sizeof(klb_flv_video_tag_t) + sizeof(klb_flv_avc_t) + 5 + 3 + 3;
+
+    // 先写 tag内容
+    uint8_t* ptr = (uint8_t*)p_buf + sizeof(klb_flv_tag_t);
+
+    // klb_flv_video_tag_t; pos 1
+    // len = sizeof(klb_flv_video_tag_t)
+    uint8_t video = ((uint8_t)(KLB_FLV_AVC_KEY_FRAME) << 4) | (uint8_t)(KLB_FLV_CODEC_AVC);
+    *ptr = video;                       ptr += 1;
+
+
+    // klb_flv_avc_t; pos 2
+    // len = sizeof(klb_flv_avc_t)
+    klb_flv_avc_t flv_avc = { 0 };
+    flv_avc.avc_packet_type = KLB_FLV_AVC_SEQUENCE_HEADER;
+
+    uint32_t avc = ((uint32_t)(flv_avc.avc_packet_type) << 24) | (uint32_t)(flv_avc.composition_time);
+    KLB_WB32(ptr, avc);                 ptr += 4;
+
+    // AVCDecoderConfigurationRecord; head pos 3
+    // len = 5
+    uint8_t version = 1;                            // configurationVersion
+    uint8_t profile_indication = 100;               // avcProfileIndication
+    uint8_t profile_compatibility = 0;              // profile_compatibility
+    uint8_t level_indication = 31;                  // AVCLevelIndication
+    uint8_t smo = 0xFF;                             // lengthSizeMinusOne
+
+    *ptr = version;                     ptr += 1;   // configurationVersion
+    *ptr = profile_indication;          ptr += 1;   // avcProfileIndication
+    *ptr = profile_compatibility;       ptr += 1;   // profile_compatibility
+    *ptr = level_indication;            ptr += 1;   // AVCLevelIndication
+    *ptr = smo;                         ptr += 1;   // lengthSizeMinusOne
+
+    // AVCDecoderConfigurationRecord: SPS 
+    // len = sps_len + 3
+    *ptr = 0x1;                         ptr += 1;   // numOfSequenceParameterSets
+    KLB_WB16(ptr, sps_len);             ptr += 2;   // sequenceParameterSetLength
+    if (0 < sps_len)
+    {
+        memcpy(ptr, p_sps, sps_len);    ptr += sps_len; // SPS
+    }
+
+    // AVCDecoderConfigurationRecord: PPS
+    // len = pps_len + 3
+    *ptr = 0x1;                         ptr += 1;       // numOfPictureParameterSets
+    KLB_WB16(ptr, pps_len);             ptr += 2;       // pictureParameterSetLength
+    if (0 < pps_len)
+    {
+        memcpy(ptr, p_pps, pps_len);    ptr += pps_len; // PPS
+    }
+
+    // 后写 tag头; pos 0
+    // len = sizeof(klb_flv_tag_t)
+    ptr = (uint8_t*)p_buf;
+
+    klb_flv_tag_t tag = { 0 };
+    tag.data_size = head_size - sizeof(klb_flv_tag_t);
+    tag.tag_type = KLB_FLV_TAG_VIDEO;
+
+    tag.timestamp_extended = (timestamp >> 24) & 0xFF;
+    tag.timestamp = timestamp & 0xFFFFFF;
+
+    uint32_t dtf = ((uint32_t)(tag.filter) << 29) | ((uint32_t)(tag.tag_type) << 24) | (uint32_t)(tag.data_size);
+    uint32_t time = ((uint32_t)(tag.timestamp) << 8) | (uint32_t)(tag.timestamp_extended);
+
+    KLB_WB32(ptr, dtf);                 ptr += 4;
+    KLB_WB32(ptr, time);                ptr += 4;
+
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+
+    return head_size;
+}
+
+int klb_flv_pack_tag_h264_nalu(char* p_buf, int buf_len, int type, int nalu_size, uint32_t timestamp)
+{
+    assert(NULL != p_buf);
+    int head_size = sizeof(klb_flv_tag_t) + sizeof(klb_flv_video_tag_t) + sizeof(klb_flv_avc_t) + 4;
+
+    // 先写 tag内容
+    uint8_t* ptr = (uint8_t*)p_buf;
+
+    // 写 tag头; pos 0
+    // len = sizeof(klb_flv_tag_t)
+    klb_flv_tag_t tag = { 0 };
+    tag.data_size = sizeof(klb_flv_video_tag_t) + sizeof(klb_flv_avc_t) + 4 + nalu_size;
+    tag.tag_type = KLB_FLV_TAG_VIDEO;
+
+    tag.timestamp_extended = (timestamp >> 24) & 0xFF;
+    tag.timestamp = timestamp & 0xFFFFFF;
+
+    uint32_t dtf = ((uint32_t)(tag.filter) << 29) | ((uint32_t)(tag.tag_type) << 24) | (uint32_t)(tag.data_size);
+    uint32_t time = ((uint32_t)(tag.timestamp) << 8) | (uint32_t)(tag.timestamp_extended);
+
+    ptr = (uint8_t*)p_buf;
+    KLB_WB32(ptr, dtf);                 ptr += 4;
+    KLB_WB32(ptr, time);                ptr += 4;
+
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+
+    // klb_flv_video_tag_t; pos 1
+    // len = sizeof(klb_flv_video_tag_t)
+    uint8_t video = ((uint8_t)(type) << 4) | (uint8_t)(KLB_FLV_CODEC_AVC);
+    *ptr = video;                       ptr += 1;
+
+    // klb_flv_avc_t; pos 2
+    // len = sizeof(klb_flv_avc_t)
+    klb_flv_avc_t flv_avc = { 0 };
+    flv_avc.avc_packet_type = KLB_FLV_AVC_NALU;
+
+    uint32_t avc = ((uint32_t)(flv_avc.avc_packet_type) << 24) | (uint32_t)(flv_avc.composition_time);
+    KLB_WB32(ptr, avc);                 ptr += 4;
+
+    // NALU数据 = uint32_t + nalu
+    // A = uint32_t + nalu
+    // B = uint32_t + nalu
+
+    uint32_t w_size = nalu_size;
+    KLB_WB32(ptr, w_size);  ptr += 4;
+
+    assert(head_size == (int)((char*)ptr - p_buf));
+
+    // 这里只写了头部, 调用者需要将 nalu数据 继续填充
+    return head_size;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+
+int klb_flv_pack_tag_h265_sequence_header(char* p_buf, int buf_len, char* p_vps, int vps_len, char* p_sps, int sps_len, char* p_pps, int pps_len, uint32_t timestamp)
+{
+    assert(NULL != p_buf);
+    int head_size = vps_len + sps_len + pps_len + sizeof(klb_flv_tag_t) + sizeof(klb_flv_video_tag_t) + sizeof(klb_flv_avc_t) + 5 + 3 + 3 + 3;
+
+    // 先写 tag内容
+    uint8_t* ptr = (uint8_t*)p_buf + sizeof(klb_flv_tag_t);
+
+    // klb_flv_video_tag_t; pos 1
+    // len = sizeof(klb_flv_video_tag_t)
+    uint8_t video = ((uint8_t)(KLB_FLV_AVC_KEY_FRAME) << 4) | (uint8_t)(KLB_FLV_CODEC_AVC_H265);
+    *ptr = video;                       ptr += 1;
+
+
+    // klb_flv_avc_t; pos 2
+    // len = sizeof(klb_flv_avc_t)
+    klb_flv_avc_t flv_avc = { 0 };
+    flv_avc.avc_packet_type = KLB_FLV_AVC_SEQUENCE_HEADER;
+
+    uint32_t avc = ((uint32_t)(flv_avc.avc_packet_type) << 24) | (uint32_t)(flv_avc.composition_time);
+    KLB_WB32(ptr, avc);                ptr += 4;
+
+    // AVCDecoderConfigurationRecord; head pos 3
+    // len = 5
+    uint8_t version = 1;                            // configurationVersion
+    uint8_t profile_indication = 100;               // avcProfileIndication
+    uint8_t profile_compatibility = 0;              // profile_compatibility
+    uint8_t level_indication = 31;                  // AVCLevelIndication
+    uint8_t smo = 0xFF;                             // lengthSizeMinusOne
+
+    *ptr = version;                     ptr += 1;   // configurationVersion
+    *ptr = profile_indication;          ptr += 1;   // avcProfileIndication
+    *ptr = profile_compatibility;       ptr += 1;   // profile_compatibility
+    *ptr = level_indication;            ptr += 1;   // AVCLevelIndication
+    *ptr = smo;                         ptr += 1;   // lengthSizeMinusOne
+
+    // AVCDecoderConfigurationRecord: VPS 
+    // len = vps_len + 3
+    *ptr = 0x1;                         ptr += 1;   // numOfSequenceParameterSets
+    KLB_WB16(ptr, vps_len);             ptr += 2;   // sequenceParameterSetLength
+    if (0 < vps_len)
+    {
+        memcpy(ptr, p_vps, vps_len);    ptr += vps_len; // VPS
+    }
+
+    // AVCDecoderConfigurationRecord: SPS 
+    // len = sps_len + 3
+    *ptr = 0x1;                         ptr += 1;   // numOfSequenceParameterSets
+    KLB_WB16(ptr, sps_len);             ptr += 2;   // sequenceParameterSetLength
+    if (0 < sps_len)
+    {
+        memcpy(ptr, p_sps, sps_len);    ptr += sps_len; // SPS
+    }
+
+    // AVCDecoderConfigurationRecord: PPS
+    // len = pps_len + 3
+    *ptr = 0x1;                         ptr += 1;   // numOfPictureParameterSets
+    KLB_WB16(ptr, pps_len);             ptr += 2;   // pictureParameterSetLength
+    if (0 < pps_len)
+    {
+        memcpy(ptr, p_pps, pps_len);    ptr += pps_len; // PPS
+    }
+
+    // 后写 tag头; pos 0
+    // len = sizeof(klb_flv_tag_t)
+    ptr = (uint8_t*)p_buf;
+
+    klb_flv_tag_t tag = { 0 };
+    tag.data_size = head_size - sizeof(klb_flv_tag_t);
+    tag.tag_type = KLB_FLV_TAG_VIDEO;
+
+    tag.timestamp_extended = (timestamp >> 24) & 0xFF;
+    tag.timestamp = timestamp & 0xFFFFFF;
+
+    uint32_t dtf = ((uint32_t)(tag.filter) << 29) | ((uint32_t)(tag.tag_type) << 24) | (uint32_t)(tag.data_size);
+    uint32_t time = ((uint32_t)(tag.timestamp) << 8) | (uint32_t)(tag.timestamp_extended);
+
+    KLB_WB32(ptr, dtf);                 ptr += 4;
+    KLB_WB32(ptr, time);                ptr += 4;
+
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+
+    return head_size;
+}
+
+
+int klb_flv_pack_tag_h265_nalu(char* p_buf, int buf_len, int type, int nalu_size, uint32_t timestamp)
+{
+    assert(NULL != p_buf);
+    int head_size = sizeof(klb_flv_tag_t) + sizeof(klb_flv_video_tag_t) + sizeof(klb_flv_avc_t);
+
+    // 先写 tag内容
+    uint8_t* ptr = (uint8_t*)p_buf;
+
+    // 写 tag头; pos 0
+    // len = sizeof(klb_flv_tag_t)
+    klb_flv_tag_t tag = { 0 };
+    tag.data_size = head_size + nalu_size - sizeof(klb_flv_tag_t);
+    tag.tag_type = KLB_FLV_TAG_VIDEO;
+
+    tag.timestamp_extended = (timestamp >> 24) & 0xFF;
+    tag.timestamp = timestamp & 0xFFFFFF;
+
+    uint32_t dtf = ((uint32_t)(tag.filter) << 29) | ((uint32_t)(tag.tag_type) << 24) | (uint32_t)(tag.data_size);
+    uint32_t time = ((uint32_t)(tag.timestamp) << 8) | (uint32_t)(tag.timestamp_extended);
+
+    ptr = (uint8_t*)p_buf;
+    KLB_WB32(ptr, dtf);                 ptr += 4;
+    KLB_WB32(ptr, time);                ptr += 4;
+
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+    *ptr = 0;                           ptr += 1;
+
+    // klb_flv_video_tag_t; pos 1
+    // len = sizeof(klb_flv_video_tag_t)
+    uint8_t video = ((uint8_t)(type) << 4) | (uint8_t)(KLB_FLV_CODEC_AVC_H265);
+    *ptr = video;                       ptr += 1;
+
+    // klb_flv_avc_t; pos 2
+    // len = sizeof(klb_flv_avc_t)
+    klb_flv_avc_t flv_avc = { 0 };
+    flv_avc.avc_packet_type = KLB_FLV_AVC_NALU;
+
+    uint32_t avc = ((uint32_t)(flv_avc.avc_packet_type) << 24) | (uint32_t)(flv_avc.composition_time);
+    KLB_WB32(ptr, avc);                 ptr += 4;
+
+    // NALU数据 = uint32_t + nalu
+    // A = uint32_t + nalu
+    // B = uint32_t + nalu
+
+    uint32_t w_size = nalu_size;
+    KLB_WB32(ptr, w_size);  ptr += 4;
+
+    assert(head_size == (int)((char*)ptr - p_buf));
+
+    // 这里只写了头部, 调用者需要将 nalu数据 继续填充
+    return head_size;
 }

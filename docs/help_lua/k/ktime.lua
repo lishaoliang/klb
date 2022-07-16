@@ -2,8 +2,9 @@
 -- Copyright(c) 2021, LGPL v3 All Rights Reserved
 --
 -- @file    ktime.lua
--- @brief   k time
--- @author  李绍良
+-- @brief  	C ktime
+--   \n require("ktime")
+--   \n C导出文件: ./klb/src_c/klua/klua_platform/klua_ktime.c
 -- @version 0.1
 -- @history 修改历史
 -- @warning 没有警告

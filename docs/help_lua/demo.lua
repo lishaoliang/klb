@@ -1,7 +1,6 @@
 ﻿--[[
 -- Copyright (c) 2019, LGPL All Rights Reserved
 -- @file  demo.lua
--- @author  李绍良
 --]]
 
 

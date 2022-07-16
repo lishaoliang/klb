@@ -4,7 +4,7 @@
 #include <assert.h>
 
 
-int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_len, int* p_nal_h_len, int8_t* p_is_end)
+int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_len, int* p_nal_h_len, bool* p_is_end)
 {
     assert(NULL != p_h26x);
     assert(NULL != p_nal_start);
@@ -30,8 +30,6 @@ int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_
 
             if (0 <= flag)
             {
-                assert(0 == flag);
-
                 *p_nal_start = flag;
                 *p_nal_len = pos - flag;
 
@@ -60,8 +58,6 @@ int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_
 
     if (0 <= flag)
     {
-        assert(0 == flag);
-
         *p_nal_start = flag;
         *p_nal_len = h26x_len - flag;
 
@@ -78,7 +74,6 @@ int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_
         return 0; // 找到了nal单元单处于末尾
     }
 
-    assert(false);
     return 1; // 没有找到nal单元
 }
 

@@ -13,7 +13,7 @@ klb_buf_t* klb_mnp_pack_heart()
     mnp.magic = KLB_MNP_MAGIC;
     mnp.size = sizeof(klb_mnp_t);
     mnp.opt = KLB_MNP_FULL;
-    mnp.packtype = KLB_MNP_HEART;
+    mnp.packtype = KLB_MNP_PONG;
 
     klb_buf_t* p_buf = klb_buf_malloc(sizeof(klb_mnp_t), false);
     memcpy(p_buf->p_buf, &mnp, sizeof(klb_mnp_t));
@@ -32,7 +32,7 @@ static int check_data_klb_mnp(klb_buf_t* p_buf)
         klb_mnp_t mnp = *((klb_mnp_t*)ptr);
 
         assert(KLB_MNP_MAGIC == mnp.magic);
-        assert(mnp.packtype <= KLB_MNP_MEDIA);
+        assert(mnp.packtype < KLB_MNP_PACKTYPE_MAX);
         assert(mnp.size <= KLB_MNP_BLOCK_SIZE_MAX);
 
         ptr += mnp.size;
@@ -43,8 +43,11 @@ static int check_data_klb_mnp(klb_buf_t* p_buf)
     return 0;
 }
 
-static klb_buf_t* pack_data_klb_mnp(klb_mnp_packtype_e packtype, uint32_t sequence, uint32_t uid, uint8_t* p_head, int head_len, uint8_t* p_body, int body_len)
+klb_buf_t* klb_mnp_pack_data(klb_mnp_packtype_e packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
+    assert(KLB_MNP_TEXT == packtype || KLB_MNP_BINARY == packtype ||
+        KLB_MNP_RPC_LUA == packtype || KLB_MNP_RPC_JSON == packtype);
+
     int num_head = (head_len + KLB_MNP_BLOCK_DATA_MAX - 1) / KLB_MNP_BLOCK_DATA_MAX;
     int num_body = (body_len + KLB_MNP_BLOCK_DATA_MAX - 1) / KLB_MNP_BLOCK_DATA_MAX;
 
@@ -53,7 +56,7 @@ static klb_buf_t* pack_data_klb_mnp(klb_mnp_packtype_e packtype, uint32_t sequen
 
     klb_mnp_common_t com = { 0 };
     com.size = head_len + body_len + sizeof(klb_mnp_common_t);
-    com.extra = head_len;
+    com.head = head_len;
     com.sequence = sequence;
     com.uid = uid;
 
@@ -187,7 +190,7 @@ klb_buf_t* klb_mnp_pack_text(uint32_t sequence, uint32_t uid, const uint8_t* p_h
         return NULL;
     }
 
-    return pack_data_klb_mnp(KLB_MNP_TXT, sequence, uid, (uint8_t*)p_head, head_len, (uint8_t*)p_body, body_len);
+    return klb_mnp_pack_data(KLB_MNP_TEXT, sequence, uid, (uint8_t*)p_head, head_len, (uint8_t*)p_body, body_len);
 }
 
 klb_buf_t* klb_mnp_pack_binary(uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
@@ -197,7 +200,7 @@ klb_buf_t* klb_mnp_pack_binary(uint32_t sequence, uint32_t uid, const uint8_t* p
         return NULL;
     }
 
-    return pack_data_klb_mnp(KLB_MNP_BIN, sequence, uid, (uint8_t*)p_head, head_len, (uint8_t*)p_body, body_len);
+    return klb_mnp_pack_data(KLB_MNP_BINARY, sequence, uid, (uint8_t*)p_head, head_len, (uint8_t*)p_body, body_len);
 }
 
 klb_buf_t* klb_mnp_pack_media()

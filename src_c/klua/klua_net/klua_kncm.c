@@ -253,8 +253,8 @@ static int on_klb_ncm_recv_klua_kncm(void* ptr, int protocol, int id, int code, 
             data_len -= sizeof(klb_mnp_common_t);
 
             call_lua_reg_on_recv_klua_kncm(p_kncm, "text", id, protocol,
-                ptr, p_common->extra,
-                ptr + p_common->extra, data_len - p_common->extra,
+                ptr, p_common->head,
+                ptr + p_common->head, data_len - p_common->head,
                 p_common->sequence, p_common->uid);
         }
         else if (KLB_NCM_PACK_BINARY == packtype)
@@ -265,8 +265,8 @@ static int on_klb_ncm_recv_klua_kncm(void* ptr, int protocol, int id, int code, 
             data_len -= sizeof(klb_mnp_common_t);
 
             call_lua_reg_on_recv_klua_kncm(p_kncm, "binary", id, protocol,
-                ptr, p_common->extra,
-                ptr + p_common->extra, data_len - p_common->extra,
+                ptr, p_common->head,
+                ptr + p_common->head, data_len - p_common->head,
                 p_common->sequence, p_common->uid);
         }
         else if (KLB_NCM_PACK_MEDIA == packtype)
@@ -363,13 +363,29 @@ static int klua_kncm_on_recv(lua_State* L)
     return 0;
 }
 
-static int on_accept_klua_kncm_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr)
+static int on_accept_klua_kncm_listen(void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
 {
     klua_kncm_t* p_kncm = (klua_kncm_t*)ptr;
+    klb_socket_t* p_socket = NULL;
+    
+    if (tls)
+    {
+        p_socket = klb_socket_tls_async_create(fd, false, p_tls_param);
+    }
+    else
+    {
+        p_socket = klb_socket_async_create(fd);
+    }
 
-    klb_socket_t* p_socket = klb_socket_async_create(fd);
-
-    klb_nsp_push(p_kncm->p_nsp, p_socket);
+    if (NULL != p_socket)
+    {
+        klb_socket_set_connected(p_socket, true);
+        klb_nsp_push(p_kncm->p_nsp, p_socket);
+    }
+    else
+    {
+        KLB_SOCKET_CLOSE(fd);
+    }
 
     return 0;
 }
@@ -445,9 +461,9 @@ static int klua_kncm_connect(lua_State* L)
 
     switch (protocol)
     {
-    case KLB_PROTOCOL_MNPS:
-    case KLB_PROTOCOL_HTTPS:
-    case KLB_PROTOCOL_WSS:
+    //case KLB_PROTOCOL_MNPS:
+    //case KLB_PROTOCOL_HTTPS:
+    //case KLB_PROTOCOL_WSS:
         tls = true;
         break;
     }
@@ -462,7 +478,7 @@ static int klua_kncm_connect(lua_State* L)
     klb_socket_t* p_socket = NULL;
     if (tls)
     {
-        p_socket = klb_socket_tls_async_create(fd);
+        p_socket = klb_socket_tls_async_create(fd, false, NULL);
     }
     else
     {
@@ -691,7 +707,7 @@ static int klua_kncm_new(lua_State* L)
 
     p_kncm->p_listen = klb_listen_create(p_kncm->p_multi);
     p_kncm->p_nsp = klb_nsp_create(p_kncm->p_multi);
-    p_kncm->p_ncm = klb_ncm_create(p_kncm->p_multi);
+    p_kncm->p_ncm = klb_ncm_create(p_kncm->p_multi, KLB_PROTOCOL_LOAD_STD);
     p_kncm->is_close = false;
 
     // 数据

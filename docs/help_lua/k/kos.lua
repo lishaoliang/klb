@@ -3,7 +3,7 @@
 -- @file   kos.lua
 -- @brief  C kos
 --   \n require("kos")
--- @author 李绍良
+--   \n C导出文件: ./klb/src_c/klua/klua_platform/klua_kos.c
 -- @version 0.1
 --]]
 

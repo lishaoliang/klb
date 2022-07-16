@@ -3,6 +3,7 @@
 //
 /// @file    klb_flv.h
 /// @brief   FLV相关定义
+///         video_file_format_spec_v10_1.pdf
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -17,9 +18,6 @@ extern "C" {
 #endif
 
 #pragma pack(1) /// 1 字节对齐
-
-
-/// video_file_format_spec_v10_1.pdf
 
 
 /// E.2  The FLV header 
@@ -50,6 +48,7 @@ typedef struct klb_flv_tag_t_
 
     uint32_t reserved1 : 2;             ///< Reserved for FMS, should be 0 
     uint32_t filter : 1;                ///< Indicates if packets are filtered. 0 = No pre - processing required.1 = Pre - processing(such as decryption) of the packet
+    
     uint32_t tag_type : 5;              ///< tag类型
 #define KLB_FLV_TAG_AUDIO    8          ///< 音频
 #define KLB_FLV_TAG_VIDEO    9          ///< 视频
@@ -69,11 +68,10 @@ typedef struct klb_flv_tag_t_
 typedef struct klb_flv_video_tag_t_
 {
     uint8_t frame_type : 4;
-    uint8_t codec_id : 4;
-
 #define KLB_FLV_AVC_KEY_FRAME    1      ///< AVC关键帧
 #define KLB_FLV_AVC_INTER_FRAME  2      ///< AVC非关键帧
 
+    uint8_t codec_id : 4;
 #define KLB_FLV_CODEC_AVC        7      ///< AVC
 #define KLB_FLV_CODEC_AVC_H265   12     ///< AVC(h265); 非标准
 }klb_flv_video_tag_t;
@@ -83,11 +81,11 @@ typedef struct klb_flv_video_tag_t_
 typedef struct klb_flv_avc_t_
 {
     uint32_t avc_packet_type : 8;
-    int32_t  composition_time : 24;     ///< avc_packet_type = KLB_FVL_AVC_NALU有效
-
 #define KLB_FLV_AVC_SEQUENCE_HEADER  0
 #define KLB_FLV_AVC_NALU             1
 #define KLB_FLV_AVC_SEQUENCE_END     2
+
+    int32_t  composition_time : 24;     ///< avc_packet_type = KLB_FLV_AVC_NALU有效
 }klb_flv_avc_t;
 
 
@@ -134,12 +132,12 @@ typedef struct klb_flv_audio_tag_t_
 /// AudioSpecificConfiguration
 typedef struct klb_flv_aac_sequence_header_t_
 {
-    uint8_t profile;                            // 0-NULL, 1-AAC Main, 2-AAC LC, 2-AAC SSR, 3-AAC LTP
-    uint8_t sampling_frequency_index;           // 0-96000, 1-88200, 2-64000, 3-48000, 4-44100, 5-32000, 6-24000, 7-22050, 8-16000, 9-12000, 10-11025, 11-8000, 12-7350, 13/14-reserved, 15-frequency is written explictly
-    uint8_t channel_configuration;              // 0-AOT, 1-1channel,front-center, 2-2channels, front-left/right, 3-3channels: front center/left/right, 4-4channels: front-center/left/right, back-center, 5-5channels: front center/left/right, back-left/right, 6-6channels: front center/left/right, back left/right LFE-channel, 7-8channels
+    uint8_t  profile;                           ///< 0-NULL, 1-AAC Main, 2-AAC LC, 2-AAC SSR, 3-AAC LTP
+    uint8_t  sampling_frequency_index;          ///< 0-96000, 1-88200, 2-64000, 3-48000, 4-44100, 5-32000, 6-24000, 7-22050, 8-16000, 9-12000, 10-11025, 11-8000, 12-7350, 13/14-reserved, 15-frequency is written explictly
+    uint8_t  channel_configuration;             ///< 0-AOT, 1-1channel,front-center, 2-2channels, front-left/right, 3-3channels: front center/left/right, 4-4channels: front-center/left/right, back-center, 5-5channels: front center/left/right, back-left/right, 6-6channels: front center/left/right, back left/right LFE-channel, 7-8channels
 
-    uint8_t channels;                           // valid only in decode; 2
-    uint32_t sampling_frequency;                // valid only in decode; 44100
+    uint8_t  channels;                          ///< valid only in decode; 2
+    uint32_t sampling_frequency;                ///< valid only in decode; 44100
 }klb_flv_aac_sequence_header_t;
 
 #pragma pack()
@@ -199,6 +197,41 @@ typedef struct klb_flv_audio_info_t_
 
 
 int klb_flv_parser_tag_audio(klb_flv_audio_info_t* p_info, const char* p_data, int data_len);
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
+#define KLB_FLV_BUF_LEN(size)   ((size) + 64)   ///< 媒体数据最大需要的缓存
+#define KLB_FLV_HEAD_AND_ZERO   (9 + 4)         ///< flv流头部大小; head(9) + 4
+
+
+/// @brief flv头
+/// @return int 打包后的数据长度: KLB_FLV_HEAD_AND_ZERO
+///  按 flv头 + 4字节(第1个tag size值0) 计算
+int klb_flv_pack_head(char* p_buf, int buf_len, bool video, bool audio);
+
+
+/// @brief 打包flv tag AVC h264 sps/pps; KLB_FLV_AVC_SEQUENCE_HEADER
+/// @return int 打包后的数据长度
+/// @note sps/pps不会很大, 此打包是完整数据包
+int klb_flv_pack_tag_h264_sequence_header(char* p_buf, int buf_len, char* p_sps, int sps_len, char* p_pps, int pps_len, uint32_t timestamp);
+
+/// @brief 打包flv tag AVC h264 nalu; KLB_FLV_AVC_NALU
+/// @return int 打包flv头的数据长度
+/// @note nalu单元数据较大, 此打包仅将将flv数据头部打包, nalu单元仍然需要调用者处理
+int klb_flv_pack_tag_h264_nalu(char* p_buf, int buf_len, int type, int nalu_size, uint32_t timestamp);
+
+
+/// @brief 打包flv tag AVC h265 vps/sps/pps; KLB_FLV_AVC_SEQUENCE_HEADER
+/// @return int 打包后的数据长度
+/// @note vps/sps/pps不会很大, 此打包是完整数据包
+int klb_flv_pack_tag_h265_sequence_header(char* p_buf, int buf_len, char* p_vps, int vps_len, char* p_sps, int sps_len, char* p_pps, int pps_len, uint32_t timestamp);
+
+/// @brief 打包flv tag avc vedio h265 nalu; KLB_FLV_AVC_NALU
+/// @return int 打包flv头的数据长度
+/// @note nalu单元数据较大, 此打包仅将将flv数据头部打包, nalu单元仍然需要调用者处理
+int klb_flv_pack_tag_h265_nalu(char* p_buf, int buf_len, int type, int nalu_size, uint32_t timestamp);
 
 
 #ifdef __cplusplus

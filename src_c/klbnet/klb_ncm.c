@@ -6,6 +6,7 @@
 #include "klbutil/klb_hlist.h"
 #include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbutil/klb_log.h"
+#include "klbbase/klb_mnp.h"
 #include <assert.h>
 
 
@@ -40,7 +41,7 @@ typedef struct klb_ncm_t_
 
 //////////////////////////////////////////////////////////////////////////
 
-klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi)
+klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi, uint32_t preload)
 {
     assert(NULL != p_multi);
 
@@ -52,7 +53,16 @@ klb_ncm_t* klb_ncm_create(klb_multiplex_t* p_multi)
     p_ncm->p_item_hlist = klb_hlist_create(0);
 
     // 注册标准解析器
-    KLB_NCM_REGISTER_OPS_STD(p_ncm);
+    if (preload & KLB_PROTOCOL_LOAD_STD)
+    {
+        KLB_NCM_REGISTER_OPS_STD(p_ncm);
+    }
+
+    // 注册标准RPC解析器
+    if (preload & KLB_PROTOCOL_LOAD_RPC)
+    {
+        KLB_NCM_REGISTER_OPS_RPC(p_ncm);
+    }
 
     return p_ncm;
 }
@@ -179,6 +189,15 @@ static int on_send_klb_ncm_item(void* p_lparam, void* p_wparam, int id, int64_t 
     return send;
 }
 
+static int on_proc_klb_ncm_item(void* p_lparam, void* p_wparam, int msg, int id, klb_socket_t* p_socket, int64_t now)
+{
+    klb_ncm_t* p_ncm = (klb_ncm_t*)p_lparam;
+    klb_ncm_item_t* p_item = (klb_ncm_item_t*)p_wparam;
+
+    int send = p_item->ops.on_proc(p_item->ptr, p_item->p_socket, msg, now);
+
+    return send;
+}
 
 /// @brief 连接解析收到数据时,回调
 /// @return int 0
@@ -247,7 +266,10 @@ int klb_ncm_push(klb_ncm_t* p_ncm, int protocol, klb_socket_t* p_socket, const u
     assert(0 < p_item->id);
 
     // 新连接进来
-    cb_klb_ncm_opt_recv(p_ncm, protocol, id, KLB_SOCKET_CONNECT, 0, NULL);
+    if (klb_socket_is_connected(p_socket))
+    {
+        cb_klb_ncm_opt_recv(p_ncm, protocol, id, KLB_SOCKET_CONNECT, 0, NULL);
+    }
 
     // 初始
     assert(NULL != p_ops->cb_init);
@@ -271,7 +293,7 @@ int klb_ncm_close(klb_ncm_t* p_ncm, int id)
     return 0;
 }
 
-int klb_ncm_send_text(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len)
+int klb_ncm_send_text(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     klb_ncm_item_t* p_item = get_item_klb_ncm(p_ncm, id);
     if (NULL == p_item)
@@ -280,15 +302,15 @@ int klb_ncm_send_text(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid,
     }
 
     int ret = -1;
-    if (NULL != p_item->ops.cb_send_text)
+    if (NULL != p_item->ops.cb_send_normal)
     {
-        ret = p_item->ops.cb_send_text(p_item->ptr, p_item->p_socket, sequence, uid, p_extra, extra_len, p_data, data_len);
+        ret = p_item->ops.cb_send_normal(p_item->ptr, p_item->p_socket, KLB_MNP_TEXT, sequence, uid, p_head, head_len, p_body, body_len);
     }
 
     return ret;
 }
 
-int klb_ncm_send_binary(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_extra, int extra_len, const uint8_t* p_data, int data_len)
+int klb_ncm_send_binary(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     klb_ncm_item_t* p_item = get_item_klb_ncm(p_ncm, id);
     if (NULL == p_item)
@@ -297,9 +319,9 @@ int klb_ncm_send_binary(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t ui
     }
 
     int ret = -1;
-    if (NULL != p_item->ops.cb_send_binary)
+    if (NULL != p_item->ops.cb_send_normal)
     {
-        ret = p_item->ops.cb_send_binary(p_item->ptr, p_item->p_socket, sequence, uid, p_extra, extra_len, p_data, data_len);
+        ret = p_item->ops.cb_send_normal(p_item->ptr, p_item->p_socket, KLB_MNP_BINARY, sequence, uid, p_head, head_len, p_body, body_len);
     }
 
     return ret;
@@ -317,6 +339,80 @@ int klb_ncm_send_media(klb_ncm_t* p_ncm, int id, klb_buf_t* p_data)
     if (NULL != p_item->ops.cb_send_media)
     {
         ret = p_item->ops.cb_send_media(p_item->ptr, p_item->p_socket, p_data);
+    }
+
+    return ret;
+}
+
+int klb_ncm_send_rpc(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+{
+    int ret = -1;
+
+    if (id <= 0)
+    {
+        // 发送给所有连接
+        klb_hlist_iter_t* p_iter = klb_hlist_begin(p_ncm->p_item_hlist);
+        while (NULL != p_iter)
+        {
+            klb_ncm_item_t* p_item = (klb_ncm_item_t*)klb_hlist_data(p_iter);
+            if (NULL != p_item->ops.cb_send_normal)
+            {
+                ret = p_item->ops.cb_send_normal(p_item->ptr, p_item->p_socket, KLB_MNP_RPC_LUA, sequence, uid, p_head, head_len, p_body, body_len);
+            }
+
+            p_iter = klb_hlist_next(p_iter);
+        }
+    }
+    else
+    {
+        // 单个发送
+        klb_ncm_item_t* p_item = get_item_klb_ncm(p_ncm, id);
+        if (NULL == p_item)
+        {
+            return -1;
+        }
+
+        if (NULL != p_item->ops.cb_send_normal)
+        {
+            ret = p_item->ops.cb_send_normal(p_item->ptr, p_item->p_socket, KLB_MNP_RPC_LUA, sequence, uid, p_head, head_len, p_body, body_len);
+        }
+    }
+
+    return ret;
+}
+
+int klb_ncm_send_rpc_json(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+{
+    int ret = -1;
+
+    if (id <= 0)
+    {
+        // 发送给所有连接
+        klb_hlist_iter_t* p_iter = klb_hlist_begin(p_ncm->p_item_hlist);
+        while (NULL != p_iter)
+        {
+            klb_ncm_item_t* p_item = (klb_ncm_item_t*)klb_hlist_data(p_iter);
+            if (NULL != p_item->ops.cb_send_normal)
+            {
+                ret = p_item->ops.cb_send_normal(p_item->ptr, p_item->p_socket, KLB_MNP_RPC_JSON, sequence, uid, p_head, head_len, p_body, body_len);
+            }
+
+            p_iter = klb_hlist_next(p_iter);
+        }
+    }
+    else
+    {
+        // 单个发送
+        klb_ncm_item_t* p_item = get_item_klb_ncm(p_ncm, id);
+        if (NULL == p_item)
+        {
+            return -1;
+        }
+
+        if (NULL != p_item->ops.cb_send_normal)
+        {
+            ret = p_item->ops.cb_send_normal(p_item->ptr, p_item->p_socket, KLB_MNP_RPC_JSON, sequence, uid, p_head, head_len, p_body, body_len);
+        }
     }
 
     return ret;

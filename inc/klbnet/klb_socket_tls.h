@@ -28,10 +28,16 @@ int klb_socket_tls_init();
 void klb_socket_tls_quit();
 
 
+typedef struct klb_socket_tls_param_t_
+{
+    bool    enable;     ///< 是否启用参数
+}klb_socket_tls_param_t;
+
+
 /// @brief 创建一个加密异步socket
 /// @param [in]  fd             socket fd
 /// @return klb_socket_t* NULL.创建失败; 非NULL
-klb_socket_t* klb_socket_tls_async_create(klb_socket_fd fd);
+klb_socket_t* klb_socket_tls_async_create(klb_socket_fd fd, bool service, const klb_socket_tls_param_t* p_tls);
 
 
 

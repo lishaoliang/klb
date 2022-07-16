@@ -64,7 +64,7 @@ static void klb_ncm_ops_mnp_send_heart(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p
     p_mnp->magic = KLB_MNP_MAGIC;
     p_mnp->size = sizeof(klb_mnp_t);
     p_mnp->opt = KLB_MNP_FULL;
-    p_mnp->packtype = KLB_MNP_HEART;
+    p_mnp->packtype = KLB_MNP_PONG;
 
     p_buf->end = sizeof(klb_mnp_t);
 
@@ -95,7 +95,7 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
         memcpy(&mnp, p_buf->p_buf + p_buf->start, sizeof(klb_mnp_t));
         p_buf->start += sizeof(klb_mnp_t);
 
-        if (KLB_MNP_HEART == mnp.packtype)
+        if (KLB_MNP_PONG == mnp.packtype)
         {
             klb_ncm_ops_mnp_send_heart(p_ops, p_socket);
         }
@@ -110,7 +110,7 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
         int r_len = MIN(p_ops->left_len, data_len);
         p_ops->left_len -= r_len;
 
-        if (KLB_MNP_TXT == p_ops->mnp.packtype)
+        if (KLB_MNP_TEXT == p_ops->mnp.packtype)
         {
             klb_buffer_write(p_ops->p_txt, p_buf->p_buf + p_buf->start, r_len);
 
@@ -130,7 +130,7 @@ static int klb_ncm_ops_mnp_parse(klb_ncm_ops_mnp_t* p_ops, klb_socket_t* p_socke
                 }
             }
         }
-        else if (KLB_MNP_BIN == p_ops->mnp.packtype)
+        else if (KLB_MNP_BINARY == p_ops->mnp.packtype)
         {
             klb_buffer_write(p_ops->p_txt, p_buf->p_buf + p_buf->start, r_len);
 
@@ -279,10 +279,10 @@ static int cb_send_text_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uint3
     p_mnp->magic = KLB_MNP_MAGIC;
     p_mnp->size = totol_len;
     p_mnp->opt = KLB_MNP_FULL;
-    p_mnp->packtype = KLB_MNP_TXT;
+    p_mnp->packtype = KLB_MNP_TEXT;
 
     p_com->size = totol_len - sizeof(klb_mnp_t);
-    p_com->extra = extra_len;
+    p_com->head = extra_len;
     p_com->sequence = sequence;
     p_com->uid = uid;
 
@@ -324,10 +324,10 @@ static int cb_send_binary_klb_ncm_ops_mnp(void* ptr, klb_socket_t* p_socket, uin
     p_mnp->magic = KLB_MNP_MAGIC;
     p_mnp->size = totol_len;
     p_mnp->opt = KLB_MNP_FULL;
-    p_mnp->packtype = KLB_MNP_BIN;
+    p_mnp->packtype = KLB_MNP_BINARY;
 
     p_com->size = totol_len - sizeof(klb_mnp_t);
-    p_com->extra = extra_len;
+    p_com->head = extra_len;
     p_com->sequence = sequence;
     p_com->uid = uid;
 
@@ -526,8 +526,8 @@ int klb_ncm_register_ops_mnp(klb_ncm_t* p_ncm, int protocol)
     ops.cb_init = cb_init_klb_ncm_ops_mnp;
     ops.cb_ctrl = NULL;
 
-    ops.cb_send_text = cb_send_text_klb_ncm_ops_mnp;
-    ops.cb_send_binary = cb_send_binary_klb_ncm_ops_mnp;
+    //ops.cb_send_text = cb_send_text_klb_ncm_ops_mnp;
+    //ops.cb_send_binary = cb_send_binary_klb_ncm_ops_mnp;
     ops.cb_send_media = cb_send_media_klb_ncm_ops_mnp;
 
     ops.on_send = on_send_klb_ncm_ops_mnp;

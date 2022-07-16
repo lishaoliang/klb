@@ -7,22 +7,6 @@
 #include "klbmem/klb_buf.h"
 #include <assert.h>
 
-
-#ifndef MNP_READ_BE16
-#define MNP_READ_BE16(x)                            \
-        ((((const uint8_t*)(x))[0] << 8) |          \
-        ((const uint8_t*)(x))[1])
-#endif
-
-
-#ifndef MNP_READ_BE32
-#define MNP_READ_BE32(x)                            \
-    (((uint32_t)((const uint8_t*)(x))[0] << 24) |   \
-              (((const uint8_t*)(x))[1] << 16) |    \
-              (((const uint8_t*)(x))[2] <<  8) |    \
-              ((const uint8_t*)(x))[3])
-#endif
-
 typedef struct klb_flv_demux_t_
 {
     int             status;                 ///< 接收数据的状态
@@ -153,7 +137,7 @@ static int klb_flv_demux_on_avc_sps_pps(klb_flv_demux_t* p_flv_demux, klb_flv_vi
     uint8_t sps_count = num_of_sps & 0x1F;
     for (int i = 0; i < sps_count; i++)
     {
-        uint16_t sps_len = MNP_READ_BE16(ptr);  ptr += 2;   // sequenceParameterSetLength
+        uint16_t sps_len = KLB_RB16(ptr);  ptr += 2;   // sequenceParameterSetLength
         if (0 == sps_len)
         {
             continue;
@@ -173,7 +157,7 @@ static int klb_flv_demux_on_avc_sps_pps(klb_flv_demux_t* p_flv_demux, klb_flv_vi
     uint8_t pps_count = *ptr;                   ptr += 1;   // numOfPictureParameterSets
     for (int i = 0; i < pps_count; i++)
     {
-        uint16_t pps_len = MNP_READ_BE16(ptr);  ptr += 2;   // pictureParameterSetLength
+        uint16_t pps_len = KLB_RB16(ptr);  ptr += 2;   // pictureParameterSetLength
         if (0 == pps_len)
         {
             continue;
@@ -205,7 +189,7 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
     uint8_t vps_count = num_of_vps & 0x1F;
     for (int i = 0; i < vps_count; i++)
     {
-        uint16_t vps_len = MNP_READ_BE16(ptr);  ptr += 2;   // sequenceParameterSetLength
+        uint16_t vps_len = KLB_RB16(ptr);  ptr += 2;   // sequenceParameterSetLength
         if (0 == vps_len)
         {
             continue;
@@ -227,7 +211,7 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
     uint8_t sps_count = num_of_sps & 0x1F;
     for (int i = 0; i < sps_count; i++)
     {
-        uint16_t sps_len = MNP_READ_BE16(ptr);  ptr += 2;   // sequenceParameterSetLength
+        uint16_t sps_len = KLB_RB16(ptr);  ptr += 2;   // sequenceParameterSetLength
         if (0 == sps_len)
         {
             continue;
@@ -247,7 +231,7 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
     uint8_t pps_count = *ptr;                   ptr += 1;   // numOfPictureParameterSets
     for (int i = 0; i < pps_count; i++)
     {
-        uint16_t pps_len = MNP_READ_BE16(ptr);  ptr += 2;   // pictureParameterSetLength
+        uint16_t pps_len = KLB_RB16(ptr);  ptr += 2;   // pictureParameterSetLength
         if (0 == pps_len)
         {
             continue;
@@ -297,7 +281,7 @@ static int klb_flv_demux_on_avc_nalu(klb_flv_demux_t* p_flv_demux, klb_flv_video
 
         while (offset + 4 < nalu_len)
         {
-            uint32_t nalu_size = MNP_READ_BE32(ptr);
+            uint32_t nalu_size = KLB_RB32(ptr);
             if (3 == size_minus_one)
             {
                 nalu_size = nalu_size >> 8;
@@ -379,7 +363,7 @@ static int klb_flv_demux_on_avc_nalu_h265(klb_flv_demux_t* p_flv_demux, klb_flv_
 
         while (offset + 4 < nalu_len)
         {
-            uint32_t nalu_size = MNP_READ_BE32(ptr);
+            uint32_t nalu_size = KLB_RB32(ptr);
             if (3 == size_minus_one)
             {
                 nalu_size = nalu_size >> 8;
@@ -459,7 +443,7 @@ static int klb_flv_demux_on_aac_raw(klb_flv_demux_t* p_flv_demux, klb_flv_audio_
     p_media->time = (int64_t)(ts) * 1000;
 
     p_media->tracks = p_flv_demux->aac_seq_head_info.aac_seq_head.channels; //1.单声道; 2.立体声
-    p_media->bits_per_coded_sample = (KLB_FLV_AUDIO_SAMPLES_8BIT == p_flv_demux->aac_seq_head_info.audio.sound_size) ? 1 : 2;
+    p_media->bits_per_sample = (KLB_FLV_AUDIO_SAMPLES_8BIT == p_flv_demux->aac_seq_head_info.audio.sound_size) ? 1 : 2;
     p_media->samples = p_flv_demux->aac_seq_head_info.aac_seq_head.sampling_frequency;
 
     // 得到完整的一帧了

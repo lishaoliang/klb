@@ -55,10 +55,8 @@ static int klua_kh26x_size(lua_State* L)
     return 1;
 }
 
-static int klua_kh26x_read(lua_State* L)
+static klb_mnp_media_t* klua_kh26x_read_next(klua_kh26x_t* p_h26x)
 {
-    klua_kh26x_t* p_h26x = to_klua_kh26x(L, 1);
-
     if (0 < p_h26x->size)
     {
         klb_buf_t* p_buf = p_h26x->p_frame[p_h26x->cur];
@@ -69,17 +67,42 @@ static int klua_kh26x_read(lua_State* L)
             p_h26x->cur = 0;
         }
 
+        return p_buf;
+    }
+
+    return NULL;
+}
+
+static int klua_kh26x_read(lua_State* L)
+{
+    klua_kh26x_t* p_h26x = to_klua_kh26x(L, 1);
+
+    klb_buf_t* p_buf = klua_kh26x_read_next(p_h26x);
+    klb_buf_t* p_next = NULL;
+
+    if (NULL != p_buf)
+    {
         klb_mnp_media_t* p_media = p_buf->p_buf + sizeof(klb_mnp_t);
         p_media->time = klb_tick_counti64();
 
+        if (KLB_MNP_VTYPE_CFG == p_media->vtype)
+        {
+            p_next = klua_kh26x_read_next(p_h26x);
+
+            klb_mnp_media_t* p_media_next = p_next->p_buf + sizeof(klb_mnp_t);
+            p_media_next->time = p_media->time;
+        }
+
         lua_pushlightuserdata(L, p_buf);
+        lua_pushlightuserdata(L, p_next);
     }
     else
     {
         lua_pushnil(NULL);
+        lua_pushnil(NULL);
     }
 
-    return 1;
+    return 2;
 }
 
 static int klua_kh26x_close(lua_State* L)
@@ -200,9 +223,11 @@ static int scan_frame_h26x_file(klb_buf_t* p_file)
     return frame_num;
 }
 
+static char s_0001[] = {0x0, 0x0, 0x0, 0x1};
+
 static void copy_sps_pps_klua_kh26x(klb_buf_t* p_dst, char* p_sps, int sps_len, char* p_pps, int pps_len)
 {
-    int data_len = sps_len + pps_len + sizeof(klb_mnp_media_t);
+    int data_len = sps_len + 4 + pps_len + 4 + sizeof(klb_mnp_media_t);
     klb_buf_t* ptr = p_dst;
 
     klb_mnp_t mnp = { 0 };
@@ -215,11 +240,14 @@ static void copy_sps_pps_klua_kh26x(klb_buf_t* p_dst, char* p_sps, int sps_len, 
     media.size = data_len;
     media.dtype = KLB_MNP_DTYPE_H264;
     media.vtype = KLB_MNP_VTYPE_CFG;
+    media.sidx = KLB_MNP_SIDX_V1;
 
     int offset = 0;
     memcpy(ptr->p_buf + offset, &mnp, sizeof(klb_mnp_t));           offset += sizeof(klb_mnp_t);
     memcpy(ptr->p_buf + offset, &media, sizeof(klb_mnp_media_t));   offset += sizeof(klb_mnp_media_t);
+    memcpy(ptr->p_buf + offset, s_0001, 4);                         offset += 4;
     memcpy(ptr->p_buf + offset, p_sps, sps_len);                    offset += sps_len;
+    memcpy(ptr->p_buf + offset, s_0001, 4);                         offset += 4;
     memcpy(ptr->p_buf + offset, p_pps, pps_len);                    offset += pps_len;
 
     ptr->end = mnp.size;
@@ -227,7 +255,7 @@ static void copy_sps_pps_klua_kh26x(klb_buf_t* p_dst, char* p_sps, int sps_len, 
 
 static void copy_frame_klua_kh26x(klb_buf_t* p_dst, char* p_nal, int nal_len, uint8_t nalu_type)
 {
-    int data_len = nal_len + sizeof(klb_mnp_media_t);
+    int data_len = nal_len + sizeof(klb_mnp_media_t) + 4;
     klb_buf_t* ptr = p_dst;
 
     klb_mnp_t mnp = { 0 };
@@ -237,6 +265,7 @@ static void copy_frame_klua_kh26x(klb_buf_t* p_dst, char* p_nal, int nal_len, ui
     klb_mnp_media_t media = { 0 };
     media.size = data_len;
     media.dtype = KLB_MNP_DTYPE_H264;
+    media.sidx = KLB_MNP_SIDX_V1;
 
     switch (nalu_type)
     {
@@ -264,7 +293,7 @@ static void copy_frame_klua_kh26x(klb_buf_t* p_dst, char* p_nal, int nal_len, ui
         {
             if (data_len == cp_len)
             {
-                assert(nal_len == cp_len - sizeof(klb_mnp_media_t));
+                assert(nal_len == cp_len - sizeof(klb_mnp_media_t) - 4);
 
                 mnp.opt = KLB_MNP_FULL;
             }
@@ -275,9 +304,10 @@ static void copy_frame_klua_kh26x(klb_buf_t* p_dst, char* p_nal, int nal_len, ui
 
             memcpy(ptr->p_buf, &mnp, sizeof(klb_mnp_t));
             memcpy(ptr->p_buf + sizeof(klb_mnp_t), &media, sizeof(klb_mnp_media_t));
-            memcpy(ptr->p_buf + sizeof(klb_mnp_t) + sizeof(klb_mnp_media_t), p_nal, cp_len - sizeof(klb_mnp_media_t));
+            memcpy(ptr->p_buf + sizeof(klb_mnp_t) + sizeof(klb_mnp_media_t), s_0001, 4);
+            memcpy(ptr->p_buf + sizeof(klb_mnp_t) + sizeof(klb_mnp_media_t) + 4, p_nal, cp_len - sizeof(klb_mnp_media_t) - 4);
 
-            p_nal = p_nal + cp_len - sizeof(klb_mnp_media_t);
+            p_nal = p_nal + cp_len - sizeof(klb_mnp_media_t) - 4;
 
             first = false;
         }
@@ -304,6 +334,52 @@ static void copy_frame_klua_kh26x(klb_buf_t* p_dst, char* p_nal, int nal_len, ui
     }
 }
 
+static int check_data_klb_mnp(klb_buf_t* p_buf)
+{
+    // 整帧大小
+    int media_size = 0;
+    int size = 0;
+    bool first = true;
+
+    klb_buf_t* p_next = p_buf;
+    while (NULL != p_next)
+    {
+        char* ptr = p_next->p_buf + p_next->start;
+        int len = p_next->end - p_next->start;
+        while (0 < len)
+        {
+            klb_mnp_t mnp = *((klb_mnp_t*)ptr);
+
+            assert(KLB_MNP_MAGIC == mnp.magic);
+            assert(mnp.packtype <= KLB_MNP_MEDIA);
+            assert(mnp.size <= KLB_MNP_BLOCK_SIZE_MAX);
+
+            if (KLB_MNP_MEDIA == mnp.packtype && first)
+            {
+                klb_mnp_media_t* p_media = (klb_mnp_media_t*)(ptr + sizeof(klb_mnp_t));
+                media_size = p_media->size;
+
+                first = false;
+            }
+
+            size = size + mnp.size - sizeof(klb_mnp_t);
+
+            ptr += mnp.size;
+            len -= mnp.size;
+        }
+        assert(0 == len);
+
+        p_next = p_next->p_next;
+    }
+
+    if (0 < media_size)
+    {
+        assert(media_size == size);
+    }
+
+    return 0;
+}
+
 static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_num)
 {
     char* p_h26x = p_file->p_buf + p_file->start;
@@ -317,7 +393,7 @@ static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_
 
     int idx = 0;
     char* p_sps = NULL, * p_pps = NULL;
-    int sps_len = 0, pps_len = 0;
+    int sps_len = 0, sps_h_len = 0, pps_len = 0, pps_h_len = 0;
 
     while (0 < h26x_len)
     {
@@ -338,10 +414,12 @@ static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_
             case KLB_H264_SPS:
                 p_sps = p_nal;
                 sps_len = nal_len;
+                sps_h_len = nal_h_len;
                 break;
             case KLB_H264_PPS:
                 p_pps = p_nal;
                 pps_len = nal_len;
+                pps_h_len = nal_h_len;
                 break;
             case KLB_H264_IDRSLICE:
             case KLB_H264_ISLICE:
@@ -359,12 +437,14 @@ static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_
             if (has_key_frame && 0 < sps_len && 0 < pps_len)
             {
                 int data_len = sps_len + pps_len + sizeof(klb_mnp_media_t);
-                int total_len = data_len + ((data_len + 4095) / 4096) * sizeof(klb_mnp_t);
+                int total_len = data_len + ((data_len + 3999) / 4000) * sizeof(klb_mnp_t);
 
                 klb_buf_t* p_buf = klb_fpool_malloc(p_kh26x->p_fpool, total_len);
                 if (NULL != p_buf)
                 {
-                    copy_sps_pps_klua_kh26x(p_buf, p_sps, sps_len, p_pps, pps_len);
+                    copy_sps_pps_klua_kh26x(p_buf, p_sps + sps_h_len, sps_len - sps_h_len, p_pps + pps_h_len, pps_len - pps_h_len);
+                    assert(0 == check_data_klb_mnp(p_buf));
+
                     p_kh26x->p_frame[idx] = p_buf;
 
                     sps_len = 0;
@@ -377,12 +457,14 @@ static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_
             if (has_frame)
             {
                 int data_len = nal_len + sizeof(klb_mnp_media_t);                
-                int total_len = data_len + ((data_len + 4095) / 4096) * sizeof(klb_mnp_t);
+                int total_len = data_len + ((data_len + 3999) / 4000) * sizeof(klb_mnp_t);
 
                 klb_buf_t* p_buf = klb_fpool_malloc(p_kh26x->p_fpool, total_len);
                 if (NULL != p_buf)
                 {
-                    copy_frame_klua_kh26x(p_buf, p_nal, nal_len, type);
+                    copy_frame_klua_kh26x(p_buf, p_nal + nal_h_len, nal_len - nal_h_len, type);
+                    assert(0 == check_data_klb_mnp(p_buf));
+
                     p_kh26x->p_frame[idx] = p_buf;
 
                     idx += 1;

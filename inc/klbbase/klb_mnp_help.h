@@ -27,6 +27,10 @@ KLB_API klb_buf_t* klb_mnp_pack_binary(uint32_t sequence, uint32_t uid, const ui
 
 KLB_API klb_buf_t* klb_mnp_pack_media();
 
+
+KLB_API klb_buf_t* klb_mnp_pack_data(klb_mnp_packtype_e packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+
+
 #ifdef __cplusplus
 }
 #endif
