@@ -12,6 +12,7 @@
 #else
 #include <signal.h>
 #include <sys/socket.h>
+#include <unistd.h>
 #include <netdb.h>
 #include <fcntl.h>
 #include <errno.h>

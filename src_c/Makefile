@@ -4,8 +4,8 @@ SHELL = /bin/bash
 PWD = `pwd`
 
 # 编译工具, arm-linux-gnueabi-, arm-himix200-linux-
-MY_TOOL_CHAIN ?= arm-himix200-linux-
-#MY_TOOL_CHAIN ?= 
+#MY_TOOL_CHAIN ?= arm-himix200-linux-
+MY_TOOL_CHAIN ?= 
 
 MY_CFLAGS_EX ?= 
 
@@ -54,7 +54,7 @@ MY_DIRS += ../src_cpp/klbutil ../src_cpp/klbnet ../src_cpp/klbplatform ../src_cp
 
 
 # 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__
-MY_CFLAGS := -g -std=c99 -D_GNU_SOURCE $(MY_CFLAGS_EX)
+MY_CFLAGS := -g -D_GNU_SOURCE $(MY_CFLAGS_EX)
 
 # lua的宏
 MY_CFLAGS += -DLUA_USE_LINUX
@@ -80,7 +80,9 @@ MY_INCLUDES += -I ./klua/lua-5.4.1/src
 MY_INCLUDES += -I ../inc_hpp
 
 # 引用的静态库
-MY_LIB_STATIC := -L ../lib -Bstatic -lssl -lcrypto
+MY_LIB_STATIC := -L ../lib -Bstatic
+#MY_LIB_STATIC += -lssl -lcrypto
+
 
 # 引用的动态库
 MY_LIB_DYNAMIC := -L ../lib -Bdynamic
@@ -110,19 +112,21 @@ MY_LIB_MINI = -ffunction-sections -fdata-sections
 # 编译动态库或执行档时,使compiler删除所有未被使用的function和data,即编译之后的文件最小化
 MY_LINK_MINI = -Wl,--gc-sections
 
+MY_SO_PARAMS := -fPIC
+MY_STD_C99 := -std=c99
 
 .PHONY: all clean
 
-all: so
+all: lib so
 
 lib: $(MY_TARGET_A)
 so: $(MY_TARGET_SO)
 
 %.c.o: %.c
-	$(CC) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
+	$(CC) $(MY_STD_C99) $(MY_SO_PARAMS) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
 
 %.cpp.o: %.cpp
-	$(CXX) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
+	$(CXX) $(MY_SO_PARAMS) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
 
 $(MY_TARGET_A): $(MY_LIB_A_OBJS)
 	$(my_tip)
@@ -133,6 +137,7 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(CXX) -shared -fPIC -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
 
 strip:
+	$(CSTRIP) $(MY_TARGET_A)
 	$(CSTRIP) $(MY_TARGET_SO)
 
 clean:

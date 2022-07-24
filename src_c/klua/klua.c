@@ -178,6 +178,8 @@ int klua_open_lfs(lua_State *L)
 
 
 // from ./klb/src_c/klua/lsqlite3/src/lsqlite3.c
+extern int luaopen_lsqlite3(lua_State *L);
+
 int klua_open_lsqlite3(lua_State* L)
 {
     return luaopen_lsqlite3(L);
@@ -185,6 +187,8 @@ int klua_open_lsqlite3(lua_State* L)
 
 
 // from ./klb/src_c/klua/LuaXML_130610/LuaXML_lib.c
+extern int luaopen_LuaXML_lib(lua_State *L);
+
 int klua_open_LuaXML_lib(lua_State* L)
 {
     return luaopen_LuaXML_lib(L);

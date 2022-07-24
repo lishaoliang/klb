@@ -115,6 +115,7 @@ typedef struct klua_msg_t_
 #define KLUA_LPC_POST                   10                  ///< POST消息: 无响应
 #define KLUA_LPC_REQUEST                11                  ///< 请求消息
 #define KLUA_LPC_RESPONSE               12                  ///< 响应消息
+#define KLUA_LPC_NOTIFY                 13                  ///< 通知消息
     int                     type;                           ///< 消息类型
 
     union

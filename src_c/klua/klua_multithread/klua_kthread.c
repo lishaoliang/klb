@@ -423,7 +423,7 @@ int klua_kthread_push_msg(const char* p_name, klua_msg_t* p_msg)
         }
         klb_atomic_unlock(&p_kthread->module_lock);
     }
-    else if(KLUA_LPC_RESPONSE == p_msg->type)
+    else if(KLUA_LPC_RESPONSE == p_msg->type || KLUA_LPC_NOTIFY == p_msg->type)
     {
         klb_atomic_lock(&p_kthread->lpc_lock);
         klua_env_t* p_env = klb_hlist_find(p_kthread->p_lpc_hlist, p_name, strlen(p_name));

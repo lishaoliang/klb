@@ -51,8 +51,7 @@ typedef struct klb_hlist_t_
 
 klb_hlist_t* klb_hlist_create(uint32_t ht_max)
 {
-    klb_hlist_t* p_list = KLB_MALLOC(klb_hlist_t, 1, 0);
-    KLB_MEMSET(p_list, 0, sizeof(klb_hlist_t));
+    klb_hlist_t* p_list = KLB_MALLOCZ(klb_hlist_t, 1, 0);
 
     if (0 == ht_max)
     {
@@ -119,8 +118,7 @@ klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, ui
 
     if (NULL != p_key && NULL != p_data)
     {
-        klb_hlist_iter_t* p_iter = KLB_MALLOC(klb_hlist_iter_t, 1, key_len);
-        KLB_MEMSET(p_iter, 0, sizeof(klb_hlist_iter_t) + key_len);
+        klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, key_len);
 
         memcpy(p_iter->key, p_key, key_len);
         p_iter->key_len = key_len;
@@ -178,8 +176,7 @@ klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, ui
 
     if (NULL != p_key && NULL != p_data)
     {
-        klb_hlist_iter_t* p_iter = KLB_MALLOC(klb_hlist_iter_t, 1, key_len);
-        KLB_MEMSET(p_iter, 0, sizeof(klb_hlist_iter_t) + key_len);
+        klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, key_len);
 
         memcpy(p_iter->key, p_key, key_len);
         p_iter->key_len = key_len;
@@ -527,8 +524,7 @@ void klb_hlist_qsort(klb_hlist_t* p_list)
         return; // 无需排序
     }
 
-    klb_hlist_iter_t** p_src = KLB_MALLOC(klb_hlist_iter_t*, size, 0);
-    KLB_MEMSET(p_src, 0, size * sizeof(klb_hlist_iter_t*));
+    klb_hlist_iter_t** p_src = KLB_MALLOCZ(klb_hlist_iter_t*, size, 0);
     
     klb_hlist_iter_t** ptr = p_src;
     klb_hlist_iter_t* p_iter = p_list->p_head;

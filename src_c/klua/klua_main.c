@@ -6,6 +6,7 @@
 #include "klbmem/klb_mem.h"
 #include "klbplatform/klb_time.h"
 #include "klbplatform/klb_thread.h"
+#include "klua/klua_kthread.h"
 #include <assert.h>
 
 

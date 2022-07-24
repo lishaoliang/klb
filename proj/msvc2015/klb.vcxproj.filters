@@ -1163,6 +1163,9 @@
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h">
       <Filter>src_c\klua\klua_util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_map.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -1856,6 +1859,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rpc_ws_lua.c">
       <Filter>src_c\klbnet\klb_ncm_ops</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_map.c">
+      <Filter>src_c\klbutil</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

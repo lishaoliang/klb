@@ -315,6 +315,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbutil\klb_htab.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_list.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_log.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_map.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj_hash.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rand.h" />
@@ -563,6 +564,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbutil\klb_hmap.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_htab.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_list.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_map.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_obj.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />

@@ -4,8 +4,8 @@ SHELL = /bin/bash
 PWD = `pwd`
 
 # 编译工具, arm-linux-gnueabi-, arm-himix200-linux-
-MY_TOOL_CHAIN ?= arm-himix200-linux-
-#MY_TOOL_CHAIN ?= 
+#MY_TOOL_CHAIN ?= arm-hisiv300-linux-
+MY_TOOL_CHAIN ?= 
 
 MY_CFLAGS_EX ?= 
 
@@ -39,10 +39,11 @@ MY_INCLUDES += -I ../src_c/klua/lua-5.4.1/src
 
 
 # 引用的静态库
-MY_LIB_STATIC := -L ../lib -Bstatic
+MY_LIB_STATIC := -L ../lib -Bstatic ../lib/libklb_c.a
 
 # 引用的动态库
-MY_LIB_DYNAMIC := -L ../lib -Bdynamic -lklb_c
+MY_LIB_DYNAMIC := -L ../lib -Bdynamic 
+MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 
 
 # 编译目标名称

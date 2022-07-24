@@ -165,7 +165,7 @@ void klb_package_w_close(klb_package_w_t* p_kpa)
             assert(NULL != p_idx);
 
             fwrite(p_idx, sizeof(klb_package_idx_t), 1, p_kpa->pf);
-            av_md5_update(p_kpa->p_avmd5, p_idx, sizeof(klb_package_idx_t));
+            av_md5_update(p_kpa->p_avmd5, (const uint8_t*)p_idx, sizeof(klb_package_idx_t));
 
             KLB_FREE(p_idx);
         }
@@ -175,7 +175,7 @@ void klb_package_w_close(klb_package_w_t* p_kpa)
 
     // 文件头
     klb_rand_string(p_kpa->head.rand, KLB_PACKAGE_RAND_MAX, false);
-    p_kpa->head.head_hash = klb_hash32(&p_kpa->head, sizeof(klb_package_head_t) - sizeof(uint32_t));
+    p_kpa->head.head_hash = klb_hash32((const char*)&(p_kpa->head), sizeof(klb_package_head_t) - sizeof(uint32_t));
 
     fseek(p_kpa->pf, p_kpa->offset, SEEK_SET);
     fwrite(&p_kpa->head, sizeof(klb_package_head_t), 1, p_kpa->pf);

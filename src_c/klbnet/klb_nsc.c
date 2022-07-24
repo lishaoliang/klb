@@ -1,5 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klbnet/klb_ncm.h"
+#include "klbnet/klb_nsc.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf_atom.h"
 #include "klbnet/klb_multiplex.h"
