@@ -348,11 +348,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc_hpp\klbplatform\CShmem.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CSpinLock.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CThread.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbList.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbMap.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbVector.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CList.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CMap.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CnList.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CnMap.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CnVector.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CVector.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKlua.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp" />
@@ -536,11 +536,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_cpp\klbplatform\CShmem.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CSpinLock.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CThread.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CKlbList.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CKlbMap.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CKlbVector.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CList.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CMap.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CnList.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CnMap.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CnVector.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CVector.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\CKlua.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp" />
@@ -774,6 +774,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\libavutil\utils.c" />
     <ClCompile Include="..\..\src_c\libavutil\xga_font_data.c" />
     <ClCompile Include="..\..\src_c\libavutil\xtea.c" />
+    <ClCompile Include="..\..\src_packages\kpa_flv\klua_kpa_flv.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_http\klua_kpa_http.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_mgui\klua_kpa_mgui.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_mnp\klua_kpa_mnp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\klua_kpa_rtsp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.cpp" />
@@ -781,6 +785,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_ws\klua_kpa_ws.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

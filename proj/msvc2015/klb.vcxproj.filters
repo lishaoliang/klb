@@ -195,6 +195,21 @@
     <Filter Include="inc_hpp\klbbase">
       <UniqueIdentifier>{a611cb70-6285-46f7-ae97-01df801a5425}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_packages\kpa_mnp">
+      <UniqueIdentifier>{3c2da704-d828-4d1a-9114-162de5a0b6e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\kpa_flv">
+      <UniqueIdentifier>{87b65625-d4c4-4f6f-ad4f-4e00c3efbed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\kpa_http">
+      <UniqueIdentifier>{205c8cb9-6a6c-4024-b923-4367980d454a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\kpa_ws">
+      <UniqueIdentifier>{690f3cba-70fe-43d1-8cd9-f453a157fed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\kpa_mgui">
+      <UniqueIdentifier>{2b353071-7f7b-471a-b28c-4475b4438dce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1259,15 +1274,6 @@
     <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp">
       <Filter>inc_hpp\klua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbList.hpp">
-      <Filter>inc_hpp\klbutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbMap.hpp">
-      <Filter>inc_hpp\klbutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbVector.hpp">
-      <Filter>inc_hpp\klbutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc_hpp\klbutil\CList.hpp">
       <Filter>inc_hpp\klbutil</Filter>
     </ClInclude>
@@ -1282,6 +1288,15 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_vector.h">
       <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CnList.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CnMap.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CnVector.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2052,15 +2067,6 @@
     <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp">
       <Filter>src_cpp\klbbase</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbutil\CKlbList.cpp">
-      <Filter>src_cpp\klbutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbutil\CKlbMap.cpp">
-      <Filter>src_cpp\klbutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbutil\CKlbVector.cpp">
-      <Filter>src_cpp\klbutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_cpp\klbutil\CList.cpp">
       <Filter>src_cpp\klbutil</Filter>
     </ClCompile>
@@ -2075,6 +2081,30 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_vector.c">
       <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CnList.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CnMap.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CnVector.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_mnp\klua_kpa_mnp.cpp">
+      <Filter>src_packages\kpa_mnp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_flv\klua_kpa_flv.cpp">
+      <Filter>src_packages\kpa_flv</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_http\klua_kpa_http.cpp">
+      <Filter>src_packages\kpa_http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_ws\klua_kpa_ws.cpp">
+      <Filter>src_packages\kpa_ws</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_mgui\klua_kpa_mgui.cpp">
+      <Filter>src_packages\kpa_mgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
