@@ -102,6 +102,12 @@ KLB_API int klb_nsc_send_rpc(klb_nsc_t* p_nsc, uint32_t sequence, uint32_t uid, 
 KLB_API int klb_nsc_send_rpc_json(klb_nsc_t* p_nsc, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
+/// @brief 对连接进行控制操作: get/set,etc.
+/// @param [in]  *p_nsc                 nsc模块
+/// @return int 0.成功; 非0.失败
+KLB_API int klb_nsc_ctrl(klb_nsc_t* p_nsc, const klb_map_t* p_in, klb_map_t* p_out);
+
+
 #ifdef __cplusplus
 }
 #endif

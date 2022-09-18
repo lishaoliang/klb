@@ -24,7 +24,7 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     p_gui->p_wnd_hlist = klb_hlist_create(0);
     p_gui->p_wnd_type_hlist = klb_hlist_create(0);
 
-    p_gui->p_msg_list = klb_list_create();
+    p_gui->p_msg_list = klb_nlist_create();
     p_gui->p_msg_mutex = klb_mutex_create();
 
     // 注册标准窗口类型
@@ -52,9 +52,9 @@ void klb_gui_destroy(klb_gui_t* p_gui)
 {
     assert(NULL != p_gui);
 
-    while (0 < klb_list_size(p_gui->p_msg_list))
+    while (0 < klb_nlist_size(p_gui->p_msg_list))
     {
-        klb_msg_t* p_msg = (klb_msg_t*)klb_list_pop_head(p_gui->p_msg_list);
+        klb_msg_t* p_msg = (klb_msg_t*)klb_nlist_pop_head(p_gui->p_msg_list);
         KLB_FREE(p_msg);
     }
 
@@ -71,7 +71,7 @@ void klb_gui_destroy(klb_gui_t* p_gui)
     KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_gui->p_wnd_hlist, klb_hlist_destroy);
 
-    KLB_FREE_BY(p_gui->p_msg_list, klb_list_destroy);
+    KLB_FREE_BY(p_gui->p_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_gui->p_msg_mutex, klb_mutex_destroy);
     KLB_FREE(p_gui);
 }
@@ -135,7 +135,7 @@ void klb_gui_push(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int
     p_msg->wparam = wparam;
 
     klb_mutex_lock(p_gui->p_msg_mutex);
-    klb_list_push_tail(p_gui->p_msg_list, p_msg);
+    klb_nlist_push_tail(p_gui->p_msg_list, p_msg);
     klb_mutex_unlock(p_gui->p_msg_mutex);
 }
 
@@ -156,7 +156,7 @@ int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_
 
 static void klb_gui_split_path_name(const char* p_path_name, char** p_dir, int* p_dir_len)
 {
-    char *p = p_path_name ? strrchr(p_path_name, '/') : NULL;
+    const char* p = p_path_name ? strrchr(p_path_name, '/') : NULL;
 
     if (NULL != p)
     {
@@ -355,7 +355,7 @@ int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg)
 {
     if (0 == klb_mutex_trylock(p_gui->p_msg_mutex))
     {
-        klb_msg_t* p_pop = (klb_msg_t*)klb_list_pop_head(p_gui->p_msg_list);
+        klb_msg_t* p_pop = (klb_msg_t*)klb_nlist_pop_head(p_gui->p_msg_list);
         klb_mutex_unlock(p_gui->p_msg_mutex);
 
         if (NULL != p_pop)

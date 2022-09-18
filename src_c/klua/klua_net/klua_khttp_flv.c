@@ -6,7 +6,7 @@
 #include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_multiplex.h"
 #include "klbnet/klb_listen.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbbase/klb_mnp.h"
 #include "klbbase/klb_mnp_help.h"
 #include "klbmem/klb_buffer.h"
@@ -69,7 +69,7 @@ typedef struct klua_khttp_flv_inter_t_
     // send发送相关
     struct
     {
-        klb_list_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
+        klb_nlist_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
         klb_buf_t*              p_w_cur;        ///< 当前正在发送的缓存
         int                     w_start;        ///< 当前发送的起始点
     };
@@ -79,7 +79,7 @@ typedef struct klua_khttp_flv_inter_t_
     {
         klb_buf_t*              p_r_buf;        ///< 临时读取缓存
 
-        klb_list_t*             p_r_list;       ///< 
+        klb_nlist_t*             p_r_list;       ///< 
     };
 
     // http解析
@@ -158,21 +158,21 @@ static int call_lua_co_recv_klua_khttp_flv(klua_khttp_flv_t* p_kmnp, const char*
 static void free_klua_khttp_flv_inter(klua_khttp_flv_inter_t* p_inter)
 {
     // 清空
-    while (0 < klb_list_size(p_inter->p_w_list))
+    while (0 < klb_nlist_size(p_inter->p_w_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         KLB_FREE(p_tmp);
     }
 
-    while (0 < klb_list_size(p_inter->p_r_list))
+    while (0 < klb_nlist_size(p_inter->p_r_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_inter->p_r_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_r_list);
         KLB_FREE(p_tmp);
     }
 
     KLB_FREE_BY(p_inter->p_socket, klb_socket_destroy);
-    KLB_FREE_BY(p_inter->p_w_list, klb_list_destroy);
-    KLB_FREE_BY(p_inter->p_r_list, klb_list_destroy);
+    KLB_FREE_BY(p_inter->p_w_list, klb_nlist_destroy);
+    KLB_FREE_BY(p_inter->p_r_list, klb_nlist_destroy);
 
     KLB_FREE(p_inter->p_w_cur);
     KLB_FREE(p_inter->p_r_buf);
@@ -464,7 +464,7 @@ static int cb_recv_klua_khttp_flv(void* p_lparam, void* p_wparam, int id, int64_
     {
         klb_buf_t* p_buf = p_inter->p_r_buf;
 
-        int r = klb_socket_recv(p_socket, p_buf->p_buf + p_buf->end, p_buf->buf_len - p_buf->end);
+        int r = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), p_buf->buf_len - p_buf->end);
 
         if (0 < r)
         {
@@ -540,9 +540,9 @@ static int cb_send_klua_khttp_flv(void* p_lparam, void* p_wparam, int id, int64_
 
     while (true)
     {
-        if (NULL == p_inter->p_w_cur && 0 < klb_list_size(p_inter->p_w_list))
+        if (NULL == p_inter->p_w_cur && 0 < klb_nlist_size(p_inter->p_w_list))
         {
-            p_inter->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+            p_inter->p_w_cur = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
             p_inter->w_start = p_inter->p_w_cur->start;
         }
 
@@ -553,7 +553,7 @@ static int cb_send_klua_khttp_flv(void* p_lparam, void* p_wparam, int id, int64_
             break;
         }
 
-        int w = klb_socket_send(p_socket, p_buf->p_buf + p_inter->w_start, p_buf->end - p_inter->w_start);
+        int w = klb_socket_send(p_socket, (const uint8_t*)(p_buf->p_buf + p_inter->w_start), p_buf->end - p_inter->w_start);
 
         if (0 < w)
         {
@@ -582,7 +582,7 @@ static int cb_send_klua_khttp_flv(void* p_lparam, void* p_wparam, int id, int64_
         first = false;
     }
 
-    if (NULL == p_inter->p_w_cur && klb_list_size(p_inter->p_w_list) <= 0)
+    if (NULL == p_inter->p_w_cur && klb_nlist_size(p_inter->p_w_list) <= 0)
     {
         klb_socket_set_writing(p_inter->p_socket, false);   // 无数据可写
     }
@@ -676,7 +676,7 @@ static int klua_khttp_flv_send_text(lua_State* L)
         p_buf->end += body_len;
     }
 
-    klb_list_push_tail(p_kmnp->p_inter->p_w_list, p_buf);
+    klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_buf);
 
     ///
     if (HTTP_RESPONSE != p_kmnp->p_inter->param.http_type)
@@ -685,7 +685,7 @@ static int klua_khttp_flv_send_text(lua_State* L)
 
         p_flv_head->end = klb_flv_pack_head(p_flv_head->p_buf, p_flv_head->buf_len, true, false);
 
-        klb_list_push_tail(p_kmnp->p_inter->p_w_list, p_flv_head);
+        klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_flv_head);
     }
 
     klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
@@ -710,7 +710,7 @@ static bool scan_sps_pps_klua_khttp_flv(char* p_data, int data_len, char** p_sps
 
         if (0 == klb_h26x_scan_nalu(p_data, data_len, &nal_start, &nal_len, &nal_h_len, &is_end))
         {
-            klb_h264_nalu_type_e t = klb_h264_nalu_type(p_data[nal_start + nal_h_len]);
+            klb_h264_nalu_type_e t = (klb_h264_nalu_type_e)klb_h264_nalu_type(p_data[nal_start + nal_h_len]);
 
             if (KLB_H264_SPS == t)
             {
@@ -746,7 +746,7 @@ static bool scan_sps_pps_klua_khttp_flv(char* p_data, int data_len, char** p_sps
 
 static klb_buf_t* to_flv_frame_klua_khttp_flv(klb_buf_t* p_src)
 {
-    klb_mnp_media_t* p_media = p_src->p_buf + p_src->start + sizeof(klb_mnp_t);
+    klb_mnp_media_t* p_media = (klb_mnp_media_t*)(p_src->p_buf + p_src->start + sizeof(klb_mnp_t));
 
     if (KLB_MNP_VTYPE_CFG == p_media->vtype)
     {
@@ -788,7 +788,7 @@ static klb_buf_t* to_flv_frame_klua_khttp_flv(klb_buf_t* p_src)
 
             char* p_h26x = p_data + nal_start + nal_h_len;
 
-            klb_h264_nalu_type_e t = klb_h264_nalu_type(p_data[nal_start + nal_h_len]);
+            klb_h264_nalu_type_e t = (klb_h264_nalu_type_e)klb_h264_nalu_type(p_data[nal_start + nal_h_len]);
             int avc_type = (KLB_H264_ISLICE == t || KLB_H264_IDRSLICE == t) ? KLB_FLV_AVC_KEY_FRAME : KLB_FLV_AVC_INTER_FRAME;
 
             klb_buf_t* p_frame = klb_buf_malloc(KLB_FLV_BUF_LEN(frame_len + 4), false);
@@ -848,7 +848,7 @@ static int klua_khttp_flv_send_media(lua_State* L)
     
     if (NULL != p_frame)
     {
-        klb_list_push_tail(p_kmnp->p_inter->p_w_list, p_frame);
+        klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_frame);
         klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
     }
 
@@ -1069,10 +1069,10 @@ klua_khttp_flv_t* new_connect_klua_khttp_flv(lua_State* L, klb_socket_fd fd, klu
     p_inter->close = false;
     p_inter->p_socket = p_socket;
 
-    p_inter->p_w_list = klb_list_create();
+    p_inter->p_w_list = klb_nlist_create();
     p_inter->p_r_buf = klb_buf_malloc(p_inter->param.rbuf_max, false);
 
-    p_inter->p_r_list = klb_list_create();
+    p_inter->p_r_list = klb_nlist_create();
 
     // http parser
     http_parser_init(&p_inter->parser, p_param->http_type);
@@ -1115,7 +1115,7 @@ static int lib_klua_khttp_flv_connect(lua_State* L)
     lua_Integer port = luaL_checkinteger(L, 2);
 
     // param
-    klua_khttp_flv_param_t param = { 0 };
+    klua_khttp_flv_param_t param;
     default_param_klua_khttp_flv(&param);
     check_param_klua_khttp_flv(L, 2, &param);
 
@@ -1149,7 +1149,7 @@ static int on_accept_klua_khttp_flv_listen(void* ptr, klb_socket_fd fd, const st
             p_listen->co_accept = NULL; // 协程模式下, 一次"accept", 对应一次唤醒, 唤醒后清空
 
             // param
-            klua_khttp_flv_param_t param = { 0 };
+            klua_khttp_flv_param_t param;
             default_param_klua_khttp_flv(&param);
             param.http_type = HTTP_REQUEST;
 

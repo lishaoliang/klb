@@ -122,6 +122,12 @@
     #define MIN(A_,B_)    (((A_) < (B_)) ? (A_) : (B_))
 #endif
 
+/// @def   ABS
+/// @brief ABS宏
+#ifndef ABS
+    #define ABS(X_)       ( (X_) >= 0 ? (X_) : (-(X_)) )
+#endif
+
 /// @def    ABS_SUB
 /// @brief 差值的绝对值: 适用于无符号类型
 #ifndef ABS_SUB

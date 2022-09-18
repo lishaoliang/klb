@@ -19,9 +19,6 @@
 extern "C" {
 #endif
 
-typedef klb_socket_fd   klua_ex_fd;
-#define INVALID_EX_FD   INVALID_SOCKET
-
 
 typedef struct klua_ex_multiplex_t_ klua_ex_multiplex_t;
 

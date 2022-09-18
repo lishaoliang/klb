@@ -55,7 +55,7 @@ static int klua_kh26x_size(lua_State* L)
     return 1;
 }
 
-static klb_mnp_media_t* klua_kh26x_read_next(klua_kh26x_t* p_h26x)
+static klb_buf_t* klua_kh26x_read_next(klua_kh26x_t* p_h26x)
 {
     if (0 < p_h26x->size)
     {
@@ -82,14 +82,14 @@ static int klua_kh26x_read(lua_State* L)
 
     if (NULL != p_buf)
     {
-        klb_mnp_media_t* p_media = p_buf->p_buf + sizeof(klb_mnp_t);
+        klb_mnp_media_t* p_media = (klb_mnp_media_t*)(p_buf->p_buf + sizeof(klb_mnp_t));
         p_media->time = klb_tick_counti64();
 
         if (KLB_MNP_VTYPE_CFG == p_media->vtype)
         {
             p_next = klua_kh26x_read_next(p_h26x);
 
-            klb_mnp_media_t* p_media_next = p_next->p_buf + sizeof(klb_mnp_t);
+            klb_mnp_media_t* p_media_next = (klb_mnp_media_t*)(p_next->p_buf + sizeof(klb_mnp_t));
             p_media_next->time = p_media->time;
         }
 
@@ -200,7 +200,7 @@ static int scan_frame_h26x_file(klb_buf_t* p_file)
     while (0 < h26x_len)
     {
         int nal_start = 0, nal_len = 0, nal_h_len = 0;
-        int8_t is_end = false;
+        bool is_end = false;
 
         if (0 == klb_h26x_scan_nalu(p_h26x, h26x_len, &nal_start, &nal_len, &nal_h_len, &is_end))
         {
@@ -398,7 +398,7 @@ static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_
     while (0 < h26x_len)
     {
         int nal_start = 0, nal_len = 0, nal_h_len = 0;
-        int8_t is_end = false;
+        bool is_end = false;
         bool has_frame = false;
         bool has_key_frame = false;
 

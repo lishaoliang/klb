@@ -203,7 +203,7 @@ static int on_proc_klb_ncm_item(void* p_lparam, void* p_wparam, int msg, int id,
 /// @return int 0
 static int cb_klb_ncm_opt_recv(void* ptr, int protocol, int id, int code, int packtype, klb_buf_t* p_data)
 {
-    klb_ncm_t* p_ncm = ptr;
+    klb_ncm_t* p_ncm = (klb_ncm_t*)ptr;
 
     if (NULL != p_ncm->cb_receiver)
     {
@@ -418,7 +418,19 @@ int klb_ncm_send_rpc_json(klb_ncm_t* p_ncm, int id, uint32_t sequence, uint32_t 
     return ret;
 }
 
-int klb_ncm_ctrl(klb_ncm_t* p_ncm, int id, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num)
+int klb_ncm_ctrl(klb_ncm_t* p_ncm, int id, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    return 0;
+    klb_ncm_item_t* p_item = get_item_klb_ncm(p_ncm, id);
+    if (NULL == p_item)
+    {
+        return -1;
+    }
+
+    int ret = -1;
+    if (NULL != p_item->ops.cb_ctrl)
+    {
+        ret = p_item->ops.cb_ctrl(p_item->ptr, p_in, p_out);
+    }
+
+    return ret;
 }

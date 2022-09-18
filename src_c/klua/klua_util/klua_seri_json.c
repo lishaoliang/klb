@@ -1,12 +1,9 @@
-﻿#include "klb_type.h"
-#include "klbthird/cJSON.h"
-
-#include <lua.h>
-#include <lauxlib.h>
+﻿#include "klua/klua_util/klua_seri_json.h"
+#include "klua/klua_seri.h"
 #include <stdlib.h>
 #include <stdint.h>
-#include <assert.h>
 #include <string.h>
+#include <assert.h>
 
 
 #define MAX_DEPTH 32
@@ -18,7 +15,7 @@ static cJSON* luaseri_json_pack_one_object(lua_State *L, int index, int depth);
 
 static cJSON* luaseri_json_pack_table_array(lua_State *L, int index, int depth) 
 {
-	int array_size = lua_rawlen(L,index);
+	int array_size = (int)lua_rawlen(L,index);
 
     cJSON* p_array = cJSON_CreateArray();
 
@@ -56,7 +53,7 @@ static cJSON* luaseri_json_pack_table_hash(lua_State *L, int index, int depth, i
 		}
         else if(LUA_TSTRING == t)
         {
-            char* p_key = lua_tostring(L, -2);
+            const char* p_key = lua_tostring(L, -2);
 
 #if 1
             cJSON* p_v = luaseri_json_pack_one_object(L, -1, depth);
@@ -86,7 +83,7 @@ static cJSON* luaseri_json_pack_table(lua_State *L, int index, int depth)
 		index = lua_gettop(L) + index + 1;
 	}
 
-    int array_size = lua_rawlen(L, index);
+    int array_size = (int)lua_rawlen(L, index);
     if (0 < array_size)
     {
         return luaseri_json_pack_table_array(L, index, depth);
@@ -267,8 +264,10 @@ cJSON* luaseri_json_pack(lua_State *L, int base_idx)
     return p_json;
 }
 
-int luaseri_json_unpack(lua_State *L, int base_idx, cJSON* p_json)
+int luaseri_json_unpack(lua_State *L, int base_idx, const cJSON* ptr)
 {
+    cJSON* p_json = (cJSON*)ptr;
+
     if (NULL == p_json)
     {
         return 0;
@@ -293,4 +292,17 @@ int luaseri_json_unpack(lua_State *L, int base_idx, cJSON* p_json)
     }
 
     return lua_gettop(L) - base_idx/*1*/;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 导出
+
+cJSON* klua_seri_json_pack(lua_State* L, int base_idx)
+{
+    return luaseri_json_pack(L, base_idx);
+}
+
+int klua_seri_json_unpack(lua_State* L, int base_idx, const cJSON* p_json)
+{
+    return luaseri_json_unpack(L, base_idx, p_json);
 }

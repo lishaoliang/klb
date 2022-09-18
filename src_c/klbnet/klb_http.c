@@ -1,7 +1,7 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbnet/klb_http.h"
 #include "klbmem/klb_mem.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbmem/klb_rbuf.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_buffer.h"
@@ -16,7 +16,7 @@ typedef struct klb_http_t_
     // send发送相关
     struct
     {
-        klb_list_t* p_w_list;           ///< klb_buf_t*
+        klb_nlist_t* p_w_list;           ///< klb_buf_t*
         klb_buf_t*  p_w_cur;            ///< 当前正在发送的缓存
         int         w_len;              ///< 当前等待发送的缓存量
     };
@@ -25,7 +25,7 @@ typedef struct klb_http_t_
     struct
     {
         klb_buf_t*  p_r_buf;            ///< 临时读取缓存
-        klb_list_t* p_recv_list;        ///< 读取到的数据包列表
+        klb_nlist_t* p_recv_list;        ///< 读取到的数据包列表
     };
 
     // http_parser
@@ -57,7 +57,7 @@ static int on_message_begin_klb_http(http_parser* p_parser)
     klb_http_t* p_http = (klb_http_t*)p_parser->data;
     //KLB_LOG("on_message_begin\n");
 
-    p_http->header = sdsnew(http_method_str(p_parser->method));
+    p_http->header = sdsnew(http_method_str((enum http_method)p_parser->method));
     p_http->header = sdscat(p_http->header, " ");
 
     return 0;
@@ -223,8 +223,8 @@ klb_http_t* klb_http_create(enum http_parser_type parser_type)
 
     p_http->parser_type = parser_type;
 
-    p_http->p_w_list = klb_list_create();
-    p_http->p_recv_list = klb_list_create();
+    p_http->p_w_list = klb_nlist_create();
+    p_http->p_recv_list = klb_nlist_create();
 
     p_http->p_r_buf = klb_buf_malloc(1024 * 16, false);
 
@@ -274,7 +274,7 @@ static void klb_http_push_pack(klb_http_t* p_http)
 
     KLB_FREE_BY(p_http->header, sdsfree);
 
-    klb_list_push_tail(p_http->p_recv_list, p_data);
+    klb_nlist_push_tail(p_http->p_recv_list, p_data);
 }
 
 static int klb_http_push_data(klb_http_t* p_http, const uint8_t* p_data, int data_len)
@@ -286,7 +286,7 @@ static int klb_http_push_data(klb_http_t* p_http, const uint8_t* p_data, int dat
         memcpy(p_buf->p_buf, p_data, data_len);
         p_buf->end = data_len;
 
-        klb_list_push_tail(p_http->p_w_list, p_buf);
+        klb_nlist_push_tail(p_http->p_w_list, p_buf);
     }
 
     return 0;
@@ -373,9 +373,9 @@ int klb_http_send(klb_http_t* p_http, klb_socket_t* p_socket)
         return 0;
     }
 
-    if (NULL == p_http->p_w_cur && 0 < klb_list_size(p_http->p_w_list))
+    if (NULL == p_http->p_w_cur && 0 < klb_nlist_size(p_http->p_w_list))
     {
-        p_http->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_http->p_w_list);
+        p_http->p_w_cur = (klb_buf_t*)klb_nlist_pop_head(p_http->p_w_list);
     }
 
     int ret = 0;
@@ -386,7 +386,7 @@ int klb_http_send(klb_http_t* p_http, klb_socket_t* p_socket)
         int len = p_buf->end - p_buf->start;
         if (0 < len)
         {
-            int s = klb_socket_send(p_socket, p_buf->p_buf + p_buf->start, len);
+            int s = klb_socket_send(p_socket, (const uint8_t*)(p_buf->p_buf + p_buf->start), len);
             if (0 < s)
             {
                 p_buf->start += s;
@@ -423,7 +423,7 @@ int klb_http_recv(klb_http_t* p_http, klb_socket_t* p_socket)
 
     klb_buf_t* p_buf = p_http->p_r_buf;
 
-    int r = klb_socket_recv(p_socket, p_buf->p_buf + p_buf->end, p_buf->buf_len - p_buf->end);
+    int r = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), p_buf->buf_len - p_buf->end);
 
     if (0 < r)
     {
@@ -437,9 +437,9 @@ int klb_http_recv(klb_http_t* p_http, klb_socket_t* p_socket)
 
 int klb_http_get(klb_http_t* p_http, klb_buf_t** p_data)
 {
-    if (0 < klb_list_size(p_http->p_recv_list))
+    if (0 < klb_nlist_size(p_http->p_recv_list))
     {
-        *p_data = (klb_buf_t*)klb_list_pop_head(p_http->p_recv_list);
+        *p_data = (klb_buf_t*)klb_nlist_pop_head(p_http->p_recv_list);
         return 0;
     }
 

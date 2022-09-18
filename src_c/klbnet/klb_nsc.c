@@ -345,3 +345,16 @@ int klb_nsc_send_rpc_json(klb_nsc_t* p_nsc, uint32_t sequence, uint32_t uid, con
 
     return ret;
 }
+
+int klb_nsc_ctrl(klb_nsc_t* p_nsc, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klb_nsc_item_t* p_item = p_nsc->p_item;
+
+    int ret = -1;
+    if (NULL != p_item && NULL != p_item->ops.cb_ctrl)
+    {
+        ret = p_item->ops.cb_ctrl(p_item->ptr, p_in, p_out);
+    }
+
+    return ret;
+}

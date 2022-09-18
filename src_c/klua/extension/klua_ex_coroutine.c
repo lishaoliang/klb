@@ -1,8 +1,9 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klua/klua_coroutine.h"
 #include "klua/extension/klua_ex_coroutine.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klua/klua_env.h"
 #include "klbplatform/klb_time.h"
 
@@ -21,8 +22,8 @@ typedef struct klua_ex_coroutine_t_
     klua_env_t*     p_env;
 
     klb_hlist_t*    p_co_hlist;
-    klb_list_t*     p_wakeup_list;
-    klb_list_t*     p_timeout_list;
+    klb_nlist_t*     p_wakeup_list;
+    klb_nlist_t*     p_timeout_list;
 }klua_ex_coroutine_t;
 
 
@@ -48,8 +49,8 @@ static void* klua_ex_coroutine_create(klua_env_t* p_env)
     p_ex->p_env = p_env;
 
     p_ex->p_co_hlist = klb_hlist_create(0);
-    p_ex->p_wakeup_list = klb_list_create();
-    p_ex->p_timeout_list = klb_list_create();
+    p_ex->p_wakeup_list = klb_nlist_create();
+    p_ex->p_timeout_list = klb_nlist_create();
 
     return p_ex;
 }
@@ -59,8 +60,8 @@ static void klua_ex_coroutine_destroy(void* ptr)
     klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)ptr;
     klua_env_t* p_env = p_ex->p_env;
 
-    KLB_FREE_BY(p_ex->p_timeout_list, klb_list_destroy);
-    KLB_FREE_BY(p_ex->p_wakeup_list, klb_list_destroy);
+    KLB_FREE_BY(p_ex->p_timeout_list, klb_nlist_destroy);
+    KLB_FREE_BY(p_ex->p_wakeup_list, klb_nlist_destroy);
     KLB_FREE_BY(p_ex->p_co_hlist, klb_hlist_destroy);
     KLB_FREE(p_ex);
 }
@@ -70,10 +71,10 @@ static int klua_ex_coroutine_loop_once(void* ptr, klua_env_t* p_env, int64_t las
     klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)ptr;
 
     // wakeup list
-    while (0 < klb_list_size(p_ex->p_wakeup_list))
+    while (0 < klb_nlist_size(p_ex->p_wakeup_list))
     {
-        lua_State* p_co = (lua_State*)klb_list_pop_head(p_ex->p_wakeup_list);
-        klua_coroutine_env_t* p_co_env = klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+        lua_State* p_co = (lua_State*)klb_nlist_pop_head(p_ex->p_wakeup_list);
+        klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
 
         if (NULL != p_co_env)
         {
@@ -82,25 +83,25 @@ static int klua_ex_coroutine_loop_once(void* ptr, klua_env_t* p_env, int64_t las
     }
 
     // timeout list
-    klb_list_iter_t* p_iter = klb_list_begin(p_ex->p_timeout_list);
+    klb_nlist_iter_t* p_iter = klb_nlist_begin(p_ex->p_timeout_list);
     while (NULL != p_iter)
     {
-        klb_list_iter_t* p_next = klb_list_next(p_iter);
+        klb_nlist_iter_t* p_next = klb_nlist_next(p_iter);
 
         // 
-        klua_ex_coroutine_timeout_t* p_co_timeout = (klua_ex_coroutine_timeout_t*)klb_list_data(p_iter);
+        klua_ex_coroutine_timeout_t* p_co_timeout = (klua_ex_coroutine_timeout_t*)klb_nlist_data(p_iter);
 
         if (p_co_timeout->tick_count + p_co_timeout->wait_tc <= now)
         {
             // 时间到
-            klua_coroutine_env_t* p_co_env = klb_hlist_find(p_ex->p_co_hlist, p_co_timeout->p_co, sizeof(lua_State*));
+            klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co_timeout->p_co, sizeof(lua_State*));
 
             if (NULL != p_co_env)
             {
                 klua_ex_coroutine_call_auxwrap(p_co_env->p_main, p_co_env->co_reg);
             }
 
-            klb_list_remove(p_ex->p_timeout_list, p_iter);
+            klb_nlist_remove(p_ex->p_timeout_list, p_iter);
             KLB_FREE(p_co_timeout);
         }
 
@@ -128,7 +129,7 @@ int klua_ex_coroutine_remove(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_
 
 int klua_ex_coroutine_wakeup(klua_ex_coroutine_t* p_ex, lua_State* p_co)
 {
-    klb_list_push_tail(p_ex->p_wakeup_list, p_co);
+    klb_nlist_push_tail(p_ex->p_wakeup_list, p_co);
 
     return 0;
 }
@@ -142,14 +143,14 @@ int klua_ex_coroutine_wakeup_timeout(klua_ex_coroutine_t* p_ex, lua_State* p_co,
     p_co_timeout->wait_tc = tc;
     p_co_timeout->p_co = p_co;
 
-    klb_list_push_tail(p_ex->p_timeout_list, p_co_timeout);
+    klb_nlist_push_tail(p_ex->p_timeout_list, p_co_timeout);
 
     return 0;
 }
 
 lua_State* klua_ex_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co)
 {
-    klua_coroutine_env_t* p_co_env = klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+    klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
 
     if (NULL != p_co_env)
     {
@@ -184,4 +185,23 @@ klua_ex_coroutine_t* klua_ex_get_coroutine(klua_env_t* p_env)
 klua_ex_coroutine_t* klua_ex_get_coroutine_by_L(lua_State* L)
 {
     return klua_ex_get_coroutine(klua_env_get_by_L(L));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// 导出函数
+
+klua_ex_coroutine_t* klua_coroutine_get(klua_env_t* p_env)
+{
+    return klua_ex_get_coroutine(p_env);
+}
+
+klua_ex_coroutine_t* klua_coroutine_get_by_L(lua_State* L)
+{
+    return klua_ex_get_coroutine(klua_env_get_by_L(L));
+}
+
+lua_State* klua_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co)
+{
+    return klua_ex_coroutine_rawgeti(p_ex, p_co);
 }

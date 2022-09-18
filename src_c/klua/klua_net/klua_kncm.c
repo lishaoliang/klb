@@ -7,7 +7,6 @@
 #include "klbutil/klb_log.h"
 #include "klbmem/klb_mem.h"
 #include "klbbase/klb_mnp.h"
-#include "klua/klua_data.h"
 #include "klbnet/klb_listen.h"
 #include "klbnet/klb_nsp.h"
 #include <stdlib.h>
@@ -394,7 +393,7 @@ static int on_accept_klua_kncm_nsp(void* ptr, int protocol, klb_socket_t* p_sock
 {
     klua_kncm_t* p_kncm = (klua_kncm_t*)ptr;
 
-    uint8_t* p_data = p_buf->p_buf + p_buf->start;
+    uint8_t* p_data = (uint8_t*)(p_buf->p_buf + p_buf->start);
     int data_len = p_buf->end - p_buf->start;
 
     int id = klb_ncm_push(p_kncm->p_ncm, protocol, p_socket, p_data, data_len);
@@ -458,15 +457,6 @@ static int klua_kncm_connect(lua_State* L)
     lua_Integer port = luaL_checkinteger(L, 4);
 
     bool tls = false;
-
-    switch (protocol)
-    {
-    //case KLB_PROTOCOL_MNPS:
-    //case KLB_PROTOCOL_HTTPS:
-    //case KLB_PROTOCOL_WSS:
-        tls = true;
-        break;
-    }
 
     klb_socket_fd fd = klb_socket_connect(p_host, (int)port, 0);
     if (INVALID_SOCKET == fd)
@@ -534,7 +524,7 @@ static int klua_kncm_send_text(lua_State* L)
     bool ok = false;
     if (0 < s1_len + s2_len)
     {
-        if (0 == klb_ncm_send_text(p_kncm->p_ncm, id, sequence, uid, p_s1, s1_len, p_s2, s2_len))
+        if (0 == klb_ncm_send_text(p_kncm->p_ncm, id, sequence, uid, (const uint8_t*)p_s1, s1_len, (const uint8_t*)p_s2, s2_len))
         {
             ok = true;
         }
@@ -570,7 +560,7 @@ static int klua_kncm_send_binary(lua_State* L)
     bool ok = false;
     if (0 < s1_len + s2_len)
     {
-        if (0 == klb_ncm_send_binary(p_kncm->p_ncm, id, sequence, uid, p_s1, s1_len, p_s2, s2_len))
+        if (0 == klb_ncm_send_binary(p_kncm->p_ncm, id, sequence, uid, (const uint8_t*)p_s1, s1_len, (const uint8_t*)p_s2, s2_len))
         {
             ok = true;
         }
@@ -618,38 +608,7 @@ static int klua_kncm_ctrl(lua_State* L)
     int argc = lua_gettop(L);
     int data_num = argc - 2;
 
-    klua_data_t data[LUA_MINSTACK];
-    memset(data, 0, sizeof(klua_data_t) * LUA_MINSTACK);
-
-    for (int i = 0; i < data_num; i++)
-    {
-        klua_checkdata(L, &data[i], i + 3);
-    }
-
-    klua_data_t* p_out = NULL;
-    int out_num = 0;
-    if (0 == klb_ncm_ctrl(p_kncm->p_ncm, id, data, data_num, &p_out, &out_num))
-    {
-        lua_pushboolean(L, true);
-
-        for (int i = 0; i < out_num; i++)
-        {
-            klua_pushdata(L, &p_out[i]);
-        }
-    }
-    else
-    {
-        assert(0 == out_num);
-        lua_pushboolean(L, false);
-    }
-
-    for (int i = 0; i < out_num; i++)
-    {
-        klua_emptydata(&p_out[i]);
-    }
-
-    KLB_FREE(p_out);
-    return out_num + 1;
+    return 0;
 }
 
 static void klua_kncm_createmeta(lua_State* L)

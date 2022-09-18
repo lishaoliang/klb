@@ -6,7 +6,7 @@
 #include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_multiplex.h"
 #include "klbnet/klb_listen.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klua/extension/klua_ex_coroutine.h"
@@ -49,7 +49,7 @@ typedef struct klua_ktcp_inter_t_
     // send发送相关
     struct
     {
-        klb_list_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
+        klb_nlist_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
         klb_buf_t*              p_w_cur;        ///< 当前正在发送的缓存
     };
 
@@ -58,7 +58,7 @@ typedef struct klua_ktcp_inter_t_
     {
         klb_buf_t*              p_r_buf;        ///< 临时读取缓存
 
-        klb_list_t*             p_r_list;       ///< 读取的数据列表: klb_buf_t*
+        klb_nlist_t*             p_r_list;       ///< 读取的数据列表: klb_buf_t*
         int                     read_num;       ///< p_r_list列表中缓存的数据量: 当达到一定值时, 暂停读取, 直到再次消费数据
     };
 }klua_ktcp_inter_t;
@@ -111,23 +111,23 @@ static int call_lua_co_recv_klua_ktcp(klua_ktcp_t* p_ktcp, klb_buf_t* p_buf)
 static void free_klua_ktcp_inter(klua_ktcp_inter_t* p_inter)
 {
     // 清空
-    while (0 < klb_list_size(p_inter->p_w_list))
+    while (0 < klb_nlist_size(p_inter->p_w_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         KLB_FREE(p_tmp);
     }
 
     // 清空
-    while (0 < klb_list_size(p_inter->p_r_list))
+    while (0 < klb_nlist_size(p_inter->p_r_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_inter->p_r_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_r_list);
         KLB_FREE(p_tmp);
     }
 
     KLB_FREE_BY(p_inter->p_socket, klb_socket_destroy);
 
-    KLB_FREE_BY(p_inter->p_w_list, klb_list_destroy);
-    KLB_FREE_BY(p_inter->p_r_list, klb_list_destroy);
+    KLB_FREE_BY(p_inter->p_w_list, klb_nlist_destroy);
+    KLB_FREE_BY(p_inter->p_r_list, klb_nlist_destroy);
     KLB_FREE(p_inter->p_w_cur);
     KLB_FREE(p_inter->p_r_buf);
     KLB_FREE(p_inter);
@@ -165,7 +165,7 @@ static int cb_recv_klua_ktcp(void* p_lparam, void* p_wparam, int id, int64_t now
     {
         klb_buf_t* p_buf = p_inter->p_r_buf;
 
-        int r = klb_socket_recv(p_socket, p_buf->p_buf, p_buf->buf_len);
+        int r = klb_socket_recv(p_socket, (uint8_t*)p_buf->p_buf, p_buf->buf_len);
 
         if (0 < r)
         {
@@ -181,7 +181,7 @@ static int cb_recv_klua_ktcp(void* p_lparam, void* p_wparam, int id, int64_t now
                 memcpy(p_tmp->p_buf, p_buf->p_buf, p_buf->end);
                 p_tmp->end = total_len;
 
-                klb_list_push_tail(p_inter->p_r_list, p_tmp);
+                klb_nlist_push_tail(p_inter->p_r_list, p_tmp);
 
                 p_inter->read_num += p_buf->end; // 缓存的数据量
                 if (p_inter->param.read_max < p_inter->read_num)
@@ -229,9 +229,9 @@ static int cb_send_klua_ktcp(void* p_lparam, void* p_wparam, int id, int64_t now
 
     while (true)
     {
-        if (NULL == p_inter->p_w_cur && 0 < klb_list_size(p_inter->p_w_list))
+        if (NULL == p_inter->p_w_cur && 0 < klb_nlist_size(p_inter->p_w_list))
         {
-            p_inter->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+            p_inter->p_w_cur = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         }
 
         klb_buf_t* p_buf = p_inter->p_w_cur;
@@ -241,7 +241,7 @@ static int cb_send_klua_ktcp(void* p_lparam, void* p_wparam, int id, int64_t now
             break;
         }
 
-        int w = klb_socket_send(p_socket, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+        int w = klb_socket_send(p_socket, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
         if (0 < w)
         {
             send += w;
@@ -267,7 +267,7 @@ static int cb_send_klua_ktcp(void* p_lparam, void* p_wparam, int id, int64_t now
         first = false;
     }
 
-    if (NULL == p_inter->p_w_cur && klb_list_size(p_inter->p_w_list) <= 0)
+    if (NULL == p_inter->p_w_cur && klb_nlist_size(p_inter->p_w_list) <= 0)
     {
         klb_socket_set_writing(p_inter->p_socket, false);   // 无数据可写
     }
@@ -351,7 +351,7 @@ static int klua_ktcp_send(lua_State* L)
     memcpy(p_buf->p_buf, p_body, body_len);
     p_buf->end = body_len;
 
-    klb_list_push_tail(p_ktcp->p_inter->p_w_list, p_buf);
+    klb_nlist_push_tail(p_ktcp->p_inter->p_w_list, p_buf);
     klb_socket_set_writing(p_ktcp->p_inter->p_socket, true);
 
     return 0;
@@ -367,9 +367,9 @@ static int klua_ktcp_co_recv(lua_State* L)
 
     klua_ktcp_t* p_ktcp = to_klua_ktcp(L, 1);
 
-    if (0 < klb_list_size(p_ktcp->p_inter->p_r_list))
+    if (0 < klb_nlist_size(p_ktcp->p_inter->p_r_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_ktcp->p_inter->p_r_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_ktcp->p_inter->p_r_list);
 
         p_ktcp->p_inter->read_num -= (p_tmp->end - p_tmp->start);
         assert(0 <= p_ktcp->p_inter->read_num);
@@ -597,9 +597,9 @@ klua_ktcp_t* new_connect_klua_ktcp(lua_State* L, klb_socket_fd fd, klua_ktcp_par
     p_inter->close = false;
     p_inter->p_socket = p_socket;
 
-    p_inter->p_w_list = klb_list_create();
+    p_inter->p_w_list = klb_nlist_create();
     p_inter->p_r_buf = klb_buf_malloc(p_inter->param.rbuf_max, false);
-    p_inter->p_r_list = klb_list_create();
+    p_inter->p_r_list = klb_nlist_create();
 
     // 放入 multiplex
     klb_multiplex_ops_t o = { 0 };

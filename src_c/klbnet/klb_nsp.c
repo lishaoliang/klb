@@ -221,7 +221,7 @@ static int cb_recv_klb_nsp(void* p_lparam, void* p_wparam, int id, int64_t now)
     int len = p_buf->buf_len - p_buf->end;
     if (0 < len)
     {
-        int r = klb_socket_recv(p_item->p_socket, p_buf->p_buf + p_buf->end, len);
+        int r = klb_socket_recv(p_item->p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), len);
         if (0 < r)
         {
             p_buf->end += r;

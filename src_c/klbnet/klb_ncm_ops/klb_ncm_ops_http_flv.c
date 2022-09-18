@@ -3,7 +3,7 @@
 #include "klbnet/klb_ncm.h"
 #include "klbthird/http_parser.h"
 #include "klbmem/klb_mem.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_buffer.h"
 #include "klbthird/sds.h"
@@ -28,7 +28,7 @@ typedef struct klb_ncm_ops_http_flv_t_
     // send发送相关
     struct
     {
-        klb_list_t*         p_w_list;   ///< 待发送列表: klb_buf_t*
+        klb_nlist_t*         p_w_list;   ///< 待发送列表: klb_buf_t*
         klb_buf_t*          p_w_cur;    ///< 当前正在发送的缓存
         int                 w_start;    ///< 当前发送的起始点
     };
@@ -183,7 +183,7 @@ static void* create_klb_ncm_ops_http_flv(klb_ncm_ops_lparam_t* p_lparam, klb_ncm
     memcpy(&p_ops->wparam, p_wparam, sizeof(klb_ncm_ops_wparam_t));
 
     // send发送相关
-    p_ops->p_w_list = klb_list_create();
+    p_ops->p_w_list = klb_nlist_create();
 
     // recv接收相关
     p_ops->p_r_buf = klb_buf_malloc(p_ops->wparam.read_buffer_size, false);
@@ -218,9 +218,9 @@ static void destroy_klb_ncm_ops_http_flv(void* ptr)
     klb_ncm_ops_http_flv_t* p_opt = (klb_ncm_ops_http_flv_t*)ptr;
 
     // w
-    while (0 < klb_list_size(p_opt->p_w_list))
+    while (0 < klb_nlist_size(p_opt->p_w_list))
     {
-        klb_buf_t* p_tmp = klb_list_pop_head(p_opt->p_w_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_opt->p_w_list);
         klb_buf_unref_next(p_tmp);
     }
 
@@ -231,7 +231,7 @@ static void destroy_klb_ncm_ops_http_flv(void* ptr)
     }
 
     // 销毁
-    KLB_FREE_BY(p_opt->p_w_list, klb_list_destroy);
+    KLB_FREE_BY(p_opt->p_w_list, klb_nlist_destroy);
     KLB_FREE(p_opt->p_r_buf);
     KLB_FREE(p_opt->url);
     KLB_FREE(p_opt);
@@ -286,7 +286,7 @@ static int send_text_klb_ncm_ops_http_flv(void* ptr, klb_socket_t* p_socket, uin
 
     p_buf->end = totol_len;
 
-    klb_list_push_tail(p_ops->p_w_list, p_buf);
+    klb_nlist_push_tail(p_ops->p_w_list, p_buf);
 
     klb_socket_set_writing(p_socket, true);   // 有数据可写
 
@@ -336,9 +336,9 @@ static int on_send_klb_ncm_ops_http_flv(void* ptr, klb_socket_t* p_socket, int64
 
     while (true)
     {
-        if (NULL == p_ops->p_w_cur && 0 < klb_list_size(p_ops->p_w_list))
+        if (NULL == p_ops->p_w_cur && 0 < klb_nlist_size(p_ops->p_w_list))
         {
-            p_ops->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_ops->p_w_list);
+            p_ops->p_w_cur = (klb_buf_t*)klb_nlist_pop_head(p_ops->p_w_list);
             if (NULL != p_ops->p_w_cur)
             {
                 p_ops->w_start = p_ops->p_w_cur->start;
@@ -352,7 +352,7 @@ static int on_send_klb_ncm_ops_http_flv(void* ptr, klb_socket_t* p_socket, int64
             break;
         }
 
-        int w = klb_socket_send(p_socket, p_buf->p_buf + p_ops->w_start, p_buf->end - p_ops->w_start);
+        int w = klb_socket_send(p_socket, (const uint8_t*)(p_buf->p_buf + p_ops->w_start), p_buf->end - p_ops->w_start);
         if (0 < w)
         {
             p_ops->w_start += w;
@@ -383,7 +383,7 @@ static int on_send_klb_ncm_ops_http_flv(void* ptr, klb_socket_t* p_socket, int64
         first = false;
     }
 
-    if (NULL == p_ops->p_w_cur && klb_list_size(p_ops->p_w_list) <= 0)
+    if (NULL == p_ops->p_w_cur && klb_nlist_size(p_ops->p_w_list) <= 0)
     {
         klb_socket_set_writing(p_socket, false);   // 无数据可写
     }
@@ -417,7 +417,7 @@ static int on_recv_klb_ncm_ops_http_flv(void* ptr, klb_socket_t* p_socket, int64
     {
         klb_buf_t* p_buf = p_ops->p_r_buf;
 
-        int r = klb_socket_recv(p_socket, p_buf->p_buf + p_buf->end, p_buf->buf_len - p_buf->end);
+        int r = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), p_buf->buf_len - p_buf->end);
 
         if (0 < r)
         {

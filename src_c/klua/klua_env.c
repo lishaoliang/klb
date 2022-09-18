@@ -7,12 +7,13 @@
 #include "klbutil/klb_log.h"
 #include "klbplatform/klb_time.h"
 #include "klbutil/klb_hlist.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbthird/sds.h"
 #include "klua/klua_kthread.h"
 #include "klbplatform/klb_atomic.h"
 #include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_lpc.h"
+#include "klua/klua_util/klua_kobject.h"
 #include "lstate.h"
 #include <assert.h>
 
@@ -42,9 +43,9 @@ typedef struct klua_env_t_
     {
         long volatile   is_get_lpc_msg; ///< 是否 取 LPC 消息
         long volatile   lpc_msg_lock;   ///< p_lpc_msg_list锁
-        klb_list_t*     p_lpc_msg_list; ///< LPC 消息列表
+        klb_nlist_t*     p_lpc_msg_list; ///< LPC 消息列表
 
-        klb_list_t*     p_msg_list;     ///< 待处理消息列表
+        klb_nlist_t*     p_msg_list;     ///< 待处理消息列表
     };
 
     struct
@@ -95,8 +96,8 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     klb_atomic_set_zero(&p_env->is_get_lpc_msg);
     klb_atomic_set_zero(&p_env->lpc_msg_lock);
 
-    p_env->p_lpc_msg_list = klb_list_create();
-    p_env->p_msg_list = klb_list_create();
+    p_env->p_lpc_msg_list = klb_nlist_create();
+    p_env->p_msg_list = klb_nlist_create();
     
     p_env->is_exit = false;
 
@@ -144,8 +145,8 @@ void klua_env_destroy(klua_env_t* p_env)
 
     KLB_FREE(p_env->p_arg);
     KLB_FREE_BY(p_env->name, sdsfree);
-    KLB_FREE_BY(p_env->p_msg_list, klb_list_destroy);
-    KLB_FREE_BY(p_env->p_lpc_msg_list, klb_list_destroy);
+    KLB_FREE_BY(p_env->p_msg_list, klb_nlist_destroy);
+    KLB_FREE_BY(p_env->p_lpc_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_env->p_extension_activate_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_env->p_extension_hlist, klb_hlist_destroy);
     KLB_FREE(p_env);
@@ -388,6 +389,9 @@ static int klua_pmain(lua_State *L)
     //klua_loadlib(L, klua_open_ktime, "ktime");
     //klua_loadlib(L, klua_open_kthread, "kthread");
 
+    // object
+    createmeta_kobject_handle(L);
+
     // 加载自定义库
     if (cb_pre_load) { cb_pre_load(L); }
 
@@ -438,7 +442,7 @@ void klua_msg_free(klua_msg_t* p_msg)
     case KLUA_LPC_REQUEST:
     case KLUA_LPC_RESPONSE:
         {
-            KLB_FREE(p_msg->p_msg);
+            KLB_FREE(p_msg->p_data);
         }
         break;
     default:
@@ -522,9 +526,9 @@ void* klua_env_get_extension(klua_env_t* p_env, const char* p_name)
 
 static int klua_env_loop_msg(klua_env_t* p_env, int64_t now)
 {
-    while (0 < klb_list_size(p_env->p_msg_list))
+    while (0 < klb_nlist_size(p_env->p_msg_list))
     {
-        klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_env->p_msg_list);
+        klua_msg_t* p_msg = (klua_msg_t*)klb_nlist_pop_head(p_env->p_msg_list);
         assert(NULL != p_msg);
 
         switch (p_msg->type)
@@ -556,10 +560,10 @@ static void klua_env_get_msg(klua_env_t* p_env)
 {
     klb_atomic_lock(&p_env->lpc_msg_lock);
 
-    while (0 < klb_list_size(p_env->p_lpc_msg_list))
+    while (0 < klb_nlist_size(p_env->p_lpc_msg_list))
     {
-        klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_env->p_lpc_msg_list);
-        klb_list_push_tail(p_env->p_msg_list, p_msg);
+        klua_msg_t* p_msg = (klua_msg_t*)klb_nlist_pop_head(p_env->p_lpc_msg_list);
+        klb_nlist_push_tail(p_env->p_msg_list, p_msg);
     }
 
     klb_atomic_unlock(&p_env->lpc_msg_lock);
@@ -674,7 +678,7 @@ const klb_buf_t* klua_env_get_arg(klua_env_t* p_env)
 void klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg)
 {
     klb_atomic_lock(&p_env->lpc_msg_lock);
-    klb_list_push_tail(p_env->p_lpc_msg_list, p_msg);
+    klb_nlist_push_tail(p_env->p_lpc_msg_list, p_msg);
     klb_atomic_unlock(&p_env->lpc_msg_lock);
 
     klb_atomic_set_value(&p_env->is_get_lpc_msg, 1);

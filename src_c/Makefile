@@ -49,8 +49,8 @@ MY_DIRS += ./compat ./libavutil
 MY_DIRS += ./klbthird ./klbthird/sds
 
 # cpp
-MY_DIRS += ../src_cpp/klbmain
-MY_DIRS += ../src_cpp/klbutil ../src_cpp/klbnet ../src_cpp/klbplatform ../src_cpp/klua 
+MY_DIRS += ../src_cpp/klbmem ../src_cpp/klbutil ../src_cpp/klbnet
+MY_DIRS += ../src_cpp/klbplatform ../src_cpp/klua 
 
 
 # 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__

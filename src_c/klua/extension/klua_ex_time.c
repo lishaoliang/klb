@@ -2,7 +2,7 @@
 #include "klua/extension/klua_ex_time.h"
 #include "klua/klua.h"
 #include "klbmem/klb_mem.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_hlist.h"
 #include "klbutil/klb_log.h"
 #include <assert.h>
@@ -25,7 +25,7 @@ typedef struct klua_ex_time_t_
 {
     klua_env_t*     p_env;              ///< Lua环境
 
-    klb_list_t*     p_timer_list;       ///< 单次运行, 使用go语言命名习惯
+    klb_nlist_t*     p_timer_list;       ///< 单次运行, 使用go语言命名习惯
     klb_hlist_t*    p_ticker_hlist;     ///< 长期运行ticker列表
 }klua_ex_time_t;
 
@@ -37,7 +37,7 @@ static void* klua_ex_time_create(klua_env_t* p_env)
 
     p_time->p_env = p_env;
 
-    p_time->p_timer_list = klb_list_create();
+    p_time->p_timer_list = klb_nlist_create();
     p_time->p_ticker_hlist = klb_hlist_create(0);
 
     return p_time;
@@ -56,9 +56,9 @@ static void klua_ex_time_destroy(void* ptr)
     klua_env_t* p_env = p_time->p_env;
 
     // 清空 timer list
-    while (0 < klb_list_size(p_time->p_timer_list))
+    while (0 < klb_nlist_size(p_time->p_timer_list))
     {
-        klua_ex_time_reg_t* p_once = (klua_ex_time_reg_t*)klb_list_pop_head(p_time->p_timer_list);
+        klua_ex_time_reg_t* p_once = (klua_ex_time_reg_t*)klb_nlist_pop_head(p_time->p_timer_list);
         free_klua_ex_time_reg(p_once, p_env);
     }
 
@@ -69,7 +69,7 @@ static void klua_ex_time_destroy(void* ptr)
         free_klua_ex_time_reg(p_ticker, p_env);
     }
 
-    KLB_FREE_BY(p_time->p_timer_list, klb_list_destroy);
+    KLB_FREE_BY(p_time->p_timer_list, klb_nlist_destroy);
     KLB_FREE_BY(p_time->p_ticker_hlist, klb_hlist_destroy);
     KLB_FREE(p_time);
 }
@@ -93,20 +93,20 @@ static int call_klua_ex_time_reg(klua_env_t* p_env, int reg, int64_t now)
 static int klua_ex_time_loop_once_timer(klua_ex_time_t* p_time, klua_env_t* p_env, int64_t tc, int64_t now)
 {
     // timer once
-    klb_list_iter_t* p_iter = klb_list_begin(p_time->p_timer_list);
+    klb_nlist_iter_t* p_iter = klb_nlist_begin(p_time->p_timer_list);
     while (NULL != p_iter)
     {
-        klb_list_iter_t* p_cur = p_iter;
-        p_iter = klb_list_next(p_iter);
+        klb_nlist_iter_t* p_cur = p_iter;
+        p_iter = klb_nlist_next(p_iter);
 
-        klua_ex_time_reg_t* p_once = (klua_ex_time_reg_t*)klb_list_data(p_cur);
+        klua_ex_time_reg_t* p_once = (klua_ex_time_reg_t*)klb_nlist_data(p_cur);
 
         if (p_once->interval <= ABS_SUB(now, p_once->tc))
         {
             // 时间到了, 调用脚本
             call_klua_ex_time_reg(p_env, p_once->reg, now);
 
-            klb_list_remove(p_time->p_timer_list, p_cur);   // 移除
+            klb_nlist_remove(p_time->p_timer_list, p_cur);   // 移除
             free_klua_ex_time_reg(p_once, p_env);           // 销毁
         }
     }
@@ -178,7 +178,7 @@ int klua_ex_time_new_timer_once(klua_ex_time_t* p_time, lua_State* L, lua_Intege
     p_once->interval = wait;
     p_once->reg = reg;
 
-    klb_list_push_tail(p_time->p_timer_list, p_once);
+    klb_nlist_push_tail(p_time->p_timer_list, p_once);
 
     return 0;
 }

@@ -14,7 +14,6 @@
 #include "klb_type.h"
 #include "klbthird/sds.h"
 #include "klbmem/klb_buf.h"
-#include "klua/klua_data.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -120,14 +119,13 @@ typedef struct klua_msg_t_
 
     union
     {
-        // POST / REQUEST / RESPONSE
+        // POST / REQUEST / RESPONSE / NOTIFY
         struct
         {
             char            dst_name[KLUA_LPC_NAME_BUF];    ///< 目标(模块等)名称
             char            src_name[KLUA_LPC_NAME_BUF];    ///< 来源(模块等)名称
 
-            int             msg_size;
-            char*           p_msg;
+            klb_buf_t*      p_data;                         ///< 消息数据
         };
     };
 }klua_msg_t;

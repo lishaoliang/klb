@@ -14,6 +14,7 @@
 
 #include "klb_type.h"
 #include "klbmem/klb_buf.h"
+#include "klbmem/klb_rbuf.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -59,10 +60,14 @@ KLB_API void klb_buffer_reset(klb_buffer_t* p_buffer);
 KLB_API int klb_buffer_write(klb_buffer_t* p_buffer, const char* p_data, int data_len);
 
 
+KLB_API int klb_buffer_write_rbuf(klb_buffer_t* p_buffer, const klb_rbuf_t* p_rbuf);
+KLB_API int klb_buffer_write_buf(klb_buffer_t* p_buffer, const klb_buf_t* p_buf);
+
+
 /// @brief 当前有效数据长度
 /// @param [in]  *p_buffer          缓存指针
 /// @return int 有效数据长度
-KLB_API int klb_buffer_data_len(klb_buffer_t* p_buffer);
+KLB_API int klb_buffer_datalen(klb_buffer_t* p_buffer);
 
 
 /// @brief 将有效数据拼接在一起

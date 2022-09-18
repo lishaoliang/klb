@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klua/extension/klua_ex_gui.h"
+#include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"

@@ -1,1896 +1,1361 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbutil/CMap.hpp"
 #include "klbmem/klb_mem.h"
+#include "klbutil/klb_map_serialize.h"
+#include <iostream>
 #include <sstream>
 #include <assert.h>
 
 namespace klb {
 
 //////////////////////////////////////////////////////////////////////////
-// CMapIter
+//  CMapItem
+
+CMapItem::CMapItem()
+{
+    InitAdt();
+}
+
+CMapItem::CMapItem(const CMapItem& t)
+{
+    InitAdt();
+    CopyTo(t);
+}
+
+CMapItem::~CMapItem()
+{
+    QuitAdt();
+}
+
+CMapItem& CMapItem::operator=(const CMapItem& t)
+{
+    CopyTo(t);
+    return *this;
+}
+
+CMapItem& CMapItem::operator=(const bool b)
+{
+    return Set(b);
+}
+
+CMapItem& CMapItem::operator=(const int64_t i64)
+{
+    return Set(i64);
+}
+
+CMapItem& CMapItem::operator=(const uint64_t u64)
+{
+    return Set(u64);
+}
+
+CMapItem& CMapItem::operator=(const double d)
+{
+    return Set(d);
+}
+
+CMapItem& CMapItem::operator=(const std::string& str)
+{
+    return Set(str);
+}
+
+CMapItem& CMapItem::operator=(const char* p_str)
+{
+    return Set(p_str);
+}
+
+CMapItem& CMapItem::operator=(const CMap& m)
+{
+    return Set(m);
+}
+
+bool CMapItem::operator==(const bool b)
+{
+    // 注意: 必须 数据类型 和 值 都对应 才返回true
+    if (KLB_ADT_bool == klb_adt_type(m_ref_adt))
+    {
+        return (b == klb_adt_to_bool(m_ref_adt)) ? true : false;
+    }
+    return false;
+}
+
+bool CMapItem::operator==(const int64_t i64)
+{
+    if (KLB_ADT_int64 == klb_adt_type(m_ref_adt))
+    {
+        int64_t v = klb_adt_to_int64(m_ref_adt);
+        return (i64 == v) ? true : false;
+    }
+    return false;
+}
+
+bool CMapItem::operator==(const uint64_t u64)
+{
+    if (KLB_ADT_uint64 == klb_adt_type(m_ref_adt))
+    {
+        uint64_t v = klb_adt_to_uint64(m_ref_adt);
+        return (u64 == v) ? true : false;
+    }
+    return false;
+}
+
+bool CMapItem::operator==(const std::string& str)
+{
+    if (KLB_ADT_string == klb_adt_type(m_ref_adt))
+    {
+        const char* ptr = klb_adt_to_string(m_ref_adt);
+        return (str == ptr) ? true : false;
+    }
+    return false;
+}
+
+bool CMapItem::operator==(const char* p_str)
+{
+    if (NULL != p_str && KLB_ADT_string == klb_adt_type(m_ref_adt))
+    {
+        const char* ptr = klb_adt_to_string(m_ref_adt);
+        return (0 == strcmp(ptr, p_str)) ? true : false;
+    }
+    return false;
+}
+
+CMapItem& CMapItem::Set(const bool b)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, b);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, b);
+        }
+    }
+    else
+    {
+        klb_adt_set_bool(m_ref_adt, b);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const int64_t i64)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, i64);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, i64);
+        }
+    }
+    else
+    {
+        klb_adt_set_int64(m_ref_adt, i64);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const uint64_t u64)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, u64);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, u64);
+        }
+    }
+    else
+    {
+        klb_adt_set_uint64(m_ref_adt, u64);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const double d)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, d);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, d);
+        }
+    }
+    else
+    {
+        klb_adt_set_double(m_ref_adt, d);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const std::string& str)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, str);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, str);
+        }
+    }
+    else
+    {
+        klb_adt_set_string(m_ref_adt, str.c_str());
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const char* p_str)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, p_str);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, p_str);
+        }
+    }
+    else
+    {
+        klb_adt_set_string(m_ref_adt, p_str);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const char* p_str, int str_len)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, p_str, str_len);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, p_str, str_len);
+        }
+    }
+    else
+    {
+        klb_adt_set_lstring(m_ref_adt, p_str, str_len);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const void* ptr1, const void* ptr2)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, ptr1, ptr2);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, ptr1, ptr2);
+        }
+    }
+    else
+    {
+        klb_adt_set_ptr(m_ref_adt, ptr1, ptr2);
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Set(const CMap& m)
+{
+    if (NULL != m_ref_map)
+    {
+        if (KLB_CMAP_ITEM_array == m_type)
+        {
+            m_ref_map->Set(m_idx, m);
+        }
+        else
+        {
+            m_ref_map->Set(m_key, m);
+        }
+    }
+    else
+    {
+        klb_adt_set_map_clone(m_ref_adt, &m.m_map);
+    }
+
+    return *this;
+}
+
+klb_adt_type_e CMapItem::Type()
+{
+    return klb_adt_type(m_ref_adt);
+}
+
+CMapItem& CMapItem::Get(bool& b)
+{
+    b = klb_adt_to_bool(m_ref_adt);
+    return *this;
+}
+
+CMapItem& CMapItem::Get(int64_t& i64)
+{
+    i64 = klb_adt_to_int64(m_ref_adt);
+    return *this;
+}
+
+CMapItem& CMapItem::Get(uint64_t& u64)
+{
+    u64 = klb_adt_to_uint64(m_ref_adt);
+    return *this;
+}
+
+CMapItem& CMapItem::Get(double& d)
+{
+    d = klb_adt_to_double(m_ref_adt);
+    return *this;
+}
+
+CMapItem& CMapItem::Get(std::string& str)
+{
+    str = klb_adt_to_string(m_ref_adt);
+    return *this;
+}
+
+CMapItem& CMapItem::Get(const char** p_out_str, int* p_out_len)
+{
+    const char* p_str = klb_adt_to_lstring(m_ref_adt, p_out_len);
+
+    if (NULL != p_out_str)
+    {
+        *p_out_str = p_str;
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Get(const void** p_out_ptr1, const void** p_out_ptr2)
+{
+    const void* p_ptr1 = klb_adt_to_ptr(m_ref_adt, p_out_ptr2);
+
+    if (NULL != p_out_ptr1)
+    {
+        *p_out_ptr1 = p_ptr1;
+    }
+
+    return *this;
+}
+
+CMapItem& CMapItem::Get(CMap& m)
+{
+    klb_map_t* ptr = klb_adt_to_map(m_ref_adt);
+
+    klb_map_copy(&m.m_map, ptr);
+    return *this;
+}
+
+bool CMapItem::ToBool()
+{
+    return klb_adt_to_bool(m_ref_adt);
+}
+
+int64_t CMapItem::ToInt64()
+{
+    return klb_adt_to_int64(m_ref_adt);
+}
+
+uint64_t CMapItem::ToUint64()
+{
+    return klb_adt_to_uint64(m_ref_adt);
+}
+
+double CMapItem::ToDouble()
+{
+    return klb_adt_to_double(m_ref_adt);
+}
+
+std::string CMapItem::ToString()
+{
+    const char* p_str = klb_adt_to_string(m_ref_adt);
+    return (NULL != p_str) ? p_str : "";
+}
+
+const char* CMapItem::ToString(int* p_out_len)
+{
+    return klb_adt_to_lstring(m_ref_adt, p_out_len);
+}
+
+const void* CMapItem::ToPtr(const void** p_out_ptr2)
+{
+    return klb_adt_to_ptr(m_ref_adt, p_out_ptr2);
+}
+
+std::string CMapItem::Print()
+{
+    switch (Type())
+    {
+    case KLB_ADT_null:
+        return "null";
+        break;
+    case KLB_ADT_bool:
+        return ToBool() ? "true" : "false";
+        break;
+    case KLB_ADT_string:
+        {
+            std::ostringstream ss;
+            ss << "\"" << ToString() << "\"";
+            return ss.str();
+        }
+        break;
+    case KLB_ADT_double:
+        {
+            std::ostringstream ss;
+            ss << ToDouble();
+            return ss.str();
+        }
+        break;
+    case KLB_ADT_uint64:
+        {
+            std::ostringstream ss;
+            ss << ToUint64();
+            return ss.str();
+        }
+        break;
+    case KLB_ADT_int64:
+        {
+            std::ostringstream ss;
+            ss << ToInt64();
+            return ss.str();
+        }
+        break;
+    case KLB_ADT_map:
+        {
+            klb::CMap map;
+            Get(map);
+            return map.PrintJson();
+        }
+        break;
+    case KLB_ADT_ptr:
+        {
+            std::ostringstream ss;
+            ss << "\"0x" << ToPtr(NULL) << "\"";
+            return ss.str();
+        }
+        break;
+    default:
+        break;
+    }
+
+    return "null";
+}
+
+void CMapItem::SetMapAdt(CMap* p_map, const std::string& key, klb_adt_t* p_adt)
+{
+    assert(NULL != p_map);
+    assert(NULL != p_adt);
+
+    m_ref_map = p_map;
+    m_ref_adt = p_adt;
+
+    m_type = KLB_CMAP_ITEM_keyvalue;
+    
+    KLB_FREE_BY(m_key, sdsfree);
+    m_key = sdsnew(key.c_str());
+}
+
+void CMapItem::SetMapAdt(CMap* p_map, int idx, klb_adt_t* p_adt)
+{
+    assert(NULL != p_map);
+    assert(NULL != p_adt);
+
+    m_ref_map = p_map;
+    m_ref_adt = p_adt;
+
+    m_type = KLB_CMAP_ITEM_array;
+    m_idx = idx;
+}
+
+void CMapItem::SetMapAdt(klb_adt_t* p_adt)
+{
+    m_ref_map = NULL;
+    m_ref_adt = p_adt;
+    m_type = 0;
+}
+
+void CMapItem::InitAdt()
+{
+    m_ref_map = NULL;
+    m_ref_adt = NULL;
+    m_type = 0;
+    m_idx = 0;
+    m_key = NULL;
+}
+
+void CMapItem::QuitAdt()
+{
+    m_ref_map = NULL;
+    m_ref_adt = NULL;
+    m_type = 0;
+    m_idx = 0;
+    KLB_FREE_BY(m_key, sdsfree);
+}
+
+void CMapItem::CopyTo(const CMapItem& t)
+{
+    m_ref_map = t.m_ref_map;
+    m_ref_adt = t.m_ref_adt;
+    m_type = t.m_type;
+    m_idx = t.m_idx;
+
+    KLB_FREE_BY(m_key, sdsfree);
+    m_key = sdsnew(t.m_key);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//  CMapIter
 
 CMapIter::CMapIter()
 {
+    m_map = NULL;
     m_iter = NULL;
-}
-
-CMapIter::CMapIter(klb_hlist_iter_t* p_iter)
-{
-    m_iter = p_iter;
 }
 
 CMapIter::CMapIter(const CMapIter& t)
 {
-    CopyTo(t);
+    m_map = t.m_map;
+    m_iter = t.m_iter;
+}
+
+CMapIter::CMapIter(CMap* p_map, klb_map_iter_t* p_iter)
+{
+    m_map = p_map;
+    m_iter = p_iter;
 }
 
 CMapIter::~CMapIter()
 {
-
+    m_map = NULL;
+    m_iter = NULL;
 }
 
 CMapIter& CMapIter::operator=(const CMapIter& t)
 {
-    CopyTo(t);
-    return (*this);
+    m_map = t.m_map;
+    m_iter = t.m_iter;
+    return *this;
 }
 
-CMapIter CMapIter::Next()
+CMapIter& CMapIter::operator++(int i)
 {
-    klb_hlist_iter_t* p_next = NULL;
+    return Next();
+}
+
+CMapIter& CMapIter::operator--(int d)
+{
+    return Prev();
+}
+
+bool CMapIter::IsNull()
+{
+    return (NULL == m_iter) ? true : false;
+}
+
+CMapIter& CMapIter::Next()
+{
     if (NULL != m_iter)
     {
-        p_next = klb_hlist_next(m_iter);
+        m_iter = klb_map_next(m_iter);
     }
-
-    return CMapIter(p_next);
-}
-
-bool CMapIter::IsEnd()
-{
-    return (NULL == m_iter);
-}
-
-CMapObj& CMapIter::Data()
-{
-    CMapObj* ptr = (CMapObj*)klb_hlist_data(m_iter);
-    return (*ptr);
-}
-
-void CMapIter::CopyTo(const CMapIter& t)
-{
-    m_iter = t.m_iter;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// CMapObj
-
-CMapObj::CMapObj()
-{
-    Init();
-}
-
-CMapObj::CMapObj(const CMapObj& t)
-{
-    Init();
-    CopyTo(t);
-}
-
-CMapObj::CMapObj(const std::string& key)
-{
-    Init();
-    m_key = key;
-}
-
-CMapObj::CMapObj(const std::string& key, const CArray& v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, const CMap& v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, const void* func, const void* o)
-{
-    Init();
-    m_key = key;
-    Set(func, o);
-}
-
-CMapObj::CMapObj(const std::string& key, const void* v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, const char* v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, const char* data, int size)
-{
-    Init();
-    m_key = key;
-    Set(data, size);
-}
-
-CMapObj::CMapObj(const std::string& key, const std::string& v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, bool v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, double v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::CMapObj(const std::string& key, int64_t v)
-{
-    Init();
-    m_key = key;
-    Set(v);
-}
-
-CMapObj::~CMapObj()
-{
-    Quit();
-}
-
-CMapObj& CMapObj::operator=(const CArray& v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const CMap& v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const void* v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const char* v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const std::string& v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const bool& v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const double& v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-CMapObj& CMapObj::operator=(const int64_t& v)
-{
-    Set(v);
-
-    return (*this);
-}
-
-bool CMapObj::operator==(const void* v)
-{
-    void* ptr = NULL;
-    if (Get(&ptr))
-    {
-        return (ptr == v);
-    }
-
-    return false;
-}
-
-bool CMapObj::operator==(const char* v)
-{
-    if (NULL == v)
-    {
-        return false;
-    }
-
-    std::string s;
-    if (Get(s))
-    {
-        return (s == v);
-    }
-
-    return false;
-}
-
-bool CMapObj::operator==(const std::string& v)
-{
-    std::string s;
-    if (Get(s))
-    {
-        return (s == v);
-    }
-
-    return false;
-}
-
-bool CMapObj::operator==(const bool& v)
-{
-    bool b = false;
-    if (Get(b))
-    {
-        return (b == v);
-    }
-
-    return false;
-}
-
-bool CMapObj::operator==(const int64_t& v)
-{
-    int64_t i = 0;
-    if (Get(i))
-    {
-        return (i == v);
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(CArray& v)
-{
-    if (CMAP_CArray == m_type)
-    {
-        v = *((CArray*)m_value);
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(CMap& v)
-{
-    if (CMAP_CMap == m_type)
-    {
-        v = *((CMap*)m_value);
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(void** func, void** o)
-{
-    if (CMAP_Func == m_type)
-    {
-        if (func)
-        {
-            *func = m_value;
-        }
-
-        if (o)
-        {
-            *o = m_obj;
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(void** v)
-{
-    if (CMAP_Ptr == m_type)
-    {
-        if (v)
-        {
-            *v = m_value;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(char** data, int* size)
-{
-    if (CMAP_Buf == m_type)
-    {
-        if (size)
-        {
-            *size = (int)m_value_int64;
-        }
-
-        if (data)
-        {
-            *data = (char*)m_value;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(std::string& v)
-{
-    if (CMAP_String == m_type)
-    {
-        v = *((std::string*)m_value);
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(bool& v)
-{
-    if (CMAP_Bool == m_type)
-    {
-        v = m_value_bool;
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(double& v)
-{
-    if (CMAP_Double == m_type)
-    {
-        v = m_value_double;
-        return true;
-    }
-
-    return false;
-}
-
-bool CMapObj::Get(int64_t& v)
-{
-    if (CMAP_Int64 == m_type)
-    {
-        v = m_value_int64;
-        return true;
-    }
-
-    return false;
-}
-
-CMapObjType CMapObj::Type()
-{
-    return m_type;
-}
-
-bool CMapObj::IsType(CMapObjType t)
-{
-    return (m_type == t);
-}
-
-CArray CMapObj::GetArray()
-{
-    if (CMAP_CArray == m_type)
-    {
-        return *((CArray*)m_value);
-    }
-
-    return CArray();
-}
-
-CMap CMapObj::GetMap()
-{
-    if (CMAP_CMap == m_type)
-    {
-        return *((CMap*)m_value);
-    }
-
-    return CMap();
-}
-
-void* CMapObj::GetFunc(void** o, const void* p_default)
-{
-    if (CMAP_Func == m_type)
-    {
-        if (o)
-        {
-            *o = m_obj;
-        }
-        return m_value;
-    }
-
-    return (void*)p_default;
-}
-
-void* CMapObj::GetPtr(const void* p_default)
-{
-    if (CMAP_Ptr == m_type)
-    {
-        return m_value;
-    }
-
-    return (void*)p_default;
-}
-
-char* CMapObj::GetBuf(int* size, const void* p_default)
-{
-    if (CMAP_Buf == m_type)
-    {
-        if (size)
-        {
-            *size = (int)m_value_int64;
-        }
-
-        return (char*)m_value;
-    }
-
-    return (char*)(p_default);
-}
-
-std::string CMapObj::GetString(const std::string v_default)
-{
-    if (CMAP_String == m_type)
-    {
-        return *((std::string*)m_value);
-    }
-
-    return v_default;
-}
-
-bool CMapObj::GetBool(const bool v_default)
-{
-    if (CMAP_Bool == m_type)
-    {
-        return m_value_bool;
-    }
-
-    return v_default;
-}
-
-double CMapObj::GetDouble(const double v_default)
-{
-    if (CMAP_Double == m_type)
-    {
-        return m_value_double;
-    }
-
-    return v_default;
-}
-
-int64_t CMapObj::GetInt64(const int64_t v_default)
-{
-    if (CMAP_Int64 == m_type)
-    {
-        return m_value_int64;
-    }
-
-    return v_default;
-}
-
-CMapObj& CMapObj::Set(const CArray& v)
-{
-    ClearValue();
-
-    m_value = new CArray(v);
-    m_type = CMAP_CArray;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(const CMap& v)
-{
-    ClearValue();
-
-    m_value = new CMap(v);
-    m_type = CMAP_CMap;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(const void* func, const void* o)
-{
-    ClearValue();
-
-    m_value = (void*)func;
-    m_obj = (void*)o;
-    m_type = CMAP_Func;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, func, o);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, func, o);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(const void* v)
-{
-    ClearValue();
-
-    m_value = (void*)v;
-    m_type = CMAP_Ptr;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(const char* v)
-{
-    ClearValue();
-
-    m_value = new std::string(v ? v : "");
-    m_type = CMAP_String;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(const char* data, int size)
-{
-    ClearValue();
-
-    char* ptr = KLB_MALLOCZ(char, size, 4);
-    if (NULL != data && 0 < size)
-    {
-        memcpy(ptr, data, size);
-    }
-
-    m_value = ptr;
-    m_value_int64 = size;
-    m_type = CMAP_Buf;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, data, size);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, data, size);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(const std::string& v)
-{
-    ClearValue();
-
-    m_value = new std::string(v);
-    m_type = CMAP_String;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(bool v)
-{
-    ClearValue();
-
-    m_value_bool = v;
-    m_type = CMAP_Bool;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(double v)
-{
-    ClearValue();
-
-    m_value_double = v;
-    m_type = CMAP_Double;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-CMapObj& CMapObj::Set(int64_t v)
-{
-    ClearValue();
-
-    m_value_int64 = v;
-    m_type = CMAP_Int64;
-
-    if (NULL != m_array)
-    {
-        m_array->Set(m_array_idx, v);
-    }
-    else if (NULL != m_map)
-    {
-        m_map->Set(m_key, v);
-    }
-
-    return (*this);
-}
-
-
-std::string CMapObj::GetKey()
-{
-    return m_key;
-}
-
-std::string CMapObj::Dump()
-{
-    std::ostringstream ss;
-
-    switch (m_type)
-    {
-    case CMAP_CArray:
-        {
-            CArray v;
-            Get(v);
-
-            ss << "[" << m_key << ":" << v.Dump() << "]";
-        }
-        break;
-    case CMAP_CMap:
-        {
-            CMap v;
-            Get(v);
-
-            ss << "[" << m_key << ":" << v.Dump() << "]";
-        }
-        break;
-    case CMAP_Func:
-        {
-            void* func = NULL;
-            void* o = NULL;
-            Get(&func, &o);
-
-            ss << "{" << m_key << ":0x" << func << "-0x" << o << "}";
-        }
-        break;
-    case CMAP_Ptr:
-        {
-            void* v = NULL;
-            Get(&v);
-
-            ss << "{" << m_key << ":0x" << v << "}";
-        }
-        break;
-    case CMAP_String:
-        {
-            std::string v;
-            Get(v);
-
-            ss << "{" << m_key << ":" << v << "}";
-        }
-        break;
-    case CMAP_Bool:
-        {
-            bool v;
-            Get(v);
-
-            ss << "{" << m_key << ":" << (v ? "true" : "false") << "}";
-        }
-        break;
-    case CMAP_Double:
-        {
-            double v;
-            Get(v);
-
-            ss << "{" << m_key << ":" << v << "}";
-        }
-        break;
-    case CMAP_Int64:
-        {
-            int64_t v;
-            Get(v);
-
-            ss << "{" << m_key << ":" << v << "}";
-        }
-        break;
-    default:
-        {
-            ss << "{" << m_key << ":none}";
-        }
-        break;
-    }
-
-    return ss.str();
-}
-
-void CMapObj::Init()
-{
-    m_array = NULL;
-    m_array_idx = -1;
-
-    m_map = NULL;
-    m_key = "";
-
-    m_type = CMAP_None;
-    m_value = NULL;
-    m_value_int64 = 0;
-}
-
-void CMapObj::Quit()
-{
-    ClearValue();
-}
-
-void CMapObj::Reset()
-{
-    ClearValue();
-    Init();
-}
-
-void CMapObj::SetArray(CArray* p_array, int idx)
-{
-    m_array = p_array;
-    m_array_idx = idx;
-}
-
-void CMapObj::SetMap(CMap* p_map)
-{
-    m_map = p_map;
-}
-
-void CMapObj::SetKey(const std::string& key)
-{
-    m_key = key;
-}
-
-void CMapObj::ClearValue()
-{
-    switch (m_type)
-    {
-    case CMAP_CArray:
-        {
-            CArray* ptr = (CArray*)m_value;
-            delete ptr;
-        }
-        break;
-    case CMAP_CMap:
-        {
-            CMap* ptr = (CMap*)m_value;
-            delete ptr;
-        }
-        break;
-    case CMAP_Buf:
-        {
-            char* ptr = (char*)m_value;
-            KLB_FREE(ptr);
-        }
-        break;
-    case CMAP_String:
-        {
-            std::string* ptr = (std::string*)m_value;
-            delete ptr;
-        }
-        break;
-    default:
-        break;
-    }
-
-    m_value = NULL;
-    m_value_int64 = 0;
-
-    m_type = CMAP_None;
-}
-
-void CMapObj::CopyTo(const CMapObj& t)
-{
-    m_map = t.m_map;
-    m_key = t.m_key;
-
-    m_type = t.m_type;
-    switch (t.m_type)
-    {
-    case CMAP_CArray:
-        {
-            const CArray* p_v = (const CArray*)t.m_value;
-            m_value = new CArray(*p_v);
-        }
-        break;
-    case CMAP_CMap:
-        {
-            const CMap* p_v = (const CMap*)t.m_value;
-            m_value = new CMap(*p_v);
-        }
-        break;
-    case CMAP_Func:
-        {
-            m_value = t.m_value;
-            m_obj = t.m_obj;
-        }
-        break;
-    case CMAP_Ptr:
-        {
-            m_value = t.m_value;
-        }
-        break;
-    case CMAP_String:
-        {
-            const std::string* p_v = (const std::string*)t.m_value;
-            m_value = new std::string(*p_v);
-        }
-        break;
-    case CMAP_Bool:
-        {
-            m_value_bool = t.m_value_bool;
-        }
-        break;
-    case CMAP_Double:
-        {
-            m_value_double = t.m_value_double;
-        }
-        break;
-    case CMAP_Int64:
-        {
-            m_value_int64 = t.m_value_int64;
-        }
-        break;
-    default:
-        break;
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////
-// CArray
-
-CArray::CArray()
-{
-    Init();
-}
-
-CArray::CArray(const CArray& t)
-{
-    Init();
-    CopyTo(t);
-}
-
-CArray::~CArray()
-{
-    Quit();
-}
-
-CArray& CArray::operator=(const CArray& t)
-{
-    Quit();
-    Init();
-    CopyTo(t);
-    return (*this);
-}
-
-// 大小
-int CArray::Size()
-{
-    return klb_vector_size(m_vector);
-}
-
-CMapObj& CArray::Get(int idx)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return *p_obj;
-    }
-    else
-    {
-        m_none.Reset();
-        m_none.SetArray(this, -1);
-
-        return m_none;
-    }
-}
-
-CMapObj& CArray::operator[](int idx)
-{
-    return Get(idx);
-}
-
-bool CArray::Get(int idx, CArray& v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, CMap& v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, void** func, void** o)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(func, o);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, void** v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, char** data, int* size)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(data, size);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, std::string& v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, bool& v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, double& v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-bool CArray::Get(int idx, int64_t& v)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Get(v);
-    }
-
-    return false;
-}
-
-CMapObjType CArray::Type(int idx)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->Type();
-    }
-
-    return CMAP_None;
-}
-
-bool CArray::IsType(int idx, CMapObjType t)
-{
-    CMapObj* p_obj = Find(idx);
-    if (NULL != p_obj)
-    {
-        return p_obj->IsType(t);
-    }
-
-    return false;
-}
-
-CArray CArray::GetArray(int idx)
-{
-    CArray v;
-    if (Get(idx, v))
-    {
-        return v;
-    }
-
-    return CArray();
-}
-
-CMap CArray::GetMap(int idx)
-{
-    CMap v;
-    if (Get(idx, v))
-    {
-        return v;
-    }
-
-    return CMap();
-}
-
-void* CArray::GetFunc(int idx, void** o, const void* p_default)
-{
-    void* func = NULL;
-    if (Get(idx, &func, o))
-    {
-        return func;
-    }
-
-    return (void*)p_default;
-}
-
-void* CArray::GetPtr(int idx, const void* p_default)
-{
-    void* ptr = NULL;
-    if (Get(idx, &ptr))
-    {
-        return ptr;
-    }
-
-    return (void*)p_default;
-}
-
-char* CArray::GetBuf(int idx, int* size, const char* p_default)
-{
-    char* ptr = NULL;
-    if (Get(idx, &ptr, size))
-    {
-        return ptr;
-    }
-
-    return (char*)p_default;
-}
-
-std::string CArray::GetString(int idx, const std::string v_default)
-{
-    std::string s;
-    if (Get(idx, s))
-    {
-        return s;
-    }
-
-    return v_default;
-}
-
-bool CArray::GetBool(int idx, const bool v_default)
-{
-    bool b;
-    if (Get(idx, b))
-    {
-        return b;
-    }
-
-    return v_default;
-}
-
-double CArray::GetDouble(int idx, const double v_default)
-{
-    double d;
-    if (Get(idx, d))
-    {
-        return d;
-    }
-
-    return v_default;
-}
-
-int64_t CArray::GetInt64(int idx, const int64_t v_default)
-{
-    int64_t n;
-    if (Get(idx, n))
-    {
-        return n;
-    }
-
-    return v_default;
-}
-
-CArray& CArray::Set(int idx, const CArray& v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, const CMap& v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, const void* func, const void* o)
-{
-    return SetValue(idx, new CMapObj("", func, o));
-}
-
-CArray& CArray::Set(int idx, const void* v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, const char* v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, const char* data, int size)
-{
-    return SetValue(idx, new CMapObj("", data, size));
-}
-
-CArray& CArray::Set(int idx, const std::string& v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, bool v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, double v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Set(int idx, int64_t v)
-{
-    return SetValue(idx, new CMapObj("", v));
-}
-
-CArray& CArray::Append(const CArray& v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(const CMap& v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(const void* func, const void* o)
-{
-    return AppendValue(new CMapObj("", func, o));
-}
-
-CArray& CArray::Append(const void* v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(const char* v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(const char* data, int size)
-{
-    return AppendValue(new CMapObj("", data, size));
-}
-
-CArray& CArray::Append(const std::string& v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(bool v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(double v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-CArray& CArray::Append(int64_t v)
-{
-    return AppendValue(new CMapObj("", v));
-}
-
-// dump
-std::string CArray::Dump()
-{
-    std::ostringstream ss;
-
-    for (int i = 0; i < Size();i++)
-    {
-        CMapObj& item = Get(i);
-        ss << item.Dump() << "\n";
-    }
-
-    return ss.str();
-}
-
-CArray& CArray::SetValue(int idx, CMapObj* p_v)
-{
-    assert(NULL != p_v);
-    assert(CMAP_None != p_v->m_type);
-
-    if (0 <= idx && idx < klb_vector_size(m_vector))
-    {
-        // 替换
-        p_v->SetArray(this, idx);
-
-        CMapObj* p_obj = (CMapObj*)klb_vector_update(m_vector, idx, p_v);
-        assert(NULL != p_obj);
-
-        delete p_obj;
-    }
-    else
-    {
-        // 追加
-        int idx_push = klb_vector_push_tail(m_vector, p_v);
-        p_v->SetArray(this, idx_push);
-    }
-
     return *this;
 }
 
-CArray& CArray::AppendValue(CMapObj* p_v)
+CMapIter& CMapIter::Prev()
 {
-    assert(NULL != p_v);
-    assert(CMAP_None != p_v->m_type);
-
-    int idx = klb_vector_push_tail(m_vector, p_v);
-    p_v->SetArray(this, idx);
-
+    if (NULL != m_iter)
+    {
+        m_iter = klb_map_prev(m_iter);
+    }
     return *this;
 }
 
-void CArray::Init()
+CMapItem CMapIter::Value()
 {
-    m_vector = klb_vector_create();
-}
+    assert(NULL != m_map);
 
-void CArray::Quit()
-{
-    while (0 < klb_vector_size(m_vector))
+    klb_adt_t* p_adt = NULL;
+    if (NULL != m_iter)
     {
-        CMapObj* p_obj = (CMapObj*)klb_vector_pop_tail(m_vector);
-        delete p_obj;
+        p_adt = klb_map_data(m_iter);
+        assert(NULL != p_adt);
+    }
+    else
+    {
+        p_adt = m_map->GetNoneAdt();
     }
 
-    KLB_FREE_BY(m_vector, klb_vector_destroy);
+    CMapItem item;
+    item.SetMapAdt(p_adt);
+    return item;
 }
 
-CMapObj* CArray::Find(int idx)
+std::string CMapIter::Key()
 {
-    if (0 <= idx && idx < klb_vector_size(m_vector))
+    const char* p_key = NULL;
+    if (NULL != m_iter)
     {
-        CMapObj* p_obj = (CMapObj*)klb_vector_get(m_vector, idx);
-        assert(NULL != p_obj);
-
-        return p_obj;
+        p_key = klb_map_key(m_iter);
     }
 
-    return NULL;
+    return (NULL != p_key) ? p_key : "";
 }
-
-void CArray::CopyTo(const CArray& t)
-{
-    int size = klb_vector_size(t.m_vector);
-    for (int i = 0; i < size; i++)
-    {
-        CMapObj* p_obj = (CMapObj*)klb_vector_get(t.m_vector, i);
-        assert(NULL != p_obj);
-
-        CMapObj* p_new = new CMapObj(*p_obj);
-
-        int idx = klb_vector_push_tail(m_vector, p_new);
-        p_new->SetArray(this, idx);
-
-        assert(idx == i);
-    }
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 // CMap
 
 CMap::CMap()
 {
-    Init();
+    m_share = false;
+    InitKlbMap();
 }
 
-CMap::CMap(bool is_array)
+CMap::CMap(klb_map_t* p_map, bool share)
 {
-    Init();
+    m_share = true;
 
-    m_is_array = true;
+    m_map.p_item_hlist = p_map->p_item_hlist;
+    m_map.p_item_vector = p_map->p_item_vector;
+    klb_adt_int(&m_none_adt);
 }
 
-CMap::CMap(const CArray& t)
+CMap::CMap(klb_map_t* p_map)
 {
-    Init();
-    CopyTo(t);
+    m_share = false;
+
+    if (NULL != p_map)
+    {
+        assert(NULL != p_map->p_item_hlist);
+        assert(NULL != p_map->p_item_vector);
+
+        memset(&m_map, 0, sizeof(m_map));
+
+        m_map.p_item_hlist = p_map->p_item_hlist;
+        m_map.p_item_vector = p_map->p_item_vector;
+
+        klb_adt_int(&m_none_adt);
+
+        KLB_FREE(p_map);
+    }
+    else
+    {
+        InitKlbMap();
+    }
 }
 
 CMap::CMap(const CMap& t)
 {
-    Init();
-    CopyTo(t);
+    m_share = false;
+
+    InitKlbMap();
+    klb_map_copy(&m_map, &t.m_map);
 }
 
 CMap::~CMap()
 {
-    Quit();
+    QuitKlbMap();
 }
 
-CMap& CMap::operator=(const CArray& t)
+void CMap::InitKlbMap()
 {
-    Quit();
-    Init();
-    CopyTo(t);
-    return (*this);
+    memset(&m_map, 0, sizeof(m_map));
+    klb_map_init(&m_map);
+    klb_adt_int(&m_none_adt);
 }
 
-CMap& CMap::operator=(const CMap& t)
+void CMap::QuitKlbMap()
 {
-    Quit();
-    Init();
-    CopyTo(t);
-    return (*this);
+    if (!m_share)
+    {
+        klb_map_quit(&m_map);
+        klb_adt_quit(&m_none_adt);
+    }
 }
 
 //////////////////////////////////
-// 
 
-bool CMap::IsArray()
+const klb_map_t* CMap::GetMap()
 {
-    return m_is_array;
+    return &m_map;
 }
 
-CArray& CMap::Array()
+void CMap::Attach(klb_map_t* p_map)
 {
-    return m_array;
+    assert(!m_share); // 不许可共享模式
+
+    if (NULL != p_map)
+    {
+        QuitKlbMap();
+
+        assert(NULL != p_map->p_item_hlist);
+        assert(NULL != p_map->p_item_vector);
+
+        memset(&m_map, 0, sizeof(m_map));
+
+        m_map.p_item_hlist = p_map->p_item_hlist;
+        m_map.p_item_vector = p_map->p_item_vector;
+
+        klb_adt_int(&m_none_adt);
+
+        KLB_FREE(p_map);
+    }
+    else
+    {
+        Clear();
+    }
+}
+
+void CMap::Clear()
+{
+    klb_map_clear(&m_map);
 }
 
 int CMap::Size()
 {
-    return klb_hlist_size(m_hlist);
+    return klb_map_size(&m_map);
 }
 
-CMap&  CMap::Delete(const std::string& key)
+CMap& CMap::operator=(const CMap& t)
 {
-    klb_hlist_iter_t* p_iter = klb_hlist_find_iter(m_hlist, key.c_str(), key.length());
-    if (NULL != p_iter)
-    {
-        CMapObj* ptr = (CMapObj*)klb_hlist_remove(m_hlist, p_iter);
-        delete ptr;
-    }
+    klb_map_copy(&m_map, &t.m_map);
+    return *this;
+}
 
-    return (*this);
+CMap& CMap::operator=(const klb_map_t* p_map)
+{
+    klb_map_copy(&m_map, p_map);
+    return *this;
+}
+
+CMapItem& CMap::operator[](const std::string& key)
+{
+    const klb_adt_t* p_adt = klb_map_to_adt(&m_map, key.c_str());
+    klb_adt_t* p_dst = (NULL != p_adt) ? (klb_adt_t*)p_adt : GetNoneAdt();
+
+    m_none_item.SetMapAdt(this, key, p_dst);
+    return m_none_item;
+}
+
+CMapItem& CMap::operator[](const char* p_key)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+
+    const klb_adt_t* p_adt = klb_map_to_adt(&m_map, key.c_str());
+    klb_adt_t* p_dst = (NULL != p_adt) ? (klb_adt_t*)p_adt : GetNoneAdt();
+
+    m_none_item.SetMapAdt(this, key, p_dst);
+    return m_none_item;
+}
+
+CMapItem& CMap::operator[](int idx)
+{
+    const klb_adt_t* p_adt = klb_map_idx_to_adt(&m_map, idx);
+    klb_adt_t* p_dst = (NULL != p_adt) ? (klb_adt_t*)p_adt : GetNoneAdt();
+
+    m_none_item.SetMapAdt(this, idx, p_dst);
+    return m_none_item;
 }
 
 //////////////////////////////////
-// get
 
-CMapObj& CMap::Get(const std::string& key)
+CMap& CMap::SetNull(const std::string& key)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL == ptr)
-    {
-        m_none.Reset();
-        m_none.SetKey(key);
-        m_none.SetMap(this);
-
-        ptr = &m_none;
-    }
-    else
-    {
-        assert(CMAP_None != ptr->m_type);
-        assert(this == ptr->m_map);
-    }
-
-    return (*ptr);
+    klb_map_set_null(&m_map, key.c_str());
+    return *this;
 }
 
-CMapObj& CMap::operator[](const std::string& key)
+CMap& CMap::Set(const std::string& key, const bool b)
 {
-    return Get(key);
+    klb_map_set_bool(&m_map, key.c_str(), b);
+    return *this;
 }
 
-//////////////////////////////////
-// get value
-
-bool CMap::Get(const std::string& key, CArray& v)
+CMap& CMap::Set(const std::string& key, const int64_t i64)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    klb_map_set_int64(&m_map, key.c_str(), i64);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, CMap& v)
+CMap& CMap::Set(const std::string& key, const uint64_t u64)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    klb_map_set_uint64(&m_map, key.c_str(), u64);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, void** func, void** o)
+CMap& CMap::Set(const std::string& key, const double d)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(func, o);
-    }
-
-    return false;
+    klb_map_set_double(&m_map, key.c_str(), d);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, void** v)
+CMap& CMap::Set(const std::string& key, const std::string& str)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    klb_map_set_lstring(&m_map, key.c_str(), str.c_str(), str.size());
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, char** data, int* size)
+CMap& CMap::Set(const std::string& key, const char* p_str)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(data, size);
-    }
-
-    return false;
+    klb_map_set_string(&m_map, key.c_str(), p_str);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, std::string& v)
+CMap& CMap::Set(const std::string& key, const char* p_str, int str_len)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    klb_map_set_lstring(&m_map, key.c_str(), p_str, str_len);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, bool& v)
+CMap& CMap::Set(const std::string& key, const void* ptr1, const void* ptr2)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    klb_map_set_ptr(&m_map, key.c_str(), ptr1, ptr2);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, double& v)
+CMap& CMap::Set(const std::string& key, const CMap& m)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    klb_map_set_map_clone(&m_map, key.c_str(), &m.m_map);
+    return *this;
 }
 
-bool CMap::Get(const std::string& key, int64_t& v)
+CMap& CMap::SetNull(const char* p_key)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->Get(v);
-    }
-
-    return false;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return SetNull(key);
 }
 
-
-//////////////////////////////////
-// 按类型获取值
-
-CMapObjType CMap::Type(const std::string& key)
+CMap& CMap::Set(const char* p_key, bool b)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return ptr->m_type;
-    }
-
-    return CMAP_None;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, b);
 }
 
-bool CMap::IsType(const std::string& key, CMapObjType t)
+CMap& CMap::Set(const char* p_key, int64_t i64)
 {
-    CMapObj* ptr = Find(key);
-    if (NULL != ptr)
-    {
-        return (ptr->m_type == t);
-    }
-
-    return (CMAP_None == t);
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, i64);
 }
 
-CArray CMap::GetArray(const std::string& key)
+CMap& CMap::Set(const char* p_key, uint64_t u64)
 {
-    CArray v;
-    if (Get(key, v))
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, u64);
+}
+
+CMap& CMap::Set(const char* p_key, double d)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, d);
+}
+
+CMap& CMap::Set(const char* p_key, const std::string& str)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, str);
+}
+
+CMap& CMap::Set(const char* p_key, const char* p_str)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, p_str);
+}
+
+CMap& CMap::Set(const char* p_key, const char* p_str, int str_len)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, p_str, str_len);
+}
+
+CMap& CMap::Set(const char* p_key, const void* ptr1, const void* ptr2)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, ptr1, ptr2);
+}
+
+CMap& CMap::Set(const char* p_key, const CMap& m)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, m);
+}
+
+CMap& CMap::Get(const std::string& key, bool& b)
+{
+    b = klb_map_to_bool(&m_map, key.c_str());
+    return *this;
+}
+
+CMap& CMap::Get(const std::string& key, int64_t& i64)
+{
+    i64 = klb_map_to_int64(&m_map, key.c_str());
+    return *this;
+}
+
+CMap& CMap::Get(const std::string& key, uint64_t& u64)
+{
+    u64 = klb_map_to_uint64(&m_map, key.c_str());
+    return *this;
+}
+
+CMap& CMap::Get(const std::string& key, double& d)
+{
+    d = klb_map_to_double(&m_map, key.c_str());
+    return *this;
+}
+
+CMap& CMap::Get(const std::string& key, std::string& str)
+{
+    const char* p_str = klb_map_to_string(&m_map, key.c_str());
+    str = (NULL != p_str) ? p_str : "";
+    return *this;
+}
+
+CMap& CMap::Get(const std::string& key, const char** p_out_str, int* p_out_len)
+{
+    const char* p_str = klb_map_to_lstring(&m_map, key.c_str(), p_out_len);
+
+    if (NULL != p_out_str)
     {
-        return v;
+        *p_out_str = p_str;
     }
 
-    return CArray();
+    return *this;
 }
 
-CMap CMap::GetMap(const std::string& key)
+CMap& CMap::Get(const std::string& key, const void** p_out_ptr1, const void** p_out_ptr2)
 {
-    CMap v;
-    if (Get(key, v))
+    const void* ptr1 = klb_map_to_ptr(&m_map, key.c_str(), p_out_ptr2);
+
+    if (NULL != p_out_ptr1)
     {
-        return v;
+        *p_out_ptr1 = ptr1;
     }
-
-    return CMap();
+    return *this;
 }
 
-void* CMap::GetFunc(const std::string& key, void** obj, const void* p_default)
+CMap& CMap::Get(const std::string& key, CMap& m)
 {
-    void* func = NULL;
-    if (Get(key, &func, obj))
-    {
-        return func;
-    }
+    klb_map_t* ptr = klb_map_to_map(&m_map, key.c_str());
 
-    return (void*)p_default;
+    klb_map_copy(&m.m_map, ptr);
+    return *this;
 }
 
-void* CMap::GetPtr(const std::string& key, const void* p_default)
+CMap& CMap::Get(const char* p_key, bool& b)
 {
-    void* p_v = NULL;
-    if (Get(key, &p_v))
-    {
-        return p_v;
-    }
-
-    return (void*)p_default;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, b);
 }
 
-char* CMap::GetBuf(const std::string& key, int* size, const char* p_default)
+CMap& CMap::Get(const char* p_key, int64_t& i64)
 {
-    char* buf = NULL;
-    if (Get(key, &buf, size))
-    {
-        return buf;
-    }
-
-    return (char*)p_default;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, i64);
 }
 
-std::string CMap::GetString(const std::string& key, const std::string v_default)
+CMap& CMap::Get(const char* p_key, uint64_t& u64)
 {
-    std::string v;
-    if (Get(key, v))
-    {
-        return v;
-    }
-
-    return v_default;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, u64);
 }
 
-bool CMap::GetBool(const std::string& key, const bool v_default)
+CMap& CMap::Get(const char* p_key, double& d)
 {
-    bool v = false;
-    if (Get(key, v))
-    {
-        return v;
-    }
-
-    return v_default;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, d);
 }
 
-double CMap::GetDouble(const std::string& key, const double v_default)
+CMap& CMap::Get(const char* p_key, std::string& str)
 {
-    double v = 0.0;
-    if (Get(key, v))
-    {
-        return v;
-    }
-
-    return v_default;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, str);
 }
 
-int64_t CMap::GetInt64(const std::string& key, const int64_t v_default)
+CMap& CMap::Get(const char* p_key, const char** p_out_str, int* p_out_len)
 {
-    int64_t v = 0;
-    if (Get(key, v))
-    {
-        return v;
-    }
-
-    return v_default;
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, p_out_str, p_out_len);
 }
 
-//////////////////////////////////
-// set
-
-CMap& CMap::Set(const std::string& key, const CArray& v)
+CMap& CMap::Get(const char* p_key, const void** p_out_ptr1, const void** p_out_ptr2)
 {
-    return SetValue(key, new CMapObj(key, v));
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, p_out_ptr1, p_out_ptr2);
 }
 
-CMap& CMap::Set(const std::string& key, const CMap& v)
+CMap& CMap::Get(const char* p_key, CMap& m)
 {
-    return SetValue(key, new CMapObj(key, v));
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, m);
 }
 
-CMap& CMap::Set(const std::string& key, const void* func, const void* o)
+klb_adt_type_e CMap::Type(const std::string& key)
 {
-    return SetValue(key, new CMapObj(key, func, o));
+    return (klb_adt_type_e)klb_map_type(&m_map, key.c_str());
 }
 
-CMap& CMap::Set(const std::string& key, const void* v)
+klb_adt_type_e CMap::Type(const char* p_key)
 {
-    return SetValue(key, new CMapObj(key, v));
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Type(key);
 }
 
-CMap& CMap::Set(const std::string& key, const char* v)
+int CMap::KeyValueSize()
 {
-    return SetValue(key, new CMapObj(key, v));
+    return klb_map_key_value_size(&m_map);
 }
 
-CMap& CMap::Set(const std::string& key, const char* data, int size)
+bool CMap::Remove(const std::string& key)
 {
-    return SetValue(key, new CMapObj(key, data, size));
+    return klb_map_remove_by_key(&m_map, key.c_str());
 }
 
-CMap& CMap::Set(const std::string& key, const std::string& v)
+bool CMap::Remove(const char* p_key)
 {
-    return SetValue(key, new CMapObj(key, v));
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Remove(key);
 }
 
-CMap& CMap::Set(const std::string& key, bool v)
+bool CMap::Remove(const CMapIter& iter)
 {
-    return SetValue(key, new CMapObj(key, v));
+    klb_map_remove(&m_map, iter.m_iter);
+    return true;
 }
-
-CMap& CMap::Set(const std::string& key, double v)
-{
-    return SetValue(key, new CMapObj(key, v));
-}
-
-CMap& CMap::Set(const std::string& key, int64_t v)
-{
-    return SetValue(key, new CMapObj(key, v));
-}
-
-//////////////////////////////////
-// 遍历
 
 CMapIter CMap::Begin()
 {
-    return CMapIter((klb_hlist_iter_t*)klb_hlist_begin(m_hlist));
+    klb_map_iter_t* p_iter = klb_map_begin(&m_map);
+    return CMapIter(this, p_iter);
+}
+
+CMapIter CMap::End()
+{
+    klb_map_iter_t* p_iter = klb_map_end(&m_map);
+    return CMapIter(this, p_iter);
+}
+
+CMap& CMap::AppendNull()
+{
+    klb_map_append_null(&m_map);
+    return *this;
+}
+
+CMap& CMap::Append(const bool b)
+{
+    klb_map_append_bool(&m_map, b);
+    return *this;
+}
+
+CMap& CMap::Append(const int64_t i64)
+{
+    klb_map_append_int64(&m_map, i64);
+    return *this;
+}
+
+CMap& CMap::Append(const uint64_t u64)
+{
+    klb_map_append_uint64(&m_map, u64);
+    return *this;
+}
+
+CMap& CMap::Append(const double d)
+{
+    klb_map_append_double(&m_map, d);
+    return *this;
+}
+
+CMap& CMap::Append(const std::string& str)
+{
+    klb_map_append_string(&m_map, str.c_str());
+    return *this;
+}
+
+CMap& CMap::Append(const char* p_str)
+{
+    klb_map_append_string(&m_map, p_str);
+    return *this;
+}
+
+CMap& CMap::Append(const char* p_str, int str_len)
+{
+    klb_map_append_lstring(&m_map, p_str, str_len);
+    return *this;
+}
+
+CMap& CMap::Append(const void* ptr1, const void* ptr2)
+{
+    klb_map_append_ptr(&m_map, ptr1, ptr2);
+    return *this;
+}
+
+CMap& CMap::Append(const CMap& m)
+{
+    klb_map_append_map_clone(&m_map, &m.m_map);
+    return *this;
+}
+
+CMap& CMap::SetNull(const int idx)
+{
+    klb_map_set_idx_null(&m_map, idx);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const bool b)
+{
+    klb_map_set_idx_bool(&m_map, idx, b);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const int64_t i64)
+{
+    klb_map_set_idx_int64(&m_map, idx, i64);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const uint64_t u64)
+{
+    klb_map_set_idx_uint64(&m_map, idx, u64);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const double d)
+{
+    klb_map_set_idx_double(&m_map, idx, d);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const std::string& str)
+{
+    klb_map_set_idx_string(&m_map, idx, str.c_str());
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const char* p_str)
+{
+    klb_map_set_idx_string(&m_map, idx, p_str);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const char* p_str, int str_len)
+{
+    klb_map_set_idx_lstring(&m_map, idx, p_str, str_len);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const void* ptr1, const void* ptr2)
+{
+    klb_map_set_idx_ptr(&m_map, idx, ptr1, ptr2);
+    return *this;
+}
+
+CMap& CMap::Set(const int idx, const CMap& m)
+{
+    klb_map_set_idx_map_clone(&m_map, idx, &m.m_map);
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, bool& b)
+{
+    b = klb_map_idx_to_bool(&m_map, idx);
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, int64_t& i64)
+{
+    i64 = klb_map_idx_to_int64(&m_map, idx);
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, uint64_t& u64)
+{
+    u64 = klb_map_idx_to_uint64(&m_map, idx);
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, double& d)
+{
+    d = klb_map_idx_to_double(&m_map, idx);
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, std::string& str)
+{
+    str = klb_map_idx_to_string(&m_map, idx);
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, const char** p_out_str, int* p_out_len)
+{
+    const char* p_str = klb_map_idx_to_lstring(&m_map, idx, p_out_len);
+
+    if (NULL != p_out_str)
+    {
+        *p_out_str = p_str;
+    }
+
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, const void** p_out_ptr1, const void** p_out_ptr2)
+{
+    const void* ptr1 = klb_map_idx_to_ptr(&m_map, idx, p_out_ptr2);
+
+    if (NULL != p_out_ptr1)
+    {
+        *p_out_ptr1 = ptr1;
+    }
+
+    return *this;
+}
+
+CMap& CMap::Get(const int idx, CMap& m)
+{
+    klb_map_t* ptr = klb_map_idx_to_map(&m_map, idx);
+
+    klb_map_copy(&m.m_map, ptr);
+    return *this;
+}
+
+klb_adt_type_e CMap::Type(const int idx)
+{
+    return (klb_adt_type_e)klb_map_array_type(&m_map, idx);
+}
+
+int CMap::ArraySize()
+{
+    return klb_map_array_size(&m_map);
+}
+
+bool CMap::Remove(int idx)
+{
+    return klb_map_idx_remove(&m_map, idx);
+}
+
+bool CMap::RemoveTail()
+{
+    return klb_map_idx_remove_tail(&m_map);
+}
+
+klb_adt_t* CMap::GetNoneAdt()
+{
+    klb_adt_set_null(&m_none_adt);
+    return &m_none_adt;
 }
 
 //////////////////////////////////
-// dump
+klb_buf_t* CMap::Pack()
+{
+    return klb_map_seri_pack(&m_map);
+}
 
-std::string CMap::Dump()
+void CMap::Unpack(const char* p_data, int data_len)
+{
+    Clear();
+
+    klb_map_seri_unpack(&m_map, p_data, data_len);
+}
+
+//////////////////////////////////
+
+static void CMapPrintArray(CMap& map, std::ostringstream& ss)
+{
+    for (int i = 0; i < map.ArraySize(); i++)
+    {
+        CMapItem& item = map[i];
+
+        if (0 != i)
+        {
+            ss << ",";
+        }
+
+        ss << item.Print();
+    }
+}
+
+static void CMapPrintKV(CMap& map, std::ostringstream& ss)
+{
+    bool first = true;
+    CMapIter iter = map.Begin();
+    while (!iter.IsNull())
+    {
+        std::string key = iter.Key();
+        CMapItem item = iter.Value();
+
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            ss << ",";
+        }
+
+        ss << "\"" << key << "\":" << item.Print();
+
+        iter++;
+    }
+}
+
+std::string CMap::PrintJson()
 {
     std::ostringstream ss;
 
-    CMapIter iter = Begin();
-    while (!iter.IsEnd())
+    if (0 < ArraySize())
     {
-        CMapObj& item = iter.Data();
-
-        ss << item.Dump() << "\n";
-
-        iter = iter.Next();
+        if (0 < KeyValueSize())
+        {
+            ss << "[[";
+            CMapPrintArray(*this, ss);
+            ss << "],{";
+            CMapPrintKV(*this, ss);
+            ss << "}]";
+        }
+        else
+        {
+            ss << "[";
+            CMapPrintArray(*this, ss);
+            ss << "]";
+        }
+    }
+    else
+    {
+        ss << "{";
+        CMapPrintKV(*this, ss);
+        ss << "}";
     }
 
     return ss.str();
 }
 
-CMap& CMap::SetValue(const std::string& key, CMapObj* p_v)
-{
-    assert(NULL != p_v);
-    assert(CMAP_None != p_v->m_type);
-
-    p_v->SetMap(this);
-
-    CMapObj* p_old = (CMapObj*)klb_hlist_update(m_hlist, key.c_str(), key.length(), p_v);
-    if (NULL != p_old)
-    {
-        delete p_old;
-    }
-    else
-    {
-        klb_hlist_iter_t* p_iter = klb_hlist_push_tail(m_hlist, key.c_str(), key.length(), p_v);
-        assert(NULL != p_iter);
-    }
-
-    return (*this);
-}
-
-//////////////////////////////////
-// private
-
-void CMap::Init()
-{
-    m_is_array = false;
-    m_hlist = klb_hlist_create(0);
-}
-
-void CMap::Quit()
-{
-    if (NULL != m_hlist)
-    {
-        while (0 < klb_hlist_size(m_hlist))
-        {
-            CMapObj* ptr = (CMapObj*)klb_hlist_pop_head(m_hlist);
-
-            delete ptr;
-        }
-
-        KLB_FREE_BY(m_hlist, klb_hlist_destroy);
-    }
-}
-
-CMapObj* CMap::Find(const std::string& key)
-{
-    return (CMapObj*)klb_hlist_find(m_hlist, key.c_str(), key.length());
-}
-
-void CMap::CopyTo(const CMap& t)
-{
-    klb_hlist_iter_t* p_iter = klb_hlist_begin(t.m_hlist);
-    while (NULL != p_iter)
-    {
-        CMapObj* ptr = (CMapObj*)klb_hlist_data(p_iter);
-        CMapObj* p_new = new CMapObj(*ptr);
-
-        SetValue(ptr->m_key, p_new);
-
-        p_iter = klb_hlist_next(p_iter);
-    }
-    m_is_array = false;
-}
-
-void CMap::CopyTo(const CArray& t)
-{
-    m_array = t;
-    m_is_array = true;
-}
-
 //////////////////////////////////
 // test
-
-class CTestMap {
-public:
-    CTestMap() { m_count = 0; }
-    ~CTestMap() {}
-
-    int Add(int a, int b) { return a + b; }
-    int Dec(int a) { return a; }
-
-    int m_count;
-};
 
 int CMap::Test()
 {
@@ -1898,14 +1363,12 @@ int CMap::Test()
     a["1"] = "1";
     a["2"] = std::string("123456");
     a["3"] = true;
-    a["4"] = int64_t(1);
+    a["4"] = (int64_t)1;
     a["5"] = 3.1415926;
-    a["6"] = CMap::Test;
-    a.Set("7", int64_t(777));
-
-    int (CTestMap::*add)(int a, int b) = &CTestMap::Add;
-    CTestMap ta;
-    int cc = (ta.*add)(1, 2);
+    
+    a[0] = (int64_t)20000000000;
+    a[1] = (int64_t)1;
+    a[8] = (int64_t)8;
 
     CMap b;
     b["b1"] = "1";
@@ -1913,41 +1376,36 @@ int CMap::Test()
     b["b3"] = true;
     b["b4"] = int64_t(1);
     b["b5"] = 3.1415926;
-    b["b6"].Set((void*)CMap::Test, &b);
+    b["b6"].Set((const void*)CMap::Test, &b);
+    b["b7"] = uint64_t(0xFFFFFFFF) - 1;
+    b["b8"] = uint64_t(0xFFFFFFFF);
+    b["b9"] = "";
 
 
     a["b"] = b;
 
-    double e = a["5"].GetDouble();
+    CMap c;
+    c[0] = "c0";
+    c[1] = "c1";
+    c[2] = "c2";
+    c[3] = "c3";
+    c[4] = a;
 
-    if (a["1"] == "1")
-    {
-        std::string s1 = a["1"].Dump();
-    }
+    a["c"] = c;
 
-    CArray arr;
-    arr[0] = int64_t(100);
-    arr[1] = true;
-    arr[2] = 3.1415926;
-    arr[-1] = "poiefsf";
+    double e = a["5"].ToDouble();
 
-    arr.Append(int64_t(100)).Append("sdfef").Append("112313");
+    std::string s = a.PrintJson();
 
-    arr[0] = "r 100";
+    klb_buf_t* p_buf = a.Pack();
 
-    a["array"] = arr;
+    CMap z;
+    z.Unpack(p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+    
+    std::string sz = z.PrintJson();
 
-    std::string s = a.Dump();
-
-    CMap tb = a["1"].GetMap();
-
-    std::string s2 = tb.Dump();
-
-    CMap c = a;
-    std::string sc = c.Dump();
-
-
+    KLB_FREE(p_buf);
     return 0;
 }
 
-};
+}; // namespace klb

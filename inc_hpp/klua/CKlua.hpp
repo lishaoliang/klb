@@ -16,20 +16,14 @@
 
 namespace klb {
 
-    KLB_EXTERN class KLB_API_CPP CKlua
-    {
-    public:
-        CKlua();
-        ~CKlua();
+KLB_EXTERN class KLB_API_CPP CKlua
+{
+public:
+    CKlua();
+    ~CKlua();
 
+};
 
-        static bool ParseToMap(lua_State* L, int idx, CMap& map);
-        static void PushMapToLua(lua_State* L, CMap& map);
-
-    private:
-
-    };
-
-}
+} // namespace klb 
 
 #endif // __CKLUA_HPP__

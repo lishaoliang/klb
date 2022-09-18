@@ -161,6 +161,12 @@ KLB_API int klua_open_ktime(lua_State* L);
 KLB_API int klua_open_kmcache(lua_State* L);
 
 
+/// @brief 扩展库"kstore"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_klist(lua_State* L);
+
+
 /// @brief 扩展库"kthread"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -278,6 +284,7 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_krand,        "krand");       \
     klua_loadlib(L, klua_open_ktime,        "ktime");       \
     klua_loadlib(L, klua_open_kmcache,      "kmcache");     \
+    klua_loadlib(L, klua_open_klist,        "klist");       \
     klua_loadlib(L, klua_open_kthread,      "kthread");     \
     klua_loadlib(L, klua_open_kkpa,         "kkpa");        \
     klua_loadlib(L, klua_open_klpc,         "klpc");        \
@@ -299,6 +306,18 @@ KLB_API int klua_loadlib_all(lua_State* L);
     klua_loadlib(L, klua_open_krpc,         "krpc");        \
     klua_loadlib(L, klua_open_kh26x,        "kh26x");       \
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+// ./klb/src_packages
+
+KLB_API int klua_open_kpa_rtsp(lua_State* L);
+
+
+#define KLUA_LOADLIBS_PACKAGES(L) {                         \
+    klua_loadlib(L, klua_open_kpa_rtsp,     "kpa_rtsp");    \
+}
+
 
 #ifdef __cplusplus
 }

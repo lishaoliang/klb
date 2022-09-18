@@ -91,7 +91,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_OPENSSL__;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -303,6 +303,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbthird\sqlite3.h" />
     <ClInclude Include="..\..\inc\klbthird\zconf.h" />
     <ClInclude Include="..\..\inc\klbthird\zlib.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_adt.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_bitmap.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_canvas.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_color.h" />
@@ -316,6 +317,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbutil\klb_list.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_log.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_map.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_map_serialize.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_nlist.h" />
+    <ClInclude Include="..\..\inc\klbutil\klb_nvector.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj_hash.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rand.h" />
@@ -324,15 +328,34 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klbutil\list.h" />
     <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
-    <ClInclude Include="..\..\inc\klua\klua_data.h" />
+    <ClInclude Include="..\..\inc\klua\klua_coroutine.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
     <ClInclude Include="..\..\inc\klua\klua_kthread.h" />
+    <ClInclude Include="..\..\inc\klua\klua_multiplex.h" />
+    <ClInclude Include="..\..\inc\klua\klua_object.h" />
+    <ClInclude Include="..\..\inc\klua\klua_seri.h" />
+    <ClInclude Include="..\..\inc_hpp\klbbase\CPackage.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbmem\CBuf.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbnet\CListen.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbnet\CMultiplex.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbnet\CNcm.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbnet\CNsc.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbnet\CNsp.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CAtomic.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CDynamicLink.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CMutex.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CSemLock.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CShmem.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CSpinLock.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CThread.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbList.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbMap.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbVector.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CList.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CMap.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CVector.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKlua.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp" />
     <ClInclude Include="..\..\src_c\compat\os2threads.h" />
     <ClInclude Include="..\..\src_c\compat\va_copy.h" />
     <ClInclude Include="..\..\src_c\compat\w32dlfcn.h" />
@@ -351,10 +374,13 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
+    <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h" />
+    <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_map.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.h" />
@@ -481,19 +507,43 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h" />
     <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h" />
     <ClInclude Include="..\..\src_c\libavutil\xtea.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtp.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.h" />
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\rtp.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v" />
     <None Include="..\..\src_c\libavutil\Makefile" />
     <None Include="..\..\src_c\Makefile" />
+    <None Include="..\..\src_packages\Makefile" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbmem\CBuf.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbnet\CNcm.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbnet\CNsc.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbnet\CNsp.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbplatform\CAtomic.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbplatform\CDynamicLink.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CMutex.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbplatform\CSemLock.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbplatform\CShmem.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbplatform\CSpinLock.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CThread.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CKlbList.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CKlbMap.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CKlbVector.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CList.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CMap.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CVector.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\CKlua.cpp" />
+    <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp" />
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
@@ -553,6 +603,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbthird\cJSON.c" />
     <ClCompile Include="..\..\src_c\klbthird\http_parser.c" />
     <ClCompile Include="..\..\src_c\klbthird\sds\sds.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_adt.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_bitmap.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas_argb8888.c" />
@@ -565,16 +616,20 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klbutil\klb_htab.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_list.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_map.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_map_serialize.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_nlist.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_nvector.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_obj.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
-    <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_h26x.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_coroutine.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kcoro.c" />
@@ -586,6 +641,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\klua_format\klua_kh26x.c" />
     <ClCompile Include="..\..\src_c\klua\klua_help.c" />
     <ClCompile Include="..\..\src_c\klua\klua_main.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_klist.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c" />
@@ -598,6 +654,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krpc.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksip.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />
@@ -607,10 +664,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_util\klua_data.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_kobject.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_ksys.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_seri_json.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_seri_map.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpcode.c" />
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpprint.c" />
@@ -716,6 +774,13 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_c\libavutil\utils.c" />
     <ClCompile Include="..\..\src_c\libavutil\xga_font_data.c" />
     <ClCompile Include="..\..\src_c\libavutil\xtea.c" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\klua_kpa_rtsp.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtp.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

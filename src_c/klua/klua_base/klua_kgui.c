@@ -36,7 +36,7 @@ static klb_obj_t* klua_newuserdata_kwnd(lua_State* L, klb_wnd_t* p_wnd)
     p_obj->module = g_klua_module;
     p_obj->name = g_klua_kwnd;
 
-    klua_kwnd_t* p_kwnd = (klua_kwnd_t*)p_obj->obj;
+    klua_kwnd_t* p_kwnd = (klua_kwnd_t*)p_obj->ex;
     p_kwnd->p_wnd;
 
     return p_obj;
@@ -50,7 +50,7 @@ static klua_kwnd_t* klua_check_kwnd(lua_State* L, int idx)
     if (p_obj->module == g_klua_module &&
         p_obj->name == g_klua_kwnd)
     {
-        return (klua_kwnd_t*)p_obj->obj;
+        return (klua_kwnd_t*)p_obj->ex;
     }
 
     luaL_argerror(L, idx, KLUA_KGUI_kwnd);
@@ -74,7 +74,7 @@ static int klua_kgui_attach_canvas(lua_State* L)
 
 static void klua_kgui_msg_callback(void* p_obj, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
 {
-    klua_ex_gui_t* p_ex = p_obj;
+    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)p_obj;
 
     if (p_ex)
     {

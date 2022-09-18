@@ -425,6 +425,9 @@ klb_socket_fd klb_socket_listen(int port, int max_connect)
         return INVALID_SOCKET;
     }
 
+    struct sockaddr_in addr = { 0 };
+    int ret = 0;
+
     // 端口释放后立即就可以被再次使用
     if (0 != klb_socket_set_reuseaddr(fd))
     {
@@ -435,12 +438,11 @@ klb_socket_fd klb_socket_listen(int port, int max_connect)
     klb_socket_set_block(fd, false);
 
     // 绑定
-    struct sockaddr_in addr = { 0 };
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY); // INADDR_ANY表示占用该设备所有网卡, 不需要知道设备IP地址
     addr.sin_port = htons(port);
 
-    int ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+    ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
     if (0 != ret)
     {
         goto err_listen;
@@ -471,6 +473,9 @@ klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect)
         return INVALID_SOCKET;
     }
 
+    struct sockaddr_un addr = { 0 };
+    int ret = 0;
+
     // 端口释放后立即就可以被再次使用
     if (0 != klb_socket_set_reuseaddr(fd))
     {
@@ -480,14 +485,13 @@ klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect)
     // 非阻塞
     klb_socket_set_block(fd, false);
 
-    // 绑定
-    struct sockaddr_un addr = { 0 };
+    // 绑定 
     addr.sun_family = AF_INET;
     strncpy(addr.sun_path, p_path, sizeof(addr.sun_path) - 1);
 
     unlink(p_path);
 
-    int ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
+    ret = bind(fd, (struct sockaddr*)&addr, sizeof(addr));
     if (0 != ret)
     {
         goto err_listen;
@@ -512,7 +516,7 @@ klb_socket_fd klb_socket_accept(klb_socket_fd fd_listen, struct sockaddr_in* p_a
 {
     assert(INVALID_SOCKET != fd_listen);
 
-    int addr_size = sizeof(struct sockaddr_in);
+    socklen_t addr_size = sizeof(struct sockaddr_in);
     klb_socket_fd fd = accept(fd_listen, (struct sockaddr*)p_addr, &addr_size);
 
     if (INVALID_SOCKET != fd)

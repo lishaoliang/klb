@@ -6,7 +6,7 @@
 #include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_multiplex.h"
 #include "klbnet/klb_listen.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbbase/klb_mnp.h"
 #include "klbbase/klb_mnp_help.h"
 #include "klbmem/klb_buffer.h"

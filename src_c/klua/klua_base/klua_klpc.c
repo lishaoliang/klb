@@ -2,13 +2,12 @@
 #include "klb_type.h"
 #include "klua/klua.h"
 #include "klua/klua_kthread.h"
-#include "klua/klua_data.h"
 #include "klua/extension/klua_ex_lpc.h"
 #include "klua/extension/klua_ex_coroutine.h"
 #include "klua/klua_kthread.h"
-#include "klua/lua-skynet/lua-seri.h"
+#include "klua/klua_util/klua_seri_map.h"
 #include "klbmem/klb_mem.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbthird/sds.h"
 #include <assert.h>
 
@@ -23,10 +22,11 @@ typedef struct klua_klpc_module_t_
 
     sds                     name;           ///< 模块名称
 
-    int                     reg_on_recv;    ///< recv接收数据
     lua_State*              co_recv;        ///< "co_recv"函数对应的协程
+    klb_nlist_t*             p_msg_list;     ///< 收到的消息列表: 当未通过携程收消息时暂存于此
 
-    klb_list_t*             p_msg_list;     ///< 收到的消息列表: 当未通过携程收消息时暂存于此
+    bool                    run;            ///< 是否正常运行
+    int                     err_co_recv;    ///< 错误"co_recv"计数
 }klua_klpc_module_t;
 
 
@@ -43,9 +43,18 @@ static int call_lua_reg_on_recv_klua_klpc_module(klua_klpc_module_t* p_mo, klua_
 
         p_mo->co_recv = NULL; // 清空
 
-        lua_pushstring(L, p_msg->src_name);
-        int num = luaseri_unpack_by_buffer(L, 2, p_msg->p_msg, p_msg->msg_size);
-        int status = lua_pcall(L, num + 1, 0, 0);                   /* do the call */
+        int count = 0;
+        if (NULL != p_msg)
+        {
+            const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
+            int data_len = p_msg->p_data->end - p_msg->p_data->start;           
+
+            lua_pushstring(L, p_msg->src_name);
+            int num = luaseri_map_binary_unpack(L, 2, p_data, data_len);
+            count = num + 1;
+        }
+
+        int status = lua_pcall(L, count, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
         return (status == LUA_OK) ? 0 : 1;
@@ -64,7 +73,7 @@ static int cb_msg_klua_klpc_module(void* ptr, klua_msg_t* p_msg)
     {
         if (call_lua_reg_on_recv_klua_klpc_module(p_mo, p_msg) < 0)
         {
-            klb_list_push_tail(p_mo->p_msg_list, p_msg);
+            klb_nlist_push_tail(p_mo->p_msg_list, p_msg);
 
             free_msg = false;
         }
@@ -107,23 +116,28 @@ static int klua_klpc_module_close(lua_State* L)
 {
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
 
-    if (NULL != p_mo->name)
+    // 释放lpc
+    if (p_mo->run)
     {
         klua_ex_lpc_delete(p_mo->p_lpc, p_mo->name);
     }
 
-    klua_unref_registryindex(L, p_mo->reg_on_recv);
+    p_mo->run = false;
 
+    // 让"co_recv"返回
+    call_lua_reg_on_recv_klua_klpc_module(p_mo, NULL);
+
+    // 清空消息
     if (NULL != p_mo->p_msg_list)
     {
-        while (0 < klb_list_size(p_mo->p_msg_list))
+        while (0 < klb_nlist_size(p_mo->p_msg_list))
         {
-            klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_mo->p_msg_list);
+            klua_msg_t* p_msg = (klua_msg_t*)klb_nlist_pop_head(p_mo->p_msg_list);
             klua_msg_free(p_msg);
         }
     }
 
-    KLB_FREE_BY(p_mo->p_msg_list, klb_list_destroy);
+    KLB_FREE_BY(p_mo->p_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_mo->name, sdsfree);
 
     return 0;
@@ -131,38 +145,38 @@ static int klua_klpc_module_close(lua_State* L)
 
 static int klua_klpc_module_status(lua_State* L)
 {
-    lua_pushboolean(L, true);
-    lua_pushinteger(L, 0);
-    return 2;
-}
-
-static int klua_klpc_module_on_recv(lua_State* L)
-{
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
-    luaL_checktype(L, 2, LUA_TFUNCTION);
 
-    klua_unref_registryindex(L, p_mo->reg_on_recv);
-    p_mo->reg_on_recv = klua_ref_registryindex(L, 2);
-
-    return 0;
+    lua_pushboolean(L, p_mo->run);
+    return 1;
 }
 
 static int klua_klpc_module_co_recv(lua_State* L)
 {
-    if (!klua_is_coroutine(L))
-    {
-        luaL_error(L, "klpc.new():co_recv must in coroutine!");
-        return 0;
-    }
-
+    klua_check_coroutine(L, "klpc.new_module():co_recv() must in coroutine!");
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
 
-    if (0 < klb_list_size(p_mo->p_msg_list))
+    if (!p_mo->run)
     {
-        klua_msg_t* p_msg = (klua_msg_t*)klb_list_pop_head(p_mo->p_msg_list);
+        p_mo->err_co_recv++; // 错误计数
+
+        if (10000 < p_mo->err_co_recv)
+        {
+            luaL_error(L, "klpc.new_module() status error,not run!");
+        }
+
+        return 0; // 已经关闭
+    }
+
+    if (0 < klb_nlist_size(p_mo->p_msg_list))
+    {
+        klua_msg_t* p_msg = (klua_msg_t*)klb_nlist_pop_head(p_mo->p_msg_list);
+
+        const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
+        int data_len = p_msg->p_data->end - p_msg->p_data->start;
 
         lua_pushstring(L, p_msg->src_name);
-        int num = luaseri_unpack_by_buffer(L, 2, p_msg->p_msg, p_msg->msg_size);
+        int num = luaseri_map_binary_unpack(L, 2, p_data, data_len);
 
         klua_msg_free(p_msg);
         return num + 1;
@@ -180,18 +194,25 @@ static int klua_klpc_module_response(lua_State* L)
 {
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
 
+    if (!p_mo->run)
+    {
+        lua_pushboolean(L, false);
+        return 1; // 已经关闭
+    }
+
     size_t name_len = 0;
     const char* p_name = luaL_checklstring(L, 2, &name_len);
 
     if (name_len <= 0)
     {
-        return 0;
+        lua_pushboolean(L, false);
+        return 1;
     }
 
     //
     klua_msg_t* ptr = KLB_MALLOCZ(klua_msg_t, 1, 0);
     ptr->type = KLUA_LPC_RESPONSE;
-    ptr->p_msg = luaseri_pack_buffer(L, 2, &ptr->msg_size); // pack buffer
+    ptr->p_data = luaseri_map_binary_pack(L, 2); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
@@ -199,27 +220,40 @@ static int klua_klpc_module_response(lua_State* L)
     {
         // 目标不存在
         klua_msg_free(ptr);
+
+        lua_pushboolean(L, false);
+    }
+    else
+    {
+        lua_pushboolean(L, true);
     }
 
-    return 0;
+    return 1;
 }
 
 static int klua_klpc_module_notify(lua_State* L)
 {
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
 
+    if (!p_mo->run)
+    {
+        lua_pushboolean(L, false);
+        return 1; // 已经关闭
+    }
+
     size_t name_len = 0;
     const char* p_name = luaL_checklstring(L, 2, &name_len);
 
     if (name_len <= 0)
     {
-        return 0;
+        lua_pushboolean(L, false);
+        return 1;
     }
 
     //
     klua_msg_t* ptr = KLB_MALLOCZ(klua_msg_t, 1, 0);
     ptr->type = KLUA_LPC_NOTIFY;
-    ptr->p_msg = luaseri_pack_buffer(L, 2, &ptr->msg_size); // pack buffer
+    ptr->p_data = luaseri_map_binary_pack(L, 2); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
@@ -227,9 +261,15 @@ static int klua_klpc_module_notify(lua_State* L)
     {
         // 目标不存在
         klua_msg_free(ptr);
+
+        lua_pushboolean(L, false);
+    }
+    else
+    {
+        lua_pushboolean(L, true);
     }
 
-    return 0;
+    return 1;
 }
 
 ////////////////////////////////////////
@@ -278,7 +318,9 @@ static int lib_klua_klpc_new_module(lua_State* L)
     p_mo->p_lpc = klua_ex_get_lpc(p_mo->p_env);
     p_mo->name = sdsnew(p_name);
 
-    p_mo->p_msg_list = klb_list_create();
+    p_mo->p_msg_list = klb_nlist_create();
+
+    p_mo->run = true;
 
     klua_ex_lpc_new_module(p_mo->p_lpc, p_mo->name, cb_msg_klua_klpc_module, p_mo);
 
@@ -300,6 +342,8 @@ typedef struct klua_klpc_t_
 
     lua_State*              co_recv;        ///< "co_recv"(call)函数对应的协程
     lua_State*              co_recv_notify; ///< "co_recv_notify"函数对应的协程
+
+    bool                    run;            ///< 是否正常运行
 }klua_klpc_t;
 
 /////////////////////////////////////
@@ -316,7 +360,10 @@ static int call_lua_reg_co_recv_klua_klpc(klua_klpc_t* p_klpc, klua_msg_t* p_msg
 
         p_klpc->co_recv = NULL; // 清空
 
-        int num = luaseri_unpack_by_buffer(L, 1, p_msg->p_msg, p_msg->msg_size);
+        const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
+        int data_len = p_msg->p_data->end - p_msg->p_data->start;
+
+        int num = luaseri_map_binary_unpack(L, 1, p_data, data_len);
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
@@ -337,7 +384,10 @@ static int call_lua_reg_co_recv_notify_klua_klpc(klua_klpc_t* p_klpc, klua_msg_t
 
         p_klpc->co_recv_notify = NULL; // 清空
 
-        int num = luaseri_unpack_by_buffer(L, 1, p_msg->p_msg, p_msg->msg_size);
+        const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
+        int data_len = p_msg->p_data->end - p_msg->p_data->start;
+
+        int num = luaseri_map_binary_unpack(L, 1, p_data, data_len);
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
@@ -421,7 +471,7 @@ static int klua_klpc_post(lua_State* L)
     //
     klua_msg_t* ptr = KLB_MALLOCZ(klua_msg_t, 1, 0);
     ptr->type = KLUA_LPC_POST;
-    ptr->p_msg = luaseri_pack_buffer(L, 2, &ptr->msg_size); // pack buffer
+    ptr->p_data = luaseri_map_binary_pack(L, 2); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
@@ -445,7 +495,7 @@ static int klua_klpc_co_call(lua_State* L)
     //
     klua_msg_t* ptr = KLB_MALLOCZ(klua_msg_t, 1, 0);
     ptr->type = KLUA_LPC_REQUEST;
-    ptr->p_msg = luaseri_pack_buffer(L, 2, &ptr->msg_size);
+    ptr->p_data = luaseri_map_binary_pack(L, 2);  // pack buffer
 
     strncpy(ptr->dst_name, p_dst_name, KLUA_LPC_NAME_LEN);
     strncpy(ptr->src_name, p_klpc->name, KLUA_LPC_NAME_LEN);
@@ -531,7 +581,7 @@ static int lib_klua_klpc_post(lua_State* L)
     //
     klua_msg_t* ptr = KLB_MALLOCZ(klua_msg_t, 1, 0);
     ptr->type = KLUA_LPC_POST;
-    ptr->p_msg = luaseri_pack_buffer(L, 1, &ptr->msg_size); // pack buffer
+    ptr->p_data = luaseri_map_binary_pack(L, 1); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 

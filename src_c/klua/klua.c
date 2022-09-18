@@ -199,7 +199,11 @@ int klua_open_LuaXML_lib(lua_State* L)
 
 int klua_loadlib_all(lua_State* L)
 {
+    // 基础包
     KLUA_LOADLIBS(L);
+
+    // 扩展包
+    KLUA_LOADLIBS_PACKAGES(L);
 
     return 0;
 }

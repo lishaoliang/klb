@@ -5,7 +5,7 @@
 #include "klbutil/klb_hlist.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_mem.h"
-#include "klua/lua-skynet/lua-seri.h"
+#include "klua/klua_util/klua_seri_map.h"
 #include <assert.h>
 
 
@@ -26,7 +26,7 @@ static void clear_all_klua_kmcache(klua_kmcache_t* p_kmcache)
 {
     while (0 < klb_hlist_size(p_kmcache->p_hlist))
     {
-        klb_buf_t* p_tmp = klb_hlist_pop_head(p_kmcache->p_hlist);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_hlist_pop_head(p_kmcache->p_hlist);
 
         KLB_FREE(p_tmp->p_buf);
         KLB_FREE(p_tmp);
@@ -66,19 +66,11 @@ static int klua_kmcache_set(lua_State* L)
     size_t key_len = 0;
     const char* p_key = luaL_checklstring(L, 1, &key_len);
 
-    luaseri_pack_from(L, 1);
-
-    char* ptr = (char*)lua_topointer(L, -2);
-    int size = (int)lua_tointeger(L, -1);
-
-    klb_buf_t* p_buf = KLB_MALLOCZ(klb_buf_t, 1, 0);
-    p_buf->p_buf = ptr;
-    p_buf->end = size;
-    p_buf->buf_len = size;
+    klb_buf_t* p_buf = luaseri_map_binary_pack(L, 1);
 
     klb_mutex_lock(g_klua_kmcache->p_mutex);
 
-    klb_buf_t* p_old = klb_hlist_update(g_klua_kmcache->p_hlist, p_key, key_len, p_buf);
+    klb_buf_t* p_old = (klb_buf_t*)klb_hlist_update(g_klua_kmcache->p_hlist, p_key, key_len, p_buf);
     if (NULL != p_old)
     {
         // 更新了, 删除旧数据
@@ -106,10 +98,10 @@ static int klua_kmcache_get(lua_State* L)
     int n = 0;
     klb_mutex_lock(g_klua_kmcache->p_mutex);
 
-    klb_buf_t* p_buf = klb_hlist_find(g_klua_kmcache->p_hlist, p_key, key_len);
+    klb_buf_t* p_buf = (klb_buf_t*)klb_hlist_find(g_klua_kmcache->p_hlist, p_key, key_len);
     if (NULL != p_buf)
     {
-        n = luaseri_unpack_by_buffer(L, 1, p_buf->p_buf, p_buf->end);
+        n = luaseri_map_binary_unpack(L, 1, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
     }
 
     klb_mutex_unlock(g_klua_kmcache->p_mutex);

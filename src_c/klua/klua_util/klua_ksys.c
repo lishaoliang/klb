@@ -2,7 +2,7 @@
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbmem/klb_mem.h"
-#include "klua/lua-skynet/lua-seri.h"
+#include "klua/klua_util/klua_seri_map.h"
 #include "klua/klua_util/klua_seri_json.h"
 #include "klbthird/cJSON.h"
 #include <stdlib.h>
@@ -17,13 +17,22 @@ static int klua_ksys_exit(lua_State* L)
 
 static int klua_ksys_pack_string(lua_State* L)
 {
-    luaseri_pack(L);
+    klb_buf_t* p_buf = luaseri_map_binary_pack(L, 0);
 
-    char * str = (char *)lua_touserdata(L, -2);
-    int sz = lua_tointeger(L, -1);
-    lua_pushlstring(L, str, sz);
-    KLB_FREE(str);
+    lua_pushlstring(L, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+
+    KLB_FREE(p_buf);
     return 1;
+}
+
+static int klua_ksys_unpack(lua_State* L)
+{
+    size_t str_len = 0;
+    const char* p_str = luaL_checklstring(L, 1, &str_len);
+
+    int n = luaseri_map_binary_unpack(L, 1, p_str, str_len);
+
+    return n;
 }
 
 static int klua_ksys_pack_json(lua_State* L)
@@ -40,9 +49,9 @@ static int klua_ksys_pack_json(lua_State* L)
 
 static int klua_ksys_unpack_json(lua_State* L)
 {
-    char* p_str = luaL_checkstring(L, 1);
+    const char* p_str = luaL_checkstring(L, 1);
 
-    char* p_ep = NULL;
+    const char* p_ep = NULL;
     cJSON* p_json = cJSON_Parse(p_str, &p_ep);
 
     int n = luaseri_json_unpack(L, 1, p_json);
@@ -58,7 +67,7 @@ static int klua_ksys_get_arg(lua_State* L)
 
     if (NULL != p_arg)
     {
-        int n =luaseri_unpack_by_buffer(L, 1, (char*)p_arg->p_buf + p_arg->start, p_arg->end - p_arg->start);
+        int n = luaseri_map_binary_unpack(L, 1, (char*)p_arg->p_buf + p_arg->start, p_arg->end - p_arg->start);
         return n;
     }
 
@@ -74,7 +83,7 @@ int klua_open_ksys(lua_State* L)
         { "exit",           klua_ksys_exit },
 
         { "pack_string",    klua_ksys_pack_string },
-        { "unpack",         luaseri_unpack },
+        { "unpack",         klua_ksys_unpack },
 
         { "pack_json",      klua_ksys_pack_json },
         { "unpack_json",    klua_ksys_unpack_json },

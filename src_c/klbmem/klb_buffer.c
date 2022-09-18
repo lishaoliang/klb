@@ -144,7 +144,23 @@ int klb_buffer_write(klb_buffer_t* p_buffer, const char* p_data, int data_len)
     return 0;
 }
 
-int klb_buffer_data_len(klb_buffer_t* p_buffer)
+int klb_buffer_write_rbuf(klb_buffer_t* p_buffer, const klb_rbuf_t* p_rbuf)
+{
+    int data_len = 0;
+    char* p_data = klb_rbuf_data(p_rbuf, &data_len);
+
+    return klb_buffer_write(p_buffer, p_data, data_len);
+}
+
+int klb_buffer_write_buf(klb_buffer_t* p_buffer, const klb_buf_t* p_buf)
+{
+    int data_len = p_buf->end - p_buf->start;
+    char* p_data = p_buf->p_buf + p_buf->start;
+
+    return klb_buffer_write(p_buffer, p_data, data_len);
+}
+
+int klb_buffer_datalen(klb_buffer_t* p_buffer)
 {
     return p_buffer->total_data_len;
 }

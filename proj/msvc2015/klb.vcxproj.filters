@@ -177,6 +177,24 @@
     <Filter Include="src_c\klua\lua-skynet">
       <UniqueIdentifier>{4dcc6a0b-7593-4374-ad26-ebf6624cf2f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc_hpp\klbmem">
+      <UniqueIdentifier>{4f6e1e96-2c57-440e-b681-bb3f5debb76b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_cpp\klbmem">
+      <UniqueIdentifier>{550a0e6b-ee2a-41cc-bf18-35c44d37acc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages">
+      <UniqueIdentifier>{9f91b2a6-5e02-4b06-9ff9-8faf81fd4714}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\kpa_rtsp">
+      <UniqueIdentifier>{59ab5443-1dd6-4df4-b738-63cf5cd001ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_cpp\klbbase">
+      <UniqueIdentifier>{90b8f444-a8d1-47c7-a365-8c38442d4216}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc_hpp\klbbase">
+      <UniqueIdentifier>{a611cb70-6285-46f7-ae97-01df801a5425}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -311,9 +329,6 @@
     <ClInclude Include="..\..\inc\klbutil\klb_htab.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_list.h">
-      <Filter>inc\klbutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_log.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
@@ -329,16 +344,10 @@
     <ClInclude Include="..\..\inc\klbutil\klb_rect.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_vector.h">
-      <Filter>inc\klbutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\list.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\klua_data.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_env.h">
@@ -1166,6 +1175,114 @@
     <ClInclude Include="..\..\inc\klbutil\klb_map.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_adt.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_coroutine.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_map.h">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_seri.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_multiplex.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_map_serialize.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbmem\CBuf.hpp">
+      <Filter>inc_hpp\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CAtomic.hpp">
+      <Filter>inc_hpp\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CSemLock.hpp">
+      <Filter>inc_hpp\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CShmem.hpp">
+      <Filter>inc_hpp\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_object.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtp.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\kpa_rtsp\rtp.h">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbbase\CPackage.hpp">
+      <Filter>inc_hpp\klbbase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbnet\CNcm.hpp">
+      <Filter>inc_hpp\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbnet\CNsc.hpp">
+      <Filter>inc_hpp\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbnet\CNsp.hpp">
+      <Filter>inc_hpp\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CDynamicLink.hpp">
+      <Filter>inc_hpp\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbplatform\CSpinLock.hpp">
+      <Filter>inc_hpp\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CVector.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp">
+      <Filter>inc_hpp\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbList.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbMap.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CKlbVector.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CList.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_nlist.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_nvector.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_list.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbutil\klb_vector.h">
+      <Filter>inc\klbutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -1176,6 +1293,9 @@
     </None>
     <None Include="..\..\src_c\libavutil\Makefile">
       <Filter>src_c\libavutil</Filter>
+    </None>
+    <None Include="..\..\src_packages\Makefile">
+      <Filter>src_packages</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1314,9 +1434,6 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_htab.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbutil\klb_list.c">
-      <Filter>src_c\klbutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_obj.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
@@ -1324,9 +1441,6 @@
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c">
-      <Filter>src_c\klbutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbutil\klb_vector.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua.c">
@@ -1580,9 +1694,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c">
       <Filter>src_c\klua\klua_platform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_util\klua_data.c">
-      <Filter>src_c\klua\klua_util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c">
       <Filter>src_c\klua\klua_util</Filter>
@@ -1861,6 +1972,108 @@
       <Filter>src_c\klbnet\klb_ncm_ops</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_map.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksip.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_adt.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_seri_map.c">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_map_serialize.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbmem\CBuf.cpp">
+      <Filter>src_cpp\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbplatform\CAtomic.cpp">
+      <Filter>src_cpp\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbplatform\CSemLock.cpp">
+      <Filter>src_cpp\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbplatform\CShmem.cpp">
+      <Filter>src_cpp\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_klist.c">
+      <Filter>src_c\klua\klua_multithread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_kobject.c">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\klua_kpa_rtsp.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtp.cpp">
+      <Filter>src_packages\kpa_rtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbnet\CNcm.cpp">
+      <Filter>src_cpp\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbnet\CNsc.cpp">
+      <Filter>src_cpp\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbnet\CNsp.cpp">
+      <Filter>src_cpp\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbplatform\CDynamicLink.cpp">
+      <Filter>src_cpp\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbplatform\CSpinLock.cpp">
+      <Filter>src_cpp\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CVector.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp">
+      <Filter>src_cpp\klua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp">
+      <Filter>src_cpp\klbbase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CKlbList.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CKlbMap.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CKlbVector.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CList.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_nlist.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_nvector.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_list.c">
+      <Filter>src_c\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbutil\klb_vector.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
   </ItemGroup>

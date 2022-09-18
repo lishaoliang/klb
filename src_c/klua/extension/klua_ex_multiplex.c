@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klua/extension/klua_ex_multiplex.h"
+#include "klua/klua_multiplex.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
@@ -84,4 +85,25 @@ klua_ex_multiplex_t* klua_ex_get_multiplex(klua_env_t* p_env)
 {
     klua_ex_multiplex_t* p_ex = (klua_ex_multiplex_t*)klua_env_get_extension(p_env, KLUA_EX_MULTIPLEX_NAME);
     return p_ex;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// "klua/klua_multiplex.h"
+
+/// @brief 获取复用
+/// @param [in]  *p_env         Lua环境 
+/// @return klb_multiplex_t* 
+klb_multiplex_t* klua_multiplex_get(klua_env_t* p_env)
+{
+    return klua_ex_multiplex_get(klua_ex_get_multiplex(p_env));
+}
+
+
+/// @brief 获取复用
+/// @param [in]  *L             lua_State 
+/// @return klb_multiplex_t* 
+klb_multiplex_t* klua_multiplex_get_by_L(lua_State* L)
+{
+    return klua_ex_multiplex_get_by_L(L);
 }

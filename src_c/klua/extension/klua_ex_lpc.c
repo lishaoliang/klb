@@ -43,9 +43,10 @@ int klua_ex_lpc_new_module(klua_ex_lpc_t* p_ex, const sds name, klua_ex_lpc_msg_
     klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_module_hlist, name, sdslen(name), p_mo);
     assert(NULL != p_iter);
 
-    klua_kthread_register_module(p_mo->name, p_ex->p_env);
+    int ret = klua_kthread_register_module(p_mo->name, p_ex->p_env);
+    assert(0 == ret);
 
-    return 0;
+    return ret;
 }
 
 sds klua_ex_lpc_new_lpc(klua_ex_lpc_t* p_ex, klua_ex_lpc_msg_cb cb_msg, void* ptr)
@@ -66,7 +67,7 @@ sds klua_ex_lpc_new_lpc(klua_ex_lpc_t* p_ex, klua_ex_lpc_msg_cb cb_msg, void* pt
 
 int klua_ex_lpc_delete(klua_ex_lpc_t* p_ex, const sds name)
 {
-    klua_ex_lpc_module_t* p_mo = klb_hlist_remove_bykey(p_ex->p_module_hlist, name, sdslen(name));
+    klua_ex_lpc_module_t* p_mo = (klua_ex_lpc_module_t*)klb_hlist_remove_bykey(p_ex->p_module_hlist, name, sdslen(name));
     if (NULL != p_mo)
     {
         if (1 == p_mo->module)

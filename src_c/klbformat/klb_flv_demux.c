@@ -250,7 +250,7 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
     return 0;
 }
 
-static int klb_flv_demux_on_avc_nalu(klb_flv_demux_t* p_flv_demux, klb_flv_video_info_t* p_info, klb_list_t* p_list_out)
+static int klb_flv_demux_on_avc_nalu(klb_flv_demux_t* p_flv_demux, klb_flv_video_info_t* p_info, klb_nlist_t* p_list_out)
 {
     if (!p_flv_demux->b_update_adcr)
     {
@@ -322,13 +322,13 @@ static int klb_flv_demux_on_avc_nalu(klb_flv_demux_t* p_flv_demux, klb_flv_video
 
 
         // 得到完整的一帧了
-        klb_list_push_tail(p_list_out, p_frame);
+        klb_nlist_push_tail(p_list_out, p_frame);
     }
 
     return 0;
 }
 
-static int klb_flv_demux_on_avc_nalu_h265(klb_flv_demux_t* p_flv_demux, klb_flv_video_info_t* p_info, klb_list_t* p_list_out)
+static int klb_flv_demux_on_avc_nalu_h265(klb_flv_demux_t* p_flv_demux, klb_flv_video_info_t* p_info, klb_nlist_t* p_list_out)
 {
     // h265
     if (!p_flv_demux->b_update_adcr)
@@ -404,13 +404,13 @@ static int klb_flv_demux_on_avc_nalu_h265(klb_flv_demux_t* p_flv_demux, klb_flv_
 
 
         // 得到完整的一帧了
-        klb_list_push_tail(p_list_out, p_frame);
+        klb_nlist_push_tail(p_list_out, p_frame);
     }
 
     return 0;
 }
 
-static int klb_flv_demux_on_aac_raw(klb_flv_demux_t* p_flv_demux, klb_flv_audio_info_t* p_info, klb_list_t* p_list_out)
+static int klb_flv_demux_on_aac_raw(klb_flv_demux_t* p_flv_demux, klb_flv_audio_info_t* p_info, klb_nlist_t* p_list_out)
 {
     if (!p_flv_demux->b_update_aac_seq_head)
     {
@@ -447,12 +447,12 @@ static int klb_flv_demux_on_aac_raw(klb_flv_demux_t* p_flv_demux, klb_flv_audio_
     p_media->samples = p_flv_demux->aac_seq_head_info.aac_seq_head.sampling_frequency;
 
     // 得到完整的一帧了
-    klb_list_push_tail(p_list_out, p_frame);
+    klb_nlist_push_tail(p_list_out, p_frame);
 
     return 0;
 }
 
-static int klb_flv_demux_on_tag(klb_flv_demux_t* p_flv_demux, klb_buf_t* p_buf, klb_list_t* p_list_out)
+static int klb_flv_demux_on_tag(klb_flv_demux_t* p_flv_demux, klb_buf_t* p_buf, klb_nlist_t* p_list_out)
 {
     klb_flv_header_t* p_header = &p_flv_demux->header;
     klb_flv_tag_t* p_tag = &p_flv_demux->tag;
@@ -543,7 +543,7 @@ static int klb_flv_demux_on_tag(klb_flv_demux_t* p_flv_demux, klb_buf_t* p_buf, 
     return 0;
 }
 
-int klb_flv_demux_do(klb_flv_demux_t* p_flv_demux, const char* p_data, int data_len, klb_list_t* p_list_out)
+int klb_flv_demux_do(klb_flv_demux_t* p_flv_demux, const char* p_data, int data_len, klb_nlist_t* p_list_out)
 {
     assert(NULL != p_flv_demux);
     assert(NULL != p_data);

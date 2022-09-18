@@ -213,7 +213,7 @@ static void free_klua_coroutine_env(klua_coroutine_env_t* p_co_env)
 static int klua_kco_auxwrap(lua_State *L)
 {
     lua_State *co = lua_tothread(L, lua_upvalueindex(1));
-    klua_coroutine_env_t* p_co_env = lua_touserdata(L, lua_upvalueindex(2));
+    klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)lua_touserdata(L, lua_upvalueindex(2));
 
     // 附加参数
     for (int i = 0; i < p_co_env->param_num; i++)

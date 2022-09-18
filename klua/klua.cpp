@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "klua/klua.h"
 #include "klbbase/klb_base.h"
 

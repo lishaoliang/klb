@@ -15,29 +15,30 @@
 
 namespace klb {
 
-    /// @class CMutex
-    /// @brief 普通锁
-    KLB_EXTERN class KLB_API_CPP CMutex
-    {
-    public:
-        CMutex();
-        ~CMutex();
+/// @class CMutex
+/// @brief 普通锁
+KLB_EXTERN class KLB_API_CPP CMutex
+{
+public:
+    CMutex();
+    ~CMutex();
 
-        /// @brief 加锁
-        /// @return 无
-        void Lock();
+    /// @brief 加锁
+    /// @return 无
+    void Lock();
 
-        /// @brief 尝试加锁
-        /// @return bool true.成功; false.失败
-        bool TryLock();
+    /// @brief 尝试加锁
+    /// @return bool true.成功; false.失败
+    bool TryLock();
 
-        /// @brief 解锁
-        /// @return 无
-        void UnLock();
+    /// @brief 解锁
+    /// @return 无
+    void UnLock();
 
-    private:
-        klb_mutex_t*    m_mutex;
-    };
-}
+private:
+    klb_mutex_t*    m_mutex;
+};
+
+} // namespace klb
 
 #endif // __KLB_CMUTEX_HPP__

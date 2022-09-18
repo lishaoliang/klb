@@ -12,7 +12,7 @@
 
 
 #include "klb_type.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 
 
 #if defined(__cplusplus)
@@ -32,7 +32,7 @@ void klb_flv_demux_destroy(klb_flv_demux_t* p_flv_demux);
 /// @param [in]  data_len        数据长度
 /// @param [out] *p_list_out 解析出来的数据帧,放入此链表中
 /// @return 0.正常; -1. 数据格式错误
-int klb_flv_demux_do(klb_flv_demux_t* p_flv_demux, const char* p_data, int data_len, klb_list_t* p_list_out);
+int klb_flv_demux_do(klb_flv_demux_t* p_flv_demux, const char* p_data, int data_len, klb_nlist_t* p_list_out);
 
 
 #ifdef __cplusplus

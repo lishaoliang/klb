@@ -10,7 +10,7 @@
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_buffer.h"
 #include "klbthird/http_parser.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_log.h"
 #include "klbthird/sds.h"
 #include <assert.h>
@@ -59,7 +59,7 @@ typedef struct klua_kwebsocket_inter_t_
     // send发送相关
     struct
     {
-        klb_list_t*         p_w_list;       ///< klb_buf_t*
+        klb_nlist_t*         p_w_list;       ///< klb_buf_t*
         klb_buf_t*          p_w_cur;        ///< 当前正在发送的缓存
     };
 
@@ -273,14 +273,14 @@ static int on_chunk_complete_klua_kwebsocket(http_parser* p_parser)
 
 static void free_klua_kwebsocket_inter(klua_kwebsocket_inter_t* p_inter)
 {
-    while (0 < klb_list_size(p_inter->p_w_list))
+    while (0 < klb_nlist_size(p_inter->p_w_list))
     {
-        klb_buf_t* p_tmp = klb_list_pop_head(p_inter->p_w_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         KLB_FREE(p_tmp);
     }
 
     KLB_FREE_BY(p_inter->p_socket, klb_socket_destroy);
-    KLB_FREE_BY(p_inter->p_w_list, klb_list_destroy);
+    KLB_FREE_BY(p_inter->p_w_list, klb_nlist_destroy);
     KLB_FREE(p_inter->p_w_cur);
     KLB_FREE(p_inter->p_r_buf);
     KLB_FREE_BY(p_inter->p_ws_text, klb_buffer_destroy);
@@ -366,7 +366,7 @@ static int recv_http_klua_kwebsocket(klua_kwebsocket_t* p_kws, bool* p_is_first,
     klb_buf_t* p_buf = p_inter->p_r_buf;
     while (true)
     {
-        int r = klb_socket_recv(p_socket, p_buf->p_buf + p_buf->end, p_buf->buf_len - p_buf->end);
+        int r = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), p_buf->buf_len - p_buf->end);
 
         if (0 < r)
         {
@@ -417,7 +417,7 @@ static int parse_ws_klua_kwebsocket(klua_kwebsocket_t* p_kws)
         if (KLUA_KWS_WS_HEAD == p_inter->status)
         {
             klb_websocket_t ws = { 0 };
-            if (0 == klb_websocket_parse(&ws, p_data, data_len))
+            if (0 == klb_websocket_parse(&ws, (const uint8_t*)p_data, data_len))
             {
                 p_buf->start += ws.head_len;
 
@@ -448,7 +448,7 @@ static int parse_ws_klua_kwebsocket(klua_kwebsocket_t* p_kws)
                     {
                         if (0 != p_inter->ws.mask)
                         {
-                            klb_websocket_mask(p_inter->ws.mask_key, p_data, cp_len);
+                            klb_websocket_mask(p_inter->ws.mask_key, (uint8_t*)p_data, cp_len);
                         }
 
                         klb_buffer_write(p_inter->p_ws_text, p_data, cp_len);
@@ -458,7 +458,7 @@ static int parse_ws_klua_kwebsocket(klua_kwebsocket_t* p_kws)
                     {
                         if (0 != p_inter->ws.mask)
                         {
-                            klb_websocket_mask(p_inter->ws.mask_key, p_data, cp_len);
+                            klb_websocket_mask(p_inter->ws.mask_key, (uint8_t*)p_data, cp_len);
                         }
 
                         klb_buffer_write(p_inter->p_ws_binary, p_data, cp_len);
@@ -542,7 +542,7 @@ static int recv_ws_klua_kwebsocket(klua_kwebsocket_t* p_kws, bool* p_is_first, b
     while (true)
     {
         // 读数据
-        int r = klb_socket_recv(p_socket, p_buf->p_buf + p_buf->end, p_buf->buf_len - p_buf->end);
+        int r = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), p_buf->buf_len - p_buf->end);
 
         if (0 < r)
         {
@@ -629,9 +629,9 @@ static int on_send_klua_kwebsocket(void* p_lparam, void* p_wparam, int id, int64
 
     while (true)
     {
-        if (NULL == p_inter->p_w_cur && 0 < klb_list_size(p_inter->p_w_list))
+        if (NULL == p_inter->p_w_cur && 0 < klb_nlist_size(p_inter->p_w_list))
         {
-            p_inter->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+            p_inter->p_w_cur = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         }
 
         klb_buf_t* p_buf = p_inter->p_w_cur;
@@ -641,7 +641,7 @@ static int on_send_klua_kwebsocket(void* p_lparam, void* p_wparam, int id, int64
             break;
         }
 
-        int s = klb_socket_send(p_socket, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+        int s = klb_socket_send(p_socket, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
         if (0 < s)
         {
             send += s;
@@ -667,7 +667,7 @@ static int on_send_klua_kwebsocket(void* p_lparam, void* p_wparam, int id, int64
         first = false;
     }
 
-    if (NULL == p_inter->p_w_cur && klb_list_size(p_inter->p_w_list) <= 0)
+    if (NULL == p_inter->p_w_cur && klb_nlist_size(p_inter->p_w_list) <= 0)
     {
         klb_socket_set_writing(p_inter->p_socket, false);   // 无数据可写
     }
@@ -752,7 +752,7 @@ static int klua_kwebsocket_send_text(lua_State* L)
 
     klb_buf_t* p_buf = klb_websocket_pack_fin(KLB_WEBSOCKET_OPCODE_TEXT, NULL, p_text, text_len);
 
-    klb_list_push_tail(p_kws->p_inter->p_w_list, p_buf);    // 放入待发送列表
+    klb_nlist_push_tail(p_kws->p_inter->p_w_list, p_buf);    // 放入待发送列表
     klb_socket_set_writing(p_kws->p_inter->p_socket, true); // 有数据可写
 
     return 0;
@@ -767,7 +767,7 @@ static int klua_kwebsocket_send_binary(lua_State* L)
 
     klb_buf_t* p_buf = klb_websocket_pack_fin(KLB_WEBSOCKET_OPCODE_BINARY, NULL, p_binary, binary_len);
 
-    klb_list_push_tail(p_kws->p_inter->p_w_list, p_buf);    // 放入待发送列表
+    klb_nlist_push_tail(p_kws->p_inter->p_w_list, p_buf);    // 放入待发送列表
     klb_socket_set_writing(p_kws->p_inter->p_socket, true); // 有数据可写
 
     return 0;
@@ -846,7 +846,7 @@ static void send_http_request_klua_kwebsocket(klua_kwebsocket_t* p_kws, const ch
 
     KLB_FREE_BY(str, sdsfree);
 
-    klb_list_push_tail(p_kws->p_inter->p_w_list, p_http_text);  // 放入待发送列表
+    klb_nlist_push_tail(p_kws->p_inter->p_w_list, p_http_text);  // 放入待发送列表
     klb_socket_set_writing(p_kws->p_inter->p_socket, true);     // 有数据可写
 }
 
@@ -877,7 +877,7 @@ static klua_kwebsocket_t* new_connect_klua_kwebsocket(lua_State* L, klb_socket_f
     p_inter->is_close = false;
     p_inter->connect_tc = klua_env_get_tick_count(p_kws->p_env);
     p_inter->p_socket = p_socket;
-    p_inter->p_w_list = klb_list_create();
+    p_inter->p_w_list = klb_nlist_create();
 
     p_inter->p_r_buf = klb_buf_malloc(KLUA_KWEBSOCKET_R_BUF_MAX, false);
 
@@ -927,7 +927,7 @@ static int lib_klua_kwebsocket_connect(lua_State* L)
     const char* p_path = luaL_checkstring(L, 3);
 
     // step1. 参数
-    klua_kwebsocket_param_t param = { 0 };
+    klua_kwebsocket_param_t param;
     default_klua_kwebsocket_param(&param);
 
     // step2. 创建 socket
@@ -1073,7 +1073,7 @@ static int on_accept_klua_kwebsocket_listen(void* ptr, klb_socket_fd fd, const s
             p_listen->co_accept = NULL; // 协程模式下, 一次"accept", 对应一次唤醒, 唤醒后清空
 
             // param
-            klua_kwebsocket_param_t param = { 0 };
+            klua_kwebsocket_param_t param;
             default_klua_kwebsocket_param(&param);
             param.http_type = HTTP_REQUEST;
 

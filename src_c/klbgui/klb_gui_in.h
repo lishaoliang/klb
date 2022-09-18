@@ -13,7 +13,7 @@
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
 #include "klbgui/klb_wnd.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_hlist.h"
 #include "klbplatform/klb_mutex.h"
 #include "klbplatform/klb_thread.h"
@@ -83,7 +83,7 @@ typedef struct klb_gui_t_
     // 消息
     struct
     {
-        klb_list_t*     p_msg_list;
+        klb_nlist_t*     p_msg_list;
         klb_mutex_t*    p_msg_mutex;
     };
 

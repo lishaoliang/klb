@@ -2,7 +2,7 @@
 #include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbnet/klb_ncm.h"
 #include "klbmem/klb_mem.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_log.h"
 #include "klbmem/klb_rbuf.h"
 #include "klbnet/klb_http.h"
@@ -33,7 +33,7 @@ static void* cb_create_klb_ncm_ops_http(klb_ncm_ops_lparam_t* p_lparam, klb_ncm_
 {
     klb_ncm_ops_http_t* p_ops = KLB_MALLOCZ(klb_ncm_ops_http_t, 1, 0);
 
-    p_ops->p_ncm = p_lparam->p_ncm;
+    p_ops->p_ncm = (klb_ncm_t*)p_lparam->p_ncm;
     p_ops->protocol = p_lparam->protocol;
     p_ops->id = p_lparam->id;
     p_ops->cb_recv_to_ncm = p_lparam->cb_recv;

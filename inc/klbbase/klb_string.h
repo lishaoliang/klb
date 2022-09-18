@@ -13,7 +13,7 @@
 
 #include "klb_type.h"
 #include "klbthird/sds.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 
 
 #if defined(__cplusplus)

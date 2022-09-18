@@ -93,20 +93,12 @@ void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, void* p_o
 {
     assert(NULL != p_list);
 
-    while (true)
+    while (0 < klb_hlist_size(p_list))
     {
         void* p_data = klb_hlist_pop_head(p_list);
-
-        if (NULL != p_data)
+        if (NULL != p_data && NULL != cb_clean)
         {
-            if (NULL != cb_clean)
-            {
-                cb_clean(p_obj, p_data);
-            }
-        }
-        else
-        {
-            break;
+            cb_clean(p_obj, p_data);
         }
     }
 }
@@ -118,9 +110,10 @@ klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, ui
 
     if (NULL != p_key && NULL != p_data)
     {
-        klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, key_len);
+        klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, KLB_PADDING_4(key_len));
 
         memcpy(p_iter->key, p_key, key_len);
+        p_iter->key[key_len] = 0; // 便于key作为字符串使用
         p_iter->key_len = key_len;
 
         if (KLB_HLIST_USE_HMAP == p_list->use_type)
@@ -176,9 +169,10 @@ klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, ui
 
     if (NULL != p_key && NULL != p_data)
     {
-        klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, key_len);
+        klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, KLB_PADDING_4(key_len));
 
         memcpy(p_iter->key, p_key, key_len);
+        p_iter->key[key_len] = 0; // 便于key作为字符串使用
         p_iter->key_len = key_len;
 
         if (KLB_HLIST_USE_HMAP == p_list->use_type)
@@ -432,9 +426,11 @@ klb_hlist_iter_t* klb_hlist_prev(klb_hlist_iter_t* p_iter)
 void* klb_hlist_key(klb_hlist_iter_t* p_iter, uint32_t* p_key_len)
 {
     assert(NULL != p_iter);
-    assert(NULL != p_key_len);
 
-    *p_key_len = p_iter->key_len;
+    if (NULL != p_key_len)
+    {
+        *p_key_len = p_iter->key_len;
+    }
 
     return (void*)p_iter->key;
 }

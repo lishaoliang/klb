@@ -6,7 +6,7 @@
 #include "klbnet/klb_multiplex.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include <assert.h>
 
 #define KLB_MULTIPLEX_ID_MIN            1000            ///< 分配id的最小值
@@ -34,7 +34,7 @@ typedef struct klb_multiplex_item_t_
 typedef struct klb_multiplex_t_
 {
     klb_hlist_t*        p_items_hlist;  ///< 当前所有元素: klb_multiplex_item_t*
-    klb_list_t*         p_remove_list;  ///< 待移除列表: klb_multiplex_remove_t*
+    klb_nlist_t*         p_remove_list;  ///< 待移除列表: klb_multiplex_remove_t*
 
     int                 next_id;        ///< 下一个ID号
     int64_t             tc;             ///< 计时: 当前时间
@@ -77,7 +77,7 @@ klb_multiplex_t* klb_multiplex_create(int64_t tc)
     KLB_MEMSET(p_multi, 0, sizeof(klb_multiplex_t));
 
     p_multi->p_items_hlist = klb_hlist_create(0);
-    p_multi->p_remove_list = klb_list_create();
+    p_multi->p_remove_list = klb_nlist_create();
 
     p_multi->next_id = KLB_MULTIPLEX_ID_MIN;
     p_multi->tc = tc;
@@ -89,9 +89,9 @@ klb_multiplex_t* klb_multiplex_create(int64_t tc)
 void klb_multiplex_destroy(klb_multiplex_t* p_multi)
 {
     // 移除
-    while (0 < klb_list_size(p_multi->p_remove_list))
+    while (0 < klb_nlist_size(p_multi->p_remove_list))
     {
-        klb_multiplex_remove_t* p_remove = (klb_multiplex_remove_t*)klb_list_pop_head(p_multi->p_remove_list);
+        klb_multiplex_remove_t* p_remove = (klb_multiplex_remove_t*)klb_nlist_pop_head(p_multi->p_remove_list);
         KLB_FREE(p_remove);
     }
 
@@ -109,7 +109,7 @@ void klb_multiplex_destroy(klb_multiplex_t* p_multi)
     }
 
     // 销毁
-    KLB_FREE_BY(p_multi->p_remove_list, klb_list_destroy);
+    KLB_FREE_BY(p_multi->p_remove_list, klb_nlist_destroy);
     KLB_FREE_BY(p_multi->p_items_hlist, klb_hlist_destroy);
     KLB_FREE(p_multi);
 }
@@ -245,9 +245,9 @@ static int klb_multiplex_loop_once_do(klb_multiplex_t* p_multi, int64_t now)
 static int klb_multiplex_loop_once_remove(klb_multiplex_t* p_multi, int64_t now)
 {
     // 处理所有待移除
-    while (0 < klb_list_size(p_multi->p_remove_list))
+    while (0 < klb_nlist_size(p_multi->p_remove_list))
     {
-        klb_multiplex_remove_t* p_remove = (klb_multiplex_remove_t*)klb_list_pop_head(p_multi->p_remove_list);
+        klb_multiplex_remove_t* p_remove = (klb_multiplex_remove_t*)klb_nlist_pop_head(p_multi->p_remove_list);
 
         int id = p_remove->id;
 
@@ -346,7 +346,7 @@ int klb_multiplex_remove(klb_multiplex_t* p_multi, int id)
 
     p_remove->id = id;
 
-    klb_list_push_tail(p_multi->p_remove_list, p_remove);
+    klb_nlist_push_tail(p_multi->p_remove_list, p_remove);
 
     return 0;
 }

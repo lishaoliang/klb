@@ -6,7 +6,7 @@
 #include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_multiplex.h"
 #include "klbnet/klb_listen.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbbase/klb_mnp.h"
 #include "klbbase/klb_mnp_help.h"
 #include "klbmem/klb_buffer.h"
@@ -56,7 +56,7 @@ typedef struct klua_khttp_rtp_inter_t_
     // send发送相关
     struct
     {
-        klb_list_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
+        klb_nlist_t*             p_w_list;       ///< 待发送数据列表: klb_buf_t*
         klb_buf_t*              p_w_cur;        ///< 当前正在发送的缓存
         int                     w_start;        ///< 当前发送的起始点
     };
@@ -66,7 +66,7 @@ typedef struct klua_khttp_rtp_inter_t_
     {
         klb_buf_t*              p_r_buf;        ///< 临时读取缓存
 
-        klb_list_t*             p_r_list;       ///< 
+        klb_nlist_t*             p_r_list;       ///< 
     };
 
     // http解析
@@ -148,21 +148,21 @@ static int call_lua_co_recv_klua_khttp_rtp(klua_khttp_rtp_t* p_kmnp, const char*
 static void free_klua_khttp_rtp_inter(klua_khttp_rtp_inter_t* p_inter)
 {
     // 清空
-    while (0 < klb_list_size(p_inter->p_w_list))
+    while (0 < klb_nlist_size(p_inter->p_w_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         KLB_FREE(p_tmp);
     }
 
-    while (0 < klb_list_size(p_inter->p_r_list))
+    while (0 < klb_nlist_size(p_inter->p_r_list))
     {
-        klb_buf_t* p_tmp = (klb_buf_t*)klb_list_pop_head(p_inter->p_r_list);
+        klb_buf_t* p_tmp = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_r_list);
         KLB_FREE(p_tmp);
     }
 
     KLB_FREE_BY(p_inter->p_socket, klb_socket_destroy);
-    KLB_FREE_BY(p_inter->p_w_list, klb_list_destroy);
-    KLB_FREE_BY(p_inter->p_r_list, klb_list_destroy);
+    KLB_FREE_BY(p_inter->p_w_list, klb_nlist_destroy);
+    KLB_FREE_BY(p_inter->p_r_list, klb_nlist_destroy);
     KLB_FREE_BY(p_inter->p_txt, klb_buffer_destroy);
     KLB_FREE_BY(p_inter->p_media, klb_buffer_destroy);
 
@@ -232,7 +232,7 @@ static int klua_khttp_rtp_parse(klua_khttp_rtp_t* p_kmnp, klua_khttp_rtp_inter_t
 
                     if (call_lua_co_recv_klua_khttp_rtp(p_kmnp, "text", p_txt) < 0)
                     {
-                        klb_list_push_tail(p_inter->p_r_list, p_txt);
+                        klb_nlist_push_tail(p_inter->p_r_list, p_txt);
                     }
                     else
                     {
@@ -257,7 +257,7 @@ static int klua_khttp_rtp_parse(klua_khttp_rtp_t* p_kmnp, klua_khttp_rtp_inter_t
 
                     if (call_lua_co_recv_klua_khttp_rtp(p_kmnp, "binary", p_bin) < 0)
                     {
-                        klb_list_push_tail(p_inter->p_r_list, p_bin);
+                        klb_nlist_push_tail(p_inter->p_r_list, p_bin);
                     }
                     else
                     {
@@ -420,7 +420,7 @@ static int cb_recv_klua_khttp_rtp(void* p_lparam, void* p_wparam, int id, int64_
     {
         klb_buf_t* p_buf = p_inter->p_r_buf;
 
-        int r = klb_socket_recv(p_socket, p_buf->p_buf + p_buf->end, p_buf->buf_len - p_buf->end);
+        int r = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), p_buf->buf_len - p_buf->end);
 
         if (0 < r)
         {
@@ -486,9 +486,9 @@ static int cb_send_klua_khttp_rtp(void* p_lparam, void* p_wparam, int id, int64_
 
     while (true)
     {
-        if (NULL == p_inter->p_w_cur && 0 < klb_list_size(p_inter->p_w_list))
+        if (NULL == p_inter->p_w_cur && 0 < klb_nlist_size(p_inter->p_w_list))
         {
-            p_inter->p_w_cur = (klb_buf_t*)klb_list_pop_head(p_inter->p_w_list);
+            p_inter->p_w_cur = (klb_buf_t*)klb_nlist_pop_head(p_inter->p_w_list);
         }
 
         klb_buf_t* p_buf = p_inter->p_w_cur;
@@ -498,7 +498,7 @@ static int cb_send_klua_khttp_rtp(void* p_lparam, void* p_wparam, int id, int64_
             break;
         }
 
-        int w = klb_socket_send(p_socket, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
+        int w = klb_socket_send(p_socket, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
 
         if (0 < w)
         {
@@ -525,7 +525,7 @@ static int cb_send_klua_khttp_rtp(void* p_lparam, void* p_wparam, int id, int64_
         first = false;
     }
 
-    if (NULL == p_inter->p_w_cur && klb_list_size(p_inter->p_w_list) <= 0)
+    if (NULL == p_inter->p_w_cur && klb_nlist_size(p_inter->p_w_list) <= 0)
     {
         klb_socket_set_writing(p_inter->p_socket, false);   // 无数据可写
     }
@@ -605,11 +605,11 @@ static int klua_khttp_rtp_send_text(lua_State* L)
     size_t body_len = 0;
     const char* p_body = luaL_checklstring(L, 3, &body_len);
 
-    klb_buf_t* p_buf = klb_mnp_pack_text(0, 0, p_head, head_len, p_body, body_len);
+    klb_buf_t* p_buf = klb_mnp_pack_text(0, 0, (const uint8_t*)p_head, head_len, (const uint8_t*)p_body, body_len);
 
     if (NULL != p_buf)
     {
-        klb_list_push_tail(p_kmnp->p_inter->p_w_list, p_buf);
+        klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_buf);
         klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
     }
 
@@ -626,11 +626,11 @@ static int klua_khttp_rtp_send_binary(lua_State* L)
     size_t body_len = 0;
     const char* p_body = luaL_checklstring(L, 3, &body_len);
 
-    klb_buf_t* p_buf = klb_mnp_pack_binary(0, 0, p_head, head_len, p_body, body_len);
+    klb_buf_t* p_buf = klb_mnp_pack_binary(0, 0, (const uint8_t*)p_head, head_len, (const uint8_t*)p_body, body_len);
 
     if (NULL != p_buf)
     {
-        klb_list_push_tail(p_kmnp->p_inter->p_w_list, p_buf);
+        klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_buf);
         klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
     }
 
@@ -649,9 +649,9 @@ static int klua_khttp_rtp_co_recv(lua_State* L)
     klua_khttp_rtp_t* p_kmnp = to_klua_khttp_rtp(L, 1);
     klua_check_coroutine(L, "co_recv must in coroutine!");
 
-    if (0 < klb_list_size(p_kmnp->p_inter->p_r_list))
+    if (0 < klb_nlist_size(p_kmnp->p_inter->p_r_list))
     {
-        klb_buf_t* p_buf = (klb_buf_t*)klb_list_pop_head(p_kmnp->p_inter->p_r_list);
+        klb_buf_t* p_buf = (klb_buf_t*)klb_nlist_pop_head(p_kmnp->p_inter->p_r_list);
 
         klb_mnp_common_t* p_com = (klb_mnp_common_t*)(p_buf->p_buf + p_buf->start);
         assert(p_buf->end - p_buf->start == p_com->size);
@@ -879,10 +879,10 @@ klua_khttp_rtp_t* new_connect_klua_khttp_rtp(lua_State* L, klb_socket_fd fd, klu
     p_inter->close = false;
     p_inter->p_socket = p_socket;
 
-    p_inter->p_w_list = klb_list_create();
+    p_inter->p_w_list = klb_nlist_create();
     p_inter->p_r_buf = klb_buf_malloc(p_inter->param.rbuf_max, false);
 
-    p_inter->p_r_list = klb_list_create();
+    p_inter->p_r_list = klb_nlist_create();
 
     p_inter->p_txt = klb_buffer_create(4096);
     p_inter->p_media = klb_buffer_create(4096);
@@ -928,7 +928,7 @@ static int lib_klua_khttp_rtp_connect(lua_State* L)
     lua_Integer port = luaL_checkinteger(L, 2);
 
     // param
-    klua_khttp_rtp_param_t param = { 0 };
+    klua_khttp_rtp_param_t param;
     default_param_klua_khttp_rtp(&param);
     check_param_klua_khttp_rtp(L, 2, &param);
 
@@ -961,8 +961,8 @@ static int on_accept_klua_khttp_rtp_listen(void* ptr, klb_socket_fd fd, const st
         {
             p_listen->co_accept = NULL; // 协程模式下, 一次"accept", 对应一次唤醒, 唤醒后清空
 
-                                        // param
-            klua_khttp_rtp_param_t param = { 0 };
+            // param
+            klua_khttp_rtp_param_t param;
             default_param_klua_khttp_rtp(&param);
             param.http_type = HTTP_REQUEST;
 

@@ -2,7 +2,7 @@
 #include "klbbase/klb_package.h"
 #include "klbutil/klb_hash.h"
 #include "klbmem/klb_buf.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_hlist.h"
 #include "klbutil/klb_rand.h"
 #include "klbmem/klb_mem.h"
@@ -128,7 +128,7 @@ klb_package_w_t* klb_package_w_open(const char* p_path)
     p_kpa->p_idx_hlist = klb_hlist_create(0);
 
     // init head
-    strcpy(p_kpa->head.magic, KLB_PACKAGE_MAGIC);
+    strcpy((char*)p_kpa->head.magic, KLB_PACKAGE_MAGIC);
 
     // encrypt
     p_kpa->head.encrypt_type = 0;
@@ -174,7 +174,7 @@ void klb_package_w_close(klb_package_w_t* p_kpa)
     av_md5_final(p_kpa->p_avmd5, p_kpa->head.idx_md5);
 
     // 文件头
-    klb_rand_string(p_kpa->head.rand, KLB_PACKAGE_RAND_MAX, false);
+    klb_rand_string((char*)p_kpa->head.rand, KLB_PACKAGE_RAND_MAX, false);
     p_kpa->head.head_hash = klb_hash32((const char*)&(p_kpa->head), sizeof(klb_package_head_t) - sizeof(uint32_t));
 
     fseek(p_kpa->pf, p_kpa->offset, SEEK_SET);
@@ -198,14 +198,14 @@ static int klb_package_w_write_buf(klb_package_w_t* p_kpa, const char* p_key, in
     p_idx->key_len = key_len;
     p_idx->value_pos = offset + key_len;
     p_idx->value_len = data_len;
-    av_md5_sum(p_idx->value_md5, p_data, data_len);
+    av_md5_sum(p_idx->value_md5, (const uint8_t*)p_data, data_len);
 
     fseek(p_kpa->pf, p_kpa->offset + offset, SEEK_SET);
     if (0 < key_len)
     {
         fwrite(p_key, key_len, 1, p_kpa->pf);
 
-        av_md5_update(p_kpa->p_avmd5, p_key, key_len);
+        av_md5_update(p_kpa->p_avmd5, (const uint8_t*)p_key, key_len);
         p_kpa->data_size += key_len;
     }
 
@@ -213,7 +213,7 @@ static int klb_package_w_write_buf(klb_package_w_t* p_kpa, const char* p_key, in
     {
         fwrite(p_data, data_len, 1, p_kpa->pf);
 
-        av_md5_update(p_kpa->p_avmd5, p_data, data_len);
+        av_md5_update(p_kpa->p_avmd5, (const uint8_t*)p_data, data_len);
         p_kpa->data_size += data_len;
     }
 
@@ -257,7 +257,7 @@ static int klb_package_w_write_file_dump(klb_package_w_t* p_kpa, const char* p_k
     {
         fwrite(p_key, key_len, 1, p_kpa->pf);
 
-        av_md5_update(p_kpa->p_avmd5, p_key, key_len);
+        av_md5_update(p_kpa->p_avmd5, (const uint8_t*)p_key, key_len);
         p_kpa->data_size += key_len;
     }
 
@@ -321,7 +321,7 @@ int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, int key_
         uint8_t buf[KLB_PACKAGE_BUF_MAX];
         fread(buf, filelen, 1, pf);
 
-        ret = klb_package_w_write_buf(p_kpa, p_key, key_len, buf, filelen);
+        ret = klb_package_w_write_buf(p_kpa, p_key, key_len, (const char*)buf, filelen);
     }
     else
     {

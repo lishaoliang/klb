@@ -13,7 +13,6 @@
 
 #include "klb_type.h"
 #include "klua/klua_env.h"
-#include "klua/klua_data.h"
 #include "klbthird/sds.h"
 #include "klua/klua_kthread.h"
 

@@ -18,6 +18,31 @@
 #define KLB_RBUF_realloc        realloc
 #define KLB_RBUF_free           free
 
+void klb_rbuf_reset(klb_rbuf_t* p_buf)
+{
+    assert(NULL != p_buf);
+
+    if (NULL != p_buf->ptr)
+    {
+        KLB_RBUF_free(p_buf->ptr);
+        p_buf->ptr = NULL;
+    }
+
+    memset(p_buf, 0, sizeof(klb_rbuf_t));
+}
+
+void klb_rbuf_quit(klb_rbuf_t* p_buf)
+{
+    assert(NULL != p_buf);
+
+    if (NULL != p_buf->ptr)
+    {
+        KLB_RBUF_free(p_buf->ptr);
+        p_buf->ptr = NULL;
+    }
+
+    memset(p_buf, 0, sizeof(klb_rbuf_t));
+}
 
 static void klb_rbuf_new_init(klb_rbuf_t* p_buf, int buf_len, const void* ptr, int len)
 {
@@ -84,19 +109,6 @@ void klb_rbuf_free(klb_rbuf_t* p_buf)
     } 
 }
 
-void klb_rbuf_reset(klb_rbuf_t* p_buf)
-{
-    assert(NULL != p_buf);
-
-    if (NULL != p_buf->ptr)
-    {
-        KLB_RBUF_free(p_buf->ptr);
-        p_buf->ptr = NULL;
-    }
-
-    memset(p_buf, 0, sizeof(klb_rbuf_t));
-}
-
 static void klb_rbuf_check_buf_size(klb_rbuf_t* p_buf, int add_len)
 {
     // 检查是否有足够空间支持追加缓存大小;
@@ -147,7 +159,7 @@ static void klb_rbuf_check_buf_size(klb_rbuf_t* p_buf, int add_len)
     }
 }
 
-int klb_rbuf_cat(klb_rbuf_t* p_buf, const void* ptr, int len)
+int klb_rbuf_write(klb_rbuf_t* p_buf, const void* ptr, int len)
 {
     assert(NULL != p_buf);
 
@@ -358,7 +370,7 @@ void klb_rbuf_test()
     int size = 3;
     for (int i = 0; i < sizeof(buf) / 2;  i++)
     {
-        size += klb_rbuf_cat(p_rbuf, buf, i + 1);
+        size += klb_rbuf_write(p_rbuf, buf, i + 1);
     }
 
     test_cond("rbuf_cat length", klb_rbuf_datalen(p_rbuf) == size);

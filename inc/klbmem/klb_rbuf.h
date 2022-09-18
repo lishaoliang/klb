@@ -20,15 +20,15 @@ typedef struct klb_rbuf_t_
     int     buf_len;
 }klb_rbuf_t;
 
+void klb_rbuf_reset(klb_rbuf_t* p_buf);
+void klb_rbuf_quit(klb_rbuf_t* p_buf);
 
 klb_rbuf_t* klb_rbuf_new(const void* ptr, int len);
 klb_rbuf_t* klb_rbuf_malloc(int buf_len);
 klb_rbuf_t* klb_rbuf_dup(const klb_rbuf_t* p_buf);
 void klb_rbuf_free(klb_rbuf_t* p_buf);
 
-void klb_rbuf_reset(klb_rbuf_t* p_buf);
-
-int klb_rbuf_cat(klb_rbuf_t* p_buf, const void* ptr, int len);
+int klb_rbuf_write(klb_rbuf_t* p_buf, const void* ptr, int len);
 
 int klb_rbuf_buflen(klb_rbuf_t* p_buf);
 int klb_rbuf_datalen(klb_rbuf_t* p_buf);

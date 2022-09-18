@@ -5,7 +5,7 @@
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_multiplex.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_log.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
@@ -15,8 +15,8 @@
 #include "klbnet/klb_nsp.h"
 #include "klbnet/klb_ncm.h"
 #include "klbnet/klb_nsc.h"
-#include "klua/lua-skynet/lua-seri.h"
 #include "klua/klua_util/klua_seri_json.h"
+#include "klua/klua_util/klua_seri_map.h"
 #include "klbbase/klb_mnp.h"
 #include "klbthird/cJSON.h"
 #include <assert.h>
@@ -84,7 +84,7 @@ typedef struct klua_krpc_t_
 
         bool                    b_notify;       ///< 是否收取 "notify" 信息
         int32_t                 notify_num;     ///< 缓存的数据大小
-        klb_list_t*             p_notify_list;  ///< 缓存的数据列表: klua_krpc_data_t*
+        klb_nlist_t*             p_notify_list;  ///< 缓存的数据列表: klua_krpc_data_t*
     };
 
     uint32_t                    next_sequence;  ///< 下一个sequence序列号
@@ -102,7 +102,7 @@ static int call_lua_co_recv_klua_krpc(klua_krpc_t* p_krpc, int id, uint32_t sequ
 
         p_krpc->co_recv = NULL; // 清空
 
-        int num = (0 < body_len) ? luaseri_unpack_by_buffer(L, 1, p_body, body_len) : 0;
+        int num = (0 < body_len) ? luaseri_map_binary_unpack(L, 1, p_body, body_len) : 0;
 
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
@@ -142,7 +142,7 @@ static int call_lua_co_recv_notify_klua_krpc(klua_krpc_t* p_krpc, int id, uint32
 
         p_krpc->co_recv_notify = NULL; // 清空
 
-        int num = (0 < body_len) ? luaseri_unpack_by_buffer(L, 1, p_body, body_len) : 0;
+        int num = (0 < body_len) ? luaseri_map_binary_unpack(L, 1, p_body, body_len) : 0;
 
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
@@ -205,9 +205,9 @@ static void close_klua_krpc(klua_krpc_t* p_krpc)
     // 清空
     if (NULL != p_krpc->p_notify_list)
     {
-        while (0 < klb_list_size(p_krpc->p_notify_list))
+        while (0 < klb_nlist_size(p_krpc->p_notify_list))
         {
-            klua_krpc_data_t* p_tmp = klb_list_pop_head(p_krpc->p_notify_list);
+            klua_krpc_data_t* p_tmp = (klua_krpc_data_t*)klb_nlist_pop_head(p_krpc->p_notify_list);
             KLB_FREE_BY(p_tmp->p_buf, klb_buf_unref_next);
             KLB_FREE_BY(p_tmp->p_json, cJSON_Delete);
             KLB_FREE(p_tmp);
@@ -236,7 +236,7 @@ static void push_notify_data_klua_krpc(klua_krpc_t* p_krpc, int protocol, int id
     p_data->p_buf = p_buf;
     p_data->p_json = p_json;
 
-    klb_list_push_tail(p_krpc->p_notify_list, p_data);
+    klb_nlist_push_tail(p_krpc->p_notify_list, p_data);
 }
 
 static int cb_recv_klua_krpc(void* ptr, int protocol, int id, int code, int packtype, klb_buf_t* p_buf)
@@ -279,7 +279,7 @@ static int cb_recv_klua_krpc(void* ptr, int protocol, int id, int code, int pack
         }
         else if(KLB_NCM_PACK_RPC_JSON == packtype)
         {
-            char* p_ep = NULL;
+            const char* p_ep = NULL;
             cJSON* p_root = cJSON_Parse(ptr, &p_ep);
             cJSON* p_sequence = cJSON_GetObjectItem(p_root, "sequence");
             cJSON* p_response = cJSON_GetObjectItem(p_root, "response");
@@ -355,7 +355,7 @@ static int klua_krpc_close(lua_State* L)
 
     // 释放
     KLB_FREE_BY(p_krpc->p_nsc, klb_nsc_destroy);
-    KLB_FREE_BY(p_krpc->p_notify_list, klb_list_destroy);
+    KLB_FREE_BY(p_krpc->p_notify_list, klb_nlist_destroy);
 
     return 0;
 }
@@ -381,12 +381,11 @@ static int send_pack_rpc_klua_krpc(klua_krpc_t* p_krpc, lua_State* L, int base_i
         if (KLB_PROTOCOL_RPC_MNP_LUA == p_krpc->protocol)
         {
             // pack buffer, rpc-lua
-            int size = 0;
-            char* ptr = luaseri_pack_buffer(L, base_idx/*1*/, &size);
+            klb_buf_t* p_buf = luaseri_map_binary_pack(L, base_idx/*1*/);
 
-            ret = klb_nsc_send_rpc(p_krpc->p_nsc, sequence, 0, NULL, 0, ptr, size);
+            ret = klb_nsc_send_rpc(p_krpc->p_nsc, sequence, 0, NULL, 0, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
 
-            KLB_FREE(ptr);
+            KLB_FREE(p_buf);
         }
         else if (KLB_PROTOCOL_RPC_MNP_JSON == p_krpc->protocol)
         {
@@ -400,7 +399,7 @@ static int send_pack_rpc_klua_krpc(klua_krpc_t* p_krpc, lua_State* L, int base_i
             char* ptr = cJSON_PrintUnformatted(p_root);
             int size = strlen(ptr);
 
-            ret = klb_nsc_send_rpc_json(p_krpc->p_nsc, sequence, 0, NULL, 0, ptr, size);
+            ret = klb_nsc_send_rpc_json(p_krpc->p_nsc, sequence, 0, NULL, 0, (const uint8_t*)ptr, size);
 
             KLB_FREE(ptr);
             KLB_FREE_BY(p_root, cJSON_Delete);
@@ -432,9 +431,9 @@ static int klua_krpc_co_recv_notify(lua_State* L)
 
     if (NULL != p_krpc->p_nsc && 0 == klb_nsc_get_status(p_krpc->p_nsc))
     {
-        if (0 < klb_list_size(p_krpc->p_notify_list))
+        if (0 < klb_nlist_size(p_krpc->p_notify_list))
         {
-            klua_krpc_data_t* p_data = (klua_krpc_data_t*)klb_list_pop_head(p_krpc->p_notify_list);
+            klua_krpc_data_t* p_data = (klua_krpc_data_t*)klb_nlist_pop_head(p_krpc->p_notify_list);
 
             int num = 0;
 
@@ -451,7 +450,7 @@ static int klua_krpc_co_recv_notify(lua_State* L)
                 assert(data_len == p_com->size - p_com->head - sizeof(klb_mnp_common_t));
                 assert(0 == p_buf->p_buf[p_buf->end]); // 连接层需要将非媒体数据末尾补0, 以便于文本解析
 
-                num = luaseri_unpack_by_buffer(L, 1, ptr, data_len);
+                num = luaseri_map_binary_unpack(L, 1, ptr, data_len);
             }
             else if(KLB_NCM_PACK_RPC_JSON == p_data->packtype)
             {
@@ -605,7 +604,7 @@ klua_krpc_t* new_connect_klua_krpc(lua_State* L, klua_krpc_param_t* p_param, klb
     p_krpc->protocol = p_param->protocol;
     p_krpc->next_sequence = KLUA_KRPC_sequence_min;
 
-    p_krpc->p_notify_list = klb_list_create();
+    p_krpc->p_notify_list = klb_nlist_create();
     p_krpc->b_notify = false;
 
     klb_nsc_set_receiver(p_krpc->p_nsc, cb_recv_klua_krpc, p_krpc);
@@ -668,7 +667,7 @@ typedef struct klua_krpc_module_t_
         klb_ncm_t*              p_ncm;          ///< ncm模块
 
         int32_t                 recv_num;       ///< 缓存的数据大小
-        klb_list_t*             p_recv_list;    ///< 缓存的数据列表: klua_krpc_data_t*
+        klb_nlist_t*             p_recv_list;    ///< 缓存的数据列表: klua_krpc_data_t*
     };
 }klua_krpc_module_t;
 
@@ -712,9 +711,9 @@ static int klua_krpc_module_close(lua_State* L)
 
     if (NULL != p_mo->p_recv_list)
     {
-        while (0 < klb_list_size(p_mo->p_recv_list))
+        while (0 < klb_nlist_size(p_mo->p_recv_list))
         {
-            klua_krpc_data_t* p_tmp = (klua_krpc_data_t*)klb_list_pop_head(p_mo->p_recv_list);
+            klua_krpc_data_t* p_tmp = (klua_krpc_data_t*)klb_nlist_pop_head(p_mo->p_recv_list);
             klb_buf_unref_next(p_tmp->p_buf);
             KLB_FREE(p_tmp);
         }
@@ -723,7 +722,7 @@ static int klua_krpc_module_close(lua_State* L)
     KLB_FREE_BY(p_mo->p_listen, klb_listen_destroy);
     KLB_FREE_BY(p_mo->p_nsp, klb_nsp_destroy);
     KLB_FREE_BY(p_mo->p_ncm, klb_ncm_destroy);
-    KLB_FREE_BY(p_mo->p_recv_list, klb_list_destroy);
+    KLB_FREE_BY(p_mo->p_recv_list, klb_nlist_destroy);
 
     // 清理 co_recv
     call_lua_co_recv_klua_krpc_module(p_mo, 0, 0, 0, NULL, 0);
@@ -767,9 +766,9 @@ static int klua_krpc_module_co_recv(lua_State* L)
         return 3;
     }
 
-    if (0 < klb_list_size(p_mo->p_recv_list))
+    if (0 < klb_nlist_size(p_mo->p_recv_list))
     {
-        klua_krpc_data_t* p_recv = (klua_krpc_data_t*)klb_list_pop_head(p_mo->p_recv_list);
+        klua_krpc_data_t* p_recv = (klua_krpc_data_t*)klb_nlist_pop_head(p_mo->p_recv_list);
         klb_buf_t* p_buf = p_recv->p_buf;
 
         char* p_data = p_buf->p_buf + p_buf->start;
@@ -789,13 +788,13 @@ static int klua_krpc_module_co_recv(lua_State* L)
             lua_pushinteger(L, p_recv->protocol);
             lua_pushinteger(L, p_recv->id);
             lua_pushinteger(L, p_com->sequence);
-            int n = luaseri_unpack_by_buffer(L, 4, ptr, data_len);
+            int n = luaseri_map_binary_unpack(L, 4, ptr, data_len);
 
             ret = n + 3;
         }
         else if(KLB_NCM_PACK_RPC_JSON == p_recv->packtype)
         {
-            char* p_ep = NULL;
+            const char* p_ep = NULL;
             cJSON* p_root = cJSON_Parse(ptr, &p_ep);
             cJSON* p_request = cJSON_GetObjectItem(p_root, "request");
             cJSON* p_sequence = cJSON_GetObjectItem(p_root, "sequence");
@@ -847,12 +846,11 @@ static int klua_krpc_module_response(lua_State* L)
 
     if (KLB_PROTOCOL_RPC_MNP_LUA == protocol)
     {
-        int size = 0;
-        char* ptr = luaseri_pack_buffer(L, 4, &size);
+        klb_buf_t* p_buf = luaseri_map_binary_pack(L, 4);
 
-        klb_ncm_send_rpc(p_mo->p_ncm, id, sequence, 0, NULL, 0, ptr, size);
+        klb_ncm_send_rpc(p_mo->p_ncm, id, sequence, 0, NULL, 0, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
 
-        KLB_FREE(ptr);
+        KLB_FREE(p_buf);
     }
     else if(KLB_PROTOCOL_RPC_MNP_JSON == protocol)
     {
@@ -864,7 +862,7 @@ static int klua_krpc_module_response(lua_State* L)
 
         char* ptr = cJSON_PrintUnformatted(p_root);
 
-        klb_ncm_send_rpc_json(p_mo->p_ncm, id, sequence, 0, NULL, 0, ptr, strlen(ptr));
+        klb_ncm_send_rpc_json(p_mo->p_ncm, id, sequence, 0, NULL, 0, (const uint8_t*)ptr, strlen(ptr));
 
         KLB_FREE(ptr);
         KLB_FREE_BY(p_root, cJSON_Delete);
@@ -893,12 +891,11 @@ static int klua_krpc_module_notify(lua_State* L)
 
     if (KLB_PROTOCOL_RPC_MNP_LUA == protocol)
     {
-        int size = 0;
-        char* ptr = luaseri_pack_buffer(L, 3, &size);
+        klb_buf_t* p_buf = luaseri_map_binary_pack(L, 3);
 
-        ret = klb_ncm_send_rpc(p_mo->p_ncm, id, sequence, 0, NULL, 0, ptr, size);
+        ret = klb_ncm_send_rpc(p_mo->p_ncm, id, sequence, 0, NULL, 0, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
 
-        KLB_FREE(ptr);
+        KLB_FREE(p_buf);
     }
     else if (KLB_PROTOCOL_RPC_MNP_JSON == protocol)
     {
@@ -910,7 +907,7 @@ static int klua_krpc_module_notify(lua_State* L)
 
         char* ptr = cJSON_PrintUnformatted(p_root);
 
-        ret = klb_ncm_send_rpc_json(p_mo->p_ncm, id, sequence, 0, NULL, 0, ptr, strlen(ptr));
+        ret = klb_ncm_send_rpc_json(p_mo->p_ncm, id, sequence, 0, NULL, 0, (const uint8_t*)ptr, strlen(ptr));
 
         KLB_FREE(ptr);
         KLB_FREE_BY(p_root, cJSON_Delete);
@@ -931,11 +928,10 @@ static int klua_krpc_module_notify_all(lua_State* L)
 
     uint32_t sequence = KLUA_KRPC_sequence_notify; // "notify"(通知)固定2
 
-    int size_lua = 0;
-    char* p_lua = luaseri_pack_buffer(L, 1, &size_lua);
+    klb_buf_t* p_buf = luaseri_map_binary_pack(L, 1);
 
-    klb_ncm_send_rpc(p_mo->p_ncm, 0, sequence, 0, NULL, 0, p_lua, size_lua);
-    KLB_FREE(p_lua);
+    klb_ncm_send_rpc(p_mo->p_ncm, 0, sequence, 0, NULL, 0, (const uint8_t*)(p_buf->p_buf + p_buf->start), p_buf->end - p_buf->start);
+    KLB_FREE(p_buf);
 
     cJSON* p_json_param = luaseri_json_pack(L, 1);
     cJSON* p_root = cJSON_CreateObject();
@@ -943,7 +939,7 @@ static int klua_krpc_module_notify_all(lua_State* L)
     cJSON_AddItemToObject(p_root, "notify", p_json_param);
     char* p_json = cJSON_PrintUnformatted(p_root);
 
-    klb_ncm_send_rpc_json(p_mo->p_ncm, 0, sequence, 0, NULL, 0, p_json, strlen(p_json));
+    klb_ncm_send_rpc_json(p_mo->p_ncm, 0, sequence, 0, NULL, 0, (const uint8_t*)p_json, strlen(p_json));
 
     KLB_FREE(p_json);
     KLB_FREE_BY(p_root, cJSON_Delete);
@@ -1005,7 +1001,7 @@ static int call_lua_co_recv_klua_krpc_module(klua_krpc_module_t* p_mo, int proto
         int n = 0;
         if (0 < body_len)
         {
-            n = luaseri_unpack_by_buffer(L, 4, p_body, body_len);
+            n = luaseri_map_binary_unpack(L, 4, p_body, body_len);
         }
 
         int status = lua_pcall(L, n + 3, 0, 0);                   /* do the call */
@@ -1026,7 +1022,7 @@ static int call_lua_co_recv_klua_krpc_module_json(klua_krpc_module_t* p_mo, int 
 
         p_mo->co_recv = NULL; // 清空
 
-        char* p_ep = NULL;
+        const char* p_ep = NULL;
         cJSON* p_root = cJSON_Parse(p_body, &p_ep);
         cJSON* p_request = cJSON_GetObjectItem(p_root, "request");
         cJSON* p_sequence = cJSON_GetObjectItem(p_root, "sequence");
@@ -1057,7 +1053,7 @@ static void push_recv_data_klua_krpc_module(klua_krpc_module_t* p_mo, int protoc
     p_data->packtype = packtype;
     p_data->p_buf = p_buf;
 
-    klb_list_push_tail(p_mo->p_recv_list, p_data);
+    klb_nlist_push_tail(p_mo->p_recv_list, p_data);
 }
 
 /// @brief 连接解析收到数据时,回调
@@ -1116,7 +1112,7 @@ static int on_accept_klua_krpc_nsp(void* ptr, int protocol, klb_socket_t* p_sock
 {
     klua_krpc_module_t* p_mo = (klua_krpc_module_t*)ptr;
 
-    uint8_t* p_data = p_buf->p_buf + p_buf->start;
+    uint8_t* p_data = (uint8_t*)(p_buf->p_buf + p_buf->start);
     int data_len = p_buf->end - p_buf->start;
 
     int id = klb_ncm_push(p_mo->p_ncm, protocol, p_socket, p_data, data_len);
@@ -1173,7 +1169,7 @@ static int lib_klua_krpc_new_module(lua_State* L)
     p_mo->p_ncm = klb_ncm_create(p_mo->p_multi, KLB_PROTOCOL_LOAD_RPC);
 
     p_mo->recv_num = 0;
-    p_mo->p_recv_list = klb_list_create();
+    p_mo->p_recv_list = klb_nlist_create();
 
     // 数据
     klb_ncm_add_receiver(p_mo->p_ncm, on_recv_klua_krpc_module, p_mo);

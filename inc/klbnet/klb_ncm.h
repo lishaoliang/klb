@@ -17,7 +17,7 @@
 #include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_buf.h"
 #include "klbnet/klb_multiplex.h"
-#include "klua/klua_data.h"
+#include "klbutil/klb_map.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -161,7 +161,7 @@ typedef struct klb_ncm_ops_t_
     /// @brief 对连接进行控制操作: get/set,etc.
     /// @param [in] *ptr            ops对象
     /// @return int 0.成功; 非0.失败
-    int   (*cb_ctrl)(void* ptr, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num);
+    int   (*cb_ctrl)(void* ptr, const klb_map_t* p_in, klb_map_t* p_out);
 
     /// @brief 主动发送常规数据: 文本/二进制/RPC数据等,非媒体数据
     /// @param [in] *ptr            ops对象
@@ -242,7 +242,7 @@ KLB_API int klb_ncm_send_rpc_json(klb_ncm_t* p_ncm, int id, uint32_t sequence, u
 /// @brief 对某个连接进行控制操作: get/set,etc.
 /// @param [in]  *p_ncm                 ncm模块
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_ncm_ctrl(klb_ncm_t* p_ncm, int id, const klua_data_t* p_data, int data_num, klua_data_t** p_out, int* p_out_num);
+KLB_API int klb_ncm_ctrl(klb_ncm_t* p_ncm, int id, const klb_map_t* p_in, klb_map_t* p_out);
 
 
 #ifdef __cplusplus

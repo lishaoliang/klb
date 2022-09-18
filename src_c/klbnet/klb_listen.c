@@ -100,7 +100,7 @@ static int cb_remove_klb_listen(void* p_lparam, void* p_wparam, int id)
 
 static int on_recv_klb_listen(void* p_lparam, void* p_wparam, int id, int64_t now)
 {
-    klb_listen_t* p_listen = p_lparam;
+    klb_listen_t* p_listen = (klb_listen_t*)p_lparam;
     klb_socket_t* p_socket = (klb_socket_t*)p_wparam;
 
     if (KLB_SOCKET_OK != p_socket->status)
@@ -113,7 +113,7 @@ static int on_recv_klb_listen(void* p_lparam, void* p_wparam, int id, int64_t no
 
 static int on_send_klb_listen(void* p_lparam, void* p_wparam, int id, int64_t now)
 {
-    klb_listen_t* p_listen = p_lparam;
+    klb_listen_t* p_listen = (klb_listen_t*)p_lparam;
     klb_socket_t* p_socket = (klb_socket_t*)p_wparam;
 
     if (KLB_SOCKET_OK != p_socket->status)
@@ -126,7 +126,7 @@ static int on_send_klb_listen(void* p_lparam, void* p_wparam, int id, int64_t no
 
 static int on_proc_klb_listen(void* p_lparam, void* p_wparam, int msg, int id, klb_socket_t* p_socket, int64_t now)
 {
-    klb_listen_t* p_listen = p_lparam;
+    klb_listen_t* p_listen = (klb_listen_t*)p_lparam;
 
     switch (msg)
     {

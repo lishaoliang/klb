@@ -5,10 +5,10 @@
 #include "klbplatform/klb_mutex.h"
 #include "klbutil/klb_rand.h"
 #include "klbutil/klb_hlist.h"
-#include "klbutil/klb_list.h"
+#include "klbutil/klb_nlist.h"
 #include "klbplatform/klb_thread.h"
 #include "klbplatform/klb_atomic.h"
-#include "klua/lua-skynet/lua-seri.h"
+#include "klua/klua_util/klua_seri_map.h"
 #include "klbmem/klb_mem.h"
 #include "klbthird/sds.h"
 #include <assert.h>
@@ -190,7 +190,7 @@ static void wait_klua_kthread(klua_kthread_t* p_kthread, char* p_names[], int nu
         {
             if (NULL != p_names[i])
             {
-                klua_kthread_item_t* p_item = klb_hlist_find(p_kthread->p_thread_hlist, p_names[i], strlen(p_names[i]));
+                klua_kthread_item_t* p_item = (klua_kthread_item_t*)klb_hlist_find(p_kthread->p_thread_hlist, p_names[i], strlen(p_names[i]));
                 if (NULL != p_item && p_item->wait)
                 {
                     wait = true;
@@ -351,7 +351,7 @@ int klua_kthread_unregister_module(const sds name)
     int ret = 1;
     klb_atomic_lock(&p_kthread->module_lock);
 
-    klua_env_t* p_env = klb_hlist_remove_bykey(p_kthread->p_module_hlist, name, sdslen(name));
+    klua_env_t* p_env = (klua_env_t*)klb_hlist_remove_bykey(p_kthread->p_module_hlist, name, sdslen(name));
     if (NULL != p_env)
     {
         ret = 0;
@@ -396,7 +396,7 @@ int klua_kthread_unregister_lpc(const sds name)
     int ret = 1;
     klb_atomic_lock(&p_kthread->lpc_lock);
 
-    klua_env_t* p_env = klb_hlist_remove_bykey(p_kthread->p_lpc_hlist, name, sdslen(name));
+    klua_env_t* p_env = (klua_env_t*)klb_hlist_remove_bykey(p_kthread->p_lpc_hlist, name, sdslen(name));
     if (NULL != p_env)
     {
         ret = 0;
@@ -415,7 +415,7 @@ int klua_kthread_push_msg(const char* p_name, klua_msg_t* p_msg)
     if (KLUA_LPC_POST == p_msg->type || KLUA_LPC_REQUEST == p_msg->type)
     {
         klb_atomic_lock(&p_kthread->module_lock);
-        klua_env_t* p_env = klb_hlist_find(p_kthread->p_module_hlist, p_name, strlen(p_name));
+        klua_env_t* p_env = (klua_env_t*)klb_hlist_find(p_kthread->p_module_hlist, p_name, strlen(p_name));
         if (NULL != p_env)
         {
             klua_env_push_lpc_msg(p_env, p_msg);
@@ -426,7 +426,7 @@ int klua_kthread_push_msg(const char* p_name, klua_msg_t* p_msg)
     else if(KLUA_LPC_RESPONSE == p_msg->type || KLUA_LPC_NOTIFY == p_msg->type)
     {
         klb_atomic_lock(&p_kthread->lpc_lock);
-        klua_env_t* p_env = klb_hlist_find(p_kthread->p_lpc_hlist, p_name, strlen(p_name));
+        klua_env_t* p_env = (klua_env_t*)klb_hlist_find(p_kthread->p_lpc_hlist, p_name, strlen(p_name));
         if (NULL != p_env)
         {
             klua_env_push_lpc_msg(p_env, p_msg);
@@ -447,21 +447,18 @@ static int lib_klua_kthread_start(lua_State* L)
 {
     const char* p_entry_path = luaL_checkstring(L, 1);          ///< @1. 入口Lua脚本路径: eg."aaa.bbb"
     bool wait = klua_check_option_boolean(L, 2, true);          ///< @2. [可选](默认 true): 是否等待线程启动完成 
-    int cpu_idx = klua_check_option_integer(L, 3, -1);          ///< @3. [可选](默认 -1): 是否指定CPU核心
+    int cpu_idx = (int)klua_check_option_integer(L, 3, -1);     ///< @3. [可选](默认 -1): 是否指定CPU核心
 
     // pack buffer, 启动参数
-    luaseri_pack_from(L, 3);                                    ///< @4 - @N. [可选] 传递给线程的初始化参数
+    klb_buf_t* p_buf = luaseri_map_binary_pack(L, 3);           ///< @4 - @N. [可选] 传递给线程的初始化参数
 
-    char* p_arg = (char*)lua_topointer(L, -2);
-    int arg_size = lua_tointeger(L, -1);
-
-    sds name = klua_kthread_create(g_klua_kthread, p_entry_path, wait, cpu_idx, p_arg, arg_size);
+    sds name = klua_kthread_create(g_klua_kthread, p_entry_path, wait, cpu_idx, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start);
 
     lua_pushlstring(L, name, sdslen(name));                     ///< #1. string: 线程名称
     
     KLB_FREE_BY(name, sdsfree);
-    KLB_FREE(p_arg);
-    
+    KLB_FREE(p_buf);
+
     return 1;
 }
 
@@ -495,7 +492,7 @@ static int lib_klua_kthread_wait(lua_State* L)
         {
             if (LUA_TSTRING == lua_type(L, -1) && idx < KLUA_KTHREAD_WAIT_MAX)
             {
-                names[idx] = lua_tostring(L, -1);
+                names[idx] = (char*)lua_tostring(L, -1);
                 idx++;
             }
 
@@ -510,7 +507,7 @@ static int lib_klua_kthread_wait(lua_State* L)
         {
             if (LUA_TSTRING == lua_type(L, i))
             {
-                names[idx] = lua_tostring(L, i);
+                names[idx] = (char*)lua_tostring(L, i);
                 idx++;
 
                 if (KLUA_KTHREAD_WAIT_MAX <= idx)
