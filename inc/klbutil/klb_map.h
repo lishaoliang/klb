@@ -28,10 +28,9 @@ extern "C" {
 /// @brief  map
 typedef struct klb_map_t_
 {
-    klb_nvector_t*   p_item_vector;  ///< array 数组
-    klb_hlist_t*    p_item_hlist;   ///< key/value 键值对
+    klb_nvector_t*      p_nvector;  ///< array 数组
+    klb_hlist_t*        p_hlist;    ///< key/value 键值对
 }klb_map_t;
-
 
 
 KLB_API void klb_map_init(klb_map_t* p_map);

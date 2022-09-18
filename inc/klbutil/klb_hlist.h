@@ -34,7 +34,7 @@ typedef struct klb_hlist_t_ klb_hlist_t;
 /// @brief 创建hlist对象
 /// @param [in] ht_max       hash table大小; 0.使用自适用hash map; 大于0.使用固定大小hash table
 /// @return klb_hlist_t*     hlist对象
-KLB_API klb_hlist_t* klb_hlist_create(uint32_t ht_max);
+KLB_API klb_hlist_t* klb_hlist_create(int ht_max);
 
 
 /// @brief 销毁hlist对象
@@ -69,7 +69,7 @@ KLB_API void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, v
 /// @note 1. hlist并不负责数据释放
 ///  \n   2. hlist采用已解决hash冲突的查找算法, 不存在hash值冲突问题
 ///  \n   3. 因hlist带有链表特性, 对已存在完全一致的key时, 返回失败, 由调用者决定对如何处理完全一致的key
-KLB_API klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
+KLB_API klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data);
 
 
 /// @brief 在最后面, 向hlist压入数据
@@ -81,7 +81,7 @@ KLB_API klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p
 /// @note 1. hlist并不负责数据释放
 ///  \n   2. hlist采用已解决hash冲突的查找算法, 不存在hash值冲突问题
 ///  \n   3. 因hlist带有链表特性, 对已存在完全一致的key时, 返回失败, 由调用者决定对如何处理完全一致的key
-KLB_API klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
+KLB_API klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data);
 
 
 /// @brief 在最前面, 弹出数据
@@ -161,7 +161,7 @@ KLB_API klb_hlist_iter_t* klb_hlist_prev(klb_hlist_iter_t* p_iter);
 /// @param [in]  *p_iter        iter迭代子
 /// @param [out] *p_key_len     key长度
 /// @return void* key指针
-KLB_API void* klb_hlist_key(klb_hlist_iter_t* p_iter, uint32_t* p_key_len);
+KLB_API void* klb_hlist_key(klb_hlist_iter_t* p_iter, int* p_key_len);
 
 
 /// @brief 更新数据(只能更新已经存在的key)
@@ -171,7 +171,7 @@ KLB_API void* klb_hlist_key(klb_hlist_iter_t* p_iter, uint32_t* p_key_len);
 /// @param [in] *p_data     数据
 /// @return void*   NULL.失败,未找到原数据; 非NULL.成功,被更新的数据
 /// @note 1. 只能更新已经存在的key
-KLB_API void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data);
+KLB_API void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data);
 
 
 
@@ -180,7 +180,7 @@ KLB_API void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, uint32_t 
 /// @param [in] *p_key       key关键字(非NULL)
 /// @param [in] key_len      key长度
 /// @return klb_hlist_iter_t* 迭代子指针 或 NULL(未找到)
-KLB_API klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, uint32_t key_len);
+KLB_API klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, int key_len);
 
 
 /// @brief 按key寻找值
@@ -188,7 +188,7 @@ KLB_API klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p
 /// @param [in] *p_key       key关键字(非NULL)
 /// @param [in] key_len      key长度
 /// @return void* 数据指针 或 NULL(未找到)
-KLB_API void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t key_len);
+KLB_API void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, int key_len);
 
 
 /// @brief 按key移除节点
@@ -196,7 +196,7 @@ KLB_API void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t ke
 /// @param [in] *p_key       key关键字(非NULL)
 /// @param [in] key_len      key长度
 /// @return void* 数据指针 或 NULL(未找到)
-KLB_API void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, uint32_t key_len);
+KLB_API void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, int key_len);
 
 
 /// @brief 对节点进行排序

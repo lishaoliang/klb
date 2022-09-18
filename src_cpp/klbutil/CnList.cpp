@@ -1,5 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klbutil/CKlbList.hpp"
+#include "klbutil/CnList.hpp"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
@@ -7,57 +7,62 @@
 namespace klb {
 
 //////////////////////////////////////////////////////////////////////////
-// CKlbListIter
+// CnListIter
 
-CKlbListIter::CKlbListIter()
+CnListIter::CnListIter()
 {
     m_iter = NULL;
 }
 
-CKlbListIter::CKlbListIter(klb_nlist_iter_t* p_iter)
+CnListIter::CnListIter(klb_nlist_iter_t* p_iter)
 {
     m_iter = p_iter;
 }
 
-CKlbListIter::CKlbListIter(const CKlbListIter& t)
+CnListIter::CnListIter(const CnListIter& t)
 {
     m_iter = NULL;
 
     CopyTo(t);
 }
 
-CKlbListIter::~CKlbListIter()
+CnListIter::~CnListIter()
 {
 
 }
 
-void CKlbListIter::CopyTo(const CKlbListIter& t)
+void CnListIter::CopyTo(const CnListIter& t)
 {
     m_iter = t.m_iter;
 }
 
-CKlbListIter& CKlbListIter::operator=(const CKlbListIter& t)
+CnListIter& CnListIter::operator=(const CnListIter& t)
 { 
     CopyTo(t);
     return (*this);
 };
 
-CKlbListIter& CKlbListIter::operator++()
+CnListIter& CnListIter::operator++()
 {
     return Next();
 }
 
-CKlbListIter& CKlbListIter::operator--()
+CnListIter& CnListIter::operator--()
 {
     return Prev();
 }
 
-bool CKlbListIter::operator==(const void* ptr)
+bool CnListIter::operator==(const void* ptr)
 {
     return (ptr == m_iter) ? true : false;
 }
 
-CKlbListIter& CKlbListIter::Next()
+void* CnListIter::operator*()
+{
+    return Data();
+}
+
+CnListIter& CnListIter::Next()
 {
     if (NULL != m_iter)
     {
@@ -67,7 +72,7 @@ CKlbListIter& CKlbListIter::Next()
     return (*this);
 }
 
-CKlbListIter& CKlbListIter::Prev()
+CnListIter& CnListIter::Prev()
 {
     if (NULL != m_iter)
     {
@@ -77,12 +82,12 @@ CKlbListIter& CKlbListIter::Prev()
     return (*this);
 }
 
-bool CKlbListIter::IsNull()
+bool CnListIter::IsNull()
 {
     return (NULL == m_iter) ? true : false;
 }
 
-void* CKlbListIter::Data()
+void* CnListIter::Data()
 {
     if (NULL != m_iter)
     {
@@ -91,79 +96,85 @@ void* CKlbListIter::Data()
     return NULL;
 }
 
-void CKlbListIter::SetIter(klb_nlist_iter_t* p_iter)
+void CnListIter::SetIter(klb_nlist_iter_t* p_iter)
 {
     m_iter = p_iter;
 }
 
 //////////////////////////////////////////////////////////////////////////
-// CKlbList
+// CnList
 
-CKlbList& CKlbList::operator=(const CKlbList& t)
+CnList& CnList::operator=(const CnList& t)
 {
     assert(false);
     return *this;
 }
 
-CKlbList::CKlbList()
+CnList::CnList()
 {
     m_list = klb_nlist_create();
 }
 
-CKlbList::~CKlbList()
+CnList::~CnList()
 {
     KLB_FREE_BY(m_list, klb_nlist_destroy);
 }
 
-void CKlbList::PushHead(void* p_data)
+void CnList::PushHead(void* p_data)
 {
     klb_nlist_push_head(m_list, p_data);
 }
 
-void CKlbList::PushTail(void* p_data)
+void CnList::PushTail(void* p_data)
 {
     klb_nlist_push_tail(m_list, p_data);
 }
 
-void* CKlbList::PopHead()
+void* CnList::PopHead()
 {
     return klb_nlist_pop_head(m_list);
 }
 
-void* CKlbList::PopTail()
+void* CnList::PopTail()
 {
     return klb_nlist_pop_tail(m_list);
 }
 
-void* CKlbList::Head()
+void* CnList::Head()
 {
     return klb_nlist_head(m_list);
 }
 
-void* CKlbList::Tail()
+void* CnList::Tail()
 {
     return klb_nlist_tail(m_list);
 }
 
-int CKlbList::Size()
+int CnList::Size()
 {
     return (int)klb_nlist_size(m_list);
 }
 
-void* CKlbList::Remove(const CKlbListIter& iter)
+void* CnList::Remove(const CnListIter& iter)
 {
     assert(NULL != iter.m_iter);
     return klb_nlist_remove(m_list, iter.m_iter);
 }
 
-CKlbListIter CKlbList::Begin()
+CnListIter& CnList::Begin()
 {
-    return CKlbListIter(klb_nlist_begin(m_list));
+    klb_nlist_iter_t* p_iter = klb_nlist_begin(m_list);
+
+    m_tmp_iter.SetIter(p_iter);
+    return m_tmp_iter;
 }
 
-CKlbListIter CKlbList::End()
+CnListIter& CnList::End()
 {
-    return CKlbListIter(klb_nlist_end(m_list));
+    klb_nlist_iter_t* p_iter = klb_nlist_end(m_list);
+
+    m_tmp_iter.SetIter(p_iter);
+    return m_tmp_iter;
 }
 
 } // namespace klb

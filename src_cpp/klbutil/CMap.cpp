@@ -642,8 +642,8 @@ CMap::CMap(klb_map_t* p_map, bool share)
 {
     m_share = true;
 
-    m_map.p_item_hlist = p_map->p_item_hlist;
-    m_map.p_item_vector = p_map->p_item_vector;
+    m_map.p_hlist = p_map->p_hlist;
+    m_map.p_nvector = p_map->p_nvector;
     klb_adt_int(&m_none_adt);
 }
 
@@ -653,13 +653,13 @@ CMap::CMap(klb_map_t* p_map)
 
     if (NULL != p_map)
     {
-        assert(NULL != p_map->p_item_hlist);
-        assert(NULL != p_map->p_item_vector);
+        assert(NULL != p_map->p_hlist);
+        assert(NULL != p_map->p_nvector);
 
         memset(&m_map, 0, sizeof(m_map));
 
-        m_map.p_item_hlist = p_map->p_item_hlist;
-        m_map.p_item_vector = p_map->p_item_vector;
+        m_map.p_hlist = p_map->p_hlist;
+        m_map.p_nvector = p_map->p_nvector;
 
         klb_adt_int(&m_none_adt);
 
@@ -715,13 +715,13 @@ void CMap::Attach(klb_map_t* p_map)
     {
         QuitKlbMap();
 
-        assert(NULL != p_map->p_item_hlist);
-        assert(NULL != p_map->p_item_vector);
+        assert(NULL != p_map->p_hlist);
+        assert(NULL != p_map->p_nvector);
 
         memset(&m_map, 0, sizeof(m_map));
 
-        m_map.p_item_hlist = p_map->p_item_hlist;
-        m_map.p_item_vector = p_map->p_item_vector;
+        m_map.p_hlist = p_map->p_hlist;
+        m_map.p_nvector = p_map->p_nvector;
 
         klb_adt_int(&m_none_adt);
 

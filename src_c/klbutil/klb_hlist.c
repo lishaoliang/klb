@@ -46,10 +46,10 @@ typedef struct klb_hlist_t_
         klb_htab_t*     p_htab;     ///< hash table
     };
 
-    uint32_t            size;       ///< 节点成员数目
+    int                 size;       ///< 节点成员数目
 }klb_hlist_t;
 
-klb_hlist_t* klb_hlist_create(uint32_t ht_max)
+klb_hlist_t* klb_hlist_create(int ht_max)
 {
     klb_hlist_t* p_list = KLB_MALLOCZ(klb_hlist_t, 1, 0);
 
@@ -103,7 +103,7 @@ void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, void* p_o
     }
 }
 
-klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
+klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -162,7 +162,7 @@ klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, ui
     return NULL;
 }
 
-klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
+klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -423,7 +423,7 @@ klb_hlist_iter_t* klb_hlist_prev(klb_hlist_iter_t* p_iter)
     return p_iter->p_prev;
 }
 
-void* klb_hlist_key(klb_hlist_iter_t* p_iter, uint32_t* p_key_len)
+void* klb_hlist_key(klb_hlist_iter_t* p_iter, int* p_key_len)
 {
     assert(NULL != p_iter);
 
@@ -435,7 +435,7 @@ void* klb_hlist_key(klb_hlist_iter_t* p_iter, uint32_t* p_key_len)
     return (void*)p_iter->key;
 }
 
-void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, uint32_t key_len, void* p_data)
+void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -453,7 +453,7 @@ void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, uint32_t key_len,
     return NULL;
 }
 
-klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, uint32_t key_len)
+klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, int key_len)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -472,7 +472,7 @@ klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, ui
     return p_iter;
 }
 
-void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t key_len)
+void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, int key_len)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
@@ -482,7 +482,7 @@ void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, uint32_t key_len)
     return (NULL != p_iter) ? p_iter->p_data : NULL;
 }
 
-void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, uint32_t key_len)
+void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, int key_len)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);

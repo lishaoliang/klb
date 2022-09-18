@@ -25,11 +25,11 @@ void klb_map_destroy(klb_map_t* p_map)
 void klb_map_init(klb_map_t* p_map)
 {
     assert(NULL != p_map);
-    assert(NULL == p_map->p_item_vector);
-    assert(NULL == p_map->p_item_hlist);
+    assert(NULL == p_map->p_nvector);
+    assert(NULL == p_map->p_hlist);
 
-    p_map->p_item_vector = klb_nvector_create();
-    p_map->p_item_hlist = klb_hlist_create(0);
+    p_map->p_nvector = klb_nvector_create();
+    p_map->p_hlist = klb_hlist_create(0);
 }
 
 static int cb_clean_klb_map(void* p_obj, void* p_data)
@@ -47,10 +47,10 @@ static int cb_clean_klb_map(void* p_obj, void* p_data)
 static void clean_klb_map(klb_map_t* p_map)
 {
     // 清空 vector
-    klb_nvector_clean(p_map->p_item_vector, cb_clean_klb_map, p_map);
+    klb_nvector_clean(p_map->p_nvector, cb_clean_klb_map, p_map);
 
     // 清空 hlist
-    klb_hlist_clean(p_map->p_item_hlist, cb_clean_klb_map, p_map);
+    klb_hlist_clean(p_map->p_hlist, cb_clean_klb_map, p_map);
 }
 
 void klb_map_quit(klb_map_t* p_map)
@@ -58,18 +58,18 @@ void klb_map_quit(klb_map_t* p_map)
     // 清空
     clean_klb_map(p_map);
 
-    KLB_FREE_BY(p_map->p_item_vector, klb_nvector_destroy);
-    KLB_FREE_BY(p_map->p_item_hlist, klb_hlist_destroy);
+    KLB_FREE_BY(p_map->p_nvector, klb_nvector_destroy);
+    KLB_FREE_BY(p_map->p_hlist, klb_hlist_destroy);
 }
 
 //////////////////////////////////////////
 static klb_adt_t* get_insert_adt_klb_map_2(klb_map_t* p_map, void* p_key, uint32_t key_len)
 {
-    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_item_hlist, p_key, key_len);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
     if (NULL == p_adt)
     {
         p_adt = klb_adt_create();
-        klb_hlist_push_tail(p_map->p_item_hlist, p_key, key_len, p_adt);
+        klb_hlist_push_tail(p_map->p_hlist, p_key, key_len, p_adt);
     }
 
     return p_adt;
@@ -78,11 +78,11 @@ static klb_adt_t* get_insert_adt_klb_map_2(klb_map_t* p_map, void* p_key, uint32
 static klb_adt_t* get_insert_adt_klb_map(klb_map_t* p_map, const char* p_key)
 {
     int key_len = strlen(p_key);
-    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_item_hlist, p_key, key_len);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
     if (NULL == p_adt)
     {
         p_adt = klb_adt_create();
-        klb_hlist_push_tail(p_map->p_item_hlist, p_key, key_len, p_adt);
+        klb_hlist_push_tail(p_map->p_hlist, p_key, key_len, p_adt);
     }
 
     return p_adt;
@@ -157,11 +157,11 @@ void klb_map_set_adt(klb_map_t* p_map, const char* p_key, klb_adt_t* p_adt)
     else
     {
         int key_len = strlen(p_key);
-        klb_adt_t* p_old = (klb_adt_t*)klb_hlist_update(p_map->p_item_hlist, p_key, key_len, p_adt);
+        klb_adt_t* p_old = (klb_adt_t*)klb_hlist_update(p_map->p_hlist, p_key, key_len, p_adt);
         if (NULL == p_old)
         {
             // 未更新成功, 插入新节点
-            klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_map->p_item_hlist, p_key, key_len, p_adt);
+            klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_map->p_hlist, p_key, key_len, p_adt);
             assert(NULL != p_iter);
         }
 
@@ -178,7 +178,7 @@ void klb_map_set_adt_clone(klb_map_t* p_map, const char* p_key, const klb_adt_t*
 int klb_map_type(klb_map_t* p_map, const char* p_key)
 {
     int key_len = strlen(p_key);
-    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_item_hlist, p_key, key_len);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
     if (NULL != p_adt)
     {
         return p_adt->type;
@@ -189,13 +189,13 @@ int klb_map_type(klb_map_t* p_map, const char* p_key)
 
 int klb_map_key_value_size(klb_map_t* p_map)
 {
-    return klb_hlist_size(p_map->p_item_hlist);
+    return klb_hlist_size(p_map->p_hlist);
 }
 
 static klb_adt_t* find_hlist_adt_klb_map(klb_map_t* p_map, const char* p_key)
 {
     int key_len = strlen(p_key);
-    return (klb_adt_t*)klb_hlist_find(p_map->p_item_hlist, p_key, key_len);
+    return (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
 }
 
 bool klb_map_to_bool(klb_map_t* p_map, const char* p_key)
@@ -302,7 +302,7 @@ const klb_adt_t* klb_map_to_adt(klb_map_t* p_map, const char* p_key)
 bool klb_map_remove_by_key(klb_map_t* p_map, const char* p_key)
 {
     int key_len = strlen(p_key);
-    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_remove_bykey(p_map->p_item_hlist, p_key, key_len);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_remove_bykey(p_map->p_hlist, p_key, key_len);
     if (NULL != p_adt)
     {
         klb_adt_destroy(p_adt);
@@ -324,12 +324,12 @@ const char* klb_map_key(klb_map_iter_t* p_iter)
 
 klb_map_iter_t* klb_map_begin(klb_map_t* p_map)
 {
-    return klb_hlist_begin(p_map->p_item_hlist);
+    return klb_hlist_begin(p_map->p_hlist);
 }
 
 klb_map_iter_t* klb_map_end(klb_map_t* p_map)
 {
-    return klb_hlist_end(p_map->p_item_hlist);
+    return klb_hlist_end(p_map->p_hlist);
 }
 
 klb_map_iter_t* klb_map_next(klb_map_iter_t* p_iter)
@@ -344,7 +344,7 @@ klb_map_iter_t* klb_map_prev(klb_map_iter_t* p_iter)
 
 void klb_map_remove(klb_map_t* p_map, klb_map_iter_t* p_iter)
 {
-    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_remove(p_map->p_item_hlist, p_iter);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_remove(p_map->p_hlist, p_iter);
     assert(NULL != p_adt);
 
     KLB_FREE_BY(p_adt, klb_adt_destroy);
@@ -356,7 +356,7 @@ void klb_map_append_null(klb_map_t* p_map)
 {
     klb_adt_t* p_adt = klb_adt_create();
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_bool(klb_map_t* p_map, bool b)
@@ -364,7 +364,7 @@ void klb_map_append_bool(klb_map_t* p_map, bool b)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_bool(p_adt, b);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_int64(klb_map_t* p_map, int64_t i64)
@@ -372,7 +372,7 @@ void klb_map_append_int64(klb_map_t* p_map, int64_t i64)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_int64(p_adt, i64);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_uint64(klb_map_t* p_map, uint64_t u64)
@@ -380,7 +380,7 @@ void klb_map_append_uint64(klb_map_t* p_map, uint64_t u64)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_uint64(p_adt, u64);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_double(klb_map_t* p_map, double d)
@@ -388,7 +388,7 @@ void klb_map_append_double(klb_map_t* p_map, double d)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_double(p_adt, d);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_string(klb_map_t* p_map, const char* p_str)
@@ -396,7 +396,7 @@ void klb_map_append_string(klb_map_t* p_map, const char* p_str)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_string(p_adt, p_str);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_lstring(klb_map_t* p_map, const char* p_str, int str_len)
@@ -404,7 +404,7 @@ void klb_map_append_lstring(klb_map_t* p_map, const char* p_str, int str_len)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_lstring(p_adt, p_str, str_len);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_ptr(klb_map_t* p_map, const void* ptr1, const void* ptr2)
@@ -412,7 +412,7 @@ void klb_map_append_ptr(klb_map_t* p_map, const void* ptr1, const void* ptr2)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_ptr(p_adt, ptr1, ptr2);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 
 }
 
@@ -421,7 +421,7 @@ void klb_map_append_map(klb_map_t* p_map, klb_map_t* ptr)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_map(p_adt, ptr);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_map_clone(klb_map_t* p_map, const klb_map_t* p_src)
@@ -429,7 +429,7 @@ void klb_map_append_map_clone(klb_map_t* p_map, const klb_map_t* p_src)
     klb_adt_t* p_adt = klb_adt_create();
     klb_adt_set_map_clone(p_adt, p_src);
 
-    klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+    klb_nvector_push_tail(p_map->p_nvector, p_adt);
 }
 
 void klb_map_append_adt(klb_map_t* p_map, klb_adt_t* p_adt)
@@ -440,7 +440,7 @@ void klb_map_append_adt(klb_map_t* p_map, klb_adt_t* p_adt)
     }
     else
     {
-        klb_nvector_push_tail(p_map->p_item_vector, p_adt);
+        klb_nvector_push_tail(p_map->p_nvector, p_adt);
     }
 }
 
@@ -459,7 +459,7 @@ static void check_array_idx_klb_map(klb_map_t* p_map, int idx)
     if (idx < 0) return;
 
     int u_size = (uint32_t)idx + 1;
-    int size = klb_nvector_size(p_map->p_item_vector);
+    int size = klb_nvector_size(p_map->p_nvector);
     
     if (size < u_size)
     {
@@ -482,9 +482,9 @@ void klb_map_set_idx_null(klb_map_t* p_map, int idx)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_null(p_adt);
     }
@@ -499,9 +499,9 @@ void klb_map_set_idx_bool(klb_map_t* p_map, int idx, bool b)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_bool(p_adt, b);
     }
@@ -516,9 +516,9 @@ void klb_map_set_idx_int64(klb_map_t* p_map, int idx, int64_t i64)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_int64(p_adt, i64);
     }
@@ -533,9 +533,9 @@ void klb_map_set_idx_uint64(klb_map_t* p_map, int idx, uint64_t u64)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_uint64(p_adt, u64);
     }
@@ -550,9 +550,9 @@ void klb_map_set_idx_double(klb_map_t* p_map, int idx, double d)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_double(p_adt, d);
     }
@@ -567,9 +567,9 @@ void klb_map_set_idx_string(klb_map_t* p_map, int idx, const char* p_str)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_string(p_adt, p_str);
     }
@@ -584,9 +584,9 @@ void klb_map_set_idx_lstring(klb_map_t* p_map, int idx, const char* p_str, int s
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_lstring(p_adt, p_str, str_len);
     }
@@ -601,9 +601,9 @@ void klb_map_set_idx_ptr(klb_map_t* p_map, int idx, const void* ptr1, const void
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_ptr(p_adt, ptr1, ptr2);
     }
@@ -618,9 +618,9 @@ void klb_map_set_idx_map(klb_map_t* p_map, int idx, klb_map_t* ptr)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
         klb_adt_set_map(p_adt, ptr);
     }
@@ -643,9 +643,9 @@ void klb_map_set_idx_adt(klb_map_t* p_map, int idx, klb_adt_t* p_adt)
     else
     {
         check_array_idx_klb_map(p_map, idx);
-        assert(idx < klb_nvector_size(p_map->p_item_vector));
+        assert(idx < klb_nvector_size(p_map->p_nvector));
 
-        klb_adt_t* p_old = (klb_adt_t*)klb_nvector_update(p_map->p_item_vector, idx, p_adt);
+        klb_adt_t* p_old = (klb_adt_t*)klb_nvector_update(p_map->p_nvector, idx, p_adt);
         assert(NULL != p_old);
         KLB_FREE_BY(p_old, klb_adt_destroy);
     }
@@ -663,9 +663,9 @@ static klb_adt_t* find_vector_adt_klb_map(klb_map_t* p_map, int idx)
 {
     assert(NULL != p_map);
 
-    if (0 <= idx && idx < klb_nvector_size(p_map->p_item_vector))
+    if (0 <= idx && idx < klb_nvector_size(p_map->p_nvector))
     {
-        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_item_vector, idx);
+        klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_get(p_map->p_nvector, idx);
         assert(NULL != p_adt);
 
         return p_adt;
@@ -688,7 +688,7 @@ int klb_map_array_type(klb_map_t* p_map, int idx)
 
 int klb_map_array_size(klb_map_t* p_map)
 {
-    return klb_nvector_size(p_map->p_item_vector);
+    return klb_nvector_size(p_map->p_nvector);
 }
 
 bool klb_map_idx_to_bool(klb_map_t* p_map, int idx)
@@ -788,7 +788,7 @@ const klb_adt_t* klb_map_idx_to_adt(klb_map_t* p_map, int idx)
 
 bool klb_map_idx_remove(klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_remove(p_map->p_item_vector, idx);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_remove(p_map->p_nvector, idx);
     if (NULL != p_adt)
     {
         klb_adt_destroy(p_adt);
@@ -800,7 +800,7 @@ bool klb_map_idx_remove(klb_map_t* p_map, int idx)
 
 bool klb_map_idx_remove_tail(klb_map_t* p_map)
 {
-    klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_pop_tail(p_map->p_item_vector);
+    klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_pop_tail(p_map->p_nvector);
     if (NULL != p_adt)
     {
         klb_adt_destroy(p_adt);
@@ -815,21 +815,21 @@ bool klb_map_idx_remove_tail(klb_map_t* p_map)
 static void copy_klb_map(klb_map_t* p_dst, const klb_map_t* p_src)
 {
     // vector
-    for (int i = 0; i < klb_nvector_size(p_src->p_item_vector); i++)
+    for (int i = 0; i < klb_nvector_size(p_src->p_nvector); i++)
     {
-        klb_adt_t* p_adt_vec = (klb_adt_t*)klb_nvector_get(p_src->p_item_vector, i);
+        klb_adt_t* p_adt_vec = (klb_adt_t*)klb_nvector_get(p_src->p_nvector, i);
 
         check_array_idx_klb_map(p_dst, i);
-        assert(i < klb_nvector_size(p_dst->p_item_vector));
+        assert(i < klb_nvector_size(p_dst->p_nvector));
 
-        klb_adt_t* p_tmp_vec = (klb_adt_t*)klb_nvector_get(p_dst->p_item_vector, i);
+        klb_adt_t* p_tmp_vec = (klb_adt_t*)klb_nvector_get(p_dst->p_nvector, i);
         assert(NULL != p_tmp_vec);
         
         klb_adt_copy(p_tmp_vec, p_adt_vec);
     }
 
     // h list
-    klb_hlist_iter_t* iter = klb_hlist_begin(p_src->p_item_hlist);
+    klb_hlist_iter_t* iter = klb_hlist_begin(p_src->p_hlist);
     while (NULL != iter)
     {
         klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_data(iter);
@@ -847,7 +847,7 @@ static void copy_klb_map(klb_map_t* p_dst, const klb_map_t* p_src)
 
 int klb_map_size(klb_map_t* p_map)
 {
-    return (int)klb_hlist_size(p_map->p_item_hlist) + klb_nvector_size(p_map->p_item_vector);
+    return (int)klb_hlist_size(p_map->p_hlist) + klb_nvector_size(p_map->p_nvector);
 }
 
 void klb_map_clear(klb_map_t* p_map)
