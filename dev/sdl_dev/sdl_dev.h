@@ -2,8 +2,7 @@
 #define __SDL_DEV_H__
 
 #include "klb_type.h"
-#include "klbutil/klb_canvas.h"
-#include "klbbase/klb_mnp_dev.h"
+#include "klua/klua.h"
 
 #if defined(_WIN32)
 #if defined(__SDL_DEV_DLL__)
@@ -25,8 +24,7 @@
 extern "C" {
 #endif
 
-
-SDL_DEV_API int klb_mnp_dev_open(uint32_t version, void* p_interface, int interface_size);
+SDL_DEV_API int luaopen_sdl_dev(lua_State* L);
 
 
 #ifdef __cplusplus
