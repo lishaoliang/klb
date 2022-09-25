@@ -58,6 +58,12 @@ KLB_API void* klua_env_get_udata(klua_env_t* p_env);
 KLB_API int64_t klua_env_get_tick_count(klua_env_t* p_env);
 
 
+/// @brief 立即更新lua环境滴答数
+/// @param [in] *p_env             lua环境 
+/// @return 无
+KLB_API void klua_env_update_tick_count(klua_env_t* p_env);
+
+
 /// @brief 按路径方式加载一个脚本文件
 /// @param [in] *p_env             lua环境
 /// @param [in] *p_entry           入口lua文件路径; eg. "./test.lua"

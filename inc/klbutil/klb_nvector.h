@@ -41,16 +41,16 @@ KLB_API void klb_nvector_destroy(klb_nvector_t* p_vector);
 /// @param [in] *p_obj      传参对象
 /// @param [in] *p_data     数据
 /// @return int 0
-typedef int(*klb_nvector_clean_cb)(void* p_obj, void* p_data);
+typedef int(*klb_nvector_clear_cb)(void* p_obj, void* p_data);
 
 
 /// @brief 清空列表
 /// @param [in] *p_vector   vector对象
-/// @param [in] cb_clean    清理回调函数
+/// @param [in] cb_clear    清理回调函数
 /// @param [in] *p_obj      传参对象
 /// @return 无
 /// @note 方向: 从头到尾
-KLB_API void klb_nvector_clean(klb_nvector_t* p_vector, klb_nvector_clean_cb cb_clean, void* p_obj);
+KLB_API void klb_nvector_clear(klb_nvector_t* p_vector, klb_nvector_clear_cb cb_clear, void* p_obj);
 
 
 /// @brief 在最前面, 向vector压入数据

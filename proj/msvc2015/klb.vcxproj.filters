@@ -210,6 +210,9 @@
     <Filter Include="src_packages\kpa_mgui">
       <UniqueIdentifier>{2b353071-7f7b-471a-b28c-4475b4438dce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_packages\kpa_sip">
+      <UniqueIdentifier>{7f7e1b83-f202-4923-b56b-e2b4d642ef57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1298,6 +1301,9 @@
     <ClInclude Include="..\..\inc_hpp\klbutil\CnVector.hpp">
       <Filter>inc_hpp\klbutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_gui.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -2105,6 +2111,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_packages\kpa_mgui\klua_kpa_mgui.cpp">
       <Filter>src_packages\kpa_mgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\kpa_sip\klua_kpa_sip.cpp">
+      <Filter>src_packages\kpa_sip</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

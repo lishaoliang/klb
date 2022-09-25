@@ -151,9 +151,9 @@ klb_hlist_t* CnMap::GetHlist()
     return m_hlist;
 }
 
-void CnMap::Clean(klb_hlist_clean_cb cb_clean, void* p_obj)
+void CnMap::Clear(klb_hlist_clear_cb cb_clear, void* p_obj)
 {
-    klb_hlist_clean(m_hlist, cb_clean, p_obj);
+    klb_hlist_clear(m_hlist, cb_clear, p_obj);
 }
 
 int CnMap::Size()

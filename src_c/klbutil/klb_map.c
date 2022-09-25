@@ -32,7 +32,7 @@ void klb_map_init(klb_map_t* p_map)
     p_map->p_hlist = klb_hlist_create(0);
 }
 
-static int cb_clean_klb_map(void* p_obj, void* p_data)
+static int cb_clear_klb_map(void* p_obj, void* p_data)
 {
     klb_map_t* p_map = (klb_map_t*)p_obj;
     klb_adt_t* p_adt = (klb_adt_t*)p_data;
@@ -44,19 +44,19 @@ static int cb_clean_klb_map(void* p_obj, void* p_data)
     return 0;
 }
 
-static void clean_klb_map(klb_map_t* p_map)
+static void clear_klb_map(klb_map_t* p_map)
 {
     // 清空 vector
-    klb_nvector_clean(p_map->p_nvector, cb_clean_klb_map, p_map);
+    klb_nvector_clear(p_map->p_nvector, cb_clear_klb_map, p_map);
 
     // 清空 hlist
-    klb_hlist_clean(p_map->p_hlist, cb_clean_klb_map, p_map);
+    klb_hlist_clear(p_map->p_hlist, cb_clear_klb_map, p_map);
 }
 
 void klb_map_quit(klb_map_t* p_map)
 {
     // 清空
-    clean_klb_map(p_map);
+    clear_klb_map(p_map);
 
     KLB_FREE_BY(p_map->p_nvector, klb_nvector_destroy);
     KLB_FREE_BY(p_map->p_hlist, klb_hlist_destroy);
@@ -852,7 +852,7 @@ int klb_map_size(klb_map_t* p_map)
 
 void klb_map_clear(klb_map_t* p_map)
 {
-    clean_klb_map(p_map);
+    clear_klb_map(p_map);
 }
 
 void klb_map_copy(klb_map_t* p_dst, const klb_map_t* p_src)
@@ -860,7 +860,7 @@ void klb_map_copy(klb_map_t* p_dst, const klb_map_t* p_src)
     assert(NULL != p_dst);
 
     // 清空
-    clean_klb_map(p_dst);
+    clear_klb_map(p_dst);
 
     if (NULL == p_src)
     {

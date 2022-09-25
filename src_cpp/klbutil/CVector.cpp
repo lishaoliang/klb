@@ -173,7 +173,7 @@ CVector& CVector::Remove(const int idx)
     return *this;
 }
 
-CVector& CVector::RemoveTail(const int idx)
+CVector& CVector::RemoveTail()
 {
     return *this;
 }

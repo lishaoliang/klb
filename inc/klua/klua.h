@@ -318,6 +318,7 @@ KLB_API int klua_open_kpa_ws(lua_State* L);
 KLB_API int klua_open_kpa_mnp(lua_State* L);
 KLB_API int klua_open_kpa_rtsp(lua_State* L);
 KLB_API int klua_open_kpa_flv(lua_State* L);
+KLB_API int klua_open_kpa_sip(lua_State* L);
 
 
 #define KLUA_LOADLIBS_PACKAGES(L) {                         \
@@ -327,6 +328,7 @@ KLB_API int klua_open_kpa_flv(lua_State* L);
     klua_loadlib(L, klua_open_kpa_mnp,      "kpa_mnp");     \
     klua_loadlib(L, klua_open_kpa_rtsp,     "kpa_rtsp");    \
     klua_loadlib(L, klua_open_kpa_flv,      "kpa_flv");     \
+    klua_loadlib(L, klua_open_kpa_sip,      "kpa_sip");     \
 }
 
 

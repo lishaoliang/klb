@@ -81,7 +81,7 @@ void klb_hmap_destroy(klb_hmap_t* p_hmap)
     KLB_FREE(p_hmap);
 }
 
-int klb_hmap_clean(klb_hmap_t* p_hmap, klb_hmap_clean_cb cb_clean, void* p_obj)
+int klb_hmap_clear(klb_hmap_t* p_hmap, klb_hmap_clear_cb cb_clear, void* p_obj)
 {
     assert(NULL != p_hmap);
 
@@ -94,9 +94,9 @@ int klb_hmap_clean(klb_hmap_t* p_hmap, klb_hmap_clean_cb cb_clean, void* p_obj)
             klb_hmap_node_t* p_tmp = p_cur;
             p_cur = p_cur->p_next;
 
-            if (NULL != cb_clean)
+            if (NULL != cb_clear)
             {
-                cb_clean(p_obj, p_tmp->p_data);
+                cb_clear(p_obj, p_tmp->p_data);
             }
 
             if (KLB_HMAP_AUTO_MALLOC == p_hmap->auto_malloc)

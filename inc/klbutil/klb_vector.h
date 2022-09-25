@@ -50,7 +50,7 @@ KLB_API bool klb_vector_remove(klb_vector_t* p_vector, int idx);
 KLB_API bool klb_vector_remove_tail(klb_vector_t* p_vector);
 
 KLB_API int klb_vector_size(klb_vector_t* p_vector);
-KLB_API void klb_vector_clean(klb_vector_t* p_vector);
+KLB_API void klb_vector_clear(klb_vector_t* p_vector);
 
 
 #ifdef __cplusplus

@@ -596,7 +596,7 @@ static int cb_recv_klua_khttp_mnp(void* p_lparam, void* p_wparam, int id, int64_
 
     if (KLB_SOCKET_OK != err)
     {
-        assert(false);
+        //assert(false);
     }
 
     return recv;
@@ -785,9 +785,12 @@ static int klua_khttp_mnp_send_media(lua_State* L)
 
     //KLB_LOG("send frame,vtype:%d,size:%d,time:%lld\n", p_md->vtype, p_md->size, p_md->time);
 
-    klb_buf_ref_next(p_frame);
-    klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_frame);
-    klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
+    if (NULL != p_frame)
+    {
+        klb_buf_ref_next(p_frame);
+        klb_nlist_push_tail(p_kmnp->p_inter->p_w_list, p_frame);
+        klb_socket_set_writing(p_kmnp->p_inter->p_socket, true);
+    }
 
     return 0;
 }

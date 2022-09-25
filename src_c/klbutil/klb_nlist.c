@@ -48,7 +48,7 @@ void klb_nlist_destroy(klb_nlist_t* p_list)
 }
 
 
-void klb_nlist_clean(klb_nlist_t* p_list, klb_nlist_clean_cb cb_clean, void* p_obj)
+void klb_nlist_clear(klb_nlist_t* p_list, klb_nlist_clear_cb cb_clear, void* p_obj)
 {
     assert(NULL != p_list);
 
@@ -58,9 +58,9 @@ void klb_nlist_clean(klb_nlist_t* p_list, klb_nlist_clean_cb cb_clean, void* p_o
 
         if (NULL != p_data)
         {
-            if (NULL != cb_clean)
+            if (NULL != cb_clear)
             {
-                cb_clean(p_obj, p_data);
+                cb_clear(p_obj, p_data);
             }
         }
         else

@@ -101,7 +101,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y $(ProjectName)_$(Configuration)\libklb.dll ..\..\lib
-xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
+xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -330,6 +330,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClInclude Include="..\..\inc\klua\klua.h" />
     <ClInclude Include="..\..\inc\klua\klua_coroutine.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
+    <ClInclude Include="..\..\inc\klua\klua_gui.h" />
     <ClInclude Include="..\..\inc\klua\klua_kthread.h" />
     <ClInclude Include="..\..\inc\klua\klua_multiplex.h" />
     <ClInclude Include="..\..\inc\klua\klua_object.h" />
@@ -785,6 +786,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\</Command>
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.cpp" />
+    <ClCompile Include="..\..\src_packages\kpa_sip\klua_kpa_sip.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_ws\klua_kpa_ws.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -10,7 +10,7 @@ void klb_vector_init(klb_vector_t* p_vector)
 
 void klb_vector_quit(klb_vector_t* p_vector)
 {
-    klb_vector_clean(p_vector);
+    klb_vector_clear(p_vector);
     KLB_FREE_BY(p_vector->p_nvector, klb_nvector_destroy);
 }
 
@@ -142,10 +142,10 @@ static int cb_clean_klb_vector(void* p_obj, void* p_data)
 static void clean_klb_vector(klb_vector_t* p_vector)
 {
     // 清空 vector
-    klb_nvector_clean(p_vector, cb_clean_klb_vector, p_vector);
+    klb_nvector_clear(p_vector, cb_clean_klb_vector, p_vector);
 }
 
-void klb_vector_clean(klb_vector_t* p_vector)
+void klb_vector_clear(klb_vector_t* p_vector)
 {
     clean_klb_vector(p_vector);
 }

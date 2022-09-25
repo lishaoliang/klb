@@ -75,15 +75,15 @@ void klb_htab_destroy(klb_htab_t* p_htab);
 /// @param [in] *p_obj      传参对象
 /// @param [in] *p_data     数据
 /// @return int 0
-typedef int(*klb_htab_clean_cb)(void* p_obj, void* p_data);
+typedef int(*klb_htab_clear_cb)(void* p_obj, void* p_data);
 
 
 /// @brief 清空htab
 /// @param [in] *p_htab     htab对象
-/// @param [in] cb_clean    清理回调函数
+/// @param [in] cb_clear    清理回调函数
 /// @param [in] *p_obj      传参对象
 /// @return 无
-int klb_htab_clean(klb_htab_t* p_htab, klb_htab_clean_cb cb_clean, void* p_obj);
+int klb_htab_clear(klb_htab_t* p_htab, klb_htab_clear_cb cb_clear, void* p_obj);
 
 
 /// @brief 向htab对象压入数据

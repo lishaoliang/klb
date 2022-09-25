@@ -2,6 +2,7 @@
 #include "klua/extension/klua_ex_gui.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
+#include "klua/klua_gui.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
@@ -200,4 +201,16 @@ klua_ex_gui_t* klua_ex_get_gui(klua_env_t* p_env)
 klua_ex_gui_t* klua_ex_get_gui_by_L(lua_State* L)
 {
     return klua_ex_get_gui(klua_env_get_by_L(L));
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+klb_gui_t* klua_gui_get(klua_env_t* p_env)
+{
+    return klua_ex_gui_get(klua_ex_get_gui(p_env));
+}
+
+klb_gui_t* klua_gui_get_by_L(lua_State* L)
+{
+    return klua_gui_get(klua_env_get_by_L(L));
 }

@@ -21,13 +21,15 @@
   <ItemGroup>
     <ClCompile Include="..\..\dev\sdl_dev\my_dev.c" />
     <ClCompile Include="..\..\dev\sdl_dev\sdl_canvas.c" />
-    <ClCompile Include="..\..\dev\sdl_dev\sdl_dev.c" />
+    <ClCompile Include="..\..\dev\sdl_dev\sdl_dev.cpp" />
+    <ClCompile Include="..\..\dev\sdl_dev\sdl_extension.cpp" />
     <ClCompile Include="..\..\dev\sdl_dev\win\dllmain.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\dev\sdl_dev\my_dev.h" />
     <ClInclude Include="..\..\dev\sdl_dev\sdl_canvas.h" />
     <ClInclude Include="..\..\dev\sdl_dev\sdl_dev.h" />
+    <ClInclude Include="..\..\dev\sdl_dev\sdl_extension.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4A91CE0D-F469-4E9F-8611-5C252582BDE7}</ProjectGuid>
@@ -85,7 +87,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>..\..\lib</OutDir>
-    <TargetName>libsdl_dev</TargetName>
+    <TargetName>sdl_dev</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -111,7 +113,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);__SDL_DEV_DLL__</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\dev\SDL2-2.0.12\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\dev\SDL2-2.0.12\include;..\..\src_c\klua\lua-5.4.1\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

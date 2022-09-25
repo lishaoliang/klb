@@ -89,16 +89,16 @@ void klb_hlist_destroy(klb_hlist_t* p_list)
 }
 
 
-void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, void* p_obj)
+void klb_hlist_clear(klb_hlist_t* p_list, klb_hlist_clear_cb cb_clear, void* p_obj)
 {
     assert(NULL != p_list);
 
     while (0 < klb_hlist_size(p_list))
     {
         void* p_data = klb_hlist_pop_head(p_list);
-        if (NULL != p_data && NULL != cb_clean)
+        if (NULL != p_data && NULL != cb_clear)
         {
-            cb_clean(p_obj, p_data);
+            cb_clear(p_obj, p_data);
         }
     }
 }
@@ -321,11 +321,11 @@ void* klb_hlist_tail(klb_hlist_t* p_list)
     return (NULL != p_list->p_tail) ? p_list->p_tail->p_data : NULL;
 }
 
-uint32_t klb_hlist_size(klb_hlist_t* p_list)
+int klb_hlist_size(klb_hlist_t* p_list)
 {
     assert(NULL != p_list);
 
-    return p_list->size;
+    return (int)p_list->size;
 }
 
 void* klb_hlist_remove(klb_hlist_t* p_list, klb_hlist_iter_t* p_iter)

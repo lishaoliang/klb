@@ -171,6 +171,12 @@ int64_t klua_env_get_tick_count(klua_env_t* p_env)
     return p_env->tc;
 }
 
+void klua_env_update_tick_count(klua_env_t* p_env)
+{
+    assert(NULL != p_env);
+    p_env->tc = klb_tick_counti64();
+}
+
 static int klua_pdofile(lua_State *L)
 {
     klua_env_t* p_env = (klua_env_t*)lua_touserdata(L, 1);

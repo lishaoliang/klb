@@ -116,13 +116,13 @@ static void klb_nvector_check_resize_dec(klb_nvector_t* p_vector)
     p_vector->p_idx = ptr;
 }
 
-void klb_nvector_clean(klb_nvector_t* p_vector, klb_nvector_clean_cb cb_clean, void* p_obj)
+void klb_nvector_clear(klb_nvector_t* p_vector, klb_nvector_clear_cb cb_clear, void* p_obj)
 {
-    if (cb_clean)
+    if (cb_clear)
     {
         for (uint32_t i = 0; i < p_vector->size; i++)
         {
-            cb_clean(p_obj, p_vector->p_idx[i]);
+            cb_clear(p_obj, p_vector->p_idx[i]);
         }
     }
 

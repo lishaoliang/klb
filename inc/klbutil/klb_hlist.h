@@ -48,16 +48,16 @@ KLB_API void klb_hlist_destroy(klb_hlist_t* p_list);
 /// @param [in] *p_obj      传参对象
 /// @param [in] *p_data     数据
 /// @return int 0
-typedef int(*klb_hlist_clean_cb)(void* p_obj, void* p_data);
+typedef int(*klb_hlist_clear_cb)(void* p_obj, void* p_data);
 
 
 /// @brief 清空列表
 /// @param [in] *p_list     hlist对象
-/// @param [in] cb_clean    清理回调函数
+/// @param [in] cb_clear    清理回调函数
 /// @param [in] *p_obj      传参对象
 /// @return 无
 /// @note 方向: 从头到尾
-KLB_API void klb_hlist_clean(klb_hlist_t* p_list, klb_hlist_clean_cb cb_clean, void* p_obj);
+KLB_API void klb_hlist_clear(klb_hlist_t* p_list, klb_hlist_clear_cb cb_clear, void* p_obj);
 
 
 /// @brief 在最前面, 向hlist压入数据
@@ -110,8 +110,8 @@ KLB_API void* klb_hlist_tail(klb_hlist_t* p_list);
 
 /// @brief 当前节点数目
 /// @param [in] *p_list    hlist对象
-/// @return uint32_t 返回节点数目
-KLB_API uint32_t klb_hlist_size(klb_hlist_t* p_list);
+/// @return int 返回节点数目
+KLB_API int klb_hlist_size(klb_hlist_t* p_list);
 
 
 /// @brief 按迭代子移除节点

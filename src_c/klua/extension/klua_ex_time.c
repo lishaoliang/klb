@@ -25,7 +25,7 @@ typedef struct klua_ex_time_t_
 {
     klua_env_t*     p_env;              ///< Lua环境
 
-    klb_nlist_t*     p_timer_list;       ///< 单次运行, 使用go语言命名习惯
+    klb_nlist_t*    p_timer_list;       ///< 单次运行, 使用go语言命名习惯
     klb_hlist_t*    p_ticker_hlist;     ///< 长期运行ticker列表
 }klua_ex_time_t;
 
@@ -170,8 +170,7 @@ int klua_ex_time_new_timer_once(klua_ex_time_t* p_time, lua_State* L, lua_Intege
         return 1;
     }
 
-    klua_ex_time_reg_t* p_once = KLB_MALLOC(klua_ex_time_reg_t, 1, 0);
-    KLB_MEMSET(p_once, 0, sizeof(klua_ex_time_reg_t));
+    klua_ex_time_reg_t* p_once = KLB_MALLOCZ(klua_ex_time_reg_t, 1, 0);
 
     p_once->status = KLUA_EX_TIME_REG_RUN;
     p_once->tc = klua_env_get_tick_count(p_time->p_env);

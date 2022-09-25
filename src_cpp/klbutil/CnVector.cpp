@@ -32,9 +32,9 @@ klb_nvector_t* CnVector::GetVector()
     return m_vector;
 }
 
-void CnVector::Clean(klb_nvector_clean_cb cb_clean, void* p_obj)
+void CnVector::Clear(klb_nvector_clear_cb cb_clear, void* p_obj)
 {
-    klb_nvector_clean(m_vector, cb_clean, p_obj);
+    klb_nvector_clear(m_vector, cb_clear, p_obj);
 }
 
 int CnVector::Size()

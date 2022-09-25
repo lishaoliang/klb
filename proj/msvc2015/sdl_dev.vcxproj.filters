@@ -12,13 +12,16 @@
     <ClCompile Include="..\..\dev\sdl_dev\win\dllmain.c">
       <Filter>sdl_dev\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\dev\sdl_dev\sdl_dev.c">
-      <Filter>sdl_dev</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\dev\sdl_dev\my_dev.c">
       <Filter>sdl_dev</Filter>
     </ClCompile>
     <ClCompile Include="..\..\dev\sdl_dev\sdl_canvas.c">
+      <Filter>sdl_dev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dev\sdl_dev\sdl_dev.cpp">
+      <Filter>sdl_dev</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dev\sdl_dev\sdl_extension.cpp">
       <Filter>sdl_dev</Filter>
     </ClCompile>
   </ItemGroup>
@@ -30,6 +33,9 @@
       <Filter>sdl_dev</Filter>
     </ClInclude>
     <ClInclude Include="..\..\dev\sdl_dev\sdl_canvas.h">
+      <Filter>sdl_dev</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\dev\sdl_dev\sdl_extension.h">
       <Filter>sdl_dev</Filter>
     </ClInclude>
   </ItemGroup>

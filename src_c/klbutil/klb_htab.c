@@ -49,7 +49,7 @@ void klb_htab_destroy(klb_htab_t* p_htab)
     KLB_FREE(p_htab);
 }
 
-int klb_htab_clean(klb_htab_t* p_htab, klb_htab_clean_cb cb_clean, void* p_obj)
+int klb_htab_clear(klb_htab_t* p_htab, klb_htab_clear_cb cb_clear, void* p_obj)
 {
     assert(NULL != p_htab);
 
@@ -62,9 +62,9 @@ int klb_htab_clean(klb_htab_t* p_htab, klb_htab_clean_cb cb_clean, void* p_obj)
             klb_htab_node_t* p_tmp = p_cur;
             p_cur = p_cur->p_next;
 
-            if (NULL != cb_clean)
+            if (NULL != cb_clear)
             {
-                cb_clean(p_obj, p_tmp->p_data);
+                cb_clear(p_obj, p_tmp->p_data);
             }
 
             if (KLB_HTAB_AUTO_MALLOC == p_htab->auto_malloc)
