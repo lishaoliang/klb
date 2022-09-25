@@ -15,14 +15,16 @@ local ktime = {}
 -- @brief 休眠毫秒
 -- @param [in]  	ms[number(int)]	休眠毫秒
 -- @return 无
+-- @note 直接休眠C线程
 ktime.sleep = function (ms)
 	return
 end
 
 
--- @brief 休眠纳秒
+-- @brief 休眠纳秒[暂未实现]
 -- @param [in]  	ns[number(int)]	休眠纳秒
 -- @return 无
+-- @note 直接休眠C线程
 ktime.sleep_ns = function (ns)
 	return
 end
@@ -43,6 +45,7 @@ end
 --		-- tc[number(int)]	-- 当前系统滴答数(毫秒)
 --		return				-- 无返回值
 --  end
+-- @note 仅非协程使用
 ktime.timer = function (interval, cb)
 	return true
 end
@@ -57,9 +60,17 @@ end
 --		-- tc[number(int)]	-- 当前系统滴答数(毫秒)
 --		return				-- 无返回值
 --  end
+-- @note 仅非协程使用
 ktime.ticker = function (name, interval, cb)
 	return true
 end
 
+
+-- @brief 关闭长期调用定时器
+-- @param [in]  	name[string]			名称
+-- @return [boolean] true, false
+ktime.stop_ticker = function (name)
+	return true
+end
 
 return ktime

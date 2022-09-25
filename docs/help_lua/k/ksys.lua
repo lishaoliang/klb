@@ -27,10 +27,27 @@ end
 
 
 -- @brief 将打包的字符串(二进制) 解包
--- @param [in] str[string]	打包的字符串
+-- @param [in] s[string]	打包的字符串
 -- @return [...] 任意类型
 -- @note eg. local a, b, c = ksys.unpack('')
-ksys.unpack = function (str)
+ksys.unpack = function (s)
+	return ...
+end
+
+
+-- @brief 将函数参数打包成JSON字符串
+-- @param [in] [...]		任意类型
+-- @return [string]	打包后的字符串
+-- @note eg. local s = ksys.pack_json('a', true, {a=1})
+ksys.pack_json = function (...)
+	return '{}'
+end
+
+
+-- @brief 将打包的JSON字符串解包
+-- @param [in] s[string]	打包的字符串
+-- @return [...] 任意类型
+ksys.unpack_json = function (s)
 	return ...
 end
 

@@ -26,26 +26,41 @@ klpc.new_module = function (name)
 	mo:close = function ()
 		return
 	end
+
+	-- @brief 获取当前状态
+	-- @return 	b[boolean]					是否正常
+	--			status[number(int)]			状态码; 0.正常; 非0.错误码
+	mo:status = function ()
+		return true, 0
+	end
 	
 	-- @brief 读取(LPC)消息
-	-- @return [string]src		请求(call/post)来源名称
-	--			[string]msg		消息: 通过 ksys.unpack 解压出具体信息
+	-- @return [string]name		请求(call/post)来源名称
+	--			[任意]...		消息列表
 	-- @note 仅在协程中使用
 	--		eg. local src, msg = mo:co_recv()
-	--			local r1, r2 = ksys.unpack(msg)
 	--			...
 	--			mo:response(src, '123', true)
 	mo:co_recv = function ()
-		local src ='aaa'	-- 请求(call/post)来源名称
-		local msg = '111'	-- 消息: 通过 ksys.unpack 解压出具体信息
-		return src, msg
+		local name = 'efse2'
+		return name, ...
 	end
 
-	-- @brief 回复请求
-	-- @param [in]	src[string]		请求来源名称: 
-	-- @param [in]	...[任意类型]	回复的数据
+	-- @brief 回复数据
+	-- @param [in]	name[string]	目标名称
+	-- @param [in]	...[任意]		消息
 	-- @return 无
-	mo:response = function (src, ...)
+	-- @note 由 co_recv 函数获取后, 回应 response
+	mo:response = function (name, ...)
+		return
+	end
+	
+	-- @brief 通知消息
+	-- @param [in]	name[string]	目标名称
+	-- @param [in]	...[任意]		消息
+	-- @return 无
+	-- @note 
+	mo:notify = function (name, ...)
 		return
 	end
 	
@@ -66,12 +81,33 @@ klpc.new = function ()
 		return
 	end
 
+	-- @brief 获取当前状态
+	-- @return 	b[boolean]					是否正常
+	--			status[number(int)]			状态码; 0.正常; 非0.错误码
+	lpc:status = function ()
+		return true, 0
+	end
+
+	-- @brief 向某个模块post消息(不等待返回)
+	-- @param [in]	mo_name[string]	目标模块名称
+	-- @return [boolean] 是否成功
+	lpc:post = function (mo_name, ...)
+		return true
+	end	
+
 	-- @brief 向某个模块发送消息,并等待返回数据
 	-- @param [in]	mo_name[string]	目标模块名称
 	-- @param [in]	...[任意类型]	请求数据
 	-- @return [...] 对方回复的数据
 	-- @note 仅在协程中使用
 	lpc:co_call = function (mo_name, ...)
+		return ...
+	end
+
+	-- @brief 接收 'notify' 通知消息
+	-- @return [...] 通知消息
+	-- @note 需要初始化时开启通知接收, 仅在协程中使用
+	lpc:co_recv_notify = function ()
 		return ...
 	end
 	
@@ -88,89 +124,3 @@ end
 
 
 return klpc
-
-
--- demo
---[[
-
-local kco = require("kco")
-local klpc = require("klpc")
-local ksys = require("ksys")
-
-local mo_name = 'aaa'
-local mo_aaa = klpc.new_module(mo_name)
-print('new_module', mo_aaa, mo_name)
-
-kco.fork(function ()
-	local loop = true
-	
-	while loop do
-		local src, recv = mo_aaa:co_recv()
-		
-		-- 收到消息, 另开协程处理, 以免阻塞接收数据协程
-		kco.fork(function ()
-			
-			local func_map = {
-				strcat = function (...)
-					local param = {...}
-					local s = ''
-					for _, v in pairs(param) do
-						if 'string' == type(v) then
-							s = s .. v
-						end
-					end
-					return s
-				end,
-				
-				add = function (...)
-					local param = {...}
-					local ret = 0
-					for _, v in pairs(param) do
-						if 'number' == type(v) then
-							ret = ret + v
-						end
-					end
-					return ret
-				end,
-				
-				printf = function (...)
-					print(mo_name .. '.printf', ...)
-				end
-			}
-			
-			func_map['end'] = function ()
-				print('end')
-				loop = false
-			end
-			
-			local on_msg = function (src, msg, ...)	
-				if 'string' == type(msg) and func_map[msg] then	
-					mo_aaa:response(src, func_map[msg](...))
-				else
-					mo_aaa:response(src, ...)
-				end
-			end
-			
-			on_msg(src, ksys.unpack(recv))
-		end)
-	end
-	
-	mo_aaa:close()
-end)
-
-
-kco.fork(function ()
-	
-	klpc.post(mo_name, 'printf', '1', 'a', true)
-	
-	local lpc = klpc.new()
-
-	print('co_call(strcat)', lpc:co_call(mo_name, 'strcat', '123', '456', '789', 'abc'))
-	print('co_call(add)', lpc:co_call(mo_name, 'add', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
-	
-	lpc:close()
-	
-	klpc.post(mo_name, 'end')
-end)
-
---]]

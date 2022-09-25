@@ -35,7 +35,7 @@ end
 -- @brief 协程休眠一段时间
 -- @param [in]	tc[number(int)]		休眠时间(单位毫秒)
 -- @return 无
--- @note eg. kco.sleep(1000)
+-- @note eg. kco.co_sleep(1000)
 --  仅协程中使用
 kco.co_sleep = function (tc)
 	return
