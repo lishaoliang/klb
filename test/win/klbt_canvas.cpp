@@ -1,6 +1,6 @@
 ﻿#include "klbt_canvas.h"
 #include "klbmem/klb_mem.h"
-#include "platform/klb_mutex.h"
+#include "klbplatform/klb_mutex.h"
 #include <assert.h>
 
 

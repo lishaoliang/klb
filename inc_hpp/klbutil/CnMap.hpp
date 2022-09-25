@@ -71,7 +71,7 @@ public:
 
     klb_hlist_t* GetHlist();
 
-    void Clean(klb_hlist_clean_cb cb_clean, void* p_obj);
+    void Clear(klb_hlist_clear_cb cb_clear, void* p_obj);
     int Size(); 
 
     CnMapIter& PushHead(const void* p_key, int key_len, void* p_data);

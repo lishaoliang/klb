@@ -124,7 +124,7 @@ int klua_open_ktime(lua_State* L)
         { "ticker",         klua_ktime_ticker },
         { "stop_ticker",    klua_ktime_stop_ticker},
 
-        { NULL,         NULL }
+        { NULL,             NULL }
     };
 
     // 创建导出库函数

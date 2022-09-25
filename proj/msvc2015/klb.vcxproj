@@ -100,7 +100,7 @@
       <AdditionalDependencies>libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(ProjectName)_$(Configuration)\libklb.dll ..\..\lib
+      <Command>xcopy /Y $(ProjectName)_$(Configuration)\libklb.dll ..\..\bin
 xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

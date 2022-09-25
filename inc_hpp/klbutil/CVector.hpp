@@ -80,7 +80,7 @@ public:
     klb_adt_type_e Type(const int idx);
 
     CVector& Remove(const int idx);
-    CVector& RemoveTail(const int idx);
+    CVector& RemoveTail();
     CVector& RemoveAll();
 
 protected:

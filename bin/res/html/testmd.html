@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Test md</title>
+  <body>
+	<div id="content">
+	
+	<script type="text/javascript" src="jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="marked.min.js"></script>
+    <script type='text/javascript'>
+		var rendererMD = new marked.Renderer();
+		
+		marked.setOptions({
+			renderer: rendererMD,
+			gfm: true,
+			tables: true,
+			breaks: false,
+			pedantic: false,
+			sanitize: false,
+			smartLists: true,
+			smartypants: false
+		});//基本设置
+		
+		//marked.setOptions({
+		//	highlight: function (code) {
+		//		return hljs.highlightAuto(code).value;
+		//	}
+		//});
+	
+		$.get("testmd.md", function(data, status){
+			//alert("Data: " + data + "\nStatus: " + status);
+			//document.getElementById('content').innerHTML = marked(data)
+			$("#content").html(marked(data));
+		});
+	
+		//document.getElementById('content').innerHTML = marked('# Marked in browser\n\nRendered by **marked**.');
+	  
+    </script>
+
+  </body>
+</html>

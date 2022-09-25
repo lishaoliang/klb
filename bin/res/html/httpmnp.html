@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>HTTP-MNP</title>
+  <body>
+
+    <div>
+      <canvas id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1 width="640" height="480"></canvas>
+    </div>
+
+    <script type="text/javascript" src="mnp-1.0.0.min.js"></script>
+    <script type='text/javascript'>
+      var Module = mnpjs
+
+      mnpjs.postRun = function() {
+        mnpjs.hello(1000)
+		
+		var port = 3457;//window.location.port + 1
+
+        var param = {
+          protocol : 'HTTP-MNP',
+          url : 'http://' + window.location.hostname + ':' + port + '/httpmnp'
+        };
+        
+        mnpjs.open('123456', param, function(result){
+            console.log('open ', result, param);
+        });
+      }
+    </script>
+
+  </body>
+</html>

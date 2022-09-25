@@ -100,7 +100,7 @@
       <AdditionalDependencies>libklb.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(ProjectName)_$(Configuration)\klua.exe ..\..\lib</Command>
+      <Command>xcopy /Y $(ProjectName)_$(Configuration)\klua.exe ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

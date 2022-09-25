@@ -1,11 +1,11 @@
-///////////////////////////////////////////////////////////////////////////
+ï»¿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    CnVector.hpp
-/// @brief   vector : ´æ·ÅµÄÖ¸Õë,µ÷ÓÃÕßĞè×ÔĞĞÊÍ·Å
+/// @brief   vector : å­˜æ”¾çš„æŒ‡é’ˆ,è°ƒç”¨è€…éœ€è‡ªè¡Œé‡Šæ”¾
 /// @version 0.1
-/// @history ĞŞ¸ÄÀúÊ·
-/// @warning Ã»ÓĞ¾¯¸æ
+/// @history ä¿®æ”¹å†å²
+/// @warning æ²¡æœ‰è­¦å‘Š
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_CNVECTOR_HPP__
 #define __KLB_CNVECTOR_HPP__
@@ -18,11 +18,11 @@ namespace klb {
 
 
 /// @class CnVector
-/// @brief vector : ´æ·ÅµÄÖ¸Õë,µ÷ÓÃÕßĞè×ÔĞĞÊÍ·Å
+/// @brief vector : å­˜æ”¾çš„æŒ‡é’ˆ,è°ƒç”¨è€…éœ€è‡ªè¡Œé‡Šæ”¾
 KLB_EXTERN class KLB_API_CPP CnVector
 {
 protected:
-    CnVector& operator=(const CnVector& t); // ½ûÖ¹¿½±´
+    CnVector& operator=(const CnVector& t); // ç¦æ­¢æ‹·è´
 
 public:
     CnVector();
@@ -32,7 +32,7 @@ public:
 
     klb_nvector_t* GetVector();
 
-    void Clean(klb_nvector_clean_cb cb_clean, void* p_obj);
+    void Clear(klb_nvector_clear_cb cb_clear, void* p_obj);
     int Size();
 
     CnVector& Append(void* p_data);

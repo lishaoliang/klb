@@ -86,7 +86,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
-    <OutDir>..\..\lib</OutDir>
+    <OutDir>$(ProjectName)_$(Configuration)\</OutDir>
     <TargetName>sdl_dev</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -122,7 +122,8 @@
       <AdditionalDependencies>libklb.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\dev\SDL2-2.0.12\lib\x86\SDL2.dll ..\..\lib\ /y</Command>
+      <Command>copy ..\..\dev\SDL2-2.0.12\lib\x86\SDL2.dll ..\..\bin\ /y
+xcopy /Y $(ProjectName)_$(Configuration)\sdl_dev.dll ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
