@@ -1,5 +1,14 @@
-﻿#ifndef __KLB_WIDGET_H__
-#define __KLB_WIDGET_H__
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2020, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klb_widgets.h
+/// @brief   窗口组件
+/// @version 0.1
+/// @history 修改历史
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLB_WIDGETS_H__
+#define __KLB_WIDGETS_H__
 
 #include "klb_type.h"
 #include "klbgui/klb_wnd.h"

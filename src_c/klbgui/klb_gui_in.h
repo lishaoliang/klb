@@ -83,7 +83,7 @@ typedef struct klb_gui_t_
     // 消息
     struct
     {
-        klb_nlist_t*     p_msg_list;
+        klb_nlist_t*    p_msg_list;
         klb_mutex_t*    p_msg_mutex;
     };
 

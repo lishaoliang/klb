@@ -12,9 +12,8 @@ typedef struct sdl_extension_t_
 {
     klua_env_t*         p_env;
 
-
     SDL_Window*         p_window;
-    SDL_Renderer*       p_renderer;
+    SDL_Renderer*       p_render;
 
     SDL_Surface*        p_surface;
     SDL_Texture*        p_texture;
@@ -123,25 +122,11 @@ int sdl_extension_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int64
 
     if (p_ex->refresh)
     {
-        SDL_RenderCopy(p_ex->p_renderer, p_ex->p_texture, NULL, NULL);
-        SDL_RenderPresent(p_ex->p_renderer);
+        SDL_RenderCopy(p_ex->p_render, p_ex->p_texture, NULL, NULL);
+        SDL_RenderPresent(p_ex->p_render);
 
         p_ex->refresh = false;
     }
-
-
-        //if (sdl_canvas_need_refresh(p_dev->p_sdl_canvas))
-        //{
-        //    SDL_RenderCopy(p_dev->p_renderer, p_dev->p_texture, NULL, NULL);
-        //    SDL_RenderPresent(p_dev->p_renderer);
-
-        //    sdl_canvas_set_refresh_ok(p_dev->p_sdl_canvas);
-        //}
-
-        //if (sleep)
-        //{
-        //    SDL_Delay(1);
-        //}
 
     return 0;
 }
@@ -246,18 +231,29 @@ static void kluaex_sdl_init_canvas(sdl_extension_t* p_ex)
     p_ex->canvas.vtable.refresh = kluaex_sdl_canvas_refresh;
 }
 
-int kluaex_sdl_open_wnd(sdl_extension_t* p_ex)
+int kluaex_sdl_open_wnd(sdl_extension_t* p_ex, int w, int h, const char* p_title)
 {
-    p_ex->p_window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 960, 540, SDL_WINDOW_SHOWN);
+
+#if 0
+    p_ex->p_window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w/*960*/, h/*540*/, SDL_WINDOW_SHOWN);
     assert(NULL != p_ex->p_window);
     p_ex->p_renderer = SDL_CreateRenderer(p_ex->p_window, -1, 0);
-    p_ex->p_texture = SDL_CreateTexture(p_ex->p_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 960, 540);
+#else
+    SDL_CreateWindowAndRenderer(w, h, SDL_WINDOW_SHOWN, &p_ex->p_window, &p_ex->p_render);
+    assert(NULL != p_ex->p_window);
+    assert(NULL != p_ex->p_render);
+
+    SDL_SetWindowTitle(p_ex->p_window, p_title);
+#endif
+    
+    p_ex->p_texture = SDL_CreateTexture(p_ex->p_render, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, w, h);
+
 
     // 初始化画布信息
     kluaex_sdl_init_canvas(p_ex);
 
-    SDL_RenderCopy(p_ex->p_renderer, p_ex->p_texture, NULL, NULL);
-    SDL_RenderPresent(p_ex->p_renderer);
+    SDL_RenderCopy(p_ex->p_render, p_ex->p_texture, NULL, NULL);
+    SDL_RenderPresent(p_ex->p_render);
 
     p_ex->p_gui = klua_gui_get(p_ex->p_env);
     klb_gui_attach_canvas(p_ex->p_gui, &p_ex->canvas);
@@ -274,7 +270,7 @@ int kluaex_sdl_close_wnd(sdl_extension_t* p_ex)
 
     KLB_FREE_BY(p_ex->p_texture, SDL_DestroyTexture);
     KLB_FREE_BY(p_ex->p_surface, SDL_FreeSurface);
-    KLB_FREE_BY(p_ex->p_renderer, SDL_DestroyRenderer);
+    KLB_FREE_BY(p_ex->p_render, SDL_DestroyRenderer);
     KLB_FREE_BY(p_ex->p_window, SDL_DestroyWindow);
 
     return 0;

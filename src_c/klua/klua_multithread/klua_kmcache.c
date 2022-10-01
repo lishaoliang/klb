@@ -28,7 +28,6 @@ static void clear_all_klua_kmcache(klua_kmcache_t* p_kmcache)
     {
         klb_buf_t* p_tmp = (klb_buf_t*)klb_hlist_pop_head(p_kmcache->p_hlist);
 
-        KLB_FREE(p_tmp->p_buf);
         KLB_FREE(p_tmp);
     }
 }
@@ -74,7 +73,6 @@ static int klua_kmcache_set(lua_State* L)
     if (NULL != p_old)
     {
         // 更新了, 删除旧数据
-        KLB_FREE(p_old->p_buf);
         KLB_FREE(p_old);
     }
     else
@@ -143,7 +141,7 @@ int klua_open_kmcache(lua_State* L)
         { "get",        klua_kmcache_get },
 
         { "size",       klua_kmcache_size },
-        { "clear_all",  klua_kmcache_clear_all },
+        { "clear",      klua_kmcache_clear_all },
 
         { NULL,         NULL }
     };

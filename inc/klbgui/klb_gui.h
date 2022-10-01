@@ -15,6 +15,7 @@
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_msg.h"
 #include "klbgui/klb_wnd.h"
+#include "klbutil/klb_map.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -143,17 +144,19 @@ KLB_API int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_
 /// @brief 向控件(窗口)设置数据: 样式\显示\状态等等
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
-/// @param [in] *p_json         JSON格式数据
+/// @param [in] *p_map          map数据集合
 /// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const char* p_json);
+/// @note map 具体数据格式由控件定义
+KLB_API int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map);
 
 
 /// @brief 向控件(窗口)获取数据: 样式\显示\状态等等
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
-/// @param [in] *p_json         JSON格式数据
-/// @return char* JSON串或NULL
-KLB_API char* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const char* p_json);
+/// @param [in] *p_map          map数据集合
+/// @return klb_map_t* map数据集合
+/// @note map 具体数据格式由控件定义
+KLB_API klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map);
 
 
 #ifdef __cplusplus

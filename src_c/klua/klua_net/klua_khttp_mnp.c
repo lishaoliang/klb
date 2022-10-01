@@ -669,7 +669,7 @@ static int cb_send_klua_khttp_mnp(void* p_lparam, void* p_wparam, int id, int64_
 
     if (KLB_SOCKET_OK != err)
     {
-        assert(false);
+        //assert(false);
     }
 
     return send;

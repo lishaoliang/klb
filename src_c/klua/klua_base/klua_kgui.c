@@ -8,6 +8,8 @@
 #include "klua/klua_help.h"
 #include "klbutil/klb_hlist.h"
 #include "klua/extension/klua_ex_gui.h"
+#include "klbutil/klb_map.h"
+#include "klua/klua_seri.h"
 #include <assert.h>
 
 
@@ -166,34 +168,34 @@ static int klua_kgui_bind_command(lua_State* L)
 static int klua_kgui_set(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
-    const char* p_json = luaL_checkstring(L, 2);        ///< @2. JSON参数
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
-    int ret = klb_gui_set(p_gui, p_path_name, p_json);
+    int ret = klb_gui_set(p_gui, p_path_name, p_in);
 
     lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
     return 1;
 }
 
 static int klua_kgui_get(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
-    const char* p_json = luaL_checkstring(L, 2);        ///< @2. JSON参数
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    klb_map_t* p_out = klb_gui_get(p_gui, p_path_name, p_in);
 
-    char* p_str = klb_gui_get(p_gui, p_path_name, p_json);
-    if (NULL != p_str)
+    int n = 0;
+    if (NULL != p_out)
     {
-        lua_pushstring(L, p_str);                       ///< #1. JSON回复
-        KLB_FREE(p_str);
-    }
-    else
-    {
-        lua_pushstring(L, "");
+        n = klua_seri_map_unpack(L, 0, p_out);
     }
 
-    return 1;
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    KLB_FREE_BY(p_out, klb_map_destroy);
+    return n;
 }
 
 static int klua_kgui_do_model(lua_State* L)
@@ -244,6 +246,7 @@ int klua_open_kgui(lua_State* L)
         { "append",             klua_kgui_append },
         { "remove",             klua_kgui_remove },
         { "bind_command",       klua_kgui_bind_command },
+
         { "set",                klua_kgui_set },
         { "get",                klua_kgui_get },
 
@@ -270,14 +273,36 @@ int klua_open_kgui(lua_State* L)
 
 static int klua_kwnd_set(lua_State* L)
 {
-    klua_kwnd_t* p_kwnd = klua_check_kwnd(L, 1);
+    //klua_kwnd_t* p_kwnd = klua_check_kwnd(L, 1);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)lua_topointer(L, 1);
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
 
-    return 0;
+    int ret = p_wnd->vtable.on_set(p_wnd, p_in);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    return 1;
 }
 
 static int klua_kwnd_get(lua_State* L)
 {
-    return 0;
+    //klua_kwnd_t* p_kwnd = klua_check_kwnd(L, 1);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)lua_topointer(L, 1);
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
+
+    klb_map_t* p_out = p_wnd->vtable.on_get(p_wnd, p_in);
+
+    int n = 0;
+    if (NULL != p_out)
+    {
+        n = klua_seri_map_unpack(L, 0, p_out);
+    }
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    KLB_FREE_BY(p_out, klb_map_destroy);
+
+    return n;
 }
 
 int klua_open_kwnd(lua_State* L)

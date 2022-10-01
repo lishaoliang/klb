@@ -1,11 +1,11 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   kmcache.lua
 -- @brief  C kmcache, memory cache
 --   \n require("kmcache")
---   \n Cµ¼³öÎÄ¼ş: ./klb/src_c/klua/klua_multithread/klua_kmcache.c
---   \n ½ø³ÌÄÚ²¿ËùÓĞ¹²ÏíÊı¾İ
---   \n ×¢Òâ: ÎğÀ©´óÊ¹ÓÃ·¶Î§,×îÊÊÓÃÓÚ°æ±¾µÈ¹Ì¶¨ÄÚÈİµ«ÓÖĞèÒªÈ«¾Ö¹²ÏíµÄĞÅÏ¢
+--   \n Cå¯¼å‡ºæ–‡ä»¶: ./klb/src_c/klua/klua_multithread/klua_kmcache.c
+--   \n è¿›ç¨‹å†…éƒ¨æ‰€æœ‰å…±äº«æ•°æ®
+--   \n æ³¨æ„: å‹¿æ‰©å¤§ä½¿ç”¨èŒƒå›´,æœ€é€‚ç”¨äºç‰ˆæœ¬ç­‰å›ºå®šå†…å®¹ä½†åˆéœ€è¦å…¨å±€å…±äº«çš„ä¿¡æ¯
 -- @version 0.1
 --]]
 
@@ -13,32 +13,32 @@
 local kmcache = {}
 
 
--- @brief ÉèÖÃK/V
--- @param [in] key[string]	keyÖµ
--- @param [in] [...] 		ÈÎÒâÀàĞÍ
--- @return ÎŞ
+-- @brief è®¾ç½®K/V
+-- @param [in] key[string]	keyå€¼
+-- @param [in] [...] 		ä»»æ„ç±»å‹
+-- @return æ— 
 kmcache.set = function (key, ...)
 	return
 end
 
 
--- @brief »ñÈ¡K/V
--- @param [in] key[string]	keyÖµ
--- @return [...] ÈÎÒâÀàĞÍ
+-- @brief è·å–K/V
+-- @param [in] key[string]	keyå€¼
+-- @return [...] ä»»æ„ç±»å‹
 kmcache.get = function (key)
 	return ...
 end
 
 
--- @brief »ñÈ¡ÊıÄ¿
--- @return [number(int)] ÊıÄ¿
+-- @brief è·å–æ•°ç›®
+-- @return [number(int)] æ•°ç›®
 kmcache.size = function (key)
 	return 0
 end
 
--- @brief Çå³ıËùÓĞ
--- @return ÎŞ
-kmcache.clear_all = function ()
+-- @brief æ¸…é™¤æ‰€æœ‰
+-- @return æ— 
+kmcache.clear = function ()
 	return 
 end
 

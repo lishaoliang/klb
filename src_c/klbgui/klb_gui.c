@@ -5,7 +5,7 @@
 #include "klbutil/klb_log.h"
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klb_wnd_in.h"
-#include "klbgui/klb_widget.h"
+#include "klbgui/klb_widgets.h"
 #include <assert.h>
 
 
@@ -16,8 +16,7 @@ static int klb_gui_thread(void* p_obj, volatile int* p_run);
 
 klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 {
-    klb_gui_t* p_gui = KLB_MALLOC(klb_gui_t, 1, 0);
-    KLB_MEMSET(p_gui, 0, sizeof(klb_gui_t));
+    klb_gui_t* p_gui = KLB_MALLOCZ(klb_gui_t, 1, 0);
 
     p_gui->p_canvas = p_canvas;
 
@@ -314,7 +313,7 @@ int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_c
     return 0;
 }
 
-int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const char* p_json)
+int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map)
 {
     klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
     if (NULL == p_wnd)
@@ -325,13 +324,13 @@ int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const char* p_json)
     int ret = 1;
     if (p_wnd->vtable.on_set)
     {
-        ret = p_wnd->vtable.on_set(p_wnd, p_json);
+        ret = p_wnd->vtable.on_set(p_wnd, p_map);
     }
 
     return ret;
 }
 
-char* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const char* p_json)
+klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map)
 {
     klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
     if (NULL == p_wnd)
@@ -339,10 +338,10 @@ char* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const char* p_json)
         return NULL;
     }
 
-    char* p_ret = NULL;
+    klb_map_t* p_ret = NULL;
     if (p_wnd->vtable.on_get)
     {
-        p_ret = p_wnd->vtable.on_get(p_wnd, p_json);
+        p_ret = p_wnd->vtable.on_get(p_wnd, p_map);
     }
 
     return p_ret;
@@ -464,11 +463,10 @@ int klb_gui_redraw(klb_gui_t* p_gui)
             }
 
             KLB_CANVAS_UNLOCK(p_gui->p_canvas);
+
+            klb_gui_update_rect(p_gui, NULL);
+            p_gui->redraw = false;
         }
-
-        klb_gui_update_rect(p_gui, NULL);
-
-        p_gui->redraw = false;
     }
 
     return 0;

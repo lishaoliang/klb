@@ -1,9 +1,9 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   krand.lua
 -- @brief  C krand
 --   \n require("krand")
---   \n Cµ¼³öÎÄ¼ş: ./klb/src_c/klua/klua_util/klua_krand.c
+--   \n Cå¯¼å‡ºæ–‡ä»¶: ./klb/src_c/klua/klua_util/klua_krand.c
 -- @version 0.1
 --]]
 
@@ -11,10 +11,10 @@ local krand = {}
 
 
 
--- @brief Ëæ»úÖµ
--- @param [in]  	max[number(int)]	[¿ÉÑ¡](Ä¬ÈÏ0x7fff)Öµ×î´ó
--- @return [number(int)] Ëæ»úÖµ
---			[number(int)] ·¶Î§[1, N]
+-- @brief éšæœºå€¼
+-- @param [in]  	max[number(int)]	[å¯é€‰](é»˜è®¤0x7fff)å€¼æœ€å¤§
+-- @return [number(int)] éšæœºå€¼
+--			[number(int)] èŒƒå›´[1, N]
 -- @note eg. 1. local n, r = krand.rand(10)		1 <= n <= r, r = 10
 -- 		2. local n, r = krand.rand()			1 <= n <= r, r = 0x7fff
 krand.rand = function (max)
@@ -22,18 +22,18 @@ krand.rand = function (max)
 end
 
 
--- @brief Ëæ»ú×Ö·û´®
--- @param [in]  	size[number(int)]	×Ö·û¸öÊı
--- @return [string] ×Ö·û´®
-krand.rand_string = function (size)
+-- @brief éšæœºå­—ç¬¦ä¸²
+-- @param [in]  	len[number(int)]	å­—ç¬¦ä¸ªæ•°
+-- @return [string] å­—ç¬¦ä¸²
+krand.rand_string = function (len)
 	return '123456'
 end
 
 
--- @brief Ëæ»úÕûĞÍÊıÖµ
--- @param [in]  	size[number(int)]	×Ö·û¸öÊı: eg. 3 ==> 123
--- @return [number(int)] ÕûĞÍÊıÖµ
-krand.rand_integer = function (size)
+-- @brief éšæœºæ•´å‹æ•°å€¼
+-- @param [in]  	len[number(int)]	å­—ç¬¦ä¸ªæ•°: eg. 3 ==> 123
+-- @return [number(int)] æ•´å‹æ•°å€¼
+krand.rand_integer = function (len)
 	return 123456
 end
 

@@ -17,7 +17,7 @@
 typedef struct klua_klist_item_t_
 {
     long volatile   lock_list;  ///< p_list 的原子锁
-    klb_nlist_t*     p_list;     ///< 存储 klb_obj_t*
+    klb_nlist_t*    p_list;     ///< 存储 klb_obj_t*
 }klua_klist_item_t;
 
 
@@ -104,7 +104,7 @@ static klua_klist_item_t* get_insert_item_klua_klist(klua_klist_t* ptr, const ch
 typedef struct klua_klist_userdata_t_
 {
     klua_klist_item_t*  p_item;         ///< 
-    klb_nlist_t*         p_tmp_list;     ///< 临时list
+    klb_nlist_t*        p_tmp_list;     ///< 临时list
 }klua_klist_userdata_t;
 
 

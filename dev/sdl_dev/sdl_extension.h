@@ -17,7 +17,7 @@ sdl_extension_t* klua_ex_get_sdl(klua_env_t* p_env);
 sdl_extension_t* klua_ex_get_sdl_by_L(lua_State* L);
 
 
-int kluaex_sdl_open_wnd(sdl_extension_t* p_ex);
+int kluaex_sdl_open_wnd(sdl_extension_t* p_ex, int w, int h, const char* p_title);
 int kluaex_sdl_close_wnd(sdl_extension_t* p_ex);
 
 

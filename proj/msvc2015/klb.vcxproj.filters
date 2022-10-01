@@ -213,6 +213,9 @@
     <Filter Include="src_packages\kpa_sip">
       <UniqueIdentifier>{7f7e1b83-f202-4923-b56b-e2b4d642ef57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbgui\widgets">
+      <UniqueIdentifier>{5066e017-b6b6-4fce-8c0f-97b3c1e93817}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -726,9 +729,6 @@
       <Filter>src_c\compat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h">
-      <Filter>src_c\klbgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klbgui\klb_widget.h">
       <Filter>src_c\klbgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h">
@@ -1304,6 +1304,9 @@
     <ClInclude Include="..\..\inc\klua\klua_gui.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\klb_widgets.h">
+      <Filter>src_c\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -1343,9 +1346,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c">
       <Filter>src_c\klbformat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\klb_button.c">
-      <Filter>src_c\klbgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c">
       <Filter>src_c\klbgui</Filter>
@@ -2114,6 +2114,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_packages\kpa_sip\klua_kpa_sip.cpp">
       <Filter>src_packages\kpa_sip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klb_button.c">
+      <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

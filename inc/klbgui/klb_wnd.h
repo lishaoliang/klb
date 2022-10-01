@@ -16,7 +16,9 @@
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_msg.h"
 #include "klbutil/klb_hlist.h"
+#include "klbutil/klb_map.h"
 #include "klbthird/sds.h"
+
 
 #if defined(__cplusplus)
 extern "C" {
@@ -99,16 +101,18 @@ typedef int(*klb_wnd_on_command_cb)(klb_wnd_t* p_wnd, int msg, const klb_point_t
 
 /// @brief 向控件设置数据: 样式\显示\状态等等
 /// @param [in] *p_wnd      窗体对象
-/// @param [in] *p_json     JSON格式数据
+/// @param [in] *p_map      map数据集合
 /// @return int 0.成功; 非0.失败(错误码)
-typedef int(*klb_wnd_on_set_cb)(klb_wnd_t* p_wnd, const char* p_json);
+/// @note map 具体数据格式由控件定义
+typedef int(*klb_wnd_on_set_cb)(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 
 
 /// @brief 向控件获取数据: 样式\显示\状态等等
 /// @param [in] *p_wnd      窗体对象
-/// @param [in] *p_json     JSON格式数据
-/// @return char* JSON串或NULL
-typedef char*(*klb_wnd_on_get_cb)(klb_wnd_t* p_wnd, const char* p_json);
+/// @param [in] *p_map      map数据集合
+/// @return klb_map_t* map数据集合
+/// @note map 具体数据格式由控件定义
+typedef klb_map_t* (*klb_wnd_on_get_cb)(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 
 
 /// @struct klb_wnd_vtable_t
@@ -157,7 +161,7 @@ typedef struct klb_wnd_vtable_t_
 /// @brief  窗口
 typedef struct klb_wnd_t_
 {
-    klb_wnd_vtable_t vtable;    ///< 窗口"虚表"
+    klb_wnd_vtable_t vtable;    ///< 窗口函数表
 
     klb_wnd_t*      p_parent;   ///< 父节点, 树形结构
     klb_wnd_t*      p_child;    ///< 子节点

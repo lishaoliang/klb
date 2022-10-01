@@ -6,8 +6,12 @@
 
 static int sdl_dev_open(lua_State* L)
 {
+    int w = luaL_checkinteger(L, 1);
+    int h = luaL_checkinteger(L, 2);
+    const char* p_title = luaL_checkstring(L, 3);
+
     // 打开窗口
-    kluaex_sdl_open_wnd(klua_ex_get_sdl_by_L(L));
+    kluaex_sdl_open_wnd(klua_ex_get_sdl_by_L(L), w, h, p_title);
 
     return 0;
 }

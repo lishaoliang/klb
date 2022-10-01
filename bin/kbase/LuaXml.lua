@@ -1,4 +1,4 @@
-local xml = require("LuaXML_lib")
+﻿local xml = require("LuaXML_lib")
 local base = _G
 
 -- symbolic name for tag index, this allows accessing the tag by var[xml.TAG]

@@ -5,6 +5,7 @@
 --   \n require("kco")
 --   \n C导出文件: ./klb/src_c/klua/klua_base/klua_kcoro.c
 --   \n 协程(coroutine)
+--   \n 与lua自带的协程库冲突, 使用本库替代即可!
 -- @version 0.1
 --]]
 

@@ -1,85 +1,85 @@
---[[
+ï»¿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   krpc.lua
 -- @brief  C krpc, Remote Procedure Call Protocol
 --   \n require("klpc")
---   \n Cµ¼³öÎÄ¼ş: ./klb/src_c/klua/klua_net/klua_krpc.c
---   \n ÍøÂçÔ¶³ÌRPC
---   \n ¶¨ÒåÄ£¿é(·şÎñ¶Ë), ·ÃÎÊÄ£¿é(¿Í»§¶Ë)
+--   \n Cå¯¼å‡ºæ–‡ä»¶: ./klb/src_c/klua/klua_net/klua_krpc.c
+--   \n ç½‘ç»œè¿œç¨‹RPC
+--   \n å®šä¹‰æ¨¡å—(æœåŠ¡ç«¯), è®¿é—®æ¨¡å—(å®¢æˆ·ç«¯)
 -- @version 0.1
 --]]
 
 local krpc = {}
 
 
--- @brief ĞÂ½¨Ò»¸öµ¼³öÄ£¿é(newmetatable)
--- @param [in]	port[number(int)]	socket¶Ë¿Ú
--- @return module¶ÔÏó
+-- @brief æ–°å»ºä¸€ä¸ªå¯¼å‡ºæ¨¡å—(newmetatable)
+-- @param [in]	port[number(int)]	socketç«¯å£
+-- @return moduleå¯¹è±¡
 -- @note 
 krpc.new_module = function (port)
 	local mo = {}
 	
-	-- @brief ¹Ø±Õ
-	-- @return ÎŞ
-	-- @note ÏÔÊ¾¹Ø±Õ, ¿ÉÌáÇ°ÊÍ·Å·ÇLuaÏà¹ØµÄ×ÊÔ´(ÄÚ´æ, ÎÄ¼ş¾ä±úµÈ)
-	--		²»ÏÔÊ¾¹Ø±Õ, ÔòĞèÒªµÈ´ıgc²ÅÊÍ·Å
+	-- @brief å…³é—­
+	-- @return æ— 
+	-- @note æ˜¾ç¤ºå…³é—­, å¯æå‰é‡Šæ”¾éLuaç›¸å…³çš„èµ„æº(å†…å­˜, æ–‡ä»¶å¥æŸ„ç­‰)
+	--		ä¸æ˜¾ç¤ºå…³é—­, åˆ™éœ€è¦ç­‰å¾…gcæ‰é‡Šæ”¾
 	mo:close = function ()
 		return
 	end
 
-	-- @brief »ñÈ¡µ±Ç°×´Ì¬
-	-- @return 	b[boolean]					ÊÇ·ñÕı³£
-	--			status[number(int)]			×´Ì¬Âë; 0.Õı³£; ·Ç0.´íÎóÂë
+	-- @brief è·å–å½“å‰çŠ¶æ€
+	-- @return 	b[boolean]					æ˜¯å¦æ­£å¸¸
+	--			status[number(int)]			çŠ¶æ€ç ; 0.æ­£å¸¸; é0.é”™è¯¯ç 
 	mo:status = function ()
 		return true, 0
 	end
 	
-	-- @brief ÉèÖÃÂ·¾¶¶ÔÓ¦µÄĞ­Òé
-	-- @param [in]	path[string]			Â·¾¶; eg. '/test'
-	-- @param [in]	protocol[string]		Ğ­Òé; eg. 'http-lua','http-json','ws-lua','ws-json'
-	-- @return ÎŞ
+	-- @brief è®¾ç½®è·¯å¾„å¯¹åº”çš„åè®®
+	-- @param [in]	path[string]			è·¯å¾„; eg. '/test'
+	-- @param [in]	protocol[string]		åè®®; eg. 'http-lua','http-json','ws-lua','ws-json'
+	-- @return æ— 
 	mo:route = function (path, protocol)
 		return
 	end
 	
-	-- @brief ¶ÁÈ¡(RPC)ÏûÏ¢
-	-- @return 	protocol[number(int)]		RPCĞ­Òé±àºÅ
-	--			id[number(int)]				socket±àºÅ
-	--			sequence[number(int)]		ĞòÁĞºÅ: Ğ¡ÓÚ1000.ÎªpostÏûÏ¢; ´óÓÚµÈÓÚ1000.ÎªcallÏûÏ¢
-	--			...[ÈÎÒâ]					ÇëÇó²ÎÊıÁĞ±í
-	-- @note ½öÔÚĞ­³ÌÖĞÊ¹ÓÃ
+	-- @brief è¯»å–(RPC)æ¶ˆæ¯
+	-- @return 	protocol[number(int)]		RPCåè®®ç¼–å·
+	--			id[number(int)]				socketç¼–å·
+	--			sequence[number(int)]		åºåˆ—å·: å°äº1000.ä¸ºpostæ¶ˆæ¯; å¤§äºç­‰äº1000.ä¸ºcallæ¶ˆæ¯
+	--			...[ä»»æ„]					è¯·æ±‚å‚æ•°åˆ—è¡¨
+	-- @note ä»…åœ¨åç¨‹ä¸­ä½¿ç”¨
 	mo:co_recv = function ()
-		local protocol = 10		-- RPCĞ­Òé±àºÅ
-		local id = 1000			-- socket±àºÅ
-		local sequence = 1000	-- ĞòÁĞºÅ
-		-- ...	ÇëÇóµÄ²ÎÊıÁĞ±í
+		local protocol = 10		-- RPCåè®®ç¼–å·
+		local id = 1000			-- socketç¼–å·
+		local sequence = 1000	-- åºåˆ—å·
+		-- ...	è¯·æ±‚çš„å‚æ•°åˆ—è¡¨
 		return protocol, id, sequence, ...
 	end
 
-	-- @brief »Ø¸´ÇëÇó
-	-- @param [in]	protocol[number(int)]	RPCĞ­Òé±àºÅ
-	-- @param [in]	id[number(int)]			socket±àºÅ
-	-- @param [in]	sequence[number(int)]	ĞòÁĞºÅ: ´óÓÚµÈÓÚ1000.ÎªcallÏûÏ¢
-	-- @param [in]	...[ÈÎÒâ]				»Ø¸´µÄÊı¾İ
-	-- @return ÎŞ
-	-- @note ÔÚmo:co_recv´¦Àíºó,»ØÓ¦ÇëÇó
+	-- @brief å›å¤è¯·æ±‚
+	-- @param [in]	protocol[number(int)]	RPCåè®®ç¼–å·
+	-- @param [in]	id[number(int)]			socketç¼–å·
+	-- @param [in]	sequence[number(int)]	åºåˆ—å·: å¤§äºç­‰äº1000.ä¸ºcallæ¶ˆæ¯
+	-- @param [in]	...[ä»»æ„]				å›å¤çš„æ•°æ®
+	-- @return æ— 
+	-- @note åœ¨mo:co_recvå¤„ç†å,å›åº”è¯·æ±‚
 	mo:response = function (protocol, id, sequence, ...)
 		return
 	end
 
-	-- @brief Í¨Öªµ¥¸ö¿Í»§¶Ë: ·şÎñ·½Ö÷¶¯·¢Æğ
-	-- @param [in]	protocol[number(int)]	RPCĞ­Òé±àºÅ
-	-- @param [in]	id[number(int)]			socket±àºÅ
-	-- @param [in]	...[ÈÎÒâ]				Í¨Öª²ÎÊıÁĞ±í
-	-- @return b[boolean]					Í¨ÖªÊÇ·ñËÍ´ïÍøÂç; false.ÍøÂçÒÑ¶Ï¿ª(idÊ§Ğ§)
-	-- @note ÒµÎñ²ã¿ÉÒÔ×ö³É"¶©ÔÄ"»úÖÆ, »òÖ±½Ó"ÍÆËÍ"»úÖÆ
+	-- @brief é€šçŸ¥å•ä¸ªå®¢æˆ·ç«¯: æœåŠ¡æ–¹ä¸»åŠ¨å‘èµ·
+	-- @param [in]	protocol[number(int)]	RPCåè®®ç¼–å·
+	-- @param [in]	id[number(int)]			socketç¼–å·
+	-- @param [in]	...[ä»»æ„]				é€šçŸ¥å‚æ•°åˆ—è¡¨
+	-- @return b[boolean]					é€šçŸ¥æ˜¯å¦é€è¾¾ç½‘ç»œ; false.ç½‘ç»œå·²æ–­å¼€(idå¤±æ•ˆ)
+	-- @note ä¸šåŠ¡å±‚å¯ä»¥åšæˆ"è®¢é˜…"æœºåˆ¶, æˆ–ç›´æ¥"æ¨é€"æœºåˆ¶
 	mo:notify = function (protocol, id, ...)
 		return true
 	end
 	
-	-- @brief Í¨ÖªËùÓĞ¿Í»§¶Ë: ·şÎñ·½Ö÷¶¯·¢Æğ
-	-- @param [in]	...[ÈÎÒâ]				Í¨Öª²ÎÊıÁĞ±í
-	-- @return ÎŞ
+	-- @brief é€šçŸ¥æ‰€æœ‰å®¢æˆ·ç«¯: æœåŠ¡æ–¹ä¸»åŠ¨å‘èµ·
+	-- @param [in]	...[ä»»æ„]				é€šçŸ¥å‚æ•°åˆ—è¡¨
+	-- @return æ— 
 	mo:notify_all = function (...)
 		return
 	end
@@ -88,46 +88,46 @@ krpc.new_module = function (port)
 end
 
 
--- @brief ĞÂ½¨Ò»¸örpc¶ÔÏó
--- @param [in]	ip[string]			Ä¿±êÄ£¿éIP
--- @param [in]	port[number(int)]	¶Ë¿Ú
--- @return rpc¶ÔÏó
+-- @brief æ–°å»ºä¸€ä¸ªrpcå¯¹è±¡
+-- @param [in]	ip[string]			ç›®æ ‡æ¨¡å—IP
+-- @param [in]	port[number(int)]	ç«¯å£
+-- @return rpcå¯¹è±¡
 krpc.new = function (ip, port)
 	local rpc = {}
 
-	-- @brief ¹Ø±Õ
-	-- @return ÎŞ
-	-- @note ÏÔÊ¾¹Ø±Õ, ¿ÉÌáÇ°ÊÍ·Å·ÇLuaÏà¹ØµÄ×ÊÔ´(ÄÚ´æ, ÎÄ¼ş¾ä±úµÈ)
-	--		²»ÏÔÊ¾¹Ø±Õ, ÔòĞèÒªµÈ´ıgc²ÅÊÍ·Å
+	-- @brief å…³é—­
+	-- @return æ— 
+	-- @note æ˜¾ç¤ºå…³é—­, å¯æå‰é‡Šæ”¾éLuaç›¸å…³çš„èµ„æº(å†…å­˜, æ–‡ä»¶å¥æŸ„ç­‰)
+	--		ä¸æ˜¾ç¤ºå…³é—­, åˆ™éœ€è¦ç­‰å¾…gcæ‰é‡Šæ”¾
 	rpc:close = function ()
 		return
 	end
 
-	-- @brief »ñÈ¡µ±Ç°×´Ì¬
-	-- @return 	b[boolean]					ÊÇ·ñÕı³£
-	--			status[number(int)]			×´Ì¬Âë; 0.Õı³£; ·Ç0.´íÎóÂë
+	-- @brief è·å–å½“å‰çŠ¶æ€
+	-- @return 	b[boolean]					æ˜¯å¦æ­£å¸¸
+	--			status[number(int)]			çŠ¶æ€ç ; 0.æ­£å¸¸; é0.é”™è¯¯ç 
 	rpc:status = function ()
 		return true, 0
 	end
 
-	-- @brief postÏûÏ¢
-	-- @param [in]	...[ÈÎÒâ]		ÇëÇó²ÎÊıÁĞ±í
-	-- @return ÎŞ
+	-- @brief postæ¶ˆæ¯
+	-- @param [in]	...[ä»»æ„]		è¯·æ±‚å‚æ•°åˆ—è¡¨
+	-- @return æ— 
 	rpc:post = function (...)
 		return
 	end
 
-	-- @brief ÏòÄ³¸öÄ£¿é·¢ÆğÇëÇó,²¢µÈ´ı·µ»ØÊı¾İ
-	-- @param [in]	...[ÈÎÒâ]		ÇëÇó²ÎÊıÁĞ±í
-	-- @return [...] ¶Ô·½»Ø¸´µÄÊı¾İÁĞ±í
-	-- @note ½öÔÚĞ­³ÌÖĞÊ¹ÓÃ
+	-- @brief å‘æŸä¸ªæ¨¡å—å‘èµ·è¯·æ±‚,å¹¶ç­‰å¾…è¿”å›æ•°æ®
+	-- @param [in]	...[ä»»æ„]		è¯·æ±‚å‚æ•°åˆ—è¡¨
+	-- @return [...] å¯¹æ–¹å›å¤çš„æ•°æ®åˆ—è¡¨
+	-- @note ä»…åœ¨åç¨‹ä¸­ä½¿ç”¨
 	rpc:co_call = function (...)
 		return ...
 	end
 	
-	-- @brief ¶ÁÈ¡Í¨ÖªÏûÏ¢
-	-- @return [...] ¶Ô·½»Ø¸´µÄÊı¾İÁĞ±í
-	-- @note ½öÔÚĞ­³ÌÖĞÊ¹ÓÃ
+	-- @brief è¯»å–é€šçŸ¥æ¶ˆæ¯
+	-- @return [...] å¯¹æ–¹å›å¤çš„æ•°æ®åˆ—è¡¨
+	-- @note ä»…åœ¨åç¨‹ä¸­ä½¿ç”¨
 	rpc:co_recv_notify = function ()
 		return ...
 	end
