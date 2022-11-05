@@ -44,8 +44,8 @@ klb_canvas_t* klb_canvas_create(int w, int h, int color_fmt)
     {
     case KLB_COLOR_FMT_ARGB8888:
         {
-            p_canvas->stride = (int64_t)w * 4;
-            p_canvas->mem_len = p_canvas->stride * h;
+            p_canvas->pitch = (int64_t)w * 4;
+            p_canvas->mem_len = p_canvas->pitch * h;
             p_canvas->p_addr = KLB_MALLOC(uint8_t, p_canvas->mem_len, 0);
         }
         break;
@@ -65,182 +65,339 @@ void klb_canvas_destroy(klb_canvas_t* p_canvas)
     p_canvas->vtable.free(p_canvas);
 }
 
-int klb_canvas_draw_clear(klb_canvas_t* p_canvas, int x, int y, int w, int h)
+/// @brief 设置绘制颜色
+int klb_canvas_set_draw_color(klb_canvas_t* p_canvas, uint32_t color)
 {
-    uint32_t color = 0;
-    return klb_canvas_draw_fill(p_canvas, x, y, w, h, color);
-}
-
-int klb_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y, uint32_t color)
-{
-    assert(NULL != p_canvas);
-    uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
-
-    int bpp = klb_color_bpp(p_canvas->color_fmt);
-    uint8_t* p_addr = p_canvas->p_addr + (p_canvas->stride * y) + (bpp * x);
-
-    memcpy(p_addr, &c, bpp);
-
-    return 0;
-}
-
-int klb_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2, uint32_t color, int width)
-{
-    assert(NULL != p_canvas);
-    uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
-
-    if (x1 == x2)
+    if (NULL != p_canvas->vtable.set_draw_color)
     {
-        //横线
-        int y = 0, len = 0;
-
-        if (y1 > y2)
-        {
-            len = y1 - y2;
-            y = y2;
-        }
-        else
-        {
-            len = y2 - y1;
-            y = y1;
-        }
-
-        klb_canvas_draw_fill(p_canvas, x1, y, width, len, c);
-    }
-    else if (y1 == y2)
-    {
-        //竖线
-        long x = 0, len = 0;
-
-        if (x1 > x2)
-        {
-            len = x1 - x2;
-            x = x2;
-        }
-        else
-        {
-            len = x2 - x1;
-            x = x1;
-        }
-
-        klb_canvas_draw_fill(p_canvas, x1, y1, len, width, c);
-    }
-    else
-    {
-        assert(false);
+        return p_canvas->vtable.set_draw_color(p_canvas, color);
     }
 
     return 0;
 }
 
-int klb_canvas_draw_fill(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color)
+/// @brief 获取绘制颜色
+uint32_t klb_canvas_get_draw_color(klb_canvas_t* p_canvas)
 {
-    assert(NULL != p_canvas);
-
-    uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
-
-    // 由硬件接口实现
-    if (p_canvas->vtable.draw_fill)
+    if (NULL != p_canvas->vtable.get_draw_color)
     {
-        int ret = 0;
-        KLB_CANVAS_DRAW_BEGIN(p_canvas);
-        ret = p_canvas->vtable.draw_fill(p_canvas, x, y, w, h, c);
-        KLB_CANVAS_DRAW_END(p_canvas);
-        return ret;
-    }
-
-    // 软实现
-    int bpp = klb_color_bpp(p_canvas->color_fmt);
-    uint8_t* p_addr = p_canvas->p_addr + (p_canvas->stride * y) + (bpp * x);
-    uint8_t* ptr = p_addr;
-
-    // 绘制一行后, 再复制
-    for (int i = 0; i < w; i++)
-    {
-        memcpy(ptr, &c, bpp);
-        ptr += bpp;
-    }
-
-    ptr = p_addr + p_canvas->stride;
-    int cp_w = bpp * w;
-
-    for (int i = 1; i < h; i++)
-    {
-        memcpy(ptr, p_addr, cp_w);
-        ptr += p_canvas->stride;
+        return p_canvas->vtable.get_draw_color(p_canvas);
     }
 
     return 0;
 }
 
-int klb_canvas_draw_rect(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color, int depth)
+int klb_canvas_set_font_height(klb_canvas_t* p_canvas, int h)
 {
-    assert(NULL != p_canvas);
-
-    uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
-
-    if (p_canvas->vtable.draw_fill)
+    if (NULL != p_canvas->vtable.set_font_height)
     {
-        int ret = 0;
-        KLB_CANVAS_DRAW_BEGIN(p_canvas);
-        ret = p_canvas->vtable.draw_fill(p_canvas, x, y, w, depth, c); // 上
-        ret = p_canvas->vtable.draw_fill(p_canvas, x + w - depth, y, depth, h, c); // 右
-        ret = p_canvas->vtable.draw_fill(p_canvas, x, y + h - depth, w, depth, c); // 下
-        ret = p_canvas->vtable.draw_fill(p_canvas, x, y, depth, h, c); // 左
-        KLB_CANVAS_DRAW_END(p_canvas);
-        return ret;
-    }
-
-    klb_canvas_draw_fill(p_canvas, x, y, w, depth, c); // 上
-    klb_canvas_draw_fill(p_canvas, x + w - depth, y, depth, h, c); // 右
-    klb_canvas_draw_fill(p_canvas, x, y + h - depth, w, depth, c); // 下
-    klb_canvas_draw_fill(p_canvas, x, y, depth, h, c); // 左
-
-    return 0;
-}
-
-int klb_canvas_draw_canvas(klb_canvas_t* p_canvas, int x, int y, const klb_canvas_t* p_src_canvas, int src_x, int src_y, int src_w, int src_h)
-{
-    assert(NULL != p_canvas);
-
-    // 由硬件接口实现
-    if (p_canvas->vtable.draw_canvas)
-    {
-        int ret = 0;
-        KLB_CANVAS_DRAW_BEGIN(p_canvas);
-        ret = p_canvas->vtable.draw_canvas(p_canvas, x, y, p_src_canvas, src_x, src_y, src_w, src_h);
-        KLB_CANVAS_DRAW_END(p_canvas);
-        return ret;
-    }
-
-    // 软实现
-    if (p_canvas->color_fmt == p_src_canvas->color_fmt)
-    {
-        // todo. 裁剪
-        int bpp = klb_color_bpp(p_canvas->color_fmt);
-        uint8_t* p_dst_addr = p_canvas->p_addr + (p_canvas->stride * y) + (bpp * x);
-        uint8_t* p_src_addr = p_src_canvas->p_addr + (p_src_canvas->stride * src_y) + (bpp * src_x);
-
-        int width = bpp * src_w;
-        for (int i = 0; i < src_h; i++)
-        {
-            memcpy(p_dst_addr, p_src_addr, width);
-
-            p_dst_addr += p_canvas->stride;
-            p_src_addr += p_src_canvas->stride;
-        }
-    }
-    else
-    {
-        assert(false);
+        return p_canvas->vtable.set_font_height(p_canvas, h);
     }
 
     return 0;
 }
 
-int klb_canvas_draw_text(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color, int font, const char* p_utf8, int utf8_len)
+int klb_canvas_get_font_height(klb_canvas_t* p_canvas)
 {
-    assert(NULL != p_canvas);
+    if (NULL != p_canvas->vtable.get_font_height)
+    {
+        return p_canvas->vtable.get_font_height(p_canvas);
+    }
 
     return 0;
 }
+
+int klb_canvas_draw_clear(klb_canvas_t* p_canvas)
+{
+    if (NULL != p_canvas->vtable.draw_clear)
+    {
+        return p_canvas->vtable.draw_clear(p_canvas);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y)
+{
+    if (NULL != p_canvas->vtable.draw_point)
+    {
+        return p_canvas->vtable.draw_point(p_canvas, x, y);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count)
+{
+    if (NULL != p_canvas->vtable.draw_points)
+    {
+        return p_canvas->vtable.draw_points(p_canvas, p_points, count);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2)
+{
+    if (p_canvas->vtable.draw_line)
+    {
+        return p_canvas->vtable.draw_line(p_canvas, x1, y1, x2, y2);
+    }
+
+    //assert(NULL != p_canvas);
+    //uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
+    //if (x1 == x2)
+    //{
+    //    //横线
+    //    int y = 0, len = 0;
+    //    if (y1 > y2)
+    //    {
+    //        len = y1 - y2;
+    //        y = y2;
+    //    }
+    //    else
+    //    {
+    //        len = y2 - y1;
+    //        y = y1;
+    //    }
+    //    klb_canvas_draw_fill(p_canvas, x1, y, width, len, c);
+    //}
+    //else if (y1 == y2)
+    //{
+    //    //竖线
+    //    long x = 0, len = 0;
+    //    if (x1 > x2)
+    //    {
+    //        len = x1 - x2;
+    //        x = x2;
+    //    }
+    //    else
+    //    {
+    //        len = x2 - x1;
+    //        x = x1;
+    //    }
+    //    klb_canvas_draw_fill(p_canvas, x1, y1, len, width, c);
+    //}
+    //else
+    //{
+    //    assert(false);
+    //}
+
+    return 0;
+}
+
+int klb_canvas_draw_lines(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count)
+{
+    if (p_canvas->vtable.draw_lines)
+    {
+        return p_canvas->vtable.draw_lines(p_canvas, p_points, count);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
+{
+    if (p_canvas->vtable.draw_rect)
+    {
+        return p_canvas->vtable.draw_rect(p_canvas, p_rect);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
+{
+    if (p_canvas->vtable.draw_rects)
+    {
+        return p_canvas->vtable.draw_rects(p_canvas, p_rects, count);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_fill_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
+{
+    if (p_canvas->vtable.draw_fill_rect)
+    {
+        return p_canvas->vtable.draw_fill_rect(p_canvas, p_rect);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
+{
+    if (p_canvas->vtable.draw_fill_rects)
+    {
+        return p_canvas->vtable.draw_fill_rects(p_canvas, p_rects, count);
+    }
+
+    return 0;
+}
+
+/// @brief 绘制文字
+/// @param [in] *p_canvas       画布对象
+/// @return int 0
+int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len)
+{
+    if (p_canvas->vtable.draw_text)
+    {
+        return p_canvas->vtable.draw_text(p_canvas, p_rect, p_utf8, utf8_len);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect)
+{
+    if (p_canvas->vtable.draw_image)
+    {
+        return p_canvas->vtable.draw_image(p_canvas, p_dst_rect, p_path, p_src_rect);
+    }
+
+    return 0;
+}
+
+int klb_canvas_refresh_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
+{
+    if (p_canvas->vtable.refresh_rect)
+    {
+        return p_canvas->vtable.refresh_rect(p_canvas, p_rect);
+    }
+
+    return 0;
+}
+
+int klb_canvas_refresh_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
+{
+    if (p_canvas->vtable.refresh_rects)
+    {
+        return p_canvas->vtable.refresh_rects(p_canvas, p_rects, count);
+    }
+
+    return 0;
+}
+
+//
+//int klb_canvas_draw_fill(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color)
+//{
+//    assert(NULL != p_canvas);
+//
+//    uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
+//
+//    // 由硬件接口实现
+//    if (p_canvas->vtable.draw_fill)
+//    {
+//        int ret = 0;
+//        KLB_CANVAS_DRAW_BEGIN(p_canvas);
+//        ret = p_canvas->vtable.draw_fill(p_canvas, x, y, w, h, c);
+//        KLB_CANVAS_DRAW_END(p_canvas);
+//        return ret;
+//    }
+//
+//    // 软实现
+//    int bpp = klb_color_bpp(p_canvas->color_fmt);
+//    uint8_t* p_addr = p_canvas->p_addr + (p_canvas->pitch * y) + (bpp * x);
+//    uint8_t* ptr = p_addr;
+//
+//    // 绘制一行后, 再复制
+//    for (int i = 0; i < w; i++)
+//    {
+//        memcpy(ptr, &c, bpp);
+//        ptr += bpp;
+//    }
+//
+//    ptr = p_addr + p_canvas->pitch;
+//    int cp_w = bpp * w;
+//
+//    for (int i = 1; i < h; i++)
+//    {
+//        memcpy(ptr, p_addr, cp_w);
+//        ptr += p_canvas->pitch;
+//    }
+//
+//    return 0;
+//}
+//
+//int klb_canvas_draw_rect(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color, int depth)
+//{
+//    assert(NULL != p_canvas);
+//
+//    uint32_t c = KLB_COLOR_TO(color, p_canvas->color_fmt);
+//
+//    if (p_canvas->vtable.draw_fill)
+//    {
+//        int ret = 0;
+//        KLB_CANVAS_DRAW_BEGIN(p_canvas);
+//        ret = p_canvas->vtable.draw_fill(p_canvas, x, y, w, depth, c); // 上
+//        ret = p_canvas->vtable.draw_fill(p_canvas, x + w - depth, y, depth, h, c); // 右
+//        ret = p_canvas->vtable.draw_fill(p_canvas, x, y + h - depth, w, depth, c); // 下
+//        ret = p_canvas->vtable.draw_fill(p_canvas, x, y, depth, h, c); // 左
+//        KLB_CANVAS_DRAW_END(p_canvas);
+//        return ret;
+//    }
+//
+//    klb_canvas_draw_fill(p_canvas, x, y, w, depth, c); // 上
+//    klb_canvas_draw_fill(p_canvas, x + w - depth, y, depth, h, c); // 右
+//    klb_canvas_draw_fill(p_canvas, x, y + h - depth, w, depth, c); // 下
+//    klb_canvas_draw_fill(p_canvas, x, y, depth, h, c); // 左
+//
+//    return 0;
+//}
+//
+//int klb_canvas_draw_canvas(klb_canvas_t* p_canvas, int x, int y, const klb_canvas_t* p_src_canvas, int src_x, int src_y, int src_w, int src_h)
+//{
+//    assert(NULL != p_canvas);
+//
+//    // 由硬件接口实现
+//    if (p_canvas->vtable.draw_canvas)
+//    {
+//        int ret = 0;
+//        KLB_CANVAS_DRAW_BEGIN(p_canvas);
+//        ret = p_canvas->vtable.draw_canvas(p_canvas, x, y, p_src_canvas, src_x, src_y, src_w, src_h);
+//        KLB_CANVAS_DRAW_END(p_canvas);
+//        return ret;
+//    }
+//
+//    // 软实现
+//    if (p_canvas->color_fmt == p_src_canvas->color_fmt)
+//    {
+//        // todo. 裁剪
+//        int bpp = klb_color_bpp(p_canvas->color_fmt);
+//        uint8_t* p_dst_addr = p_canvas->p_addr + (p_canvas->pitch * y) + (bpp * x);
+//        uint8_t* p_src_addr = p_src_canvas->p_addr + (p_src_canvas->pitch * src_y) + (bpp * src_x);
+//
+//        int width = bpp * src_w;
+//        for (int i = 0; i < src_h; i++)
+//        {
+//            memcpy(p_dst_addr, p_src_addr, width);
+//
+//            p_dst_addr += p_canvas->pitch;
+//            p_src_addr += p_src_canvas->pitch;
+//        }
+//    }
+//    else
+//    {
+//        assert(false);
+//    }
+//
+//    return 0;
+//}
+//
+//int klb_canvas_draw_text(klb_canvas_t* p_canvas, int x, int y, int w, int h, const char* p_utf8, int utf8_len, uint32_t color, int font_h)
+//{
+//    assert(NULL != p_canvas);
+//
+//    if (p_canvas->vtable.draw_text)
+//    {
+//        int ret = 0;
+//        KLB_CANVAS_DRAW_BEGIN(p_canvas);
+//        ret = p_canvas->vtable.draw_text(p_canvas, x, y, w, h, p_utf8, utf8_len, color, font_h);
+//        KLB_CANVAS_DRAW_END(p_canvas);
+//
+//        return ret;
+//    }
+//
+//    return 0;
+//}

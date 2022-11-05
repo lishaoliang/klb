@@ -14,7 +14,7 @@
 #include "klb_type.h"
 #include "klua/klua_env.h"
 #include "klbthird/sds.h"
-#include "klua/klua_kthread.h"
+#include "klua/klua_thread.h"
 
 #if defined(__cplusplus)
 extern "C" {

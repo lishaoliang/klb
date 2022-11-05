@@ -61,9 +61,9 @@ static int klua_ksys_unpack_json(lua_State* L)
 }
 
 /// @brief 获取全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
-static int klua_ksys_get_arg(lua_State* L)
+static int klua_ksys_get_args(lua_State* L)
 {
-    const klb_buf_t* p_arg = klua_env_get_arg(klua_env_get_by_L(L));
+    const klb_buf_t* p_arg = klua_env_get_args(klua_env_get_by_L(L));
 
     if (NULL != p_arg)
     {
@@ -88,7 +88,7 @@ int klua_open_ksys(lua_State* L)
         { "pack_json",      klua_ksys_pack_json },
         { "unpack_json",    klua_ksys_unpack_json },
 
-        { "get_arg",        klua_ksys_get_arg },
+        { "get_args",       klua_ksys_get_args },
 
         { NULL,             NULL }
     };

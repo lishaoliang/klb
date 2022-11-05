@@ -70,7 +70,7 @@ KLB_API void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas);
 /// @param [in] *p_gui          GUI对象
 /// @param [in] msg             消息类型: "./gui/klb_msg.h"
 /// @return 无
-KLB_API void klb_gui_push(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam);
+KLB_API void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam);
 
 
 /// @brief 创建窗口
@@ -91,6 +91,10 @@ typedef klb_wnd_t* (*klb_wnd_create_cb)(int x, int y, int w, int h);
 KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_create);
 
 
+/// @brief 加载图片资源
+KLB_API int klb_gui_load_image(klb_gui_t* p_gui, const char* p_img_path);
+
+
 /// @brief 添加窗口
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_type         窗口类型名
@@ -102,7 +106,7 @@ KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_creat
 /// @param [out] **p_out_wnd    窗口指针: 仅可访问
 /// @return int 0.成功; 非0.失败(错误码)
 /// @note 前父窗口必须存在; eg. "/home/btn1" 则需要 "/home" 必须存在, 才能添加
-KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, klb_wnd_t** p_out_wnd);
+KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd);
 
 
 /// @brief 移除窗口

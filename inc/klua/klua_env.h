@@ -227,13 +227,13 @@ KLB_API const sds klua_env_get_name(klua_env_t* p_env);
 /// @brief 设置全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
 /// @param [in] *p_env              lua环境
 /// @return 无
-KLB_API void klua_env_set_arg(klua_env_t* p_env, const char* p_data, int data_len);
+KLB_API void klua_env_set_args(klua_env_t* p_env, const char* p_data, int data_len);
 
 
 /// @brief 获取全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
 /// @param [in] *p_env              lua环境
 /// @return const klb_buf_t*
-KLB_API const klb_buf_t* klua_env_get_arg(klua_env_t* p_env);
+KLB_API const klb_buf_t* klua_env_get_args(klua_env_t* p_env);
 
 
 /// @brief 放入消息: p_msg 交给

@@ -43,7 +43,7 @@ int klua_ex_lpc_new_module(klua_ex_lpc_t* p_ex, const sds name, klua_ex_lpc_msg_
     klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_module_hlist, name, sdslen(name), p_mo);
     assert(NULL != p_iter);
 
-    int ret = klua_kthread_register_module(p_mo->name, p_ex->p_env);
+    int ret = klua_thread_register_lpc_module(p_mo->name, p_ex->p_env);
     assert(0 == ret);
 
     return ret;
@@ -55,7 +55,7 @@ sds klua_ex_lpc_new_lpc(klua_ex_lpc_t* p_ex, klua_ex_lpc_msg_cb cb_msg, void* pt
 
     klua_ex_lpc_module_t* p_mo = KLB_MALLOCZ(klua_ex_lpc_module_t, 1, 0);
     p_mo->module = 0;
-    p_mo->name = klua_kthread_register_lpc(p_ex->p_env);
+    p_mo->name = klua_thread_register_lpc(p_ex->p_env);
     p_mo->cb_msg = cb_msg;
     p_mo->ptr = ptr;
 
@@ -72,11 +72,11 @@ int klua_ex_lpc_delete(klua_ex_lpc_t* p_ex, const sds name)
     {
         if (1 == p_mo->module)
         {
-            klua_kthread_unregister_module(name);
+            klua_thread_unregister_lpc_module(name);
         }
         else
         {
-            klua_kthread_unregister_lpc(name);
+            klua_thread_unregister_lpc(name);
         }
 
         KLB_FREE_BY(p_mo->name, sdsfree);

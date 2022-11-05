@@ -81,7 +81,7 @@ static void klua_kgui_msg_callback(void* p_obj, int msg, int x1, int y1, int x2,
     if (p_ex)
     {
         klb_gui_t* p_gui = klua_ex_gui_get(p_ex);
-        klb_gui_push(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
+        klb_gui_push_msg(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
     }
 }
 
@@ -94,7 +94,7 @@ static int klua_kgui_get_msg_callback(lua_State* L)
     return 2;
 }
 
-static int klua_kgui_push(lua_State* L)
+static int klua_kgui_push_msg(lua_State* L)
 {
     int msg = (int)luaL_checkinteger(L, 1);                     ///< @1. 消息
     int x1 = (int)luaL_checkinteger(L, 2);                      ///< @2. 相对父窗口x1坐标
@@ -108,7 +108,7 @@ static int klua_kgui_push(lua_State* L)
 
     if (NULL != p_gui)
     {
-        klb_gui_push(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
+        klb_gui_push_msg(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
         lua_pushinteger(L, 0);
     }
     else
@@ -116,6 +116,17 @@ static int klua_kgui_push(lua_State* L)
         lua_pushinteger(L, 1);
     }
 
+    return 1;
+}
+
+static int klua_kgui_load_image(lua_State* L)
+{
+    const char* p_img_path = luaL_checkstring(L, 1);
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    int ret = klb_gui_load_image(p_gui, p_img_path);
+
+    lua_pushinteger(L, ret);
     return 1;
 }
 
@@ -128,10 +139,12 @@ static int klua_kgui_append(lua_State* L)
     int w = (int)luaL_checkinteger(L, 5);                   ///< @5. 相对父窗口宽
     int h = (int)luaL_checkinteger(L, 6);                   ///< @6. 相对父窗口高
 
+    uint32_t style = (uint32_t)klua_check_option_integer(L, 7, 0);  ///< @7. [可选]样式
+
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
 
     klb_wnd_t* p_wnd = NULL;
-    int ret = klb_gui_append(p_gui, p_type, p_path_name, x, y, w, h, &p_wnd);
+    int ret = klb_gui_append(p_gui, p_type, p_path_name, x, y, w, h, style, &p_wnd);
 
     lua_pushinteger(L, ret);                                ///< #1. 0.成功; 非0.失败(错误码)
 
@@ -241,7 +254,9 @@ int klua_open_kgui(lua_State* L)
         { "get_msg_callback",   klua_kgui_get_msg_callback },
         { "attach_canvas",      klua_kgui_attach_canvas },
 
-        { "push",               klua_kgui_push },
+        { "push_msg",           klua_kgui_push_msg },
+
+        { "load_image",         klua_kgui_load_image },
 
         { "append",             klua_kgui_append },
         { "remove",             klua_kgui_remove },

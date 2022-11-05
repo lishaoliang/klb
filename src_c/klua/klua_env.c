@@ -9,7 +9,7 @@
 #include "klbutil/klb_hlist.h"
 #include "klbutil/klb_nlist.h"
 #include "klbthird/sds.h"
-#include "klua/klua_kthread.h"
+#include "klua/klua_thread.h"
 #include "klbplatform/klb_atomic.h"
 #include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_lpc.h"
@@ -122,9 +122,6 @@ void klua_env_destroy(klua_env_t* p_env)
 {
     assert(NULL != p_env);
 
-    // 销毁Lua环境
-    KLB_FREE_BY(p_env->L, lua_close);
-
     // 注销激活的扩展
     while (0 < klb_hlist_size(p_env->p_extension_activate_hlist))
     {
@@ -142,6 +139,9 @@ void klua_env_destroy(klua_env_t* p_env)
         klua_env_extension_t* p_extension = (klua_env_extension_t*)klb_hlist_pop_head(p_env->p_extension_hlist);
         KLB_FREE(p_extension);
     }
+
+    // 销毁Lua环境
+    KLB_FREE_BY(p_env->L, lua_close);
 
     KLB_FREE(p_env->p_arg);
     KLB_FREE_BY(p_env->name, sdsfree);
@@ -658,7 +658,7 @@ const sds klua_env_get_name(klua_env_t* p_env)
 /// @brief 设置全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
 /// @param [in] *p_env              lua环境
 /// @return 无
-void klua_env_set_arg(klua_env_t* p_env, const char* p_data, int data_len)
+void klua_env_set_args(klua_env_t* p_env, const char* p_data, int data_len)
 {
     assert(NULL != p_env);
 
@@ -676,7 +676,7 @@ void klua_env_set_arg(klua_env_t* p_env, const char* p_data, int data_len)
 /// @brief 获取全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
 /// @param [in] *p_env              lua环境
 /// @return 无
-const klb_buf_t* klua_env_get_arg(klua_env_t* p_env)
+const klb_buf_t* klua_env_get_args(klua_env_t* p_env)
 {
     return p_env->p_arg;
 }

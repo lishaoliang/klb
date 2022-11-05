@@ -42,6 +42,8 @@ typedef struct klb_wnd_pos_t_
 typedef enum klb_wnd_style_e_
 {
     KLB_WND_STYLE_TOP            = 0x0001,   ///< 顶层窗口
+    KLB_WND_STYLE_BORDERLESS     = 0x0002,   ///< 无边框/标题栏
+    KLB_WND_STYLE_NOFOCUS        = 0x0004,   ///< 无聚焦状态
 }klb_wnd_style_e;
 
 
@@ -194,6 +196,11 @@ typedef struct klb_wnd_t_
     } \
 }
 
+
+/// @brief 获取gui
+KLB_API klb_gui_t* klb_wnd_get_gui(klb_wnd_t* p_wnd);
+
+
 /// @brief 获取画布
 /// @param [in] *p_wnd      窗口对象
 /// @return klb_canvas_t* 画布指针
@@ -211,6 +218,35 @@ KLB_API uint32_t klb_wnd_get_style(klb_wnd_t* p_wnd);
 /// @param [in] style       样式
 /// @return 无
 KLB_API void klb_wnd_set_style(klb_wnd_t* p_wnd, uint32_t style);
+
+/// @brief 设置是否显示
+KLB_API void klb_wnd_show(klb_wnd_t* p_wnd, bool show);
+
+/// @brief 需要刷新
+KLB_API void klb_wnd_update(klb_wnd_t* p_wnd);
+
+
+/// @brief 绑定响应函数
+KLB_API int klb_wnd_bind_command(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* p_obj);
+
+
+/// @brief 参数设置 / 获取
+KLB_API int klb_wnd_set(klb_wnd_t* p_wnd, const klb_map_t* p_map);
+KLB_API klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map);
+
+
+/// @brief 绘图
+KLB_API int klb_wnd_draw_clear(klb_wnd_t* p_wnd, uint32_t color);
+KLB_API int klb_wnd_draw_point(klb_wnd_t* p_wnd, int x, int y, uint32_t color);
+KLB_API int klb_wnd_draw_points(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color);
+KLB_API int klb_wnd_draw_line(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t color);
+KLB_API int klb_wnd_draw_lines(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color);
+KLB_API int klb_wnd_draw_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
+KLB_API int klb_wnd_draw_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
+KLB_API int klb_wnd_draw_fill_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
+KLB_API int klb_wnd_draw_fill_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
+KLB_API int klb_wnd_draw_text(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
+KLB_API int klb_wnd_draw_image(klb_wnd_t* p_wnd, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect);
 
 
 #ifdef __cplusplus

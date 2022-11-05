@@ -1,5 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klua/klua_kthread.h"
+#include "klua/klua_thread.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbplatform/klb_mutex.h"
@@ -39,14 +39,16 @@ typedef struct klua_kthread_item_t_
 /// @brief  全局 线程,LPC,LPC模块等信息
 typedef struct klua_kthread_t_
 {
-    long volatile   module_lock;        ///< p_module_hlist锁
-    long volatile   lpc_lock;           ///< p_lpc_hlist锁
+    long volatile       module_lock;        ///< p_module_hlist锁
+    long volatile       lpc_lock;           ///< p_lpc_hlist锁
 
-    klb_hlist_t*    p_module_hlist;     ///< 模块(供LPC通信)列表: klua_env_t*
-    klb_hlist_t*    p_lpc_hlist;        ///< LPC列表: klua_env_t*
+    klb_hlist_t*        p_module_hlist;     ///< 模块(供LPC通信)列表: klua_env_t*
+    klb_hlist_t*        p_lpc_hlist;        ///< LPC列表: klua_env_t*
 
-    klb_mutex_t*    p_thread_mutex;     ///< 线程锁
-    klb_hlist_t*    p_thread_hlist;     ///< 所有线程: klua_kthread_item_t*
+    klb_mutex_t*        p_thread_mutex;     ///< 线程锁
+    klb_hlist_t*        p_thread_hlist;     ///< 所有线程: klua_kthread_item_t*
+
+    klua_openlibs_cb    pre_openlibs;       ///< lua环境预加载库
 }klua_kthread_t;
 
 
@@ -135,7 +137,7 @@ static int cb_thread_klua_kthread(void* p_obj, volatile int* p_run)
     return 0;
 }
 
-static klua_kthread_item_t* klua_kthread_item_create(const char* p_name, size_t name_len, const char* p_entry, const char* p_arg, int arg_size)
+static klua_kthread_item_t* klua_kthread_item_create(klua_openlibs_cb cb, const char* p_name, size_t name_len, const char* p_entry, const char* p_arg, int arg_size)
 {
     klua_kthread_item_t* p_item = KLB_MALLOCZ(klua_kthread_item_t, 1, 0);
 
@@ -143,9 +145,9 @@ static klua_kthread_item_t* klua_kthread_item_create(const char* p_name, size_t 
     p_item->flag = KLUA_KTHREAD_OWNER;
     p_item->entry_path = sdsnew(p_entry);
 
-    p_item->p_env = klua_env_create(klua_loadlib_all);
+    p_item->p_env = klua_env_create(cb);
     klua_env_set_name(p_item->p_env, p_name, name_len);
-    klua_env_set_arg(p_item->p_env, p_arg, arg_size);
+    klua_env_set_args(p_item->p_env, p_arg, arg_size);
 
     return p_item;
 }
@@ -230,7 +232,7 @@ static sds klua_kthread_create(klua_kthread_t* p_kthread, const char* p_entry, b
         if (NULL == klb_hlist_find_iter(p_kthread->p_thread_hlist, name, KLUA_KTHREAD_NAME_LEN))
         {
             // 创建, 并加入hlist
-            klua_kthread_item_t* p_item = klua_kthread_item_create(name, KLUA_KTHREAD_NAME_LEN, p_entry, p_arg, arg_size);
+            klua_kthread_item_t* p_item = klua_kthread_item_create(name, KLUA_KTHREAD_NAME_LEN, p_entry, p_arg, arg_size, p_kthread->pre_openlibs);
             klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_kthread->p_thread_hlist, name, KLUA_KTHREAD_NAME_LEN, p_item);
             assert(NULL != p_iter);
 
@@ -311,20 +313,29 @@ static int klua_kthread_register_in(klua_kthread_t* p_kthread, const char* p_nam
 //////////////////////////////////////////////////////////////////////////
 // 公共接口函数
 
-int klua_kthread_register(const char* p_name, klua_env_t* p_env)
+void klua_thread_set_preload(klua_openlibs_cb cb)
+{
+    klua_kthread_t* p_kthread = g_klua_kthread;
+
+    klb_mutex_lock(p_kthread->p_thread_mutex);
+    p_kthread->pre_openlibs = cb;
+    klb_mutex_unlock(p_kthread->p_thread_mutex);
+}
+
+int klua_thread_register(const char* p_name, klua_env_t* p_env)
 {
     klua_kthread_register_in(g_klua_kthread, p_name, strlen(p_name), p_env);
 
     return 0;
 }
 
-int klua_kthread_unregister(const char* p_name)
+int klua_thread_unregister(const char* p_name)
 {
     klua_kthread_destroy(g_klua_kthread, p_name, strlen(p_name));
     return 0;
 }
 
-int klua_kthread_register_module(const sds name, klua_env_t* p_env)
+int klua_thread_register_lpc_module(const sds name, klua_env_t* p_env)
 {
     klua_kthread_t* p_kthread = g_klua_kthread;
 
@@ -344,7 +355,7 @@ int klua_kthread_register_module(const sds name, klua_env_t* p_env)
     return ret;
 }
 
-int klua_kthread_unregister_module(const sds name)
+int klua_thread_unregister_lpc_module(const sds name)
 {
     klua_kthread_t* p_kthread = g_klua_kthread;
 
@@ -361,7 +372,7 @@ int klua_kthread_unregister_module(const sds name)
     return ret;
 }
 
-sds klua_kthread_register_lpc(klua_env_t* p_env)
+sds klua_thread_register_lpc(klua_env_t* p_env)
 {
     klua_kthread_t* p_kthread = g_klua_kthread;
 
@@ -389,7 +400,7 @@ sds klua_kthread_register_lpc(klua_env_t* p_env)
     return ret;
 }
 
-int klua_kthread_unregister_lpc(const sds name)
+int klua_thread_unregister_lpc(const sds name)
 {
     klua_kthread_t* p_kthread = g_klua_kthread;
 
@@ -406,7 +417,7 @@ int klua_kthread_unregister_lpc(const sds name)
     return ret;
 }
 
-int klua_kthread_push_msg(const char* p_name, klua_msg_t* p_msg)
+int klua_thread_push_lpc_msg(const char* p_name, klua_msg_t* p_msg)
 {
     klua_kthread_t* p_kthread = g_klua_kthread;
 

@@ -120,7 +120,7 @@ void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas)
     p_gui->p_canvas = p_canvas;
 }
 
-void klb_gui_push(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
+void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
 {
     klb_msg_t* p_msg = KLB_MALLOC(klb_msg_t, 1, 0);
     KLB_MEMSET(p_msg, 0, sizeof(klb_msg_t));
@@ -169,7 +169,17 @@ static void klb_gui_split_path_name(const char* p_path_name, char** p_dir, int* 
     }
 }
 
-int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, klb_wnd_t** p_out_wnd)
+int klb_gui_load_image(klb_gui_t* p_gui, const char* p_img_path)
+{
+    if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_image)
+    {
+        return p_gui->p_canvas->vtable.load_image(p_gui->p_canvas, p_img_path, NULL, NULL);
+    }
+
+    return 1;
+}
+
+int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd)
 {
     klb_wnd_create_cb create = (klb_wnd_create_cb)klb_hlist_find(p_gui->p_wnd_type_hlist, p_type, strlen(p_type));
     if (NULL == create)
@@ -204,6 +214,7 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
         }
 
         p_wnd = create(x, y, w, h);
+        klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
         klb_wnd_push_child(p_parent, p_wnd);
         klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
     }
@@ -218,6 +229,8 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
 
         p_wnd = create(x, y, w, h);
         klb_wnd_set_top(p_wnd, p_gui);
+        klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
+
         klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
 
         //klb_list_push_tail(p_gui->p_top_list, p_wnd);
@@ -398,12 +411,7 @@ int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             klb_wnd_set_focus(p_gui->p_focus, false);
 
-            if (KLB_CANVAS_LOCK_OK(p_gui->p_canvas))
-            {
-                klb_wnd_draw(p_gui->p_focus);
-                KLB_CANVAS_UNLOCK(p_gui->p_canvas);
-            }
-
+            klb_wnd_draw(p_gui->p_focus);
             klb_gui_update_rect(p_gui, NULL);
         }
 
@@ -411,12 +419,8 @@ int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             klb_wnd_set_focus(p_focus, true);
 
-            if (KLB_CANVAS_LOCK_OK(p_gui->p_canvas))
-            {
-                klb_wnd_draw(p_focus);
-                KLB_CANVAS_UNLOCK(p_gui->p_canvas);
-            }
 
+            klb_wnd_draw(p_focus);
             klb_gui_update_rect(p_gui, NULL);
         }
 
@@ -453,20 +457,16 @@ int klb_gui_redraw(klb_gui_t* p_gui)
 {
     if (p_gui->redraw)
     {
-        if (KLB_CANVAS_LOCK_OK(p_gui->p_canvas))
+        klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(255, 10, 10, 10));
+        klb_canvas_draw_clear(p_gui->p_canvas);
+
+        for (int i = 0; i < p_gui->wnd_popup_num; i++)
         {
-            klb_canvas_draw_clear(p_gui->p_canvas, 0, 0, p_gui->p_canvas->rect.w, p_gui->p_canvas->rect.h);
-
-            for (int i = 0; i < p_gui->wnd_popup_num; i++)
-            {
-                klb_wnd_draw(p_gui->p_wnd_popup[i]);
-            }
-
-            KLB_CANVAS_UNLOCK(p_gui->p_canvas);
-
-            klb_gui_update_rect(p_gui, NULL);
-            p_gui->redraw = false;
+            klb_wnd_draw(p_gui->p_wnd_popup[i]);
         }
+
+        klb_gui_update_rect(p_gui, NULL);
+        p_gui->redraw = false;
     }
 
     return 0;
@@ -474,6 +474,7 @@ int klb_gui_redraw(klb_gui_t* p_gui)
 
 int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect)
 {
+    p_gui->redraw = true;
     p_gui->refresh = true;
     return 0;
 }
@@ -482,9 +483,9 @@ int klb_gui_refresh(klb_gui_t* p_gui)
 {
     if (p_gui->refresh)
     {
-        if (p_gui->p_canvas->vtable.refresh)
+        if (p_gui->p_canvas->vtable.refresh_rect)
         {
-            p_gui->p_canvas->vtable.refresh(p_gui->p_canvas, 0, 0, p_gui->p_canvas->rect.w, p_gui->p_canvas->rect.h);
+            p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
         }
 
         p_gui->refresh = false;
@@ -524,11 +525,11 @@ static int test_dlg(klb_gui_t* p_gui)
     klb_wnd_set_top(p_dlg, p_gui);
     klb_list_push_tail(p_gui->p_top_list, p_dlg);
 #else
-    klb_gui_append(p_gui, "kdialog", "/home", 10, 10, 640, 480, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn1", 10, 10, 100, 24, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn2", 10, 40, 100, 24, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn3", 10, 70, 100, 24, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn4", 10, 100, 100, 24, NULL);
+    klb_gui_append(p_gui, "kdialog", "/home", 10, 10, 640, 480, 0, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn1", 10, 10, 100, 24, 0, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn2", 10, 40, 100, 24, 0, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn3", 10, 70, 100, 24, 0, NULL);
+    klb_gui_append(p_gui, "kbutton", "/home/btn4", 10, 100, 100, 24, 0, NULL);
 
     klb_gui_bind_command(p_gui, "/home/btn4", test_dlg_btn_on_command, NULL);
 #endif
@@ -544,7 +545,6 @@ static int klb_gui_thread(void* p_obj, volatile int* p_run)
     while (*p_run)
     {
         klb_gui_loop_once(p_gui, 0);
-
         klb_sleep(10);
     }
 

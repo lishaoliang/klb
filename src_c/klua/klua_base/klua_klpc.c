@@ -1,10 +1,9 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klb_type.h"
 #include "klua/klua.h"
-#include "klua/klua_kthread.h"
+#include "klua/klua_thread.h"
 #include "klua/extension/klua_ex_lpc.h"
 #include "klua/extension/klua_ex_coroutine.h"
-#include "klua/klua_kthread.h"
 #include "klua/klua_util/klua_seri_map.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_nlist.h"
@@ -216,7 +215,7 @@ static int klua_klpc_module_response(lua_State* L)
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
-    if (0 != klua_kthread_push_msg(p_name, ptr))
+    if (0 != klua_thread_push_lpc_msg(p_name, ptr))
     {
         // 目标不存在
         klua_msg_free(ptr);
@@ -257,7 +256,7 @@ static int klua_klpc_module_notify(lua_State* L)
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
-    if (0 != klua_kthread_push_msg(p_name, ptr))
+    if (0 != klua_thread_push_lpc_msg(p_name, ptr))
     {
         // 目标不存在
         klua_msg_free(ptr);
@@ -475,7 +474,7 @@ static int klua_klpc_post(lua_State* L)
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
-    int ret = klua_kthread_push_msg(p_name, ptr);
+    int ret = klua_thread_push_lpc_msg(p_name, ptr);
     if (0 != ret)
     {
         klua_msg_free(ptr);
@@ -500,7 +499,7 @@ static int klua_klpc_co_call(lua_State* L)
     strncpy(ptr->dst_name, p_dst_name, KLUA_LPC_NAME_LEN);
     strncpy(ptr->src_name, p_klpc->name, KLUA_LPC_NAME_LEN);
 
-    if (0 == klua_kthread_push_msg(p_dst_name, ptr))
+    if (0 == klua_thread_push_lpc_msg(p_dst_name, ptr))
     {
         assert(NULL == p_klpc->co_recv);
         p_klpc->co_recv = L;
@@ -585,7 +584,7 @@ static int lib_klua_klpc_post(lua_State* L)
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
 
-    int ret = klua_kthread_push_msg(p_name, ptr);
+    int ret = klua_thread_push_lpc_msg(p_name, ptr);
     if (0 != ret)
     {
         klua_msg_free(ptr);
