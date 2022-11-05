@@ -55,8 +55,8 @@ end
 -- @brief 获取 当前环境 lua_State(klua_env_t) 的全局参数
 -- @return [...] 任意类型
 -- @note 来源于 kthread.start() 的第4个参数开始
---  eg. local a, b, c = ksys.get_arg()
-ksys.get_arg = function ()
+--  eg. local a, b, c = ksys.get_args()
+ksys.get_args = function ()
 	return ...
 end
 
