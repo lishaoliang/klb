@@ -8,6 +8,8 @@ local http_mime = require("knet.http_mime")
 
 
 local root_www = './res/html'
+local path_h264 = './res/media/dnfvideo_2022-10-23_16-19-05-919.h264'
+
 
 local filter_path = function (path)	
 	-- 防止使用相对路径, 非法下载文件
@@ -196,7 +198,7 @@ local send_media_http_mnp = function (conn)
 	local h = normal_res_header2('application/octet-stream', 0)
 	conn:send_text(h, '')
 
-	local h264 = kh26x.load('./res/media/2019.432x240.X264.AAC.Mandarin.240.10.h264')
+	local h264 = kh26x.load(path_h264)
 	
 	while true do
 		local frame1, frame2 = h264:read()
