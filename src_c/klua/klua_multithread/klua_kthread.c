@@ -232,7 +232,7 @@ static sds klua_kthread_create(klua_kthread_t* p_kthread, const char* p_entry, b
         if (NULL == klb_hlist_find_iter(p_kthread->p_thread_hlist, name, KLUA_KTHREAD_NAME_LEN))
         {
             // 创建, 并加入hlist
-            klua_kthread_item_t* p_item = klua_kthread_item_create(name, KLUA_KTHREAD_NAME_LEN, p_entry, p_arg, arg_size, p_kthread->pre_openlibs);
+            klua_kthread_item_t* p_item = klua_kthread_item_create(p_kthread->pre_openlibs, name, KLUA_KTHREAD_NAME_LEN, p_entry, p_arg, arg_size);
             klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_kthread->p_thread_hlist, name, KLUA_KTHREAD_NAME_LEN, p_item);
             assert(NULL != p_iter);
 

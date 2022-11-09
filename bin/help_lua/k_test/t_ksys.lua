@@ -15,7 +15,7 @@ print('s2 unpack json', ksys.unpack_json(s2))
 
 
 -- step 3
-local s3 = ksys.pack_string(ksys.get_arg())
+local s3 = ksys.pack_string(ksys.get_args())
 print('s3', ksys.unpack(s3))
 
 

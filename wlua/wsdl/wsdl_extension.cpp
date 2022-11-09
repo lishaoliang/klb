@@ -16,7 +16,7 @@
 
 typedef struct wsdl_extension_t_
 {
-    klua_env_t*         p_env;
+    klua_env_t*         p_env;              ///< 附加环境: env
 
     SDL_Window*         p_window;
     SDL_Renderer*       p_render;
@@ -25,15 +25,14 @@ typedef struct wsdl_extension_t_
     SDL_Texture*        p_texture;
 
     SDL_Texture*        p_tex_text;
-
     klb_canvas_t        canvas;
 
-    ft_raster_t*        p_ft;           // 字体
-    wsdl_images_t*      p_imgs;         // 图片
+    ft_raster_t*        p_ft;               ///< 字体
+    wsdl_images_t*      p_imgs;             ///< 图片
 
-    klb_gui_t*          p_gui;          // gui
+    klb_gui_t*          p_gui;              ///< gui
 
-    sds                 base_path;      // 执行文件 路径
+    sds                 base_path;          ///< 执行文件路径
 
     bool                refresh;
     bool                open;

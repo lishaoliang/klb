@@ -50,7 +50,7 @@ klist.new = function (path)
 		return
 	end
 	
-	-- @brief 取出顶部C数据
+	-- @brief 取出头部C数据
 	-- @return [lightuserdata] C指针(klb_obj_t*)
 	o.pop = function ()
 		-- return cobj
