@@ -56,7 +56,11 @@ int wsdl_images_load(wsdl_images_t* p_imgs, SDL_Renderer* p_render, const char* 
 
     wsdl_img_item_t* p_item = KLB_MALLOCZ(wsdl_img_item_t, 1, 0);
     p_item->p_surface = p_surface;
-    p_item->p_texture = SDL_CreateTextureFromSurface(p_render, p_surface);
+
+    if (NULL != p_render)
+    {
+        p_item->p_texture = SDL_CreateTextureFromSurface(p_render, p_surface);
+    }
 
     if (NULL == klb_hlist_push_tail(p_imgs->p_hlist, p_key, key_len, p_item))
     {

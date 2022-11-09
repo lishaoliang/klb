@@ -107,7 +107,7 @@ int wsdl_extension_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int6
         {
             if (SDL_WINDOWEVENT_EXPOSED == event.window.event)
             {
-                SDL_RenderPresent(p_ex->p_wnd->p_render);
+                wsdl_wnd_render_present(p_ex->p_wnd);
             }
         }
         
@@ -131,9 +131,7 @@ int wsdl_extension_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int6
 
     if (p_ex->refresh)
     {
-        SDL_SetRenderTarget(p_ex->p_wnd->p_render, NULL);
-        SDL_RenderCopy(p_ex->p_wnd->p_render, p_ex->p_wnd->p_texture, NULL, NULL);
-        SDL_RenderPresent(p_ex->p_wnd->p_render);
+        wsdl_wnd_refresh(p_ex->p_wnd);
 
         p_ex->refresh = false;
     }
@@ -186,17 +184,7 @@ wsdl_extension_t* kluaex_get_wsdl_by_L(lua_State* L)
 int kluaex_sdl_canvas_set_draw_color(klb_canvas_t* p_canvas, uint32_t color)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    uint8_t a = (color >> 24) & 0xFF;
-    uint8_t r = (color >> 16) & 0xFF;
-    uint8_t g = (color >> 8) & 0xFF;
-    uint8_t b = (color) & 0xFF;
-
-    SDL_SetRenderDrawColor(p_ex->p_wnd->p_render, r, g, b, a);
-
-    p_canvas->draw_color = color;
-
-    return 0;
+    return wsdl_wnd_set_draw_color(p_ex->p_wnd, color);
 }
 
 /// @brief 获取绘制颜色
@@ -204,29 +192,21 @@ int kluaex_sdl_canvas_set_draw_color(klb_canvas_t* p_canvas, uint32_t color)
 static uint32_t kluaex_sdl_canvas_get_draw_color(klb_canvas_t* p_canvas)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    uint8_t a = 0, r = 0, g = 0, b = 0;
-
-    SDL_GetRenderDrawColor(p_ex->p_wnd->p_render, &r, &g, &b, &a);
-
-    return KLB_ARGB8888(a, r, g, b);
+    return wsdl_wnd_get_draw_color(p_ex->p_wnd);
 }
 
 /// @brief 设置字体高度
 static int kluaex_sdl_canvas_set_font_height(klb_canvas_t* p_canvas, int h)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    p_canvas->font_h = h;
-    return 0;
+    return wsdl_wnd_set_font_height(p_ex->p_wnd, h);
 }
 
 /// @brief 获取字体高度
 static int kluaex_sdl_canvas_get_font_height(klb_canvas_t* p_canvas)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return p_canvas->font_h;
+    return wsdl_wnd_get_font_height(p_ex->p_wnd);
 }
 
 /// @brief 加载图片
@@ -237,7 +217,7 @@ int kluaex_sdl_canvas_load_image(klb_canvas_t* p_canvas, const char* p_path, int
     sds path = sdsnew(p_ex->base_path);
     path = sdscat(path, p_path);
 
-    int ret = wsdl_images_load(p_ex->p_imgs, p_ex->p_wnd->p_render, p_path, path);
+    int ret = wsdl_images_load(p_ex->p_imgs, wsdl_wnd_get_render(p_ex->p_wnd), p_path, path);
 
     KLB_FREE_BY(path, sdsfree);
     return ret;
@@ -247,139 +227,75 @@ int kluaex_sdl_canvas_load_image(klb_canvas_t* p_canvas, const char* p_path, int
 static int kluaex_sdl_canvas_draw_clear(klb_canvas_t* p_canvas)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    SDL_SetRenderTarget(p_ex->p_wnd->p_render, p_ex->p_wnd->p_texture);
-    SDL_RenderClear(p_ex->p_wnd->p_render);
-
-    return 0;
+    return wsdl_wnd_draw_clear(p_ex->p_wnd);
 }
 
 /// @brief 绘制点
 static int kluaex_sdl_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return SDL_RenderDrawPoint(p_ex->p_wnd->p_render, x, y);
+    return wsdl_wnd_draw_point(p_ex->p_wnd, x, y);
 }
 
 /// @brief 绘制多个点
 static int kluaex_sdl_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return 0;
+    return wsdl_wnd_draw_points(p_ex->p_wnd, p_points, count);
 }
 
 /// @brief 绘制线段
 static int kluaex_sdl_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return SDL_RenderDrawLine(p_ex->p_wnd->p_render, x1, y1, x2, y2);
+    return wsdl_wnd_draw_line(p_ex->p_wnd, x1, y1, x2, y2);
 }
 
 /// @brief 绘制多个线段
 static int kluaex_sdl_canvas_draw_lines(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return 0;
+    return wsdl_wnd_draw_lines(p_ex->p_wnd, p_points, count);
 }
 
 /// @brief 绘制空心矩形
 static int kluaex_sdl_canvas_draw_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    SDL_Rect rect = { p_rect->x, p_rect->y, p_rect->w, p_rect->h };
-
-    SDL_SetRenderTarget(p_ex->p_wnd->p_render, p_ex->p_wnd->p_texture);
-    SDL_RenderDrawRect(p_ex->p_wnd->p_render, &rect);
-
-    return 0;
+    return wsdl_wnd_draw_rect(p_ex->p_wnd, p_rect);
 }
 
 /// @brief 绘制多个空心矩形
 static int kluaex_sdl_canvas_draw_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return 0;
+    return wsdl_wnd_draw_rects(p_ex->p_wnd, p_rects, count);
 }
 
 /// @brief 使用单色填充绘制单个区域
 static int kluaex_sdl_canvas_draw_fill_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    SDL_Rect rect = { p_rect->x, p_rect->y, p_rect->w, p_rect->h };
-
-    SDL_SetRenderTarget(p_ex->p_wnd->p_render, p_ex->p_wnd->p_texture);
-    SDL_RenderFillRect(p_ex->p_wnd->p_render, &rect);
-
-    return 0;
+    return wsdl_wnd_draw_fill_rect(p_ex->p_wnd, p_rect);
 }
 
 /// @brief 使用单色填充多个区域
 static int kluaex_sdl_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    return 0;
+    return wsdl_wnd_draw_fill_rects(p_ex->p_wnd, p_rects, count);
 }
 
 static int kluaex_sdl_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    SDL_Surface* p_surface = NULL;
-
-    if (0 == SDL_LockTextureToSurface(p_ex->p_wnd->p_tex_text, NULL, &p_surface))
-    {
-        SDL_Rect src_rect = { 0, 0, p_rect->w, p_rect->h };
-        SDL_FillRect(p_surface, &src_rect, KLB_ARGB8888(0, 0, 0, 0));
-
-        ft_raster_pixels_t raster = { 0 };
-
-        raster.p_pixels = (uint8_t*)p_surface->pixels;
-        raster.pitch = p_surface->pitch;
-        raster.w = p_surface->w;
-        raster.h = p_surface->h;
-        raster.color_fmt = KLB_COLOR_FMT_ARGB8888;
-
-        ft_raster_text(p_ex->p_ft, &raster, 0, 0, p_rect->w, p_rect->h, p_utf8, utf8_len, p_canvas->draw_color, p_canvas->font_h);
-
-        SDL_UnlockTexture(p_ex->p_wnd->p_tex_text);
-
-        // 
-        SDL_SetRenderTarget(p_ex->p_wnd->p_render, p_ex->p_wnd->p_texture);
-
-        SDL_Rect dst_rect = { p_rect->x, p_rect->y, p_rect->w, p_rect->h };
-        SDL_RenderCopy(p_ex->p_wnd->p_render, p_ex->p_wnd->p_tex_text, &src_rect, &dst_rect);
-        SDL_RenderPresent(p_ex->p_wnd->p_render);
-    }
-    return 0;
+    return wsdl_wnd_draw_text(p_ex->p_wnd, p_ex->p_ft, p_rect, p_utf8, utf8_len);
 }
 
 int kluaex_sdl_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
-
-    SDL_Texture* p_tex = wsdl_images_find(p_ex->p_imgs, p_ex->p_wnd->p_render, p_path);
-
-    if (NULL == p_tex)
-    {
-        return 1;
-    }
-
-    SDL_Rect src_rect = { 0, 0, p_dst_rect->w, p_dst_rect->h };
-    SDL_Rect dst_rect = { p_dst_rect->x, p_dst_rect->y, p_dst_rect->w, p_dst_rect->h };
-
-    SDL_SetRenderTarget(p_ex->p_wnd->p_render, p_ex->p_wnd->p_texture);
-    SDL_RenderCopy(p_ex->p_wnd->p_render, p_tex, NULL/*&src_rect*/, &dst_rect);
-    SDL_RenderPresent(p_ex->p_wnd->p_render);
-
-    return 0;
+    return wsdl_wnd_draw_image(p_ex->p_wnd, p_ex->p_imgs, p_dst_rect, p_path, p_src_rect);
 }
 
 static int kluaex_sdl_canvas_refresh_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
