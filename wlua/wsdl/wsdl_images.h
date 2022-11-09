@@ -23,7 +23,7 @@ extern "C" {
 typedef struct wsdl_images_t_ wsdl_images_t;
 
 
-wsdl_images_t* wsdl_images_create(SDL_Renderer* p_render);
+wsdl_images_t* wsdl_images_create();
 void wsdl_images_destroy(wsdl_images_t* p_imgs);
 
 int wsdl_images_load(wsdl_images_t* p_imgs, SDL_Renderer* p_render, const char* p_key, const char* p_path);

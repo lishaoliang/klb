@@ -15,7 +15,7 @@ typedef struct wsdl_images_t_
 }wsdl_images_t;
 
 
-wsdl_images_t* wsdl_images_create(SDL_Renderer* p_render)
+wsdl_images_t* wsdl_images_create()
 {
     wsdl_images_t* p_imgs = KLB_MALLOCZ(wsdl_images_t, 1, 0);
 
