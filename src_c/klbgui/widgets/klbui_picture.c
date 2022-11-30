@@ -2,11 +2,12 @@
 #include "klbgui/klb_widgets.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
+#include "sds.h"
 
 
 typedef struct klbui_picture_t_
 {
-    int a;
+    sds     pic;            ///< 图片
 }klbui_picture_t;
 
 
@@ -14,6 +15,7 @@ static void klbui_picture_destroy(klb_wnd_t* p_wnd)
 {
     klbui_picture_t* p_pic = (klbui_picture_t*)p_wnd->ctrl;
 
+    KLB_FREE_BY(p_pic->pic, sdsfree);
     KLB_FREE(p_wnd);
 }
 
@@ -28,6 +30,12 @@ static int klbui_picture_on_paint(klb_wnd_t* p_wnd)
     }
 
     klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
+
+    if (0 < sdslen(p_pic->pic))
+    {
+        klb_wnd_draw_image(p_wnd, p_rect, p_pic->pic, NULL);
+    }
+
     klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
 
     return 0;
@@ -70,9 +78,12 @@ static int klbui_picture_on_set(klb_wnd_t* p_wnd, const klb_map_t* p_map)
     const char* p_key = klb_map_idx_to_string(p_map, 0);
     const char* p_value = klb_map_idx_to_string(p_map, 1);
 
-    if (0 == strcmp(p_key, "title"))
+    if (0 == strcmp(p_key, "picture"))
     {
+        p_pic->pic = sdscpy(p_pic->pic, p_value);
 
+        // 
+        klb_wnd_update(p_wnd);
     }
 
     return 0;
@@ -85,9 +96,9 @@ static klb_map_t* klbui_picture_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
     const char* p_key = klb_map_idx_to_string(p_map, 0);
 
     klb_map_t* p_out = klb_map_create();
-    if (0 == strcmp(p_key, "title"))
+    if (0 == strcmp(p_key, "picture"))
     {
-
+        klb_map_set_idx_string(p_out, 0, p_pic->pic);
     }
 
     return p_out;
@@ -108,6 +119,9 @@ klb_wnd_t* klbui_picture_create(int x, int y, int w, int h)
     p_wnd->vtable.on_command = klbui_picture_on_command;
     p_wnd->vtable.on_set = klbui_picture_on_set;
     p_wnd->vtable.on_get = klbui_picture_on_get;
+
+    // init
+    p_pic->pic = sdsempty();
 
     return p_wnd;
 }

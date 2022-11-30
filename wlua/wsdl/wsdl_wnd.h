@@ -24,29 +24,7 @@ extern "C" {
 #endif
 
 
-typedef struct wsdl_wnd_t_
-{
-    bool                open;               ///< 是否打开窗口
-    
-    // 窗口/render
-    struct
-    {
-        SDL_Window*     p_window;           ///< 窗口
-        SDL_Renderer*   p_render;           ///< 渲染器
-    };
-
-    // gui/font
-    struct
-    {
-        SDL_Texture*    p_tex_ui;           ///< 主GUI纹理   
-        SDL_Texture*    p_tex_text;         ///< 临时文本纹理
-
-        uint32_t        draw_color;         ///< 画笔颜色
-        int             font_h;             ///< 字体高度
-    };
-
-
-}wsdl_wnd_t;
+typedef struct wsdl_wnd_t_ wsdl_wnd_t;
 
 
 wsdl_wnd_t* wsdl_wnd_create();
@@ -55,6 +33,8 @@ void wsdl_wnd_destroy(wsdl_wnd_t* p_wnd);
 
 int wsdl_wnd_open(wsdl_wnd_t* p_wnd, klb_gui_t* p_gui, int w, int h, const char* p_title);
 void wsdl_wnd_close(wsdl_wnd_t* p_wnd);
+
+bool wsdl_wnd_is_open(wsdl_wnd_t* p_wnd);
 
 SDL_Renderer* wsdl_wnd_get_render(wsdl_wnd_t* p_wnd);
 
@@ -88,6 +68,11 @@ int wsdl_wnd_draw_image(wsdl_wnd_t* p_wnd, wsdl_images_t* p_images, const klb_re
 
 int wsdl_wnd_refresh_rect(wsdl_wnd_t* p_wnd, const klb_rect_t* p_rect);
 int wsdl_wnd_refresh_rects(wsdl_wnd_t* p_wnd, const klb_rect_t* p_rects, int count);
+
+
+// 视频接口
+int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx);
+int wsdl_wnd_video_set_pos(wsdl_wnd_t* p_wnd, int idx, const klb_rect_t* p_dst_rect, const klb_rect_t* p_src_rect);
 
 
 #ifdef __cplusplus

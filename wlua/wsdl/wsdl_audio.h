@@ -1,28 +1,29 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
-/// @file    wsdl.h
-/// @brief   windows sdl Lua接口
+/// @file    wsdl_audio.h
+/// @brief   windows sdl audio 音频处理
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __WSDL_H__
-#define __WSDL_H__
+#ifndef __WSDL_AUDIO_H__
+#define __WSDL_AUDIO_H__
 
 #include "klb_type.h"
-#include "klua/klua.h"
+#include "SDL.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
-KLB_API int luaopen_wsdl(lua_State* L);
+
+
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __WSDL_H__
+#endif // __WSDL_AUDIO_H__
 //end

@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\wlua\ft_raster.cpp" />
     <ClCompile Include="..\..\wlua\wlua.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl.cpp" />
+    <ClCompile Include="..\..\wlua\wsdl\wsdl_audio.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_extension.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_images.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_wnd.cpp" />
@@ -117,6 +118,7 @@
     <ClInclude Include="..\..\wlua\SDL2-2.24.1\include\SDL_video.h" />
     <ClInclude Include="..\..\wlua\SDL2-2.24.1\include\SDL_vulkan.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl.h" />
+    <ClInclude Include="..\..\wlua\wsdl\wsdl_audio.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl_extension.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl_images.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl_wnd.h" />

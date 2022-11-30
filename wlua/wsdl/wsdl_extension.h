@@ -2,7 +2,7 @@
 //  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    wsdl_extension.h
-/// @brief   windows sdl extension, SDL平台底层接口
+/// @brief   windows sdl extension, Lua扩展, SDL平台底层接口
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告

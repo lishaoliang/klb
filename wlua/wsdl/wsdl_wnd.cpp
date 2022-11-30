@@ -1,9 +1,58 @@
 ﻿#include "wsdl_wnd.h"
 #include "klbmem/klb_mem.h"
+#include "klbutil/klb_rect.h"
+#include "klbutil/klb_list.h"
 #include <assert.h>
 
 
 #define WSDL_FONT_MAX       256
+#define WSDL_YUV_MAX        32
+
+
+// YUV420P
+typedef struct wsdl_texture_yuv_t_
+{
+    bool                    enable;                 ///< 是否启用
+
+    SDL_Texture*            p_tex_yuv;              ///< yuv纹理
+
+    int                     w;                      ///< 纹理宽
+    int                     h;                      ///< 纹理高
+    
+    int                     z_order;                ///< 显示次序
+
+    klb_rect_t              src;                    ///< yuv原区域
+    klb_rect_t              dst;                    ///< 显示的目标区域
+}wsdl_texture_yuv_t;
+
+
+typedef struct wsdl_wnd_t_
+{
+    bool                    open;                   ///< 是否打开窗口
+
+    // 窗口/render
+    struct
+    {
+        SDL_Window*         p_window;               ///< 窗口
+        SDL_Renderer*       p_render;               ///< 渲染器
+    };
+
+    // gui/font
+    struct
+    {
+        SDL_Texture*        p_tex_ui;               ///< 主GUI纹理   
+        SDL_Texture*        p_tex_text;             ///< 临时文本纹理
+
+        uint32_t            draw_color;             ///< 画笔颜色
+        int                 font_h;                 ///< 字体高度
+    };
+
+    // YUV视频
+    struct
+    {
+        wsdl_texture_yuv_t  tex_yuv[WSDL_YUV_MAX];  ///< 视频纹理
+    };
+}wsdl_wnd_t;
 
 
 wsdl_wnd_t* wsdl_wnd_create()
@@ -12,6 +61,11 @@ wsdl_wnd_t* wsdl_wnd_create()
 
     p_wnd->draw_color = KLB_ARGB8888(255, 10, 10, 10);
     p_wnd->font_h = 24;
+
+    for (int i = 0; i < WSDL_YUV_MAX; i++)
+    {
+        p_wnd->tex_yuv[i].enable = false;
+    }
 
     p_wnd->open = false;
 
@@ -64,6 +118,11 @@ void wsdl_wnd_close(wsdl_wnd_t* p_wnd)
     }
 }
 
+bool wsdl_wnd_is_open(wsdl_wnd_t* p_wnd)
+{
+    return p_wnd->open;
+}
+
 SDL_Renderer* wsdl_wnd_get_render(wsdl_wnd_t* p_wnd)
 {
     return p_wnd->p_render;
@@ -80,7 +139,13 @@ void wsdl_wnd_render_present(wsdl_wnd_t* p_wnd)
 void wsdl_wnd_refresh(wsdl_wnd_t* p_wnd)
 {
     SDL_SetRenderTarget(p_wnd->p_render, NULL);
+
+    SDL_SetRenderDrawColor(p_wnd->p_render, 10, 10, 10, 255);
+    SDL_RenderClear(p_wnd->p_render);
+
+    SDL_SetTextureBlendMode(p_wnd->p_tex_ui, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(p_wnd->p_render, p_wnd->p_tex_ui, NULL, NULL);
+
     SDL_RenderPresent(p_wnd->p_render);
 }
 
@@ -256,4 +321,14 @@ int wsdl_wnd_refresh_rects(wsdl_wnd_t* p_wnd, const klb_rect_t* p_rects, int cou
 
 
 //////////////////////////////////////////////////////////////////////////
+// 视频接口
 
+int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx)
+{
+    return 0;
+}
+
+int wsdl_wnd_video_set_pos(wsdl_wnd_t* p_wnd, int idx, const klb_rect_t* p_dst_rect, const klb_rect_t* p_src_rect)
+{
+    return 0;
+}

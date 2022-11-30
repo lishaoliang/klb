@@ -44,9 +44,6 @@ static int klb_dialog_on_paint(klb_wnd_t* p_wnd)
 
         klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 81, 81, 81));
 
-        //// debug
-        //klb_wnd_draw_image(p_wnd, p_rect, "./res/images/lsh.bmp", NULL);
-
         klb_wnd_draw_line(p_wnd, p_rect->x, p_rect->y, p_rect->x + p_rect->w - 2, p_rect->y, KLB_ARGB8888(255, 180, 180, 180));
         klb_wnd_draw_line(p_wnd, p_rect->x, p_rect->y + title_h, p_rect->x + p_rect->w - 2, p_rect->y + title_h, KLB_ARGB8888(255, 120, 120, 120));
 

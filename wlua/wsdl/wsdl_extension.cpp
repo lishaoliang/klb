@@ -80,7 +80,7 @@ int wsdl_extension_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int6
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)ptr;
 
-    if (!p_ex->p_wnd->open)
+    if (!wsdl_wnd_is_open(p_ex->p_wnd))
     {
         return 0;
     }

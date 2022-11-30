@@ -10,6 +10,9 @@
     <Filter Include="SDL2">
       <UniqueIdentifier>{90fe6e27-6383-409e-9554-dc6c4c6e1208}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ff_dec">
+      <UniqueIdentifier>{c43e6878-18a6-4fab-9c33-37fc1b84cfbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\wlua\wlua.cpp">
@@ -28,6 +31,9 @@
       <Filter>wsdl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wlua\wsdl\wsdl_wnd.cpp">
+      <Filter>wsdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\wsdl\wsdl_audio.cpp">
       <Filter>wsdl</Filter>
     </ClCompile>
   </ItemGroup>
@@ -309,6 +315,9 @@
       <Filter>wsdl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wlua\wsdl\wsdl_wnd.h">
+      <Filter>wsdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\wsdl\wsdl_audio.h">
       <Filter>wsdl</Filter>
     </ClInclude>
   </ItemGroup>

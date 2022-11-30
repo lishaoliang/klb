@@ -24,7 +24,9 @@ wsdl.OpenWnd('./res/font/simsun.ttc', WND_W, WND_H, 'Demo对话框实例!' )
 
 kgui.load_image('./res/images/dialog_close_normal.bmp')
 kgui.load_image('./res/images/dialog_close_focus.bmp')
-kgui.load_image('./res/images/lsh.bmp')
+
+kgui.load_image('./res/images/2fab96b2be1e057c524763b7839136db.bmp')
+kgui.load_image('./res/images/33fbb649d7dd6c721a39f8a0be989f81.bmp')
 
 
 kgui.append('kdialog', '/home', 0, 0, 160, 540, 0x0002)
@@ -42,12 +44,16 @@ kgui.append('kdialog', '/page1', 0, 0, WND_W, WND_H)
 kgui.append('kbutton', '/page1/btn1', 10, 60, 140, 32)
 kgui.append('kbutton', '/page1/btn2', 10, 100, 140, 32)
 kgui.append('kbutton', '/page1/btn3', 10, 180, 140, 32)
+kgui.append('kbutton', '/page1/btn4', 10, 260, 140, 32)
+kgui.append('kpicture', '/page1/pic1', 160, 60, WND_W - 200, WND_H - 120)
 
 kgui.set('/page1', 'title', 'DoModel弹出页面')
 kgui.set('/page1/btn1', 'title', '确定')
 kgui.set('/page1/btn2', 'title', '取消')
 kgui.set('/page1/btn3', 'title', '随机标题')
-
+kgui.set('/page1/btn4', 'title', '更换图片')
+kgui.set('/page1/pic1', 'picture', './res/images/2fab96b2be1e057c524763b7839136db.bmp')
+	
 	
 kgui.bind_command('/home/btn2', function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 	if 0x0201 == msg or 0x0203 == msg then
@@ -101,6 +107,20 @@ kgui.bind_command('/page1/btn3', function (obj, msg, x1, y1, x2, y2, lparam, wpa
 	return 0
 end)
 
+local pic1 = false
+
+kgui.bind_command('/page1/btn4', function (obj, msg, x1, y1, x2, y2, lparam, wparam)
+	if 0x0201 == msg or 0x0203 == msg then
+		if pic1 then
+			kgui.set('/page1/pic1', 'picture', './res/images/2fab96b2be1e057c524763b7839136db.bmp')			
+		else
+			kgui.set('/page1/pic1', 'picture', './res/images/33fbb649d7dd6c721a39f8a0be989f81.bmp')
+		end
+		
+		pic1 = not pic1;
+	end		
+	return 0
+end)
 
 
 kgui.do_model('/home')

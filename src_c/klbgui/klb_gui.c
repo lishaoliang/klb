@@ -457,7 +457,7 @@ int klb_gui_redraw(klb_gui_t* p_gui)
 {
     if (p_gui->redraw)
     {
-        klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(255, 10, 10, 10));
+        klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
         klb_canvas_draw_clear(p_gui->p_canvas);
 
         for (int i = 0; i < p_gui->wnd_popup_num; i++)
