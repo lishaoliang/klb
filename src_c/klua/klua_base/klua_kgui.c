@@ -10,6 +10,7 @@
 #include "klua/extension/klua_ex_gui.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_seri.h"
+#include "klua/klua_gui.h"
 #include <assert.h>
 
 
@@ -247,6 +248,17 @@ static int klua_kgui_end_model_all(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_show(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
+    bool show = luaL_checkboolean(L, 2);                ///< @2. 是否显示
+
+    int ret = klb_gui_show(klua_gui_get_by_L(L), p_path_name, show);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
 int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
@@ -268,6 +280,8 @@ int klua_open_kgui(lua_State* L)
         { "do_model",           klua_kgui_do_model },
         { "end_model",          klua_kgui_end_model },
         { "end_model_all",      klua_kgui_end_model_all },
+
+        { "show",               klua_kgui_show },
 
         { NULL,                 NULL }
     };

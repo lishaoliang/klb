@@ -87,6 +87,12 @@ typedef struct klb_gui_t_
         klb_mutex_t*    p_msg_mutex;
     };
 
+    // lua env
+    struct
+    {
+        klua_env_t*     p_klua_env;
+    };
+
     // 线程
     struct
     {

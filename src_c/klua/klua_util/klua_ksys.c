@@ -15,6 +15,13 @@ static int klua_ksys_exit(lua_State* L)
     return 0;
 }
 
+static int klua_ksys_is_exit(lua_State* L)
+{
+    bool exit = klua_env_is_exit(klua_env_get_by_L(L));
+    lua_pushboolean(L, exit);
+    return 1;
+}
+
 static int klua_ksys_pack_string(lua_State* L)
 {
     klb_buf_t* p_buf = luaseri_map_binary_pack(L, 0);
@@ -81,6 +88,7 @@ int klua_open_ksys(lua_State* L)
     static luaL_Reg lib[] =
     {
         { "exit",           klua_ksys_exit },
+        { "is_exit",        klua_ksys_is_exit },
 
         { "pack_string",    klua_ksys_pack_string },
         { "unpack",         klua_ksys_unpack },

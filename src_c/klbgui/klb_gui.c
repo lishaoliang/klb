@@ -91,6 +91,20 @@ void klb_gui_stop(klb_gui_t* p_gui)
     KLB_FREE_BY(p_gui->p_thread1, klb_thread_destroy);
 }
 
+/// @brief 附加到 klua_env_t*
+int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env)
+{
+    p_gui->p_klua_env = p_env;
+    return 0;
+}
+
+
+/// @brief 获取 klua_env_t*
+klua_env_t* klb_gui_get_klua_env(klb_gui_t* p_gui)
+{
+    return p_gui->p_klua_env;
+}
+
 int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 {
     int ret = 0;
@@ -358,6 +372,18 @@ klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const klb_map_
     }
 
     return p_ret;
+}
+
+int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    if (NULL == p_wnd)
+    {
+        return 1;
+    }
+
+    klb_wnd_show(p_wnd, show);
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

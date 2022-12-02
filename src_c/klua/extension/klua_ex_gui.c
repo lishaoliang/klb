@@ -38,6 +38,8 @@ static void* klua_ex_gui_create(klua_env_t* p_env)
     p_ex->L = klua_env_get_L(p_env);
 
     p_ex->p_gui = klb_gui_create(NULL);
+    klb_gui_attach_klua_env(p_ex->p_gui, p_env);
+
     p_ex->p_bind_hlist = klb_hlist_create(0);
 
     return p_ex;
