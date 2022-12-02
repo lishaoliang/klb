@@ -1,7 +1,7 @@
-#include "SDL.h"
+﻿#include "SDL.h"
 #include "klua/klua.h"
 #include "klbbase/klb_base.h"
-
+#include "ffmpeg_include.h"
 #include "wsdl.h"
 
 #if defined(WIN32) && defined(DEBUG_VLD)
@@ -19,8 +19,9 @@ static int wlua_openlibs(lua_State* L)
 
 int main(int argc, char *argv[])
 {
-    klb_base_init(NULL);
-    SDL_Init(SDL_INIT_EVERYTHING);
+    klb_base_init(NULL);            // klb
+    SDL_Init(SDL_INIT_EVERYTHING);  // SDL
+    avcodec_register_all();         // ffmpeg
 
     int ret = klua_main(argc, argv, wlua_openlibs);
 

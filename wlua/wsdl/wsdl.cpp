@@ -1,5 +1,7 @@
 ﻿#include "wsdl.h"
 #include "klbmem/klb_mem.h"
+#include "klbmem/klb_buf.h"
+#include "klbutil/klb_rect.h"
 #include "SDL.h"
 #include "wsdl_extension.h"
 #include <assert.h>
@@ -70,6 +72,36 @@ static int wsdl_CloseWnd(lua_State* L)
     return 0;
 }
 
+// 放入音视频
+static int wsdl_PushMedia(lua_State* L)
+{
+    // 音视频
+    int chnn = luaL_checkinteger(L, 1);     // 通道
+    int sidx = luaL_checkinteger(L, 2);     // 流idx
+
+    klb_buf_t* p_media = (klb_buf_t*)luaL_checklightuserdata(L, 3); // 
+
+    kluaex_wsdl_push_media(kluaex_get_wsdl_by_L(L), chnn, sidx, p_media);
+
+    return 0;
+}
+
+// 设置视频位置
+static int wsdl_SetVideoPos(lua_State* L)
+{
+    int idx = luaL_checkinteger(L, 1);      // 视频序号
+    int x = luaL_checkinteger(L, 2);        // x
+    int y = luaL_checkinteger(L, 3);        // y
+    int w = luaL_checkinteger(L, 4);        // w
+    int h = luaL_checkinteger(L, 5);        // h
+
+    klb_rect_t dst = {x, y, w, h};
+
+    kluaex_wsdl_set_video_pos(kluaex_get_wsdl_by_L(L), idx, &dst);
+
+    return 0;
+}
+
 int luaopen_wsdl(lua_State* L)
 {
     static luaL_Reg lib[] =
@@ -80,8 +112,13 @@ int luaopen_wsdl(lua_State* L)
         { "GetBasePath",    wsdl_SDL_GetBasePath },
         { "GetPrefPath",    wsdl_SDL_GetPrefPath },
 
+        // 窗口
         { "OpenWnd",        wsdl_OpenWnd },
         { "CloseWnd",       wsdl_CloseWnd },
+
+        // 音视频
+        { "PushMedia",      wsdl_PushMedia },
+        { "SetVideoPos",    wsdl_SetVideoPos },
 
         { NULL,             NULL }
     };

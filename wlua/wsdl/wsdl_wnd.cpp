@@ -35,6 +35,9 @@ typedef struct wsdl_wnd_t_
     {
         SDL_Window*         p_window;               ///< 窗口
         SDL_Renderer*       p_render;               ///< 渲染器
+
+        int                 window_w;               ///< 窗口宽
+        int                 window_h;               ///< 窗口高
     };
 
     // gui/font
@@ -95,6 +98,9 @@ int wsdl_wnd_open(wsdl_wnd_t* p_wnd, klb_gui_t* p_gui, int w, int h, const char*
     SDL_SetWindowTitle(p_wnd->p_window, p_title);
 #endif
 
+    p_wnd->window_w = w;
+    p_wnd->window_h = h;
+
     p_wnd->p_tex_text = SDL_CreateTexture(p_wnd->p_render, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, w, WSDL_FONT_MAX);
     SDL_SetTextureBlendMode(p_wnd->p_tex_text, SDL_BLENDMODE_BLEND);
 
@@ -109,6 +115,11 @@ void wsdl_wnd_close(wsdl_wnd_t* p_wnd)
 {
     if (p_wnd->open)
     {
+        for (int i = 0; i < WSDL_YUV_MAX; i++)
+        {
+            KLB_FREE_BY(p_wnd->tex_yuv[i].p_tex_yuv, SDL_DestroyTexture);
+        }
+
         KLB_FREE_BY(p_wnd->p_tex_text, SDL_DestroyTexture);
         KLB_FREE_BY(p_wnd->p_tex_ui, SDL_DestroyTexture);
         KLB_FREE_BY(p_wnd->p_render, SDL_DestroyRenderer);
@@ -143,6 +154,13 @@ void wsdl_wnd_refresh(wsdl_wnd_t* p_wnd)
     SDL_SetRenderDrawColor(p_wnd->p_render, 10, 10, 10, 255);
     SDL_RenderClear(p_wnd->p_render);
 
+    if (p_wnd->tex_yuv[0].enable)
+    {
+        SDL_Rect dst = { p_wnd->tex_yuv[0].dst.x, p_wnd->tex_yuv[0].dst.y, p_wnd->tex_yuv[0].dst.w, p_wnd->tex_yuv[0].dst.h};
+        SDL_RenderCopy(p_wnd->p_render, p_wnd->tex_yuv[0].p_tex_yuv, NULL, &dst);
+    }
+
+    // ui
     SDL_SetTextureBlendMode(p_wnd->p_tex_ui, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(p_wnd->p_render, p_wnd->p_tex_ui, NULL, NULL);
 
@@ -323,12 +341,40 @@ int wsdl_wnd_refresh_rects(wsdl_wnd_t* p_wnd, const klb_rect_t* p_rects, int cou
 //////////////////////////////////////////////////////////////////////////
 // 视频接口
 
-int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx)
+int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx, const AVFrame* p_frame)
 {
+    if (NULL == p_frame)
+    {
+        return 0;
+    }
+
+    wsdl_texture_yuv_t* p_tex = &(p_wnd->tex_yuv[idx]);
+
+    int w = p_frame->width;
+    int h = p_frame->height;
+
+    if (NULL == p_tex->p_tex_yuv)
+    {
+        p_tex->p_tex_yuv = SDL_CreateTexture(p_wnd->p_render, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING, w, h);
+        p_tex->enable = true;
+        p_tex->w = w;
+        p_tex->h = h;
+    }
+
+    SDL_UpdateYUVTexture(p_tex->p_tex_yuv, NULL,
+        p_frame->data[0], p_frame->linesize[0],
+        p_frame->data[1], p_frame->linesize[1], 
+        p_frame->data[2], p_frame->linesize[2]);
+
     return 0;
 }
 
 int wsdl_wnd_video_set_pos(wsdl_wnd_t* p_wnd, int idx, const klb_rect_t* p_dst_rect, const klb_rect_t* p_src_rect)
 {
+    wsdl_texture_yuv_t* p_tex = &(p_wnd->tex_yuv[idx]);
+
+    memcpy(&(p_tex->dst), p_dst_rect, sizeof(klb_rect_t));
+    //memcpy(&(p_tex->src), p_src_rect, sizeof(klb_rect_t));
+
     return 0;
 }

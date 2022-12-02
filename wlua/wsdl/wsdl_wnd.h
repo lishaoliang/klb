@@ -12,6 +12,8 @@
 
 
 #include "klb_type.h"
+#include "ffmpeg_include.h"
+
 #include "SDL.h"
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_gui.h"
@@ -71,7 +73,7 @@ int wsdl_wnd_refresh_rects(wsdl_wnd_t* p_wnd, const klb_rect_t* p_rects, int cou
 
 
 // 视频接口
-int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx);
+int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx, const AVFrame* p_frame);
 int wsdl_wnd_video_set_pos(wsdl_wnd_t* p_wnd, int idx, const klb_rect_t* p_dst_rect, const klb_rect_t* p_src_rect);
 
 
