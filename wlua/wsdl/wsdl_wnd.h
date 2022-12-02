@@ -26,6 +26,9 @@ extern "C" {
 #endif
 
 
+#define WSDL_YUV_MAX        32          ///< YUV表面 最大值
+
+
 typedef struct wsdl_wnd_t_ wsdl_wnd_t;
 
 

@@ -66,7 +66,7 @@ static int wsdl_ui_video_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
 
     switch (msg)
     {
-    case KLB_GUI_CTRL_PAINT:
+    case KLB_GUI_PAINT:
         return wsdl_ui_video_on_paint(p_wnd);
     default:
         break;

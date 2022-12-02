@@ -6,7 +6,6 @@
 
 
 #define WSDL_FONT_MAX       256
-#define WSDL_YUV_MAX        32
 
 
 // YUV420P
@@ -154,13 +153,19 @@ void wsdl_wnd_refresh(wsdl_wnd_t* p_wnd)
     SDL_SetRenderDrawColor(p_wnd->p_render, 10, 10, 10, 255);
     SDL_RenderClear(p_wnd->p_render);
 
-    if (p_wnd->tex_yuv[0].enable)
+    // YUV
+    for (int i = 0; i < WSDL_YUV_MAX; i++)
     {
-        SDL_Rect dst = { p_wnd->tex_yuv[0].dst.x, p_wnd->tex_yuv[0].dst.y, p_wnd->tex_yuv[0].dst.w, p_wnd->tex_yuv[0].dst.h};
-        SDL_RenderCopy(p_wnd->p_render, p_wnd->tex_yuv[0].p_tex_yuv, NULL, &dst);
+        wsdl_texture_yuv_t* p_yuv = &(p_wnd->tex_yuv[i]);
+
+        if (p_yuv->enable && 0 < p_yuv->w  && 0 < p_yuv->h)
+        {
+            SDL_Rect dst = { p_yuv->dst.x, p_yuv->dst.y, p_yuv->dst.w, p_yuv->dst.h };
+            SDL_RenderCopy(p_wnd->p_render, p_wnd->tex_yuv[0].p_tex_yuv, NULL, &dst);
+        }
     }
 
-    // ui
+    // UI
     SDL_SetTextureBlendMode(p_wnd->p_tex_ui, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(p_wnd->p_render, p_wnd->p_tex_ui, NULL, NULL);
 
@@ -353,12 +358,33 @@ int wsdl_wnd_video_update(wsdl_wnd_t* p_wnd, int idx, const AVFrame* p_frame)
     int w = p_frame->width;
     int h = p_frame->height;
 
-    if (NULL == p_tex->p_tex_yuv)
+    while (true)
     {
-        p_tex->p_tex_yuv = SDL_CreateTexture(p_wnd->p_render, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING, w, h);
-        p_tex->enable = true;
-        p_tex->w = w;
-        p_tex->h = h;
+        if (NULL == p_tex->p_tex_yuv)
+        {
+            p_tex->p_tex_yuv = SDL_CreateTexture(p_wnd->p_render, SDL_PIXELFORMAT_YV12, SDL_TEXTUREACCESS_STREAMING, w, h);
+            
+            p_tex->enable = true;
+            p_tex->w = w;
+            p_tex->h = h;
+
+            break;
+        }
+        else
+        {
+            if (w != p_tex->w || h != p_tex->h)
+            {
+                KLB_FREE_BY(p_tex->p_tex_yuv, SDL_DestroyTexture);
+
+                p_tex->enable = false;
+                p_tex->w = 0;
+                p_tex->h = 0;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 
     SDL_UpdateYUVTexture(p_tex->p_tex_yuv, NULL,

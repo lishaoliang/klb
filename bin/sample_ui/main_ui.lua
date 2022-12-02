@@ -4,6 +4,8 @@ local kgui = require("kgui")
 local kwnd = require("kwnd")
 local ksys = require("ksys")
 local krand = require("krand")
+local kco = require("kco")
+
 
 package.path = package.path .. ';' .. wsdl.GetBasePath() .. '?.lua'
 
@@ -41,19 +43,25 @@ kgui.set('/home/btn3', 'title', '33333')
 	
 --kgui.append('kdialog', '/page1', 200, 100, 960 - 200, 540 - 100)
 kgui.append('kdialog', '/page1', 0, 0, WND_W, WND_H)
+
 kgui.append('kbutton', '/page1/btn1', 10, 60, 140, 32)
 kgui.append('kbutton', '/page1/btn2', 10, 100, 140, 32)
 kgui.append('kbutton', '/page1/btn3', 10, 180, 140, 32)
-kgui.append('kbutton', '/page1/btn4', 10, 260, 140, 32)
+kgui.append('kbutton', '/page1/btn4', 10, 240, 140, 32)
+kgui.append('kbutton', '/page1/btn5', 10, 300, 140, 32)
+
 kgui.append('kpicture', '/page1/pic1', 160, 60, WND_W - 200, WND_H - 120)
+kgui.append('wsdl_video', '/page1/video1', 160, 60, WND_W - 200, WND_H - 120)
 
 kgui.set('/page1', 'title', 'DoModel弹出页面')
 kgui.set('/page1/btn1', 'title', '确定')
 kgui.set('/page1/btn2', 'title', '取消')
 kgui.set('/page1/btn3', 'title', '随机标题')
 kgui.set('/page1/btn4', 'title', '更换图片')
+kgui.set('/page1/btn5', 'title', '播放')
 kgui.set('/page1/pic1', 'picture', './res/images/2fab96b2be1e057c524763b7839136db.bmp')
-	
+
+
 	
 kgui.bind_command('/home/btn2', function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 	if 0x0201 == msg or 0x0203 == msg then
@@ -108,6 +116,12 @@ kgui.bind_command('/page1/btn3', function (obj, msg, x1, y1, x2, y2, lparam, wpa
 end)
 
 local pic1 = false
+local play = false
+
+
+kgui.show('/page1/pic1', true)
+kgui.show('/page1/video1', false)
+
 
 kgui.bind_command('/page1/btn4', function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 	if 0x0201 == msg or 0x0203 == msg then
@@ -118,10 +132,55 @@ kgui.bind_command('/page1/btn4', function (obj, msg, x1, y1, x2, y2, lparam, wpa
 		end
 		
 		pic1 = not pic1;
+		
+		--kgui.show('/page1/pic1', pic1)
 	end		
+	return 0
+end)
+
+kgui.bind_command('/page1/btn5', function (obj, msg, x1, y1, x2, y2, lparam, wparam)
+	if 0x0201 == msg or 0x0203 == msg then	
+		play = not play
+		
+		if play then
+			wsdl.SetVideoPos(0, 160, 60, WND_W - 200, WND_H - 120)
+			
+			kgui.show('/page1/pic1', false)
+			kgui.show('/page1/video1', true)
+			
+			kgui.set('/page1/btn5', 'title', '停止')
+		else
+			wsdl.SetVideoPos(0, 0, 0, 0, 0)
+			
+			kgui.show('/page1/pic1', true)
+			kgui.show('/page1/video1', false)
+			
+			kgui.set('/page1/btn5', 'title', '播放')
+		end
+	end
 	return 0
 end)
 
 
 kgui.do_model('/home')
 
+
+-- h264
+local kh26x = require("kh26x")
+local path_h264 = './res/media/dnfvideo_2022-10-23_16-19-05-919.h264'
+
+kco.fork(function ()
+	local h264 = kh26x.load(path_h264)	
+	
+	while not ksys.is_exit() do
+		
+		if play then
+			local frame1, frame2 = h264:read()
+			
+			wsdl.PushMedia(0, 0, frame1)		
+			wsdl.PushMedia(0, 0, frame2)
+		end
+		
+		kco.co_sleep(30)
+	end	
+end)

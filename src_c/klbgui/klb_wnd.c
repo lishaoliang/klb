@@ -82,13 +82,19 @@ void klb_wnd_show(klb_wnd_t* p_wnd, bool show)
     {
         p_wnd->state.status |= KLB_WND_STATUS_HIDE;
     }
+
+    // 更新
+    klb_wnd_update(p_wnd);
 }
 
 void klb_wnd_update(klb_wnd_t* p_wnd)
 {
     assert(NULL != p_wnd);
 
-    klb_gui_update_rect(p_wnd->env.p_gui, &p_wnd->pos.rect_in_canvas);
+    if (NULL != p_wnd->env.p_gui)
+    {
+        klb_gui_update_rect(p_wnd->env.p_gui, &p_wnd->pos.rect_in_canvas);
+    }
 }
 
 klb_wnd_t* klb_wnd_get_top(klb_wnd_t* p_wnd)
@@ -194,7 +200,7 @@ int klb_wnd_on_paint(klb_wnd_t* p_wnd)
 
     if (p_wnd->vtable.on_control)
     {
-        return p_wnd->vtable.on_control(p_wnd, KLB_GUI_CTRL_PAINT, NULL, NULL, 0, 0);
+        return p_wnd->vtable.on_control(p_wnd, KLB_GUI_PAINT, NULL, NULL, 0, 0);
     }
 
     return 0;

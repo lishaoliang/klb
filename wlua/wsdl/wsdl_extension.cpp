@@ -416,6 +416,7 @@ int kluaex_wsdl_push_media(wsdl_extension_t* p_ex, int chnn, int sidx, klb_buf_t
 {
     if (0 == chnn && 0 == sidx && NULL != p_media)
     {
+        // test
         if (NULL == g_dec)
         {
             g_dec = ffmpeg_dec_create(AV_CODEC_ID_H264);

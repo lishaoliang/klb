@@ -228,6 +228,7 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
         }
 
         p_wnd = create(x, y, w, h);
+        p_wnd->env.p_gui = p_gui;
         klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
         klb_wnd_push_child(p_parent, p_wnd);
         klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
@@ -242,6 +243,7 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
         }
 
         p_wnd = create(x, y, w, h);
+        p_wnd->env.p_gui = p_gui;
         klb_wnd_set_top(p_wnd, p_gui);
         klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
 

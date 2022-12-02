@@ -282,9 +282,9 @@ extern "C" {
 
 
 
-/// @def   KLB_GUI_CTRL_PAINT
+/// @def   KLB_GUI_PAINT
 /// @brief 绘制消息
-#define KLB_GUI_CTRL_PAINT   0x0401
+#define KLB_GUI_PAINT        0x0401
 
 
 /// @def   KLB_GUI_WM_USER
