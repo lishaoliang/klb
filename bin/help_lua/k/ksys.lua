@@ -17,6 +17,13 @@ ksys.exit = function ()
 end
 
 
+-- @brief 获取是否退出当前环境
+-- @return [boolean] true.退出; false.未退出
+ksys.is_exit = function ()
+	return false
+end
+
+
 -- @brief 将函数参数打包成一个字符串(二进制)
 -- @param [in] [...]		任意类型
 -- @return [string]	打包后的字符串(二进制)
