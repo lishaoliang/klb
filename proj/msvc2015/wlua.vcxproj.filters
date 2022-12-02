@@ -36,6 +36,42 @@
     <ClCompile Include="..\..\wlua\wsdl\wsdl_audio.cpp">
       <Filter>wsdl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffdec_single.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffdec_yuv_wav.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffmpeg_dec.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffmpeg_dec_audio.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_high.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_higher.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_low.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_lower.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_lowest.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_middle.cpp">
+      <Filter>ff_dec</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wlua\wsdl\wsdl_ui_video.cpp">
+      <Filter>wsdl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\wlua\wsdl\wsdl_extension.h">
@@ -318,6 +354,27 @@
       <Filter>wsdl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wlua\wsdl\wsdl_audio.h">
+      <Filter>wsdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\ff_dec\ffdec_single.h">
+      <Filter>ff_dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\ff_dec\ffdec_yuv_wav.h">
+      <Filter>ff_dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\ff_dec\ffmpeg_dec.h">
+      <Filter>ff_dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\ff_dec\ffmpeg_dec_audio.h">
+      <Filter>ff_dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\ff_dec\ffrate_ctrl.h">
+      <Filter>ff_dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\ff_dec\ffmpeg_include.h">
+      <Filter>ff_dec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\wsdl\wsdl_ui_video.h">
       <Filter>wsdl</Filter>
     </ClInclude>
   </ItemGroup>

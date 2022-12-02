@@ -19,15 +19,33 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\wlua\ff_dec\ffdec_single.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffdec_yuv_wav.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffmpeg_dec.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffmpeg_dec_audio.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_high.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_higher.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_low.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_lower.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_lowest.cpp" />
+    <ClCompile Include="..\..\wlua\ff_dec\ffrate_ctrl_middle.cpp" />
     <ClCompile Include="..\..\wlua\ft_raster.cpp" />
     <ClCompile Include="..\..\wlua\wlua.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_audio.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_extension.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_images.cpp" />
+    <ClCompile Include="..\..\wlua\wsdl\wsdl_ui_video.cpp" />
     <ClCompile Include="..\..\wlua\wsdl\wsdl_wnd.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\wlua\ff_dec\ffdec_single.h" />
+    <ClInclude Include="..\..\wlua\ff_dec\ffdec_yuv_wav.h" />
+    <ClInclude Include="..\..\wlua\ff_dec\ffmpeg_dec.h" />
+    <ClInclude Include="..\..\wlua\ff_dec\ffmpeg_dec_audio.h" />
+    <ClInclude Include="..\..\wlua\ff_dec\ffmpeg_include.h" />
+    <ClInclude Include="..\..\wlua\ff_dec\ffrate_ctrl.h" />
     <ClInclude Include="..\..\wlua\ft_raster.h" />
     <ClInclude Include="..\..\wlua\SDL2-2.24.1\include\begin_code.h" />
     <ClInclude Include="..\..\wlua\SDL2-2.24.1\include\close_code.h" />
@@ -121,6 +139,7 @@
     <ClInclude Include="..\..\wlua\wsdl\wsdl_audio.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl_extension.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl_images.h" />
+    <ClInclude Include="..\..\wlua\wsdl\wsdl_ui_video.h" />
     <ClInclude Include="..\..\wlua\wsdl\wsdl_wnd.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -199,19 +218,19 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\src_c\klua\lua-5.4.1\src;..\..\wlua\SDL2-2.24.1\include;..\..\wlua;..\..\wlua\freetype-2.12.1;..\..\wlua\wsdl;..\..\wlua\ffmpeg-5.1.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\src_c\klua\lua-5.4.1\src;..\..\wlua\SDL2-2.24.1\include;..\..\wlua;..\..\wlua\ff_dec;..\..\wlua\freetype-2.12.1;..\..\wlua\wsdl;..\..\wlua\ffmpeg-4.1.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\;..\..\lib;..\..\wlua\SDL2-2.24.1\lib\x86;..\..\wlua\freetype-2.12.1\lib\x86;..\..\wlua\ffmpeg-5.1.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libklb.lib;SDL2.lib;SDL2main.lib;freetype.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\;..\..\lib;..\..\wlua\SDL2-2.24.1\lib\x86;..\..\wlua\freetype-2.12.1\lib\x86;..\..\wlua\ffmpeg-4.1.3\x86\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;SDL2.lib;SDL2main.lib;freetype.lib;libklb.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y $(ProjectName)_$(Configuration)\wlua.exe ..\..\bin
 xcopy /Y ..\..\wlua\SDL2-2.24.1\lib\x86\SDL2.dll ..\..\bin
 xcopy /Y ..\..\wlua\freetype-2.12.1\lib\x86\freetype.dll ..\..\bin
-xcopy /Y ..\..\wlua\ffmpeg-5.1.2\bin\* ..\..\bin</Command>
+xcopy /Y ..\..\wlua\ffmpeg-4.1.3\x86\bin\* ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -16,6 +16,7 @@
 #include "klbgui/klb_msg.h"
 #include "klbgui/klb_wnd.h"
 #include "klbutil/klb_map.h"
+#include "klua/klua_env.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -47,6 +48,14 @@ int klb_gui_start(klb_gui_t* p_gui);
 /// @param [in] *p_gui          GUI对象
 /// @return 无
 void klb_gui_stop(klb_gui_t* p_gui);
+
+
+/// @brief 附加到 klua_env_t*
+KLB_API int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env);
+
+
+/// @brief 获取 klua_env_t*
+KLB_API klua_env_t* klb_gui_get_klua_env(klb_gui_t* p_gui);
 
 
 /// @brief 处理消息(事件)流程
@@ -161,6 +170,14 @@ KLB_API int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map
 /// @return klb_map_t* map数据集合
 /// @note map 具体数据格式由控件定义
 KLB_API klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map);
+
+
+/// @brief 设置控件(窗口)的显示状态
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
+/// @param [in] *p_map          map数据集合
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show);
 
 
 #ifdef __cplusplus
