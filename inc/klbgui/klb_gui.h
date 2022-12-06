@@ -88,7 +88,7 @@ KLB_API void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2,
 /// @param [in] w               宽
 /// @param [in] h               高
 /// @return klb_wnd_t* 窗口对象
-typedef klb_wnd_t* (*klb_wnd_create_cb)(int x, int y, int w, int h);
+typedef klb_wnd_t* (*klb_wnd_create_cb)(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
 /// @brief 注册窗口类型

@@ -121,7 +121,7 @@ static int on_cmd_btn_close_klb_dialog(klb_wnd_t* p_wnd, int msg, const klb_poin
 
 //////////////////////////////////////////////////////////////////////////
 
-klb_wnd_t* klb_dialog_create(int x, int y, int w, int h)
+klb_wnd_t* klb_dialog_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klb_dialog_t));
     klb_dialog_t* p_dlg = (klb_dialog_t*)p_wnd->ctrl;
@@ -139,7 +139,7 @@ klb_wnd_t* klb_dialog_create(int x, int y, int w, int h)
     p_dlg->title = sdsempty();
 
     //
-    p_dlg->p_btn_close = klbui_button_create(w - 42 - 4, (42 - 30) / 2, 42, 30);
+    p_dlg->p_btn_close = klbui_button_create(p_gui, w - 42 - 4, (42 - 30) / 2, 42, 30);
 
     //klb_wnd_set_style(p_dlg->p_btn_close, style | klb_wnd_get_style(p_wnd));
     klb_wnd_push_child(p_wnd, p_dlg->p_btn_close);

@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 
-klb_wnd_t* wsdl_ui_video_create(int x, int y, int w, int h);
+klb_wnd_t* wsdl_ui_video_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
 #ifdef __cplusplus

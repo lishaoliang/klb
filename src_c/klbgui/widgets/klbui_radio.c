@@ -94,7 +94,7 @@ static klb_map_t* klbui_radio_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
     return p_out;
 }
 
-klb_wnd_t* klbui_radio_create(int x, int y, int w, int h)
+klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_radio_t));
     klbui_radio_t* p_radio = (klbui_radio_t*)p_wnd->ctrl;

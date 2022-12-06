@@ -94,7 +94,7 @@ static klb_map_t* klbui_tab_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
     return p_out;
 }
 
-klb_wnd_t* klbui_tab_create(int x, int y, int w, int h)
+klb_wnd_t* klbui_tab_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_tab_t));
     klbui_tab_t* p_tab = (klbui_tab_t*)p_wnd->ctrl;

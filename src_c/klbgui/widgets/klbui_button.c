@@ -150,7 +150,7 @@ static klb_map_t* klbui_button_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
     return p_out;
 }
 
-klb_wnd_t* klbui_button_create(int x, int y, int w, int h)
+klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_button_t));
 
