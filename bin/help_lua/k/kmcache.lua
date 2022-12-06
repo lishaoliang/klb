@@ -1,5 +1,5 @@
 ﻿--[[
--- Copyright(c) 2022, LGPL All Rights Reserved
+-- Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file   kmcache.lua
 -- @brief  C kmcache, memory cache
 --   \n require("kmcache")
@@ -30,8 +30,8 @@ kmcache.get = function (key)
 end
 
 
--- @brief 获取数目
--- @return [number(int)] 数目
+-- @brief 获取总数
+-- @return [number(int)] 总数
 kmcache.size = function (key)
 	return 0
 end

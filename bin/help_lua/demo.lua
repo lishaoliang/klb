@@ -1,5 +1,5 @@
 ﻿--[[
--- Copyright (c) 2019, LGPL All Rights Reserved
+-- Copyright (c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  demo.lua
 --]]
 
@@ -20,7 +20,7 @@ assert(false)
 
 
 --[[
--- Copyright(c) 2019, LGPL All Rights Reserved
+-- Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file    xxx.lua
 -- @brief   文件头注释模板
 -- @author  xxx

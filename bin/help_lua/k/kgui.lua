@@ -16,10 +16,17 @@ local kgui = {}
 -- @param [in] lparam[number(int)]	参数1
 -- @param [in] wparam[number(int)]	参数2
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.push = function (msg, x1, y1, x2, y2, lparam, wparam)
+kgui.push_msg = function (msg, x1, y1, x2, y2, lparam, wparam)
 	return 0
 end
 
+
+-- @brief 加载图片
+-- @param [in] path[string]			图片路径
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.load_image = function (path)
+	return 0
+end
 
 -- @brief 添加窗口
 -- @param [in] t[string]			窗口/控件类型
@@ -33,9 +40,11 @@ kgui.append = function (t, path, x, y, w, h)
 	return 0
 end
 
+
 -- @brief 移除窗口
+-- @return 无
 kgui.remove = function (path)
-	
+	return
 end
 
 
@@ -87,13 +96,21 @@ kgui.do_model = function (path)
 
 end
 
-
 kgui.end_model = function (path)
 
 end
 
 kgui.end_model_all = function ()
 	
+end
+
+
+-- @brief 显示或隐藏窗口
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @param [in] show[boolean]		true.显示; false.隐藏
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.show = function (path, show)
+	return 0
 end
 
 return kgui
