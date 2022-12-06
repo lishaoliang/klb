@@ -4,12 +4,14 @@
 #include "klbutil/klb_canvas.h"
 #include "klua/klua_gui.h"
 #include "klbutil/klb_log.h"
+#include "klbgui/klb_gui.h"
+#include "klua/klua_gui.h"
 #include "ft_raster.h"
 #include "wsdl_images.h"
 #include "wsdl_wnd.h"
 #include "wsdl_ui_video.h"
-#include "klbgui/klb_gui.h"
-#include "klua/klua_gui.h"
+#include "wsdl_video.h"
+#include "wsdl_audio.h"
 #include <assert.h>
 
 
@@ -29,6 +31,9 @@ typedef struct wsdl_extension_t_
     klb_canvas_t        canvas;             ///< gui 画布
 
     sds                 base_path;          ///< 执行文件路径
+
+    wsdl_video_t*       p_video;            ///< 视频处理
+    wsdl_audio_t*       p_audio;            ///< 音频处理
 
     bool                refresh;
 }wsdl_extension_t;
@@ -67,6 +72,8 @@ void* wsdl_extension_create(klua_env_t* p_env)
     p_ex->p_env = p_env;
     p_ex->p_wnd = wsdl_wnd_create();
 
+    p_ex->p_video = wsdl_video_create();
+
     p_ex->refresh = false;
 
     return p_ex;
@@ -75,6 +82,8 @@ void* wsdl_extension_create(klua_env_t* p_env)
 void wsdl_extension_destroy(void* ptr)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)ptr;
+
+    KLB_FREE_BY(p_ex->p_video, wsdl_video_destroy);
 
     KLB_FREE_BY(p_ex->p_wnd, wsdl_wnd_destroy);
     KLB_FREE(p_ex);
@@ -381,69 +390,16 @@ int kluaex_wsdl_close_wnd(wsdl_extension_t* p_ex)
     return 0;
 }
 
-
-#include "ffmpeg_dec.h"
-#include "klbbase/klb_mnp.h"
-
-static ffmpeg_dec_t* g_dec = NULL;
-
-static klb_buf_t* kluaex_wsdl_join(klb_buf_t* p_media)
-{
-    int size = 0;
-
-    klb_buf_t* p_next = p_media;
-    while (NULL != p_next)
-    {
-        size =  size + p_next->end - p_next->start;
-        p_next = p_next->p_next;
-    }
-
-    klb_buf_t* ptr = klb_buf_malloc(size, false);
-
-    p_next = p_media;
-    while (NULL != p_next && p_next->start < p_next->end)
-    {
-        memcpy(ptr->p_buf + ptr->end, p_next->p_buf + p_next->start + sizeof(klb_mnp_t), p_next->end - p_next->start - sizeof(klb_mnp_t));
-        ptr->end = ptr->end + p_next->end - p_next->start - sizeof(klb_mnp_t);
-
-        p_next = p_next->p_next;
-    }
-
-    return ptr;
-}
-
 int kluaex_wsdl_push_media(wsdl_extension_t* p_ex, int chnn, int sidx, klb_buf_t* p_media)
 {
-    if (0 == chnn && 0 == sidx && NULL != p_media)
+    AVFrame* p_frame = NULL;
+
+    if (0 == wsdl_video_decode(p_ex->p_video, chnn, sidx, p_media, &p_frame))
     {
-        // test
-        if (NULL == g_dec)
-        {
-            g_dec = ffmpeg_dec_create(AV_CODEC_ID_H264);
-        }
+        wsdl_wnd_video_update(p_ex->p_wnd, 0, p_frame);
+        p_ex->refresh = true;
 
-        klb_buf_t* ptr = kluaex_wsdl_join(p_media);
-
-        uint8_t* p_data = (uint8_t*)ptr->p_buf + sizeof(klb_mnp_media_t);
-        int data_len = ptr->end - sizeof(klb_mnp_media_t);
-
-        if (NULL != p_data && 0 < data_len)
-        {
-            AVFrame* p_frame = ffmpeg_dec_decode(g_dec, p_data, data_len, 0, 0);
-            if (NULL != p_frame)
-            {
-                if (NULL != p_ex->p_wnd)
-                {
-                    wsdl_wnd_video_update(p_ex->p_wnd, 0, p_frame);
-
-                    p_ex->refresh = true;
-                }
-
-                ffmpeg_dec_avframe_free(p_frame);
-            }
-        }
-
-        KLB_FREE(ptr);
+        ffmpeg_dec_avframe_free(p_frame);
     }
 
     return 0;

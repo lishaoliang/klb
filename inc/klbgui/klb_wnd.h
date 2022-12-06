@@ -30,6 +30,7 @@ typedef struct klb_wnd_t_ klb_wnd_t;
 
 /// @struct klb_wnd_pos_t
 /// @brief  窗口位置
+///   采用坐标系: 左上角点为原点
 typedef struct klb_wnd_pos_t_
 {
     klb_rect_t  rect_in_canvas;             ///< 基于画布的坐标(屏幕/顶层窗口)

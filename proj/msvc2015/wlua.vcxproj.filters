@@ -72,6 +72,9 @@
     <ClCompile Include="..\..\wlua\wsdl\wsdl_ui_video.cpp">
       <Filter>wsdl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\wlua\wsdl\wsdl_video.cpp">
+      <Filter>wsdl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\wlua\wsdl\wsdl_extension.h">
@@ -375,6 +378,9 @@
       <Filter>ff_dec</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wlua\wsdl\wsdl_ui_video.h">
+      <Filter>wsdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\wlua\wsdl\wsdl_video.h">
       <Filter>wsdl</Filter>
     </ClInclude>
   </ItemGroup>

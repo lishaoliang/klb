@@ -17,8 +17,10 @@
 extern "C" {
 #endif
 
-
-
+typedef struct wsdl_audio_t_
+{
+    int a;
+}wsdl_audio_t;
 
 
 #ifdef __cplusplus
