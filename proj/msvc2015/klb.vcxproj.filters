@@ -1307,6 +1307,9 @@
     <ClInclude Include="..\..\inc\klua\klua_thread.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_default.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\Makefile">
@@ -2174,6 +2177,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_rich_text.c">
       <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klbui_default.c">
+      <Filter>src_c\klbgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

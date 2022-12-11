@@ -15,6 +15,7 @@
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_msg.h"
 #include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_default.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_env.h"
 
@@ -48,6 +49,10 @@ int klb_gui_start(klb_gui_t* p_gui);
 /// @param [in] *p_gui          GUI对象
 /// @return 无
 void klb_gui_stop(klb_gui_t* p_gui);
+
+
+/// @brief 获取标准控件的默认值指针
+KLB_API klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui);
 
 
 /// @brief 附加到 klua_env_t*
@@ -178,6 +183,20 @@ KLB_API klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const 
 /// @param [in] *p_map          map数据集合
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show);
+
+
+/// @brief 基于父窗口移动(相对坐标)
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y);
+
+
+/// @brief 重置控件大小
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
 
 
 #ifdef __cplusplus

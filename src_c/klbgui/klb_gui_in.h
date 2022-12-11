@@ -93,6 +93,9 @@ typedef struct klb_gui_t_
         klua_env_t*     p_klua_env;
     };
 
+    // 默认值
+    klbui_default_t     def;                ///< 默认值
+
     // 线程
     struct
     {
@@ -100,6 +103,7 @@ typedef struct klb_gui_t_
     };
 }klb_gui_t;
 
+void klbui_default_init(klb_gui_t* p_gui);
 
 int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg);
 

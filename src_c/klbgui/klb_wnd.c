@@ -16,7 +16,7 @@ int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd)
     p_wnd->p_parent = p_parent;
 
     // 使用父窗口环境
-    p_wnd->env = p_parent->env;
+    p_wnd->p_gui = p_parent->p_gui;
 
     if (NULL == p_parent->p_child)
     {
@@ -48,7 +48,7 @@ klb_gui_t* klb_wnd_get_gui(klb_wnd_t* p_wnd)
     assert(NULL != p_wnd);
     klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
 
-    return p_top->env.p_gui;
+    return p_top->p_gui;
 }
 
 klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd)
@@ -56,7 +56,7 @@ klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd)
     assert(NULL != p_wnd);
     klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
 
-    return p_top->env.p_gui->p_canvas;
+    return p_top->p_gui->p_canvas;
 }
 
 uint32_t klb_wnd_get_style(klb_wnd_t* p_wnd)
@@ -87,13 +87,31 @@ void klb_wnd_show(klb_wnd_t* p_wnd, bool show)
     klb_wnd_update(p_wnd);
 }
 
+/// @brief 基于父窗口移动(相对坐标)
+void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y)
+{
+    assert(NULL != p_wnd);
+
+    p_wnd->pos.rect_in_parent.x = x;
+    p_wnd->pos.rect_in_parent.y = y;
+}
+
+/// @brief 重置控件大小
+void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h)
+{
+    assert(NULL != p_wnd);
+
+    p_wnd->pos.rect_in_parent.w = w;
+    p_wnd->pos.rect_in_parent.h = h;
+}
+
 void klb_wnd_update(klb_wnd_t* p_wnd)
 {
     assert(NULL != p_wnd);
 
-    if (NULL != p_wnd->env.p_gui)
+    if (NULL != p_wnd->p_gui)
     {
-        klb_gui_update_rect(p_wnd->env.p_gui, &p_wnd->pos.rect_in_canvas);
+        klb_gui_update_rect(p_wnd->p_gui, &p_wnd->pos.rect_in_canvas);
     }
 }
 
@@ -117,7 +135,7 @@ int klb_wnd_set_top(klb_wnd_t* p_wnd, klb_gui_t* p_gui)
     assert(NULL == p_wnd->p_parent);
 
     p_wnd->state.style |= KLB_WND_STYLE_TOP;
-    p_wnd->env.p_gui = p_gui;
+    p_wnd->p_gui = p_gui;
 
     return 0;
 }
@@ -389,7 +407,7 @@ int klb_wnd_draw_fill_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int cou
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
     int ret = klb_canvas_set_draw_color(p_canvas, color);
-    ret |= klb_canvas_draw_fill_rects(p_canvas, p_rects, count, color);
+    ret |= klb_canvas_draw_fill_rects(p_canvas, p_rects, count);
 
     return ret;
 }

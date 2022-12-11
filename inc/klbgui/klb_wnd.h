@@ -172,10 +172,10 @@ typedef struct klb_wnd_t_
     klb_wnd_t*      p_prev;     ///< 前一个兄弟节点
     klb_wnd_t*      p_next;     ///< 后一个兄弟节点
 
+    klb_gui_t*      p_gui;      ///< 窗口所属的gui
+
     klb_wnd_pos_t   pos;        ///< 窗口位置
     klb_wnd_state_t state;      ///< 窗口状态的参数
-
-    klb_wnd_env_t   env;        ///< 窗口运行环境
 
     sds             name;       ///< 窗口名称
     sds             type;       ///< 窗口类型
@@ -222,6 +222,13 @@ KLB_API void klb_wnd_set_style(klb_wnd_t* p_wnd, uint32_t style);
 
 /// @brief 设置是否显示
 KLB_API void klb_wnd_show(klb_wnd_t* p_wnd, bool show);
+
+/// @brief 基于父窗口移动(相对坐标)
+KLB_API void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y);
+
+/// @brief 重置控件大小
+KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
+
 
 /// @brief 需要刷新
 KLB_API void klb_wnd_update(klb_wnd_t* p_wnd);

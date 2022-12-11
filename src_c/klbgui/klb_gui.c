@@ -26,6 +26,9 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     p_gui->p_msg_list = klb_nlist_create();
     p_gui->p_msg_mutex = klb_mutex_create();
 
+    // gui部分使用的默认值 初始化
+    klbui_default_init(p_gui);
+
     // 注册标准窗口类型
     // 创建完成之后, 可注册自定义控件
     KLB_GUI_REGISTER_STD(p_gui);
@@ -89,6 +92,12 @@ void klb_gui_stop(klb_gui_t* p_gui)
     assert(NULL != p_gui);
 
     KLB_FREE_BY(p_gui->p_thread1, klb_thread_destroy);
+}
+
+/// @brief 获取标准控件的默认值指针
+klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui)
+{
+    return &p_gui->def;
 }
 
 /// @brief 附加到 klua_env_t*
@@ -228,7 +237,7 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
         }
 
         p_wnd = create(p_gui, x, y, w, h);
-        p_wnd->env.p_gui = p_gui;
+        p_wnd->p_gui = p_gui;
         klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
         klb_wnd_push_child(p_parent, p_wnd);
         klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
@@ -243,7 +252,7 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
         }
 
         p_wnd = create(p_gui, x, y, w, h);
-        p_wnd->env.p_gui = p_gui;
+        p_wnd->p_gui = p_gui;
         klb_wnd_set_top(p_wnd, p_gui);
         klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
 
@@ -385,6 +394,28 @@ int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show)
     }
 
     klb_wnd_show(p_wnd, show);
+    return 0;
+}
+
+int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    if (NULL == p_wnd)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    if (NULL == p_wnd)
+    {
+        return 1;
+    }
+
     return 0;
 }
 

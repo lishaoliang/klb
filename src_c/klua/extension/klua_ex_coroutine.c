@@ -19,11 +19,12 @@ typedef struct klua_ex_coroutine_timeout_t_
 
 typedef struct klua_ex_coroutine_t_
 {
-    klua_env_t*     p_env;
+    klua_env_t*     p_env;              ///< 环境
 
-    klb_hlist_t*    p_co_hlist;
-    klb_nlist_t*     p_wakeup_list;
-    klb_nlist_t*     p_timeout_list;
+    klb_hlist_t*    p_co_hlist;         ///< 所有协程
+
+    klb_nlist_t*    p_wakeup_list;      ///< 待立即唤醒列表
+    klb_nlist_t*    p_timeout_list;     ///< 计时唤醒列表: klua_ex_coroutine_timeout_t*
 }klua_ex_coroutine_t;
 
 
@@ -59,6 +60,12 @@ static void klua_ex_coroutine_destroy(void* ptr)
 {
     klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)ptr;
     klua_env_t* p_env = p_ex->p_env;
+
+    //while (0 < klb_nlist_size(p_ex->p_timeout_list))
+    //{
+    //    klua_ex_coroutine_timeout_t* p_co_timeout = klb_nlist_pop_head(p_ex->p_timeout_list);
+    //    KLB_FREE(p_co_timeout);
+    //}
 
     KLB_FREE_BY(p_ex->p_timeout_list, klb_nlist_destroy);
     KLB_FREE_BY(p_ex->p_wakeup_list, klb_nlist_destroy);

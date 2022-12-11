@@ -109,26 +109,32 @@ static int klbui_button_on_set(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 {
     klbui_button_t* p_btn = (klbui_button_t*)p_wnd->ctrl;
 
-    const char* p_key = klb_map_idx_to_string(p_map, 0);
-    const char* p_value = klb_map_idx_to_string(p_map, 1);
+    int count = klb_map_array_size(p_map);
 
-    if (0 == strcmp(p_key, "title"))
+    for (int i = 0; i < count; i++)
     {
-        p_btn->title = sdscpy(p_btn->title, p_value);
+        const char* p_key = klb_map_idx_to_string(p_map, i);
+        const char* p_value = klb_map_idx_to_string(p_map, i + 1); 
+        i++;
 
-        klb_wnd_update(p_wnd);
-    }
-    else if(0 == strcmp(p_key, "normal"))
-    {
-        p_btn->normal = sdscpy(p_btn->normal, p_value);
-    }
-    else if (0 == strcmp(p_key, "focus"))
-    {
-        p_btn->focus = sdscpy(p_btn->focus, p_value);
-    }
-    else if (0 == strcmp(p_key, "disable"))
-    {
-        p_btn->disable = sdscpy(p_btn->disable, p_value);
+        if (0 == strcmp(p_key, "title"))
+        {
+            p_btn->title = sdscpy(p_btn->title, p_value);
+
+            klb_wnd_update(p_wnd);
+        }
+        else if (0 == strcmp(p_key, "normal"))
+        {
+            p_btn->normal = sdscpy(p_btn->normal, p_value);
+        }
+        else if (0 == strcmp(p_key, "focus"))
+        {
+            p_btn->focus = sdscpy(p_btn->focus, p_value);
+        }
+        else if (0 == strcmp(p_key, "disable"))
+        {
+            p_btn->disable = sdscpy(p_btn->disable, p_value);
+        }
     }
 
     return 0;
