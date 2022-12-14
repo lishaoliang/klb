@@ -138,8 +138,7 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
     klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)klb_hlist_find(p_ex->p_bind_hlist, p_path_name, name_len);
     if (NULL == p_bind)
     {
-        p_bind = KLB_MALLOC(klua_kgui_bind_t, 1, 0);
-        KLB_MEMSET(p_bind, 0, sizeof(klua_kgui_bind_t));
+        p_bind = KLB_MALLOCZ(klua_kgui_bind_t, 1, 0);
 
         p_bind->p_ex = p_ex;
         insert = true;

@@ -162,6 +162,27 @@ kgui.bind_command('/page1/btn5', function (obj, msg, x1, y1, x2, y2, lparam, wpa
 end)
 
 
+kgui.bind_command('/page1', function (obj, msg)
+	
+	if 0x0418 == msg then
+		-- return 1
+		
+	elseif 0x0419 == msg then
+		-- 即将关闭对话框
+		
+		wsdl.SetVideoPos(0, 0, 0, 0, 0)
+		
+		kgui.show('/page1/pic1', true)
+		kgui.show('/page1/video1', false)
+		
+		kgui.set('/page1/btn5', 'title', '播放')
+		
+		play = false
+	end
+	
+	return 0
+end)
+
 kgui.do_model('/home')
 
 
@@ -182,5 +203,5 @@ kco.fork(function ()
 		end
 		
 		kco.co_sleep(30)
-	end	
+	end
 end)

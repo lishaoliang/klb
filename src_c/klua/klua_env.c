@@ -14,6 +14,7 @@
 #include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_lpc.h"
 #include "klua/klua_util/klua_kobject.h"
+#include "klua/extension/klua_ex_coroutine.h"
 #include "lstate.h"
 #include <assert.h>
 
@@ -408,6 +409,9 @@ static int klua_pmain(lua_State *L)
 static int klua_pquit(lua_State *L)
 {
     klua_env_t* p_env = (klua_env_t*)lua_touserdata(L, 1);
+
+    // exit
+    klua_ex_coroutine_exit(p_env, p_env->tc);
 
     // exit
     klua_env_call_kexit(p_env);

@@ -83,6 +83,9 @@ void wsdl_extension_destroy(void* ptr)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)ptr;
 
+
+    kluaex_wsdl_close_wnd(p_ex);
+
     KLB_FREE_BY(p_ex->p_video, wsdl_video_destroy);
 
     KLB_FREE_BY(p_ex->p_wnd, wsdl_wnd_destroy);
@@ -381,11 +384,11 @@ int kluaex_wsdl_open_wnd(wsdl_extension_t* p_ex, const char* p_font_path, int w,
 
 int kluaex_wsdl_close_wnd(wsdl_extension_t* p_ex)
 {
-    // 退出 font/
-    wsdl_extension_quit(p_ex);
-
     // 退出窗口
     wsdl_wnd_close(p_ex->p_wnd);
+
+    // 退出 font/
+    wsdl_extension_quit(p_ex);
 
     return 0;
 }

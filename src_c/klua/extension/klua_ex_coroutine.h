@@ -40,6 +40,7 @@ int klua_ex_register_coroutine(klua_env_t* p_env);
 klua_ex_coroutine_t* klua_ex_get_coroutine(klua_env_t* p_env);
 klua_ex_coroutine_t* klua_ex_get_coroutine_by_L(lua_State* L);
 
+int klua_ex_coroutine_exit(klua_env_t* p_env, int64_t now);
 
 int klua_ex_coroutine_push(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_co_env);
 int klua_ex_coroutine_remove(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_co_env);

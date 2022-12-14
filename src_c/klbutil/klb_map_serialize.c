@@ -272,6 +272,8 @@ klb_buf_t* klb_map_seri_pack(const klb_map_t* p_map)
 
     klbmapseri_map(p_buffer, &rbuf, (klb_map_t*)p_map);
 
+    klb_rbuf_quit(&rbuf);
+
     klb_buf_t* p_buf = klb_buffer_join(p_buffer, NULL, NULL);
 
     klb_buffer_destroy(p_buffer);

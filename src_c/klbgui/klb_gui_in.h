@@ -104,6 +104,7 @@ typedef struct klb_gui_t_
 }klb_gui_t;
 
 void klbui_default_init(klb_gui_t* p_gui);
+void klbui_default_quit(klb_gui_t* p_gui);
 
 int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg);
 

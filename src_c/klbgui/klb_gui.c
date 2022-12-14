@@ -70,6 +70,8 @@ void klb_gui_destroy(klb_gui_t* p_gui)
         klb_hlist_pop_head(p_gui->p_wnd_hlist);
     }
 
+    klbui_default_quit(p_gui);
+
     KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_gui->p_wnd_hlist, klb_hlist_destroy);
 
@@ -298,6 +300,13 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_wnd_popup[p_gui->wnd_popup_num] = p_wnd;
         p_gui->wnd_popup_num += 1;
 
+        // KLB_GUI_DISPLAYING
+        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+        {
+            klb_point_t pt = { 0, 0 };
+            p_wnd->vtable.on_command(p_wnd, KLB_GUI_DISPLAYING, &pt, &pt, 0, 0);
+        }
+
         p_gui->redraw = true;
 
         return 0;
@@ -316,6 +325,21 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
     int index = p_gui->wnd_popup_num - 1;
 
     klb_wnd_t* p_top = p_gui->p_wnd_popup[index];
+    klb_wnd_t* p_wnd = p_top;
+
+    int end = 0;
+    // KLB_GUI_PRE_END_MODEL
+    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+    {
+        klb_point_t pt = { 0, 0 };
+        end = p_wnd->vtable.on_command(p_wnd, KLB_GUI_PRE_END_MODEL, &pt, &pt, 0, 0);
+    }
+
+    if (0 != end)
+    {
+        return end;
+    }
+
     if (NULL != p_gui->p_focus_top && p_top == p_gui->p_focus_top)
     {
         klb_wnd_set_focus(p_gui->p_focus, false);
@@ -326,6 +350,13 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
 
     p_gui->p_wnd_popup[index] = NULL;
     p_gui->wnd_popup_num = index;
+
+    // KLB_GUI_DISPLAY_NOT
+    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+    {
+        klb_point_t pt = { 0, 0 };
+        p_wnd->vtable.on_command(p_wnd, KLB_GUI_DISPLAY_NOT, &pt, &pt, 0, 0);
+    }
 
     p_gui->redraw = true;
 

@@ -226,7 +226,7 @@ KLB_API void klb_wnd_show(klb_wnd_t* p_wnd, bool show);
 /// @brief 基于父窗口移动(相对坐标)
 KLB_API void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y);
 
-/// @brief 重置控件大小
+/// @brief 重新设置控件大小
 KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
 
 

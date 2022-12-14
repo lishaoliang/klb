@@ -120,6 +120,23 @@ static int klua_ex_coroutine_loop_once(void* ptr, klua_env_t* p_env, int64_t las
 
 //////////////////////////////////////////////////////////////////////////
 
+int klua_ex_coroutine_exit(klua_env_t* p_env, int64_t now)
+{
+    // 环境退出时, 将所有协程退出
+
+    klua_ex_coroutine_t* p_ex = klua_ex_get_coroutine(p_env);
+
+    while (0 < klb_nlist_size(p_ex->p_wakeup_list) ||
+        0 < klb_nlist_size(p_ex->p_timeout_list) )
+    {
+        klua_ex_coroutine_loop_once(p_ex, p_env, now, now);
+
+        now += 1000000000;
+    }
+
+    return 0;
+}
+
 int klua_ex_coroutine_push(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_co_env)
 {
     klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_co_hlist, p_co_env->p_co, sizeof(lua_State*), p_co_env);

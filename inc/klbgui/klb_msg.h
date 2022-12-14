@@ -284,7 +284,22 @@ extern "C" {
 
 /// @def   KLB_GUI_PAINT
 /// @brief 绘制消息
-#define KLB_GUI_PAINT        0x0401
+#define KLB_GUI_PAINT               0x0401
+
+
+/// @def   KLB_GUI_DISPLAYING
+/// @brief 即将显示对话框
+#define KLB_GUI_DISPLAYING          0x0410
+
+
+/// @def   KLB_GUI_PRE_END_MODEL
+/// @brief 即将关闭对话框
+#define KLB_GUI_PRE_END_MODEL       0x0418
+
+
+/// @def   KLB_GUI_DISPLAY_NOT
+/// @brief 即将隐藏对话框
+#define KLB_GUI_DISPLAY_NOT         0x0419
 
 
 /// @def   KLB_GUI_WM_USER
@@ -292,7 +307,7 @@ extern "C" {
 ///  [0x0000, 0x0400]   参考微软定义
 ///  (0x0400, 0x1000)   GUI核心定义消息
 ///  [0x1000, +)        界面消息
-#define KLB_GUI_WM_USER      0x1000
+#define KLB_GUI_WM_USER             0x1000
 
 
 
