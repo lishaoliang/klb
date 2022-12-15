@@ -1,4 +1,4 @@
-﻿local stringex = require("kbase.stringex")
+﻿local stringex = require("klbcore.util.stringex")
 
 local my_mime = {
 	avi = 'video/avi',

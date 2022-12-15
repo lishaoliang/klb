@@ -410,11 +410,11 @@ static int klua_pquit(lua_State *L)
 {
     klua_env_t* p_env = (klua_env_t*)lua_touserdata(L, 1);
 
-    // exit
-    klua_ex_coroutine_exit(p_env, p_env->tc);
+    // call kexit
+    klua_env_call_kexit(p_env);
 
     // exit
-    klua_env_call_kexit(p_env);
+    klua_ex_coroutine_exit(p_env, p_env->tc);
 
     // unref
     klua_punref(p_env, L);
