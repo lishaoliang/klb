@@ -46,8 +46,8 @@ static int klbui_button_on_paint(klb_wnd_t* p_wnd)
         }
         else
         {
-            klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 61, 71, 51));
-            klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 180, 180, 180));
+            klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 61, 71, 51));
+            klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 180, 180, 180));
         }
     }
     else
@@ -58,8 +58,8 @@ static int klbui_button_on_paint(klb_wnd_t* p_wnd)
         }
         else
         {
-            klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
-            klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
+            klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
+            klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
         }
     }
 
@@ -68,7 +68,7 @@ static int klbui_button_on_paint(klb_wnd_t* p_wnd)
         int x = p_rect->x + 2, y = p_rect->y + 2, w = p_rect->w - 4, h = p_rect->h - 4 - 2;
 
         klb_rect_t r = { x, y, w, h };
-        klb_wnd_draw_text(p_wnd, &r, p_btn->title, sdslen(p_btn->title), KLB_ARGB8888(255, 255, 128, 0), h - 2);
+        klb_wnd_draw_text2(p_wnd, &r, p_btn->title, sdslen(p_btn->title), KLB_ARGB8888(255, 255, 128, 0), h - 2);
     }
 
     return 0;

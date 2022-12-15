@@ -29,15 +29,15 @@ static int klbui_static_on_paint(klb_wnd_t* p_wnd)
         return 0;
     }
 
-    klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
-    klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
+    klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
 
     if (0 < sdslen(p_static->title))
     {
         int x = p_rect->x + 2, y = p_rect->y + 2, w = p_rect->w - 4, h = p_rect->h - 4 - 2;
 
         klb_rect_t r = { x, y, w, h };
-        klb_wnd_draw_text(p_wnd, &r, p_static->title, sdslen(p_static->title), KLB_ARGB8888(255, 255, 128, 0), h - 2);
+        klb_wnd_draw_text2(p_wnd, &r, p_static->title, sdslen(p_static->title), KLB_ARGB8888(255, 255, 128, 0), h - 2);
     }
 
     return 0;

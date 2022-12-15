@@ -67,14 +67,6 @@ typedef struct klb_wnd_state_t_
 }klb_wnd_state_t;
 
 
-/// @struct klb_wnd_env_t
-/// @brief  窗口环境
-typedef struct klb_wnd_env_t_
-{
-    klb_gui_t*  p_gui;                      ///< 窗口所属的gui
-}klb_wnd_env_t;
-
-
 /// @brief 销毁
 /// @param [in] *p_wnd      窗体对象
 /// @return 无
@@ -148,42 +140,52 @@ typedef struct klb_wnd_vtable_t_
 
     /// @brief 向控件设置数据: 样式\显示\状态等等
     /// @param [in] *p_wnd      窗体对象
-    /// @param [in] *p_json     JSON格式数据
+    /// @param [in] **p_map     map数据集合
     /// @return int 0.成功; 非0.失败(错误码)
     klb_wnd_on_set_cb       on_set;
 
     /// @brief 向控件获取数据: 样式\显示\状态等等
     /// @param [in] *p_wnd      窗体对象
-    /// @param [in] *p_json     JSON格式数据
+    /// @param [in] **p_map     map数据集合
     /// @return char* JSON串或NULL
     klb_wnd_on_get_cb       on_get;
 }klb_wnd_vtable_t;
 
 
 /// @struct klb_wnd_t
-/// @brief  窗口
+/// @brief  窗口基础结构
 typedef struct klb_wnd_t_
 {
-    klb_wnd_vtable_t vtable;    ///< 窗口函数表
+    // 抽象函数
+    klb_wnd_vtable_t    vtable;     ///< 窗口函数表
 
-    klb_wnd_t*      p_parent;   ///< 父节点, 树形结构
-    klb_wnd_t*      p_child;    ///< 子节点
+    // 窗口关系
+    // 用于记录树形结构的窗口结构
+    klb_wnd_t*          p_parent;   ///< 父节点, 树形结构
+    klb_wnd_t*          p_child;    ///< 子节点
 
-    klb_wnd_t*      p_prev;     ///< 前一个兄弟节点
-    klb_wnd_t*      p_next;     ///< 后一个兄弟节点
+    klb_wnd_t*          p_prev;     ///< 前一个兄弟节点
+    klb_wnd_t*          p_next;     ///< 后一个兄弟节点
 
-    klb_gui_t*      p_gui;      ///< 窗口所属的gui
+    // gui
+    klb_gui_t*          p_gui;      ///< 窗口所属的gui
 
-    klb_wnd_pos_t   pos;        ///< 窗口位置
-    klb_wnd_state_t state;      ///< 窗口状态的参数
+    // 子窗口查找表
+    // 通过路径快速查找窗口
+    klb_hlist_t*        p_hlist;    ///< 仅顶层窗口拥有的子窗口查找表
 
-    sds             name;       ///< 窗口名称
-    sds             type;       ///< 窗口类型
-    klb_hlist_t*    p_hlist;    ///< 仅顶层窗口拥有的子窗口查找表
+    // 窗口位置/状态等
+    klb_wnd_pos_t       pos;        ///< 窗口位置
+    klb_wnd_state_t     state;      ///< 窗口状态的参数
 
-    void*           p_udata;    ///< public user data, [公共用户数据]
+    sds                 name;       ///< 窗口名称
+    sds                 type;       ///< 窗口类型
 
-    char            ctrl[];     ///< 控件私有数据域, (控件数据)
+    // 用户数据
+    void*               p_udata;    ///< public user data, [公共用户数据]
+
+    // 组件(控件)数据
+    char                ctrl[];     ///< 控件私有数据域, (控件数据)
 }klb_wnd_t;
 
 
@@ -243,18 +245,34 @@ KLB_API int klb_wnd_set(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 KLB_API klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 
 
-/// @brief 绘图
-KLB_API int klb_wnd_draw_clear(klb_wnd_t* p_wnd, uint32_t color);
-KLB_API int klb_wnd_draw_point(klb_wnd_t* p_wnd, int x, int y, uint32_t color);
-KLB_API int klb_wnd_draw_points(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color);
-KLB_API int klb_wnd_draw_line(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t color);
-KLB_API int klb_wnd_draw_lines(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color);
-KLB_API int klb_wnd_draw_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
-KLB_API int klb_wnd_draw_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
-KLB_API int klb_wnd_draw_fill_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
-KLB_API int klb_wnd_draw_fill_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
-KLB_API int klb_wnd_draw_text(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
+/// @brief 绘图接口
+KLB_API int klb_wnd_set_draw_color(klb_wnd_t* p_wnd, uint32_t color);
+KLB_API uint32_t klb_wnd_get_draw_color(klb_wnd_t* p_wnd);
+KLB_API int klb_wnd_set_font_height(klb_wnd_t* p_wnd, int h);
+KLB_API int klb_wnd_get_font_height(klb_wnd_t* p_wnd);
+
+KLB_API int klb_wnd_draw_clear(klb_wnd_t* p_wnd, uint32_t* p_color);
+KLB_API int klb_wnd_draw_point(klb_wnd_t* p_wnd, int x, int y, uint32_t* p_color);
+KLB_API int klb_wnd_draw_points(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t* p_color);
+KLB_API int klb_wnd_draw_line(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t* p_color);
+KLB_API int klb_wnd_draw_lines(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t* p_color);
+KLB_API int klb_wnd_draw_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t* p_color);
+KLB_API int klb_wnd_draw_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t* p_color);
+KLB_API int klb_wnd_draw_fill_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t* p_color);
+KLB_API int klb_wnd_draw_fill_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t* p_color);
+KLB_API int klb_wnd_draw_text(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t* p_color, int* p_font_h);
 KLB_API int klb_wnd_draw_image(klb_wnd_t* p_wnd, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect);
+
+KLB_API int klb_wnd_draw_clear2(klb_wnd_t* p_wnd, uint32_t color);
+KLB_API int klb_wnd_draw_point2(klb_wnd_t* p_wnd, int x, int y, uint32_t color);
+KLB_API int klb_wnd_draw_points2(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color);
+KLB_API int klb_wnd_draw_line2(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t color);
+KLB_API int klb_wnd_draw_lines2(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color);
+KLB_API int klb_wnd_draw_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
+KLB_API int klb_wnd_draw_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
+KLB_API int klb_wnd_draw_fill_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
+KLB_API int klb_wnd_draw_fill_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
+KLB_API int klb_wnd_draw_text2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
 
 
 #ifdef __cplusplus

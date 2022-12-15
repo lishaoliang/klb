@@ -322,102 +322,197 @@ klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 //////////////////////////////////////////////////////////////////////////
 // 绘图
 
-int klb_wnd_draw_clear(klb_wnd_t* p_wnd, uint32_t color)
+int klb_wnd_set_draw_color(klb_wnd_t* p_wnd, uint32_t color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
     int ret = klb_canvas_set_draw_color(p_canvas, color);
+
+    return ret;
+}
+
+uint32_t klb_wnd_get_draw_color(klb_wnd_t* p_wnd)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+
+    return klb_canvas_get_draw_color(p_canvas);
+}
+
+int klb_wnd_set_font_height(klb_wnd_t* p_wnd, int h)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+
+    int ret = klb_canvas_set_font_height(p_canvas, h);
+
+    return ret;
+}
+
+int klb_wnd_get_font_height(klb_wnd_t* p_wnd)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+
+    return klb_canvas_get_font_height(p_canvas);
+}
+
+int klb_wnd_draw_clear(klb_wnd_t* p_wnd, uint32_t* p_color)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+    
     ret |= klb_canvas_draw_clear(p_canvas);
 
     return ret;
 }
 
-int klb_wnd_draw_point(klb_wnd_t* p_wnd, int x, int y, uint32_t color)
+int klb_wnd_draw_point(klb_wnd_t* p_wnd, int x, int y, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_point(p_canvas, x, y);
 
     return ret;
 }
 
-int klb_wnd_draw_points(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color)
+int klb_wnd_draw_points(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_points(p_canvas, p_points, count);
 
     return ret;
 }
 
-int klb_wnd_draw_line(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t color)
+int klb_wnd_draw_line(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_line(p_canvas, x1, y1, x2, y2);
 
     return ret;
 }
 
-int klb_wnd_draw_lines(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color)
+int klb_wnd_draw_lines(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_lines(p_canvas, p_points, count);
 
     return ret;
 }
 
-int klb_wnd_draw_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color)
+int klb_wnd_draw_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_rect(p_canvas, p_rect);
 
     return ret;
 }
 
-int klb_wnd_draw_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color)
+int klb_wnd_draw_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_rects(p_canvas, p_rects, count);
 
     return ret;
 }
 
-int klb_wnd_draw_fill_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color)
+int klb_wnd_draw_fill_rect(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
     ret |= klb_canvas_draw_fill_rect(p_canvas, p_rect);
 
     return ret;
 }
 
-int klb_wnd_draw_fill_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color)
+int klb_wnd_draw_fill_rects(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t* p_color)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        int ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
     ret |= klb_canvas_draw_fill_rects(p_canvas, p_rects, count);
 
     return ret;
 }
 
-int klb_wnd_draw_text(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h)
+int klb_wnd_draw_text(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t* p_color, int* p_font_h)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
 
-    int ret = klb_canvas_set_draw_color(p_canvas, color);
-    ret |= klb_canvas_set_font_height(p_canvas, font_h);
+    int ret = 0;
+
+    if (NULL != p_color)
+    {
+        ret = klb_canvas_set_draw_color(p_canvas, *p_color);
+    }
+
+    if (NULL != p_font_h)
+    {
+        ret |= klb_canvas_set_font_height(p_canvas, *p_font_h);
+    }
+
     ret |= klb_canvas_draw_text(p_canvas, p_rect, p_utf8, utf8_len);
 
     return ret;
@@ -430,4 +525,54 @@ int klb_wnd_draw_image(klb_wnd_t* p_wnd, const klb_rect_t* p_dst_rect, const cha
     int ret = klb_canvas_draw_image(p_canvas, p_dst_rect, p_path);
 
     return ret;
+}
+
+int klb_wnd_draw_clear2(klb_wnd_t* p_wnd, uint32_t color)
+{
+    return klb_wnd_draw_clear(p_wnd, &color);
+}
+
+int klb_wnd_draw_point2(klb_wnd_t* p_wnd, int x, int y, uint32_t color)
+{
+    return klb_wnd_draw_point(p_wnd, x, y, &color);
+}
+
+int klb_wnd_draw_points2(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color)
+{
+    return klb_wnd_draw_points(p_wnd, p_points, count, &color);
+}
+
+int klb_wnd_draw_line2(klb_wnd_t* p_wnd, int x1, int y1, int x2, int y2, uint32_t color)
+{
+    return klb_wnd_draw_line(p_wnd, x1, y1, x2, y2, &color);
+}
+
+int klb_wnd_draw_lines2(klb_wnd_t* p_wnd, const klb_point_t* p_points, int count, uint32_t color)
+{
+    return klb_wnd_draw_lines(p_wnd, p_points, count, &color);
+}
+
+int klb_wnd_draw_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color)
+{
+    return klb_wnd_draw_rect(p_wnd, p_rect, &color);
+}
+
+int klb_wnd_draw_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color)
+{
+    return klb_wnd_draw_rects(p_wnd, p_rects, count, &color);
+}
+
+int klb_wnd_draw_fill_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color)
+{
+    return klb_wnd_draw_fill_rect(p_wnd, p_rect, &color);
+}
+
+int klb_wnd_draw_fill_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color)
+{
+    return klb_wnd_draw_fill_rects(p_wnd, p_rects, count, &color);
+}
+
+int klb_wnd_draw_text2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h)
+{
+    return klb_wnd_draw_text(p_wnd, p_rect, p_utf8, utf8_len, &color, &font_h);
 }

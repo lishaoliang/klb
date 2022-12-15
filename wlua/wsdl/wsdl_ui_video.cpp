@@ -43,11 +43,11 @@ static int wsdl_ui_video_on_paint(klb_wnd_t* p_wnd)
 
     if (p_video->play)
     {
-        klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(0, 0, 0, 0));
+        klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(0, 0, 0, 0));
     }
     else
     {
-        klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
+        klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
 
         if (0 < sdslen(p_video->pic))
         {
@@ -55,7 +55,7 @@ static int wsdl_ui_video_on_paint(klb_wnd_t* p_wnd)
         }
     }
 
-    klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
+    klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
 
     return 0;
 }

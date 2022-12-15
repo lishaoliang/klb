@@ -29,14 +29,14 @@ static int klbui_picture_on_paint(klb_wnd_t* p_wnd)
         return 0;
     }
 
-    klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 30, 30, 30));
 
     if (0 < sdslen(p_pic->pic))
     {
         klb_wnd_draw_image(p_wnd, p_rect, p_pic->pic, NULL);
     }
 
-    klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
+    klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 120, 120, 120));
 
     return 0;
 }

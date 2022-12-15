@@ -28,33 +28,33 @@ static int klb_dialog_on_paint(klb_wnd_t* p_wnd)
 
     if (KLB_WND_STYLE_BORDERLESS & p_wnd->state.style)
     {
-        klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 31, 41, 21));
-        klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 81, 81, 81));
+        klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 31, 41, 21));
+        klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 81, 81, 81));
 
         //
         klb_wnd_show(p_dlg->p_btn_close, false);
     }
     else
     {
-        klb_wnd_draw_fill_rect(p_wnd, p_rect, KLB_ARGB8888(255, 31, 41, 21));
+        klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 31, 41, 21));
 
         int title_h = 42;
         klb_rect_t title_rect = { p_rect->x, p_rect->y, p_rect->w, title_h };
-        klb_wnd_draw_fill_rect(p_wnd, &title_rect, KLB_ARGB8888(255, 45, 45, 48));
+        klb_wnd_draw_fill_rect2(p_wnd, &title_rect, KLB_ARGB8888(255, 45, 45, 48));
 
-        klb_wnd_draw_rect(p_wnd, p_rect, KLB_ARGB8888(255, 81, 81, 81));
+        klb_wnd_draw_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 81, 81, 81));
 
-        klb_wnd_draw_line(p_wnd, p_rect->x, p_rect->y, p_rect->x + p_rect->w - 2, p_rect->y, KLB_ARGB8888(255, 180, 180, 180));
-        klb_wnd_draw_line(p_wnd, p_rect->x, p_rect->y + title_h, p_rect->x + p_rect->w - 2, p_rect->y + title_h, KLB_ARGB8888(255, 120, 120, 120));
+        klb_wnd_draw_line2(p_wnd, p_rect->x, p_rect->y, p_rect->x + p_rect->w - 2, p_rect->y, KLB_ARGB8888(255, 180, 180, 180));
+        klb_wnd_draw_line2(p_wnd, p_rect->x, p_rect->y + title_h, p_rect->x + p_rect->w - 2, p_rect->y + title_h, KLB_ARGB8888(255, 120, 120, 120));
 
-        klb_wnd_draw_line(p_wnd, p_rect->x, p_rect->y, p_rect->x, p_rect->y + p_rect->h - 2, KLB_ARGB8888(255, 180, 180, 180));
+        klb_wnd_draw_line2(p_wnd, p_rect->x, p_rect->y, p_rect->x, p_rect->y + p_rect->h - 2, KLB_ARGB8888(255, 180, 180, 180));
     
         if (0 < sdslen(p_dlg->title))
         {
             int x = p_rect->x + 8, y = p_rect->y + 4, w = p_rect->w - 16, h = title_h - 8;
 
             klb_rect_t r = { x, y, w, h };
-            klb_wnd_draw_text(p_wnd, &r, p_dlg->title, sdslen(p_dlg->title), KLB_ARGB8888(255, 255, 128, 0), h - 2);
+            klb_wnd_draw_text2(p_wnd, &r, p_dlg->title, sdslen(p_dlg->title), KLB_ARGB8888(255, 255, 128, 0), h - 2);
         }
     }
 
