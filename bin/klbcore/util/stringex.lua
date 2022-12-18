@@ -1,4 +1,8 @@
-﻿local string = require("string")
+﻿-- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- @file  stringex.lua
+-- @brief string extented
+--]]
+local string = require("string")
 
 local stringex = {}
 

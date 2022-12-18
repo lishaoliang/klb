@@ -188,7 +188,7 @@ kgui.do_model('/home')
 
 -- h264
 local kh26x = require("kh26x")
-local path_h264 = './res/media/dnfvideo_2022-10-23_16-19-05-919.h264'
+local path_h264 = "./res/media/BGM-You KnowI'llGo Get-960x540.h264"
 
 kco.fork(function ()
 	local h264 = kh26x.load(path_h264)	

@@ -1,4 +1,8 @@
-﻿
+﻿--[[
+-- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- @file  printex.lua
+-- @brief print extented
+--]]
 local cjson = require("cjson.safe")
 
 
