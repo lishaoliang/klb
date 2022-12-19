@@ -6,8 +6,7 @@
 local cjson = require("cjson.safe")
 
 
-local copy_to_string_table = nil
-copy_to_string_table = function(t)
+local function copy_to_string_table(t)
 	local dst = {}
 	
 	for k, v in pairs(t) do
