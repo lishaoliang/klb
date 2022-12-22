@@ -9,6 +9,36 @@
 
 xml = require("klbcore.util.LuaXml")
 
+
+-------------------------------------------------------------------
+
+local function new_xml()
+	local xml = {}
+
+	xml:tag = function (tag)
+		
+	end
+
+	xml:append = function (tag)
+		
+	end
+	
+	xml:str = function (indent, tagValue)
+	
+	end
+
+	xml:save = function (filename)
+	
+	end
+	
+	xml:find = function (tag, attributeKey, attributeValue)
+	
+	end
+	
+	return xml
+end
+
+
 -------------------------------------------------------------------
 -- ./klb/src_c/klua/LuaXML_130610/LuaXML_lib.c
 
@@ -18,7 +48,7 @@ xml = require("klbcore.util.LuaXml")
 -- @param [in]		filename[string]	xml文件路径
 -- @return [table] xml
 xml.load = function (filename)
-	return xml
+	return new_xml()
 end
 
 
@@ -26,7 +56,7 @@ end
 -- @param [in]		xml_text[string]	xml数据
 -- @return [table] xml
 xml.eval = function (xml_text)
-	return xml
+	return new_xml()
 end
 
 
@@ -44,40 +74,9 @@ end
 -- ./klbcore/util/LuaXml.lua
 
 
--- @brief 新的一个xml
--- @param [in]		arg[string]	根节点
+-- @brief 新的一个xml对象
+-- @param [in]		root[string]	根节点
 -- @return [table] xml
-xml.new = function (arg)
-	return xml 
-end
-
-
-xml.tag = function (var, tag)
-
-end
-
-
-xml.append = function (var, tag)
-	
-end
-
-
-xml.str = function (var, indent, tagValue)
-	
-end
-
-
--- @brief 保存xml文件
--- @param [in]		var[table]			xml
--- @param [in]		filename[string]	文件路径
--- @return [nil, table] [boolean] 几个返回值集合
--- @note 注意事项,参见xxx
--- @see [string][table] = x_xx(string, string, table)
-xml.save = function (var, filename)
-	
-end
-
-
-xml.find = function (var, tag, attributeKey, attributeValue)
-	
+xml.new = function (root)
+	return new_xml()
 end

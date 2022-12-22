@@ -1,4 +1,4 @@
-﻿-- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+﻿-- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  stringex.lua
 -- @brief string extented
 --]]
