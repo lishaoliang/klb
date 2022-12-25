@@ -30,7 +30,7 @@ function table_to_xml(node, t, has_type)
 		local leaf_node = node:append(k)
 		
 		if has_type then
-			local type_v = type(v)		
+			local type_v = type(v)
 			if 'boolean' == type_v then
 				leaf_node[KEY_type] = 'boolean'
 			elseif 'number' == type_v then
@@ -93,16 +93,94 @@ function xmlparser.to_xml(t, has_type, root)
 end
 
 
-function xml_to_table(t, node)
+function xml_to_table(t, node, is_array)
 	if 'table' ~= type(node) then
-		return
+		return ''
+	end
+	
+	local function type_node(v)
+		-- leaf
+		local len = #v
+		if len < 1 then
+			return 'leaf'
+		elseif len == 1 then
+			if 'table' ~= type(v[1]) then
+				return 'leaf'
+			end
+		end
+		
+		for _, v in ipairs(v) do
+			if 'item' ~= v[0] then
+				return 'object'
+			end
+		end
+		
+		return 'array'
 	end
 	
 	local k = node:tag()
+
+	local tn = type_node(node)
 	
-	if 1 < #node then
-		
+	if 'leaf' == tn then
+		-- 叶子节点
+		local node_type = ('string' == type(node['type']) and node['type']) or '' -- xml提供的节点类型
+		if 1 == #node then
+			local v = ''
+			if 'boolean' == node_type then
+				if 'true' == node[1] then
+					v = true
+				else
+					v = false
+				end
+			elseif 'number' == node_type then
+				v = tonumber(node[1])
+			else
+				v = tostring(node[1])
+			end
+			
+			if is_array then
+				table.insert(t, v)
+			else
+				t[k] = v
+			end
+		else			
+			if is_array then
+				table.insert(t, {})
+			else
+				t[k] = {}
+			end
+		end
+	elseif 'array' == tn then
+		-- 数组
+		for _, v in ipairs(node) do			
+			if 'table' == type(v) then
+				if 'leaf' == type_node(v) then
+					xml_to_table(t, v, true)
+				else
+					local t1 = {}
+					local k1 = xml_to_table(t1, v)
+					table.insert(t, t1)
+				end
+			end
+		end
+	else
+		-- object {...}
+		for _, v in ipairs(node) do
+			if 'table' == type(v) then
+				if 'leaf' == type_node(v) then
+					xml_to_table(t, v)
+				else
+					local t1 = {}
+					local k1 = xml_to_table(t1, v)
+					
+					t[k1] = t1
+				end
+			end
+		end
 	end
+	
+	return k
 end
 
 
@@ -112,7 +190,7 @@ end
 function xmlparser.to_table(x)
 	local t = {}	
 	
-	xml_to_table(t, tx)
+	xml_to_table(t, x)
 	
 	return t
 end
