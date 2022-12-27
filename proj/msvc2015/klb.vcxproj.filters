@@ -216,6 +216,12 @@
     <Filter Include="src_c\klbgui\widgets">
       <UniqueIdentifier>{5066e017-b6b6-4fce-8c0f-97b3c1e93817}</UniqueIdentifier>
     </Filter>
+    <Filter Include="build">
+      <UniqueIdentifier>{330da761-95fd-411a-90b8-4d59b33d66b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build\linux">
+      <UniqueIdentifier>{0681a292-a6a0-447a-86b9-c9839cb24d6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1312,9 +1318,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\src_c\Makefile">
-      <Filter>src_c</Filter>
-    </None>
     <None Include="..\..\src_c\libavutil\libavutil.v">
       <Filter>src_c\libavutil</Filter>
     </None>
@@ -1323,6 +1326,10 @@
     </None>
     <None Include="..\..\src_packages\Makefile">
       <Filter>src_packages</Filter>
+    </None>
+    <None Include="..\..\Makefile" />
+    <None Include="..\..\build\linux\Makefile">
+      <Filter>build\linux</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

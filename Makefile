@@ -1,105 +1,179 @@
-# make
+# 编译命令 : make
 
 SHELL = /bin/bash
 PWD = `pwd`
 
-# "linux", "windows", "darwin", "js"
-OS ?= linux
+# 编译工具, arm-linux-gnueabi-, arm-himix200-linux-
+#MY_TOOL_CHAIN ?= arm-himix200-linux-
+MY_TOOL_CHAIN ?= 
 
-# "amd64", "386", "arm", "arm64", "wasm"
-ARCH ?= amd64
-TAGS ?= "debug normal"
+MY_CFLAGS_EX ?= 
 
-#MY_TOOL_CHAIN ?= arm-linux-gnueabi-
-#MY_TOOL_CHAIN ?=
-
-ifeq ($(OS), linux)
-	ifeq ($(MY_ARCH), arm)
-		MY_TOOL_CHAIN ?= arm-linux-gnueabi-
-	endif
-
-	MY_CFLAGS +=
-	MY_GO_STATIC  ?= 
-	MY_GCC_STATIC ?= 
-else ifeq ($(OS), windows)
-	ifeq ($(MY_ARCH), 386)
-		MY_TOOL_CHAIN ?= i686-w64-mingw32-
-	else
-		MY_TOOL_CHAIN ?= x86_64-w64-mingw32-
-	endif
-
-	MY_CFLAGS += -D__WINDOWS__
-	MY_GO_STATIC  ?= -ldflags -extldflags=-static
-	MY_GCC_STATIC ?= -static
-else ifeq ($(OS), darwin)
-	CC ?= clang
-	CXX ?= clang
-	MY_GO_STATIC ?=
-
-	MY_CFLAGS +=
-	MY_GO_STATIC  ?= 
-	MY_GCC_STATIC ?= 
-else ifeq ($(OS), stm32)
-	MY_TOOL_CHAIN ?= arm-none-eabi-
-
-	MY_CFLAGS += -D__STM32__
-	MY_GO_STATIC  ?= 
-	MY_GCC_STATIC ?= -static
-else ifeq ($(OS), js)
-	MY_TOOL_CHAIN ?= 
-
-	MY_CFLAGS += -D__EMSCRIPTEN__
-	MY_GO_STATIC  ?= 
-	MY_GCC_STATIC ?= -static
-else
-	MY_GO_STATIC  ?= -ldflags -extldflags=-static
-	MY_GCC_STATIC ?= -static
-endif
-
-INSTALL_PATH_VERSION = $(INSTALL_LIB)/klb1.0
-
-# 传递给子makefile的参数
-MK_PARAMS := OS=$(OS) ARCH=$(ARCH) TAGS=$(TAGS) MY_TOOL_CHAIN=$(MY_TOOL_CHAIN)
+# gcc编译工具链
+CC		:= $(MY_TOOL_CHAIN)gcc
+CXX		:= $(MY_TOOL_CHAIN)g++
+CAR		:= $(MY_TOOL_CHAIN)ar
+CRANLIB	:= $(MY_TOOL_CHAIN)ranlib
+CSTRIP	:= $(MY_TOOL_CHAIN)strip
+MAKE	:= make
+RM		:= -rm
+RM_F	:= -rm -f
+RM_RF	:= -rm -rf
+CP		:= -cp
+CP_F	:= -cp -f
+CP_RF	:= -cp -rf
 
 
-.PHONY: all clean strip upx doc install uninstall
+# 从目录检索需要编译的c文件
+MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
+
+# klbnet
+MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops
+
+# klbformat
+MY_DIRS += ./src_c/klbformat
+
+# klbgui
+MY_DIRS += ./src_c/klbgui ./src_c/klbgui/widgets
+
+# klua
+MY_DIRS += ./src_c/klua ./src_c/klua/extension ./src_c/klua/klua_platform ./src_c/klua/klua_util ./src_c/klua/klua_base
+MY_DIRS += ./src_c/klua/klua_multithread ./src_c/klua/klua_net ./src_c/klua/klua_format
+MY_DIRS += ./src_c/klua/lua-5.4.1/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/lpeg-1.0.2 ./src_c/klua/luafilesystem-2.0/src
+MY_DIRS += ./src_c/klua/lsqlite3 ./src_c/klua/LuaXML_130610 ./src_c/klua/lua-skynet
+
+# libavutil
+MY_DIRS += ./src_c/compat ./src_c/libavutil
+
+# 第三方库
+MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
+
+# cpp / src_cpp
+MY_DIRS += ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbnet
+MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klua 
 
 
-all:
-	if [ -d ./src_c ]; then $(MAKE) $(MK_PARAMS) -C ./src_c; fi
-	if [ -d ./src ]; then $(MAKE) $(MK_PARAMS) -C ./src; fi
+# src_packages
+MY_DIRS += ./src_packages/kpa_flv
+MY_DIRS += ./src_packages/kpa_http 
+MY_DIRS += ./src_packages/kpa_mgui 
+MY_DIRS += ./src_packages/kpa_mnp 
+MY_DIRS += ./src_packages/kpa_rtsp 
+MY_DIRS += ./src_packages/kpa_sip 
+MY_DIRS += ./src_packages/kpa_ws 
 
 
-clean:
-	if [ -d ./src_c ]; then $(MAKE) $(MK_PARAMS) -C ./src_c clean; fi
-	if [ -d ./src ]; then $(MAKE) $(MK_PARAMS) -C ./src clean; fi
+# 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__
+MY_CFLAGS := -g -D_GNU_SOURCE $(MY_CFLAGS_EX)
 
+# lua的宏
+MY_CFLAGS += -DLUA_USE_LINUX
+
+# pcre2的宏
+MY_CFLAGS += -DHAVE_CONFIG_H
+
+# quickjs的宏
+MY_CFLAGS += -DCONFIG_BIGNUM -DCONFIG_VERSION=\"2019-10-27\"
+
+# openssl
+MY_CFLAGS += -D__KLB_OPENSSL__
+
+# 引用头文件
+MY_INCLUDES := -I ./src_c -I ./inc -I ./src_c/compat
+MY_INCLUDES += -I ./src_c/klua/lsqlite3
+MY_INCLUDES += -I ./src_c/klbthird/sds
+MY_INCLUDES += -I ./src_c/klbthird/pcre2/src
+MY_INCLUDES += -I ./inc/klbthird
+
+# 第三方库头文件
+MY_INCLUDES += -I ./src_c/klua/lua-5.4.1/src
+
+# cpp
+MY_INCLUDES += -I ./inc_hpp
+
+# src_packages
+MY_INCLUDES += -I ./src_packages
+
+
+# 引用的静态库
+MY_LIB_STATIC := -L ./lib -Bstatic
+MY_LIB_STATIC += -lssl -lcrypto
+
+
+# 引用的动态库
+MY_LIB_DYNAMIC := -L ./lib -Bdynamic
+MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
+
+
+# 编译目标名称
+MY_TARGET_NAME := klb_c
+MY_TARGET_A := ./lib/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := ./lib/lib$(MY_TARGET_NAME).so
+
+
+# 所有编译文件 C/C++
+MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
+MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
+MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
+MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
+
+
+MY_LIB_A_OBJS := $(addsuffix .o, $(MY_SOURCES))
+MY_A_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC)
+
+
+# 编译静态库时候,使compiler为每个function和data item分配独立的section
+MY_LIB_MINI = -ffunction-sections -fdata-sections
+
+# 编译动态库或执行档时,使compiler删除所有未被使用的function和data,即编译之后的文件最小化
+MY_LINK_MINI = -Wl,--gc-sections
+
+MY_SO_PARAMS := -fPIC
+MY_STD_C99 := -std=c99
+
+.PHONY: all clean
+
+all: lib so
+
+lib: $(MY_TARGET_A)
+so: $(MY_TARGET_SO)
+
+%.c.o: %.c
+	$(CC) $(MY_STD_C99) $(MY_SO_PARAMS) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
+
+%.cpp.o: %.cpp
+	$(CXX) $(MY_SO_PARAMS) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
+
+$(MY_TARGET_A): $(MY_LIB_A_OBJS)
+	$(my_tip)
+	$(CAR) rs $(MY_TARGET_A) $(MY_LIB_A_OBJS)
+
+$(MY_TARGET_SO): $(MY_LIB_A_OBJS)
+	$(my_tip)
+	$(CXX) -shared -fPIC -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
 
 strip:
-	if [ -d ./src ]; then $(MAKE) $(MK_PARAMS) -C ./src strip; fi
+	$(CSTRIP) $(MY_TARGET_A)
+	$(CSTRIP) $(MY_TARGET_SO)
 
-upx:
-	if [ -d ./src ]; then $(MAKE) $(MK_PARAMS) -C ./src upx; fi
+clean:
+	@echo "++++++ make clean ++++++"
+	@echo "+ MY_DIRS = $(MY_DIRS)"
+	@echo "++ RM_F = $(RM_F)"
+	$(RM_F) $(MY_LIB_A_OBJS)
+	$(RM_F) $(MY_TARGET_A)
+	$(RM_F) $(MY_TARGET_SO)
+	@echo "+++++++++++++++++++++++++"
 
-doc:
-	doxygen
 
-
-install:
-	mkdir -p $(INSTALL_PATH_VERSION)/
-	$(CP_F)  $(MY_LIB_PATH)/klb $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/base/ $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/html/ $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/http/ $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/tls/ $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/rtsp/ $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/server/ $(INSTALL_PATH_VERSION)/
-	$(CP_RF) $(MY_LIB_PATH)/util/ $(INSTALL_PATH_VERSION)/
-	$(CP_F)  $(MY_LIB_PATH)/*.lua $(INSTALL_PATH_VERSION)/
-	ln -s -f $(INSTALL_PATH_VERSION)/klb $(INSTALL_BIN)/klb
-	ln -s -f $(INSTALL_PATH_VERSION)/ $(INSTALL_LIB)/klb1
-
-uninstall:
-	$(RM_RF) $(INSTALL_PATH_VERSION)/
-	$(RM_F)  $(INSTALL_BIN)/klb
-	$(RM_F)  $(INSTALL_LIB)/klb1
+define my_tip
+	@echo "++++++ make tip ++++++"
+	@echo "+ MY_TOOL_CHAIN = $(MY_TOOL_CHAIN)"
+	@echo "+ CC = $(CC)"
+	@echo "+ CXX = $(CXX)"
+	@echo "+ MY_SOURCES = $(MY_SOURCES)"
+	@echo "+ MY_DIRS = $(MY_DIRS)"
+	@echo "+ MY_CFLAGS = $(MY_CFLAGS)"
+	@echo "+ MY_TARGET_A = $(MY_TARGET_A)"
+	@echo "++++++++++++++++++++++"
+endef

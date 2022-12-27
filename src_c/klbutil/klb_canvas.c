@@ -249,11 +249,11 @@ int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const
     return 0;
 }
 
-int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect)
+int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path)
 {
     if (p_canvas->vtable.draw_image)
     {
-        return p_canvas->vtable.draw_image(p_canvas, p_dst_rect, p_path, p_src_rect);
+        return p_canvas->vtable.draw_image(p_canvas, p_dst_rect, p_path, NULL);
     }
 
     return 0;

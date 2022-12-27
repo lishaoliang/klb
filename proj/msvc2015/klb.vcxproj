@@ -529,9 +529,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_packages\kpa_rtsp\rtp.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\build\linux\Makefile" />
+    <None Include="..\..\Makefile" />
     <None Include="..\..\src_c\libavutil\libavutil.v" />
     <None Include="..\..\src_c\libavutil\Makefile" />
-    <None Include="..\..\src_c\Makefile" />
     <None Include="..\..\src_packages\Makefile" />
   </ItemGroup>
   <ItemGroup>

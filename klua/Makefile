@@ -44,6 +44,7 @@ MY_LIB_STATIC := -L ../lib -Bstatic ../lib/libklb_c.a
 # 引用的动态库
 MY_LIB_DYNAMIC := -L ../lib -Bdynamic 
 MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
+MY_LIB_DYNAMIC += -lssl -lcrypto
 
 
 # 编译目标名称
@@ -92,19 +93,11 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(my_tip)
 	$(CXX) -shared -fPIC -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
 
-$(MY_TARGET_EXE): depends $(MY_LIB_A_OBJS)
+$(MY_TARGET_EXE): $(MY_LIB_A_OBJS)
 	$(my_tip)
 	$(CXX) -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
-	
-strip:
-	$(CSTRIP) $(MY_TARGET_EXE)
 
-depends:
-	if [ -f ../src_c/Makefile ]; then $(MAKE) -C ../src_c; fi
-	
 clean:
-	if [ -f ../src_c/Makefile ]; then $(MAKE) -C ../src_c clean; fi
-
 	@echo "++++++ make clean ++++++"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
 	@echo "++ RM_F = $(RM_F)"
