@@ -2,6 +2,11 @@
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
+#ifndef _WIN32
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <arpa/inet.h>
+#endif // !_WIN32
 
 
 void kpa_rtsp_udp_rtp_destroy(kpa_rtsp_udp_rtp_t* p_udp)
