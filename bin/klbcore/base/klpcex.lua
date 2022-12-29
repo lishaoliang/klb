@@ -15,13 +15,13 @@ local klpcex = {}
 -- @param [in]		...[任意类型]		参数数据
 -- @return [...]	模块回复的数据
 -- @note 仅在协程中使用
-function klpcex.call(mo_name, ...)	
+function klpcex.call(mo_name, ...)
 	local lpc = klpc.new()
 	
 	return (function (...)
 		lpc:close()
 		return ...
-	end)(lpc:co_call(mo_name, ...))	
+	end)(lpc:co_call(mo_name, ...))
 end
 
 

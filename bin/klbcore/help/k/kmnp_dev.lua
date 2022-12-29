@@ -1,5 +1,0 @@
-﻿--[[
--- Copyright(c) 2020, LGPL v3 All Rights Reserved
---   \n "kmnp_dev"
--- @version 0.1
---]]

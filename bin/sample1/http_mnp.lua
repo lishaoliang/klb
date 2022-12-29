@@ -205,7 +205,7 @@ local send_media_http_mnp = function (conn)
 		conn:send_media(frame1)
 		conn:send_media(frame2)
 		
-		kco.co_sleep(33)
+		kco.co_sleep(25)
 	end	
 end
 
