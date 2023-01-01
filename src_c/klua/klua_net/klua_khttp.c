@@ -549,6 +549,9 @@ static int cb_klua_khttp_send(void* p_lparam, void* p_wparam, int id, int64_t no
     klb_socket_status_e err = KLB_SOCKET_OK;
     int send = 0;
 
+    // select/epool 之后, 首次调用send 返回-1时, 才认为网络断开 
+    bool first = true;
+
     while (true)
     {
         if (NULL == p_inter->p_w_cur && 0 < klb_nlist_size(p_inter->p_w_list))
@@ -581,9 +584,14 @@ static int cb_klua_khttp_send(void* p_lparam, void* p_wparam, int id, int64_t no
         }
         else
         {
-            err = KLB_SOCKET_DISCONNECT;
+            if (first)
+            {
+                err = KLB_SOCKET_DISCONNECT;
+            }
             break; // 出现错误
         }
+
+        first = false;
     }
 
     if (NULL == p_inter->p_w_cur && klb_nlist_size(p_inter->p_w_list) <= 0)
