@@ -3,6 +3,7 @@
 -- @brief string extented
 --]]
 local string = require("string")
+local table = require("table")
 
 local stringex = {}
 
@@ -36,6 +37,19 @@ stringex.find_ignore_case = function (s1, s2)
 	end
 
 	return false
+end
+
+
+-- 连接成字符串
+function stringex.join(...)
+	local args = {...}
+	local t = {}
+	
+	for _, v in ipairs(args) do
+		table.insert(t, tostring(v))
+	end
+	
+	return table.concat(t)
 end
 
 return stringex
