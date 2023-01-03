@@ -9,7 +9,7 @@
 #include <assert.h>
 
 
-static int klb_gui_thread(void* p_obj, volatile int* p_run);
+//static int klb_gui_thread(void* p_obj, volatile int* p_run);
 
 //////////////////////////////////////////////////////////////////////////
 // klb_gui.h
@@ -80,21 +80,21 @@ void klb_gui_destroy(klb_gui_t* p_gui)
     KLB_FREE(p_gui);
 }
 
-int klb_gui_start(klb_gui_t* p_gui)
-{
-    assert(NULL == p_gui->p_thread1);
+//int klb_gui_start(klb_gui_t* p_gui)
+//{
+//    assert(NULL == p_gui->p_thread1);
+//
+//    p_gui->p_thread1 = klb_thread_create(klb_gui_thread, p_gui, -1, "klb gui");
+//
+//    return (NULL != p_gui->p_thread1) ? 0 : 1;
+//}
 
-    p_gui->p_thread1 = klb_thread_create(klb_gui_thread, p_gui, -1, "klb gui");
-
-    return (NULL != p_gui->p_thread1) ? 0 : 1;
-}
-
-void klb_gui_stop(klb_gui_t* p_gui)
-{
-    assert(NULL != p_gui);
-
-    KLB_FREE_BY(p_gui->p_thread1, klb_thread_destroy);
-}
+//void klb_gui_stop(klb_gui_t* p_gui)
+//{
+//    assert(NULL != p_gui);
+//
+//    KLB_FREE_BY(p_gui->p_thread1, klb_thread_destroy);
+//}
 
 /// @brief 获取标准控件的默认值指针
 klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui)
@@ -586,58 +586,58 @@ int klb_gui_refresh(klb_gui_t* p_gui)
 
 //////////////////////////////////////////////////////////////////////////
 
-static int test_dlg_btn_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    switch (msg)
-    {
-    case KLB_WM_LBUTTONDOWN:
-        KLB_LOG("klb_button_on_command\n");
-        break;
-    default:
-        break;
-    }
+//static int test_dlg_btn_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+//{
+//    switch (msg)
+//    {
+//    case KLB_WM_LBUTTONDOWN:
+//        KLB_LOG("klb_button_on_command\n");
+//        break;
+//    default:
+//        break;
+//    }
+//
+//    return 0;
+//}
 
-    return 0;
-}
-
-static int test_dlg(klb_gui_t* p_gui)
-{
-#if 0
-    klb_wnd_t* p_dlg = klb_dialog_create(10, 10, 640, 480);
-
-    klb_wnd_t* p_btn1 = klb_button_create(10, 10, 100, 24);
-    klb_wnd_push_child(p_dlg, p_btn1);
-
-    klb_wnd_t* p_btn2 = klb_button_create(10, 64, 100, 24);
-    klb_wnd_push_child(p_dlg, p_btn2);
-
-
-    klb_wnd_set_top(p_dlg, p_gui);
-    klb_list_push_tail(p_gui->p_top_list, p_dlg);
-#else
-    klb_gui_append(p_gui, "kdialog", "/home", 10, 10, 640, 480, 0, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn1", 10, 10, 100, 24, 0, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn2", 10, 40, 100, 24, 0, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn3", 10, 70, 100, 24, 0, NULL);
-    klb_gui_append(p_gui, "kbutton", "/home/btn4", 10, 100, 100, 24, 0, NULL);
-
-    klb_gui_bind_command(p_gui, "/home/btn4", test_dlg_btn_on_command, NULL);
-#endif
-
-    return 0;
-}
-
-static int klb_gui_thread(void* p_obj, volatile int* p_run)
-{
-    KLB_LOG("start klb gui thread.\n");
-    klb_gui_t* p_gui = (klb_gui_t*)(p_obj);
-
-    while (*p_run)
-    {
-        klb_gui_loop_once(p_gui, 0);
-        klb_sleep(10);
-    }
-
-    KLB_LOG("stop klb gui thread.\n");
-    return 0;
-}
+//static int test_dlg(klb_gui_t* p_gui)
+//{
+//#if 0
+//    klb_wnd_t* p_dlg = klb_dialog_create(10, 10, 640, 480);
+//
+//    klb_wnd_t* p_btn1 = klb_button_create(10, 10, 100, 24);
+//    klb_wnd_push_child(p_dlg, p_btn1);
+//
+//    klb_wnd_t* p_btn2 = klb_button_create(10, 64, 100, 24);
+//    klb_wnd_push_child(p_dlg, p_btn2);
+//
+//
+//    klb_wnd_set_top(p_dlg, p_gui);
+//    klb_list_push_tail(p_gui->p_top_list, p_dlg);
+//#else
+//    klb_gui_append(p_gui, "kdialog", "/home", 10, 10, 640, 480, 0, NULL);
+//    klb_gui_append(p_gui, "kbutton", "/home/btn1", 10, 10, 100, 24, 0, NULL);
+//    klb_gui_append(p_gui, "kbutton", "/home/btn2", 10, 40, 100, 24, 0, NULL);
+//    klb_gui_append(p_gui, "kbutton", "/home/btn3", 10, 70, 100, 24, 0, NULL);
+//    klb_gui_append(p_gui, "kbutton", "/home/btn4", 10, 100, 100, 24, 0, NULL);
+//
+//    klb_gui_bind_command(p_gui, "/home/btn4", test_dlg_btn_on_command, NULL);
+//#endif
+//
+//    return 0;
+//}
+//
+//static int klb_gui_thread(void* p_obj, volatile int* p_run)
+//{
+//    KLB_LOG("start klb gui thread.\n");
+//    klb_gui_t* p_gui = (klb_gui_t*)(p_obj);
+//
+//    while (*p_run)
+//    {
+//        klb_gui_loop_once(p_gui, 0);
+//        klb_sleep(10);
+//    }
+//
+//    KLB_LOG("stop klb gui thread.\n");
+//    return 0;
+//}

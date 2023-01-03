@@ -32,10 +32,6 @@ typedef struct klbui_default_t_
     uint32_t    btn_color_bg_normal;        // button color background normal
     uint32_t    btn_color_bg_focus;         // button color background focus
     uint32_t    btn_color_bg_disable;       // button color background disable
-
-    sds         btn_image_normal;           // button image normal
-    sds         btn_image_focus;            // button image focus
-    sds         btn_image_disable;          // button image disable
 }klbui_default_t;
 
 

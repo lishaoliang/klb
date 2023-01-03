@@ -149,12 +149,12 @@ klb_wnd_t* klb_dialog_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 
     klb_map_clear(&r);
     klb_map_set_idx_string(&r, 0, "normal");
-    klb_map_set_idx_string(&r, 1, "./res/images/dialog_close_normal.bmp");
+    klb_map_set_idx_string(&r, 1, "dialog_close_normal.bmp");
     klb_wnd_set(p_dlg->p_btn_close, &r);
 
     klb_map_clear(&r);
     klb_map_set_idx_string(&r, 0, "focus");
-    klb_map_set_idx_string(&r, 1, "./res/images/dialog_close_focus.bmp");
+    klb_map_set_idx_string(&r, 1, "dialog_close_focus.bmp");
     klb_wnd_set(p_dlg->p_btn_close, &r);
 
     klb_map_quit(&r);

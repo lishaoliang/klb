@@ -3,6 +3,9 @@
 //
 /// @file    klb_gui.h
 /// @brief   GUI接口定义
+///   默认配色采用 visual studio 深色系风格
+///   图标来源于1: http://iconpark.oceanengine.com/official
+///   图标来源于2: https://remixicon.com/
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -42,13 +45,13 @@ KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
 /// @brief 启动线程
 /// @param [in] *p_gui          GUI对象
 /// @return int 0.成功; 非0.失败
-int klb_gui_start(klb_gui_t* p_gui);
+//int klb_gui_start(klb_gui_t* p_gui);
 
 
 /// @brief 关闭线程
 /// @param [in] *p_gui          GUI对象
 /// @return 无
-void klb_gui_stop(klb_gui_t* p_gui);
+//void klb_gui_stop(klb_gui_t* p_gui);
 
 
 /// @brief 获取标准控件的默认值指针

@@ -12,21 +12,21 @@ local wsdl = {}
 
 -- @brief 获取SDL版本
 -- @return [string] SDL版本字符串
-wsdl.GetVersion = function ()
+wsdl.get_version = function ()
 	return 'V2.0.1'
 end
 
 
 -- @brief 获取SDL版本
 -- @return [string] SDL的git版本字符串
-wsdl.GetRevision = function ()
+wsdl.get_revision = function ()
 	return 'xxxxxx'
 end
 
 
 -- @brief 获取可执行文件的路径
 -- @return [string] 可执行文件路径
-wsdl.GetBasePath = function ()
+wsdl.get_base_path = function ()
 	return '/home/aaa/bbb'
 end
 
@@ -35,7 +35,7 @@ end
 -- @param [in]      org[string]		组织
 -- @param [in]      app[string]		程序
 -- @return [string] 应用程序配置路径
-wsdl.GetPrefPath = function (org, app)
+wsdl.get_pref_path = function (org, app)
 	return 'C:\Users\Administrator\AppData\Roaming\klb\test'
 end
 
@@ -46,13 +46,13 @@ end
 -- @param [in]      h[number(int)]		窗口高
 -- @param [in]      title[string]		窗口标题
 -- @return [string] 应用程序配置路径
-wsdl.OpenWnd = function (font_path, w, h, title)
+wsdl.open_wnd = function (font_path, w, h, title)
 	return 
 end
 
 
 -- @brief 关闭窗口
-wsdl.CloseWnd = function ()
+wsdl.close_wnd = function ()
 	return
 end
 
@@ -62,7 +62,7 @@ end
 -- @param [in]      sidx[number(int)]		流序号
 -- @param [in]      media[lightuserdata]	C指针: klb_buf_t*
 -- @return 无
-wsdl.PushMedia = function (chnn, sidx, media)
+wsdl.push_media = function (chnn, sidx, media)
 	return
 end
 
@@ -74,7 +74,7 @@ end
 -- @param [in]      w[number(int)]			宽
 -- @param [in]      h[number(int)]			高
 -- @return 无
-wsdl.SetVideoPos = function (idx, x, y, w, h)
+wsdl.set_video_pos = function (idx, x, y, w, h)
 	return
 end
 

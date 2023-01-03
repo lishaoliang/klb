@@ -1,7 +1,7 @@
 ﻿local wsdl = require("wsdl")
 
 -- lua 根路径
-local basepath = wsdl.GetBasePath()
+local basepath = wsdl.get_base_path()
 package.path = package.path .. ';' .. basepath .. '?.lua;' .. basepath .. '?/init.lua;'
 
 
@@ -13,10 +13,12 @@ local CONST_h = 720
 
 
 -- step1. 打开窗口
-wsdl.OpenWnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui示例1' )
+wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui示例1' )
 
 
 -- step2. 加载图片资源
+-- 下载来自: http://iconpark.oceanengine.com/home
+-- 下载来自: https://remixicon.com/
 local res_path = basepath .. 'res/images/'
 klbui.load_image('dialog_close_normal.bmp', res_path .. 'dialog_close_normal.bmp')
 klbui.load_image('dialog_close_focus.bmp', res_path .. 'dialog_close_focus.bmp')
@@ -26,7 +28,7 @@ klbui.load_image('33fbb649d7dd6c721a39f8a0be989f81.bmp', res_path .. '33fbb649d7
 
 
 -- step3. 初始全局默认设置
-
+-- 可选
 
 
 local home = {}

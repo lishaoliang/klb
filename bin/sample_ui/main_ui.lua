@@ -7,7 +7,7 @@ local krand = require("krand")
 local kco = require("kco")
 
 
-package.path = package.path .. ';' .. wsdl.GetBasePath() .. '?.lua'
+package.path = package.path .. ';' .. wsdl.get_base_path() .. '?.lua'
 
 
 local WND_W = 1280
@@ -21,7 +21,7 @@ local a1, a2 = ksys.get_args()
 
 
 -- 打开 sdl 窗口引擎
-wsdl.OpenWnd('./res/font/simsun.ttc', WND_W, WND_H, 'Demo对话框实例!' )
+wsdl.open_wnd('./res/font/simsun.ttc', WND_W, WND_H, 'Demo对话框实例!' )
 
 
 kgui.load_image('dialog_close_normal.bmp', './res/images/dialog_close_normal.bmp')
@@ -143,14 +143,14 @@ kgui.bind_command('/page1/btn5', function (obj, msg, x1, y1, x2, y2, lparam, wpa
 		play = not play
 		
 		if play then
-			wsdl.SetVideoPos(0, 160, 60, WND_W - 200, WND_H - 120)
+			wsdl.set_video_pos(0, 160, 60, WND_W - 200, WND_H - 120)
 			
 			kgui.show('/page1/pic1', false)
 			kgui.show('/page1/video1', true)
 			
 			kgui.set('/page1/btn5', 'title', '停止')
 		else
-			wsdl.SetVideoPos(0, 0, 0, 0, 0)
+			wsdl.set_video_pos(0, 0, 0, 0, 0)
 			
 			kgui.show('/page1/pic1', true)
 			kgui.show('/page1/video1', false)
@@ -170,7 +170,7 @@ kgui.bind_command('/page1', function (obj, msg)
 	elseif 0x0419 == msg then
 		-- 即将关闭对话框
 		
-		wsdl.SetVideoPos(0, 0, 0, 0, 0)
+		wsdl.set_video_pos(0, 0, 0, 0, 0)
 		
 		kgui.show('/page1/pic1', true)
 		kgui.show('/page1/video1', false)
@@ -198,8 +198,8 @@ kco.fork(function ()
 		if play then
 			local frame1, frame2 = h264:read()
 			
-			wsdl.PushMedia(0, 0, frame1)		
-			wsdl.PushMedia(0, 0, frame2)
+			wsdl.push_media(0, 0, frame1)		
+			wsdl.push_media(0, 0, frame2)
 		end
 		
 		kco.co_sleep(30)

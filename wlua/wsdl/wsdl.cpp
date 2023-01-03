@@ -106,19 +106,19 @@ int luaopen_wsdl(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
-        { "GetVersion",     wsdl_SDL_GetVersion },
-        { "GetRevision",    wsdl_SDL_GetRevision },
+        { "get_version",        wsdl_SDL_GetVersion },
+        { "get_revision",       wsdl_SDL_GetRevision },
 
-        { "GetBasePath",    wsdl_SDL_GetBasePath },
-        { "GetPrefPath",    wsdl_SDL_GetPrefPath },
+        { "get_base_path",      wsdl_SDL_GetBasePath },
+        { "get_pref_path",      wsdl_SDL_GetPrefPath },
 
         // 窗口
-        { "OpenWnd",        wsdl_OpenWnd },
-        { "CloseWnd",       wsdl_CloseWnd },
+        { "open_wnd",           wsdl_OpenWnd },
+        { "close_wnd",          wsdl_CloseWnd },
 
         // 音视频
-        { "PushMedia",      wsdl_PushMedia },
-        { "SetVideoPos",    wsdl_SetVideoPos },
+        { "push_media",         wsdl_PushMedia },
+        { "set_video_pos",      wsdl_SetVideoPos },
 
         { NULL,             NULL }
     };
