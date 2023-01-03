@@ -1,11 +1,14 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  parser.lua
--- @brief 按一定规则将lua table解析成对话框
+-- @brief 解析器
+---   按一定规则将lua table解析成对话框
 -- @note 关键字等含义 参考 html5 标准: https://www.w3school.com.cn/html/html5_intro.asp
 ---   https://www.runoob.com/html/html5-form-input-types.html
 --]]
 local kgui = require("kgui")
+local csser = require("klbcore.klbui.csser")
+
 
 local parser = {}
 local E = {}
@@ -23,6 +26,7 @@ local CONST_keys = {
 	['id'] = true,			-- id编号
 	
 	['style'] = true,		-- css样式
+	['class'] = true,		-- 类
 	
 	['commonds'] = true,	-- 静态命令集
 	['_commonds'] = true,	-- 动态命令集
@@ -48,7 +52,7 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 end
 
 
-local function ParseWnd(wnd, commonds)
+local function ParseWnd(wnd, commonds, css)
 	if 'table' ~= type(wnd) then
 		return
 	end
@@ -64,17 +68,24 @@ local function ParseWnd(wnd, commonds)
 	local w = pos[3]
 	local h = pos[4]
 	
-	if '' ~= type then
+	if '' ~= t then
 		kgui.append(t, path, x, y, w, h)
 	end
 	
-	-- set
+	-- 生效 css
+	csser.css(wnd, path, css)
+
+	-- 生效	css-style 样式
+	csser.css_style(wnd, path)
+	
+	-- set 其他属性
 	for k, v in pairs(wnd) do
 		if 'function' ~= type(v) and not CONST_keys[k] then
 			kgui.set(path, k, v)
 		end
 	end
 
+	-- 绑定命令函数
 	kgui.bind_command(path, function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 		local cmds1 = ('table' == type(wnd['_commonds']) and wnd['_commonds']) or E
 		local cmds2 = ('table' == type(commonds[path]) and commonds[path]) or E
@@ -84,13 +95,13 @@ local function ParseWnd(wnd, commonds)
 	
 	-- 子窗口: 第1种表达方式
 	for _, v in ipairs(wnd) do
-		ParseWnd(v, commonds)
+		ParseWnd(v, commonds, css)
 	end
 	
 	-- 子窗口: 第2种表达方式
 	local child = wnd['child'] or {}
 	for _, v in ipairs(child) do
-		ParseWnd(v, commonds)
+		ParseWnd(v, commonds, css)
 	end
 end
 
@@ -109,10 +120,11 @@ local function CopyCommonds(src)
 	return t
 end
 
-function parser.parse(dlg, commonds)	
-	local tmp_cmds = CopyCommonds(commonds)
+
+function parser.parse(dialog, commonds, css)
+	--local tmp_cmds = CopyCommonds(commonds)
 	
-	ParseWnd(dlg, tmp_cmds)
+	ParseWnd(dialog, commonds, css)
 end
 
 
