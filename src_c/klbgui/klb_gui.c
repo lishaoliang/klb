@@ -194,11 +194,11 @@ static void klb_gui_split_path_name(const char* p_path_name, char** p_dir, int* 
     }
 }
 
-int klb_gui_load_image(klb_gui_t* p_gui, const char* p_img_path)
+int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
 {
     if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_image)
     {
-        return p_gui->p_canvas->vtable.load_image(p_gui->p_canvas, p_img_path, NULL, NULL);
+        return p_gui->p_canvas->vtable.load_image(p_gui->p_canvas, p_key, p_img_path, NULL, NULL);
     }
 
     return 1;

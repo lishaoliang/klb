@@ -230,16 +230,12 @@ static int kluaex_sdl_canvas_get_font_height(klb_canvas_t* p_canvas)
 }
 
 /// @brief 加载图片
-int kluaex_sdl_canvas_load_image(klb_canvas_t* p_canvas, const char* p_path, int* p_w, int* p_h)
+int kluaex_sdl_canvas_load_image(klb_canvas_t* p_canvas, const char* p_key, const char* p_path, int* p_w, int* p_h)
 {
     wsdl_extension_t* p_ex = (wsdl_extension_t*)p_canvas->p_obj;
 
-    sds path = sdsnew(p_ex->base_path);
-    path = sdscat(path, p_path);
+    int ret = wsdl_images_load(p_ex->p_imgs, wsdl_wnd_get_render(p_ex->p_wnd), p_key, p_path);
 
-    int ret = wsdl_images_load(p_ex->p_imgs, wsdl_wnd_get_render(p_ex->p_wnd), p_path, path);
-
-    KLB_FREE_BY(path, sdsfree);
     return ret;
 }
 

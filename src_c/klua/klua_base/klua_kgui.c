@@ -114,7 +114,7 @@ static int klua_kwnd_draw_clear(lua_State* L)
 
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_clear(p_wnd, color);
+    int ret = klb_wnd_draw_clear(p_wnd, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -128,7 +128,7 @@ static int klua_kwnd_draw_point(lua_State* L)
 
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_point(p_wnd, x, y, color);
+    int ret = klb_wnd_draw_point(p_wnd, x, y, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -143,7 +143,7 @@ static int klua_kwnd_draw_points(lua_State* L)
 
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_points(p_wnd, p_points, count, color);
+    int ret = klb_wnd_draw_points(p_wnd, p_points, count, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -159,7 +159,7 @@ static int klua_kwnd_draw_line(lua_State* L)
 
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_line(p_wnd, x1, y1, x2, y2, color);
+    int ret = klb_wnd_draw_line(p_wnd, x1, y1, x2, y2, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -173,7 +173,7 @@ static int klua_kwnd_draw_lines(lua_State* L)
     int count = 0;
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_lines(p_wnd, p_points, count, color);
+    int ret = klb_wnd_draw_lines(p_wnd, p_points, count, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -186,7 +186,7 @@ static int klua_kwnd_draw_rect(lua_State* L)
     klb_rect_t rect = { 0, 0, 0, 0 };
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_rect(p_wnd, &rect, color);
+    int ret = klb_wnd_draw_rect(p_wnd, &rect, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -198,7 +198,7 @@ static int klua_kwnd_draw_rects(lua_State* L)
 
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_rects(p_wnd, NULL, 0, color);
+    int ret = klb_wnd_draw_rects(p_wnd, NULL, 0, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -211,7 +211,7 @@ static int klua_kwnd_draw_fill_rect(lua_State* L)
     klb_rect_t rect = { 0, 0, 0, 0 };
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_fill_rect(p_wnd, &rect, color);
+    int ret = klb_wnd_draw_fill_rect(p_wnd, &rect, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -223,7 +223,7 @@ static int klua_kwnd_draw_fill_rects(lua_State* L)
 
     uint32_t color = 0xFF101010;
 
-    int ret = klb_wnd_draw_fill_rects(p_wnd, NULL, 0, color);
+    int ret = klb_wnd_draw_fill_rects(p_wnd, NULL, 0, &color);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -235,8 +235,9 @@ static int klua_kwnd_draw_draw_text(lua_State* L)
 
     klb_rect_t rect = { 0, 0, 0, 0 };
     uint32_t color = 0xFF101010;
+    int font_h = 20;
 
-    int ret = klb_wnd_draw_text(p_wnd, &rect, NULL, 0, color, 20);
+    int ret = klb_wnd_draw_text(p_wnd, &rect, NULL, 0, &color, &font_h);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -297,68 +298,69 @@ int klua_open_kwnd(lua_State* L)
 //////////////////////////////////////////////////////////////////////////
 // kgui lua 接口
 
-static int klua_kgui_attach_canvas(lua_State* L)
-{
-    klb_canvas_t* ptr = (klb_canvas_t*)luaL_checklightuserdata(L, 1);      ///< @1. 显存画布
+//static int klua_kgui_attach_canvas(lua_State* L)
+//{
+//    klb_canvas_t* ptr = (klb_canvas_t*)luaL_checklightuserdata(L, 1);      ///< @1. 显存画布
+//
+//    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+//
+//    klb_gui_attach_canvas(p_gui, ptr);
+//
+//    return 0;
+//}
 
-    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+//static void klua_kgui_msg_callback(void* p_obj, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
+//{
+//    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)p_obj;
+//
+//    if (p_ex)
+//    {
+//        klb_gui_t* p_gui = klua_ex_gui_get(p_ex);
+//        klb_gui_push_msg(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
+//    }
+//}
 
-    klb_gui_attach_canvas(p_gui, ptr);
+//static int klua_kgui_get_msg_callback(lua_State* L)
+//{
+//    klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
+//
+//    lua_pushlightuserdata(L, (void*)klua_kgui_msg_callback);
+//    lua_pushlightuserdata(L, (void*)p_ex);
+//    return 2;
+//}
 
-    return 0;
-}
-
-static void klua_kgui_msg_callback(void* p_obj, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
-{
-    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)p_obj;
-
-    if (p_ex)
-    {
-        klb_gui_t* p_gui = klua_ex_gui_get(p_ex);
-        klb_gui_push_msg(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
-    }
-}
-
-static int klua_kgui_get_msg_callback(lua_State* L)
-{
-    klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
-
-    lua_pushlightuserdata(L, (void*)klua_kgui_msg_callback);
-    lua_pushlightuserdata(L, (void*)p_ex);
-    return 2;
-}
-
-static int klua_kgui_push_msg(lua_State* L)
-{
-    int msg = (int)luaL_checkinteger(L, 1);                     ///< @1. 消息
-    int x1 = (int)luaL_checkinteger(L, 2);                      ///< @2. 相对父窗口x1坐标
-    int y1 = (int)luaL_checkinteger(L, 3);                      ///< @3. 相对父窗口y1坐标
-    int x2 = (int)luaL_checkinteger(L, 4);                      ///< @4. 相对父窗口x2坐标
-    int y2 = (int)luaL_checkinteger(L, 5);                      ///< @5. 相对父窗口y2坐标
-    int lparam = (int)luaL_checkinteger(L, 6);                  ///< @6. 参数1
-    int wparam = (int)luaL_checkinteger(L, 7);                  ///< @7. 参数2
-
-    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
-
-    if (NULL != p_gui)
-    {
-        klb_gui_push_msg(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
-        lua_pushinteger(L, 0);
-    }
-    else
-    {
-        lua_pushinteger(L, 1);
-    }
-
-    return 1;
-}
+//static int klua_kgui_push_msg(lua_State* L)
+//{
+//    int msg = (int)luaL_checkinteger(L, 1);                     ///< @1. 消息
+//    int x1 = (int)luaL_checkinteger(L, 2);                      ///< @2. 相对父窗口x1坐标
+//    int y1 = (int)luaL_checkinteger(L, 3);                      ///< @3. 相对父窗口y1坐标
+//    int x2 = (int)luaL_checkinteger(L, 4);                      ///< @4. 相对父窗口x2坐标
+//    int y2 = (int)luaL_checkinteger(L, 5);                      ///< @5. 相对父窗口y2坐标
+//    int lparam = (int)luaL_checkinteger(L, 6);                  ///< @6. 参数1
+//    int wparam = (int)luaL_checkinteger(L, 7);                  ///< @7. 参数2
+//
+//    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+//
+//    if (NULL != p_gui)
+//    {
+//        klb_gui_push_msg(p_gui, msg, x1, y1, x2, y2, lparam, wparam);
+//        lua_pushinteger(L, 0);
+//    }
+//    else
+//    {
+//        lua_pushinteger(L, 1);
+//    }
+//
+//    return 1;
+//}
 
 static int klua_kgui_load_image(lua_State* L)
 {
-    const char* p_img_path = luaL_checkstring(L, 1);
+    const char* p_key = luaL_checkstring(L, 1);
+    const char* p_img_path = luaL_checkstring(L, 2);
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
-    int ret = klb_gui_load_image(p_gui, p_img_path);
+    int ret = klb_gui_load_image(p_gui, p_key, p_img_path);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -496,10 +498,10 @@ int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
     {
-        { "get_msg_callback",   klua_kgui_get_msg_callback },
-        { "attach_canvas",      klua_kgui_attach_canvas },
+        //{ "get_msg_callback",   klua_kgui_get_msg_callback },
+        //{ "attach_canvas",      klua_kgui_attach_canvas },
 
-        { "push_msg",           klua_kgui_push_msg },
+        //{ "push_msg",           klua_kgui_push_msg },
 
         { "load_image",         klua_kgui_load_image },
 

@@ -54,7 +54,7 @@ typedef struct klb_canvas_vtable_t_
 
     /// @brief 加载图片
     /// @return int 0.成功; 非0.失败
-    int(*load_image)(klb_canvas_t* p_canvas, const char* p_path, int* p_w, int* p_h);
+    int(*load_image)(klb_canvas_t* p_canvas, const char* p_key, const char* p_path, int* p_w, int* p_h);
 
     /// @brief 使用单色清空屏幕
     /// @param [in] color       颜色

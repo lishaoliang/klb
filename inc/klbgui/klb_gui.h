@@ -106,7 +106,7 @@ KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_creat
 
 
 /// @brief 加载图片资源
-KLB_API int klb_gui_load_image(klb_gui_t* p_gui, const char* p_img_path);
+KLB_API int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path);
 
 
 /// @brief 添加窗口
