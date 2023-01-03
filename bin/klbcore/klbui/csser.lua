@@ -75,6 +75,16 @@ function csser.css(wnd, path, css)
 end
 
 
+
+--[[
+local dialog = {
+	...
+	['style'] = {
+		['title'] = '按钮CSS'
+	}
+	...
+}
+--]]
 function csser.css_style(wnd, path)
 	local style = wnd['style'] or E
 

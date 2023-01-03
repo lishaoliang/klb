@@ -75,4 +75,21 @@ klbui.select = function (dialog, multi)
 end
 
 
+-- @brief 加载资源图片
+-- @param [in] key[string]			关键字
+-- @param [in] path[string]			图片路径
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.load_image = function (key, path)
+	return kgui.load_image(key, path)
+end
+
+
+-- @brief 模态显示窗口
+-- @param [in] path[string]			窗口虚拟路径; eg. '/home'
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.do_model = function (path)
+	return kgui.do_model(path)
+end
+
+
 return klbui

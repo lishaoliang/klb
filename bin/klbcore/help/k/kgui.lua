@@ -22,9 +22,10 @@ end
 
 
 -- @brief 加载图片
+-- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.load_image = function (path)
+kgui.load_image = function (key, path)
 	return 0
 end
 

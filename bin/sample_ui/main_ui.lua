@@ -24,11 +24,11 @@ local a1, a2 = ksys.get_args()
 wsdl.OpenWnd('./res/font/simsun.ttc', WND_W, WND_H, 'Demo对话框实例!' )
 
 
-kgui.load_image('./res/images/dialog_close_normal.bmp')
-kgui.load_image('./res/images/dialog_close_focus.bmp')
+kgui.load_image('dialog_close_normal.bmp', './res/images/dialog_close_normal.bmp')
+kgui.load_image('dialog_close_focus.bmp', './res/images/dialog_close_focus.bmp')
 
-kgui.load_image('./res/images/2fab96b2be1e057c524763b7839136db.bmp')
-kgui.load_image('./res/images/33fbb649d7dd6c721a39f8a0be989f81.bmp')
+kgui.load_image('2fab96b2be1e057c524763b7839136db.bmp', './res/images/2fab96b2be1e057c524763b7839136db.bmp')
+kgui.load_image('33fbb649d7dd6c721a39f8a0be989f81.bmp', './res/images/33fbb649d7dd6c721a39f8a0be989f81.bmp')
 
 
 kgui.append('kdialog', '/home', 0, 0, 160, 540, 0x0002)
@@ -59,7 +59,7 @@ kgui.set('/page1/btn2', 'title', '取消')
 kgui.set('/page1/btn3', 'title', '随机标题')
 kgui.set('/page1/btn4', 'title', '更换图片')
 kgui.set('/page1/btn5', 'title', '播放')
-kgui.set('/page1/pic1', 'picture', './res/images/2fab96b2be1e057c524763b7839136db.bmp')
+kgui.set('/page1/pic1', 'picture', '2fab96b2be1e057c524763b7839136db.bmp')
 
 
 	
@@ -126,9 +126,9 @@ kgui.show('/page1/video1', false)
 kgui.bind_command('/page1/btn4', function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 	if 0x0201 == msg or 0x0203 == msg then
 		if pic1 then
-			kgui.set('/page1/pic1', 'picture', './res/images/2fab96b2be1e057c524763b7839136db.bmp')			
+			kgui.set('/page1/pic1', 'picture', '2fab96b2be1e057c524763b7839136db.bmp')			
 		else
-			kgui.set('/page1/pic1', 'picture', './res/images/33fbb649d7dd6c721a39f8a0be989f81.bmp')
+			kgui.set('/page1/pic1', 'picture', '33fbb649d7dd6c721a39f8a0be989f81.bmp')
 		end
 		
 		pic1 = not pic1;

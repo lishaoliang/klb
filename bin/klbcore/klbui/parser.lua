@@ -16,18 +16,25 @@ local E = {}
 
 -- 预定义的 关键字
 local CONST_keys = {
-	['path'] = true,		-- 仿路径系统, 建立窗口树
+	-- 关键窗口树
+	['path'] = true,		-- 虚拟路径(仿路径系统), 建立窗口树
+	
+	-- 可检索选择属性
 	['type'] = true,		-- 控件类型
-	['pos'] = true,			-- 位置,大小
-	
-	['child'] = true,		-- 包含的子窗口
-	
+	['class'] = true,		-- 类
 	['name'] = true,		-- 名称
 	['id'] = true,			-- id编号
 	
+	-- css 样式
 	['style'] = true,		-- css样式
-	['class'] = true,		-- 类
 	
+	-- 显示区域
+	['pos'] = true,			-- 位置,大小
+	
+	-- 子窗口
+	['child'] = true,		-- 包含的子窗口
+	
+	-- 命令集
 	['commonds'] = true,	-- 静态命令集
 	['_commonds'] = true,	-- 动态命令集
 }
