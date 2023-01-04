@@ -123,7 +123,7 @@ KLB_API bool klb_map_idx_to_bool(klb_map_t* p_map, int idx);
 KLB_API int64_t klb_map_idx_to_int64(klb_map_t* p_map, int idx);
 KLB_API uint64_t klb_map_idx_to_uint64(klb_map_t* p_map, int idx);
 KLB_API double klb_map_idx_to_double(klb_map_t* p_map, int idx);
-KLB_API const char* klb_map_idx_to_string(klb_map_t* p_map, int idx);
+KLB_API const char* klb_map_idx_to_string(const klb_map_t* p_map, int idx);
 KLB_API const char* klb_map_idx_to_lstring(klb_map_t* p_map, int idx, int* p_out_len);
 KLB_API const void* klb_map_idx_to_ptr(klb_map_t* p_map, int idx, const void** p_out_ptr2);
 KLB_API klb_map_t* klb_map_idx_to_map(klb_map_t* p_map, int idx);

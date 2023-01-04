@@ -97,7 +97,7 @@ void klb_gui_destroy(klb_gui_t* p_gui)
 //}
 
 /// @brief 获取标准控件的默认值指针
-klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui)
+const klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui)
 {
     return &p_gui->def;
 }

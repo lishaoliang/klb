@@ -1316,6 +1316,9 @@
     <ClInclude Include="..\..\inc\klbgui\klbui_default.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_css.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">

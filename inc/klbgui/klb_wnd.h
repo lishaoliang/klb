@@ -154,6 +154,7 @@ typedef struct klb_wnd_vtable_t_
 
 /// @struct klb_wnd_t
 /// @brief  窗口基础结构
+///  基础窗口结构, 不携带CSS属性, 尽量减小体积 
 typedef struct klb_wnd_t_
 {
     // 抽象函数

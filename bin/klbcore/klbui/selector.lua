@@ -1,5 +1,5 @@
 ﻿--[[
--- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  selector.lua
 -- @brief 选择器
 -- @note 参考 jQuery-选择器
@@ -204,7 +204,7 @@ selector.select = function (dlg, multi)
 							
 							return t
 						else
-							return kgui.get(wnds_first_path(), ...)
+							return kgui.get(wnds_first_path(), k, ...)
 						end
 					end
 				end

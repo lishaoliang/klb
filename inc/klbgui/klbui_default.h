@@ -24,14 +24,8 @@ extern "C" {
 /// @brief  gui部分的默认值
 typedef struct klbui_default_t_
 {
-    // dialog / dlg
-
-
-
-    // button / btn
-    uint32_t    btn_color_bg_normal;        // button color background normal
-    uint32_t    btn_color_bg_focus;         // button color background focus
-    uint32_t    btn_color_bg_disable;       // button color background disable
+    uint32_t text_color;                // 文本颜色
+    uint32_t background_color;          // 背景颜色
 }klbui_default_t;
 
 

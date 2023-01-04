@@ -55,7 +55,7 @@ KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
 
 
 /// @brief 获取标准控件的默认值指针
-KLB_API klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui);
+KLB_API const klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui);
 
 
 /// @brief 附加到 klua_env_t*
@@ -200,6 +200,13 @@ KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
+
+
+
+//////////////////////////////////////////////////////////////////////////
+
+/// @brief 检查参数是否为颜色
+KLB_API bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color);
 
 
 #ifdef __cplusplus

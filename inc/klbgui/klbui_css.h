@@ -1,0 +1,200 @@
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klbui_css.h
+/// @brief   GUI CSS相关定义
+///   参考 CSS3 : https://www.w3school.com.cn/css/index.asp
+///   命名规则,含义,用法等尽可能参考 CSS3
+/// @version 0.1
+/// @history 修改历史
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLBUI_CSS_H__
+#define __KLBUI_CSS_H__
+
+
+#include "klb_type.h"
+#include "klbthird/sds.h"
+
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
+/// @brief 边框模型
+///  参考: https://www.w3school.com.cn/css/css_boxmodel.asp
+///  元素(wnd)实际宽 = 外边距(margin) + 边框(border) + 内边距(padding) + 元素宽(width)
+///  元素(wnd)实际高 = 外边距(margin) + 边框(border) + 内边距(padding) + 元素宽(height)
+///  参考模型图:
+///  *---------------- margin(外边距) ------------------*
+///  |  *------------- border(边框) -----------------*  |
+///  |  |  *---------- padding(内边距) -----------*  |  |
+///  |  |  |  *--------------------------------*  |  |  |
+///  |  |  |  |                                |  |  |  |
+///  |  |  |  |        element(元素/wnd)       |  |  |  |
+///  |  |  |  |                                |  |  |  |
+///  |  |  |  *--------------------------------*  |  |  |
+///  |  |  *--------------------------------------*  |  |
+///  |  *--------------------------------------------*  |
+///  *--------------------------------------------------*
+///  
+///  klb_wnd_t.pos.rect_in_parent = 基于父窗口的 实际区域
+///  klb_wnd_t.pos.rect_in_canvas = 基于画布的 实际区域
+///  背景应用于由内容(元素wnd)和内边距、边框组成的区域
+
+/// @brief 基础参数
+
+/// 宽高
+/// element(元素/wnd) 高                   ///< ["width"] = 120 元素宽度
+/// element(元素/wnd) 宽                   ///< ["height"] = 120 元素高度
+
+
+/// 显示/隐藏
+/// klb_wnd_t.state | KLB_WND_STATUS_HIDE   ///< ["visibility"]
+#define KLBUICSS_visibility_visible  0      ///< ["visibility"] = "visible" [默认值]元素是可见的
+#define KLBUICSS_visibility_hidden   1      ///< ["visibility"] = "hidden" 元素是不可见的
+
+
+/// @struct klbuicss_text_t
+/// @brief  文本
+///   参考: https://www.w3school.com.cn/css/css_text.asp
+typedef struct klbuicss_text_t_
+{
+    uint32_t    color;          ///< ["color"] 文本颜色
+    int         align;          ///< ["text-align"] 文本对齐
+    int         transform;      ///< ["text-transform"] 文本转换
+
+    int         indent;         ///< ["text-indent"] 属性用于指定文本第一行的缩进
+    int         spacing;        ///< ["letter-spacing"] 属性用于指定文本中字符之间的间距
+    int         line_height;    ///< ["line-height"] 属性用于指定行之间的间距
+    int         word_spacing;   ///< ["word-spacing"] 属性用于指定文本中单词之间的间距
+    int         white_space;    ///< ["white-space"] 属性指定元素内部空白的处理方式
+}klbuicss_text_t;
+
+
+/// @struct klbuicss_text_t
+/// @brief  字体
+///   参考: https://www.w3school.com.cn/css/css_font.asp
+typedef struct klbuicss_font_t_
+{
+    int         style;             ///< ["font-style"] 属性主要用于指定斜体文本
+#define KLBUICSS_font1_normal   0  ///< ["font-style"] = "normal" 文字正常显示
+#define KLBUICSS_font1_italic   1  ///< ["font-style"] = "italic" 文本以斜体显示
+#define KLBUICSS_font1_oblique  2  ///< ["font-style"] = "oblique" 文本为"倾斜"(倾斜与斜体非常相似,但支持较少)
+
+    int         weight;             ///< ["font-weight"] 属性指定字体的粗细
+#define KLBUICSS_font2_normal   0   ///< ["font-weight"] = "normal"
+#define KLBUICSS_font2_bold     1   ///< ["font-weight"] = "bold"
+
+    int         size;               ///< ["font-size"] 属性设置文本的大小
+}klbuicss_font_t;
+
+
+/// @struct klbuicss_background_t_
+/// @brief  背景
+///   参考: https://www.w3school.com.cn/css/css_background.asp
+typedef struct klbuicss_background_t_
+{
+    uint32_t    color;      ///< "background-color" 属性指定元素的背景色
+    sds         image;      ///< "background-image" 属性指定用作元素背景的图像
+    int         repeat;     ///< "background-repeat" 属性指定重复图像
+    int         position;   ///< "background-position" 属性用于指定背景图像的位置
+    int         attachment; ///< "background-attachment" 属性指定背景图像是应该滚动还是固定的(不会随页面的其余部分一起滚动)
+}klbuicss_background_t;
+
+
+/// @struct klbuicss_border_t
+/// @brief  边框
+///   参考: https://www.w3school.com.cn/css/css_border.asp
+typedef struct klbuicss_border_t_
+{
+    struct
+    {
+        int     top;
+        int     right;
+        int     bottom;
+        int     left;
+    }style;                 ///< "border-style" 属性指定要显示的边框类型
+
+    struct
+    {
+        int     top;
+        int     right;
+        int     bottom;
+        int     left;
+    }width;                 ///< "border-width" 属性指定四个边框的宽度
+
+    struct
+    {
+        uint32_t top;
+        uint32_t right;
+        uint32_t bottom;
+        uint32_t left;
+    }color;                 ///< "border-color" 属性用于设置四个边框的颜色
+
+    int         radius;     ///< "border-radius" 属性用于向元素添加圆角边框
+}klbuicss_border_t;
+
+
+/// @struct klbuicss_margin_t
+/// @brief  外边距
+///   参考: https://www.w3school.com.cn/css/css_margin.asp
+///   合并写法: ["margin"] = {25, 50, 75, 100}
+///   单位像素
+typedef struct klbuicss_margin_t_
+{
+    int     top;            ///< "margin-top" 上外边距
+    int     right;          ///< "margin-right" 右外边距
+    int     bottom;         ///< "margin-bottom" 下外边距
+    int     left;           ///< "margin-left" 左外边距
+}klbuicss_margin_t;
+
+
+/// @struct klbuicss_padding_t
+/// @brief  内边距
+///   参考: https://www.w3school.com.cn/css/css_margin.asp
+///   合并写法: ["padding"] = {25, 50, 75, 100}
+///   单位像素
+typedef struct klbuicss_padding_t_
+{
+    int     top;            ///< "padding-top" 上内边距
+    int     right;          ///< "padding-right" 右内边距
+    int     bottom;         ///< "padding-bottom" 下内边距
+    int     left;           ///< "padding-left" 左内边距
+}klbuicss_padding_t;
+
+
+/// @struct klbuicss_outline_t
+/// @brief  轮廓
+///   参考: https://www.w3school.com.cn/css/css_outline.asp
+typedef struct klbuicss_outline_t
+{
+    int      style;                     ///< ["outline-style"] 属性指定轮廓的样式
+#define KLBUICSS_outline1_none       0  ///< ["outline-style"] = "none" 定义无轮廓
+#define KLBUICSS_outline1_dotted     1  ///< ["outline-style"] = "dotted"定义点状的轮廓
+#define KLBUICSS_outline1_dashed     2  ///< ["outline-style"] = "dashed"定义虚线的轮廓
+#define KLBUICSS_outline1_solid      3  ///< ["outline-style"] = "solid"定义实线的轮廓
+#define KLBUICSS_outline1_double     4  ///< ["outline-style"] = "double"定义双线的轮廓
+#define KLBUICSS_outline1_groove     5  ///< ["outline-style"] = "groove"定义 3D 凹槽轮廓
+#define KLBUICSS_outline1_ridge      6  ///< ["outline-style"] = "ridge"定义 3D 凸槽轮廓
+#define KLBUICSS_outline1_inset      7  ///< ["outline-style"] = "inset"定义 3D 凹边轮廓
+#define KLBUICSS_outline1_outset     8  ///< ["outline-style"] = "outset"定义 3D 凸边轮廓
+#define KLBUICSS_outline1_hidden     9  ///< ["outline-style"] = "hidden"定义隐藏的轮廓
+
+    int      width;                      ///< ["outline-width"] 属性指定轮廓的宽度
+#define KLBUICSS_outline2_thin       1   ///< ["outline-width"] = "thin", 单位像素
+#define KLBUICSS_outline2_medium     3   ///< ["outline-width"] = "medium", 单位像素
+#define KLBUICSS_outline2_thick      5   ///< ["outline-width"] = "thick", 单位像素
+
+    uint32_t color;                     ///< ["outline-color"] 属性用于设置轮廓的颜色
+    int      offset;                    ///< ["outline-offset"] 轮廓偏移
+}klbuicss_outline_t;
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __KLBUI_CSS_H__
+//end

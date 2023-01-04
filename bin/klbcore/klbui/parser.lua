@@ -1,5 +1,5 @@
 ﻿--[[
--- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  parser.lua
 -- @brief 解析器
 ---   按一定规则将lua table解析成对话框

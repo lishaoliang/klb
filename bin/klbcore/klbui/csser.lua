@@ -1,8 +1,10 @@
 ﻿--[[
--- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  csser.lua
 -- @brief CSS样式规则
--- @note 关键字等含义 参考 html5 标准: https://www.w3school.com.cn/jquery/jquery_ref_css.asp
+-- @note 关键字等含义 参考 H5,CSS3 标准
+--  1. https://www.w3school.com.cn/css/index.asp
+--  2. https://www.w3school.com.cn/jquery/jquery_ref_css.asp
 --]]
 local kgui = require("kgui")
 

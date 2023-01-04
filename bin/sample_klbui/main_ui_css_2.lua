@@ -1,7 +1,7 @@
 ﻿--[[
--- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  main_ui_1.lua
--- @brief 使用klbui配置窗口示例
+-- Copyright (c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- @file  main_ui_css_2.lua
+-- @brief 使用klbui-css配置窗口示例
 --   klbui为参考H5与jQuery简化规则封装
 --]]
 local wsdl = require("wsdl")
@@ -19,7 +19,7 @@ local CONST_h = 720
 
 
 -- step1. 打开窗口
-wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui示例1' )
+wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui-css示例2' )
 
 
 -- step2. 加载图片资源
@@ -39,11 +39,64 @@ klbui.load_image('33fbb649d7dd6c721a39f8a0be989f81.bmp', res_path .. '33fbb649d7
 
 local home = {}
 
+
+home.css = {
+	['type'] = {
+		['kdialog'] = {
+			
+		},
+		
+		['kbutton'] = {
+			
+		}
+	},
+	
+	['class'] = {
+		
+	},
+	
+	['name'] = {
+		['pic1'] = {
+			['visibility'] = 'hidden',
+			['border-width'] = {1, 1, 1, 1}
+		},
+		
+		['btn1'] = {
+			['background-image'] = 'url("aaa.bmp")',
+			['background-color'] = {255, 30, 30, 30},
+			['color'] = {255, 220, 220, 10}
+		},
+		
+		['btn2'] = {
+			['background-color'] = {255, 30, 220, 202}
+		},
+		
+		['btn3'] = {
+			['background-color'] = 0xFFF010FF
+		}
+	},
+	
+	['id'] = {
+		['btn1:visited'] = {
+			['color'] = 'green',
+			['background-color'] = 'green'
+		},
+		['btn1:hover'] = {
+			['color'] = 'green',
+			['background-color'] = 'green'
+		},
+		['btn1:active'] = {
+			['color'] = 'green',
+			['background-color'] = 'green'
+		}
+	}
+}
+
 home.dialog = {
 	['path'] = '/home',
 	['type'] = 'kdialog',
 	['pos'] = {0, 0, CONST_w, CONST_h},
-	['title'] = 'klbui示例1 - hello world!',
+	['title'] = 'klbui-css示例2 - hello world!',
 	['name'] = 'home1',
 	
 	['child'] = {
@@ -104,6 +157,9 @@ home.commonds = {
 	['/home/btn1'] = {
 		['click'] = function ()
 			jq('pic1').picture('2fab96b2be1e057c524763b7839136db.bmp')
+			
+			local title = jq('btn1').title()
+			local c = 0
 		end
 	},
 
@@ -127,7 +183,7 @@ home.commonds = {
 }
 
 -- step4. 解析生成窗口
-klbui.parse(home.dialog, home.commonds)
+klbui.parse(home.dialog, home.commonds, home.css)
 
 
 -- step5. 显示 '/home' 窗口

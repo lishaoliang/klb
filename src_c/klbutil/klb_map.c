@@ -731,7 +731,7 @@ double klb_map_idx_to_double(klb_map_t* p_map, int idx)
     return 0.0;
 }
 
-const char* klb_map_idx_to_string(klb_map_t* p_map, int idx)
+const char* klb_map_idx_to_string(const klb_map_t* p_map, int idx)
 {
     klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
     if (NULL != p_adt)
