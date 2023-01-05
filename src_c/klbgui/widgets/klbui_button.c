@@ -4,7 +4,7 @@
 #include "klbutil/klb_log.h"
 #include "klbgui/klbui_css.h"
 #include "klbutil/klb_color.h"
-#include "klbutil/klb_hmap.h"
+#include "klbutil/klb_map.h"
 
 
 /// @def   KLBUI_BTN_get

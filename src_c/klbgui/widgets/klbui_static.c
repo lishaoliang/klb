@@ -2,12 +2,20 @@
 #include "klbgui/klb_widgets.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
+#include "klbgui/klbui_css_ex.h"
+#include "klbutil/klb_map.h"
 
 
 // 静态文本框
 typedef struct klbui_static_t_
 {
-    sds         title;      // 标题
+    sds                         title;          ///< 标题
+
+    // normal
+    klbuicss_margin_t           margin;         ///< 外边框
+    klbuicss_padding_t          padding;        ///< 内边框
+
+    klbuicssex_attributes_t     normal;         ///< 集合属性
 }klbui_static_t;
 
 
