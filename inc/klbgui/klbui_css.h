@@ -119,7 +119,15 @@ typedef struct klbuicss_border_t_
         int     right;
         int     bottom;
         int     left;
-    }style;                 ///< "border-style" 属性指定要显示的边框类型
+    }style;                         ///< "border-style" 属性指定要显示的边框类型,属性可以设置一到四个值(用于上边框,右边框,下边框和左边框)
+#define KLBUICSS_border1_none   0   ///< ["border-style"] = "none" 定义无边框
+#define KLBUICSS_border1_dotted 1   ///< ["border-style"] = "dotted" 定义无边框
+#define KLBUICSS_border1_dashed 2   ///< ["border-style"] = "dashed" 定义虚线边框
+#define KLBUICSS_border1_solid  3   ///< ["border-style"] = "solid" 定义实线边框
+#define KLBUICSS_border1_double 4   ///< ["border-style"] = "double" 定义双边框
+#define KLBUICSS_border1_hidden 5   ///< ["border-style"] = "hidden" 定义隐藏边框
+#define KLBUICSS_border1_inset  6   ///< ["border-style"] = "inset" 定义3D inset边框
+#define KLBUICSS_border1_outset 7   ///< ["border-style"] = "outset" 定义3D outset边框
 
     struct
     {
@@ -127,7 +135,7 @@ typedef struct klbuicss_border_t_
         int     right;
         int     bottom;
         int     left;
-    }width;                 ///< "border-width" 属性指定四个边框的宽度
+    }width;                         ///< "border-width" 属性指定四个边框的宽度
 
     struct
     {
@@ -135,9 +143,9 @@ typedef struct klbuicss_border_t_
         uint32_t right;
         uint32_t bottom;
         uint32_t left;
-    }color;                 ///< "border-color" 属性用于设置四个边框的颜色
+    }color;                         ///< "border-color" 属性用于设置四个边框的颜色
 
-    int         radius;     ///< "border-radius" 属性用于向元素添加圆角边框
+    int         radius;             ///< "border-radius" 属性用于向元素添加圆角边框
 }klbuicss_border_t;
 
 

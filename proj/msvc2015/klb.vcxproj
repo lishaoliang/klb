@@ -175,6 +175,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbformat\klb_flv.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_flv_demux.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_css.h" />
+    <ClInclude Include="..\..\inc\klbgui\klbui_css_ex.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_default.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
@@ -569,6 +570,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_default.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />

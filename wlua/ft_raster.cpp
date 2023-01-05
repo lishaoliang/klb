@@ -141,7 +141,8 @@ int ft_raster_text(ft_raster_t* p_ft, ft_raster_pixels_t* p_raster, int x, int y
     /* the pen position in 26.6 cartesian space coordinates; */
     /* start at (x,y+h) relative to the upper left corner  */
     pen.x = FT_int32(x);
-    pen.y = FT_int32(p_raster->h - (y + h) + offset_y);
+    //pen.y = FT_int32(p_raster->h - (y + h) + offset_y);
+    pen.y = FT_int32(p_raster->h - (y + h) + offset_y + (h - font_h) / 2); // 居中
 
     for (int i = 0; i < utf8_len; )
     {

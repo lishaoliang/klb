@@ -5,6 +5,7 @@
 --   klbui为参考H5与jQuery简化规则封装
 --]]
 local wsdl = require("wsdl")
+local ktime = require("ktime")
 
 -- lua 根路径
 local basepath = wsdl.get_base_path()
@@ -47,7 +48,14 @@ home.css = {
 		},
 		
 		['kbutton'] = {
+			['padding-top'] = 1,
+			['padding-right'] = 2,
+			['padding-bottom'] = 2,
+			['padding-left'] = 10,
 			
+			['color:focus'] = {255, 10, 220, 220},
+			['border-width:focus'] = {2, 2, 2, 2},
+			['border-color:focus'] = {255,220,30,220},
 		}
 	},
 	
@@ -158,6 +166,9 @@ home.dialog = {
 
 local jq = klbui.select(home.dialog)
 
+
+home.parse_tc = 0
+
 home.commonds = {
 	['/home'] = {
 		['load'] = function ()
@@ -188,7 +199,8 @@ home.commonds = {
 		['click'] = function ()
 			jq('pic1').picture('dialog_close_normal.bmp')
 			
-			jq('btn1').visibility(true)
+			local title = 'klbui-css示例2 - hello world!' .. ' - ' .. tostring(home.parse_tc) .. 'ms'			
+			jq('home1').title(title)
 		end
 	},
 	
@@ -206,7 +218,11 @@ home.commonds = {
 }
 
 -- step4. 解析生成窗口
+local t1 = ktime.tick_count()
 klbui.parse(home.dialog, home.commonds, home.css)
+local t2 = ktime.tick_count()
+
+home.parse_tc = t2 - t1
 
 
 -- step5. 显示 '/home' 窗口

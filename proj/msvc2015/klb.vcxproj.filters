@@ -1319,6 +1319,9 @@
     <ClInclude Include="..\..\inc\klbgui\klbui_css.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_css_ex.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2189,6 +2192,9 @@
       <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klbui_default.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c">
       <Filter>src_c\klbgui</Filter>
     </ClCompile>
   </ItemGroup>
