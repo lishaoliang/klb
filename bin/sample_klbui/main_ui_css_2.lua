@@ -52,7 +52,15 @@ home.css = {
 	},
 	
 	['class'] = {
-		
+		['class-btn-a'] = {
+			['background-color'] = {255, 30, 30, 30},
+			['color'] = {255, 220, 220, 10},
+			['font-size'] = 20,
+			
+			['background-color:focus'] = {255, 80, 80, 80},
+			['color:focus'] = {255, 10, 220, 10},
+			['font-size:focus'] = 28,
+		}
 	},
 	
 	['name'] = {
@@ -62,13 +70,19 @@ home.css = {
 		},
 		
 		['btn1'] = {
-			['background-image'] = 'url("aaa.bmp")',
 			['background-color'] = {255, 30, 30, 30},
-			['color'] = {255, 220, 220, 10}
+			['color'] = {255, 220, 220, 10},
+			['font-size'] = 20,
+			
+			['background-color:focus'] = {255, 80, 80, 80},
+			['color:focus'] = {255, 10, 220, 10},
+			['font-size:focus'] = 28,
 		},
 		
 		['btn2'] = {
-			['background-color'] = {255, 30, 220, 202}
+			['background-color'] = {255, 30, 220, 202},
+			
+			['background-image:focus'] = 'dialog_close_focus.bmp'
 		},
 		
 		['btn3'] = {
@@ -137,6 +151,7 @@ home.dialog = {
 			['pos'] = {10, 64 + 140, 140, 32},
 			['title'] = '图片444',
 			['name'] = 'btn4',
+			['class'] = 'class-btn-a'
 		}
 	}
 }
@@ -172,12 +187,20 @@ home.commonds = {
 	['/home/btn3'] = {
 		['click'] = function ()
 			jq('pic1').picture('dialog_close_normal.bmp')
+			
+			jq('btn1').visibility(true)
 		end
 	},
 	
 	['/home/btn4'] = {
 		['click'] = function ()
 			jq('pic1').picture('dialog_close_focus.bmp')
+			
+			--jq('btn1')['background-color'](0xFFF01010)
+			
+			--local a1 = jq('btn1')['background-color']()
+			
+			--jq('btn1').visibility(false)
 		end
 	}
 }

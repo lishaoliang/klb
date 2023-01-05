@@ -63,6 +63,10 @@ typedef struct klbuicss_text_t_
 {
     uint32_t    color;          ///< ["color"] 文本颜色
     int         align;          ///< ["text-align"] 文本对齐
+#define KLBUICSS_text1_center 0 ///< ["text-align"] = "center" 中心对齐
+#define KLBUICSS_text1_left   1 ///< ["text-align"] = "left" 左对齐
+#define KLBUICSS_text1_right  2 ///< ["text-align"] = "right" 右对齐
+
     int         transform;      ///< ["text-transform"] 文本转换
 
     int         indent;         ///< ["text-indent"] 属性用于指定文本第一行的缩进

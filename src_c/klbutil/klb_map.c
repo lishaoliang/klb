@@ -175,7 +175,7 @@ void klb_map_set_adt_clone(klb_map_t* p_map, const char* p_key, const klb_adt_t*
     klb_adt_copy(p_tmp, p_adt);
 }
 
-int klb_map_type(klb_map_t* p_map, const char* p_key)
+int klb_map_type(const klb_map_t* p_map, const char* p_key)
 {
     int key_len = strlen(p_key);
     klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
@@ -187,7 +187,7 @@ int klb_map_type(klb_map_t* p_map, const char* p_key)
     return KLB_ADT_null;
 }
 
-int klb_map_key_value_size(klb_map_t* p_map)
+int klb_map_key_value_size(const klb_map_t* p_map)
 {
     return klb_hlist_size(p_map->p_hlist);
 }
@@ -198,9 +198,9 @@ static klb_adt_t* find_hlist_adt_klb_map(klb_map_t* p_map, const char* p_key)
     return (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
 }
 
-bool klb_map_to_bool(klb_map_t* p_map, const char* p_key)
+bool klb_map_to_bool(const klb_map_t* p_map, const char* p_key)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_bool(p_adt);
@@ -209,9 +209,9 @@ bool klb_map_to_bool(klb_map_t* p_map, const char* p_key)
     return false;
 }
 
-int64_t klb_map_to_int64(klb_map_t* p_map, const char* p_key)
+int64_t klb_map_to_int64(const klb_map_t* p_map, const char* p_key)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_int64(p_adt);
@@ -220,9 +220,9 @@ int64_t klb_map_to_int64(klb_map_t* p_map, const char* p_key)
     return 0;
 }
 
-uint64_t klb_map_to_uint64(klb_map_t* p_map, const char* p_key)
+uint64_t klb_map_to_uint64(const klb_map_t* p_map, const char* p_key)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_uint64(p_adt);
@@ -231,9 +231,9 @@ uint64_t klb_map_to_uint64(klb_map_t* p_map, const char* p_key)
     return 0;
 }
 
-double klb_map_to_double(klb_map_t* p_map, const char* p_key)
+double klb_map_to_double(const klb_map_t* p_map, const char* p_key)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_double(p_adt);
@@ -242,9 +242,9 @@ double klb_map_to_double(klb_map_t* p_map, const char* p_key)
     return 0.0;
 }
 
-const char* klb_map_to_string(klb_map_t* p_map, const char* p_key)
+const char* klb_map_to_string(const klb_map_t* p_map, const char* p_key)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_string(p_adt);
@@ -253,9 +253,9 @@ const char* klb_map_to_string(klb_map_t* p_map, const char* p_key)
     return "";
 }
 
-const char* klb_map_to_lstring(klb_map_t* p_map, const char* p_key, int* p_out_len)
+const char* klb_map_to_lstring(const klb_map_t* p_map, const char* p_key, int* p_out_len)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_lstring(p_adt, p_out_len);
@@ -268,9 +268,9 @@ const char* klb_map_to_lstring(klb_map_t* p_map, const char* p_key, int* p_out_l
     return "";
 }
 
-const void* klb_map_to_ptr(klb_map_t* p_map, const char* p_key, const void** p_out_ptr2)
+const void* klb_map_to_ptr(const klb_map_t* p_map, const char* p_key, const void** p_out_ptr2)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_ptr(p_adt, p_out_ptr2);
@@ -283,9 +283,9 @@ const void* klb_map_to_ptr(klb_map_t* p_map, const char* p_key, const void** p_o
     return NULL;
 }
 
-klb_map_t* klb_map_to_map(klb_map_t* p_map, const char* p_key)
+klb_map_t* klb_map_to_map(const klb_map_t* p_map, const char* p_key)
 {
-    klb_adt_t* p_adt = find_hlist_adt_klb_map(p_map, p_key);
+    klb_adt_t* p_adt = find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
     if (NULL != p_adt)
     {
         return klb_adt_to_map(p_adt);
@@ -294,9 +294,9 @@ klb_map_t* klb_map_to_map(klb_map_t* p_map, const char* p_key)
     return NULL;
 }
 
-const klb_adt_t* klb_map_to_adt(klb_map_t* p_map, const char* p_key)
+const klb_adt_t* klb_map_to_adt(const klb_map_t* p_map, const char* p_key)
 {
-    return find_hlist_adt_klb_map(p_map, p_key);
+    return find_hlist_adt_klb_map((klb_map_t*)p_map, p_key);
 }
 
 bool klb_map_remove_by_key(klb_map_t* p_map, const char* p_key)
@@ -317,9 +317,9 @@ klb_adt_t* klb_map_data(klb_map_iter_t* p_iter)
     return (klb_adt_t*)klb_hlist_data(p_iter);
 }
 
-const char* klb_map_key(klb_map_iter_t* p_iter)
+const char* klb_map_key(const klb_map_iter_t* p_iter)
 {
-    return (const char*)klb_hlist_key(p_iter, NULL);
+    return (const char*)klb_hlist_key((klb_hlist_iter_t*)p_iter, NULL);
 }
 
 klb_map_iter_t* klb_map_begin(klb_map_t* p_map)
@@ -674,9 +674,9 @@ static klb_adt_t* find_vector_adt_klb_map(klb_map_t* p_map, int idx)
     return NULL;
 }
 
-int klb_map_array_type(klb_map_t* p_map, int idx)
+int klb_map_array_type(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
 
     if(NULL != p_adt)
     {
@@ -686,14 +686,14 @@ int klb_map_array_type(klb_map_t* p_map, int idx)
     return KLB_ADT_null;
 }
 
-int klb_map_array_size(klb_map_t* p_map)
+int klb_map_array_size(const klb_map_t* p_map)
 {
     return klb_nvector_size(p_map->p_nvector);
 }
 
-bool klb_map_idx_to_bool(klb_map_t* p_map, int idx)
+bool klb_map_idx_to_bool(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_bool(p_adt);
@@ -701,9 +701,9 @@ bool klb_map_idx_to_bool(klb_map_t* p_map, int idx)
     return false;
 }
 
-int64_t klb_map_idx_to_int64(klb_map_t* p_map, int idx)
+int64_t klb_map_idx_to_int64(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_int64(p_adt);
@@ -711,9 +711,9 @@ int64_t klb_map_idx_to_int64(klb_map_t* p_map, int idx)
     return 0;
 }
 
-uint64_t klb_map_idx_to_uint64(klb_map_t* p_map, int idx)
+uint64_t klb_map_idx_to_uint64(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_uint64(p_adt);
@@ -721,9 +721,9 @@ uint64_t klb_map_idx_to_uint64(klb_map_t* p_map, int idx)
     return 0;
 }
 
-double klb_map_idx_to_double(klb_map_t* p_map, int idx)
+double klb_map_idx_to_double(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_double(p_adt);
@@ -733,7 +733,7 @@ double klb_map_idx_to_double(klb_map_t* p_map, int idx)
 
 const char* klb_map_idx_to_string(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_string(p_adt);
@@ -741,9 +741,9 @@ const char* klb_map_idx_to_string(const klb_map_t* p_map, int idx)
     return "";
 }
 
-const char* klb_map_idx_to_lstring(klb_map_t* p_map, int idx, int* p_out_len)
+const char* klb_map_idx_to_lstring(const klb_map_t* p_map, int idx, int* p_out_len)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_lstring(p_adt, p_out_len);
@@ -756,9 +756,9 @@ const char* klb_map_idx_to_lstring(klb_map_t* p_map, int idx, int* p_out_len)
     return "";
 }
 
-const void* klb_map_idx_to_ptr(klb_map_t* p_map, int idx, const void** p_out_ptr2)
+const void* klb_map_idx_to_ptr(const klb_map_t* p_map, int idx, const void** p_out_ptr2)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_ptr(p_adt, p_out_ptr2);
@@ -771,9 +771,9 @@ const void* klb_map_idx_to_ptr(klb_map_t* p_map, int idx, const void** p_out_ptr
     return NULL;
 }
 
-klb_map_t* klb_map_idx_to_map(klb_map_t* p_map, int idx)
+klb_map_t* klb_map_idx_to_map(const klb_map_t* p_map, int idx)
 {
-    klb_adt_t* p_adt = find_vector_adt_klb_map(p_map, idx);
+    klb_adt_t* p_adt = find_vector_adt_klb_map((klb_map_t*)p_map, idx);
     if (NULL != p_adt)
     {
         return klb_adt_to_map(p_adt);
@@ -781,9 +781,9 @@ klb_map_t* klb_map_idx_to_map(klb_map_t* p_map, int idx)
     return NULL;
 }
 
-const klb_adt_t* klb_map_idx_to_adt(klb_map_t* p_map, int idx)
+const klb_adt_t* klb_map_idx_to_adt(const klb_map_t* p_map, int idx)
 {
-    return find_vector_adt_klb_map(p_map, idx);
+    return find_vector_adt_klb_map((klb_map_t*)p_map, idx);
 }
 
 bool klb_map_idx_remove(klb_map_t* p_map, int idx)
@@ -845,7 +845,7 @@ static void copy_klb_map(klb_map_t* p_dst, const klb_map_t* p_src)
     }
 }
 
-int klb_map_size(klb_map_t* p_map)
+int klb_map_size(const klb_map_t* p_map)
 {
     return (int)klb_hlist_size(p_map->p_hlist) + klb_nvector_size(p_map->p_nvector);
 }

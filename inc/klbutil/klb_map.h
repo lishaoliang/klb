@@ -64,25 +64,25 @@ KLB_API void klb_map_set_adt(klb_map_t* p_map, const char* p_key, klb_adt_t* p_a
 KLB_API void klb_map_set_adt_clone(klb_map_t* p_map, const char* p_key, const klb_adt_t* p_adt); // 拷贝数据
 
 /// @brief object 类型
-KLB_API int klb_map_type(klb_map_t* p_map, const char* p_key);
-KLB_API int klb_map_key_value_size(klb_map_t* p_map);
+KLB_API int klb_map_type(const klb_map_t* p_map, const char* p_key);
+KLB_API int klb_map_key_value_size(const klb_map_t* p_map);
 
 /// @brief object 强制取值
-KLB_API bool klb_map_to_bool(klb_map_t* p_map, const char* p_key);
-KLB_API int64_t klb_map_to_int64(klb_map_t* p_map, const char* p_key);
-KLB_API uint64_t klb_map_to_uint64(klb_map_t* p_map, const char* p_key);
-KLB_API double klb_map_to_double(klb_map_t* p_map, const char* p_key);
-KLB_API const char* klb_map_to_string(klb_map_t* p_map, const char* p_key);
-KLB_API const char* klb_map_to_lstring(klb_map_t* p_map, const char* p_key, int* p_out_len);
-KLB_API const void* klb_map_to_ptr(klb_map_t* p_map, const char* p_key, const void** p_out_ptr2);
-KLB_API klb_map_t* klb_map_to_map(klb_map_t* p_map, const char* p_key);
-KLB_API const klb_adt_t* klb_map_to_adt(klb_map_t* p_map, const char* p_key);
+KLB_API bool klb_map_to_bool(const klb_map_t* p_map, const char* p_key);
+KLB_API int64_t klb_map_to_int64(const klb_map_t* p_map, const char* p_key);
+KLB_API uint64_t klb_map_to_uint64(const klb_map_t* p_map, const char* p_key);
+KLB_API double klb_map_to_double(const klb_map_t* p_map, const char* p_key);
+KLB_API const char* klb_map_to_string(const klb_map_t* p_map, const char* p_key);
+KLB_API const char* klb_map_to_lstring(const klb_map_t* p_map, const char* p_key, int* p_out_len);
+KLB_API const void* klb_map_to_ptr(const klb_map_t* p_map, const char* p_key, const void** p_out_ptr2);
+KLB_API klb_map_t* klb_map_to_map(const klb_map_t* p_map, const char* p_key);
+KLB_API const klb_adt_t* klb_map_to_adt(const klb_map_t* p_map, const char* p_key);
 
 KLB_API bool klb_map_remove_by_key(klb_map_t* p_map, const char* p_key);
 
 typedef klb_hlist_iter_t klb_map_iter_t;
 KLB_API klb_adt_t* klb_map_data(klb_map_iter_t* p_iter);
-KLB_API const char* klb_map_key(klb_map_iter_t* p_iter);
+KLB_API const char* klb_map_key(const klb_map_iter_t* p_iter);
 KLB_API klb_map_iter_t* klb_map_begin(klb_map_t* p_map);
 KLB_API klb_map_iter_t* klb_map_end(klb_map_t* p_map);
 KLB_API klb_map_iter_t* klb_map_next(klb_map_iter_t* p_iter);
@@ -116,18 +116,18 @@ KLB_API void klb_map_set_idx_map_clone(klb_map_t* p_map, int idx, const klb_map_
 KLB_API void klb_map_set_idx_adt(klb_map_t* p_map, int idx, klb_adt_t* p_adt); // 托管指针
 KLB_API void klb_map_set_idx_adt_clone(klb_map_t* p_map, int idx, const klb_adt_t* p_adt);
 
-KLB_API int klb_map_array_type(klb_map_t* p_map, int idx);
-KLB_API int klb_map_array_size(klb_map_t* p_map);
+KLB_API int klb_map_array_type(const klb_map_t* p_map, int idx);
+KLB_API int klb_map_array_size(const klb_map_t* p_map);
 
-KLB_API bool klb_map_idx_to_bool(klb_map_t* p_map, int idx);
-KLB_API int64_t klb_map_idx_to_int64(klb_map_t* p_map, int idx);
-KLB_API uint64_t klb_map_idx_to_uint64(klb_map_t* p_map, int idx);
-KLB_API double klb_map_idx_to_double(klb_map_t* p_map, int idx);
+KLB_API bool klb_map_idx_to_bool(const klb_map_t* p_map, int idx);
+KLB_API int64_t klb_map_idx_to_int64(const klb_map_t* p_map, int idx);
+KLB_API uint64_t klb_map_idx_to_uint64(const klb_map_t* p_map, int idx);
+KLB_API double klb_map_idx_to_double(const klb_map_t* p_map, int idx);
 KLB_API const char* klb_map_idx_to_string(const klb_map_t* p_map, int idx);
-KLB_API const char* klb_map_idx_to_lstring(klb_map_t* p_map, int idx, int* p_out_len);
-KLB_API const void* klb_map_idx_to_ptr(klb_map_t* p_map, int idx, const void** p_out_ptr2);
-KLB_API klb_map_t* klb_map_idx_to_map(klb_map_t* p_map, int idx);
-KLB_API const klb_adt_t* klb_map_idx_to_adt(klb_map_t* p_map, int idx);
+KLB_API const char* klb_map_idx_to_lstring(const klb_map_t* p_map, int idx, int* p_out_len);
+KLB_API const void* klb_map_idx_to_ptr(const klb_map_t* p_map, int idx, const void** p_out_ptr2);
+KLB_API klb_map_t* klb_map_idx_to_map(const klb_map_t* p_map, int idx);
+KLB_API const klb_adt_t* klb_map_idx_to_adt(const klb_map_t* p_map, int idx);
 
 KLB_API bool klb_map_idx_remove(klb_map_t* p_map, int idx);
 KLB_API bool klb_map_idx_remove_tail(klb_map_t* p_map);
@@ -135,7 +135,7 @@ KLB_API bool klb_map_idx_remove_tail(klb_map_t* p_map);
 
 /////////////////////////////////////
 
-KLB_API int klb_map_size(klb_map_t* p_map);
+KLB_API int klb_map_size(const klb_map_t* p_map);
 KLB_API void klb_map_clear(klb_map_t* p_map);
 
 
