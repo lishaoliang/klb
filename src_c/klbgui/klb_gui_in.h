@@ -17,6 +17,7 @@
 #include "klbutil/klb_hlist.h"
 #include "klbplatform/klb_mutex.h"
 #include "klbplatform/klb_thread.h"
+#include "klbutil/klb_map.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -52,6 +53,9 @@ typedef struct klb_gui_t_
         ///  \n 通过"klb_gui_register"函数注册
         ///  \n 查找指定类型的创建函数
         klb_hlist_t*    p_wnd_type_hlist;
+
+        /// @brief css属性函数表
+        klb_map_t       css_map;
 
         /// @brief 窗口查找表
         ///  \n 存储通过"klb_gui_append"函数加入进来的窗口

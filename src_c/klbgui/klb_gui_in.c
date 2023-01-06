@@ -70,3 +70,16 @@ bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, ui
 
     return false;
 }
+
+/// @brief 通过组件类型获取 css 属性函数处理 map
+klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type)
+{
+    return klb_map_to_map(&p_gui->css_map, p_type);
+}
+
+/// @brief 新建 css 属性函数处理 map
+klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type)
+{
+    klb_map_set_map(&p_gui->css_map, p_type, NULL); // 重设置一个 map
+    return klb_map_to_map(&p_gui->css_map, p_type);
+}

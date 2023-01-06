@@ -1,13 +1,47 @@
 ﻿#include "klbgui/klbui_css_ex.h"
 #include "klbgui/klb_gui.h"
+#include "klbmem/klb_mem.h"
 #include <string.h>
+#include <assert.h>
 
+
+//////////////////////////////////////////////////////////////////////////
+// 默认初始化
+void klbuicssex_attributes_init(klbuicssex_attributes_t* p_attr, const klbui_default_t* p_default)
+{
+    p_attr->text.color = p_default->text_color;
+    p_attr->text.align = KLBUICSS_text1_center;
+
+    p_attr->font.style = KLBUICSS_font1_normal;
+    p_attr->font.weight = KLBUICSS_font2_normal;
+    p_attr->font.size = p_default->font_size;
+
+    p_attr->background.color = p_default->background_color;
+    p_attr->background.image = sdsempty();
+
+    p_attr->border.width.top = p_default->border_width;
+    p_attr->border.width.right = p_default->border_width;
+    p_attr->border.width.bottom = p_default->border_width;
+    p_attr->border.width.left = p_default->border_width;
+    p_attr->border.color.top = p_default->border_color;
+    p_attr->border.color.right = p_default->border_color;
+    p_attr->border.color.bottom = p_default->border_color;
+    p_attr->border.color.left = p_default->border_color;
+    p_attr->border.radius = p_default->border_radius;
+}
+
+void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr)
+{
+    KLB_FREE_BY(p_attr->background.image, sdsfree);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // 公共 单属性操作
 
 void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+    assert(NULL != p_sds);
+
     if (KLBUI_CSSEX_get == method)
     {
         klb_map_set_idx_string(p_out, 0, *p_sds);
@@ -27,6 +61,8 @@ void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const kl
 
 void klbuicssex_attribute_int(int* p_int, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+    assert(NULL != p_int);
+
     if (KLBUI_CSSEX_get == method)
     {
         klb_map_set_idx_int64(p_out, 0, *p_int);
@@ -59,6 +95,8 @@ void klbuicssex_attribute_int(int* p_int, klb_wnd_t* p_wnd, int method, const kl
 
 void klbuicssex_attribute_color(uint32_t* p_color, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+    assert(NULL != p_color);
+
     if (KLBUI_CSSEX_get == method)
     {
         klb_map_set_idx_int64(p_out, 0, *p_color);
@@ -77,6 +115,8 @@ void klbuicssex_attribute_color(uint32_t* p_color, klb_wnd_t* p_wnd, int method,
 
 void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+    assert(NULL != p_image);
+
     if (KLBUI_CSSEX_get == method)
     {
         klb_map_set_idx_string(p_out, 0, *p_image);

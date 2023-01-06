@@ -20,6 +20,7 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
     p_gui->p_canvas = p_canvas;
 
+    klb_map_init(&p_gui->css_map);
     p_gui->p_wnd_hlist = klb_hlist_create(0);
     p_gui->p_wnd_type_hlist = klb_hlist_create(0);
 
@@ -74,6 +75,8 @@ void klb_gui_destroy(klb_gui_t* p_gui)
 
     KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_gui->p_wnd_hlist, klb_hlist_destroy);
+
+    klb_map_quit(&p_gui->css_map);
 
     KLB_FREE_BY(p_gui->p_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_gui->p_msg_mutex, klb_mutex_destroy);

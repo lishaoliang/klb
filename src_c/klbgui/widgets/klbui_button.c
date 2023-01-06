@@ -124,7 +124,7 @@ static int klbui_button_on_paint(klb_wnd_t* p_wnd)
     // button的绘图区域
     klb_rect_t paint_rect = *p_rect;
 
-    // 移除外边框
+    // 移除外边距
     paint_rect.x += p_btn->margin.left;
     paint_rect.y += p_btn->margin.top;
     paint_rect.w -= (p_btn->margin.left + p_btn->margin.right);

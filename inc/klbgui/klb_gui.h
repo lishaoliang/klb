@@ -202,11 +202,27 @@ KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y
 KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
 
 
-
 //////////////////////////////////////////////////////////////////////////
+// CSS辅助函数
 
 /// @brief 检查参数是否为颜色
 KLB_API bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color);
+
+
+/// @brief 通过组件类型获取 css 属性函数处理 map
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return klb_map_t* 函数处理表名称
+///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
+///  \n 相同组件, 使用同一套函数处理表, 目的是为了 精简组件体积
+KLB_API klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type);
+
+
+/// @brief 新建 css 属性函数处理 map
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return klb_map_t* 函数处理表名称
+KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 
 
 #ifdef __cplusplus

@@ -14,6 +14,7 @@
 #include "klb_type.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_default.h"
 #include "klbthird/sds.h"
 
 
@@ -36,6 +37,12 @@ typedef struct klbuicssex_attributes_t_
     klbuicss_background_t       background;     ///< 背景属性
     klbuicss_border_t           border;         ///< 边框属性
 }klbuicssex_attributes_t;
+
+
+//////////////////////////////////////////////////////////////////////////
+// 默认属性初始化/退出
+KLB_API void klbuicssex_attributes_init(klbuicssex_attributes_t* p_attr, const klbui_default_t* p_default);
+KLB_API void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr);
 
 
 //////////////////////////////////////////////////////////////////////////
