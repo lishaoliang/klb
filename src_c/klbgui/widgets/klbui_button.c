@@ -199,44 +199,54 @@ static void on_klbui_button_visibility(klb_wnd_t* p_wnd, klbui_button_t* p_btn, 
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_button_margin(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_margin(&p_btn->margin, p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_button_margin_top(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->margin.top), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_top(&p_btn->margin, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_margin_right(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->margin.right), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_right(&p_btn->margin, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_margin_bottom(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->margin.bottom), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_bottom(&p_btn->margin, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_margin_left(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->margin.left), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_left(&p_btn->margin, p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_button_padding(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding(&p_btn->padding, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_padding_top(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->padding.top), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_top(&p_btn->padding, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_padding_right(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->padding.right), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_right(&p_btn->padding, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_padding_bottom(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->padding.bottom), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_bottom(&p_btn->padding, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_padding_left(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_btn->padding.left), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_left(&p_btn->padding, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_button_text_color(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -438,12 +448,14 @@ static void klbui_button_init_func_map(klb_wnd_t* p_wnd, klbui_button_t* p_btn, 
     KLBUI_btn_bind("visibility", on_klbui_button_visibility); // 显示/隐藏
 
     // 外边距 margin
+    KLBUI_btn_bind("margin", on_klbui_button_margin);
     KLBUI_btn_bind("margin-top", on_klbui_button_margin_top);
     KLBUI_btn_bind("margin-right", on_klbui_button_margin_right);
     KLBUI_btn_bind("margin-bottom", on_klbui_button_margin_bottom);
     KLBUI_btn_bind("margin-left", on_klbui_button_margin_left);
 
     // 内边距 padding
+    KLBUI_btn_bind("padding", on_klbui_button_padding);
     KLBUI_btn_bind("padding-top", on_klbui_button_padding_top);
     KLBUI_btn_bind("padding-right", on_klbui_button_padding_right);
     KLBUI_btn_bind("padding-bottom", on_klbui_button_padding_bottom);

@@ -56,6 +56,53 @@ extern "C" {
 #define KLBUICSS_visibility_hidden   1      ///< ["visibility"] = "hidden" 元素是不可见的
 
 
+/// @struct klbuicss_margin_t
+/// @brief  外边距
+///   参考: https://www.w3school.com.cn/css/css_margin.asp
+///   合并写法: ["margin"] = {25, 50, 75, 100}
+///   单位像素
+typedef struct klbuicss_margin_t_
+{
+    int     top;            ///< "margin-top" 上外边距
+    int     right;          ///< "margin-right" 右外边距
+    int     bottom;         ///< "margin-bottom" 下外边距
+    int     left;           ///< "margin-left" 左外边距
+}klbuicss_margin_t;
+
+
+/// @struct klbuicss_padding_t
+/// @brief  内边距
+///   参考: https://www.w3school.com.cn/css/css_margin.asp
+///   合并写法: ["padding"] = {25, 50, 75, 100}
+///   单位像素
+typedef struct klbuicss_padding_t_
+{
+    int     top;            ///< "padding-top" 上内边距
+    int     right;          ///< "padding-right" 右内边距
+    int     bottom;         ///< "padding-bottom" 下内边距
+    int     left;           ///< "padding-left" 左内边距
+}klbuicss_padding_t;
+
+
+/// @struct klbuicss_box_t
+/// @brief  基础盒模型属性
+typedef struct klbuicss_box_t_
+{
+    int     max_height;         ///< ["max-height"] 最大高度
+    int     max_width;          ///< ["max-width"] 最大宽度
+    int     min_height;         ///< ["min-height"] 最小高度
+    int     min_width;          ///< ["min-width"] 最大宽度
+}klbuicss_box_t;
+
+
+/// @struct klbuicss_laylout_t
+/// @brief  布局属性
+typedef struct klbuicss_laylout_t_
+{
+    int     z_index;            ///< ["z-index"] 堆叠顺序
+}klbuicss_laylout_t;
+
+
 /// @struct klbuicss_text_t
 /// @brief  文本
 ///   参考: https://www.w3school.com.cn/css/css_text.asp
@@ -149,34 +196,6 @@ typedef struct klbuicss_border_t_
 }klbuicss_border_t;
 
 
-/// @struct klbuicss_margin_t
-/// @brief  外边距
-///   参考: https://www.w3school.com.cn/css/css_margin.asp
-///   合并写法: ["margin"] = {25, 50, 75, 100}
-///   单位像素
-typedef struct klbuicss_margin_t_
-{
-    int     top;            ///< "margin-top" 上外边距
-    int     right;          ///< "margin-right" 右外边距
-    int     bottom;         ///< "margin-bottom" 下外边距
-    int     left;           ///< "margin-left" 左外边距
-}klbuicss_margin_t;
-
-
-/// @struct klbuicss_padding_t
-/// @brief  内边距
-///   参考: https://www.w3school.com.cn/css/css_margin.asp
-///   合并写法: ["padding"] = {25, 50, 75, 100}
-///   单位像素
-typedef struct klbuicss_padding_t_
-{
-    int     top;            ///< "padding-top" 上内边距
-    int     right;          ///< "padding-right" 右内边距
-    int     bottom;         ///< "padding-bottom" 下内边距
-    int     left;           ///< "padding-left" 左内边距
-}klbuicss_padding_t;
-
-
 /// @struct klbuicss_outline_t
 /// @brief  轮廓
 ///   参考: https://www.w3school.com.cn/css/css_outline.asp
@@ -202,6 +221,14 @@ typedef struct klbuicss_outline_t
     uint32_t color;                     ///< ["outline-color"] 属性用于设置轮廓的颜色
     int      offset;                    ///< ["outline-offset"] 轮廓偏移
 }klbuicss_outline_t;
+
+
+/// @struct klbuicss_util_t
+/// @brief  其他属性
+typedef struct klbuicss_util_t_
+{
+    int     cursor;                     ///< ["cursor"] = "" 指定光标形状
+}klbuicss_util_t;
 
 
 #ifdef __cplusplus

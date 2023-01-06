@@ -63,6 +63,44 @@ KLB_API void klbuicssex_visibility(klb_wnd_t* p_wnd, int method, const klb_map_t
 
 
 //////////////////////////////////////////////////////////////////////////
+// 外边距
+
+// 外边距 margin
+KLB_API void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 外边距-上 margin-top
+KLB_API void klbuicssex_margin_top(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 外边距-右 margin-right
+KLB_API void klbuicssex_margin_right(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 外边距-下 margin-bottom
+KLB_API void klbuicssex_margin_bottom(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 外边距-上 margin-left
+KLB_API void klbuicssex_margin_left(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 内边距
+
+// 内边距 padding
+KLB_API void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 内边距-上 padding-top
+KLB_API void klbuicssex_padding_top(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 内边距-右 padding-right
+KLB_API void klbuicssex_padding_right(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 内边距-下 padding-bottom
+KLB_API void klbuicssex_padding_bottom(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+// 内边距-上 padding-left
+KLB_API void klbuicssex_padding_left(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
+//////////////////////////////////////////////////////////////////////////
 // 文本
 
 // 文本颜色 color

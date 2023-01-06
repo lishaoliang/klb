@@ -193,6 +193,74 @@ void klbuicssex_visibility(klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, 
     }
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// 外边距
+
+// 外边距 margin
+void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+
+}
+
+// 外边距-上 margin-top
+void klbuicssex_margin_top(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_margin->top, p_wnd, method, p_in, p_out);
+}
+
+// 外边距-右 margin-right
+void klbuicssex_margin_right(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_margin->right, p_wnd, method, p_in, p_out);
+}
+
+// 外边距-下 margin-bottom
+void klbuicssex_margin_bottom(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_margin->bottom, p_wnd, method, p_in, p_out);
+}
+
+// 外边距-上 margin-left
+void klbuicssex_margin_left(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_margin->left, p_wnd, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 内边距
+
+// 内边距 padding
+void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+
+}
+
+// 内边距-上 padding-top
+void klbuicssex_padding_top(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_padding->top, p_wnd, method, p_in, p_out);
+}
+
+// 内边距-右 padding-right
+void klbuicssex_padding_right(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_padding->right, p_wnd, method, p_in, p_out);
+}
+
+// 内边距-下 padding-bottom
+void klbuicssex_padding_bottom(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_padding->bottom, p_wnd, method, p_in, p_out);
+}
+
+// 内边距-上 padding-left
+void klbuicssex_padding_left(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&p_padding->left, p_wnd, method, p_in, p_out);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // 文本
 
