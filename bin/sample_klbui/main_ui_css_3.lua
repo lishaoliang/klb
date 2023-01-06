@@ -1,6 +1,6 @@
 ﻿--[[
 -- Copyright (c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  main_ui_css_2.lua
+-- @file  main_ui_css_3.lua
 -- @brief 使用klbui-css配置窗口示例
 --   klbui为参考H5与jQuery简化规则封装
 --]]
@@ -21,7 +21,7 @@ local CONST_h = 720
 
 
 -- step1. 打开窗口
-wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui-css示例2' )
+wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui-css示例3' )
 
 
 -- step2. 加载图片资源
@@ -71,57 +71,15 @@ home.css = {
 	},
 	
 	['class'] = {
-		['class-btn-a'] = {
-			['background-color'] = {255, 30, 30, 30},
-			['color'] = {255, 220, 220, 10},
-			['font-size'] = 20,
-			
-			['background-color:focus'] = {255, 80, 80, 80},
-			['color:focus'] = {255, 10, 220, 10},
-			['font-size:focus'] = 28,
-		}
+		
 	},
 	
 	['name'] = {
-		['pic1'] = {
-			['visibility'] = 'hidden',
-			['border-width'] = {1, 1, 1, 1}
-		},
 		
-		['btn1'] = {
-			['background-color'] = {255, 30, 30, 30},
-			['color'] = {255, 220, 220, 10},
-			['font-size'] = 20,
-			
-			['background-color:focus'] = {255, 80, 80, 80},
-			['color:focus'] = {255, 10, 220, 10},
-			['font-size:focus'] = 28,
-		},
-		
-		['btn2'] = {
-			['background-color'] = {255, 30, 220, 202},
-			
-			['background-image:focus'] = 'dialog_close_focus.bmp'
-		},
-		
-		['btn3'] = {
-			['background-color'] = 0xFFF010FF
-		}
 	},
 	
 	['id'] = {
-		['btn1:visited'] = {
-			['color'] = 'green',
-			['background-color'] = 'green'
-		},
-		['btn1:hover'] = {
-			['color'] = 'green',
-			['background-color'] = 'green'
-		},
-		['btn1:active'] = {
-			['color'] = 'green',
-			['background-color'] = 'green'
-		}
+		
 	}
 }
 
@@ -129,7 +87,7 @@ home.dialog = {
 	['path'] = '/home',
 	['type'] = 'kdialog',
 	['pos'] = {0, 0, CONST_w, CONST_h},
-	['title'] = 'klbui-css示例2 - hello world!',
+	['title'] = 'klbui-css示例3 - hello world!',
 	['name'] = 'home1',
 	
 	['child'] = {
@@ -209,40 +167,25 @@ home.commonds = {
 
 	['/home/btn1'] = {
 		['click'] = function ()
-			jq('pic1').picture('2fab96b2be1e057c524763b7839136db.bmp')
 			
-			local title = jq('btn1').title()
-			local c = 0
 		end
 	},
 
 	['/home/btn2'] = {
 		['click'] = function ()
-			jq('pic1').picture('33fbb649d7dd6c721a39f8a0be989f81.bmp')
+			
 		end
 	},
 
 	['/home/btn3'] = {
 		['click'] = function ()
-			jq('pic1').picture('dialog_close_normal.bmp')
 			
-			local title = 'klbui-css示例2 - hello world!' .. ' - ' .. tostring(home.parse_tc) .. 'ms'			
-			jq('home1').title(title)
 		end
 	},
 	
 	['/home/btn4'] = {
 		['click'] = function ()
-			jq('pic1').picture('dialog_close_focus.bmp')
 			
-			--jq('btn1')['background-color'](0xFFF01010)
-			
-			--local a1 = jq('btn1')['background-color']()
-			
-			--jq('btn1').visibility(false)
-			
-			jq('static1').title(krand.rand_string(12))
-			jq('static2').title(krand.rand_string(12))
 		end
 	}
 }

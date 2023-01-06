@@ -174,6 +174,8 @@ static void klbui_static_init_attribute(klb_wnd_t* p_wnd, klbui_static_t* p_stat
 
 static void klbui_static_quit_attribute(klbui_static_t* p_static)
 {
+    KLB_FREE_BY(p_static->title, sdsfree);
+
     klbuicssex_attributes_quit(&p_static->normal);
 }
 
@@ -294,7 +296,7 @@ static void on_klbui_static_title(klb_wnd_t* p_wnd, klbui_static_t* p_static, in
 
 static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_static, klb_gui_t* p_gui)
 {
-    klb_map_t* ptr = klb_gui_css_map(p_gui, "kstatic");
+    klb_map_t* ptr = klb_gui_css_map(p_gui, KLBUI_kstatic);
     if (NULL != ptr)
     {
         p_static->p_func_map = ptr;
@@ -302,7 +304,7 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     }
     
     // 未找到, 则新添加 解析map, 及处理函数
-    ptr = klb_gui_new_css_map(p_gui, "kstatic");
+    ptr = klb_gui_new_css_map(p_gui, KLBUI_kstatic);
     p_static->p_func_map = ptr;
 
 

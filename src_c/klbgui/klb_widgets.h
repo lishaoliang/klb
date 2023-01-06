@@ -43,29 +43,51 @@ klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
+#define KLBUI_kdialog           "kdialog"
+#define KLBUI_kstatic           "kstatic"
+#define KLBUI_kbutton           "kbutton"
+#define KLBUI_kedit             "kedit"
+#define KLBUI_kcheck            "kcheck"
+#define KLBUI_kcombo            "kcombo"
+#define KLBUI_kdate             "kdate"
+#define KLBUI_kip               "kip"
+#define KLBUI_kpicture          "kpicture"
+#define KLBUI_kradio            "kradio"
+#define KLBUI_kslider           "kslider"
+#define KLBUI_kgroup            "kgroup"
+#define KLBUI_klist             "klist"
+#define KLBUI_kprogress         "kprogress"
+#define KLBUI_krichtext         "krichtext"
+#define KLBUI_kspin             "kspin"
+#define KLBUI_ktab              "ktab"
+#define KLBUI_khscrollbar       "khscrollbar"
+#define KLBUI_kvscrollbar       "kvscrollbar"
+#define KLBUI_kcalendar         "kcalendar"
+#define KLBUI_kanimation        "kanimation"
+
 
 #define KLB_GUI_REGISTER_STD(PTR_GUI_)  { \
-    klb_gui_register((PTR_GUI_), "kdialog",     klb_dialog_create);         \
-    klb_gui_register((PTR_GUI_), "kstatic",     klbui_static_create);       \
-    klb_gui_register((PTR_GUI_), "kbutton",     klbui_button_create);       \
-    klb_gui_register((PTR_GUI_), "kedit",       klbui_edit_create);         \
-    klb_gui_register((PTR_GUI_), "kcheck",      klbui_check_create);        \
-    klb_gui_register((PTR_GUI_), "kcombo",      klbui_combo_create);        \
-    klb_gui_register((PTR_GUI_), "kdate",       klbui_date_create);         \
-    klb_gui_register((PTR_GUI_), "kip",         klbui_ip_create);           \
-    klb_gui_register((PTR_GUI_), "kpicture",    klbui_picture_create);      \
-    klb_gui_register((PTR_GUI_), "kradio",      klbui_radio_create);        \
-    klb_gui_register((PTR_GUI_), "kslider",     klbui_slider_create);       \
-    klb_gui_register((PTR_GUI_), "kgroup",      klbui_group_create);        \
-    klb_gui_register((PTR_GUI_), "klist",       klbui_list_create);         \
-    klb_gui_register((PTR_GUI_), "kprogress",   klbui_progress_create);     \
-    klb_gui_register((PTR_GUI_), "krichtext",   klbui_rich_text_create);    \
-    klb_gui_register((PTR_GUI_), "kspin",       klbui_spin_create);         \
-    klb_gui_register((PTR_GUI_), "ktab",        klbui_tab_create);          \
-    klb_gui_register((PTR_GUI_), "khscrollbar", klbui_hscrollbar_create);   \
-    klb_gui_register((PTR_GUI_), "kvscrollbar", klbui_vscrollbar_create);   \
-    klb_gui_register((PTR_GUI_), "kcalendar",   klbui_calendar_create);     \
-    klb_gui_register((PTR_GUI_), "kanimation",  klbui_animation_create);    \
+    klb_gui_register((PTR_GUI_), KLBUI_kdialog,     klb_dialog_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kstatic,     klbui_static_create);       \
+    klb_gui_register((PTR_GUI_), KLBUI_kbutton,     klbui_button_create);       \
+    klb_gui_register((PTR_GUI_), KLBUI_kedit,       klbui_edit_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kcheck,      klbui_check_create);        \
+    klb_gui_register((PTR_GUI_), KLBUI_kcombo,      klbui_combo_create);        \
+    klb_gui_register((PTR_GUI_), KLBUI_kdate,       klbui_date_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kip,         klbui_ip_create);           \
+    klb_gui_register((PTR_GUI_), KLBUI_kpicture,    klbui_picture_create);      \
+    klb_gui_register((PTR_GUI_), KLBUI_kradio,      klbui_radio_create);        \
+    klb_gui_register((PTR_GUI_), KLBUI_kslider,     klbui_slider_create);       \
+    klb_gui_register((PTR_GUI_), KLBUI_kgroup,      klbui_group_create);        \
+    klb_gui_register((PTR_GUI_), KLBUI_klist,       klbui_list_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kprogress,   klbui_progress_create);     \
+    klb_gui_register((PTR_GUI_), KLBUI_krichtext,   klbui_rich_text_create);    \
+    klb_gui_register((PTR_GUI_), KLBUI_kspin,       klbui_spin_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_ktab,        klbui_tab_create);          \
+    klb_gui_register((PTR_GUI_), KLBUI_khscrollbar, klbui_hscrollbar_create);   \
+    klb_gui_register((PTR_GUI_), KLBUI_kvscrollbar, klbui_vscrollbar_create);   \
+    klb_gui_register((PTR_GUI_), KLBUI_kcalendar,   klbui_calendar_create);     \
+    klb_gui_register((PTR_GUI_), KLBUI_kanimation,  klbui_animation_create);    \
 }
 
 

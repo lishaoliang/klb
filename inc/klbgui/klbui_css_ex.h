@@ -3,6 +3,7 @@
 //
 /// @file    klbui_css_ex.h
 /// @brief   UI组件 CSS属性操作帮助函数
+///   参考 CSS3 : https://www.w3school.com.cn/css/index.asp
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
