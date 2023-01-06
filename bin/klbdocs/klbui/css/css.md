@@ -1,6 +1,21 @@
 ## CSS样式
 
 
+
+### 元素(窗口)状态
+
+
+* 常规状态: normal
+* 聚焦状态: focus
+* 不使能状态: disable
+
+* 输入状态: input
+```
+    例如: 文本输入框输入文本时
+```
+
+
+
 ### 边框模型
 * 参考: https://www.w3school.com.cn/css/css_boxmodel.asp
 

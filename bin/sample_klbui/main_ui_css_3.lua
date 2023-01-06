@@ -67,7 +67,18 @@ home.css = {
 			['color:focus'] = {255, 10, 220, 220},
 			['border-width:focus'] = {2, 2, 2, 2},
 			['border-color:focus'] = {255,220,30,220},
-		}
+		},
+		
+		['kedit'] = {
+			['padding-top'] = 1,
+			['padding-right'] = 2,
+			['padding-bottom'] = 2,
+			['padding-left'] = 10,
+			
+			['color:focus'] = {255, 10, 220, 220},
+			['border-width:focus'] = {2, 2, 2, 2},
+			['border-color:focus'] = {255,220,30,220},
+		},
 	},
 	
 	['class'] = {
@@ -90,14 +101,7 @@ home.dialog = {
 	['title'] = 'klbui-css示例3 - hello world!',
 	['name'] = 'home1',
 	
-	['child'] = {
-		{
-			['path'] = '/home/pic1',
-			['type'] = 'kpicture',
-			['pos'] = {160, 64 + 10, CONST_w - 160 - 10, CONST_h - 64 - 20},
-			['name'] = 'pic1',
-		},
-		
+	['child'] = {	
 		{
 			['path'] = '/home/btn1',
 			['type'] = 'kbutton',
@@ -145,6 +149,14 @@ home.dialog = {
 			['pos'] = {10, 64 + 240, 140, 32},
 			['title'] = '静态文本显示',
 			['name'] = 'static2',
+		},
+		
+		{
+			['path'] = '/home/edit1',
+			['type'] = 'kedit',
+			['pos'] = {10 + 140 + 30, 64 + 50, 140, 32},
+			['value'] = '编辑框',
+			['name'] = 'edit1',
 		},
 	}
 }
