@@ -38,9 +38,8 @@ static void klbui_static_destroy(klb_wnd_t* p_wnd)
     KLB_FREE(p_wnd);
 }
 
-static void klbui_button_on_paint_status(klb_wnd_t* p_wnd, klbui_static_t* p_static, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+static void klbui_static_on_paint_status(klb_wnd_t* p_wnd, klbui_static_t* p_static, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    // 普通状态
     if (0 < sdslen(p_attr->background.image))
     {
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
@@ -95,7 +94,7 @@ static int klbui_static_on_paint(klb_wnd_t* p_wnd)
         return 0;
     }
 
-    // button的绘图区域
+    // 绘图区域
     klb_rect_t paint_rect = *p_rect;
 
     // 移除外边距
@@ -104,7 +103,7 @@ static int klbui_static_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_static->margin.left + p_static->margin.right);
     paint_rect.h -= (p_static->margin.top + p_static->margin.bottom);
 
-    klbui_button_on_paint_status(p_wnd, p_static, &(p_static->normal), &paint_rect);
+    klbui_static_on_paint_status(p_wnd, p_static, &(p_static->normal), &paint_rect);
 
     return 0;
 }

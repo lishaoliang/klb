@@ -523,9 +523,20 @@ int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 
     // 焦点窗口消息
     klb_wnd_t* p_wnd = p_gui->p_focus;
-    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+    if (NULL != p_wnd)
     {
-        p_wnd->vtable.on_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        // 这里 on_control / on_command 函数都需要处理, eg. 组件可能需要响应部分消息
+        // 先调用组件自身的处理函数
+        if (NULL != p_wnd->vtable.on_control)
+        {
+            p_wnd->vtable.on_control(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        }
+
+        // 再调用绑定的用户函数
+        if (NULL != p_wnd->vtable.on_command)
+        {
+            p_wnd->vtable.on_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        }
     }
 
     return 0;

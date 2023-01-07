@@ -45,7 +45,6 @@ static void klbui_edit_destroy(klb_wnd_t* p_wnd)
 
 static void klbui_edit_on_paint_status(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    // 普通状态
     if (0 < sdslen(p_attr->background.image))
     {
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
@@ -100,7 +99,7 @@ static int klbui_edit_on_paint(klb_wnd_t* p_wnd)
         return 0;
     }
 
-    // button的绘图区域
+    // 绘图区域
     klb_rect_t paint_rect = *p_rect;
 
     // 移除外边距
@@ -173,257 +172,257 @@ static klb_map_t* klbui_edit_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 
 //////////////////////////////////////////////////////////////////////////
 // 初始化属性默认值
-static void klbui_edit_init_attribute(klb_wnd_t* p_wnd, klbui_edit_t* p_btn)
+static void klbui_edit_init_attribute(klb_wnd_t* p_wnd, klbui_edit_t* p_edit)
 {
     const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
 
-    p_btn->value = sdsempty();
+    p_edit->value = sdsempty();
 
-    klbuicssex_attributes_init(&p_btn->normal, p_default);
-    klbuicssex_attributes_init(&p_btn->focus, p_default);
-    klbuicssex_attributes_init(&p_btn->disable, p_default);
-    klbuicssex_attributes_init(&p_btn->input, p_default);
+    klbuicssex_attributes_init(&p_edit->normal, p_default);
+    klbuicssex_attributes_init(&p_edit->focus, p_default);
+    klbuicssex_attributes_init(&p_edit->disable, p_default);
+    klbuicssex_attributes_init(&p_edit->input, p_default);
 }
 
-static void klbui_edit_quit_attribute(klbui_edit_t* p_btn)
+static void klbui_edit_quit_attribute(klbui_edit_t* p_edit)
 {
-    KLB_FREE_BY(p_btn->value, sdsfree);
+    KLB_FREE_BY(p_edit->value, sdsfree);
 
-    klbuicssex_attributes_quit(&p_btn->normal);
-    klbuicssex_attributes_quit(&p_btn->focus);
-    klbuicssex_attributes_quit(&p_btn->disable);
-    klbuicssex_attributes_quit(&p_btn->input);
+    klbuicssex_attributes_quit(&p_edit->normal);
+    klbuicssex_attributes_quit(&p_edit->focus);
+    klbuicssex_attributes_quit(&p_edit->disable);
+    klbuicssex_attributes_quit(&p_edit->input);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // 仿 CSS 方法
 
-static void on_klbui_edit_visibility(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_visibility(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_margin(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_margin(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin(&p_btn->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin(&p_edit->margin, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_margin_top(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_margin_top(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_top(&p_btn->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_top(&p_edit->margin, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_margin_right(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_margin_right(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_right(&p_btn->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_right(&p_edit->margin, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_margin_bottom(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_margin_bottom(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_bottom(&p_btn->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_bottom(&p_edit->margin, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_margin_left(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_margin_left(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_left(&p_btn->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_left(&p_edit->margin, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_padding(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_padding(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding(&p_btn->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding(&p_edit->padding, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_padding_top(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_padding_top(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_top(&p_btn->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_top(&p_edit->padding, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_padding_right(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_padding_right(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_right(&p_btn->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_right(&p_edit->padding, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_padding_bottom(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_padding_bottom(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_bottom(&p_btn->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_bottom(&p_edit->padding, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_padding_left(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_padding_left(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_left(&p_btn->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_left(&p_edit->padding, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_text_color(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_text_color(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_btn->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_edit->normal.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_text_color_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_text_color_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_btn->focus.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_edit->focus.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_text_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_text_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_btn->disable.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_edit->disable.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_text_align(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_text_align(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_btn->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_edit->normal.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_text_align_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_text_align_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_btn->focus.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_edit->focus.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_text_align_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_text_align_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_btn->disable.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_edit->disable.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_style(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_style(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_style(&(p_btn->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_style(&(p_edit->normal.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_style_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_style_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_style(&(p_btn->focus.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_style(&(p_edit->focus.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_style_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_style_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_style(&(p_btn->disable.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_style(&(p_edit->disable.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_weight(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_weight(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_weight(&(p_btn->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_weight(&(p_edit->normal.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_weight_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_weight_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_weight(&(p_btn->focus.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_weight(&(p_edit->focus.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_weight_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_weight_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_weight(&(p_btn->disable.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_weight(&(p_edit->disable.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_size(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_size(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_btn->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_edit->normal.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_size_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_size_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_btn->focus.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_edit->focus.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_font_size_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_font_size_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_btn->disable.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_edit->disable.font), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_background_color(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_background_color(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_btn->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_edit->normal.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_background_color_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_background_color_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_btn->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_edit->focus.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_background_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_background_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_btn->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_edit->disable.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_background_image(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_background_image(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_btn->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_edit->normal.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_background_image_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_background_image_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_btn->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_edit->focus.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_background_image_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_background_image_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_btn->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_edit->disable.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_style(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_style(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_style(&(p_btn->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_style(&(p_edit->normal.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_style_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_style_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_style(&(p_btn->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_style(&(p_edit->focus.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_style_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_style_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_style(&(p_btn->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_style(&(p_edit->disable.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_width(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_width(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_btn->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_edit->normal.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_width_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_width_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_btn->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_edit->focus.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_width_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_width_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_btn->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_edit->disable.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_color(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_color(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_btn->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_edit->normal.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_color_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_color_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_btn->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_edit->focus.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_btn->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_edit->disable.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_radius(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_radius(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_radius(&(p_btn->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_radius(&(p_edit->normal.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_radius_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_radius_focus(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_radius(&(p_btn->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_radius(&(p_edit->focus.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_edit_border_radius_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_border_radius_disable(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_radius(&(p_btn->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_radius(&(p_edit->disable.border), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////
 // 自定义属性
 
-static void on_klbui_edit_value(klb_wnd_t* p_wnd, klbui_edit_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_value(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_btn->value), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_sds(&(p_edit->value), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////

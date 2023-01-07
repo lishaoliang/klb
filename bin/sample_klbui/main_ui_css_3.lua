@@ -76,8 +76,16 @@ home.css = {
 			['padding-left'] = 10,
 			
 			['color:focus'] = {255, 10, 220, 220},
+			['border-color:focus'] = {255,160,160,160},
+			['background-color:focus'] = {255,30,30,30}
+		},
+		
+		['kcheck'] = {
 			['border-width:focus'] = {2, 2, 2, 2},
-			['border-color:focus'] = {255,220,30,220},
+			['color'] = {255, 200, 200, 200},
+			['color:focus'] = {255, 220, 220, 200},
+			['border-color:focus'] = {255,160,160,160},
+			['background-color:focus'] = {255,30,30,30}
 		},
 	},
 	
@@ -98,11 +106,13 @@ home.dialog = {
 	['path'] = '/home',
 	['type'] = 'kdialog',
 	['pos'] = {0, 0, CONST_w, CONST_h},
+	
 	['title'] = 'klbui-css示例3 - hello world!',
 	['name'] = 'home1',
 	
-	['child'] = {	
+	['child'] = {
 		{
+			['LOAD_ptp'] = "'/home/btn1', 'kbutton', {10, 64 + 10, 140, 32}",
 			['path'] = '/home/btn1',
 			['type'] = 'kbutton',
 			['pos'] = {10, 64 + 10, 140, 32},
@@ -154,9 +164,17 @@ home.dialog = {
 		{
 			['path'] = '/home/edit1',
 			['type'] = 'kedit',
-			['pos'] = {10 + 140 + 30, 64 + 50, 140, 32},
+			['pos'] = {10 + 140 + 30, 64 + 50, 480, 32},
 			['value'] = '编辑框',
 			['name'] = 'edit1',
+		},
+		
+		{
+			['path'] = '/home/check1',
+			['type'] = 'kcheck',
+			['pos'] = {10 + 140 + 30, 64 + 100, 28, 28},
+			['value'] = true,
+			['name'] = 'check1',
 		},
 	}
 }
@@ -179,7 +197,7 @@ home.commonds = {
 
 	['/home/btn1'] = {
 		['click'] = function ()
-			
+			jq('edit1').value('test!')
 		end
 	},
 
@@ -212,3 +230,5 @@ home.parse_tc = t2 - t1
 
 -- step5. 显示 '/home' 窗口
 klbui.do_model('/home')
+
+
