@@ -87,6 +87,11 @@ home.css = {
 			['border-color:focus'] = {255,160,160,160},
 			['background-color:focus'] = {255,30,30,30}
 		},
+		
+		['kpicture'] = {
+			['border-width:focus'] = {2, 2, 2, 2},
+			['border-color:focus'] = {255,20,220,220},
+		},
 	},
 	
 	['class'] = {
@@ -172,9 +177,18 @@ home.dialog = {
 		{
 			['path'] = '/home/check1',
 			['type'] = 'kcheck',
-			['pos'] = {10 + 140 + 30, 64 + 100, 28, 28},
+			['pos'] = {10 + 140 + 30, 64 + 100, 24, 24},
 			['value'] = true,
 			['name'] = 'check1',
+		},
+		
+		{
+			['path'] = '/home/pic1',
+			['type'] = 'kpicture',
+			['pos'] = {10 + 140 + 30, 64 + 100 + 40, 360, 240},
+			['value'] = true,
+			['name'] = 'pic1',
+			['image'] = '2fab96b2be1e057c524763b7839136db.bmp',
 		},
 	}
 }
@@ -217,7 +231,17 @@ home.commonds = {
 		['click'] = function ()
 			
 		end
-	}
+	},
+	
+	['/home/check1'] = {
+		['click'] = function ()			
+			if jq('check1').value() then
+				jq('pic1')['image']('2fab96b2be1e057c524763b7839136db.bmp')
+			else
+				jq('pic1')['image']('33fbb649d7dd6c721a39f8a0be989f81.bmp')
+			end
+		end
+	},
 }
 
 -- step4. 解析生成窗口

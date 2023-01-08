@@ -43,7 +43,6 @@ static void klbui_button_destroy(klb_wnd_t* p_wnd)
 
 static void klbui_button_on_paint_status(klb_wnd_t* p_wnd, klbui_button_t* p_btn, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    // 普通状态
     if (0 < sdslen(p_attr->background.image))
     {
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
