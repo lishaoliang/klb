@@ -8,6 +8,7 @@
 --]]
 local kgui = require("kgui")
 local csser = require("klbcore.klbui.csser")
+local event = require("klbcore.klbui.event")
 
 
 local parser = {}
@@ -52,6 +53,17 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 			cmds2['click'](x1, y1, x2, y2, lparam, wparam)
 		elseif 'function' == type(cmds3['click']) then
 			cmds3['click'](x1, y1, x2, y2, lparam, wparam)
+		end
+	end
+	
+	local event_str = event.transform(msg)
+	if 'string' == type(event_str) then		
+		if 'function' == type(cmds1[event_str]) then
+			cmds1[event_str](x1, y1, x2, y2, lparam, wparam)
+		elseif 'function' == type(cmds2[event_str]) then
+			cmds2[event_str](x1, y1, x2, y2, lparam, wparam)
+		elseif 'function' == type(cmds3[event_str]) then
+			cmds3[event_str](x1, y1, x2, y2, lparam, wparam)
 		end
 	end
 	
