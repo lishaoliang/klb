@@ -130,7 +130,7 @@ static int klbui_edit_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p
 
     switch (msg)
     {
-    case KLB_GUI_PAINT:
+    case KLBUI_PAINT:
         return klbui_edit_on_paint(p_wnd);
     default:
         break;

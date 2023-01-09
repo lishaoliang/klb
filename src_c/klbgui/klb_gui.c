@@ -303,11 +303,11 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_wnd_popup[p_gui->wnd_popup_num] = p_wnd;
         p_gui->wnd_popup_num += 1;
 
-        // KLB_GUI_DISPLAYING
+        // KLBUI_LOAD
         if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
         {
             klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLB_GUI_DISPLAYING, &pt, &pt, 0, 0);
+            p_wnd->vtable.on_command(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
         }
 
         p_gui->redraw = true;
@@ -331,12 +331,12 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
     klb_wnd_t* p_wnd = p_top;
 
     int end = 0;
-    // KLB_GUI_PRE_END_MODEL
-    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-    {
-        klb_point_t pt = { 0, 0 };
-        end = p_wnd->vtable.on_command(p_wnd, KLB_GUI_PRE_END_MODEL, &pt, &pt, 0, 0);
-    }
+    // KLBUI_UNLOAD
+    //if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+    //{
+    //    klb_point_t pt = { 0, 0 };
+    //    end = p_wnd->vtable.on_command(p_wnd, KLBUI_UNLOAD, &pt, &pt, 0, 0);
+    //}
 
     if (0 != end)
     {
@@ -354,11 +354,11 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
     p_gui->p_wnd_popup[index] = NULL;
     p_gui->wnd_popup_num = index;
 
-    // KLB_GUI_DISPLAY_NOT
+    // KLBUI_UNLOAD
     if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
     {
         klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_command(p_wnd, KLB_GUI_DISPLAY_NOT, &pt, &pt, 0, 0);
+        p_wnd->vtable.on_command(p_wnd, KLBUI_UNLOAD, &pt, &pt, 0, 0);
     }
 
     p_gui->redraw = true;

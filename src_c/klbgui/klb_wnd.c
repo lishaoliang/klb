@@ -218,7 +218,7 @@ int klb_wnd_on_paint(klb_wnd_t* p_wnd)
 
     if (p_wnd->vtable.on_control)
     {
-        return p_wnd->vtable.on_control(p_wnd, KLB_GUI_PAINT, NULL, NULL, 0, 0);
+        return p_wnd->vtable.on_control(p_wnd, KLBUI_PAINT, NULL, NULL, 0, 0);
     }
 
     return 0;
