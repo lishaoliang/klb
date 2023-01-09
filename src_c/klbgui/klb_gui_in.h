@@ -54,9 +54,6 @@ typedef struct klb_gui_t_
         ///  \n 查找指定类型的创建函数
         klb_hlist_t*    p_wnd_type_hlist;
 
-        /// @brief css属性函数表
-        klb_map_t       css_map;
-
         /// @brief 窗口查找表
         ///  \n 存储通过"klb_gui_append"函数加入进来的窗口
         ///  \n 在需要的时候通过路径名提取
@@ -97,15 +94,13 @@ typedef struct klb_gui_t_
         klua_env_t*     p_klua_env;
     };
 
+    /// @brief css属性函数表
+    klb_map_t           css_map;
+
     // 默认值
     klbui_default_t     def;                ///< 默认值
-
-    // 线程
-    struct
-    {
-        klb_thread_t*   p_thread1;
-    };
 }klb_gui_t;
+
 
 void klbui_default_init(klb_gui_t* p_gui);
 void klbui_default_quit(klb_gui_t* p_gui);

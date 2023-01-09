@@ -16,12 +16,13 @@
 #include "klb_type.h"
 #include "klbutil/klb_rect.h"
 #include "klbutil/klb_canvas.h"
-#include "klbgui/klb_msg.h"
-#include "klbgui/klb_wnd.h"
-#include "klbgui/klbui_event.h"
-#include "klbgui/klbui_default.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_env.h"
+#include "klbgui/klb_msg.h"
+#include "klbgui/klbui_event.h"
+#include "klbgui/klbui_default.h"
+#include "klbgui/klbui_css.h"
+#include "klbgui/klb_wnd.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -43,27 +44,11 @@ KLB_API klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas);
 KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
 
 
-/// @brief 启动线程
-/// @param [in] *p_gui          GUI对象
-/// @return int 0.成功; 非0.失败
-//int klb_gui_start(klb_gui_t* p_gui);
-
-
-/// @brief 关闭线程
-/// @param [in] *p_gui          GUI对象
-/// @return 无
-//void klb_gui_stop(klb_gui_t* p_gui);
-
-
-/// @brief 获取标准控件的默认值指针
-KLB_API const klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui);
-
-
 /// @brief 附加到 klua_env_t*
 KLB_API int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env);
 
 
-/// @brief 获取 klua_env_t*
+/// @brief 获取附加的 klua_env_t*
 KLB_API klua_env_t* klb_gui_get_klua_env(klb_gui_t* p_gui);
 
 
@@ -201,29 +186,6 @@ KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
-
-
-//////////////////////////////////////////////////////////////////////////
-// CSS辅助函数
-
-/// @brief 检查参数是否为颜色
-KLB_API bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color);
-
-
-/// @brief 通过组件类型获取 css 属性函数处理 map
-/// @param [in] *p_gui          GUI对象
-/// @param [in] *p_type         组件类型名
-/// @return klb_map_t* 函数处理表名称
-///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
-///  \n 相同组件, 使用同一套函数处理表, 目的是为了 精简组件体积
-KLB_API klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type);
-
-
-/// @brief 新建 css 属性函数处理 map
-/// @param [in] *p_gui          GUI对象
-/// @param [in] *p_type         组件类型名
-/// @return klb_map_t* 函数处理表名称
-KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 
 
 #ifdef __cplusplus

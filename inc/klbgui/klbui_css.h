@@ -15,11 +15,14 @@
 
 #include "klb_type.h"
 #include "klbthird/sds.h"
+#include "klbutil/klb_map.h"
 
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+typedef struct klb_gui_t_ klb_gui_t;
 
 
 /// @brief 边框模型
@@ -229,6 +232,29 @@ typedef struct klbuicss_util_t_
 {
     int     cursor;                     ///< ["cursor"] = "" 指定光标形状
 }klbuicss_util_t;
+
+
+//////////////////////////////////////////////////////////////////////////
+// CSS辅助函数
+
+/// @brief 检查参数是否为颜色
+KLB_API bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color);
+
+
+/// @brief 通过组件类型获取 css 属性函数处理 map
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return klb_map_t* 函数处理表名称
+///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
+///  \n 相同组件, 使用同一套函数处理表, 目的是为了 精简组件体积
+KLB_API klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type);
+
+
+/// @brief 新建 css 属性函数处理 map
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return klb_map_t* 函数处理表名称
+KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 
 
 #ifdef __cplusplus

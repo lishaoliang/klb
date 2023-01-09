@@ -19,6 +19,7 @@
 extern "C" {
 #endif
 
+typedef struct klb_gui_t_ klb_gui_t;
 
 /// @struct klbui_default_t
 /// @brief  gui部分的默认值
@@ -42,6 +43,10 @@ typedef struct klbui_default_t_
     int         border_radius;              // 边框圆角
 
 }klbui_default_t;
+
+
+/// @brief 获取标准控件的默认值指针
+KLB_API const klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui);
 
 
 #ifdef __cplusplus
