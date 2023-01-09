@@ -222,6 +222,9 @@
     <Filter Include="build\linux">
       <UniqueIdentifier>{0681a292-a6a0-447a-86b9-c9839cb24d6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbgui\subviews">
+      <UniqueIdentifier>{b47bdff2-242b-40c0-b173-e06cc493baff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1322,6 +1325,12 @@
     <ClInclude Include="..\..\inc\klbgui\klbui_css_ex.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_tab_button.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_event.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2196,6 +2205,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c">
       <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_view.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_tab_button.c">
+      <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

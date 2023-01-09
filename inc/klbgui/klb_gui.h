@@ -18,6 +18,7 @@
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_msg.h"
 #include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_event.h"
 #include "klbgui/klbui_default.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_env.h"

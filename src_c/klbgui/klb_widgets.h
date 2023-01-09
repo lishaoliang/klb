@@ -13,6 +13,7 @@
 #include "klb_type.h"
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klb_gui.h"
+#include "klbgui/klbui_event.h"
 
 
 #if defined(__cplusplus)
@@ -37,6 +38,7 @@ klb_wnd_t* klbui_progress_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_rich_text_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_spin_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_tab_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_view_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_hscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_vscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -60,6 +62,7 @@ klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_krichtext         "krichtext"
 #define KLBUI_kspin             "kspin"
 #define KLBUI_ktab              "ktab"
+#define KLBUI_kview             "kview"
 #define KLBUI_khscrollbar       "khscrollbar"
 #define KLBUI_kvscrollbar       "kvscrollbar"
 #define KLBUI_kcalendar         "kcalendar"
@@ -84,6 +87,7 @@ klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_krichtext,   klbui_rich_text_create);    \
     klb_gui_register((PTR_GUI_), KLBUI_kspin,       klbui_spin_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_ktab,        klbui_tab_create);          \
+    klb_gui_register((PTR_GUI_), KLBUI_kview,       klbui_view_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_khscrollbar, klbui_hscrollbar_create);   \
     klb_gui_register((PTR_GUI_), KLBUI_kvscrollbar, klbui_vscrollbar_create);   \
     klb_gui_register((PTR_GUI_), KLBUI_kcalendar,   klbui_calendar_create);     \
