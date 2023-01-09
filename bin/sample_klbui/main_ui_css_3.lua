@@ -21,7 +21,7 @@ local CONST_h = 720
 
 
 -- step1. 打开窗口
-wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w, CONST_h, 'klbui-css示例3' )
+wsdl.open_wnd(basepath .. 'res/font/simsun.ttc', CONST_w,  CONST_h, 'klbui-css示例3' )
 
 
 -- step2. 加载图片资源
@@ -40,6 +40,8 @@ klbui.load_image('33fbb649d7dd6c721a39f8a0be989f81.bmp', res_path .. '33fbb649d7
 
 
 local home = {}
+
+local jq = function () end
 
 
 home.css = {
@@ -121,7 +123,7 @@ home.dialog = {
 			['path'] = '/home/btn1',
 			['type'] = 'kbutton',
 			['pos'] = {10, 64 + 10, 140, 32},
-			['title'] = '图片111',
+			['title'] = '按钮111',
 			['name'] = 'btn1',
 		},
 		
@@ -129,7 +131,7 @@ home.dialog = {
 			['path'] = '/home/btn2',
 			['type'] = 'kbutton',
 			['pos'] = {10, 64 + 50, 140, 32},
-			['title'] = '图片222',
+			['title'] = '按钮222',
 			['name'] = 'btn2',
 		},
 		
@@ -137,7 +139,7 @@ home.dialog = {
 			['path'] = '/home/btn3',
 			['type'] = 'kbutton',
 			['pos'] = {10, 64 + 90, 140, 32},
-			['title'] = '图片333',
+			['title'] = '按钮333',
 			['name'] = 'btn3',
 		},
 		
@@ -145,7 +147,7 @@ home.dialog = {
 			['path'] = '/home/btn4',
 			['type'] = 'kbutton',
 			['pos'] = {10, 64 + 140, 140, 32},
-			['title'] = '图片444',
+			['title'] = '按钮444',
 			['name'] = 'btn4',
 			['class'] = 'class-btn-a'
 		},
@@ -190,11 +192,30 @@ home.dialog = {
 			['name'] = 'pic1',
 			['image'] = '2fab96b2be1e057c524763b7839136db.bmp',
 		},
+		
+		{
+			['path'] = '/home/progress1',
+			['type'] = 'kprogress',
+			['pos'] = {10 + 140 + 30, 64 + 100 + 40 + 260, 360, 32},
+			['value'] = 80,
+			['name'] = 'progress1',
+			['commonds'] = {
+				['click'] = function ()
+					local progress = jq('progress1').value()
+					
+					progress = progress + 5
+					if 100 < progress then
+						progress = 0
+					end
+					
+					jq('progress1').value(progress)
+				end
+			}
+		},
 	}
 }
 
-local jq = klbui.select(home.dialog)
-
+jq = klbui.select(home.dialog)
 
 home.parse_tc = 0
 
@@ -241,7 +262,7 @@ home.commonds = {
 				jq('pic1')['image']('33fbb649d7dd6c721a39f8a0be989f81.bmp')
 			end
 		end
-	},
+	}
 }
 
 -- step4. 解析生成窗口
