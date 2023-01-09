@@ -34,6 +34,9 @@ klbui.load_image('dialog_close_focus.bmp', res_path .. 'dialog_close_focus.bmp')
 klbui.load_image('2fab96b2be1e057c524763b7839136db.bmp', res_path .. '2fab96b2be1e057c524763b7839136db.bmp')
 klbui.load_image('33fbb649d7dd6c721a39f8a0be989f81.bmp', res_path .. '33fbb649d7dd6c721a39f8a0be989f81.bmp')
 
+klbui.load_image('radio-two_normal.bmp', res_path .. '单选_radio-two_1.bmp')
+klbui.load_image('radio-two_focus.bmp', res_path .. '单选_radio-two_2.bmp')
+
 
 -- step3. 初始全局默认设置
 -- 可选
@@ -88,6 +91,14 @@ home.css = {
 			['color:focus'] = {255, 220, 220, 200},
 			['border-color:focus'] = {255,160,160,160},
 			['background-color:focus'] = {255,30,30,30}
+		},
+		
+		['kradio'] = {
+			['border-width:focus'] = {2, 2, 2, 2},
+			['color'] = {255, 200, 200, 20},
+			['color:focus'] = {255, 220, 220, 200},
+			['border-color:focus'] = {255,160,160,160},
+			['background-color:focus'] = {255,30,30,30},
 		},
 		
 		['kpicture'] = {
@@ -185,10 +196,17 @@ home.dialog = {
 		},
 		
 		{
+			['path'] = '/home/radio1',
+			['type'] = 'kradio',
+			['pos'] = {10 + 140 + 30 + 32, 64 + 100, 24, 24},
+			['value'] = true,
+			['name'] = 'radio1',
+		},
+		
+		{
 			['path'] = '/home/pic1',
 			['type'] = 'kpicture',
 			['pos'] = {10 + 140 + 30, 64 + 100 + 40, 360, 240},
-			['value'] = true,
 			['name'] = 'pic1',
 			['image'] = '2fab96b2be1e057c524763b7839136db.bmp',
 		},
@@ -260,6 +278,16 @@ home.commonds = {
 				jq('pic1')['image']('2fab96b2be1e057c524763b7839136db.bmp')
 			else
 				jq('pic1')['image']('33fbb649d7dd6c721a39f8a0be989f81.bmp')
+			end
+		end
+	},
+	
+	['/home/radio1'] = {
+		['click'] = function ()
+			if jq('radio1').value() then
+				jq('pic1')['image']('radio-two_normal.bmp')
+			else
+				jq('pic1')['image']('radio-two_focus.bmp')
 			end
 		end
 	}
