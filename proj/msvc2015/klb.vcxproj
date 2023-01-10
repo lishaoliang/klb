@@ -378,8 +378,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\compat\w32pthreads.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
+    <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
-    <ClInclude Include="..\..\src_c\klbgui\klb_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_tab_button.h" />
     <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />

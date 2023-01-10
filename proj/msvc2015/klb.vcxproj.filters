@@ -1310,9 +1310,6 @@
     <ClInclude Include="..\..\inc\klua\klua_gui.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbgui\klb_widgets.h">
-      <Filter>src_c\klbgui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_thread.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
@@ -1330,6 +1327,9 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbgui\klbui_event.h">
       <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h">
+      <Filter>src_c\klbgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

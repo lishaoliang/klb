@@ -5,7 +5,7 @@
 #include "klbutil/klb_log.h"
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klb_wnd_in.h"
-#include "klbgui/klb_widgets.h"
+#include "klbgui/klbui_widgets.h"
 #include <assert.h>
 
 //////////////////////////////////////////////////////////////////////////
