@@ -174,6 +174,8 @@ static void klbui_view_init_attribute(klb_wnd_t* p_wnd, klbui_view_t* p_view)
 {
     const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
 
+    p_wnd->state.style |= KLB_WND_STYLE_NOFOCUS;
+
     p_view->title = sdsempty();
 
     klbuicssex_attributes_init(&p_view->normal, p_default);

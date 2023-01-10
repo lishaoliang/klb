@@ -277,7 +277,9 @@ klb_wnd_t* klb_wnd_pt_in(klb_wnd_t* p_wnd, int x, int y)
         p_next = p_next->p_next;
     }
 
-    if (!(p_wnd->state.status & KLB_WND_STATUS_HIDE) && klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, x, y))
+    if (!(p_wnd->state.style & KLB_WND_STYLE_NOFOCUS) &&    // 可聚焦样式 
+        !(p_wnd->state.status & KLB_WND_STATUS_HIDE) &&     // 显示
+        klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, x, y))   // 在窗口区域内部
     {
         return p_wnd;
     }

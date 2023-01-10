@@ -22,11 +22,27 @@
 extern "C" {
 #endif
 
-
+/// @struct klbui_tab_botton_t
+/// @brief  ktab私有控件
 typedef struct klbui_tab_botton_t_
 {
-    int         index;
-    klb_wnd_t*  p_bind_wnd;
+    sds                     title;          ///< 标题
+
+    // normal
+    klbuicss_margin_t       margin;         ///< 外边框
+    klbuicss_padding_t      padding;        ///< 内边框
+
+    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
+    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
+    klbuicssex_attributes_t check;          ///< check 选中状态参数
+
+    // 非CSS属性
+    struct
+    {
+        int                 index;          ///< 序号
+        klb_wnd_t*          p_bind_wnd;     ///< 绑定的窗口
+        bool                is_check;       ///< 是否选中
+    };
 }klbui_tab_botton_t;
 
 
@@ -37,6 +53,10 @@ int klbui_tab_botton_get_index(klb_wnd_t* p_wnd);
 
 void klbui_tab_botton_bind_wnd(klb_wnd_t* p_wnd, klb_wnd_t* p_dst);
 klb_wnd_t* klbui_tab_botton_get_bind_wnd(klb_wnd_t* p_wnd);
+
+void klbui_tab_botton_check(klb_wnd_t* p_wnd, bool check);
+
+void klbui_tab_botton_update_title(klb_wnd_t* p_wnd);
 
 
 #ifdef __cplusplus

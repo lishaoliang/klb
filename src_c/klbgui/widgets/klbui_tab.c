@@ -27,8 +27,12 @@ typedef struct klbui_tab_t_
 
     klb_map_t*              p_func_map;     ///< 属性函数表
 
-    int                     tab_count;
-    klb_wnd_t*              tab_btn[KLBUI_tab_max]; ///< klbui_tab_botton_t*
+    // tab 按钮
+    struct
+    {
+        int                     tab_count;
+        klb_wnd_t*              tab_btn[KLBUI_tab_max]; ///< klbui_tab_botton_t*
+    };
 }klbui_tab_t;
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,30 +49,6 @@ static void klbui_tab_destroy(klb_wnd_t* p_wnd)
     p_tab->p_func_map = NULL;
 
     KLB_FREE(p_wnd);
-}
-
-static void klbui_tab_on_paint_button_status(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
-{
-    klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 20, 30, 20));
-
-    if (0 < strlen("1111"))
-    {
-        klb_rect_t text_rect = *p_rect;
-
-        // 移除边框
-        text_rect.x += p_attr->border.width.left;
-        text_rect.y += p_attr->border.width.top;
-        text_rect.w -= (p_attr->border.width.left + p_attr->border.width.right);
-        text_rect.h -= (p_attr->border.width.top + p_attr->border.width.bottom);
-
-        // 移除内边距
-        text_rect.x += p_tab->padding.left;
-        text_rect.y += p_tab->padding.top;
-        text_rect.w -= (p_tab->padding.left + p_tab->padding.right);
-        text_rect.h -= (p_tab->padding.top + p_tab->padding.bottom);
-
-        klb_wnd_draw_text2(p_wnd, &text_rect, "1111", strlen("1111"), p_attr->text.color, p_attr->font.size);
-    }
 }
 
 static void klbui_tab_on_paint_status(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
@@ -140,10 +120,12 @@ static void klbui_tab_show_page(klbui_tab_t* p_tab, int idx)
         klb_wnd_t* p_bind = klbui_tab_botton_get_bind_wnd(p_tab->tab_btn[i]);
         if (i == idx)
         {
+            klbui_tab_botton_check(p_tab->tab_btn[i], true);
             klb_wnd_show(p_bind, true);
         }
         else
         {
+            klbui_tab_botton_check(p_tab->tab_btn[i], false);
             klb_wnd_show(p_bind, false);
         }
     }
@@ -211,11 +193,11 @@ static int klbui_tab_on_load(klb_wnd_t* p_wnd, klbui_tab_t* p_tab)
         {
             // 子窗口
             int index = p_tab->tab_count;
-            p_tab->tab_btn[index] = klbui_tab_botton_create(p_wnd->p_gui, 120 * index, 0, 120, 32);
+            p_tab->tab_btn[index] = klbui_tab_botton_create(p_wnd->p_gui, 120 * index, 1, 120, 32);
             klb_wnd_push_child(p_wnd, p_tab->tab_btn[index]);
-
             klbui_tab_botton_set_index(p_tab->tab_btn[index], index);
             klbui_tab_botton_bind_wnd(p_tab->tab_btn[index], p_cur);
+            klbui_tab_botton_update_title(p_tab->tab_btn[index]);
             klb_wnd_bind_command(p_tab->tab_btn[index], on_command_tab_btn_klbui_tab, p_wnd);
 
             p_tab->tab_count += 1;
@@ -287,6 +269,7 @@ static void klbui_tab_init_attribute(klb_wnd_t* p_wnd, klbui_tab_t* p_tab)
 {
     const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
 
+    p_wnd->state.style |= KLB_WND_STYLE_NOFOCUS;
     //p_tab->title = sdsempty();
 
     klbuicssex_attributes_init(&p_tab->normal, p_default);
