@@ -154,11 +154,21 @@ selector.select = function (dlg, multi)
 			local args = {...}
 			if 1 < #args then
 				for _, v in ipairs(wnds) do
-					local path = ('string' == type(v['path']) and v['path']) or ''				
+					local path = ('string' == type(v['path']) and v['path']) or ''		
 					kgui.set(path, ...)
 				end
 			elseif 1 == #args then
-				return kgui.get(wnds_first_path(), ...)
+				if 'table' == type(args[1]) then
+					for k1, v1 in pairs(args[1]) do
+						-- set
+						for _, v2 in ipairs(wnds) do
+							local path = ('string' == type(v2['path']) and v2['path']) or ''
+							kgui.set(path, k1, v1)
+						end
+					end
+				else
+					return kgui.get(wnds_first_path(), ...)
+				end
 			end
 			
 			return t

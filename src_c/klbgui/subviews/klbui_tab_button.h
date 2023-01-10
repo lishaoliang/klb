@@ -25,13 +25,18 @@ extern "C" {
 
 typedef struct klbui_tab_botton_t_
 {
-    int a;
+    int         index;
+    klb_wnd_t*  p_bind_wnd;
 }klbui_tab_botton_t;
 
 
 klb_wnd_t* klbui_tab_botton_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
+void klbui_tab_botton_set_index(klb_wnd_t* p_wnd, int idx);
+int klbui_tab_botton_get_index(klb_wnd_t* p_wnd);
 
+void klbui_tab_botton_bind_wnd(klb_wnd_t* p_wnd, klb_wnd_t* p_dst);
+klb_wnd_t* klbui_tab_botton_get_bind_wnd(klb_wnd_t* p_wnd);
 
 
 #ifdef __cplusplus

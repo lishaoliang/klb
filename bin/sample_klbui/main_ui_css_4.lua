@@ -60,7 +60,27 @@ home.css = {
 			['color:focus'] = {255, 10, 220, 220},	
 			['border-width:focus'] = {2, 2, 2, 2},
 			['border-color:focus'] = {255,220,30,220},
-		}
+		},
+		
+		['kview'] = {
+			['background-color'] = {255, 80, 80, 80},
+			['background-color:focus'] = {255, 220, 220, 30},
+			
+			['color:focus'] = {255, 10, 220, 220},	
+			['border-width:focus'] = {2, 2, 2, 2},
+			['border-color:focus'] = {255,220,30,220},
+		},
+		
+		['kbutton'] = {
+			['padding-top'] = 1,
+			['padding-right'] = 2,
+			['padding-bottom'] = 2,
+			['padding-left'] = 10,
+			
+			['color:focus'] = {255, 10, 220, 220},
+			['border-width:focus'] = {2, 2, 2, 2},
+			['border-color:focus'] = {255,220,30,220},
+		},
 	},
 	
 	['class'] = {
@@ -84,7 +104,39 @@ local view1 = {
 	['name'] = 'view1',
 	
 	['child'] = {
+		{
+			['path'] = '/home/tab1/view1/btn1',
+			['type'] = 'kbutton',
+			['pos'] = {10, 64 + 10, 140, 32},
+			['title'] = '按钮111',
+			['name'] = 'btn1',
+		},
 		
+		{
+			['path'] = '/home/tab1/view1/btn2',
+			['type'] = 'kbutton',
+			['pos'] = {10, 64 + 50, 140, 32},
+			['title'] = '按钮222',
+			['name'] = 'btn2',
+		},
+		
+		{
+			['path'] = '/home/tab1/view1/btn3',
+			['type'] = 'kbutton',
+			['pos'] = {10, 64 + 90, 140, 32},
+			['title'] = '按钮333',
+			['name'] = 'btn3',
+		},
+		
+		{
+			['path'] = '/home/tab1/view1/static1',
+			['type'] = 'kstatic',
+			['pos'] = {10, 64 + 190, 140, 32},
+			['title'] = '静态文本显示',
+			['name'] = 'static1',
+			
+			['color'] = {255, 10, 220, 220},
+		},
 	}
 }
 
@@ -96,7 +148,21 @@ local view2 = {
 	['name'] = 'view2',
 	
 	['child'] = {
+		{
+			['path'] = '/home/tab1/view2/btn21',
+			['type'] = 'kbutton',
+			['pos'] = {10 + 240, 64 + 10, 140, 32},
+			['title'] = 'AAAA',
+			['name'] = 'btn21',
+		},
 		
+		{
+			['path'] = '/home/tab1/view2/btn22',
+			['type'] = 'kbutton',
+			['pos'] = {10 + 240, 64 + 50, 140, 32},
+			['title'] = 'BBBB',
+			['name'] = 'btn22',
+		},
 	}
 }
 
@@ -117,8 +183,9 @@ home.dialog = {
 			['name'] = 'tab1',
 			
 			['child'] = {
-				view1,
-				--view2
+				--view1,
+				view2,
+				view1
 			}
 		},
 	}

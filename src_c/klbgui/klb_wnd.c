@@ -277,7 +277,7 @@ klb_wnd_t* klb_wnd_pt_in(klb_wnd_t* p_wnd, int x, int y)
         p_next = p_next->p_next;
     }
 
-    if (klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, x, y))
+    if (!(p_wnd->state.status & KLB_WND_STATUS_HIDE) && klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, x, y))
     {
         return p_wnd;
     }

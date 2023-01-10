@@ -7,6 +7,10 @@
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_map.h"
 #include "klbgui/subviews/klbui_tab_button.h"
+#include "klbgui/klb_wnd_in.h"
+
+
+#define KLBUI_tab_max           8
 
 
 /// @struct klbui_tab_t
@@ -22,6 +26,9 @@ typedef struct klbui_tab_t_
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
 
     klb_map_t*              p_func_map;     ///< 属性函数表
+
+    int                     tab_count;
+    klb_wnd_t*              tab_btn[KLBUI_tab_max]; ///< klbui_tab_botton_t*
 }klbui_tab_t;
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,33 +117,116 @@ static int klbui_tab_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_tab->margin.left + p_tab->margin.right);
     paint_rect.h -= (p_tab->margin.top + p_tab->margin.bottom);
 
-    klb_rect_t btn_rect = paint_rect;
-    btn_rect.w = 240;
-    btn_rect.h = 38;
-
-    klb_rect_t btn_rect2 = paint_rect;
-    btn_rect2.x = 240;
-    btn_rect2.w = 240;
-    btn_rect2.h = 38;
-
     if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
     {
         klbui_tab_on_paint_status(p_wnd, p_tab, &p_tab->disable, &paint_rect);
-        klbui_tab_on_paint_button_status(p_wnd, p_tab, &p_tab->disable, &btn_rect);
-        klbui_tab_on_paint_button_status(p_wnd, p_tab, &p_tab->disable, &btn_rect2);
     }
     else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
     {
         klbui_tab_on_paint_status(p_wnd, p_tab, &p_tab->focus, &paint_rect);
-        klbui_tab_on_paint_button_status(p_wnd, p_tab, &p_tab->focus, &btn_rect);
-        klbui_tab_on_paint_button_status(p_wnd, p_tab, &p_tab->focus, &btn_rect2);
     }
     else
     {
         klbui_tab_on_paint_status(p_wnd, p_tab, &p_tab->normal, &paint_rect);
-        klbui_tab_on_paint_button_status(p_wnd, p_tab, &p_tab->normal, &btn_rect);
-        klbui_tab_on_paint_button_status(p_wnd, p_tab, &p_tab->normal, &btn_rect2);
     }
+
+    return 0;
+}
+
+static void klbui_tab_show_page(klbui_tab_t* p_tab, int idx)
+{
+    for (int i = 0; i < p_tab->tab_count; i++)
+    {
+        klb_wnd_t* p_bind = klbui_tab_botton_get_bind_wnd(p_tab->tab_btn[i]);
+        if (i == idx)
+        {
+            klb_wnd_show(p_bind, true);
+        }
+        else
+        {
+            klb_wnd_show(p_bind, false);
+        }
+    }
+}
+
+static int on_command_tab_btn_klbui_tab(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klbui_tab_botton_t* p_btn = (klbui_tab_botton_t*)p_wnd->ctrl;
+    klb_wnd_t* p_owner = (klb_wnd_t*)p_wnd->p_udata;
+    klbui_tab_t* p_tab = (klbui_tab_t*)p_owner->ctrl;
+
+    switch (msg)
+    {
+    case KLB_WM_LBUTTONDOWN:
+    case KLB_WM_LBUTTONDBLCLK:
+        {
+            int idx = klbui_tab_botton_get_index(p_wnd);
+            klbui_tab_show_page(p_tab, idx);
+        }
+        break;
+    default:
+        break;
+    }
+
+    return 0;
+}
+
+static bool is_tab_btn_klbui_tab(klbui_tab_t* p_tab, klb_wnd_t* p_dst)
+{
+    for (int i = 0; i < p_tab->tab_count; i++)
+    {
+        if (p_dst == p_tab->tab_btn[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool is_bind_wnd_klbui_tab(klbui_tab_t* p_tab, klb_wnd_t* p_dst)
+{
+    for (int i = 0; i < p_tab->tab_count; i++)
+    {
+        klb_wnd_t* p_bind = klbui_tab_botton_get_bind_wnd(p_tab->tab_btn[i]);
+        if (p_dst == p_bind)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static int klbui_tab_on_load(klb_wnd_t* p_wnd, klbui_tab_t* p_tab)
+{
+    // load 每次弹出显示都会执行一次
+    // 动态检查tab页是否与子窗口一致
+
+    klb_wnd_t* p_next = p_wnd->p_child;
+    while (NULL != p_next)
+    {
+        klb_wnd_t* p_cur = p_next;
+        if (!is_tab_btn_klbui_tab(p_tab, p_cur) && !is_bind_wnd_klbui_tab(p_tab, p_cur))
+        {
+            // 子窗口
+            int index = p_tab->tab_count;
+            p_tab->tab_btn[index] = klbui_tab_botton_create(p_wnd->p_gui, 120 * index, 0, 120, 32);
+            klb_wnd_push_child(p_wnd, p_tab->tab_btn[index]);
+
+            klbui_tab_botton_set_index(p_tab->tab_btn[index], index);
+            klbui_tab_botton_bind_wnd(p_tab->tab_btn[index], p_cur);
+            klb_wnd_bind_command(p_tab->tab_btn[index], on_command_tab_btn_klbui_tab, p_wnd);
+
+            p_tab->tab_count += 1;
+        }
+
+        p_next = p_next->p_next;
+    }
+
+    klbui_tab_show_page(p_tab, 0);
+
+    klb_wnd_set_calculate(klb_wnd_get_top(p_wnd), true);
 
     return 0;
 }
@@ -149,6 +239,10 @@ static int klbui_tab_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_
     {
     case KLBUI_PAINT:
         return klbui_tab_on_paint(p_wnd);
+        break;
+    case KLBUI_LOAD:
+        return klbui_tab_on_load(p_wnd, p_tab);
+        break;
     default:
         break;
     }

@@ -49,6 +49,38 @@ static int klbui_tab_botton_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
     return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+void klbui_tab_botton_set_index(klb_wnd_t* p_wnd, int idx)
+{
+    klbui_tab_botton_t* p_btn = (klbui_tab_botton_t*)p_wnd->ctrl;
+
+    p_btn->index = idx;
+}
+
+int klbui_tab_botton_get_index(klb_wnd_t* p_wnd)
+{
+    klbui_tab_botton_t* p_btn = (klbui_tab_botton_t*)p_wnd->ctrl;
+
+    return p_btn->index;
+}
+
+void klbui_tab_botton_bind_wnd(klb_wnd_t* p_wnd, klb_wnd_t* p_dst)
+{
+    klbui_tab_botton_t* p_btn = (klbui_tab_botton_t*)p_wnd->ctrl;
+
+    p_btn->p_bind_wnd = p_dst;
+}
+
+klb_wnd_t* klbui_tab_botton_get_bind_wnd(klb_wnd_t* p_wnd)
+{
+    klbui_tab_botton_t* p_btn = (klbui_tab_botton_t*)p_wnd->ctrl;
+
+    return p_btn->p_bind_wnd;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 klb_wnd_t* klbui_tab_botton_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_tab_botton_t));

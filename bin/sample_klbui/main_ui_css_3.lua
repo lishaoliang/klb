@@ -45,7 +45,7 @@ klbui.load_image('radio-two_focus.bmp', res_path .. '单选_radio-two_2.bmp')
 local home = {}
 
 local jq = function () end
-
+local jq0 = function () end
 
 home.css = {
 	['type'] = {
@@ -233,14 +233,28 @@ home.dialog = {
 	}
 }
 
-jq = klbui.select(home.dialog)
+jq = klbui.select(home.dialog)			-- 单选
+jq0 = klbui.select(home.dialog, true)	-- 多选
+
 
 home.parse_tc = 0
 
 home.commonds = {
 	['/home'] = {
 		['load'] = function ()
-			
+			jq('edit1').value('解析耗时:' .. tostring(home.parse_tc) .. 'ms')
+				
+			jq('btn4').click(function ()
+				jq0(':kstatic').css({
+					['color'] = {255, 220, 220, 220},
+					['font-size'] = 22,
+					['border-color'] = {255,160,160,160},
+					['background-color'] = {255, 60, 60, 60},
+				})
+				
+				jq('static1').value('后期动态绑定')
+				jq('static2').value('点击了按钮4!')
+			end)
 		end,
 		
 		['unload'] = function ()
@@ -256,13 +270,25 @@ home.commonds = {
 
 	['/home/btn2'] = {
 		['click'] = function ()
-			
+			jq0(':kcheck').css({
+				['border-width:focus'] = {2, 2, 2, 2},
+				['color'] = {255, 160, 160, 160},
+				['color:focus'] = {255, 220, 20, 20},
+				['border-color:focus'] = {255,160,160,160},
+				['background-color:focus'] = {255,30,30,30}
+			})
 		end
 	},
 
 	['/home/btn3'] = {
 		['click'] = function ()
-			
+			jq0(':kcheck').css({
+				['border-width:focus'] = {2, 2, 2, 2},
+				['color'] = {255, 250, 250, 250},
+				['color:focus'] = {255, 20, 220, 20},
+				['border-color:focus'] = {255,160,160,160},
+				['background-color:focus'] = {255,30,30,30}
+			})
 		end
 	},
 	

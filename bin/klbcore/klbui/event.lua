@@ -11,27 +11,28 @@ local event = {}
 
 -- @def   KLBUI_PAINT
 -- @brief 绘制事件
-event.PAINT		= 0x501		-- paint
+event.PAINT = 0x501		-- paint
 
 
 -- @def   KLBUI_LOAD
 -- @brief 加载事件: 对话框即将载入
-event.LOAD		= 0x601		-- load
+event.LOAD = 0x601		-- load
 
 
 -- @def   KLBUI_UNLOAD
 -- @brief 卸载事件: 对话框即将关闭
-event.UNLOAD	= 0x602		-- unload
+event.UNLOAD = 0x602	-- unload
 
 
 -- @brief 转换表
 local transform_map = {
 	['paint'] = event.PAINT,		-- 绘制事件
-	['load'] = event.LOAD,			-- 加载事件
-	['unload'] = event.UNLOAD,		-- 卸载事件
-	
 	[event.PAINT] = 'paint',		-- 绘制事件
+	
+	['load'] = event.LOAD,			-- 加载事件
 	[event.LOAD] = 'load',			-- 加载事件
+	
+	['unload'] = event.UNLOAD,		-- 卸载事件
 	[event.UNLOAD] = 'unload',		-- 卸载事件
 }
 
