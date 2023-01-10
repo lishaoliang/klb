@@ -34,9 +34,6 @@ klbui.load_image('dialog_close_focus.bmp', res_path .. 'dialog_close_focus.bmp')
 klbui.load_image('2fab96b2be1e057c524763b7839136db.bmp', res_path .. '2fab96b2be1e057c524763b7839136db.bmp')
 klbui.load_image('33fbb649d7dd6c721a39f8a0be989f81.bmp', res_path .. '33fbb649d7dd6c721a39f8a0be989f81.bmp')
 
-klbui.load_image('radio-two_normal.bmp', res_path .. '单选_radio-two_1.bmp')
-klbui.load_image('radio-two_focus.bmp', res_path .. '单选_radio-two_2.bmp')
-
 
 -- step3. 初始全局默认设置
 -- 可选
@@ -81,6 +78,20 @@ home.css = {
 			['border-width:focus'] = {2, 2, 2, 2},
 			['border-color:focus'] = {255,220,30,220},
 		},
+		
+		['kcombo'] = {
+			['padding-top'] = 1,
+			['padding-right'] = 2,
+			['padding-bottom'] = 2,
+			['padding-left'] = 10,
+			
+			['color:focus'] = {255, 10, 220, 220},
+			['border-width:focus'] = {2, 2, 2, 2},
+			['border-color:focus'] = {255,220,30,220},
+			
+			['botton-right.color'] = {255, 180, 180, 180},
+			['botton-right.color:focus'] = {255, 20, 20, 250},
+		},
 	},
 	
 	['class'] = {
@@ -99,7 +110,7 @@ home.css = {
 local view1 = {
 	['path'] = '/home/tab1/view1',
 	['type'] = 'kview',
-	['pos'] = {0, 40, CONST_w, CONST_h - 80},
+	['pos'] = {0, 34, CONST_w, CONST_h - 74},
 	['title'] = '页面1',
 	['name'] = 'view1',
 	
@@ -143,7 +154,7 @@ local view1 = {
 local view2 = {
 	['path'] = '/home/tab1/view2',
 	['type'] = 'kview',
-	['pos'] = {0, 40, CONST_w - 2, CONST_h - 80},
+	['pos'] = {0, 34, CONST_w - 2, CONST_h - 74},
 	['title'] = '页面2',
 	['name'] = 'view2',
 	
@@ -162,6 +173,14 @@ local view2 = {
 			['pos'] = {10 + 240, 64 + 50, 140, 32},
 			['title'] = 'BBBB',
 			['name'] = 'btn22',
+		},
+		
+		{
+			['path'] = '/home/tab1/view2/combo23',
+			['type'] = 'kcombo',
+			['pos'] = {10 + 240, 64 + 50 + 40, 140, 32},
+			['title'] = 'BBBB',
+			['name'] = 'combo23',
 		},
 	}
 }
@@ -183,9 +202,8 @@ home.dialog = {
 			['name'] = 'tab1',
 			
 			['child'] = {
-				--view1,
+				view1,
 				view2,
-				view1
 			}
 		},
 	}

@@ -18,6 +18,10 @@ extern "C" {
 #endif
 
 
+//////////////////////////////////////////////////////////////////////////
+// 公共事件[0x500 ~ 0x7FF]
+
+
 /// @def   KLBUI_PAINT
 /// @brief 绘制事件
 #define KLBUI_PAINT             0x501       // paint
@@ -31,6 +35,26 @@ extern "C" {
 /// @def   KLBUI_UNLOAD
 /// @brief 卸载事件: 对话框即将关闭
 #define KLBUI_UNLOAD            0x602       // unload
+
+
+/// @def   KLBUI_FOCUS
+/// @brief 聚焦事件: 控件得到焦点
+#define KLBUI_FOCUS             0x701       // focus
+
+
+/// @def   KLBUI_UNFOCUS
+/// @brief 失去聚焦事件
+#define KLBUI_UNFOCUS           0x702       // unfocus
+
+
+//////////////////////////////////////////////////////////////////////////
+// 组件私有事件 [0x800 ~ 0x9FF]
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// 自定义事件 [0x1000 ~ -]
+
 
 
 #ifdef __cplusplus
