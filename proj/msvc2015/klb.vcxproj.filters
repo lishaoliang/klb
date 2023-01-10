@@ -2212,5 +2212,11 @@
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_tab_button.c">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menubar.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menu.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

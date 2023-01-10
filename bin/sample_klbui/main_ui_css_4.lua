@@ -89,7 +89,7 @@ home.css = {
 			['border-width:focus'] = {2, 2, 2, 2},
 			['border-color:focus'] = {255,220,30,220},
 			
-			['botton-right.color'] = {255, 180, 180, 180},
+			['botton-right.color'] = {255, 120, 120, 120},
 			['botton-right.color:focus'] = {255, 20, 20, 250},
 		},
 	},
