@@ -483,6 +483,57 @@ static int klua_kgui_end_model_all(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_popup(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/menu1"
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int ret = klb_gui_popup(p_gui, p_path_name);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
+static int klua_kgui_popup_end(lua_State* L)
+{
+    bool all = true;
+    if (LUA_TBOOLEAN == lua_type(L, 1))
+    {
+        all = (0 == lua_toboolean(L, 1)) ? false : true;
+    }
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int ret = klb_gui_popup_end(p_gui, all);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
+static int klua_kgui_messagebox(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/messagebox1"
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int ret = klb_gui_messagebox(p_gui, p_path_name);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
+static int klua_kgui_messagebox_end(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int ret = klb_gui_messagebox_end(p_gui);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
+
 static int klua_kgui_show(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
@@ -515,6 +566,12 @@ int klua_open_kgui(lua_State* L)
         { "do_model",           klua_kgui_do_model },
         { "end_model",          klua_kgui_end_model },
         { "end_model_all",      klua_kgui_end_model_all },
+
+        { "popup",              klua_kgui_popup },
+        { "popup_end",          klua_kgui_popup_end },
+
+        { "messagebox",         klua_kgui_messagebox },
+        { "messagebox_end",     klua_kgui_messagebox_end },
 
         // wnd
         { "show",               klua_kgui_show },

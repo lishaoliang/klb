@@ -286,7 +286,7 @@ static void klb_gui_load_wnd(klb_wnd_t* p_wnd)
 
 int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
 {
-    if (KLB_GUI_POPUP_WND_MAX <= p_gui->wnd_popup_num)
+    if (KLBUI_MODAL_WND_MAX <= p_gui->modal_num)
     {
         return 1; // 超过最大弹出数目
     }
@@ -296,16 +296,16 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
-        for (int i = 0; i < p_gui->wnd_popup_num; i++)
+        for (int i = 0; i < p_gui->modal_num; i++)
         {
-            if (p_wnd == p_gui->p_wnd_popup[i])
+            if (p_wnd == p_gui->p_modal_wnd[i])
             {
                 return 1; // 已经被弹出
             }
         }
 
-        p_gui->p_wnd_popup[p_gui->wnd_popup_num] = p_wnd;
-        p_gui->wnd_popup_num += 1;
+        p_gui->p_modal_wnd[p_gui->modal_num] = p_wnd;
+        p_gui->modal_num += 1;
 
         // KLBUI_LOAD
         klb_gui_load_wnd(p_wnd);
@@ -325,14 +325,14 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
 
 int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
 {
-    if (p_gui->wnd_popup_num <= 0)
+    if (p_gui->modal_num <= 0)
     {
         return 1;
     }
 
-    int index = p_gui->wnd_popup_num - 1;
+    int index = p_gui->modal_num - 1;
 
-    klb_wnd_t* p_top = p_gui->p_wnd_popup[index];
+    klb_wnd_t* p_top = p_gui->p_modal_wnd[index];
     klb_wnd_t* p_wnd = p_top;
 
     int end = 0;
@@ -356,8 +356,8 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_focus = NULL;
     }
 
-    p_gui->p_wnd_popup[index] = NULL;
-    p_gui->wnd_popup_num = index;
+    p_gui->p_modal_wnd[index] = NULL;
+    p_gui->modal_num = index;
 
     // KLBUI_UNLOAD
     if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
@@ -373,6 +373,85 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
 
 int klb_gui_end_model_all(klb_gui_t* p_gui)
 {
+    return 0;
+}
+
+/// @brief 弹出菜单等页面
+int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
+{
+    return 0;
+}
+
+int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
+{
+    return 0;
+}
+
+/// @brief 消息框
+int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
+{
+    if (NULL != p_gui->p_msg_box)
+    {
+        return 1; // 已经弹出
+    }
+
+    int path_len = strlen(p_path_name);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, path_len);
+
+    if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
+    {
+        if (NULL != p_gui->p_focus)
+        {
+            klb_wnd_set_focus(p_gui->p_focus, false);
+
+            p_gui->p_focus_top = NULL;
+            p_gui->p_focus = NULL;
+        }
+
+        p_gui->p_msg_box = p_wnd;
+
+        // KLBUI_LOAD
+        klb_gui_load_wnd(p_wnd);
+        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+        {
+            klb_point_t pt = { 0, 0 };
+            p_wnd->vtable.on_command(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
+        }
+
+        p_gui->redraw = true;
+        return 0;
+    }
+
+    return 1;
+}
+
+int klb_gui_messagebox_end(klb_gui_t* p_gui)
+{
+    if (NULL == p_gui->p_msg_box)
+    {
+        return 1;
+    }
+    
+    if (NULL != p_gui->p_focus)
+    {
+        klb_wnd_set_focus(p_gui->p_focus, false);
+
+        p_gui->p_focus_top = NULL;
+        p_gui->p_focus = NULL;
+    }
+
+    klb_wnd_t* p_wnd = p_gui->p_msg_box;
+
+    // KLBUI_UNLOAD
+    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+    {
+        klb_point_t pt = { 0, 0 };
+        p_wnd->vtable.on_command(p_wnd, KLBUI_UNLOAD, &pt, &pt, 0, 0);
+    }
+
+    p_gui->p_msg_box = NULL;
+    p_gui->redraw = true;
+
     return 0;
 }
 
@@ -480,15 +559,27 @@ int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg)
 
 static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t** p_top)
 {
-    for (int i = p_gui->wnd_popup_num - 1; 0 <= i; i--)
+    // messagebox
+    if (NULL != p_gui->p_msg_box)
     {
-        klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_wnd_popup[i], x, y);
+        klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_msg_box, x, y);
+        if (NULL != p_focus)
+        {
+            *p_top = p_gui->p_msg_box;
+        }
+
+        return p_focus;
+    }
+
+    for (int i = p_gui->modal_num - 1; 0 <= i; i--)
+    {
+        klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_modal_wnd[i], x, y);
 
         if (NULL != p_focus)
         {
             if (NULL != p_top)
             {
-                *p_top = p_gui->p_wnd_popup[i];
+                *p_top = p_gui->p_modal_wnd[i];
             }
 
             return p_focus;
@@ -569,9 +660,14 @@ int klb_gui_redraw(klb_gui_t* p_gui)
         klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
         klb_canvas_draw_clear(p_gui->p_canvas);
 
-        for (int i = 0; i < p_gui->wnd_popup_num; i++)
+        for (int i = 0; i < p_gui->modal_num; i++)
         {
-            klb_wnd_draw(p_gui->p_wnd_popup[i]);
+            klb_wnd_draw(p_gui->p_modal_wnd[i]);
+        }
+
+        if (NULL != p_gui->p_msg_box)
+        {
+            klb_wnd_draw(p_gui->p_msg_box);
         }
 
         klb_gui_update_rect(p_gui, NULL);

@@ -592,6 +592,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_list.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menu.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menubar.c" />
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_messagebox.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_progress.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_radio.c" />

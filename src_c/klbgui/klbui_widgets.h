@@ -46,6 +46,8 @@ klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_menubar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
+klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+
 
 #define KLBUI_kdialog           "kdialog"
 #define KLBUI_kstatic           "kstatic"
@@ -71,6 +73,8 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_kanimation        "kanimation"
 #define KLBUI_kmenubar          "kmenubar"
 #define KLBUI_kmenu             "kmenu"
+
+#define KLBUI_kmessagebox       "kmessagebox"
 
 
 #define KLB_GUI_REGISTER_STD(PTR_GUI_)  { \
@@ -98,6 +102,7 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kanimation,  klbui_animation_create);    \
     klb_gui_register((PTR_GUI_), KLBUI_kmenubar,    klbui_menubar_create);      \
     klb_gui_register((PTR_GUI_), KLBUI_kmenu,       klbui_menu_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kmessagebox, klbui_messagebox_create);   \
 }
 
 

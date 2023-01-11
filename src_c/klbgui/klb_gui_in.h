@@ -34,7 +34,8 @@ typedef struct klb_msg_t_
 }klb_msg_t;
 
 
-#define KLB_GUI_POPUP_WND_MAX           16
+#define KLBUI_MODAL_WND_MAX           16
+#define KLBUI_POPUP_WND_MAX           4
 
 
 typedef struct klb_gui_t_
@@ -58,13 +59,21 @@ typedef struct klb_gui_t_
         ///  \n 存储通过"klb_gui_append"函数加入进来的窗口
         ///  \n 在需要的时候通过路径名提取
         klb_hlist_t*    p_wnd_hlist;
+    };
 
-        /// @brief 当前显示的弹出窗口栈
-        ///  \n 绘制UI,系统消息等
-        klb_wnd_t*      p_wnd_popup[KLB_GUI_POPUP_WND_MAX];
+    // 当前绘制窗口, 窗口显示次序
+    struct
+    {
+        /// @brief modal 方式显示的窗口栈
+        int             modal_num;
+        klb_wnd_t*      p_modal_wnd[KLBUI_MODAL_WND_MAX];
 
-        /// @brief 当前显示的弹出窗口数
-        int             wnd_popup_num;
+        /// @brief popup 方式显示的窗口栈 
+        int             popup_num;
+        klb_wnd_t*      p_popup_wnd[KLBUI_POPUP_WND_MAX];
+
+        klb_wnd_t*      p_msg_box;      ///< message box
+        klb_wnd_t*      p_tip;          ///< tip
     };
 
     // 聚焦等

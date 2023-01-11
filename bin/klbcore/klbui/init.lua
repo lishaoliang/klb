@@ -92,4 +92,25 @@ klbui.do_model = function (path)
 end
 
 
+-- @brief 弹出窗口
+-- @param [in] path[string]			窗口虚拟路径; eg. '/menu1'
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.popup = function (path)
+	return kgui.popup(path)
+end
+
+
+-- @brief 消息框
+-- @param [in] path[string]			窗口虚拟路径; eg. '/messagebox'
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.messagebox = function (path)
+	return kgui.messagebox(path)
+end
+
+-- @brief 关闭消息框
+klbui.messagebox_end = function ()
+	return kgui.messagebox_end()
+end
+
+
 return klbui

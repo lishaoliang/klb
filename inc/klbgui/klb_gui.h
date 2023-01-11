@@ -6,18 +6,19 @@
 ///   默认配色采用 visual studio 深色系风格
 ///   图标来源于1: http://iconpark.oceanengine.com/official
 ///   图标来源于2: https://remixicon.com/
-/// @version 0.1
+/// @version 0.2
 /// @history 修改历史
+///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
 #define __KLB_GUI_H__
 
 #include "klb_type.h"
+#include "klua/klua_env.h"
 #include "klbutil/klb_rect.h"
 #include "klbutil/klb_canvas.h"
 #include "klbutil/klb_map.h"
-#include "klua/klua_env.h"
 #include "klbgui/klb_msg.h"
 #include "klbgui/klbui_event.h"
 #include "klbgui/klbui_default.h"
@@ -137,6 +138,30 @@ KLB_API int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name);
 /// @param [in] *p_gui          GUI对象
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_end_model_all(klb_gui_t* p_gui);
+
+
+/// @brief 弹出菜单/对话框等页面
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/menu1"
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name);
+
+
+/// @brief 关闭弹出的页面
+KLB_API int klb_gui_popup_end(klb_gui_t* p_gui, bool all);
+
+
+/// @brief 消息框: 弹出消息框
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/messagebox1"
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name);
+
+
+/// @brief 关闭消息框
+/// @param [in] *p_gui          GUI对象
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_messagebox_end(klb_gui_t* p_gui);
 
 
 /// @brief 向控件(窗口)绑定事件响应函数
