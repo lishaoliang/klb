@@ -34,7 +34,7 @@ MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops
 MY_DIRS += ./src_c/klbformat
 
 # klbgui
-MY_DIRS += ./src_c/klbgui ./src_c/klbgui/widgets ./src_c/klbgui/subviews
+MY_DIRS += ./src_c/klbgui ./src_c/klbgui/extensions ./src_c/klbgui/widgets ./src_c/klbgui/subviews
 
 # klua
 MY_DIRS += ./src_c/klua ./src_c/klua/extension ./src_c/klua/klua_platform ./src_c/klua/klua_util ./src_c/klua/klua_base

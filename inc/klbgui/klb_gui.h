@@ -45,6 +45,44 @@ KLB_API klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas);
 KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
 
 
+/// @struct klb_gui_extension_t
+/// @brief  gui环境扩展
+typedef struct klb_gui_extension_t_
+{
+    /// @brief 创建扩展
+    /// @param [in] *p_gui          gui对象
+    /// @return void* 扩展的指针
+    void* (*cb_create)(klb_gui_t* p_gui);
+
+    /// @brief 销毁扩展
+    /// @param [in] *ptr            扩展的指针
+    /// @return 无
+    void(*cb_destroy)(void* ptr, klb_gui_t* p_gui);
+
+    /// @brief 常规调用一次
+    /// @param [in] *ptr            扩展的指针
+    /// @param [in] *p_gui          gui对象
+    /// @param [in] now             当前滴答数
+    /// @return int 0
+    int(*cb_loop_once)(void* ptr, klb_gui_t* p_gui, int64_t now);
+}klb_gui_extension_t;
+
+
+/// @brief 注册gui扩展
+/// @param [in] *p_gui              gui对象
+/// @param [in] *p_name             名称
+/// @param [in] *p_extension        扩展的接口函数
+/// @return int 0
+KLB_API int klb_gui_register_extension(klb_gui_t* p_gui, const char* p_name, const klb_gui_extension_t* p_extension);
+
+
+/// @brief 获取gui扩展
+/// @param [in] *p_gui              gui对象
+/// @param [in] *p_name             名称
+/// @return void* 扩展的指针
+KLB_API void* klb_gui_get_extension(klb_gui_t* p_gui, const char* p_name);
+
+
 /// @brief 附加到 klua_env_t*
 KLB_API int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env);
 

@@ -378,6 +378,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\compat\w32pthreads.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h" />
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
@@ -572,6 +574,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbbase\klb_str_map.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_default.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c" />

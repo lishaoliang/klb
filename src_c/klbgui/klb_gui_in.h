@@ -18,10 +18,21 @@
 #include "klbplatform/klb_mutex.h"
 #include "klbplatform/klb_thread.h"
 #include "klbutil/klb_map.h"
+#include "klbthird/sds.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+/// @struct klb_gui_extension_activated_t
+/// @brief  激活的扩展
+typedef struct klb_gui_extension_activate_t_
+{
+    void*                   ptr;        ///< 扩展的指针
+    sds                     name;       ///< 扩展的名称
+    klb_gui_extension_t     ex;         ///< 扩展的接口函数
+}klb_gui_extension_activated_t;
 
 
 typedef struct klb_msg_t_
@@ -45,6 +56,13 @@ typedef struct klb_gui_t_
     {
         /// @brief 绑定的主显存画布
         klb_canvas_t*   p_canvas;
+    };
+
+    // 扩展: 将gui部分功能分散处理
+    struct
+    {
+        klb_hlist_t*    p_extension_hlist;              ///< 注册的扩展; klb_gui_extension_t*
+        klb_hlist_t*    p_extension_activated_hlist;    ///< 激活的扩展; klb_gui_extension_activated_t*
     };
 
     // 窗口管理

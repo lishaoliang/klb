@@ -17,6 +17,9 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
     p_gui->p_canvas = p_canvas;
 
+    p_gui->p_extension_hlist = klb_hlist_create(0);
+    p_gui->p_extension_activated_hlist = klb_hlist_create(0);
+
     klb_map_init(&p_gui->css_map);
     p_gui->p_wnd_hlist = klb_hlist_create(0);
     p_gui->p_wnd_type_hlist = klb_hlist_create(0);
@@ -48,6 +51,26 @@ static void klb_gui_destroy_wnd(klb_wnd_t* p_wnd)
     KLB_FREE_WND(p_wnd);
 }
 
+static void klb_gui_quit_extensions(klb_gui_t* p_gui)
+{
+    // 退出已经激活的扩展
+    while (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
+    {
+        klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_pop_head(p_gui->p_extension_activated_hlist);
+        p_activated->ex.cb_destroy(p_activated->ptr, p_gui); // 销毁
+
+        KLB_FREE_BY(p_activated->name, sdsfree);
+        KLB_FREE(p_activated);
+    }
+
+    // 退出注册的扩展
+    while (0 < klb_hlist_size(p_gui->p_extension_hlist))
+    {
+        klb_gui_extension_t* p_extension = (klb_gui_extension_t*)klb_hlist_pop_head(p_gui->p_extension_hlist);
+        KLB_FREE(p_extension);
+    }
+}
+
 void klb_gui_destroy(klb_gui_t* p_gui)
 {
     assert(NULL != p_gui);
@@ -69,6 +92,7 @@ void klb_gui_destroy(klb_gui_t* p_gui)
     }
 
     klbui_default_quit(p_gui);
+    klb_gui_quit_extensions(p_gui);
 
     KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_gui->p_wnd_hlist, klb_hlist_destroy);
@@ -77,7 +101,72 @@ void klb_gui_destroy(klb_gui_t* p_gui)
 
     KLB_FREE_BY(p_gui->p_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_gui->p_msg_mutex, klb_mutex_destroy);
+
+    KLB_FREE_BY(p_gui->p_extension_activated_hlist, klb_hlist_destroy);
+    KLB_FREE_BY(p_gui->p_extension_hlist, klb_hlist_destroy);
+
     KLB_FREE(p_gui);
+}
+
+/// @brief 注册gui扩展
+int klb_gui_register_extension(klb_gui_t* p_gui, const char* p_name, const klb_gui_extension_t* p_extension)
+{
+    assert(NULL != p_gui);
+    assert(NULL != p_name);
+    assert(NULL != p_extension);
+    assert(NULL != p_extension->cb_create);
+    assert(NULL != p_extension->cb_destroy);
+
+    size_t name_len = strlen(p_name);
+
+    klb_gui_extension_t* p_tmp = KLB_MALLOCZ(klb_gui_extension_t, 1, 0);
+    memcpy(p_tmp, p_extension, sizeof(klb_gui_extension_t));
+
+    klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_gui->p_extension_hlist, p_name, name_len, p_tmp);
+    if (NULL == p_iter)
+    {
+        KLB_FREE(p_tmp);
+
+        KLB_LOG_E("register gui env extension error!name:[%s]\n", p_name);
+        return 1; // 放入失败, 名称重复
+    }
+
+    return 0;
+}
+
+/// @brief 获取gui扩展
+void* klb_gui_get_extension(klb_gui_t* p_gui, const char* p_name)
+{
+    assert(NULL != p_gui);
+    assert(NULL != p_name);
+
+    // 先从激活的里面找
+    size_t name_len = strlen(p_name);
+    klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_find(p_gui->p_extension_activated_hlist, p_name, name_len);
+    if (NULL != p_activated)
+    {
+        return p_activated->ptr;
+    }
+
+    // 未找到, 则激活
+    klb_gui_extension_t* p_extension = (klb_gui_extension_t*)klb_hlist_find(p_gui->p_extension_hlist, p_name, name_len);
+    if (NULL != p_extension)
+    {
+        klb_gui_extension_activated_t* p_tmp = KLB_MALLOCZ(klb_gui_extension_activated_t, 1, 0);
+
+        memcpy(&p_tmp->ex, p_extension, sizeof(klb_gui_extension_t));
+        p_tmp->name = sdsnewlen(p_name, name_len);
+
+        p_tmp->ptr = p_tmp->ex.cb_create(p_gui);
+        assert(NULL != p_tmp->ptr);
+
+        klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_gui->p_extension_activated_hlist, p_name, name_len, p_tmp);
+        assert(NULL != p_iter);
+
+        return p_tmp->ptr;
+    }
+
+    return NULL;
 }
 
 /// @brief 获取标准控件的默认值指针

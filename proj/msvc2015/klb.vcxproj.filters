@@ -225,6 +225,9 @@
     <Filter Include="src_c\klbgui\subviews">
       <UniqueIdentifier>{b47bdff2-242b-40c0-b173-e06cc493baff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbgui\extensions">
+      <UniqueIdentifier>{c28430d4-368e-4dec-8c93-868d39624c65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1331,6 +1334,12 @@
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h">
       <Filter>src_c\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2220,6 +2229,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_messagebox.c">
       <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c">
+      <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
