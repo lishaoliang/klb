@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbuiex_extensions.h
@@ -15,6 +15,7 @@
 
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
+#include "klbgui/extensions/klbuiex_default.h"
 #include "klbgui/extensions/klbuiex_time.h"
 
 #if defined(__cplusplus)
@@ -22,7 +23,11 @@ extern "C" {
 #endif
 
 
-
+#define KLBUIEX_register_extensions_std(GUI_) \
+{ \
+    klbuiex_register_default((GUI_)); \
+    klbuiex_register_time((GUI_)); \
+}
 
 
 #ifdef __cplusplus

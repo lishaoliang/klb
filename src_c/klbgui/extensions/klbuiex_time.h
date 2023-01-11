@@ -12,13 +12,18 @@
 
 
 #include "klb_type.h"
-
+#include "klbgui/klb_gui.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 
+typedef struct klbuiex_time_t_ klbuiex_time_t;
+
+
+int klbuiex_register_time(klb_gui_t* p_gui);
+klbuiex_time_t* klbuiex_get_time(klb_gui_t* p_gui);
 
 
 

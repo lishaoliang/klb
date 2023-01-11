@@ -123,9 +123,6 @@ typedef struct klb_gui_t_
 
     /// @brief css属性函数表
     klb_map_t           css_map;
-
-    // 默认值
-    klbui_default_t     def;                ///< 默认值
 }klb_gui_t;
 
 

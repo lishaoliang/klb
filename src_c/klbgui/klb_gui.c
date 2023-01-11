@@ -6,6 +6,7 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klb_wnd_in.h"
 #include "klbgui/klbui_widgets.h"
+#include "klbgui/extensions/klbuiex_extensions.h"
 #include <assert.h>
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,12 +28,12 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     p_gui->p_msg_list = klb_nlist_create();
     p_gui->p_msg_mutex = klb_mutex_create();
 
-    // gui部分使用的默认值 初始化
-    klbui_default_init(p_gui);
-
     // 注册标准窗口类型
     // 创建完成之后, 可注册自定义控件
     KLB_GUI_REGISTER_STD(p_gui);
+
+    // 注册标准扩展
+    KLBUIEX_register_extensions_std(p_gui);
 
     return p_gui;
 }
@@ -91,7 +92,6 @@ void klb_gui_destroy(klb_gui_t* p_gui)
         klb_hlist_pop_head(p_gui->p_wnd_hlist);
     }
 
-    klbui_default_quit(p_gui);
     klb_gui_quit_extensions(p_gui);
 
     KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
@@ -172,7 +172,7 @@ void* klb_gui_get_extension(klb_gui_t* p_gui, const char* p_name)
 /// @brief 获取标准控件的默认值指针
 const klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui)
 {
-    return &p_gui->def;
+    return klbuiex_default_get_value(klbuiex_get_default(p_gui));
 }
 
 /// @brief 附加到 klua_env_t*
@@ -199,6 +199,22 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         if (0 != klb_gui_process_message_once(p_gui))
         {
             break; // 一次将队列中的所有消息处理完毕
+        }
+    }
+
+    // 依次处理, 激活的扩展
+    if (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
+    {
+        klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
+        while (NULL != p_iter)
+        {
+            klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_data(p_iter);
+            if (NULL != p_activated && p_activated->ex.cb_loop_once)
+            {
+                p_activated->ex.cb_loop_once(p_activated->ptr, p_gui, tc);
+            }
+
+            p_iter = klb_hlist_next(p_iter);
         }
     }
 

@@ -9,6 +9,7 @@
 /// @version 0.2
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
+///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
@@ -46,7 +47,7 @@ KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
 
 
 /// @struct klb_gui_extension_t
-/// @brief  gui环境扩展
+/// @brief  gui扩展
 typedef struct klb_gui_extension_t_
 {
     /// @brief 创建扩展
