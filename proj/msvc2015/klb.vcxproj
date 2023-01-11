@@ -165,7 +165,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
-    <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_help.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_package.h" />
@@ -683,7 +682,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kcoro.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kpackage.c" />
     <ClCompile Include="..\..\src_c\klua\klua_env.c" />
     <ClCompile Include="..\..\src_c\klua\klua_format\klua_kh26x.c" />

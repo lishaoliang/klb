@@ -239,9 +239,6 @@
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbbase\klb_mnp_dev.h">
-      <Filter>inc\klbbase</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
@@ -1724,9 +1721,6 @@
       <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_klpc.c">
-      <Filter>src_c\klua\klua_base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_base\klua_kmnp_dev.c">
       <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c">
