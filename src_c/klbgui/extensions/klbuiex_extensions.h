@@ -15,8 +15,10 @@
 
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
+#include "klbgui/extensions/klbuiex_wndhash.h"
 #include "klbgui/extensions/klbuiex_default.h"
 #include "klbgui/extensions/klbuiex_time.h"
+
 
 #if defined(__cplusplus)
 extern "C" {
@@ -25,6 +27,7 @@ extern "C" {
 
 #define KLBUIEX_register_extensions_std(GUI_) \
 { \
+    klbuiex_register_wndhash((GUI_)); \
     klbuiex_register_default((GUI_)); \
     klbuiex_register_time((GUI_)); \
 }

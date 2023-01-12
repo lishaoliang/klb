@@ -128,7 +128,7 @@ typedef klb_wnd_t* (*klb_wnd_create_cb)(klb_gui_t* p_gui, int x, int y, int w, i
 /// @brief 注册窗口类型
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_type         窗口类型名
-/// @param [in] create          创建函数
+/// @param [in] cb_create       创建窗口
 /// @return int 0.成功; 非0.失败(错误码)
 ///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
 KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_create);

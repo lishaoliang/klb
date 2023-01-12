@@ -1340,6 +1340,9 @@
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2228,6 +2231,9 @@
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
   </ItemGroup>

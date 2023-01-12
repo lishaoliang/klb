@@ -19,6 +19,7 @@
 #include "klbplatform/klb_thread.h"
 #include "klbutil/klb_map.h"
 #include "klbthird/sds.h"
+#include "klbgui/extensions/klbuiex_extensions.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -66,18 +67,7 @@ typedef struct klb_gui_t_
     };
 
     // 窗口管理
-    struct
-    {
-        /// @brief 窗口类型查找表
-        ///  \n 通过"klb_gui_register"函数注册
-        ///  \n 查找指定类型的创建函数
-        klb_hlist_t*    p_wnd_type_hlist;
-
-        /// @brief 窗口查找表
-        ///  \n 存储通过"klb_gui_append"函数加入进来的窗口
-        ///  \n 在需要的时候通过路径名提取
-        klb_hlist_t*    p_wnd_hlist;
-    };
+    klbuiex_wndhash_t*  p_wndhash;                      ///< 窗口创建,查找等
 
     // 当前绘制窗口, 窗口显示次序
     struct

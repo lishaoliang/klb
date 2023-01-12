@@ -21,19 +21,19 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     p_gui->p_extension_hlist = klb_hlist_create(0);
     p_gui->p_extension_activated_hlist = klb_hlist_create(0);
 
-    klb_map_init(&p_gui->css_map);
-    p_gui->p_wnd_hlist = klb_hlist_create(0);
-    p_gui->p_wnd_type_hlist = klb_hlist_create(0);
-
     p_gui->p_msg_list = klb_nlist_create();
     p_gui->p_msg_mutex = klb_mutex_create();
 
-    // 注册标准窗口类型
-    // 创建完成之后, 可注册自定义控件
-    KLB_GUI_REGISTER_STD(p_gui);
+    klb_map_init(&p_gui->css_map);
 
     // 注册标准扩展
     KLBUIEX_register_extensions_std(p_gui);
+
+    // 取得window hash指针
+    p_gui->p_wndhash = klbuiex_get_wndhash(p_gui);
+
+    // 注册标准窗口类型
+    KLB_GUI_REGISTER_STD(p_gui);
 
     return p_gui;
 }
@@ -82,21 +82,7 @@ void klb_gui_destroy(klb_gui_t* p_gui)
         KLB_FREE(p_msg);
     }
 
-    while (0 < klb_hlist_size(p_gui->p_wnd_type_hlist))
-    {
-        klb_hlist_pop_head(p_gui->p_wnd_type_hlist);
-    }
-
-    while (0 < klb_hlist_size(p_gui->p_wnd_hlist))
-    {
-        klb_hlist_pop_head(p_gui->p_wnd_hlist);
-    }
-
     klb_gui_quit_extensions(p_gui);
-
-    KLB_FREE_BY(p_gui->p_wnd_type_hlist, klb_hlist_destroy);
-    KLB_FREE_BY(p_gui->p_wnd_hlist, klb_hlist_destroy);
-
     klb_map_quit(&p_gui->css_map);
 
     KLB_FREE_BY(p_gui->p_msg_list, klb_nlist_destroy);
@@ -258,31 +244,8 @@ int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_
     assert(NULL != p_type);
     assert(NULL != cb_create);
 
-    int len = strlen(p_type);
-    if (NULL == klb_hlist_push_tail(p_gui->p_wnd_type_hlist, p_type, len, (void*)cb_create))
-    {
-        return 1; // 放入失败
-    }
-
-    return 0;
+    return klbuiex_wndhash_register(p_gui->p_wndhash, p_type, cb_create);
 }
-
-static void klb_gui_split_path_name(const char* p_path_name, char** p_dir, int* p_dir_len)
-{
-    const char* p = p_path_name ? strrchr(p_path_name, '/') : NULL;
-
-    if (NULL != p)
-    {
-        *p_dir = (char*)p_path_name;
-        *p_dir_len = p - p_path_name;
-    }
-    else
-    {
-        *p_dir = NULL;
-        *p_dir_len = 0;
-    }
-}
-
 int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
 {
     if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_image)
@@ -295,75 +258,17 @@ int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_pa
 
 int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd)
 {
-    klb_wnd_create_cb create = (klb_wnd_create_cb)klb_hlist_find(p_gui->p_wnd_type_hlist, p_type, strlen(p_type));
-    if (NULL == create)
-    {
-        return 1;
-    }
-
-    char* p_dir = NULL;
-    int dir_len = 0;
-
-    klb_gui_split_path_name(p_path_name, &p_dir, &dir_len);
-    if (NULL == p_dir)
-    {
-        return 2;
-    }
-
-    klb_wnd_t* p_wnd = NULL;
-    int path_len = strlen(p_path_name);
-
-    if (0 < dir_len)
-    {
-        // 路径中有父窗口
-        klb_wnd_t* p_parent = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_dir, dir_len);
-        if (NULL == p_parent)
-        {
-            return 3;
-        }
-
-        if (NULL != klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, path_len))
-        {
-            return 4; // 已经存在
-        }
-
-        p_wnd = create(p_gui, x, y, w, h);
-        p_wnd->p_gui = p_gui;
-        klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
-        klb_wnd_push_child(p_parent, p_wnd);
-        klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
-    }
-    else
-    {
-        // 路径中无父窗口
-        // 根目录, 顶层窗口
-        if (NULL != klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, path_len))
-        {
-            return 4; // 已经存在
-        }
-
-        p_wnd = create(p_gui, x, y, w, h);
-        p_wnd->p_gui = p_gui;
-        klb_wnd_set_top(p_wnd, p_gui);
-        klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
-
-        klb_hlist_push_tail(p_gui->p_wnd_hlist, p_path_name, path_len, p_wnd);
-
-        //klb_list_push_tail(p_gui->p_top_list, p_wnd);
-    }
-
-    //p_gui->redraw = true;
-
     if (NULL != p_out_wnd)
     {
-        *p_out_wnd = p_wnd;
+        *p_out_wnd = NULL;
     }
-    return 0;
+
+    return klbuiex_wndhash_append(p_gui->p_wndhash, p_type, p_path_name, x, y, w, h, style);
 }
 
 int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)
 {
-    return 0;
+    return klbuiex_wndhash_remove(p_gui->p_wndhash, p_path_name);
 }
 
 static void klb_gui_load_wnd(klb_wnd_t* p_wnd)
@@ -397,7 +302,7 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
     }
 
     int path_len = strlen(p_path_name);
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, path_len);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
@@ -501,7 +406,7 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
     }
 
     int path_len = strlen(p_path_name);
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, path_len);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
@@ -562,7 +467,7 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
 
 int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_command_cb on_command, void* p_obj)
 {
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
         return 1;
@@ -576,7 +481,7 @@ int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_c
 
 int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map)
 {
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
         return 1;
@@ -593,7 +498,7 @@ int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_ma
 
 klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map)
 {
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
         return NULL;
@@ -610,7 +515,7 @@ klb_map_t* klb_gui_get(klb_gui_t* p_gui, const char* p_path_name, const klb_map_
 
 int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show)
 {
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
         return 1;
@@ -622,7 +527,7 @@ int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show)
 
 int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y)
 {
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
         return 1;
@@ -633,7 +538,7 @@ int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y)
 
 int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h)
 {
-    klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_find(p_gui->p_wnd_hlist, p_path_name, strlen(p_path_name));
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
         return 1;
