@@ -256,13 +256,8 @@ int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_pa
     return 1;
 }
 
-int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd)
+int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style)
 {
-    if (NULL != p_out_wnd)
-    {
-        *p_out_wnd = NULL;
-    }
-
     return klbuiex_wndhash_append(p_gui->p_wndhash, p_type, p_path_name, x, y, w, h, style);
 }
 

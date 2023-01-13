@@ -149,7 +149,7 @@ KLB_API int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* 
 /// @param [out] **p_out_wnd    窗口指针: 仅可访问
 /// @return int 0.成功; 非0.失败(错误码)
 /// @note 前父窗口必须存在; eg. "/home/btn1" 则需要 "/home" 必须存在, 才能添加
-KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd);
+KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
 
 
 /// @brief 移除窗口

@@ -379,21 +379,10 @@ static int klua_kgui_append(lua_State* L)
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
 
-    klb_wnd_t* p_wnd = NULL;
-    int ret = klb_gui_append(p_gui, p_type, p_path_name, x, y, w, h, style, &p_wnd);
+    int ret = klb_gui_append(p_gui, p_type, p_path_name, x, y, w, h, style);
 
     lua_pushinteger(L, ret);                                ///< #1. 0.成功; 非0.失败(错误码)
-
-    if (0 == ret)
-    {
-        lua_pushlightuserdata(L, p_wnd);                    ///< #2.
-    }
-    else
-    {
-        lua_pushnil(L);
-    }
-
-    return 2;
+    return 1;
 }
 
 static int klua_kgui_remove(lua_State* L)

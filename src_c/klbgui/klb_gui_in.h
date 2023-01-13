@@ -16,7 +16,6 @@
 #include "klbutil/klb_nlist.h"
 #include "klbutil/klb_hlist.h"
 #include "klbplatform/klb_mutex.h"
-#include "klbplatform/klb_thread.h"
 #include "klbutil/klb_map.h"
 #include "klbthird/sds.h"
 #include "klbgui/extensions/klbuiex_extensions.h"
@@ -115,10 +114,6 @@ typedef struct klb_gui_t_
     klb_map_t           css_map;
 }klb_gui_t;
 
-
-void klbui_default_init(klb_gui_t* p_gui);
-void klbui_default_quit(klb_gui_t* p_gui);
-
 int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg);
 
 int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg);
@@ -130,11 +125,7 @@ int klb_gui_redraw(klb_gui_t* p_gui);
 int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect);
 int klb_gui_refresh(klb_gui_t* p_gui);
 
-
 //////////////////////////////////////////////////////////////////////////
-
-int klb_gui_register_ktype(klb_gui_t* p_gui);
-
 
 #ifdef __cplusplus
 }

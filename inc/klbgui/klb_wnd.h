@@ -15,7 +15,6 @@
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_canvas.h"
 #include "klbgui/klb_msg.h"
-#include "klbutil/klb_hlist.h"
 #include "klbutil/klb_map.h"
 #include "klbthird/sds.h"
 
@@ -170,10 +169,6 @@ typedef struct klb_wnd_t_
 
     // gui
     klb_gui_t*          p_gui;      ///< 窗口所属的gui
-
-    // 子窗口查找表
-    // 通过路径快速查找窗口
-    klb_hlist_t*        p_hlist;    ///< 仅顶层窗口拥有的子窗口查找表
 
     // 窗口位置/状态等
     klb_wnd_pos_t       pos;        ///< 窗口位置

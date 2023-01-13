@@ -4,11 +4,6 @@
 #include <assert.h>
 
 
-int klb_gui_register_ktype(klb_gui_t* p_gui)
-{
-    return 0;
-}
-
 bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color)
 {
     klb_map_t* p_in = (klb_map_t*)p_map;
