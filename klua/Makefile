@@ -1,13 +1,15 @@
 # 编译命令 : make
+# make MY_VERSION=release MY_TOOL_CHAIN=arm-himix200-linux- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
 
 SHELL = /bin/bash
 PWD = `pwd`
 
 # 编译工具, arm-linux-gnueabi-, arm-himix200-linux-
-#MY_TOOL_CHAIN ?= arm-hisiv300-linux-
+#MY_TOOL_CHAIN ?= arm-himix200-linux-
 MY_TOOL_CHAIN ?= 
-
 MY_CFLAGS_EX ?= 
+MY_VERSION ?= debug
+
 
 # gcc编译工具链
 CC		:= $(MY_TOOL_CHAIN)gcc
@@ -27,8 +29,8 @@ CP_RF	:= -cp -rf
 # 从目录检索需要编译的c文件
 MY_DIRS := .
 
-# 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__
-MY_CFLAGS := -g -std=c99 -D_GNU_SOURCE $(MY_CFLAGS_EX)
+# 编译选项 -D__XXX_XXX__
+MY_CFLAGS := $(MY_CFLAGS_EX) -D_GNU_SOURCE 
 
 # 引用头文件
 MY_INCLUDES := -I . -I ../inc
@@ -39,12 +41,19 @@ MY_INCLUDES += -I ../src_c/klua/lua-5.4.1/src
 
 
 # 引用的静态库
-MY_LIB_STATIC := -L ../lib -Bstatic ../lib/libklb_c.a
+MY_LIB_STATIC := -L ../lib -Bstatic ../lib/libklb.a
 
 # 引用的动态库
 MY_LIB_DYNAMIC := -L ../lib -Bdynamic 
 MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
-MY_LIB_DYNAMIC += -lssl -lcrypto
+
+# openssl
+#MY_LIB_DYNAMIC += -lssl -lcrypto
+
+# debug/release
+ifneq ($(MY_VERSION),release)
+	MY_CFLAGS += -g
+endif
 
 
 # 编译目标名称
@@ -96,6 +105,9 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 $(MY_TARGET_EXE): $(MY_LIB_A_OBJS)
 	$(my_tip)
 	$(CXX) -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
+
+strip:
+	$(CSTRIP) $(MY_TARGET_EXE)
 
 clean:
 	@echo "++++++ make clean ++++++"

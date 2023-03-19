@@ -257,15 +257,16 @@ xcopy /Y ..\..\wlua\ffmpeg-4.1.3\x86\bin\* ..\..\bin</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\src_c\klua\lua-5.4.1\src;..\..\wlua\SDL2-2.24.1\include;..\..\wlua;..\..\wlua\freetype-2.12.1;..\..\wlua\wsdl;..\..\wlua\ffmpeg-5.1.2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\src_c\klua\lua-5.4.1\src;..\..\wlua\SDL2-2.24.1\include;..\..\wlua;..\..\wlua\ff_dec;..\..\wlua\freetype-2.12.1;..\..\wlua\wsdl;..\..\wlua\ffmpeg-4.1.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\..\;..\..\lib;..\..\wlua\SDL2-2.24.1\lib\x86;..\..\wlua\freetype-2.12.1\lib\x86;..\..\wlua\ffmpeg-5.1.2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libklb.lib;SDL2.lib;SDL2main.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\;..\..\lib;..\..\wlua\SDL2-2.24.1\lib\x86;..\..\wlua\freetype-2.12.1\lib\x86;..\..\wlua\ffmpeg-4.1.3\x86\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;postproc.lib;swresample.lib;swscale.lib;SDL2.lib;SDL2main.lib;freetype.lib;libklb.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y $(ProjectName)_$(Configuration)\wlua.exe ..\..\bin

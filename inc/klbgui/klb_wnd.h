@@ -185,6 +185,16 @@ typedef struct klb_wnd_t_
 }klb_wnd_t;
 
 
+/// @def   KLB_WIDGETS_PTR
+/// @brief 从窗口指针获取组件指针
+#define KLB_WIDGETS_PTR(WND_, ST_)  ((ST_*)((WND_)->ctrl))
+
+
+/// @def   KLB_WND_PTR
+/// @brief 从组件指针获取窗口指针
+#define KLB_WND_PTR(WIDGETS_)       ((klb_wnd_t*)((char*)(WIDGETS_) - sizeof(klb_wnd_t)))
+
+
 /// @def   KLB_FREE_WND
 /// @brief 释放单个窗口
 #define KLB_FREE_WND(WND_) { \

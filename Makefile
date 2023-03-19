@@ -1,4 +1,5 @@
 # 编译命令 : make
+# make MY_VERSION=release MY_TOOL_CHAIN=arm-himix200-linux- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
 
 SHELL = /bin/bash
 PWD = `pwd`
@@ -6,8 +7,8 @@ PWD = `pwd`
 # 编译工具, arm-linux-gnueabi-, arm-himix200-linux-
 #MY_TOOL_CHAIN ?= arm-himix200-linux-
 MY_TOOL_CHAIN ?= 
-
 MY_CFLAGS_EX ?= 
+MY_VERSION ?= debug
 
 # gcc编译工具链
 CC		:= $(MY_TOOL_CHAIN)gcc
@@ -63,8 +64,8 @@ MY_DIRS += ./src_packages/kpa_sip
 MY_DIRS += ./src_packages/kpa_ws 
 
 
-# 编译选项 -D__KLB_USE_KMNP_DEV_STATIC__
-MY_CFLAGS := -g -D_GNU_SOURCE $(MY_CFLAGS_EX)
+# 编译选项 -D__XXX_XXX__
+MY_CFLAGS := $(MY_CFLAGS_EX) -D_GNU_SOURCE 
 
 # lua的宏
 MY_CFLAGS += -DLUA_USE_LINUX
@@ -72,11 +73,6 @@ MY_CFLAGS += -DLUA_USE_LINUX
 # pcre2的宏
 MY_CFLAGS += -DHAVE_CONFIG_H
 
-# quickjs的宏
-MY_CFLAGS += -DCONFIG_BIGNUM -DCONFIG_VERSION=\"2019-10-27\"
-
-# openssl
-MY_CFLAGS += -D__KLB_OPENSSL__
 
 # 引用头文件
 MY_INCLUDES := -I ./src_c -I ./inc -I ./src_c/compat
@@ -97,16 +93,23 @@ MY_INCLUDES += -I ./src_packages
 
 # 引用的静态库
 MY_LIB_STATIC := -L ./lib -Bstatic
-MY_LIB_STATIC += -lssl -lcrypto
-
 
 # 引用的动态库
 MY_LIB_DYNAMIC := -L ./lib -Bdynamic
 MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 
 
+# openssl
+#MY_CFLAGS += -D__KLB_OPENSSL__
+#MY_LIB_STATIC += -lssl -lcrypto
+
+# debug/release
+ifneq ($(MY_VERSION),release)
+	MY_CFLAGS += -g
+endif
+
 # 编译目标名称
-MY_TARGET_NAME := klb_c
+MY_TARGET_NAME := klb
 MY_TARGET_A := ./lib/lib$(MY_TARGET_NAME).a
 MY_TARGET_SO := ./lib/lib$(MY_TARGET_NAME).so
 
@@ -153,7 +156,7 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(CXX) -shared -fPIC -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
 
 strip:
-	$(CSTRIP) $(MY_TARGET_A)
+#	$(CSTRIP) $(MY_TARGET_A)
 	$(CSTRIP) $(MY_TARGET_SO)
 
 clean:

@@ -24,7 +24,7 @@
 // windows
 #if defined(_WIN32)
 #define HAVE_WINDOWS_H 1
-#define HAVE_BCRYPT 1
+#define HAVE_BCRYPT 0
 #define HAVE_W32THREADS 1
 #define HAVE_DOS_PATHS 1
 #define HAVE_GETSYSTEMTIMEASFILETIME 1

@@ -186,6 +186,13 @@ KLB_API int klb_gui_end_model_all(klb_gui_t* p_gui);
 KLB_API int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name);
 
 
+/// @brief 弹出菜单/对话框等页面
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_top          外部自定义窗口: 由外部管理生命周期
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
+
+
 /// @brief 关闭弹出的页面
 KLB_API int klb_gui_popup_end(klb_gui_t* p_gui, bool all);
 

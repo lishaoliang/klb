@@ -93,7 +93,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_OPENSSL__;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -128,9 +128,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_OPENSSL__;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -384,6 +384,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_combo_menu.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_tab_button.h" />
     <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h" />
@@ -583,6 +584,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_gui_in.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_combo_menu.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_tab_button.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_animation.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_button.c" />

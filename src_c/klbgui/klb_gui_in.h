@@ -114,12 +114,6 @@ typedef struct klb_gui_t_
     klb_map_t           css_map;
 }klb_gui_t;
 
-int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg);
-
-int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg);
-
-int klb_gui_process_message_once(klb_gui_t* p_gui);
-
 int klb_gui_redraw(klb_gui_t* p_gui);
 
 int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect);

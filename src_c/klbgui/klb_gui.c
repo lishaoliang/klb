@@ -9,6 +9,7 @@
 #include "klbgui/extensions/klbuiex_extensions.h"
 #include <assert.h>
 
+
 //////////////////////////////////////////////////////////////////////////
 // klb_gui.h
 
@@ -173,44 +174,6 @@ int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env)
 klua_env_t* klb_gui_get_klua_env(klb_gui_t* p_gui)
 {
     return p_gui->p_klua_env;
-}
-
-int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
-{
-    int ret = 0;
-
-    // 消息处理
-    while (true)
-    {
-        if (0 != klb_gui_process_message_once(p_gui))
-        {
-            break; // 一次将队列中的所有消息处理完毕
-        }
-    }
-
-    // 依次处理, 激活的扩展
-    if (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
-    {
-        klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
-        while (NULL != p_iter)
-        {
-            klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_data(p_iter);
-            if (NULL != p_activated && p_activated->ex.cb_loop_once)
-            {
-                p_activated->ex.cb_loop_once(p_activated->ptr, p_gui, tc);
-            }
-
-            p_iter = klb_hlist_next(p_iter);
-        }
-    }
-
-    // 是否重绘
-    klb_gui_redraw(p_gui);
-
-    // 刷新
-    klb_gui_refresh(p_gui);
-
-    return ret;
 }
 
 void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas)
@@ -387,8 +350,60 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
     return 0;
 }
 
+int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
+{
+    if (KLBUI_POPUP_WND_MAX <= p_gui->popup_num)
+    {
+        return 1; // 超过最大弹出数目
+    }
+
+    klb_wnd_t* p_wnd = p_top;
+
+    if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
+    {
+        for (int i = 0; i < p_gui->popup_num; i++)
+        {
+            if (p_wnd == p_gui->p_popup_wnd[i])
+            {
+                return 1; // 已经被弹出
+            }
+        }
+
+        p_gui->p_popup_wnd[p_gui->popup_num] = p_wnd;
+        p_gui->popup_num += 1;
+
+        // KLBUI_LOAD
+        klb_gui_load_wnd(p_wnd);
+        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+        {
+            klb_point_t pt = { 0, 0 };
+            p_wnd->vtable.on_command(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
+        }
+
+        p_gui->redraw = true;
+
+        klb_wnd_set_calculate(p_wnd, true);
+
+        return 0;
+    }
+
+    return 1;
+}
+
 int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
 {
+    if (NULL != p_gui->p_focus)
+    {
+        klb_wnd_set_focus(p_gui->p_focus, false);
+
+        p_gui->p_focus_top = NULL;
+        p_gui->p_focus = NULL;
+    }
+
+    p_gui->popup_num = 0;
+
+    p_gui->redraw = true;
+
     return 0;
 }
 
@@ -542,25 +557,59 @@ int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h)
     return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// klb_gui_in.h
-
-int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg)
+int klb_gui_redraw(klb_gui_t* p_gui)
 {
-    if (0 == klb_mutex_trylock(p_gui->p_msg_mutex))
+    if (p_gui->redraw)
     {
-        klb_msg_t* p_pop = (klb_msg_t*)klb_nlist_pop_head(p_gui->p_msg_list);
-        klb_mutex_unlock(p_gui->p_msg_mutex);
+        klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
+        klb_canvas_draw_clear(p_gui->p_canvas);
 
-        if (NULL != p_pop)
+        for (int i = 0; i < p_gui->modal_num; i++)
         {
-            *p_msg = p_pop;
-            return 0;
+            klb_wnd_draw(p_gui->p_modal_wnd[i]);
         }
+
+        for (int i = 0; i < p_gui->popup_num; i++)
+        {
+            klb_wnd_draw(p_gui->p_popup_wnd[i]);
+        }
+
+        if (NULL != p_gui->p_msg_box)
+        {
+            klb_wnd_draw(p_gui->p_msg_box);
+        }
+
+        klb_gui_update_rect(p_gui, NULL);
+        p_gui->redraw = false;
     }
 
-    return 1;
+    return 0;
 }
+
+int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect)
+{
+    p_gui->redraw = true;
+    p_gui->refresh = true;
+    return 0;
+}
+
+int klb_gui_refresh(klb_gui_t* p_gui)
+{
+    if (p_gui->refresh)
+    {
+        if (p_gui->p_canvas->vtable.refresh_rect)
+        {
+            p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
+        }
+
+        p_gui->refresh = false;
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// loop message
 
 static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t** p_top)
 {
@@ -576,6 +625,23 @@ static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
         return p_focus;
     }
 
+    // popup
+    for (int i = p_gui->popup_num - 1; 0 <= i; i--)
+    {
+        klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_popup_wnd[i], x, y);
+
+        if (NULL != p_focus)
+        {
+            if (NULL != p_top)
+            {
+                *p_top = p_gui->p_popup_wnd[i];
+            }
+
+            return p_focus;
+        }
+    }
+
+    // modal
     for (int i = p_gui->modal_num - 1; 0 <= i; i--)
     {
         klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_modal_wnd[i], x, y);
@@ -594,7 +660,7 @@ static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
     return NULL;
 }
 
-int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
+static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 {
     if (KLB_WM_MOUSEMOVE == p_msg->msg)
     {
@@ -643,8 +709,24 @@ int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
     return 0;
 }
 
+static int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg)
+{
+    if (0 == klb_mutex_trylock(p_gui->p_msg_mutex))
+    {
+        klb_msg_t* p_pop = (klb_msg_t*)klb_nlist_pop_head(p_gui->p_msg_list);
+        klb_mutex_unlock(p_gui->p_msg_mutex);
 
-int klb_gui_process_message_once(klb_gui_t* p_gui)
+        if (NULL != p_pop)
+        {
+            *p_msg = p_pop;
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static int klb_gui_process_message_once(klb_gui_t* p_gui)
 {
     klb_msg_t* p_msg = NULL;
     if (0 == klb_gui_pop_message(p_gui, &p_msg))
@@ -658,48 +740,40 @@ int klb_gui_process_message_once(klb_gui_t* p_gui)
     return 1;
 }
 
-int klb_gui_redraw(klb_gui_t* p_gui)
+int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 {
-    if (p_gui->redraw)
+    int ret = 0;
+
+    // 消息处理
+    while (true)
     {
-        klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
-        klb_canvas_draw_clear(p_gui->p_canvas);
-
-        for (int i = 0; i < p_gui->modal_num; i++)
+        if (0 != klb_gui_process_message_once(p_gui))
         {
-            klb_wnd_draw(p_gui->p_modal_wnd[i]);
+            break; // 一次将队列中的所有消息处理完毕
         }
-
-        if (NULL != p_gui->p_msg_box)
-        {
-            klb_wnd_draw(p_gui->p_msg_box);
-        }
-
-        klb_gui_update_rect(p_gui, NULL);
-        p_gui->redraw = false;
     }
 
-    return 0;
-}
-
-int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect)
-{
-    p_gui->redraw = true;
-    p_gui->refresh = true;
-    return 0;
-}
-
-int klb_gui_refresh(klb_gui_t* p_gui)
-{
-    if (p_gui->refresh)
+    // 依次处理, 激活的扩展
+    if (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
     {
-        if (p_gui->p_canvas->vtable.refresh_rect)
+        klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
+        while (NULL != p_iter)
         {
-            p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
-        }
+            klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_data(p_iter);
+            if (NULL != p_activated && p_activated->ex.cb_loop_once)
+            {
+                p_activated->ex.cb_loop_once(p_activated->ptr, p_gui, tc);
+            }
 
-        p_gui->refresh = false;
+            p_iter = klb_hlist_next(p_iter);
+        }
     }
 
-    return 0;
+    // 是否重绘
+    klb_gui_redraw(p_gui);
+
+    // 刷新
+    klb_gui_refresh(p_gui);
+
+    return ret;
 }

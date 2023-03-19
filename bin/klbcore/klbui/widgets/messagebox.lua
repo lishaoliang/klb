@@ -27,7 +27,7 @@ messagebox.css = {
 
 messagebox.dialog = {
 	['path'] = '/messagebox',
-	['type'] = 'kdialog',
+	['type'] = 'kmessagebox',
 	['pos'] = {200, 200, 480, 240},
 	['title'] = 'messagebox',
 	['name'] = 'messagebox1',

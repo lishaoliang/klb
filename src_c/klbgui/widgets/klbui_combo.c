@@ -6,6 +6,7 @@
 #include "klbgui/klbui_css_ex.h"
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_map.h"
+#include "klbgui/subviews/klbui_combo_menu.h"
 
 
 /// @struct klbui_combo_botton_t
@@ -36,6 +37,8 @@ typedef struct klbui_combo_t_
 
     //klbui_combo_botton_t    btn_left;       ///< 左侧按钮
     klbui_combo_botton_t    btn_right;      ///< 右侧按钮
+
+    klb_wnd_t*              p_menu;
 
     klb_map_t*              p_func_map;     ///< 属性函数表
 }klbui_combo_t;
@@ -173,6 +176,19 @@ static int klbui_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
     {
     case KLBUI_PAINT:
         return klbui_combo_on_paint(p_wnd);
+        break;
+    case KLB_WM_LBUTTONDOWN:
+    case KLB_WM_LBUTTONDBLCLK:
+        {
+            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+            int x = rect.x;
+            int y = rect.y + rect.h;
+
+            klb_wnd_move(p_combo->p_menu, x, y);
+
+            klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
+        }
+        break;
     default:
         break;
     }
@@ -612,6 +628,9 @@ klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     p_wnd->vtable.on_get = klbui_combo_on_get;
 
     p_wnd->p_gui = p_gui;
+
+    // 初始化弹出菜单
+    p_combo->p_menu = klbui_combo_menu_create(p_gui, 0, 0, 128, 28 * 9);
 
     // 初始化默认值
     klbui_combo_init_attribute(p_wnd, p_combo);
