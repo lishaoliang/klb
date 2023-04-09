@@ -249,6 +249,16 @@ int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const
     return 0;
 }
 
+int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h)
+{
+    if (p_canvas->vtable.text_size)
+    {
+        return p_canvas->vtable.text_size(p_canvas, p_utf8, utf8_len, p_out_w, p_out_h);
+    }
+
+    return 0;
+}
+
 int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path)
 {
     if (p_canvas->vtable.draw_image)

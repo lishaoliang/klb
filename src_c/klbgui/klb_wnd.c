@@ -520,6 +520,22 @@ int klb_wnd_draw_text(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_
     return ret;
 }
 
+int klb_wnd_text_size(klb_wnd_t* p_wnd, const char* p_utf8, int utf8_len, int* p_font_h, int* p_out_w, int* p_out_h)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+
+    int ret = 0;
+
+    if (NULL != p_font_h)
+    {
+        ret |= klb_canvas_set_font_height(p_canvas, *p_font_h);
+    }
+
+    ret |= klb_canvas_text_size(p_canvas, p_utf8, utf8_len, p_out_w, p_out_h);
+
+    return ret;
+}
+
 int klb_wnd_draw_image(klb_wnd_t* p_wnd, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect)
 {
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);

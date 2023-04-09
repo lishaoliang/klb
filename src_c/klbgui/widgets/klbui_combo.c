@@ -9,24 +9,29 @@
 #include "klbgui/subviews/klbui_combo_menu.h"
 
 
-/// @struct klbui_combo_botton_t
+/// @struct klbui_combo_button_t
 /// @brief  下拉组合控件的按钮
-typedef struct klbui_combo_botton_t_
+typedef struct klbui_combo_button_t_
 {
     klbuicss_padding_t      padding;        ///< 内边框
 
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
-}klbui_combo_botton_t;
+}klbui_combo_button_t;
 
 
 /// @struct klbui_button_t
 /// @brief  下拉组合控件
 typedef struct klbui_combo_t_
 {
-    sds                     title;          ///< 标题
+    // 自定义属性
+    sds                     title;          ///< 标题: 用于显示
+    sds                     value;          ///< 值: 用于做业务逻辑
 
+    klb_map_t*              p_data_map;     ///< 存储数组 : {['value']='1', ['title']='11111'}
+
+    // CSS属性
     // normal
     klbuicss_margin_t       margin;         ///< 外边框
     klbuicss_padding_t      padding;        ///< 内边框
@@ -35,8 +40,7 @@ typedef struct klbui_combo_t_
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
 
-    //klbui_combo_botton_t    btn_left;       ///< 左侧按钮
-    klbui_combo_botton_t    btn_right;      ///< 右侧按钮
+    klbui_combo_button_t    button_right;   ///< 右侧按钮
 
     klb_wnd_t*              p_menu;
 
@@ -64,10 +68,10 @@ static void klbui_combo_on_paint_button_status(klb_wnd_t* p_wnd, klbui_combo_t* 
 {
     klb_rect_t r = *p_rect;
 
-    r.x += p_combo->btn_right.padding.left;
-    r.y += p_combo->btn_right.padding.top;
-    r.w -= (p_combo->btn_right.padding.left + p_combo->btn_right.padding.right);
-    r.h -= (p_combo->btn_right.padding.top + p_combo->btn_right.padding.bottom);
+    r.x += p_combo->button_right.padding.left;
+    r.y += p_combo->button_right.padding.top;
+    r.w -= (p_combo->button_right.padding.left + p_combo->button_right.padding.right);
+    r.h -= (p_combo->button_right.padding.top + p_combo->button_right.padding.bottom);
 
     // 倒三角
     int h = r.w / 2;
@@ -152,17 +156,17 @@ static int klbui_combo_on_paint(klb_wnd_t* p_wnd)
     if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
     {
         klbui_combo_on_paint_status(p_wnd, p_combo, &p_combo->disable, &paint_rect);
-        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->btn_right.disable), &btn_right_rect);
+        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->button_right.disable), &btn_right_rect);
     }
     else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
     {
         klbui_combo_on_paint_status(p_wnd, p_combo, &p_combo->focus, &paint_rect);
-        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->btn_right.focus), &btn_right_rect);
+        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->button_right.focus), &btn_right_rect);
     }
     else
     {
         klbui_combo_on_paint_status(p_wnd, p_combo, &p_combo->normal, &paint_rect);
-        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->btn_right.normal), &btn_right_rect);
+        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->button_right.normal), &btn_right_rect);
     }
 
     return 0;
@@ -234,27 +238,32 @@ static void klbui_combo_init_attribute(klb_wnd_t* p_wnd, klbui_combo_t* p_combo)
     const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
 
     p_combo->title = sdsempty();
+    p_combo->value = sdsempty();
+
+    p_combo->p_data_map = klb_map_create();
 
     klbuicssex_attributes_init(&p_combo->normal, p_default);
     klbuicssex_attributes_init(&p_combo->focus, p_default);
     klbuicssex_attributes_init(&p_combo->disable, p_default);
 
-    klbuicssex_attributes_init(&(p_combo->btn_right.normal), p_default);
-    klbuicssex_attributes_init(&(p_combo->btn_right.focus), p_default);
-    klbuicssex_attributes_init(&(p_combo->btn_right.disable), p_default);
+    klbuicssex_attributes_init(&(p_combo->button_right.normal), p_default);
+    klbuicssex_attributes_init(&(p_combo->button_right.focus), p_default);
+    klbuicssex_attributes_init(&(p_combo->button_right.disable), p_default);
 }
 
 static void klbui_combo_quit_attribute(klbui_combo_t* p_combo)
 {
     KLB_FREE_BY(p_combo->title, sdsfree);
+    KLB_FREE_BY(p_combo->value, sdsfree);
+    KLB_FREE_BY(p_combo->p_data_map, klb_map_destroy);
 
     klbuicssex_attributes_quit(&p_combo->normal);
     klbuicssex_attributes_quit(&p_combo->focus);
     klbuicssex_attributes_quit(&p_combo->disable);
 
-    klbuicssex_attributes_quit(&(p_combo->btn_right.normal));
-    klbuicssex_attributes_quit(&(p_combo->btn_right.focus));
-    klbuicssex_attributes_quit(&(p_combo->btn_right.disable));
+    klbuicssex_attributes_quit(&(p_combo->button_right.normal));
+    klbuicssex_attributes_quit(&(p_combo->button_right.focus));
+    klbuicssex_attributes_quit(&(p_combo->button_right.disable));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -480,19 +489,19 @@ static void on_klbui_combo_border_radius_disable(klb_wnd_t* p_wnd, klbui_combo_t
     klbuicssex_border_radius(&(p_combo->disable.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_combo_botton_right_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_combo_button_right_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_combo->btn_right.normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_combo->button_right.normal.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_combo_botton_right_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_combo_button_right_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_combo->btn_right.focus.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_combo->button_right.focus.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_combo_botton_right_color_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_combo_button_right_color_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_combo->btn_right.disable.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_combo->button_right.disable.text), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////
@@ -501,6 +510,60 @@ static void on_klbui_combo_botton_right_color_disable(klb_wnd_t* p_wnd, klbui_co
 static void on_klbui_combo_title(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_sds(&(p_combo->title), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_value(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_sds(&(p_combo->value), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_append(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_set == method)
+    {
+        /* eg.
+            jq('combo1').append({
+                {['1'] = '项目1'},
+                {['2'] = '项目2'},
+                {['3'] = '项目3'},
+                {['4'] = '项目4'}
+            })
+
+            or, kgui.set('/xxx/.../combo1', 'append', {
+                {['1'] = '项目1'},
+                {['2'] = '项目2'},
+                {['3'] = '项目3'},
+                {['4'] = '项目4'}
+            })
+        */
+        int start = 1;
+        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_array)
+        {
+            int count = klb_map_array_size(p_in_array);
+            for (int i = 0; i < count; i++)
+            {
+                klb_map_append_adt_clone(p_combo->p_data_map, klb_map_idx_to_adt(p_in_array, i));
+            }
+        }
+    }
+}
+
+static void on_klbui_combo_remove(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+
+}
+
+static void on_klbui_combo_clear(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_set == method)
+    {
+        // 清空待选列表
+        klb_map_clear(p_combo->p_data_map);
+
+        sdsclear(p_combo->title);
+        sdsclear(p_combo->value);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -553,14 +616,14 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("text-align:disable", on_klbui_combo_text_align_disable);
 
     // 斜体 font-style
-    KLBUI_combo_bind("font-style", on_klbui_combo_font_style);
-    KLBUI_combo_bind("font-style:focus", on_klbui_combo_font_style_focus);
-    KLBUI_combo_bind("font-style:disable", on_klbui_combo_font_style_disable);
+    //KLBUI_combo_bind("font-style", on_klbui_combo_font_style);
+    //KLBUI_combo_bind("font-style:focus", on_klbui_combo_font_style_focus);
+    //KLBUI_combo_bind("font-style:disable", on_klbui_combo_font_style_disable);
 
     // 字体粗细 font-weight
-    KLBUI_combo_bind("font-weight", on_klbui_combo_font_weight);
-    KLBUI_combo_bind("font-weight:focus", on_klbui_combo_font_weight_focus);
-    KLBUI_combo_bind("font-weight:disable", on_klbui_combo_font_weight_disable);
+    //KLBUI_combo_bind("font-weight", on_klbui_combo_font_weight);
+    //KLBUI_combo_bind("font-weight:focus", on_klbui_combo_font_weight_focus);
+    //KLBUI_combo_bind("font-weight:disable", on_klbui_combo_font_weight_disable);
 
     // 字体大小 font-size
     KLBUI_combo_bind("font-size", on_klbui_combo_font_size);
@@ -573,14 +636,14 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("background-color:disable", on_klbui_combo_background_color_disable);
 
     // 背景图片 background-image
-    KLBUI_combo_bind("background-image", on_klbui_combo_background_image);
-    KLBUI_combo_bind("background-image:focus", on_klbui_combo_background_image_focus);
-    KLBUI_combo_bind("background-image:disable", on_klbui_combo_background_image_disable);
+    //KLBUI_combo_bind("background-image", on_klbui_combo_background_image);
+    //KLBUI_combo_bind("background-image:focus", on_klbui_combo_background_image_focus);
+    //KLBUI_combo_bind("background-image:disable", on_klbui_combo_background_image_disable);
 
     // 边框类型 border-style
-    KLBUI_combo_bind("border-style", on_klbui_combo_border_style);
-    KLBUI_combo_bind("border-style:focus", on_klbui_combo_border_style_focus);
-    KLBUI_combo_bind("border-style:disable", on_klbui_combo_border_style_disable);
+    //KLBUI_combo_bind("border-style", on_klbui_combo_border_style);
+    //KLBUI_combo_bind("border-style:focus", on_klbui_combo_border_style_focus);
+    //KLBUI_combo_bind("border-style:disable", on_klbui_combo_border_style_disable);
 
     // 边框的宽度 border-width
     KLBUI_combo_bind("border-width", on_klbui_combo_border_width);
@@ -593,22 +656,27 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("border-color:disable", on_klbui_combo_border_color_disable);
 
     // 圆角边框 border-radius
-    KLBUI_combo_bind("border-radius", on_klbui_combo_border_radius);
-    KLBUI_combo_bind("border-radius:focus", on_klbui_combo_border_radius_focus);
-    KLBUI_combo_bind("border-radius:disable", on_klbui_combo_border_radius_disable);
+    //KLBUI_combo_bind("border-radius", on_klbui_combo_border_radius);
+    //KLBUI_combo_bind("border-radius:focus", on_klbui_combo_border_radius_focus);
+    //KLBUI_combo_bind("border-radius:disable", on_klbui_combo_border_radius_disable);
+
 
     //////////////////////////////////////////////
-    // 右侧倒三角
-    KLBUI_combo_bind("botton-right.color", on_klbui_combo_botton_right_color);
-    KLBUI_combo_bind("botton-right.color:focus", on_klbui_combo_botton_right_color_focus);
-    KLBUI_combo_bind("botton-right.color:disable", on_klbui_combo_botton_right_color_disable);
+    // 右侧倒三角按钮 前景色 button_right color
+    KLBUI_combo_bind("button_right.color", on_klbui_combo_button_right_color);
+    KLBUI_combo_bind("button_right.color:focus", on_klbui_combo_button_right_color_focus);
+    KLBUI_combo_bind("button_right.color:disable", on_klbui_combo_button_right_color_disable);
 
 
     //////////////////////////////////////////////
     // 自定义方法
 
     KLBUI_combo_bind("title", on_klbui_combo_title);
-    KLBUI_combo_bind("value", on_klbui_combo_title);
+    KLBUI_combo_bind("value", on_klbui_combo_value);
+
+    KLBUI_combo_bind("append", on_klbui_combo_append);
+    KLBUI_combo_bind("remove", on_klbui_combo_remove);
+    KLBUI_combo_bind("clear", on_klbui_combo_clear);
 }
 
 klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h)
@@ -626,6 +694,8 @@ klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     p_wnd->vtable.on_command = NULL;
     p_wnd->vtable.on_set = klbui_combo_on_set;
     p_wnd->vtable.on_get = klbui_combo_on_get;
+
+    p_wnd->state.style = 0x0;   // 默认样式
 
     p_wnd->p_gui = p_gui;
 

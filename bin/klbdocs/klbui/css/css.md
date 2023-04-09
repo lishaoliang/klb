@@ -36,11 +36,11 @@ eg. [私有子控件名.]主CSS样式[:状态]
 
 ```lua
 {
-    ['botton.background-color'] = {255,220,220,220},      -- normal 常规状态
-    ['botton.background-color:focus'] = 0xFFA0A0A0,       -- focus 聚焦状态
-    ['botton.background-color:disable'] = '0xFFA0A0A0'    -- disable 不使能状态
-    ['botton.background-color:check'] = '0xFFA0A0A0'      -- check 选中状态
-    ['botton.background-color:input'] = '0xFFA0A0A0'      -- input 输入状态
+    ['button.background-color'] = {255,220,220,220},      -- normal 常规状态
+    ['button.background-color:focus'] = 0xFFA0A0A0,       -- focus 聚焦状态
+    ['button.background-color:disable'] = '0xFFA0A0A0'    -- disable 不使能状态
+    ['button.background-color:check'] = '0xFFA0A0A0'      -- check 选中状态
+    ['button.background-color:input'] = '0xFFA0A0A0'      -- input 输入状态
 }
 ```
 

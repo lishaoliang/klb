@@ -106,6 +106,9 @@ typedef struct klb_canvas_vtable_t_
     /// @brief 绘制utf8文本
     int(*draw_text)(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len);
 
+    /// @brief 以当前字体大小, 绘制utf8文本所需要的宽高
+    int(*text_size)(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h);
+
     /// @brief 绘制图片
     int(*draw_image)(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect);
 
@@ -117,7 +120,7 @@ typedef struct klb_canvas_vtable_t_
     /// @return int 0.成功; 非0.失败
     ///  \n 源画布/目标画布像素格式必须一致
     ///  \n 源区域大于目标区域时,裁剪
-    //int(*draw_copy)(klb_canvas_t* p_canvas, int x, int y, const klb_canvas_t* p_src_canvas, const klb_rect_t* p_src_rect);
+    int(*draw_copy)(klb_canvas_t* p_canvas, int x, int y, const klb_canvas_t* p_src_canvas, const klb_rect_t* p_src_rect);
 
     /// @brief 刷新画布到显存(屏幕)
     /// @param [in] *p_canvas   画布对象
@@ -137,7 +140,7 @@ typedef struct klb_canvas_vtable_t_
     /// @param [in] color_fmt   颜色格式
     /// @return klb_canvas_t* 画布对象
     ///  \n 可申请使用硬件的画布
-    klb_canvas_t* (*malloc)(int w, int h, int color_fmt);
+    klb_canvas_t* (*malloc)(klb_canvas_t* p_canvas, int w, int h, int color_fmt);
 
     /// @brief 释放画布
     /// @param [in] *p_canvas   画布对象
@@ -159,6 +162,7 @@ typedef struct klb_canvas_t_
     uint8_t*            p_addr;                 ///< 画布虚拟地址
     uintptr_t           phy_addr;               ///< 画布物理地址
 
+    int                 bpp;                    ///< 像素位宽
     int64_t             mem_len;                ///< 内存长度
     int64_t             pitch;                  ///< 行跨距 = w * bpp(1,2,3,4) + padding
 
@@ -232,6 +236,10 @@ int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects
 /// @param [in] *p_canvas       画布对象
 /// @return int 0
 int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len);
+
+/// @brief 以当前字体大小, 绘制utf8文本所需要的宽高
+int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h);
+
 
 /// @brief 绘制图片
 int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path);

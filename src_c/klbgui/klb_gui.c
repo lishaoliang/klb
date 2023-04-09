@@ -622,6 +622,7 @@ static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
             *p_top = p_gui->p_msg_box;
         }
 
+        // 在有 messagebox 时, 只在 messagebox 里面寻找
         return p_focus;
     }
 
@@ -639,6 +640,9 @@ static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
 
             return p_focus;
         }
+
+        // 在有 popup 时, 只在 popup 里面寻找
+        return NULL;
     }
 
     // modal
@@ -675,7 +679,7 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
             klb_gui_update_rect(p_gui, NULL);
         }
 
-        if (NULL != p_focus)
+        if (NULL != p_focus && p_focus != p_gui->p_focus)
         {
             klb_wnd_set_focus(p_focus, true);
 
@@ -688,8 +692,24 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         p_gui->p_focus = p_focus;
     }
 
-    // 焦点窗口消息
-    klb_wnd_t* p_wnd = p_gui->p_focus;
+    // 处理窗口消息
+    klb_wnd_t* p_wnd = p_gui->p_focus; // 焦点窗口
+
+    if (NULL == p_wnd)
+    {
+        // 若无焦点窗口, 则检查是否有 messagebox / popup 窗口
+        // 若有messagebox / popup , 则将消息交个顶层窗口处理
+        if (NULL != p_gui->p_msg_box)
+        {
+            p_wnd = p_gui->p_msg_box;
+        }
+        else if(0 < p_gui->popup_num)
+        {
+            p_wnd = p_gui->p_popup_wnd[0]; // 首次popup 的窗口
+        }
+    }
+
+
     if (NULL != p_wnd)
     {
         // 这里 on_control / on_command 函数都需要处理, eg. 组件可能需要响应部分消息

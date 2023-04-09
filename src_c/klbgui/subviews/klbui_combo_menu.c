@@ -6,6 +6,7 @@
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_map.h"
 #include "klbgui/klb_wnd_in.h"
+#include "klbutil/klb_rect.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,8 @@
 
 typedef struct klbui_combo_menu_item_t_
 {
+    sds                     title;          ///< 标题
+
     klbui_combo_menu_t*     p_combo_menu;
 }klbui_combo_menu_item_t;
 
@@ -21,6 +24,11 @@ typedef struct klbui_combo_menu_item_t_
 static void klbui_combo_menu_item_set_combo_menu(klbui_combo_menu_item_t* p_item, klbui_combo_menu_t* p_menu)
 {
     p_item->p_combo_menu = p_menu;
+}
+
+static void klbui_combo_menu_item_set_title(klbui_combo_menu_item_t* p_item, const char* p_title)
+{
+    p_item->title = sdscpy(p_item->title, p_title);
 }
 
 ////////////////////////////////////////
@@ -31,6 +39,7 @@ static void klbui_combo_menu_item_destroy(klb_wnd_t* p_wnd)
     klbui_combo_menu_item_t* p_item = (klbui_combo_menu_item_t*)p_wnd->ctrl;
 
     // 清理属性
+    KLB_FREE_BY(p_item->title, sdsfree);
 
     KLB_FREE(p_wnd);
 }
@@ -63,24 +72,24 @@ static void klbui_combo_menu_item_on_paint_status(klb_wnd_t* p_wnd, klbui_combo_
         klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
     }
 
-    //if (0 < sdslen(p_btn->title))
-    //{
-    //    klb_rect_t text_rect = *p_rect;
+    if (0 < sdslen(p_btn->title))
+    {
+        klb_rect_t text_rect = *p_rect;
 
-    //    // 移除边框
-    //    text_rect.x += p_attr->border.width.left;
-    //    text_rect.y += p_attr->border.width.top;
-    //    text_rect.w -= (p_attr->border.width.left + p_attr->border.width.right);
-    //    text_rect.h -= (p_attr->border.width.top + p_attr->border.width.bottom);
+        // 移除边框
+        text_rect.x += p_attr->border.width.left;
+        text_rect.y += p_attr->border.width.top;
+        text_rect.w -= (p_attr->border.width.left + p_attr->border.width.right);
+        text_rect.h -= (p_attr->border.width.top + p_attr->border.width.bottom);
 
-    //    // 移除内边距
-    //    text_rect.x += p_btn->padding.left;
-    //    text_rect.y += p_btn->padding.top;
-    //    text_rect.w -= (p_btn->padding.left + p_btn->padding.right);
-    //    text_rect.h -= (p_btn->padding.top + p_btn->padding.bottom);
+        // 移除内边距
+        //text_rect.x += p_attr->padding.left;
+        //text_rect.y += p_attr->padding.top;
+        //text_rect.w -= (p_attr->padding.left + p_attr->padding.right);
+        //text_rect.h -= (p_attr->padding.top + p_attr->padding.bottom);
 
-    //    klb_wnd_draw_text2(p_wnd, &text_rect, p_btn->title, sdslen(p_btn->title), p_attr->text.color, p_attr->font.size);
-    //}
+        klb_wnd_draw_text2(p_wnd, &text_rect, p_btn->title, sdslen(p_btn->title), p_attr->text.color, p_attr->font.size);
+    }
 }
 
 static int klbui_combo_menu_item_on_paint(klb_wnd_t* p_wnd)
@@ -156,6 +165,8 @@ static klbui_combo_menu_item_t* klbui_combo_menu_item_create(klb_gui_t* p_gui, i
 
     p_wnd->p_gui = p_gui;
 
+    p_item->title = sdsnew("");
+
     return p_item;
 }
 
@@ -200,6 +211,16 @@ static int klbui_combo_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
     {
     case KLBUI_PAINT:
         return klbui_combo_menu_on_paint(p_wnd);
+    case KLB_WM_LBUTTONDOWN:
+    case KLB_WM_LBUTTONDBLCLK:
+        {
+            klb_rect_t* p_rect = &p_wnd->pos.rect_in_canvas;
+            if (!klb_pt_in_rect(p_rect, p_pt1->x, p_pt1->y))
+            {
+                klb_gui_popup_end(p_wnd->p_gui, true);
+            }
+        }
+        break;
     default:
         break;
     }
@@ -251,9 +272,12 @@ klb_wnd_t* klbui_combo_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     {
         p_menu->p_item[i] = klbui_combo_menu_item_create(p_gui, 1, 1 + i * item_h, item_w, item_h);
         klbui_combo_menu_item_set_combo_menu(p_menu->p_item[i], p_menu);
+        klbui_combo_menu_item_set_title(p_menu->p_item[i], "aaaaa");
 
         klb_wnd_push_child(p_wnd, KLB_WND_PTR(p_menu->p_item[i]));
     }
+
+    p_wnd->pos.rect_in_parent.h = item_h * KLBUI_COMBO_MENU_item_max;
 
     return p_wnd;
 }

@@ -278,16 +278,7 @@ extern "C" {
 *
 * Private Window Messages Start Here:
 */
-#define KLB_WM_USER          0x0400
-
-
-/// @def   KLB_GUI_WM_USER
-/// @brief GUI用户消息
-///  [0x0000, 0x0400]   参考微软定义
-///  (0x0400, 0x1000)   GUI核心定义消息
-///  [0x1000, +)        界面消息
-#define KLB_GUI_WM_USER             0x1000
-
+#define KLB_WM_USER             0x0400
 
 
 #ifdef __cplusplus
