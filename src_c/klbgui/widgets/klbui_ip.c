@@ -39,7 +39,7 @@ static int klbui_ip_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_p
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_ip_on_paint(p_wnd);
     default:
         break;
@@ -54,7 +54,7 @@ static int klbui_ip_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_p
 
     switch (msg)
     {
-    case KLB_WM_LBUTTONDOWN:
+    case KLBUI_click:
         break;
     default:
         break;

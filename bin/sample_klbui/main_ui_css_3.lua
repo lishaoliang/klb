@@ -241,7 +241,7 @@ home.parse_tc = 0
 
 home.commonds = {
 	['/home'] = {
-		['load'] = function ()
+		['onload'] = function ()
 			jq('edit1').value('解析耗时:' .. tostring(home.parse_tc) .. 'ms')
 				
 			jq('btn4').click(function ()
@@ -257,7 +257,7 @@ home.commonds = {
 			end)
 		end,
 		
-		['unload'] = function ()
+		['onunload'] = function ()
 			
 		end
 	},

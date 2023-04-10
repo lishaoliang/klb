@@ -215,11 +215,11 @@ home.parse_tc = 0
 
 home.commonds = {
 	['/home'] = {
-		['load'] = function ()
+		['onload'] = function ()
 			
 		end,
 		
-		['unload'] = function ()
+		['onunload'] = function ()
 			
 		end
 	}

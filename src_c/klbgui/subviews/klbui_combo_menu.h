@@ -16,6 +16,7 @@
 #include "klbgui/klb_gui.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
+#include "klbutil/klb_map.h"
 
 
 #if defined(__cplusplus)
@@ -29,22 +30,40 @@ extern "C" {
 typedef struct klbui_combo_menu_item_t_ klbui_combo_menu_item_t;
 
 
-typedef struct klbui_combo_menu_t_
+typedef int(*klbui_combo_menu_cb)(klb_wnd_t* p_combo, sds value, sds title);
+
+
+typedef struct klbui_combo_menu_css_t_
 {
     // normal
-    klbuicss_margin_t           margin;         ///< 外边框
-    klbuicss_padding_t          padding;        ///< 内边框
-
+    klbuicss_padding_t          padding;        ///< 内边距
     klbuicssex_attributes_t     normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t     focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t     disable;        ///< disable 不使能状态参数
 
-    klbui_combo_menu_item_t*   p_item[KLBUI_COMBO_MENU_item_max];
+    // item
+    klbuicssex_attributes_t     item_normal;    ///< normal 常规状态参数
+    klbuicssex_attributes_t     item_focus;     ///< focus 聚焦状态参数
+}klbui_combo_menu_css_t;
+
+typedef struct klbui_combo_menu_t_
+{
+    klbui_combo_menu_css_t          css;
+    klbui_combo_menu_item_t*        p_item[KLBUI_COMBO_MENU_item_max];
+
+    struct
+    {
+        klb_map_t*                  p_ref_array;    ///< combo组件中存储的数据
+
+        klb_wnd_t*                  p_combo;        ///< combo组件
+        klbui_combo_menu_cb         cb_combo;       ///< 选中后的回调函数
+    };
 }klbui_combo_menu_t;
 
 
 klb_wnd_t* klbui_combo_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
+void klbui_combo_menu_init_css(const klbui_default_t* p_default, klbui_combo_menu_css_t* p_menu_css);
+
+int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klb_map_t* p_data_array, klbui_combo_menu_cb cb, klb_wnd_t* p_combo);
 
 
 #ifdef __cplusplus

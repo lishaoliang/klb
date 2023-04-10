@@ -120,11 +120,11 @@ static int klbui_check_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_check_on_paint(p_wnd);
         break;
-    case KLB_WM_LBUTTONDOWN:
-    case KLB_WM_LBUTTONDBLCLK:
+    case KLBUI_click:
+    case KLBUI_dblclick:
         {
             p_check->check = !p_check->check;
             klb_wnd_update(p_wnd);

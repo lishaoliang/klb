@@ -106,7 +106,7 @@ static int klbui_tab_botton_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_tab_botton_on_paint(p_wnd);
     default:
         break;

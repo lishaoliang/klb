@@ -128,7 +128,7 @@ static int klbui_menubar_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_menubar_on_paint(p_wnd);
     default:
         break;

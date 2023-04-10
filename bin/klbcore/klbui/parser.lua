@@ -46,6 +46,7 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 	-- 1. cmds1 动态命令集 
 	-- 2. cmds2 由 parse 第二参数 外部静态命令集
 	-- 3. cmds3 由 parse 第一参数 静态命令集
+	--[[
 	if 0x0201 == msg or 0x0203 == msg then
 		if 'function' == type(cmds1['click']) then
 			cmds1['click'](x1, y1, x2, y2, lparam, wparam)
@@ -55,6 +56,7 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 			cmds3['click'](x1, y1, x2, y2, lparam, wparam)
 		end
 	end
+	--]]
 	
 	local event_str = event.transform(msg)
 	if 'string' == type(event_str) then		

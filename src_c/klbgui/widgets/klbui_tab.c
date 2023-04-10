@@ -139,8 +139,8 @@ static int on_command_tab_btn_klbui_tab(klb_wnd_t* p_wnd, int msg, const klb_poi
 
     switch (msg)
     {
-    case KLB_WM_LBUTTONDOWN:
-    case KLB_WM_LBUTTONDBLCLK:
+    case KLBUI_click:
+    case KLBUI_dblclick:
         {
             int idx = klbui_tab_botton_get_index(p_wnd);
             klbui_tab_show_page(p_tab, idx);
@@ -219,10 +219,10 @@ static int klbui_tab_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_tab_on_paint(p_wnd);
         break;
-    case KLBUI_LOAD:
+    case KLBUI_onload:
         return klbui_tab_on_load(p_wnd, p_tab);
         break;
     default:

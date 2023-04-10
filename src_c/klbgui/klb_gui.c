@@ -248,7 +248,7 @@ static void klb_gui_load_wnd(klb_wnd_t* p_wnd)
     if (NULL != p_wnd->vtable.on_control)
     {
         klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_control(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
+        p_wnd->vtable.on_control(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
     }
 }
 
@@ -280,7 +280,7 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
         if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
         {
             klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
+            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
         p_gui->redraw = true;
@@ -331,7 +331,7 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
     if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
     {
         klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_command(p_wnd, KLBUI_UNLOAD, &pt, &pt, 0, 0);
+        p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
     }
 
     p_gui->redraw = true;
@@ -377,7 +377,7 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
         {
             klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
+            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
         p_gui->redraw = true;
@@ -435,7 +435,7 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
         if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
         {
             klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_LOAD, &pt, &pt, 0, 0);
+            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
         p_gui->redraw = true;
@@ -466,7 +466,7 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
     if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
     {
         klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_command(p_wnd, KLBUI_UNLOAD, &pt, &pt, 0, 0);
+        p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
     }
 
     p_gui->p_msg_box = NULL;
@@ -666,7 +666,7 @@ static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
 
 static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 {
-    if (KLB_WM_MOUSEMOVE == p_msg->msg)
+    if (KLBUI_mousemove == p_msg->msg)
     {
         klb_wnd_t* p_focus_top = NULL;
         klb_wnd_t* p_focus = klb_gui_find_focus(p_gui, p_msg->pt1.x, p_msg->pt1.y, &p_focus_top);

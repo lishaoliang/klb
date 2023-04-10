@@ -40,7 +40,7 @@ static int klbui_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_hscrollbar_on_paint(p_wnd);
     default:
         break;
@@ -55,7 +55,7 @@ static int klbui_hscrollbar_on_command(klb_wnd_t* p_wnd, int msg, const klb_poin
 
     switch (msg)
     {
-    case KLB_WM_LBUTTONDOWN:
+    case KLBUI_click:
         break;
     default:
         break;

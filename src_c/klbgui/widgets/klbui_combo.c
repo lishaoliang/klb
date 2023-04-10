@@ -29,7 +29,7 @@ typedef struct klbui_combo_t_
     sds                     title;          ///< 标题: 用于显示
     sds                     value;          ///< 值: 用于做业务逻辑
 
-    klb_map_t*              p_data_map;     ///< 存储数组 : {['value']='1', ['title']='11111'}
+    klb_map_t*              p_data_array;   ///< 存储数组 : {{['1'] = '项目1'}, {['2'] = '项目2'}}
 
     // CSS属性
     // normal
@@ -41,6 +41,8 @@ typedef struct klbui_combo_t_
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
 
     klbui_combo_button_t    button_right;   ///< 右侧按钮
+
+    klbui_combo_menu_css_t  menu_css;       ///< 弹出菜单样式
 
     klb_wnd_t*              p_menu;
 
@@ -114,6 +116,9 @@ static void klbui_combo_on_paint_status(klb_wnd_t* p_wnd, klbui_combo_t* p_combo
     {
         klb_rect_t text_rect = *p_rect;
 
+        // 移除右侧三角符号占用空间
+        text_rect.w -= 14;
+
         // 移除边框
         text_rect.x += p_attr->border.width.left;
         text_rect.y += p_attr->border.width.top;
@@ -172,22 +177,38 @@ static int klbui_combo_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+static int cb_klbui_combo_value_title(klb_wnd_t* p_wnd, sds value, sds title)
+{
+    klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
+
+    // 用户已经点击了某个选项
+
+    p_combo->value = sdscpy(p_combo->value, value);
+    p_combo->title = sdscpy(p_combo->title, title);
+
+    klb_wnd_update(p_wnd);
+
+    return 0;
+}
+
 static int klbui_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
 
     switch (msg)
     {
-    case KLBUI_PAINT:
+    case KLBUI_onpaint:
         return klbui_combo_on_paint(p_wnd);
         break;
-    case KLB_WM_LBUTTONDOWN:
-    case KLB_WM_LBUTTONDBLCLK:
+    case KLBUI_click:
+    case KLBUI_dblclick:
         {
             klb_rect_t rect = p_wnd->pos.rect_in_canvas;
             int x = rect.x;
             int y = rect.y + rect.h;
 
+            klbui_combo_menu_bind(p_combo->p_menu, p_combo->p_data_array, cb_klbui_combo_value_title, p_wnd);
+            
             klb_wnd_move(p_combo->p_menu, x, y);
 
             klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
@@ -240,7 +261,7 @@ static void klbui_combo_init_attribute(klb_wnd_t* p_wnd, klbui_combo_t* p_combo)
     p_combo->title = sdsempty();
     p_combo->value = sdsempty();
 
-    p_combo->p_data_map = klb_map_create();
+    p_combo->p_data_array = klb_map_create();
 
     klbuicssex_attributes_init(&p_combo->normal, p_default);
     klbuicssex_attributes_init(&p_combo->focus, p_default);
@@ -255,7 +276,7 @@ static void klbui_combo_quit_attribute(klbui_combo_t* p_combo)
 {
     KLB_FREE_BY(p_combo->title, sdsfree);
     KLB_FREE_BY(p_combo->value, sdsfree);
-    KLB_FREE_BY(p_combo->p_data_map, klb_map_destroy);
+    KLB_FREE_BY(p_combo->p_data_array, klb_map_destroy);
 
     klbuicssex_attributes_quit(&p_combo->normal);
     klbuicssex_attributes_quit(&p_combo->focus);
@@ -504,6 +525,49 @@ static void on_klbui_combo_button_right_color_disable(klb_wnd_t* p_wnd, klbui_co
     klbuicssex_text_color(&(p_combo->button_right.disable.text), p_wnd, method, p_in, p_out);
 }
 
+////////////////////////////////////
+// combo_menu
+
+static void on_klbui_combo_menu_padding(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_padding_top(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding_top(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_padding_right(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding_right(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_padding_bottom(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding_bottom(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_padding_left(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding_left(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_background_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_background_color(&(p_combo->menu_css.normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_border_width(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_width(&(p_combo->menu_css.normal.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_border_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_color(&(p_combo->menu_css.normal.border), p_wnd, method, p_in, p_out);
+}
+
 //////////////////////////////////////
 // 自定义属性
 
@@ -515,6 +579,8 @@ static void on_klbui_combo_title(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int m
 static void on_klbui_combo_value(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_sds(&(p_combo->value), p_wnd, method, p_in, p_out);
+
+    int count = klb_map_array_size(p_combo->p_data_array);
 }
 
 static void on_klbui_combo_append(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -543,15 +609,10 @@ static void on_klbui_combo_append(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int 
             int count = klb_map_array_size(p_in_array);
             for (int i = 0; i < count; i++)
             {
-                klb_map_append_adt_clone(p_combo->p_data_map, klb_map_idx_to_adt(p_in_array, i));
+                klb_map_append_adt_clone(p_combo->p_data_array, klb_map_idx_to_adt(p_in_array, i));
             }
         }
     }
-}
-
-static void on_klbui_combo_remove(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-
 }
 
 static void on_klbui_combo_clear(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -559,7 +620,7 @@ static void on_klbui_combo_clear(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int m
     if (KLBUI_CSSEX_set == method)
     {
         // 清空待选列表
-        klb_map_clear(p_combo->p_data_map);
+        klb_map_clear(p_combo->p_data_array);
 
         sdsclear(p_combo->title);
         sdsclear(p_combo->value);
@@ -669,13 +730,40 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
 
 
     //////////////////////////////////////////////
+    // 弹出菜单CSS属性
+
+    // 菜单 - 内边距 padding
+    KLBUI_combo_bind("menu.padding", on_klbui_combo_menu_padding);
+    KLBUI_combo_bind("menu.padding-top", on_klbui_combo_menu_padding_top);
+    KLBUI_combo_bind("menu.padding-right", on_klbui_combo_menu_padding_right);
+    KLBUI_combo_bind("menu.padding-bottom", on_klbui_combo_menu_padding_bottom);
+    KLBUI_combo_bind("menu.padding-left", on_klbui_combo_menu_padding_left);
+
+    // 菜单 - 背景色 background-color
+    KLBUI_combo_bind("menu.background-color", on_klbui_combo_menu_background_color);
+
+    // 菜单 - 边框的宽度 border-width
+    KLBUI_combo_bind("menu.border-width", on_klbui_combo_menu_border_width);
+
+    // 菜单 - 边框的颜色 border-color
+    KLBUI_combo_bind("menu.border-color", on_klbui_combo_menu_border_color);
+
+    // 菜单 - 弹出项 - 文本颜色 color
+    //KLBUI_combo_bind("menu_item.color", on_klbui_combo_menu_item_text_color);
+    //KLBUI_combo_bind("menu_item.color:focus", on_klbui_menu_item_combo_text_color_focus);
+
+    // 菜单 - 弹出项 - 文本对齐 text-align
+    //KLBUI_combo_bind("menu_item.text-align", on_klbui_combo_menu_item_text_align);
+    //KLBUI_combo_bind("menu_item.text-align:focus", on_klbui_combo_menu_item_text_align_focus);
+
+
+    //////////////////////////////////////////////
     // 自定义方法
 
     KLBUI_combo_bind("title", on_klbui_combo_title);
     KLBUI_combo_bind("value", on_klbui_combo_value);
 
     KLBUI_combo_bind("append", on_klbui_combo_append);
-    KLBUI_combo_bind("remove", on_klbui_combo_remove);
     KLBUI_combo_bind("clear", on_klbui_combo_clear);
 }
 
@@ -699,14 +787,15 @@ klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 
     p_wnd->p_gui = p_gui;
 
-    // 初始化弹出菜单
-    p_combo->p_menu = klbui_combo_menu_create(p_gui, 0, 0, 128, 28 * 9);
-
     // 初始化默认值
     klbui_combo_init_attribute(p_wnd, p_combo);
+    klbui_combo_menu_init_css(klb_gui_get_std_default(p_wnd->p_gui), &p_combo->menu_css);
 
     // 初始化 支持的方法
     klbui_combo_init_func_map(p_wnd, p_combo, p_gui);
+
+    // 初始化弹出菜单
+    p_combo->p_menu = klbui_combo_menu_create(p_gui, 0, 0, 128, 28 * 9);
 
     return p_wnd;
 }

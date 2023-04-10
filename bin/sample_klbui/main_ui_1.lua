@@ -92,11 +92,11 @@ local jq = klbui.select(home.dialog)
 
 home.commonds = {
 	['/home'] = {
-		['load'] = function ()
+		['onload'] = function ()
 			
 		end,
 		
-		['unload'] = function ()
+		['onunload'] = function ()
 			
 		end
 	},
