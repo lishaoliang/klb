@@ -66,7 +66,7 @@ local transform_map = {
 	[event.mousedown] = 'mousedown',	-- 
 
 	['mouseup'] = event.mouseup,		-- 
-	[event.mouseup] = 'event.mouseup',	-- 
+	[event.mouseup] = 'mouseup',	-- 
 	
 	['onabort'] = event.onabort,		-- 窗口加载崩溃事件
 	[event.onabort] = 'onabort',		-- 窗口加载崩溃事件

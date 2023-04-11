@@ -590,6 +590,11 @@ int klb_wnd_draw_fill_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int co
     return klb_wnd_draw_fill_rects(p_wnd, p_rects, count, &color);
 }
 
+int klb_wnd_text_size2(klb_wnd_t* p_wnd, const char* p_utf8, int utf8_len, int font_h, int* p_out_w, int* p_out_h)
+{
+    return klb_wnd_text_size(p_wnd, p_utf8, utf8_len, &font_h, p_out_w, p_out_h);
+}
+
 int klb_wnd_draw_text2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h)
 {
     return klb_wnd_draw_text(p_wnd, p_rect, p_utf8, utf8_len, &color, &font_h);

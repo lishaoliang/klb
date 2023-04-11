@@ -107,9 +107,66 @@ klbui.messagebox = function (path)
 	return kgui.messagebox(path)
 end
 
+
 -- @brief 关闭消息框
 klbui.messagebox_end = function ()
 	return kgui.messagebox_end()
+end
+
+
+-- @brief 显示或隐藏窗口
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @param [in] show[boolean]		true.显示; false.隐藏
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.show = function (path, show)
+	return kgui.show(path, show)
+end
+
+
+-- @brief 移动窗口位置
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @param [in] x[number(int)]		相对父窗口x坐标
+-- @param [in] y[number(int)]		相对父窗口y坐标
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.move = function (path, x, y)
+	return kgui.move(path, x, y)
+end
+
+
+-- @brief 修改窗口大小
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @param [in] w[number(int)]		宽
+-- @param [in] h[number(int)]		高
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.resize = function (path, w, h)
+	return kgui.resize(path, w, h)
+end
+
+------------------------------------------------
+-- W, H
+
+local width = 0		-- 主显示宽
+local height = 0	-- 主显示高
+
+-- @brief 获取主显示宽度
+-- @return [number(int)] 	宽
+klbui.width = function ()
+	if width <= 0 then
+		width, height = kgui.wh()
+	end
+	
+	return width
+end
+
+
+-- @brief 获取主显示宽度
+-- @return [number(int)] 	高
+klbui.height = function ()
+	if height <= 0 then
+		width, height = kgui.wh()
+	end
+	
+	return height
 end
 
 

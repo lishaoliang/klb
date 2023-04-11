@@ -13,10 +13,10 @@
 ///  参考: https://www.w3school.com.cn/jsref/dom_obj_text.asp
 typedef struct klbui_edit_t_
 {
-    sds                     value;          ///< 文本域文本
+    sds                     title;          ///< 文本域文本
 
-    klbuicss_margin_t       margin;         ///< 外边框
-    klbuicss_padding_t      padding;        ///< 内边框
+    klbuicss_margin_t       margin;         ///< 外边距
+    klbuicss_padding_t      padding;        ///< 内边距
 
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
@@ -47,46 +47,20 @@ static void klbui_edit_on_paint_status(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, k
 {
     if (0 < sdslen(p_attr->background.image))
     {
+        // 图片背景
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
     }
     else
     {
+        // 纯色背景
         klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
 
-        klb_rect_t paint_rect = *p_rect;
-
-        // border
-        klb_rect_t border_top = { paint_rect.x, paint_rect.y, paint_rect.w, p_attr->border.width.top };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_attr->border.color.top);
-
-        klb_rect_t border_right = { paint_rect.x + paint_rect.w - p_attr->border.width.right, paint_rect.y, p_attr->border.width.right, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_attr->border.color.right);
-
-        klb_rect_t border_bottom = { paint_rect.x, paint_rect.y + paint_rect.h - p_attr->border.width.bottom, paint_rect.w, p_attr->border.width.bottom };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_attr->border.color.bottom);
-
-        klb_rect_t border_left = { paint_rect.x, paint_rect.y, p_attr->border.width.left, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
+        // 边框
+        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
-    if (0 < sdslen(p_edit->value))
-    {
-        klb_rect_t text_rect = *p_rect;
-
-        // 移除边框
-        text_rect.x += p_attr->border.width.left;
-        text_rect.y += p_attr->border.width.top;
-        text_rect.w -= (p_attr->border.width.left + p_attr->border.width.right);
-        text_rect.h -= (p_attr->border.width.top + p_attr->border.width.bottom);
-
-        // 移除内边距
-        text_rect.x += p_edit->padding.left;
-        text_rect.y += p_edit->padding.top;
-        text_rect.w -= (p_edit->padding.left + p_edit->padding.right);
-        text_rect.h -= (p_edit->padding.top + p_edit->padding.bottom);
-
-        klb_wnd_draw_text2(p_wnd, &text_rect, p_edit->value, sdslen(p_edit->value), p_attr->text.color, p_attr->font.size);
-    }
+    // 标题文本
+    klbuicssex_draw_text(p_wnd, p_edit->title, p_rect, &p_attr->border, &p_edit->padding, &p_attr->text, &p_attr->font);
 }
 
 static int klbui_edit_on_paint(klb_wnd_t* p_wnd)
@@ -176,7 +150,7 @@ static void klbui_edit_init_attribute(klb_wnd_t* p_wnd, klbui_edit_t* p_edit)
 {
     const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
 
-    p_edit->value = sdsempty();
+    p_edit->title = sdsempty();
 
     klbuicssex_attributes_init(&p_edit->normal, p_default);
     klbuicssex_attributes_init(&p_edit->focus, p_default);
@@ -186,7 +160,7 @@ static void klbui_edit_init_attribute(klb_wnd_t* p_wnd, klbui_edit_t* p_edit)
 
 static void klbui_edit_quit_attribute(klbui_edit_t* p_edit)
 {
-    KLB_FREE_BY(p_edit->value, sdsfree);
+    KLB_FREE_BY(p_edit->title, sdsfree);
 
     klbuicssex_attributes_quit(&p_edit->normal);
     klbuicssex_attributes_quit(&p_edit->focus);
@@ -420,9 +394,9 @@ static void on_klbui_edit_border_radius_disable(klb_wnd_t* p_wnd, klbui_edit_t* 
 //////////////////////////////////////
 // 自定义属性
 
-static void on_klbui_edit_value(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_edit_title(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_edit->value), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_sds(&(p_edit->title), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -475,14 +449,14 @@ static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb
     KLBUI_edit_bind("text-align:disable", on_klbui_edit_text_align_disable);
 
     // 斜体 font-style
-    KLBUI_edit_bind("font-style", on_klbui_edit_font_style);
-    KLBUI_edit_bind("font-style:focus", on_klbui_edit_font_style_focus);
-    KLBUI_edit_bind("font-style:disable", on_klbui_edit_font_style_disable);
+    //KLBUI_edit_bind("font-style", on_klbui_edit_font_style);
+    //KLBUI_edit_bind("font-style:focus", on_klbui_edit_font_style_focus);
+    //KLBUI_edit_bind("font-style:disable", on_klbui_edit_font_style_disable);
 
     // 字体粗细 font-weight
-    KLBUI_edit_bind("font-weight", on_klbui_edit_font_weight);
-    KLBUI_edit_bind("font-weight:focus", on_klbui_edit_font_weight_focus);
-    KLBUI_edit_bind("font-weight:disable", on_klbui_edit_font_weight_disable);
+    //KLBUI_edit_bind("font-weight", on_klbui_edit_font_weight);
+    //KLBUI_edit_bind("font-weight:focus", on_klbui_edit_font_weight_focus);
+    //KLBUI_edit_bind("font-weight:disable", on_klbui_edit_font_weight_disable);
 
     // 字体大小 font-size
     KLBUI_edit_bind("font-size", on_klbui_edit_font_size);
@@ -500,9 +474,9 @@ static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb
     KLBUI_edit_bind("background-image:disable", on_klbui_edit_background_image_disable);
 
     // 边框类型 border-style
-    KLBUI_edit_bind("border-style", on_klbui_edit_border_style);
-    KLBUI_edit_bind("border-style:focus", on_klbui_edit_border_style_focus);
-    KLBUI_edit_bind("border-style:disable", on_klbui_edit_border_style_disable);
+    //KLBUI_edit_bind("border-style", on_klbui_edit_border_style);
+    //KLBUI_edit_bind("border-style:focus", on_klbui_edit_border_style_focus);
+    //KLBUI_edit_bind("border-style:disable", on_klbui_edit_border_style_disable);
 
     // 边框的宽度 border-width
     KLBUI_edit_bind("border-width", on_klbui_edit_border_width);
@@ -515,15 +489,15 @@ static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb
     KLBUI_edit_bind("border-color:disable", on_klbui_edit_border_color_disable);
 
     // 圆角边框 border-radius
-    KLBUI_edit_bind("border-radius", on_klbui_edit_border_radius);
-    KLBUI_edit_bind("border-radius:focus", on_klbui_edit_border_radius_focus);
-    KLBUI_edit_bind("border-radius:disable", on_klbui_edit_border_radius_disable);
+    //KLBUI_edit_bind("border-radius", on_klbui_edit_border_radius);
+    //KLBUI_edit_bind("border-radius:focus", on_klbui_edit_border_radius_focus);
+    //KLBUI_edit_bind("border-radius:disable", on_klbui_edit_border_radius_disable);
 
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_edit_bind("title", on_klbui_edit_value);
-    KLBUI_edit_bind("value", on_klbui_edit_value);
+    KLBUI_edit_bind("title", on_klbui_edit_title);
+    KLBUI_edit_bind("value", on_klbui_edit_title);
 }
 
 klb_wnd_t* klbui_edit_create(klb_gui_t* p_gui, int x, int y, int w, int h)
@@ -543,6 +517,9 @@ klb_wnd_t* klbui_edit_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     p_wnd->vtable.on_get = klbui_edit_on_get;
 
     p_wnd->p_gui = p_gui;
+
+    // 样式 style
+    p_wnd->state.style = 0x0;
 
     // 初始化默认值
     klbui_edit_init_attribute(p_wnd, p_edit);

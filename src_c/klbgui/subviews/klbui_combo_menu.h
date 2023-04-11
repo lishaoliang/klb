@@ -46,11 +46,11 @@ typedef struct klbui_combo_menu_css_t_
 
 typedef struct klbui_combo_menu_t_
 {
-    klbui_combo_menu_css_t          css;
     klbui_combo_menu_item_t*        p_item[KLBUI_COMBO_MENU_item_max];
 
     struct
     {
+        klbui_combo_menu_css_t*     p_ref_css;      ///< CSS样式: 采用引用combo组件的样式定义
         klb_map_t*                  p_ref_array;    ///< combo组件中存储的数据
 
         klb_wnd_t*                  p_combo;        ///< combo组件
@@ -61,9 +61,10 @@ typedef struct klbui_combo_menu_t_
 
 klb_wnd_t* klbui_combo_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
-void klbui_combo_menu_init_css(const klbui_default_t* p_default, klbui_combo_menu_css_t* p_menu_css);
+void klbui_combo_menu_css_init(const klbui_default_t* p_default, klbui_combo_menu_css_t* p_menu_css);
+void klbui_combo_menu_css_quit(klbui_combo_menu_css_t* p_menu_css);
 
-int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klb_map_t* p_data_array, klbui_combo_menu_cb cb, klb_wnd_t* p_combo);
+int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klbui_combo_menu_css_t* p_css, klb_map_t* p_data_array, klbui_combo_menu_cb cb, klb_wnd_t* p_combo, int* p_out_w, int* p_out_h);
 
 
 #ifdef __cplusplus

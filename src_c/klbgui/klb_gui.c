@@ -543,6 +543,7 @@ int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y)
         return 1;
     }
 
+    klb_wnd_move(p_wnd, x, y);
     return 0;
 }
 
@@ -552,6 +553,22 @@ int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h)
     if (NULL == p_wnd)
     {
         return 1;
+    }
+
+    klb_wnd_resize(p_wnd, w, h);
+    return 0;
+}
+
+int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
+{
+    if (NULL != p_out_w)
+    {
+        *p_out_w = (NULL != p_gui->p_canvas) ? p_gui->p_canvas->rect.w : 0;
+    }
+
+    if (NULL != p_out_h)
+    {
+        *p_out_h = (NULL != p_gui->p_canvas) ? p_gui->p_canvas->rect.h : 0;
     }
 
     return 0;

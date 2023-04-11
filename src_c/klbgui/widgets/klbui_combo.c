@@ -61,6 +61,7 @@ static void klbui_combo_destroy(klb_wnd_t* p_wnd)
 
     // 清理属性
     klbui_combo_quit_attribute(p_combo);
+    klbui_combo_menu_css_quit(&p_combo->menu_css);
     p_combo->p_func_map = NULL;
 
     KLB_FREE(p_wnd);
@@ -90,49 +91,23 @@ static void klbui_combo_on_paint_status(klb_wnd_t* p_wnd, klbui_combo_t* p_combo
 {
     if (0 < sdslen(p_attr->background.image))
     {
+        // 图片背景
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
     }
     else
     {
+        // 纯色背景
         klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
 
-        klb_rect_t paint_rect = *p_rect;
-
-        // border
-        klb_rect_t border_top = { paint_rect.x, paint_rect.y, paint_rect.w, p_attr->border.width.top };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_attr->border.color.top);
-
-        klb_rect_t border_right = { paint_rect.x + paint_rect.w - p_attr->border.width.right, paint_rect.y, p_attr->border.width.right, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_attr->border.color.right);
-
-        klb_rect_t border_bottom = { paint_rect.x, paint_rect.y + paint_rect.h - p_attr->border.width.bottom, paint_rect.w, p_attr->border.width.bottom };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_attr->border.color.bottom);
-
-        klb_rect_t border_left = { paint_rect.x, paint_rect.y, p_attr->border.width.left, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
+        // 边框
+        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
-    if (0 < sdslen(p_combo->title))
-    {
-        klb_rect_t text_rect = *p_rect;
+    // 标题文本
+    klb_rect_t text_rect = *p_rect;
+    text_rect.w -= 14;
 
-        // 移除右侧三角符号占用空间
-        text_rect.w -= 14;
-
-        // 移除边框
-        text_rect.x += p_attr->border.width.left;
-        text_rect.y += p_attr->border.width.top;
-        text_rect.w -= (p_attr->border.width.left + p_attr->border.width.right);
-        text_rect.h -= (p_attr->border.width.top + p_attr->border.width.bottom);
-
-        // 移除内边距
-        text_rect.x += p_combo->padding.left;
-        text_rect.y += p_combo->padding.top;
-        text_rect.w -= (p_combo->padding.left + p_combo->padding.right);
-        text_rect.h -= (p_combo->padding.top + p_combo->padding.bottom);
-
-        klb_wnd_draw_text2(p_wnd, &text_rect, p_combo->title, sdslen(p_combo->title), p_attr->text.color, p_attr->font.size);
-    }
+    klbuicssex_draw_text(p_wnd, p_combo->title, &text_rect, &p_attr->border, &p_combo->padding, &p_attr->text, &p_attr->font);
 }
 
 static int klbui_combo_on_paint(klb_wnd_t* p_wnd)
@@ -203,13 +178,21 @@ static int klbui_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
     case KLBUI_click:
     case KLBUI_dblclick:
         {
-            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-            int x = rect.x;
-            int y = rect.y + rect.h;
+            int screen_w = 0, screen_h = 0;
+            klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
 
-            klbui_combo_menu_bind(p_combo->p_menu, p_combo->p_data_array, cb_klbui_combo_value_title, p_wnd);
+            int menu_w = 0, menu_h = 0;
+            klbui_combo_menu_bind(p_combo->p_menu, &p_combo->menu_css, p_combo->p_data_array, cb_klbui_combo_value_title, p_wnd, &menu_w, &menu_h);
             
+            menu_w = p_wnd->pos.rect_in_parent.w;
+
+            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+            int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
+            int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
+
             klb_wnd_move(p_combo->p_menu, x, y);
+            klb_wnd_resize(p_combo->p_menu, menu_w, menu_h);
 
             klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
         }
@@ -568,6 +551,46 @@ static void on_klbui_combo_menu_border_color(klb_wnd_t* p_wnd, klbui_combo_t* p_
     klbuicssex_border_color(&(p_combo->menu_css.normal.border), p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_combo_menu_item_text_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_text_color(&(p_combo->menu_css.item_normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_text_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_text_color(&(p_combo->menu_css.item_focus.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_text_align(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_text_align(&(p_combo->menu_css.item_normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_text_align_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_text_align(&(p_combo->menu_css.item_focus.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_border_width(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_width(&(p_combo->menu_css.item_normal.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_border_width_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_width(&(p_combo->menu_css.item_focus.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_border_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_color(&(p_combo->menu_css.item_normal.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_border_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_color(&(p_combo->menu_css.item_focus.border), p_wnd, method, p_in, p_out);
+}
+
 //////////////////////////////////////
 // 自定义属性
 
@@ -749,13 +772,20 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("menu.border-color", on_klbui_combo_menu_border_color);
 
     // 菜单 - 弹出项 - 文本颜色 color
-    //KLBUI_combo_bind("menu_item.color", on_klbui_combo_menu_item_text_color);
-    //KLBUI_combo_bind("menu_item.color:focus", on_klbui_menu_item_combo_text_color_focus);
+    KLBUI_combo_bind("menu_item.color", on_klbui_combo_menu_item_text_color);
+    KLBUI_combo_bind("menu_item.color:focus", on_klbui_combo_menu_item_text_color_focus);
 
     // 菜单 - 弹出项 - 文本对齐 text-align
-    //KLBUI_combo_bind("menu_item.text-align", on_klbui_combo_menu_item_text_align);
-    //KLBUI_combo_bind("menu_item.text-align:focus", on_klbui_combo_menu_item_text_align_focus);
+    KLBUI_combo_bind("menu_item.text-align", on_klbui_combo_menu_item_text_align);
+    KLBUI_combo_bind("menu_item.text-align:focus", on_klbui_combo_menu_item_text_align_focus);
 
+    // 菜单 - 弹出项 - 边框的宽度 border-width
+    KLBUI_combo_bind("menu_item.border-width", on_klbui_combo_menu_item_border_width);
+    KLBUI_combo_bind("menu_item.border-width:focus", on_klbui_combo_menu_item_border_width_focus);
+
+    // 菜单 - 弹出项 - 边框的颜色 border-color
+    KLBUI_combo_bind("menu_item.border-color", on_klbui_combo_menu_item_border_color);
+    KLBUI_combo_bind("menu_item.border-color:focus", on_klbui_combo_menu_item_border_color_focus);
 
     //////////////////////////////////////////////
     // 自定义方法
@@ -789,13 +819,13 @@ klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 
     // 初始化默认值
     klbui_combo_init_attribute(p_wnd, p_combo);
-    klbui_combo_menu_init_css(klb_gui_get_std_default(p_wnd->p_gui), &p_combo->menu_css);
+    klbui_combo_menu_css_init(klb_gui_get_std_default(p_wnd->p_gui), &p_combo->menu_css);
 
     // 初始化 支持的方法
     klbui_combo_init_func_map(p_wnd, p_combo, p_gui);
 
     // 初始化弹出菜单
-    p_combo->p_menu = klbui_combo_menu_create(p_gui, 0, 0, 128, 28 * 9);
+    p_combo->p_menu = klbui_combo_menu_create(p_gui, 0, 0, w, 28 * 9);
 
     return p_wnd;
 }

@@ -140,11 +140,11 @@ static int klbui_combo_menu_item_on_paint(klb_wnd_t* p_wnd)
 
     if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
     {
-        klbui_combo_menu_item_on_paint_status(p_wnd, p_item, &p_menu->css.item_focus, &paint_rect);
+        klbui_combo_menu_item_on_paint_status(p_wnd, p_item, &p_menu->p_ref_css->item_focus, &paint_rect);
     }
     else
     {
-        klbui_combo_menu_item_on_paint_status(p_wnd, p_item, &p_menu->css.item_normal, &paint_rect);
+        klbui_combo_menu_item_on_paint_status(p_wnd, p_item, &p_menu->p_ref_css->item_normal, &paint_rect);
     }
 
     return 0;
@@ -206,16 +206,25 @@ static void klbui_combo_menu_click_ok(klbui_combo_menu_t* p_combo_menu, klbui_co
     }
 }
 
-int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klb_map_t* p_data_array, klbui_combo_menu_cb cb, klb_wnd_t* p_combo)
+int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klbui_combo_menu_css_t* p_css, klb_map_t* p_data_array, klbui_combo_menu_cb cb, klb_wnd_t* p_combo, int* p_out_w, int* p_out_h)
 {
     klbui_combo_menu_t* p_menu = (klbui_combo_menu_t*)p_wnd->ctrl;
 
+    p_menu->p_ref_css = p_css;
     p_menu->p_ref_array = p_data_array;
     p_menu->cb_combo = cb;
     p_menu->p_combo = p_combo;
 
     int array_size = (NULL != p_data_array) ? klb_map_array_size(p_data_array) : 0;
     int count = MIN(array_size, KLBUI_COMBO_MENU_item_max);
+
+    // w, h
+    int item_h = p_css->item_normal.font.size + 4;
+    int w = p_wnd->pos.rect_in_parent.w;
+    int h = item_h * count + p_css->padding.top + p_css->padding.bottom;
+    int item_w = w - p_css->padding.left - p_css->padding.right;
+
+    klb_wnd_resize(p_wnd, w, h);
 
     for (int i = 0; i < count; i++)
     {
@@ -228,6 +237,9 @@ int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klb_map_t* p_data_array, klbui_combo
         klbui_combo_menu_item_set_title(p_menu->p_item[i], p_title);
         klbui_combo_menu_item_set_value(p_menu->p_item[i], p_key);
 
+        klb_wnd_resize(KLB_WND_PTR(p_menu->p_item[i]), item_w, item_h);
+        klb_wnd_move(KLB_WND_PTR(p_menu->p_item[i]), p_css->padding.left, p_css->padding.top + item_h * i);
+
         klb_wnd_show(KLB_WND_PTR(p_menu->p_item[i]), true);
     }
 
@@ -236,12 +248,15 @@ int klbui_combo_menu_bind(klb_wnd_t* p_wnd, klb_map_t* p_data_array, klbui_combo
         klb_wnd_show(KLB_WND_PTR(p_menu->p_item[i]), false);
     }
 
-    // w, h
-    int item_h = 28;
-    int w = p_wnd->pos.rect_in_parent.w;
-    int h = item_h * count + 2;
+    if (NULL != p_out_w)
+    {
+        *p_out_w = w;
+    }
 
-    klb_wnd_resize(p_wnd, w, h);
+    if (NULL != p_out_h)
+    {
+        *p_out_h = h;
+    }
 
     return 0;
 }
@@ -269,17 +284,29 @@ static void klbui_combo_menu_on_paint_status(klb_wnd_t* p_wnd, klbui_combo_menu_
         klb_rect_t paint_rect = *p_rect;
 
         // border
-        klb_rect_t border_top = { paint_rect.x, paint_rect.y, paint_rect.w, p_attr->border.width.top };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_attr->border.color.top);
+        if (0 < p_attr->border.width.top)
+        {
+            klb_rect_t border_top = { paint_rect.x, paint_rect.y, paint_rect.w, p_attr->border.width.top };
+            klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_attr->border.color.top);
+        }
 
-        klb_rect_t border_right = { paint_rect.x + paint_rect.w - p_attr->border.width.right, paint_rect.y, p_attr->border.width.right, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_attr->border.color.right);
+        if (0 < p_attr->border.width.right)
+        {
+            klb_rect_t border_right = { paint_rect.x + paint_rect.w - p_attr->border.width.right, paint_rect.y, p_attr->border.width.right, paint_rect.h };
+            klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_attr->border.color.right);
+        }
 
-        klb_rect_t border_bottom = { paint_rect.x, paint_rect.y + paint_rect.h - p_attr->border.width.bottom, paint_rect.w, p_attr->border.width.bottom };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_attr->border.color.bottom);
+        if (0 < p_attr->border.width.bottom)
+        {
+            klb_rect_t border_bottom = { paint_rect.x, paint_rect.y + paint_rect.h - p_attr->border.width.bottom, paint_rect.w, p_attr->border.width.bottom };
+            klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_attr->border.color.bottom);
+        }
 
-        klb_rect_t border_left = { paint_rect.x, paint_rect.y, p_attr->border.width.left, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
+        if (0 < p_attr->border.width.left)
+        {
+            klb_rect_t border_left = { paint_rect.x, paint_rect.y, p_attr->border.width.left, paint_rect.h };
+            klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
+        }
     }
 }
 
@@ -296,7 +323,7 @@ static int klbui_combo_menu_on_paint(klb_wnd_t* p_wnd)
     // 绘图区域
     klb_rect_t paint_rect = *p_rect;
 
-    klbui_combo_menu_on_paint_status(p_wnd, p_menu, &p_menu->css.normal, &paint_rect);
+    klbui_combo_menu_on_paint_status(p_wnd, p_menu, &p_menu->p_ref_css->normal, &paint_rect);
 
     return 0;
 }
@@ -329,11 +356,16 @@ static int klbui_combo_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
 
 //////////////////////////////////////////////////////////////////////////
 
-void klbui_combo_menu_init_css(const klbui_default_t* p_default, klbui_combo_menu_css_t* p_menu_css)
+void klbui_combo_menu_css_init(const klbui_default_t* p_default, klbui_combo_menu_css_t* p_menu_css)
 {
     klbuicssex_attributes_init(&p_menu_css->normal, p_default);
     klbuicssex_attributes_init(&p_menu_css->item_normal, p_default);
     klbuicssex_attributes_init(&p_menu_css->item_focus, p_default);
+
+    p_menu_css->padding.top = 1;
+    p_menu_css->padding.right = 1;
+    p_menu_css->padding.bottom = 1;
+    p_menu_css->padding.left = 1;
 
     p_menu_css->item_focus.border.color.top = KLB_ARGB8888(255, 220, 20, 20);
     p_menu_css->item_focus.border.color.right = KLB_ARGB8888(255, 220, 20, 20);
@@ -344,6 +376,13 @@ void klbui_combo_menu_init_css(const klbui_default_t* p_default, klbui_combo_men
     p_menu_css->item_normal.border.width.right = 0;
     p_menu_css->item_normal.border.width.bottom = 0;
     p_menu_css->item_normal.border.width.left = 0;
+}
+
+void klbui_combo_menu_css_quit(klbui_combo_menu_css_t* p_menu_css)
+{
+    klbuicssex_attributes_quit(&p_menu_css->normal);
+    klbuicssex_attributes_quit(&p_menu_css->item_normal);
+    klbuicssex_attributes_quit(&p_menu_css->item_focus);
 }
 
 klb_wnd_t* klbui_combo_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h)
@@ -368,7 +407,7 @@ klb_wnd_t* klbui_combo_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     p_wnd->state.style = KLB_WND_STYLE_TOP;
 
     // 初始化CSS等属性参数
-    klbui_combo_menu_init_css(klb_gui_get_std_default(p_gui), &p_menu->css);
+    //klbui_combo_menu_init_css(klb_gui_get_std_default(p_gui), &p_menu->css);
 
     // item
     int item_w = w - 2;

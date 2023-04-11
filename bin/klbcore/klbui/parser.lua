@@ -2,11 +2,14 @@
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  parser.lua
 -- @brief 解析器
----   按一定规则将lua table解析成对话框
+--   按一定规则将lua table解析成对话框
+--   [2023-4] parse解析时, 加入随机唯一路径机制, 使用者可以省略['path']参数
 -- @note 关键字等含义 参考 html5 标准: https://www.w3school.com.cn/html/html5_intro.asp
 ---   https://www.runoob.com/html/html5-form-input-types.html
 --]]
+local table = require("table")
 local kgui = require("kgui")
+local krand = require("krand")
 local csser = require("klbcore.klbui.csser")
 local event = require("klbcore.klbui.event")
 
@@ -18,6 +21,7 @@ local E = {}
 -- 预定义的 关键字
 local CONST_keys = {
 	-- 关键窗口树
+	-- parse函数已加入随机唯一路径, 使用者可以省略此参数
 	['path'] = true,		-- 虚拟路径(仿路径系统), 建立窗口树
 	
 	-- 可检索选择属性
@@ -46,18 +50,6 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 	-- 1. cmds1 动态命令集 
 	-- 2. cmds2 由 parse 第二参数 外部静态命令集
 	-- 3. cmds3 由 parse 第一参数 静态命令集
-	--[[
-	if 0x0201 == msg or 0x0203 == msg then
-		if 'function' == type(cmds1['click']) then
-			cmds1['click'](x1, y1, x2, y2, lparam, wparam)
-		elseif 'function' == type(cmds2['click']) then
-			cmds2['click'](x1, y1, x2, y2, lparam, wparam)
-		elseif 'function' == type(cmds3['click']) then
-			cmds3['click'](x1, y1, x2, y2, lparam, wparam)
-		end
-	end
-	--]]
-	
 	local event_str = event.transform(msg)
 	if 'string' == type(event_str) then		
 		if 'function' == type(cmds1[event_str]) then
@@ -73,14 +65,17 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 end
 
 
-local function ParseWnd(wnd, commonds, css)
+-- 3位字符串, 最大范围为 63^3 = 250047
+-- 4位字符串, 最大范围为 63^4 = 15752961
+local CONST_rand_max = 4
+
+local function ParseWnd(wnd, commonds, css, root_path, first)
 	if 'table' ~= type(wnd) then
 		return
 	end
 
 	-- 参考
-	-- https://www.w3school.com.cn/html/html5_intro.asp
-	local path = wnd['path'] or '/'
+	-- https://www.w3school.com.cn/html/html5_intro.asp	
 	local t = wnd['type'] or ''
 	local pos = wnd['pos'] or {}
 
@@ -88,9 +83,53 @@ local function ParseWnd(wnd, commonds, css)
 	local y = pos[2]
 	local w = pos[3]
 	local h = pos[4]
+	local path = ''
 	
 	if '' ~= t then
-		kgui.append(t, path, x, y, w, h)
+		if first then
+			-- 首次运行, 是顶层对话框, 先尝试使用原始提供路径
+			-- 若原始路径已被占用, 则随机分配一个路径地址, 直到无重复为止
+			path = root_path
+			
+			local try_count = 0
+			while true do
+				if 0 == kgui.append(t, path, x, y, w, h) then
+					break -- 添加成功
+				end
+				
+				path = table.concat({'/', krand.rand_string(CONST_rand_max)}) -- 根路径
+				
+				try_count = try_count + 1
+				if 99999 <= try_count then
+					assert(false) -- 有错误, 类型不正确等
+					path = ''
+					break
+				end
+			end
+			
+			wnd['path'] = path -- 更新路径
+		else
+			-- 非首次运行, 则不是顶层对话框
+			-- 随机分配一个路径地址, 直到无重复为止
+			local try_count = 0
+			while true do
+				--path = root_path .. '/' .. krand.rand_string(CONST_rand_max)
+				path = table.concat({root_path, '/', krand.rand_string(CONST_rand_max)})
+				
+				if 0 == kgui.append(t, path, x, y, w, h) then
+					break -- 添加成功
+				end
+				
+				try_count = try_count + 1
+				if 99999 <= try_count then
+					assert(false)	-- 有错误, 类型不正确等
+					path = ''
+					break
+				end
+			end
+			
+			wnd['path'] = path -- 更新路径
+		end	
 	end
 	
 	-- 生效 css
@@ -116,13 +155,13 @@ local function ParseWnd(wnd, commonds, css)
 	
 	-- 子窗口: 第1种表达方式
 	for _, v in ipairs(wnd) do
-		ParseWnd(v, commonds, css)
+		ParseWnd(v, commonds, css, path, false)
 	end
 	
 	-- 子窗口: 第2种表达方式
 	local child = wnd['child'] or {}
 	for _, v in ipairs(child) do
-		ParseWnd(v, commonds, css)
+		ParseWnd(v, commonds, css, path, false)
 	end
 end
 
@@ -143,9 +182,11 @@ end
 
 
 function parser.parse(dialog, commonds, css)
-	--local tmp_cmds = CopyCommonds(commonds)
+	local param_cmds = commonds or {}
+	local param_css = css or {}
+	local root_path = dialog['path'] or table.concat({'/', krand.rand_string(CONST_rand_max)}) -- 根路径
 	
-	ParseWnd(dialog, commonds, css)
+	ParseWnd(dialog, param_cmds, param_css, root_path, true)
 end
 
 

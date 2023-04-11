@@ -149,6 +149,18 @@ KLB_API void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_w
 KLB_API void klbuicssex_border_radius(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
 
+
+//////////////////////////////////////////////////////////////////////////
+// 参考绘制
+
+
+// 绘制边框
+KLB_API void klbuicssex_draw_border(klb_wnd_t* p_wnd, klb_rect_t* p_rect, klbuicss_border_t* p_border);
+
+// 绘制文本
+KLB_API void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font);
+
+
 #ifdef __cplusplus
 }
 #endif

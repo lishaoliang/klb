@@ -279,6 +279,7 @@ KLB_API int klb_wnd_draw_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint3
 KLB_API int klb_wnd_draw_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
 KLB_API int klb_wnd_draw_fill_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, uint32_t color);
 KLB_API int klb_wnd_draw_fill_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
+KLB_API int klb_wnd_text_size2(klb_wnd_t* p_wnd, const char* p_utf8, int utf8_len, int font_h, int* p_out_w, int* p_out_h);
 KLB_API int klb_wnd_draw_text2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
 
 

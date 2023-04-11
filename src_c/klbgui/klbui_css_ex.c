@@ -10,7 +10,7 @@
 void klbuicssex_attributes_init(klbuicssex_attributes_t* p_attr, const klbui_default_t* p_default)
 {
     p_attr->text.color = p_default->text_color;
-    p_attr->text.align = KLBUICSS_text1_center;
+    p_attr->text.align = KLBUICSS_text1_left;
 
     p_attr->font.style = KLBUICSS_font1_normal;
     p_attr->font.weight = KLBUICSS_font2_normal;
@@ -200,7 +200,50 @@ void klbuicssex_visibility(klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, 
 // 外边距 margin
 void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_int64(p_out, 0, p_margin->top);
+        klb_map_set_idx_int64(p_out, 1, p_margin->right);
+        klb_map_set_idx_int64(p_out, 2, p_margin->bottom);
+        klb_map_set_idx_int64(p_out, 3, p_margin->left);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        int t = klb_map_array_type(p_in, start);
+        if (KLB_ADT_map == t)
+        {
+            klb_map_t* ptr = klb_map_idx_to_map(p_in, start);
+            p_margin->top = (int)klb_map_idx_to_int64(ptr, 0);
+            p_margin->right = (int)klb_map_idx_to_int64(ptr, 1);
+            p_margin->bottom = (int)klb_map_idx_to_int64(ptr, 2);
+            p_margin->left = (int)klb_map_idx_to_int64(ptr, 3);
 
+            klb_wnd_update(p_wnd);
+        }
+        else if (KLB_ADT_int64 == t)
+        {
+            int w = (int)klb_map_idx_to_int64(p_in, start);
+
+            p_margin->top = w;
+            p_margin->right = w;
+            p_margin->bottom = w;
+            p_margin->left = w;
+
+            klb_wnd_update(p_wnd);
+        }
+        else if (KLB_ADT_uint64 == t)
+        {
+            int w = (int)klb_map_idx_to_uint64(p_in, start);
+
+            p_margin->top = w;
+            p_margin->right = w;
+            p_margin->bottom = w;
+            p_margin->left = w;
+
+            klb_wnd_update(p_wnd);
+        }
+    }
 }
 
 // 外边距-上 margin-top
@@ -233,7 +276,50 @@ void klbuicssex_margin_left(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int m
 // 内边距 padding
 void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_int64(p_out, 0, p_padding->top);
+        klb_map_set_idx_int64(p_out, 1, p_padding->right);
+        klb_map_set_idx_int64(p_out, 2, p_padding->bottom);
+        klb_map_set_idx_int64(p_out, 3, p_padding->left);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        int t = klb_map_array_type(p_in, start);
+        if (KLB_ADT_map == t)
+        {
+            klb_map_t* ptr = klb_map_idx_to_map(p_in, start);
+            p_padding->top = (int)klb_map_idx_to_int64(ptr, 0);
+            p_padding->right = (int)klb_map_idx_to_int64(ptr, 1);
+            p_padding->bottom = (int)klb_map_idx_to_int64(ptr, 2);
+            p_padding->left = (int)klb_map_idx_to_int64(ptr, 3);
 
+            klb_wnd_update(p_wnd);
+        }
+        else if (KLB_ADT_int64 == t)
+        {
+            int w = (int)klb_map_idx_to_int64(p_in, start);
+
+            p_padding->top = w;
+            p_padding->right = w;
+            p_padding->bottom = w;
+            p_padding->left = w;
+
+            klb_wnd_update(p_wnd);
+        }
+        else if (KLB_ADT_uint64 == t)
+        {
+            int w = (int)klb_map_idx_to_uint64(p_in, start);
+
+            p_padding->top = w;
+            p_padding->right = w;
+            p_padding->bottom = w;
+            p_padding->left = w;
+
+            klb_wnd_update(p_wnd);
+        }
+    }
 }
 
 // 内边距-上 padding-top
@@ -467,21 +553,44 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
 {
     if (KLBUI_CSSEX_get == method)
     {
-        klb_map_set_idx_int64(p_out, 0, 1);
-        klb_map_set_idx_int64(p_out, 1, 1);
-        klb_map_set_idx_int64(p_out, 2, 1);
-        klb_map_set_idx_int64(p_out, 3, 1);
+        klb_map_set_idx_int64(p_out, 0, p_border->width.top);
+        klb_map_set_idx_int64(p_out, 1, p_border->width.right);
+        klb_map_set_idx_int64(p_out, 2, p_border->width.bottom);
+        klb_map_set_idx_int64(p_out, 3, p_border->width.left);
     }
     else if (KLBUI_CSSEX_set == method)
     {
         int start = 1;
-        if (KLB_ADT_map == klb_map_array_type(p_in, start))
+        int t = klb_map_array_type(p_in, start);
+        if (KLB_ADT_map == t)
         {
             klb_map_t* ptr = klb_map_idx_to_map(p_in, start);
             p_border->width.top = (int)klb_map_idx_to_int64(ptr, 0);
             p_border->width.right = (int)klb_map_idx_to_int64(ptr, 1);
             p_border->width.bottom = (int)klb_map_idx_to_int64(ptr, 2);
             p_border->width.left = (int)klb_map_idx_to_int64(ptr, 3);
+
+            klb_wnd_update(p_wnd);
+        }
+        else if(KLB_ADT_int64 == t)
+        {
+            int w = (int)klb_map_idx_to_int64(p_in, start);
+
+            p_border->width.top = w;
+            p_border->width.right = w;
+            p_border->width.bottom = w;
+            p_border->width.left = w;
+
+            klb_wnd_update(p_wnd);
+        }
+        else if(KLB_ADT_uint64 == t)
+        {
+            int w = (int)klb_map_idx_to_uint64(p_in, start);
+
+            p_border->width.top = w;
+            p_border->width.right = w;
+            p_border->width.bottom = w;
+            p_border->width.left = w;
 
             klb_wnd_update(p_wnd);
         }
@@ -515,4 +624,110 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
 void klbuicssex_border_radius(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_border->radius), p_wnd, method, p_in, p_out);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// 参考绘制
+
+
+// 绘制边框
+void klbuicssex_draw_border(klb_wnd_t* p_wnd, klb_rect_t* p_rect, klbuicss_border_t* p_border)
+{
+    assert(NULL != p_wnd);
+    assert(NULL != p_rect);
+
+    // border
+    if (NULL == p_border)
+    {
+        return;
+    }
+
+    // top
+    if (0 < p_border->width.top)
+    {
+        klb_rect_t border_top = { p_rect->x, p_rect->y, p_rect->w, p_border->width.top };
+        klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_border->color.top);
+    }
+
+    // right
+    if (0 < p_border->width.right)
+    {
+        klb_rect_t border_right = { p_rect->x + p_rect->w - p_border->width.right, p_rect->y, p_border->width.right, p_rect->h };
+        klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_border->color.right);
+    }
+    
+    // bottom
+    if (0 < p_border->width.bottom)
+    {
+        klb_rect_t border_bottom = { p_rect->x, p_rect->y + p_rect->h - p_border->width.bottom, p_rect->w, p_border->width.bottom };
+        klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_border->color.bottom);
+    }
+
+    // left
+    if (0 < p_border->width.left)
+    {
+        klb_rect_t border_left = { p_rect->x, p_rect->y, p_border->width.left, p_rect->h };
+        klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_border->color.left);
+    }
+}
+
+// 绘制文本
+void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font)
+{
+    assert(NULL != p_wnd);
+
+    if (NULL == txt || sdslen(txt) <= 0)
+    {
+        return;
+    }
+
+    klb_rect_t text_rect = *p_rect;
+
+    // 移除边框
+    if (NULL != p_border)
+    {
+        text_rect.x += p_border->width.left;
+        text_rect.y += p_border->width.top;
+        text_rect.w -= (p_border->width.left + p_border->width.right);
+        text_rect.h -= (p_border->width.top + p_border->width.bottom);
+    }
+
+    // 移除内边距
+    if (NULL != p_padding)
+    {
+        text_rect.x += p_padding->left;
+        text_rect.y += p_padding->top;
+        text_rect.w -= (p_padding->left + p_padding->right);
+        text_rect.h -= (p_padding->top + p_padding->bottom);
+    }
+
+    if (KLBUICSS_text1_center == p_css_text->align)
+    {
+        // 居中
+        int need_w = 0;
+        klb_wnd_text_size2(p_wnd, txt, sdslen(txt), p_css_font->size, &need_w, NULL);
+
+        if (need_w < text_rect.w)
+        {
+            text_rect.x += (text_rect.w - need_w) / 2;
+        }
+    }
+    else if(KLBUICSS_text1_right == p_css_text->align)
+    {
+        // 右对其
+        int need_w = 0;
+        klb_wnd_text_size2(p_wnd, txt, sdslen(txt), p_css_font->size, &need_w, NULL);
+
+        if (need_w < text_rect.w)
+        {
+            text_rect.x += (text_rect.w - need_w);
+        }
+    }
+    else
+    {
+        // 左对其, 无需处理
+    }
+
+    klb_wnd_draw_text2(p_wnd, &text_rect, txt, sdslen(txt), p_css_text->color, p_css_font->size);
 }

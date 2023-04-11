@@ -259,6 +259,15 @@ KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y
 KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
 
 
+/// @brief 获取主画布(主屏幕)的分辨率
+/// @param [in]  *p_gui         GUI对象
+/// @param [out] *p_out_w       输出窗口宽
+/// @param [out] *p_out_h       输出窗口高
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h);
+
+
+
 #ifdef __cplusplus
 }
 #endif
