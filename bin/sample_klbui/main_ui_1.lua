@@ -131,4 +131,4 @@ klbui.parse(home.dialog, home.commonds)
 
 
 -- step5. 显示 '/home' 窗口
-klbui.do_model('/home')
+klbui.model('/home')

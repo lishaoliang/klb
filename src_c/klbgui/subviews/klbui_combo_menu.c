@@ -64,58 +64,20 @@ static void klbui_combo_menu_item_on_paint_status(klb_wnd_t* p_wnd, klbui_combo_
 {
     if (0 < sdslen(p_attr->background.image))
     {
+        // 图片背景
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
     }
     else
     {
+        // 纯色背景
         klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
 
-        klb_rect_t paint_rect = *p_rect;
-
-        // border
-        if (0 < p_attr->border.width.top)
-        {
-            klb_rect_t border_top = { paint_rect.x, paint_rect.y, paint_rect.w, p_attr->border.width.top };
-            klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_attr->border.color.top);
-        }
-
-        if (0 < p_attr->border.width.right)
-        {
-            klb_rect_t border_right = { paint_rect.x + paint_rect.w - p_attr->border.width.right, paint_rect.y, p_attr->border.width.right, paint_rect.h };
-            klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_attr->border.color.right);
-        }
-
-        if (0 < p_attr->border.width.bottom)
-        {
-            klb_rect_t border_bottom = { paint_rect.x, paint_rect.y + paint_rect.h - p_attr->border.width.bottom, paint_rect.w, p_attr->border.width.bottom };
-            klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_attr->border.color.bottom);
-        }
-
-        if (0 < p_attr->border.width.left)
-        {
-            klb_rect_t border_left = { paint_rect.x, paint_rect.y, p_attr->border.width.left, paint_rect.h };
-            klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
-        }
+        // 边框
+        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
-    if (0 < sdslen(p_btn->title))
-    {
-        klb_rect_t text_rect = *p_rect;
-
-        // 移除边框
-        text_rect.x += p_attr->border.width.left;
-        text_rect.y += p_attr->border.width.top;
-        text_rect.w -= (p_attr->border.width.left + p_attr->border.width.right);
-        text_rect.h -= (p_attr->border.width.top + p_attr->border.width.bottom);
-
-        // 移除内边距
-        //text_rect.x += p_attr->padding.left;
-        //text_rect.y += p_attr->padding.top;
-        //text_rect.w -= (p_attr->padding.left + p_attr->padding.right);
-        //text_rect.h -= (p_attr->padding.top + p_attr->padding.bottom);
-
-        klb_wnd_draw_text2(p_wnd, &text_rect, p_btn->title, sdslen(p_btn->title), p_attr->text.color, p_attr->font.size);
-    }
+    // 标题文本
+    klbuicssex_draw_text(p_wnd, p_btn->title, p_rect, &p_attr->border, NULL, &p_attr->text, &p_attr->font);
 }
 
 static int klbui_combo_menu_item_on_paint(klb_wnd_t* p_wnd)

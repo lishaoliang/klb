@@ -29,6 +29,11 @@ klbuiex_default_t* klbuiex_get_default(klb_gui_t* p_gui);
 klbui_default_t* klbuiex_default_get_value(klbuiex_default_t* p_default);
 
 
+// 通过 Lua 获取, 设置默认CSS属性
+int klbuiex_default_css_set(klbuiex_default_t* p_default, const klb_map_t* p_map);
+klb_map_t* klbuiex_default_css_get(klbuiex_default_t* p_default, const klb_map_t* p_map);
+
+
 #ifdef __cplusplus
 }
 #endif

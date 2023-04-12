@@ -111,10 +111,6 @@ static klb_map_t* klb_dialog_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 
 static int on_cmd_btn_close_klb_dialog(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    if (0x0201 == msg)
-    {
-        klb_gui_end_model(klb_wnd_get_gui(p_wnd), NULL);
-    }
 
     return 0;
 }

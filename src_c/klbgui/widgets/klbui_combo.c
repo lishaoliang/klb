@@ -80,7 +80,7 @@ static void klbui_combo_on_paint_button_status(klb_wnd_t* p_wnd, klbui_combo_t* 
     int h = r.w / 2;
     int x = r.x + (r.w - h) /2 - 1;
     int y = r.y + (r.h - h) / 2;
-    for (int i = h; i >= 0; i--)
+    for (int i = h; i > 0; i--)
     {
         klb_wnd_draw_line2(p_wnd, x - i, y, x + i, y, p_attr->text.color);
         y += 1;

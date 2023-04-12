@@ -49,7 +49,7 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 	-- commond 命令 优先集次序
 	-- 1. cmds1 动态命令集 
 	-- 2. cmds2 由 parse 第二参数 外部静态命令集
-	-- 3. cmds3 由 parse 第一参数 静态命令集
+	-- 3. cmds3 由 parse 第一参数 dialog 里面静态命令集
 	local event_str = event.transform(msg)
 	if 'string' == type(event_str) then		
 		if 'function' == type(cmds1[event_str]) then
@@ -144,12 +144,29 @@ local function ParseWnd(wnd, commonds, css, root_path, first)
 			kgui.set(path, k, v)
 		end
 	end
+	
+	-- 将 cmds2 / cmds3 从bind_command绑定函数中独立提取出来, 只在解析时计算一次
+	-- cmds2, 独立填写的相应命令集合
+	local name = wnd['name'] or ''
+	local id = wnd['id'] or ''
+		
+	local cmds2 = E		
+	if 'table' == type(commonds[path]) then
+		cmds2 = commonds[path]	-- 1. 依据路径判定
+	elseif '' ~= id and 'table' == type(commonds[id]) then
+		cmds2 = commonds[id]	-- 2. 依据id判定
+	elseif '' ~= name and 'table' == type(commonds[name]) then
+		cmds2 = commonds[name]	-- 3. 依据名称判定
+	end		
+	
+	-- cmds3, 内嵌在 dialog里面的
+	local cmds3 = ('table' == type(wnd['commonds']) and wnd['commonds']) or E	
 
 	-- 绑定命令函数
 	kgui.bind_command(path, function (obj, msg, x1, y1, x2, y2, lparam, wparam)
+		-- cmds1, 动态绑定表, 每次响应时动态计算
 		local cmds1 = ('table' == type(wnd['_commonds']) and wnd['_commonds']) or E
-		local cmds2 = ('table' == type(commonds[path]) and commonds[path]) or E
-		local cmds3 = ('table' == type(wnd['commonds']) and wnd['commonds']) or E
+		
 		return OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
 	end)
 	

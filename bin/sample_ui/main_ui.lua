@@ -183,7 +183,7 @@ kgui.bind_command('/page1', function (obj, msg)
 	return 0
 end)
 
-kgui.do_model('/home')
+kgui.model('/home')
 
 
 -- h264

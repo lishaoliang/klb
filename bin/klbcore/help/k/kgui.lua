@@ -7,6 +7,25 @@
 local kgui = {}
 
 
+
+
+-- @brief 设置默认全局CSS参数
+-- @param [in] [任意]...			设置参数
+-- @return [number(int)] 	0.成功; 非0.失败
+-- @note 注意必须在控件创建之前, 才能在初始化控件时生效;
+kgui.set_default_css = function (...)
+	return 0
+end
+
+
+-- @brief 获取默认全局CSS参数
+-- @param [in] [任意]...			获取参数
+-- @return [任意]...				值
+kgui.get_default_css = function (...)
+	return ...
+end
+
+
 -- @brief 加载图片
 -- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径
@@ -73,24 +92,28 @@ end
 -- @brief 向窗口(控件)获取数据: 样式\显示\状态等等
 -- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
 -- @param [in] [任意]...			获取参数
--- @return [string] JSON回复
+-- @return [任意]...				值
 kgui.get = function (path, ...)
 	return ...
 end
 
 
-kgui.do_model = function (path)
-
+-- @brief 以model方式的显示一个对话框
+-- @param [in] all[boolean]			是否关闭全部popup: 默认true
+-- @param [in] path[string]			窗口路径(类unix): 默认nil
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.model = function (path)
+	return 0
 end
 
-kgui.end_model = function (path)
 
+-- @brief 结束一个model方式的对话框
+-- @param [in] all[boolean]			是否关闭全部popup: 默认true
+-- @param [in] path[string]			窗口路径(类unix): 默认nil
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.model_end = function (all, path)
+	return 0
 end
-
-kgui.end_model_all = function ()
-	
-end
-
 
 -- @brief 以popup方式显示一个菜单
 -- @param [in] path[string]			窗口路径(类unix): eg."/menu"
@@ -103,7 +126,7 @@ end
 -- @brief 结束一个popup方式的菜单
 -- @param [in] all[boolean]			是否关闭全部popup: 默认true
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.popup_end = function ()
+kgui.popup_end = function (all)
 	return 0
 end
 
@@ -158,5 +181,6 @@ end
 kgui.wh = function ()
 	return 1280, 720
 end
+
 
 return kgui

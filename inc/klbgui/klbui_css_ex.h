@@ -15,13 +15,15 @@
 #include "klb_type.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klb_wnd.h"
-#include "klbgui/klbui_default.h"
 #include "klbthird/sds.h"
 
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+typedef struct klbui_default_t_ klbui_default_t;
 
 
 #define KLBUI_CSSEX_get     0                   ///< get method

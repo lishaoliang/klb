@@ -162,6 +162,16 @@ const klbui_default_t* klb_gui_get_std_default(klb_gui_t* p_gui)
     return klbuiex_default_get_value(klbuiex_get_default(p_gui));
 }
 
+int klb_gui_default_css_set(klb_gui_t* p_gui, const klb_map_t* p_map)
+{
+    return klbuiex_default_css_set(klbuiex_get_default(p_gui), p_map);
+}
+
+klb_map_t* klb_gui_default_css_get(klb_gui_t* p_gui, const klb_map_t* p_map)
+{
+    return klbuiex_default_css_get(klbuiex_get_default(p_gui), p_map);
+}
+
 /// @brief 附加到 klua_env_t*
 int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env)
 {
@@ -252,7 +262,7 @@ static void klb_gui_load_wnd(klb_wnd_t* p_wnd)
     }
 }
 
-int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
+int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
 {
     if (KLBUI_MODAL_WND_MAX <= p_gui->modal_num)
     {
@@ -291,30 +301,17 @@ int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name)
     return 1;
 }
 
-int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
+static void klb_gui_model_end_last(klb_gui_t* p_gui)
 {
     if (p_gui->modal_num <= 0)
     {
-        return 1;
+        return;
     }
 
     int index = p_gui->modal_num - 1;
 
     klb_wnd_t* p_top = p_gui->p_modal_wnd[index];
     klb_wnd_t* p_wnd = p_top;
-
-    int end = 0;
-    // KLBUI_UNLOAD
-    //if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-    //{
-    //    klb_point_t pt = { 0, 0 };
-    //    end = p_wnd->vtable.on_command(p_wnd, KLBUI_UNLOAD, &pt, &pt, 0, 0);
-    //}
-
-    if (0 != end)
-    {
-        return end;
-    }
 
     if (NULL != p_gui->p_focus_top && p_top == p_gui->p_focus_top)
     {
@@ -327,7 +324,7 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
     p_gui->p_modal_wnd[index] = NULL;
     p_gui->modal_num = index;
 
-    // KLBUI_UNLOAD
+    // KLBUI_onunload
     if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
     {
         klb_point_t pt = { 0, 0 };
@@ -335,29 +332,38 @@ int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name)
     }
 
     p_gui->redraw = true;
-
-    return 0;
 }
 
-int klb_gui_end_model_all(klb_gui_t* p_gui)
+
+int klb_gui_model_end(klb_gui_t* p_gui, bool all, const char* p_path_name)
 {
+    if (all)
+    {
+        // 移除所有
+        while (0 < p_gui->modal_num)
+        {
+            klb_gui_model_end_last(p_gui);
+        }
+    }
+    else
+    {
+        // 移除最后一个
+        klb_gui_model_end_last(p_gui);
+    }
+
     return 0;
 }
 
 /// @brief 弹出菜单等页面
 int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
 {
-    return 0;
-}
-
-int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
-{
     if (KLBUI_POPUP_WND_MAX <= p_gui->popup_num)
     {
         return 1; // 超过最大弹出数目
     }
 
-    klb_wnd_t* p_wnd = p_top;
+    int path_len = strlen(p_path_name);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
@@ -382,7 +388,43 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
 
         p_gui->redraw = true;
 
-        klb_wnd_set_calculate(p_wnd, true);
+        return 0;
+    }
+
+    return 1;
+}
+
+int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
+{
+    if (KLBUI_POPUP_WND_MAX <= p_gui->popup_num)
+    {
+        return 1; // 超过最大弹出数目
+    }
+
+    klb_wnd_t* p_wnd = p_top;
+
+    if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
+    {
+        for (int i = 0; i < p_gui->popup_num; i++)
+        {
+            if (p_wnd == p_gui->p_popup_wnd[i])
+            {
+                return 1; // 已经被弹出
+            }
+        }
+
+        p_gui->p_popup_wnd[p_gui->popup_num] = p_wnd;
+        p_gui->popup_num += 1;
+
+        // KLBUI_onload
+        klb_gui_load_wnd(p_wnd);
+        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+        {
+            klb_point_t pt = { 0, 0 };
+            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
+        }
+
+        p_gui->redraw = true;
 
         return 0;
     }
@@ -390,9 +432,19 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
     return 1;
 }
 
-int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
+static void klb_gui_popup_end_last(klb_gui_t* p_gui)
 {
-    if (NULL != p_gui->p_focus)
+    if (p_gui->popup_num <= 0)
+    {
+        return;
+    }
+
+    int index = p_gui->popup_num - 1;
+
+    klb_wnd_t* p_top = p_gui->p_popup_wnd[index];
+    klb_wnd_t* p_wnd = p_top;
+
+    if (NULL != p_gui->p_focus_top && p_top == p_gui->p_focus_top)
     {
         klb_wnd_set_focus(p_gui->p_focus, false);
 
@@ -400,9 +452,32 @@ int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
         p_gui->p_focus = NULL;
     }
 
-    p_gui->popup_num = 0;
+    p_gui->p_popup_wnd[index] = NULL;
+    p_gui->popup_num = index;
+
+    // KLBUI_onunload
+    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
+    {
+        klb_point_t pt = { 0, 0 };
+        p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
+    }
 
     p_gui->redraw = true;
+}
+
+int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
+{
+    if (all)
+    {
+        while (0 < p_gui->popup_num)
+        {
+            klb_gui_popup_end_last(p_gui);
+        }
+    }
+    else
+    {
+        klb_gui_popup_end_last(p_gui);
+    }
 
     return 0;
 }
@@ -740,6 +815,21 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         if (NULL != p_wnd->vtable.on_command)
         {
             p_wnd->vtable.on_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        }
+
+        // 最后将消息交给顶层窗口处理
+        klb_wnd_t* p_wnd_top = klb_wnd_get_top(p_wnd);
+        if (p_wnd != p_wnd_top)
+        {
+            if (NULL != p_wnd_top->vtable.on_control)
+            {
+                p_wnd_top->vtable.on_control(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            }
+
+            if (NULL != p_wnd_top->vtable.on_command)
+            {
+                p_wnd_top->vtable.on_command(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            }
         }
     }
 

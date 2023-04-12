@@ -163,20 +163,14 @@ KLB_API int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name);
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_do_model(klb_gui_t* p_gui, const char* p_path_name);
+KLB_API int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name);
 
 
 /// @brief 关闭显示窗口
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_end_model(klb_gui_t* p_gui, const char* p_path_name);
-
-
-/// @brief 关闭所有显示窗口
-/// @param [in] *p_gui          GUI对象
-/// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_end_model_all(klb_gui_t* p_gui);
+KLB_API int klb_gui_model_end(klb_gui_t* p_gui, bool all, const char* p_path_name);
 
 
 /// @brief 弹出菜单/对话框等页面

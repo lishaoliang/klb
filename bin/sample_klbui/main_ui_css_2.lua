@@ -256,4 +256,4 @@ home.parse_tc = t2 - t1
 
 
 -- step5. 显示 '/home' 窗口
-klbui.do_model('/home')
+klbui.model('/home')

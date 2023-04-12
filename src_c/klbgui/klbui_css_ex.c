@@ -27,7 +27,6 @@ void klbuicssex_attributes_init(klbuicssex_attributes_t* p_attr, const klbui_def
     p_attr->border.color.right = p_default->border_color;
     p_attr->border.color.bottom = p_default->border_color;
     p_attr->border.color.left = p_default->border_color;
-    p_attr->border.radius = p_default->border_radius;
 }
 
 void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr)
@@ -77,14 +76,20 @@ void klbuicssex_attribute_int(int* p_int, klb_wnd_t* p_wnd, int method, const kl
             {
                 *p_int = (int)klb_map_idx_to_int64(p_in, start);
 
-                klb_wnd_update(p_wnd);
+                if (NULL != p_wnd)
+                {
+                    klb_wnd_update(p_wnd);
+                }
             }
             break;
         case KLB_ADT_uint64:
             {
                 *p_int = (int)klb_map_idx_to_uint64(p_in, start);
 
-                klb_wnd_update(p_wnd);
+                if (NULL != p_wnd)
+                {
+                    klb_wnd_update(p_wnd);
+                }
             }
             break;
         default:
@@ -105,10 +110,14 @@ void klbuicssex_attribute_color(uint32_t* p_color, klb_wnd_t* p_wnd, int method,
     {
         int start = 1;
         uint32_t color = 0;
-        if (klb_gui_check_color(p_wnd->p_gui, p_in, start, &color))
+        if (klb_gui_check_color(NULL, p_in, start, &color))
         {
             *p_color = color;
-            klb_wnd_update(p_wnd);
+
+            if (NULL != p_wnd)
+            {
+                klb_wnd_update(p_wnd);
+            }
         }
     }
 }
@@ -130,7 +139,10 @@ void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, cons
             const char* p_value = klb_map_idx_to_string(p_in, start);
             *p_image = sdscpy(*p_image, p_value);
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)
+            {
+                klb_wnd_update(p_wnd);
+            }
         }
     }
 }
@@ -219,7 +231,7 @@ void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method
             p_margin->bottom = (int)klb_map_idx_to_int64(ptr, 2);
             p_margin->left = (int)klb_map_idx_to_int64(ptr, 3);
 
-            klb_wnd_update(p_wnd);
+            if(NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
         else if (KLB_ADT_int64 == t)
         {
@@ -230,7 +242,7 @@ void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method
             p_margin->bottom = w;
             p_margin->left = w;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
         else if (KLB_ADT_uint64 == t)
         {
@@ -241,7 +253,7 @@ void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method
             p_margin->bottom = w;
             p_margin->left = w;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
     }
 }
@@ -295,7 +307,7 @@ void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int met
             p_padding->bottom = (int)klb_map_idx_to_int64(ptr, 2);
             p_padding->left = (int)klb_map_idx_to_int64(ptr, 3);
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
         else if (KLB_ADT_int64 == t)
         {
@@ -306,7 +318,7 @@ void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int met
             p_padding->bottom = w;
             p_padding->left = w;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
         else if (KLB_ADT_uint64 == t)
         {
@@ -317,7 +329,7 @@ void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int met
             p_padding->bottom = w;
             p_padding->left = w;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
     }
 }
@@ -385,20 +397,26 @@ void klbuicssex_text_align(klbuicss_text_t* p_text, klb_wnd_t* p_wnd, int method
     {
         int start = 1;
         const char* p_value = klb_map_idx_to_string(p_in, start);
+        bool update = false;
 
         if (0 == strcmp(p_value, "center"))
         {
             p_text->align = KLBUICSS_text1_center;
-            klb_wnd_update(p_wnd);
+            update = true;
         }
         else if (0 == strcmp(p_value, "left"))
         {
             p_text->align = KLBUICSS_text1_left;
-            klb_wnd_update(p_wnd);
+            update = true;
         }
         else if (0 == strcmp(p_value, "right"))
         {
             p_text->align = KLBUICSS_text1_right;
+            update = true;
+        }
+
+        if (NULL != p_wnd && update)
+        {
             klb_wnd_update(p_wnd);
         }
     }
@@ -570,7 +588,10 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
             p_border->width.bottom = (int)klb_map_idx_to_int64(ptr, 2);
             p_border->width.left = (int)klb_map_idx_to_int64(ptr, 3);
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)
+            {
+                klb_wnd_update(p_wnd);
+            }
         }
         else if(KLB_ADT_int64 == t)
         {
@@ -581,7 +602,10 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
             p_border->width.bottom = w;
             p_border->width.left = w;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)
+            {
+                klb_wnd_update(p_wnd);
+            }
         }
         else if(KLB_ADT_uint64 == t)
         {
@@ -592,7 +616,10 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
             p_border->width.bottom = w;
             p_border->width.left = w;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)
+            {
+                klb_wnd_update(p_wnd);
+            }
         }
     }
 }
@@ -608,14 +635,17 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
     {
         int start = 1;
         uint32_t color = 0;
-        if (klb_gui_check_color(p_wnd->p_gui, p_in, start, &color))
+        if (klb_gui_check_color(NULL, p_in, start, &color))
         {
             p_border->color.top = color;
             p_border->color.right = color;
             p_border->color.bottom = color;
             p_border->color.left = color;
 
-            klb_wnd_update(p_wnd);
+            if (NULL != p_wnd)
+            {
+                klb_wnd_update(p_wnd);
+            }
         }
     }
 }

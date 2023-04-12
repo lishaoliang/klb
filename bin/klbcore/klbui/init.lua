@@ -75,6 +75,32 @@ klbui.select = function (dialog, multi)
 end
 
 
+-- @brief 设置/获取默认全局CSS参数
+-- @param [in] [任意]...			参数
+-- @return [任意]...				值
+-- @note 注意若是设置, 则必须在控件创建之前, 才能在初始化控件时生效;
+--   eg. 获取 local text_color = klbui.default_css('color')
+--   eg. 设置 klbui.default_css({['color']={255,220,220,220}})
+klbui.default_css = function (...)
+	local args = {...}
+	
+	if 1 < #args then
+		kgui.set_default_css(...)
+	elseif 1 == #args then
+		if 'table' == type(args[1]) then
+			for k1, v1 in pairs(args[1]) do
+				-- set
+				kgui.set_default_css(k1, v1)
+			end
+		else
+			return kgui.get_default_css(...)
+		end
+	end
+	
+	return klbui
+end
+
+
 -- @brief 加载资源图片
 -- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径
@@ -87,16 +113,33 @@ end
 -- @brief 模态显示窗口
 -- @param [in] path[string]			窗口虚拟路径; eg. '/home'
 -- @return [number(int)] 	0.成功; 非0.失败
-klbui.do_model = function (path)
-	return kgui.do_model(path)
+klbui.model = function (path)
+	return kgui.model(path)
 end
 
+
+
+-- @brief 结束一个model方式的对话框
+-- @param [in] all[boolean]			是否关闭全部popup: 默认true
+-- @param [in] path[string]			窗口路径(类unix): 默认nil
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.model_end = function (all, path)
+	return kgui.model_end(all, path)
+end
 
 -- @brief 弹出窗口
 -- @param [in] path[string]			窗口虚拟路径; eg. '/menu1'
 -- @return [number(int)] 	0.成功; 非0.失败
 klbui.popup = function (path)
 	return kgui.popup(path)
+end
+
+
+-- @brief 结束一个popup方式的菜单
+-- @param [in] all[boolean]			是否关闭全部popup: 默认true
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.popup_end = function (all)
+	return kgui.popup_end(all)
 end
 
 
