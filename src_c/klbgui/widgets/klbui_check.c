@@ -176,9 +176,9 @@ static void klbui_check_init_attribute(klb_wnd_t* p_wnd, klbui_check_t* p_check)
 
     p_check->check = false;
 
-    klbuicssex_attributes_init(&p_check->normal, p_default);
-    klbuicssex_attributes_init(&p_check->focus, p_default);
-    klbuicssex_attributes_init(&p_check->disable, p_default);
+    klbuicssex_attributes_init(&p_check->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_check->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_check->disable, &p_default->disable);
 }
 
 static void klbui_check_quit_attribute(klbui_check_t* p_check)
@@ -441,7 +441,7 @@ static void on_klbui_check_value(klb_wnd_t* p_wnd, klbui_check_t* p_check, int m
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_check_bind(KEY_, FUNC_) { klb_map_set_ptr(p_check->p_func_map, (KEY_), (FUNC_), p_check); }
+#define KLBUI_check_bind(KEY_, FUNC_) { klb_map_set_ptr(p_check->p_func_map, (KEY_), (void*)(FUNC_), p_check); }
 
 static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, klb_gui_t* p_gui)
 {

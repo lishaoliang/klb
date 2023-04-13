@@ -176,9 +176,9 @@ static void klbui_menubar_init_attribute(klb_wnd_t* p_wnd, klbui_menubar_t* p_me
 
     p_menubar->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_menubar->normal, p_default);
-    klbuicssex_attributes_init(&p_menubar->focus, p_default);
-    klbuicssex_attributes_init(&p_menubar->disable, p_default);
+    klbuicssex_attributes_init(&p_menubar->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_menubar->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_menubar->disable, &p_default->disable);
 }
 
 static void klbui_menubar_quit_attribute(klbui_menubar_t* p_menubar)
@@ -423,7 +423,7 @@ static void on_klbui_menubar_title(klb_wnd_t* p_wnd, klbui_menubar_t* p_menubar,
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_menubar_bind(KEY_, FUNC_) { klb_map_set_ptr(p_menubar->p_func_map, (KEY_), (FUNC_), p_menubar); }
+#define KLBUI_menubar_bind(KEY_, FUNC_) { klb_map_set_ptr(p_menubar->p_func_map, (KEY_), (void*)(FUNC_), p_menubar); }
 
 static void klbui_menubar_init_func_map(klb_wnd_t* p_wnd, klbui_menubar_t* p_menubar, klb_gui_t* p_gui)
 {

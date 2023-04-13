@@ -139,7 +139,7 @@ static void klbui_static_init_attribute(klb_wnd_t* p_wnd, klbui_static_t* p_stat
     // init
     p_static->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_static->normal, p_default);
+    klbuicssex_attributes_init(&p_static->normal, &p_default->normal);
 
     p_static->normal.border.width.top = 0;
     p_static->normal.border.width.right = 0;
@@ -166,6 +166,11 @@ static void on_klbui_static_visibility(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_static_margin(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_margin(&p_static->margin, p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_static_margin_top(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_static->margin.top), p_wnd, method, p_in, p_out);
@@ -184,6 +189,11 @@ static void on_klbui_static_margin_bottom(klb_wnd_t* p_wnd, klbui_static_t* p_st
 static void on_klbui_static_margin_left(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_static->margin.left), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_static_padding(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_padding(&p_static->padding, p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_top(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -267,7 +277,7 @@ static void on_klbui_static_title(klb_wnd_t* p_wnd, klbui_static_t* p_static, in
 }
 
 /////////////////////////////////////
-#define KLBUI_static_bind(KEY_, FUNC_) { klb_map_set_ptr(p_static->p_func_map, (KEY_), (FUNC_), p_static); }
+#define KLBUI_static_bind(KEY_, FUNC_) { klb_map_set_ptr(p_static->p_func_map, (KEY_), (void*)(FUNC_), p_static); }
 
 static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_static, klb_gui_t* p_gui)
 {
@@ -291,12 +301,14 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     KLBUI_static_bind("visibility", on_klbui_static_visibility);
 
     // 外边距 margin
+    KLBUI_static_bind("margin", on_klbui_static_margin);
     KLBUI_static_bind("margin-top", on_klbui_static_margin_top);
     KLBUI_static_bind("margin-right", on_klbui_static_margin_right);
     KLBUI_static_bind("margin-bottom", on_klbui_static_margin_bottom);
     KLBUI_static_bind("margin-left", on_klbui_static_margin_left);
 
     // 内边距 padding
+    KLBUI_static_bind("padding", on_klbui_static_padding);
     KLBUI_static_bind("padding-top", on_klbui_static_padding_top);
     KLBUI_static_bind("padding-right", on_klbui_static_padding_right);
     KLBUI_static_bind("padding-bottom", on_klbui_static_padding_bottom);

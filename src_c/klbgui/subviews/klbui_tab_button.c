@@ -159,9 +159,9 @@ static void klbui_tab_botton_init_attribute(klb_wnd_t* p_wnd, klbui_tab_botton_t
 
     p_btn->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_btn->normal, p_default);
-    klbuicssex_attributes_init(&p_btn->focus, p_default);
-    klbuicssex_attributes_init(&p_btn->check, p_default);
+    klbuicssex_attributes_init(&p_btn->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_btn->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_btn->check, &p_default->check);
 
     p_btn->is_check = false;
 }

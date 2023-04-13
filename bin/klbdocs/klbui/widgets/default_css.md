@@ -1,48 +1,45 @@
-## 按钮
+## 默认全局CSS
 
-* 注册类型: kbutton
+* 无注册类型
 
 ### 概述
 
 ```c
-// C实现文件: ./klb/src_c/klbgui/widgets/klbui_button.c
+// C实现文件: ./klb/src_c/klbgui/extensions/klbuiex_default.c
 ```
 
 ### 支持状态
 
-* 普通: normal
-* 聚焦: focus
-* 不使能: disable
+* 常规状态: normal
+* 聚焦状态: focus
+* 不使能状态: disable
+* 选中状态: check
+* 输入状态: input
 
+### 参考使用
 
-### CSS属性
-
-#### 显隐
-
-* 属性: visibility
-* 无状态
-
-* 显示
+* 设置
 ```lua
-{
-    ['visibility'] = 'visible',
-    ['visibility'] = true,
-}
-```
+local klbui = require("klbcore.klbui")
 
-* 隐藏
-```lua
-{
-    ['visibility'] = 'hidden',
-    ['visibility'] = false,
-}
+-- 设置多个全局CSS属性
+klbui.default_css({
+    ['color'] = {255,80,80,80},
+    ['color:focus'] = {255,220,220,220},
+    ['color:disable'] = {255,20,20,20},
+})
 ```
 
 * 获取
 ```lua
-    'visible'   -- 显示
-    'hidden'    -- 隐藏
+local klbui = require("klbcore.klbui")
+
+-- 获取单个全局CSS属性
+local color = klbui.default_css('color')
+print('color:', color)
 ```
+
+### CSS属性
 
 #### 外边距
 
@@ -91,7 +88,7 @@
 ##### 文本颜色
 
 * 属性: color
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -99,6 +96,8 @@
     ['color'] = {255,220,220,220},          -- normal 常规状态
     ['color:focus'] = 0xFFA0A0A0,           -- focus 聚焦状态
     ['color:disable'] = '0xFFA0A0A0',       -- disable 不使能状态
+    ['color:check'] = {255,220,220,220},    -- check 选中状态
+    ['color:input'] = {255,220,220,220},    -- 输入状态
 }
 ```
 
@@ -110,7 +109,7 @@
 ##### 文本对齐
 
 * 属性: text-align
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -118,6 +117,8 @@
     ['text-align'] = 'center',
     ['text-align:focus'] = 'left',
     ['text-align:disable'] = 'right',
+    ['text-align:check'] = 'left',
+    ['text-align:input'] = 'left'
 }
 ```
 
@@ -133,7 +134,7 @@
 ##### 字体大小
 
 * 属性: font-size
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -141,6 +142,8 @@
     ['font-size'] = 24,
     ['font-size:focus'] = 28,
     ['font-size:disable'] = 20,
+    ['font-size:check'] = 20,
+    ['font-size:input'] = 20,
 }
 ```
 
@@ -149,7 +152,7 @@
 ##### 背景色
 
 * 属性: background-color
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -157,6 +160,8 @@
     ['background-color'] = {255,220,80,20},
     ['background-color:focus'] = 0xFFA0A0A0,
     ['background-color:disable'] = '0xFFA0A0A0',
+    ['background-color:check'] = {255,220,80,20},
+    ['background-color:input'] = {255,220,80,20},
 }
 ```
 
@@ -168,7 +173,7 @@
 ##### 背景图片
 
 * 属性: background-image
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -176,6 +181,8 @@
     ['background-image'] = '',
     ['background-image:focus'] = 'bbb.bmp',
     ['background-image:disable'] = 'ccc.bmp',
+    ['background-image:check'] = 'eee.bmp',
+    ['background-image:input'] = 'fff.bmp',
 }
 ```
 
@@ -189,7 +196,7 @@
 ##### 边框宽度
 
 * 属性: border-width
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -199,6 +206,8 @@
 
     ['border-width:focus'] = 1,
     ['border-width:disable'] = 1,
+    ['border-width:check'] = 1,
+    ['border-width:input'] = 1,
 }
 ```
 
@@ -210,7 +219,7 @@
 ##### 边框颜色
 
 * 属性: border-color
-* 支持状态: normal, focus, disable
+* 支持状态: normal, focus, disable, check, input
 
 * 设置
 ```lua
@@ -221,47 +230,12 @@
 
     ['border-color:focus'] = {255,220,30,30},
     ['border-color:disable'] = {255,220,30,30},
+    ['border-color:check'] = {255,220,30,30},
+    ['border-color:input'] = {255,220,30,30},
 }
 ```
 
 * 获取
 ```lua
     0xFFA0A0A0
-```
-
-### 自定义属性
-
-#### 标题
-
-* 属性: title
-* 无状态
-
-
-* 设置
-```lua
-{
-    ['title'] = '按钮1'
-}
-```
-
-* 获取
-```lua
-    '按钮1'
-```
-
-#### 值
-
-* 属性: value
-* 无状态
-
-* 设置
-```lua
-{
-    ['value'] = '按钮1'
-}
-```
-
-* 获取
-```lua
-    '按钮1'
 ```

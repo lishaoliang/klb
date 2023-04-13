@@ -246,13 +246,13 @@ static void klbui_combo_init_attribute(klb_wnd_t* p_wnd, klbui_combo_t* p_combo)
 
     p_combo->p_data_array = klb_map_create();
 
-    klbuicssex_attributes_init(&p_combo->normal, p_default);
-    klbuicssex_attributes_init(&p_combo->focus, p_default);
-    klbuicssex_attributes_init(&p_combo->disable, p_default);
+    klbuicssex_attributes_init(&p_combo->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_combo->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_combo->disable, &p_default->disable);
 
-    klbuicssex_attributes_init(&(p_combo->button_right.normal), p_default);
-    klbuicssex_attributes_init(&(p_combo->button_right.focus), p_default);
-    klbuicssex_attributes_init(&(p_combo->button_right.disable), p_default);
+    klbuicssex_attributes_init(&(p_combo->button_right.normal), &p_default->normal);
+    klbuicssex_attributes_init(&(p_combo->button_right.focus), &p_default->focus);
+    klbuicssex_attributes_init(&(p_combo->button_right.disable), &p_default->disable);
 }
 
 static void klbui_combo_quit_attribute(klbui_combo_t* p_combo)
@@ -640,19 +640,16 @@ static void on_klbui_combo_append(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int 
 
 static void on_klbui_combo_clear(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    if (KLBUI_CSSEX_set == method)
-    {
-        // 清空待选列表
-        klb_map_clear(p_combo->p_data_array);
+    // 清空待选列表
+    klb_map_clear(p_combo->p_data_array);
 
-        sdsclear(p_combo->title);
-        sdsclear(p_combo->value);
-    }
+    sdsclear(p_combo->title);
+    sdsclear(p_combo->value);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_combo_bind(KEY_, FUNC_) { klb_map_set_ptr(p_combo->p_func_map, (KEY_), (FUNC_), p_combo); }
+#define KLBUI_combo_bind(KEY_, FUNC_) { klb_map_set_ptr(p_combo->p_func_map, (KEY_), (void*)(FUNC_), p_combo); }
 
 static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, klb_gui_t* p_gui)
 {

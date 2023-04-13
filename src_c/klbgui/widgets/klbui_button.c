@@ -150,9 +150,9 @@ static void klbui_button_init_attribute(klb_wnd_t* p_wnd, klbui_button_t* p_btn)
 
     p_btn->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_btn->normal, p_default);
-    klbuicssex_attributes_init(&p_btn->focus, p_default);
-    klbuicssex_attributes_init(&p_btn->disable, p_default);
+    klbuicssex_attributes_init(&p_btn->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_btn->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_btn->disable, &p_default->disable);
 }
 
 static void klbui_button_quit_attribute(klbui_button_t* p_btn)
@@ -397,7 +397,7 @@ static void on_klbui_button_title(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int m
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_btn_bind(KEY_, FUNC_) { klb_map_set_ptr(p_btn->p_func_map, (KEY_), (FUNC_), p_btn); }
+#define KLBUI_btn_bind(KEY_, FUNC_) { klb_map_set_ptr(p_btn->p_func_map, (KEY_), (void*)(FUNC_), p_btn); }
 
 static void klbui_button_init_func_map(klb_wnd_t* p_wnd, klbui_button_t* p_btn, klb_gui_t* p_gui)
 {

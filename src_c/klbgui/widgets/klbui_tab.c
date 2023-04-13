@@ -251,7 +251,7 @@ static void klbui_tab_init_attribute(klb_wnd_t* p_wnd, klbui_tab_t* p_tab)
 
     p_tab->tab_btn_height = 32;
 
-    klbuicssex_attributes_init(&p_tab->normal, p_default);
+    klbuicssex_attributes_init(&p_tab->normal, &p_default->normal);
 }
 
 static void klbui_tab_quit_attribute(klbui_tab_t* p_tab)
@@ -387,7 +387,7 @@ static void on_klbui_tab_button_height(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, int
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_tab_bind(KEY_, FUNC_) { klb_map_set_ptr(p_tab->p_func_map, (KEY_), (FUNC_), p_tab); }
+#define KLBUI_tab_bind(KEY_, FUNC_) { klb_map_set_ptr(p_tab->p_func_map, (KEY_), (void*)(FUNC_), p_tab); }
 
 static void klbui_tab_init_func_map(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, klb_gui_t* p_gui)
 {

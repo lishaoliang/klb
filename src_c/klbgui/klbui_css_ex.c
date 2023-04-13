@@ -7,26 +7,19 @@
 
 //////////////////////////////////////////////////////////////////////////
 // 默认初始化
-void klbuicssex_attributes_init(klbuicssex_attributes_t* p_attr, const klbui_default_t* p_default)
+void klbuicssex_attributes_init(klbuicssex_attributes_t* p_dst, const klbuicssex_attributes_t* p_src)
 {
-    p_attr->text.color = p_default->text_color;
-    p_attr->text.align = KLBUICSS_text1_left;
+    p_dst->text = p_src->text;
+    p_dst->font = p_src->font;
 
-    p_attr->font.style = KLBUICSS_font1_normal;
-    p_attr->font.weight = KLBUICSS_font2_normal;
-    p_attr->font.size = p_default->font_size;
+    p_dst->background.image = sdsempty();
+    p_dst->background.color = p_src->background.color;
+    p_dst->background.image = sdscpy(p_dst->background.image, p_src->background.image);
+    p_dst->background.repeat = p_src->background.repeat;
+    p_dst->background.position = p_src->background.position;
+    p_dst->background.attachment = p_src->background.attachment;
 
-    p_attr->background.color = p_default->background_color;
-    p_attr->background.image = sdsempty();
-
-    p_attr->border.width.top = p_default->border_width;
-    p_attr->border.width.right = p_default->border_width;
-    p_attr->border.width.bottom = p_default->border_width;
-    p_attr->border.width.left = p_default->border_width;
-    p_attr->border.color.top = p_default->border_color;
-    p_attr->border.color.right = p_default->border_color;
-    p_attr->border.color.bottom = p_default->border_color;
-    p_attr->border.color.left = p_default->border_color;
+    p_dst->border = p_src->border;
 }
 
 void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr)

@@ -320,9 +320,9 @@ static int klbui_combo_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
 
 void klbui_combo_menu_css_init(const klbui_default_t* p_default, klbui_combo_menu_css_t* p_menu_css)
 {
-    klbuicssex_attributes_init(&p_menu_css->normal, p_default);
-    klbuicssex_attributes_init(&p_menu_css->item_normal, p_default);
-    klbuicssex_attributes_init(&p_menu_css->item_focus, p_default);
+    klbuicssex_attributes_init(&p_menu_css->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_menu_css->item_normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_menu_css->item_focus, &p_default->focus);
 
     p_menu_css->padding.top = 1;
     p_menu_css->padding.right = 1;

@@ -56,6 +56,10 @@ typedef struct klb_canvas_vtable_t_
     /// @return int 0.成功; 非0.失败
     int(*load_image)(klb_canvas_t* p_canvas, const char* p_key, const char* p_path, int* p_w, int* p_h);
 
+    /// @brief 获取图片大小
+    /// @return int 0.成功; 非0.失败
+    int(*image_size)(klb_canvas_t* p_canvas, const char* p_key, int* p_out_w, int* p_out_h);
+
     /// @brief 使用单色清空屏幕
     /// @param [in] color       颜色
     /// @return int 0.成功; 非0.失败
@@ -237,9 +241,11 @@ int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects
 /// @return int 0
 int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len);
 
-/// @brief 以当前字体大小, 绘制utf8文本所需要的宽高
+/// @brief 获取以当前字体大小, 绘制utf8文本所需要的宽高
 int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h);
 
+/// @brief 获取图片尺寸
+int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out_w, int* p_out_h);
 
 /// @brief 绘制图片
 int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path);

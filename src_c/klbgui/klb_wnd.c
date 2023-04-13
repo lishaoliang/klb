@@ -265,6 +265,11 @@ void klb_wnd_calculate_rect_in_canvas(klb_wnd_t* p_wnd)
 
 klb_wnd_t* klb_wnd_pt_in(klb_wnd_t* p_wnd, int x, int y)
 {
+    if (p_wnd->state.status & KLB_WND_STATUS_HIDE)
+    {
+        return NULL; // 窗口处于隐藏, 则不再寻找
+    }
+
     klb_wnd_t* p_next = p_wnd->p_child;
     while (NULL != p_next)
     {
@@ -544,6 +549,14 @@ int klb_wnd_draw_image(klb_wnd_t* p_wnd, const klb_rect_t* p_dst_rect, const cha
 
     return ret;
 }
+
+int klb_wnd_image_size(klb_wnd_t* p_wnd, const char* p_path, int* p_out_w, int* p_out_h)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+
+    return klb_canvas_image_size(p_canvas, p_path, p_out_w, p_out_h);
+}
+
 
 int klb_wnd_draw_clear2(klb_wnd_t* p_wnd, uint32_t color)
 {

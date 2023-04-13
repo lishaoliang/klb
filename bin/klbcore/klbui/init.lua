@@ -6,7 +6,7 @@
 --     参考: https://www.runoob.com/html/html5-form-input-types.html
 --     参考: https://www.w3school.com.cn/jquery/index.asp
 --]]
-
+local kco = require("kco")
 local kgui = require("kgui")
 local parser = require("klbcore.klbui.parser")
 local selector = require("klbcore.klbui.selector")
@@ -212,5 +212,32 @@ klbui.height = function ()
 	return height
 end
 
+
+------------------------------------------------
+-- 协程同步
+
+
+-- @brief 协程同步调用
+-- @param [in] func[function]			在协程中执行的函数
+-- @return [function] 同步流程函数
+-- @note func = function (x1, y1, x2, y2, lparam, wparam)
+--		    print('->', x1, y1, x2, y2, lparam, wparam)
+--		 end
+--  此函数调用过程中, GUI会以阻塞方式运行(即不响应(丢弃)键鼠等消息), 一直到协程函数执行完毕 
+klbui.co_sync = function (func)
+	return function (...)
+		--local timeout = 0
+		--local func = nil
+		
+		-- gui 开始等待
+		
+		kco.fork(function (...)
+			-- 执行函数流程
+			func(...)
+			
+			-- gui 结束等待
+		end, ...)
+	end
+end
 
 return klbui

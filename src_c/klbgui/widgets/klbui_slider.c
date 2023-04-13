@@ -176,9 +176,9 @@ static void klbui_slider_init_attribute(klb_wnd_t* p_wnd, klbui_slider_t* p_slid
 
     p_slider->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_slider->normal, p_default);
-    klbuicssex_attributes_init(&p_slider->focus, p_default);
-    klbuicssex_attributes_init(&p_slider->disable, p_default);
+    klbuicssex_attributes_init(&p_slider->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_slider->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_slider->disable, &p_default->disable);
 }
 
 static void klbui_slider_quit_attribute(klbui_slider_t* p_slider)
@@ -423,7 +423,7 @@ static void on_klbui_slider_title(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, in
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_slider_bind(KEY_, FUNC_) { klb_map_set_ptr(p_slider->p_func_map, (KEY_), (FUNC_), p_slider); }
+#define KLBUI_slider_bind(KEY_, FUNC_) { klb_map_set_ptr(p_slider->p_func_map, (KEY_), (void*)(FUNC_), p_slider); }
 
 static void klbui_slider_init_func_map(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, klb_gui_t* p_gui)
 {

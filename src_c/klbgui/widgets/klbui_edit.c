@@ -152,10 +152,10 @@ static void klbui_edit_init_attribute(klb_wnd_t* p_wnd, klbui_edit_t* p_edit)
 
     p_edit->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_edit->normal, p_default);
-    klbuicssex_attributes_init(&p_edit->focus, p_default);
-    klbuicssex_attributes_init(&p_edit->disable, p_default);
-    klbuicssex_attributes_init(&p_edit->input, p_default);
+    klbuicssex_attributes_init(&p_edit->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_edit->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_edit->disable, &p_default->disable);
+    klbuicssex_attributes_init(&p_edit->input, &p_default->input);
 }
 
 static void klbui_edit_quit_attribute(klbui_edit_t* p_edit)
@@ -401,7 +401,7 @@ static void on_klbui_edit_title(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int meth
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_edit_bind(KEY_, FUNC_) { klb_map_set_ptr(p_edit->p_func_map, (KEY_), (FUNC_), p_edit); }
+#define KLBUI_edit_bind(KEY_, FUNC_) { klb_map_set_ptr(p_edit->p_func_map, (KEY_), (void*)(FUNC_), p_edit); }
 
 static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb_gui_t* p_gui)
 {

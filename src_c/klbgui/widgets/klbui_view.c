@@ -134,7 +134,7 @@ static void klbui_view_init_attribute(klb_wnd_t* p_wnd, klbui_view_t* p_view)
 
     p_view->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_view->normal, p_default);
+    klbuicssex_attributes_init(&p_view->normal, &p_default->normal);
 }
 
 static void klbui_view_quit_attribute(klbui_view_t* p_view)
@@ -268,7 +268,7 @@ static void on_klbui_view_title(klb_wnd_t* p_wnd, klbui_view_t* p_view, int meth
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_view_bind(KEY_, FUNC_) { klb_map_set_ptr(p_view->p_func_map, (KEY_), (FUNC_), p_view); }
+#define KLBUI_view_bind(KEY_, FUNC_) { klb_map_set_ptr(p_view->p_func_map, (KEY_), (void*)(FUNC_), p_view); }
 
 static void klbui_view_init_func_map(klb_wnd_t* p_wnd, klbui_view_t* p_view, klb_gui_t* p_gui)
 {

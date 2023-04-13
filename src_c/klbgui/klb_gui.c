@@ -219,11 +219,22 @@ int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_
 
     return klbuiex_wndhash_register(p_gui->p_wndhash, p_type, cb_create);
 }
+
 int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
 {
     if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_image)
     {
         return p_gui->p_canvas->vtable.load_image(p_gui->p_canvas, p_key, p_img_path, NULL, NULL);
+    }
+
+    return 1;
+}
+
+int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w, int* p_out_h)
+{
+    if (NULL != p_gui->p_canvas)
+    {
+        return klb_canvas_image_size(p_gui->p_canvas, p_key, p_out_w, p_out_h);
     }
 
     return 1;
@@ -293,6 +304,7 @@ int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
             p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
+        klb_wnd_set_calculate(p_wnd, true);
         p_gui->redraw = true;
 
         return 0;
@@ -386,6 +398,7 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
             p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
+        klb_wnd_set_calculate(p_wnd, true);
         p_gui->redraw = true;
 
         return 0;
@@ -513,6 +526,7 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
             p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
+        klb_wnd_set_calculate(p_wnd, true);
         p_gui->redraw = true;
         return 0;
     }

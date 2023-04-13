@@ -176,9 +176,9 @@ static void klbui_messagebox_init_attribute(klb_wnd_t* p_wnd, klbui_messagebox_t
 
     p_msg_box->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_msg_box->normal, p_default);
-    klbuicssex_attributes_init(&p_msg_box->focus, p_default);
-    klbuicssex_attributes_init(&p_msg_box->disable, p_default);
+    klbuicssex_attributes_init(&p_msg_box->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_msg_box->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_msg_box->disable, &p_default->disable);
 }
 
 static void klbui_messagebox_quit_attribute(klbui_messagebox_t* p_msg_box)
@@ -423,7 +423,7 @@ static void on_klbui_messagebox_title(klb_wnd_t* p_wnd, klbui_messagebox_t* p_ms
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_messagebox_bind(KEY_, FUNC_) { klb_map_set_ptr(p_msg_box->p_func_map, (KEY_), (FUNC_), p_msg_box); }
+#define KLBUI_messagebox_bind(KEY_, FUNC_) { klb_map_set_ptr(p_msg_box->p_func_map, (KEY_), (void*)(FUNC_), p_msg_box); }
 
 static void klbui_messagebox_init_func_map(klb_wnd_t* p_wnd, klbui_messagebox_t* p_msg_box, klb_gui_t* p_gui)
 {

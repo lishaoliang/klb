@@ -176,9 +176,9 @@ static void klbui_menu_init_attribute(klb_wnd_t* p_wnd, klbui_menu_t* p_menu)
 
     p_menu->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_menu->normal, p_default);
-    klbuicssex_attributes_init(&p_menu->focus, p_default);
-    klbuicssex_attributes_init(&p_menu->disable, p_default);
+    klbuicssex_attributes_init(&p_menu->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_menu->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_menu->disable, &p_default->disable);
 }
 
 static void klbui_menu_quit_attribute(klbui_menu_t* p_menu)
@@ -423,7 +423,7 @@ static void on_klbui_menu_title(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int meth
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_menu_bind(KEY_, FUNC_) { klb_map_set_ptr(p_menu->p_func_map, (KEY_), (FUNC_), p_menu); }
+#define KLBUI_menu_bind(KEY_, FUNC_) { klb_map_set_ptr(p_menu->p_func_map, (KEY_), (void*)(FUNC_), p_menu); }
 
 static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb_gui_t* p_gui)
 {

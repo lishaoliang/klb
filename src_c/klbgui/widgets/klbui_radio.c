@@ -175,9 +175,9 @@ static void klbui_radio_init_attribute(klb_wnd_t* p_wnd, klbui_radio_t* p_radio)
 
     p_radio->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_radio->normal, p_default);
-    klbuicssex_attributes_init(&p_radio->focus, p_default);
-    klbuicssex_attributes_init(&p_radio->disable, p_default);
+    klbuicssex_attributes_init(&p_radio->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_radio->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_radio->disable, &p_default->disable);
 }
 
 static void klbui_radio_quit_attribute(klbui_radio_t* p_radio)
@@ -445,7 +445,7 @@ static void on_klbui_radio_value(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, int m
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_radio_bind(KEY_, FUNC_) { klb_map_set_ptr(p_radio->p_func_map, (KEY_), (FUNC_), p_radio); }
+#define KLBUI_radio_bind(KEY_, FUNC_) { klb_map_set_ptr(p_radio->p_func_map, (KEY_), (void*)(FUNC_), p_radio); }
 
 static void klbui_radio_init_func_map(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, klb_gui_t* p_gui)
 {

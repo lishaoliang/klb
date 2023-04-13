@@ -182,9 +182,9 @@ static void klbui_progress_init_attribute(klb_wnd_t* p_wnd, klbui_progress_t* p_
 
     p_progress->title = sdsempty();
 
-    klbuicssex_attributes_init(&p_progress->normal, p_default);
-    klbuicssex_attributes_init(&p_progress->focus, p_default);
-    klbuicssex_attributes_init(&p_progress->disable, p_default);
+    klbuicssex_attributes_init(&p_progress->normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_progress->focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_progress->disable, &p_default->disable);
 }
 
 static void klbui_progress_quit_attribute(klbui_progress_t* p_progress)
@@ -478,7 +478,7 @@ static void on_klbui_progress_value(klb_wnd_t* p_wnd, klbui_progress_t* p_progre
 
 //////////////////////////////////////////////////////////////////////////
 
-#define KLBUI_progress_bind(KEY_, FUNC_) { klb_map_set_ptr(p_progress->p_func_map, (KEY_), (FUNC_), p_progress); }
+#define KLBUI_progress_bind(KEY_, FUNC_) { klb_map_set_ptr(p_progress->p_func_map, (KEY_), (void*)(FUNC_), p_progress); }
 
 static void klbui_progress_init_func_map(klb_wnd_t* p_wnd, klbui_progress_t* p_progress, klb_gui_t* p_gui)
 {

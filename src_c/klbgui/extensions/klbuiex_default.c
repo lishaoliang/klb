@@ -24,14 +24,14 @@ typedef void(*klbuiex_default_cb)(klbuiex_default_t* p_default, int method, cons
 
 static void klbuiex_default_init_normal(klbuicssex_attributes_t* p_normal)
 {
-    p_normal->text.color = KLB_ARGB8888(255, 255, 128, 0);
+    p_normal->text.color = KLB_ARGB8888(255, 220, 220, 220);
     p_normal->text.align = KLBUICSS_text1_left;
 
     p_normal->font.style = KLBUICSS_font1_normal;
     p_normal->font.weight = KLBUICSS_font2_normal;
     p_normal->font.size = 24;
 
-    p_normal->background.color = KLB_ARGB8888(255, 30, 30, 30);
+    p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
     p_normal->background.image = sdsempty();
 
     p_normal->border.width.top = 1;
@@ -46,36 +46,36 @@ static void klbuiex_default_init_normal(klbuicssex_attributes_t* p_normal)
 
 static void klbuiex_default_init_focus(klbuicssex_attributes_t* p_normal)
 {
-    p_normal->text.color = KLB_ARGB8888(255, 255, 128, 0);
+    p_normal->text.color = KLB_ARGB8888(255, 220, 220, 10);
     p_normal->text.align = KLBUICSS_text1_left;
 
     p_normal->font.style = KLBUICSS_font1_normal;
     p_normal->font.weight = KLBUICSS_font2_normal;
     p_normal->font.size = 24;
 
-    p_normal->background.color = KLB_ARGB8888(255, 30, 30, 30);
+    p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
     p_normal->background.image = sdsempty();
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
     p_normal->border.width.bottom = 1;
     p_normal->border.width.left = 1;
-    p_normal->border.color.top = KLB_ARGB8888(255, 80, 80, 80);
-    p_normal->border.color.right = KLB_ARGB8888(255, 80, 80, 80);
-    p_normal->border.color.bottom = KLB_ARGB8888(255, 80, 80, 80);
-    p_normal->border.color.left = KLB_ARGB8888(255, 80, 80, 80);
+    p_normal->border.color.top = KLB_ARGB8888(255, 220, 80, 80);
+    p_normal->border.color.right = KLB_ARGB8888(255, 220, 80, 80);
+    p_normal->border.color.bottom = KLB_ARGB8888(255, 220, 80, 80);
+    p_normal->border.color.left = KLB_ARGB8888(255, 220, 80, 80);
 }
 
 static void klbuiex_default_init_disable(klbuicssex_attributes_t* p_normal)
 {
-    p_normal->text.color = KLB_ARGB8888(255, 255, 128, 0);
+    p_normal->text.color = KLB_ARGB8888(255, 180, 180, 180);
     p_normal->text.align = KLBUICSS_text1_left;
 
     p_normal->font.style = KLBUICSS_font1_normal;
     p_normal->font.weight = KLBUICSS_font2_normal;
     p_normal->font.size = 24;
 
-    p_normal->background.color = KLB_ARGB8888(255, 30, 30, 30);
+    p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
     p_normal->background.image = sdsempty();
 
     p_normal->border.width.top = 1;
@@ -90,36 +90,36 @@ static void klbuiex_default_init_disable(klbuicssex_attributes_t* p_normal)
 
 static void klbuiex_default_init_check(klbuicssex_attributes_t* p_normal)
 {
-    p_normal->text.color = KLB_ARGB8888(255, 255, 128, 0);
+    p_normal->text.color = KLB_ARGB8888(255, 10, 210, 210);
     p_normal->text.align = KLBUICSS_text1_left;
 
     p_normal->font.style = KLBUICSS_font1_normal;
     p_normal->font.weight = KLBUICSS_font2_normal;
     p_normal->font.size = 24;
 
-    p_normal->background.color = KLB_ARGB8888(255, 30, 30, 30);
+    p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
     p_normal->background.image = sdsempty();
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
     p_normal->border.width.bottom = 1;
     p_normal->border.width.left = 1;
-    p_normal->border.color.top = KLB_ARGB8888(255, 80, 80, 80);
-    p_normal->border.color.right = KLB_ARGB8888(255, 80, 80, 80);
-    p_normal->border.color.bottom = KLB_ARGB8888(255, 80, 80, 80);
-    p_normal->border.color.left = KLB_ARGB8888(255, 80, 80, 80);
+    p_normal->border.color.top = KLB_ARGB8888(255, 180, 80, 180);
+    p_normal->border.color.right = KLB_ARGB8888(255, 180, 80, 180);
+    p_normal->border.color.bottom = KLB_ARGB8888(255, 180, 80, 180);
+    p_normal->border.color.left = KLB_ARGB8888(255, 180, 80, 180);
 }
 
 static void klbuiex_default_init_input(klbuicssex_attributes_t* p_normal)
 {
-    p_normal->text.color = KLB_ARGB8888(255, 255, 128, 0);
+    p_normal->text.color = KLB_ARGB8888(255, 180, 180, 180);
     p_normal->text.align = KLBUICSS_text1_left;
 
     p_normal->font.style = KLBUICSS_font1_normal;
     p_normal->font.weight = KLBUICSS_font2_normal;
     p_normal->font.size = 24;
 
-    p_normal->background.color = KLB_ARGB8888(255, 30, 30, 30);
+    p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
     p_normal->background.image = sdsempty();
 
     p_normal->border.width.top = 1;
@@ -134,25 +134,17 @@ static void klbuiex_default_init_input(klbuicssex_attributes_t* p_normal)
 
 static void klbuiex_default_init(klbuiex_default_t* p_default)
 {
-    // ---------------------------------------------------
-    // 文本 text
-    p_default->def.text_color = KLB_ARGB8888(255, 255, 128, 0);
+    // margin
+    p_default->def.margin.top = 0;
+    p_default->def.margin.right = 0;
+    p_default->def.margin.bottom = 0;
+    p_default->def.margin.right = 0;
 
-
-    // ---------------------------------------------------
-    // 字体 font
-    p_default->def.font_size = 24;
-
-
-    // ---------------------------------------------------
-    // 背景 background
-    p_default->def.background_color = KLB_ARGB8888(255, 30, 30, 30);
-
-
-    // ---------------------------------------------------
-    // 边框 border
-    p_default->def.border_width = 1;
-    p_default->def.border_color = KLB_ARGB8888(255, 80, 80, 80);
+    // padding
+    p_default->def.padding.top = 1;
+    p_default->def.padding.right = 1;
+    p_default->def.padding.bottom = 1;
+    p_default->def.padding.right = 1;
 
     // init
     klbuiex_default_init_normal(&p_default->def.normal);
