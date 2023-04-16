@@ -30,6 +30,50 @@ void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr)
 //////////////////////////////////////////////////////////////////////////
 // 公共 单属性操作
 
+void klbuicssex_attribute_bool(bool* p_bool, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    assert(NULL != p_bool);
+
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, *p_bool);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        bool update = false;
+        int start = 1;
+        int type = klb_map_array_type(p_in, start);
+        switch (type)
+        {
+        case KLB_ADT_int64:
+            {
+                *p_bool = (0 == klb_map_idx_to_int64(p_in, start)) ? false : true;
+                update = true;
+            }
+            break;
+        case KLB_ADT_uint64:
+            {
+                *p_bool = (0 == klb_map_idx_to_uint64(p_in, start)) ? false : true;
+                update = true;
+            }
+            break;
+        case KLB_ADT_bool:
+            {
+                *p_bool = klb_map_idx_to_bool(p_in, start);
+                update = true;
+            }
+            break;
+        default:
+            break;
+        }
+
+        if (NULL != p_wnd && update)
+        {
+            klb_wnd_update(p_wnd);
+        }
+    }
+}
+
 void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     assert(NULL != p_sds);

@@ -51,6 +51,7 @@ KLB_API void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr);
 //////////////////////////////////////////////////////////////////////////
 // 公共 单属性操作
 
+KLB_API void klbuicssex_attribute_bool(bool* p_bool, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_int(int* p_int, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_color(uint32_t* p_color, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
