@@ -14,9 +14,29 @@ local E = {}
 
 local function SetAttribute(path, s, t)
 	local attrs = ('table' == type(t[s]) and t[s]) or E
+
+	-- 位置参数
+	local pos = ('table' == type(attrs['pos']) and attrs['pos']) or {}
+	local x = pos[1]
+	local y = pos[2]
+	local w = pos[3]
+	local h = pos[4]
 	
+	-- 移动窗口至(x, y)
+	if 'number' == type(x) and 'number' == type(y) then
+		kgui.move(path, x, y)
+	end
+	
+	-- 重设窗口大小(w, h)
+	if 'number' == type(w) and 'number' == type(h) then
+		kgui.resize(path, w, h)
+	end
+	
+	-- 非位置参数
 	for k, v in pairs(attrs) do
-		kgui.set(path, k, v)
+		if 'pos' ~= k then
+			kgui.set(path, k, v)
+		end
 	end	
 end
 
@@ -94,6 +114,15 @@ function csser.css_style(wnd, path)
 	for k, v in pairs(style) do
 		kgui.set(path, k, v)
 	end		
+end
+
+
+-- 默认css
+function csser.css_default(wnd, path, css_def)
+	-- css style
+	for k, v in pairs(css_def) do
+		kgui.set(path, k, v)
+	end	
 end
 
 

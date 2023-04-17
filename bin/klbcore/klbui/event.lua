@@ -54,6 +54,11 @@ event.onload = 0x601		-- onload
 event.onunload = 0x602		-- onunload
 
 
+-- @def   KLBUI_onchange
+-- @brief 内容变更事件
+event.onchange = 0x604		-- onchange
+
+
 -- @brief 转换表
 local transform_map = {
 	['click'] = event.click,			-- 左键单击事件
@@ -82,6 +87,9 @@ local transform_map = {
 	
 	['onunload'] = event.onunload,		-- 卸载事件
 	[event.onunload] = 'onunload',		-- 卸载事件
+	
+	['onchange'] = event.onchange,		-- 内容变更事件
+	[event.onchange] = 'onchange',		-- 内容变更事件
 }
 
 

@@ -156,10 +156,25 @@ static int cb_klbui_combo_value_title(klb_wnd_t* p_wnd, sds value, sds title)
 {
     klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
 
-    // 用户已经点击了某个选项
+    bool change = false;
+    if (0 != sdscmp(p_combo->value, value))
+    {
+        change = true;
+    }
 
+    // 用户已经点击了某个选项
     p_combo->value = sdscpy(p_combo->value, value);
     p_combo->title = sdscpy(p_combo->title, title);
+
+    if (change)
+    {
+        // 内容变更事件 KLBUI_onchange
+        if (NULL != p_wnd->vtable.on_command)
+        {
+            klb_point_t pt = { 0 };
+            p_wnd->vtable.on_command(p_wnd, KLBUI_onchange, &pt, &pt, 0, 0);
+        }
+    }
 
     klb_wnd_update(p_wnd);
 

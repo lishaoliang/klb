@@ -182,28 +182,44 @@ local function ParseWnd(wnd, commonds, css, root_path, first)
 	end
 end
 
-
-local function CopyCommonds(src)
-	local t = {}
-	
-	if 'table' ~= type(src) then
-		return t
-	end
-	
-	for k, v in pairs(src) do
-		t[k] = v
-	end
-	
-	return t
-end
-
-
 function parser.parse(dialog, commonds, css)
 	local param_cmds = commonds or {}
 	local param_css = css or {}
 	local root_path = dialog['path'] or table.concat({'/', krand.rand_string(CONST_rand_max)}) -- 根路径
 	
 	ParseWnd(dialog, param_cmds, param_css, root_path, true)
+end
+
+
+local function UpdateWndCss(wnd, default_css, css)
+	-- 参考
+	-- https://www.w3school.com.cn/html/html5_intro.asp
+	local path = wnd['path']
+	
+	-- 生效全局默认CSS
+	csser.css_default(wnd, path, default_css)
+	
+	-- 生效 自定义CSS
+	csser.css(wnd, path, css)
+
+	-- 子窗口: 第1种表达方式
+	for _, v in ipairs(wnd) do
+		UpdateWndCss(v, default_css, css)
+	end
+	
+	-- 子窗口: 第2种表达方式
+	local child = wnd['child'] or {}
+	for _, v in ipairs(child) do
+		UpdateWndCss(v, default_css, css)
+	end
+end
+
+
+function parser.update_css(dialog, default_css, css)
+	local param_default_css = default_css or {}
+	local param_css = css or {}
+	
+	UpdateWndCss(dialog, param_default_css, param_css)
 end
 
 

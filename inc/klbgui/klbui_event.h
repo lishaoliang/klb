@@ -105,6 +105,9 @@ extern "C" {
 #define KLBUI_onresize          0x603           // onresize
 
 
+/// @def   KLBUI_onchange
+/// @brief 内容变更事件: 当窗口组件内容变更时触发
+#define KLBUI_onchange          0x604           // onchange
 
 /// @def   KLBUI_focusin
 /// @brief 即将获得焦点事件: 窗口组件即将获得焦点时触发

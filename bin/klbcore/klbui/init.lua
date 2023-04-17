@@ -52,6 +52,16 @@ klbui.parse = function (dialog, commonds, css)
 end
 
 
+-- @brief 更新对话框CSS
+-- @param [in]      dialog[table]			对话框描述table
+-- @param [in]      default_css[nil,table]	[可选]全局默认CSS
+-- @param [in]      css[nil,table]			[可选]CSS描述table
+-- @return 无
+klbui.update_css = function (dialog, default_css, css)
+	return parser.update_css(dialog, default_css, css)
+end
+
+
 -- @brief 选择器
 -- @param [in]      dialog[table]		对话框描述table: 和 klbui.parse的参数1 一致
 -- @param [in]      multi[nil,boolean]	[可选]true.多选; false.单选; 默认false
