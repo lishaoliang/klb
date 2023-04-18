@@ -16,12 +16,14 @@ typedef struct klbui_check_t_
     bool                    check;          ///< 是否选中
 
     // normal
-    klbuicss_margin_t       margin;         ///< 外边框
-    klbuicss_padding_t      padding;        ///< 内边框
+    klbuicss_margin_t       margin;         ///< 外边距
+    klbuicss_padding_t      padding;        ///< 内边距
 
-    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+    klbuicssex_attributes_t on;             ///< 选中状态后, 常规参数
+    klbuicssex_attributes_t on_focus;       ///< 选中状态后, 聚焦参数
+
+    klbuicssex_attributes_t off;            ///< 未选中, 常规参数
+    klbuicssex_attributes_t off_focus;      ///< 未选中, 聚焦参数
 
     klb_map_t*              p_func_map;     ///< 属性函数表
 }klbui_check_t;
@@ -46,29 +48,20 @@ static void klbui_check_on_paint_status(klb_wnd_t* p_wnd, klbui_check_t* p_check
 {
     if (0 < sdslen(p_attr->background.image))
     {
+        // 图片背景
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
     }
     else
     {
+        // 纯色背景
         klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
 
-        klb_rect_t paint_rect = *p_rect;
-
-        // border
-        klb_rect_t border_top = { paint_rect.x, paint_rect.y, paint_rect.w, p_attr->border.width.top };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_top, p_attr->border.color.top);
-
-        klb_rect_t border_right = { paint_rect.x + paint_rect.w - p_attr->border.width.right, paint_rect.y, p_attr->border.width.right, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_right, p_attr->border.color.right);
-
-        klb_rect_t border_bottom = { paint_rect.x, paint_rect.y + paint_rect.h - p_attr->border.width.bottom, paint_rect.w, p_attr->border.width.bottom };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_bottom, p_attr->border.color.bottom);
-
-        klb_rect_t border_left = { paint_rect.x, paint_rect.y, p_attr->border.width.left, paint_rect.h };
-        klb_wnd_draw_fill_rect2(p_wnd, &border_left, p_attr->border.color.left);
+        // 边框
+        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
 
         if (p_check->check)
         {
+            klb_rect_t paint_rect = *p_rect;
             klb_rect_t check_rect = { paint_rect.x + paint_rect.w / 4, 
                                     paint_rect.y + paint_rect.h / 4,
                                     paint_rect.w / 2, 
@@ -98,17 +91,27 @@ static int klbui_check_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_check->margin.left + p_check->margin.right);
     paint_rect.h -= (p_check->margin.top + p_check->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (p_check->check)
     {
-        klbui_check_on_paint_status(p_wnd, p_check, &p_check->disable, &paint_rect);
-    }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbui_check_on_paint_status(p_wnd, p_check, &p_check->focus, &paint_rect);
+        if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+        {
+            klbui_check_on_paint_status(p_wnd, p_check, &p_check->on_focus, &paint_rect);   // 选中 - 聚焦
+        }
+        else
+        {
+            klbui_check_on_paint_status(p_wnd, p_check, &p_check->on, &paint_rect);         // 选中 - 常规
+        }
     }
     else
     {
-        klbui_check_on_paint_status(p_wnd, p_check, &p_check->normal, &paint_rect);
+        if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+        {
+            klbui_check_on_paint_status(p_wnd, p_check, &p_check->off_focus, &paint_rect);  // 未选中 - 常规
+        }
+        else
+        {
+            klbui_check_on_paint_status(p_wnd, p_check, &p_check->off, &paint_rect);        // 未选中 - 常规
+        }
     }
 
     return 0;
@@ -127,6 +130,14 @@ static int klbui_check_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
     case KLBUI_dblclick:
         {
             p_check->check = !p_check->check;
+
+            // 内容变更事件 KLBUI_onchange
+            if (NULL != p_wnd->vtable.on_command)
+            {
+                klb_point_t pt = { 0 };
+                p_wnd->vtable.on_command(p_wnd, KLBUI_onchange, p_pt1, p_pt2, lparam, wparam);
+            }
+
             klb_wnd_update(p_wnd);
         }
         break;
@@ -176,16 +187,18 @@ static void klbui_check_init_attribute(klb_wnd_t* p_wnd, klbui_check_t* p_check)
 
     p_check->check = false;
 
-    klbuicssex_attributes_init(&p_check->normal, &p_default->normal);
-    klbuicssex_attributes_init(&p_check->focus, &p_default->focus);
-    klbuicssex_attributes_init(&p_check->disable, &p_default->disable);
+    klbuicssex_attributes_init(&p_check->on, &p_default->normal);
+    klbuicssex_attributes_init(&p_check->on_focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_check->off, &p_default->normal);
+    klbuicssex_attributes_init(&p_check->off_focus, &p_default->focus);
 }
 
 static void klbui_check_quit_attribute(klbui_check_t* p_check)
 {
-    klbuicssex_attributes_quit(&p_check->normal);
-    klbuicssex_attributes_quit(&p_check->focus);
-    klbuicssex_attributes_quit(&p_check->disable);
+    klbuicssex_attributes_quit(&p_check->on);
+    klbuicssex_attributes_quit(&p_check->on_focus);
+    klbuicssex_attributes_quit(&p_check->off);
+    klbuicssex_attributes_quit(&p_check->off_focus);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -248,167 +261,102 @@ static void on_klbui_check_padding_left(klb_wnd_t* p_wnd, klbui_check_t* p_check
 
 static void on_klbui_check_text_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_check->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_check->off.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_text_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_check->focus.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_check->off_focus.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_text_color_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_text_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_check->disable.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_check->on.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_text_align(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_text_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_check->normal.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_text_align_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_align(&(p_check->focus.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_text_align_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_align(&(p_check->disable.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_style(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_style(&(p_check->normal.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_style_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_style(&(p_check->focus.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_style_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_style(&(p_check->disable.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_weight(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_weight(&(p_check->normal.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_weight_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_weight(&(p_check->focus.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_weight_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_weight(&(p_check->disable.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_size(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_size(&(p_check->normal.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_size_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_size(&(p_check->focus.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_font_size_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_size(&(p_check->disable.font), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_check->on_focus.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_background_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_check->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_check->off.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_background_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_check->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_check->off_focus.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_background_color_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_background_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_check->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_check->on.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_check_on_background_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_background_color(&(p_check->on_focus.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_background_image(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_check->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_check->off.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_background_image_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_check->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_check->off_focus.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_background_image_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_background_image(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_check->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_check->on.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_border_style(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_background_image_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_style(&(p_check->normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_border_style_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_style(&(p_check->focus.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_border_style_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_style(&(p_check->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_check->on_focus.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_border_width(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_check->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_check->off.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_border_width_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_check->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_check->off_focus.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_border_width_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_border_width(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_check->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_check->on.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_check_on_border_width_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_border_width(&(p_check->on_focus.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_border_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_check->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_check->off.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_border_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_check->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_check->off_focus.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_border_color_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_border_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_check->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_check->on.border), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_check_border_radius(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_check_on_border_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_radius(&(p_check->normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_border_radius_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_radius(&(p_check->focus.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_check_border_radius_disable(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_radius(&(p_check->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_check->on_focus.border), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////
@@ -481,62 +429,38 @@ static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, 
     // 文本颜色 color
     KLBUI_check_bind("color", on_klbui_check_text_color);
     KLBUI_check_bind("color:focus", on_klbui_check_text_color_focus);
-    KLBUI_check_bind("color:disable", on_klbui_check_text_color_disable);
-
-    // 文本对齐 text-align
-    KLBUI_check_bind("text-align", on_klbui_check_text_align);
-    KLBUI_check_bind("text-align:focus", on_klbui_check_text_align_focus);
-    KLBUI_check_bind("text-align:disable", on_klbui_check_text_align_disable);
-
-    // 斜体 font-style
-    KLBUI_check_bind("font-style", on_klbui_check_font_style);
-    KLBUI_check_bind("font-style:focus", on_klbui_check_font_style_focus);
-    KLBUI_check_bind("font-style:disable", on_klbui_check_font_style_disable);
-
-    // 字体粗细 font-weight
-    KLBUI_check_bind("font-weight", on_klbui_check_font_weight);
-    KLBUI_check_bind("font-weight:focus", on_klbui_check_font_weight_focus);
-    KLBUI_check_bind("font-weight:disable", on_klbui_check_font_weight_disable);
-
-    // 字体大小 font-size
-    KLBUI_check_bind("font-size", on_klbui_check_font_size);
-    KLBUI_check_bind("font-size:focus", on_klbui_check_font_size_focus);
-    KLBUI_check_bind("font-size:disable", on_klbui_check_font_size_disable);
+    KLBUI_check_bind("check.color", on_klbui_check_on_text_color);
+    KLBUI_check_bind("check.color:focus", on_klbui_check_on_text_color_focus);
 
     // 背景色 background-color
     KLBUI_check_bind("background-color", on_klbui_check_background_color);
     KLBUI_check_bind("background-color:focus", on_klbui_check_background_color_focus);
-    KLBUI_check_bind("background-color:disable", on_klbui_check_background_color_disable);
+    KLBUI_check_bind("check.background-color", on_klbui_check_on_background_color);
+    KLBUI_check_bind("check.background-color:focus", on_klbui_check_on_background_color_focus);
 
     // 背景图片 background-image
     KLBUI_check_bind("background-image", on_klbui_check_background_image);
     KLBUI_check_bind("background-image:focus", on_klbui_check_background_image_focus);
-    KLBUI_check_bind("background-image:disable", on_klbui_check_background_image_disable);
-
-    // 边框类型 border-style
-    KLBUI_check_bind("border-style", on_klbui_check_border_style);
-    KLBUI_check_bind("border-style:focus", on_klbui_check_border_style_focus);
-    KLBUI_check_bind("border-style:disable", on_klbui_check_border_style_disable);
+    KLBUI_check_bind("check.background-image", on_klbui_check_on_background_image);
+    KLBUI_check_bind("check.background-image:focus", on_klbui_check_on_background_image_focus);
 
     // 边框的宽度 border-width
     KLBUI_check_bind("border-width", on_klbui_check_border_width);
     KLBUI_check_bind("border-width:focus", on_klbui_check_border_width_focus);
-    KLBUI_check_bind("border-width:disable", on_klbui_check_border_width_disable);
+    KLBUI_check_bind("check.border-width", on_klbui_check_on_border_width);
+    KLBUI_check_bind("check.border-width:focus", on_klbui_check_on_border_width_focus);
 
     // 边框的颜色 border-color
     KLBUI_check_bind("border-color", on_klbui_check_border_color);
     KLBUI_check_bind("border-color:focus", on_klbui_check_border_color_focus);
-    KLBUI_check_bind("border-color:disable", on_klbui_check_border_color_disable);
-
-    // 圆角边框 border-radius
-    KLBUI_check_bind("border-radius", on_klbui_check_border_radius);
-    KLBUI_check_bind("border-radius:focus", on_klbui_check_border_radius_focus);
-    KLBUI_check_bind("border-radius:disable", on_klbui_check_border_radius_disable);
+    KLBUI_check_bind("check.border-color", on_klbui_check_on_border_color);
+    KLBUI_check_bind("check.border-color:focus", on_klbui_check_on_border_color_focus);
 
     //////////////////////////////////////////////
     // 自定义方法
 
     KLBUI_check_bind("value", on_klbui_check_value);
+    KLBUI_check_bind("check", on_klbui_check_value);
 }
 
 klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h)
@@ -556,6 +480,9 @@ klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     p_wnd->vtable.on_get = klbui_check_on_get;
 
     p_wnd->p_gui = p_gui;
+
+    // 样式
+    p_wnd->state.style = 0x0;
 
     // 初始化默认值
     klbui_check_init_attribute(p_wnd, p_check);

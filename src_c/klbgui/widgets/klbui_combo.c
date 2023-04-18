@@ -586,6 +586,16 @@ static void on_klbui_combo_menu_item_text_align_focus(klb_wnd_t* p_wnd, klbui_co
     klbuicssex_text_align(&(p_combo->menu_css.item_focus.text), p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_combo_menu_item_background_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_background_color(&(p_combo->menu_css.item_normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_combo_menu_item_background_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_background_color(&(p_combo->menu_css.item_focus.background), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_combo_menu_item_border_width(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_border_width(&(p_combo->menu_css.item_normal.border), p_wnd, method, p_in, p_out);
@@ -790,6 +800,10 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     // 菜单 - 弹出项 - 文本对齐 text-align
     KLBUI_combo_bind("menu_item.text-align", on_klbui_combo_menu_item_text_align);
     KLBUI_combo_bind("menu_item.text-align:focus", on_klbui_combo_menu_item_text_align_focus);
+
+    // 菜单 - 弹出项 - 背景色 background-color
+    KLBUI_combo_bind("menu_item.background-color", on_klbui_combo_menu_item_background_color);
+    KLBUI_combo_bind("menu_item.background-color:focus", on_klbui_combo_menu_item_background_color_focus);
 
     // 菜单 - 弹出项 - 边框的宽度 border-width
     KLBUI_combo_bind("menu_item.border-width", on_klbui_combo_menu_item_border_width);
