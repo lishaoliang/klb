@@ -12,13 +12,13 @@
 /// @brief  滑动条CSS属性
 typedef struct klbui_slider_attributes_t_
 {
-    klbuicss_text_t             text;               ///< 文本/前景属性
-    klbuicss_background_t       background;         ///< 背景属性
+    uint32_t                    background_color;   ///< 整个背景色
+    uint32_t                    foreground_color;   ///< 滑块颜色
+
+    klbuicss_text_t             text;               ///< 左侧值占据的颜色
 
     uint32_t                    pos_color;          ///< 中间指示颜色(非图片时)
     sds                         pos_image;          ///< 中间指示位置图片
-    int                         pos_w;
-    int                         pos_h;
 }klbui_slider_attributes_t;
 
 
@@ -29,6 +29,10 @@ typedef struct klbui_slider_t_
     int                 min;            ///< 最小值
     int                 max;            ///< 最大值
     int                 value;          ///< 当前值
+
+    int                 foreground_h;   ///< 滑块高度
+    int                 pos_w;          ///< 中间指示宽度
+    int                 pos_h;          ///< 中间指示高度
 
     // normal
     klbuicss_margin_t   margin;         ///< 外边距
@@ -74,31 +78,52 @@ static void klbui_slider_destroy(klb_wnd_t* p_wnd)
 
 static void klbui_slider_on_paint_status(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, klbui_slider_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    // 背景
-    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+    // 全部背景
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background_color);
 
     // 滑动条 横杆
-    int mid_h = 6;
-    klb_rect_t r_mid = {p_rect->x, p_rect->y + (p_rect->h - mid_h) / 2, p_rect->w, mid_h };
-    klb_wnd_draw_fill_rect2(p_wnd, &r_mid, KLB_ARGB8888(255, 120, 120, 120));
+    int foreground_h = p_slider->foreground_h;
+    klb_rect_t r_mid = {p_rect->x, p_rect->y + (p_rect->h - foreground_h) / 2, p_rect->w, foreground_h };
+    klb_wnd_draw_fill_rect2(p_wnd, &r_mid, p_attr->foreground_color);
 
     // 左侧值占距
-    int left_w = p_rect->w * (p_slider->value - p_slider->min) / (p_slider->max - p_slider->min);
-    left_w = klbui_slider_fix(left_w, 0, p_rect->w);
+    int left_w = 0;
+    if (p_slider->min == p_slider->value)
+    {
+        left_w = 0;
+    }
+    else if(p_slider->max == p_slider->value)
+    {
+        left_w = p_rect->w;
+    }
+    else
+    {
+        left_w = p_rect->w * (p_slider->value - p_slider->min + 1) / (p_slider->max - p_slider->min + 1);
+        left_w = klbui_slider_fix(left_w, 0, p_rect->w);
+    }
 
     if (0 < left_w)
     {
-        klb_rect_t r_left = { p_rect->x, p_rect->y + (p_rect->h - mid_h) / 2, left_w, mid_h };
-        klb_wnd_draw_fill_rect2(p_wnd, &r_left, KLB_ARGB8888(255, 120, 120, 220));
+        klb_rect_t r_left = { p_rect->x, p_rect->y + (p_rect->h - foreground_h) / 2, left_w, foreground_h };
+        klb_wnd_draw_fill_rect2(p_wnd, &r_left, p_attr->text.color);
     }
 
-    // 中间
-    int pos_w = 6;
-    int pos_h = 12;
-    klb_rect_t r_pos = { p_rect->x + left_w - pos_w / 2, p_rect->y + (p_rect->h - pos_h) / 2, pos_w, pos_h };
+    // 指示区域
+    int pos_w = p_slider->pos_w;
+    int pos_h = p_slider->pos_h;
+    int pos_off_x = left_w - pos_w / 2;
+    pos_off_x = klbui_slider_fix(pos_off_x, 0, p_rect->w - pos_w);
+    
+    klb_rect_t r_pos = { p_rect->x + pos_off_x, p_rect->y + (p_rect->h - pos_h) / 2, pos_w, pos_h };
 
-    klb_wnd_draw_fill_rect2(p_wnd, &r_pos, KLB_ARGB8888(255, 220, 120, 220));
-
+    if (0 < sdslen(p_attr->pos_image))
+    {
+        klb_wnd_draw_image(p_wnd, &r_pos, p_attr->pos_image, NULL);
+    }
+    else
+    {
+        klb_wnd_draw_fill_rect2(p_wnd, &r_pos, p_attr->pos_color);
+    }
 }
 
 static int klbui_slider_on_paint(klb_wnd_t* p_wnd)
@@ -158,7 +183,7 @@ static int klbui_slider_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
             paint_rect.w -= (p_slider->margin.left + p_slider->margin.right);
             paint_rect.h -= (p_slider->margin.top + p_slider->margin.bottom);
 
-            int value = (p_slider->max - p_slider->min) * (p_pt1->x - paint_rect.x) / (paint_rect.w);
+            int value = p_slider->min + (p_slider->max - p_slider->min + 1) * (p_pt1->x - paint_rect.x + 1) / (paint_rect.w);
             value = klbui_slider_fix(value, p_slider->min, p_slider->max);
 
             bool change = (value == p_slider->value) ? false : true;
@@ -219,20 +244,17 @@ static klb_map_t* klbui_slider_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 
 static void klbui_slider_attributes_init(klbui_slider_attributes_t* p_dst, const klbuicssex_attributes_t* p_src)
 {
-    p_dst->background.image = sdsempty();
-    p_dst->pos_image = sdsempty();
-
     p_dst->text = p_src->text;
-    p_dst->background.color = p_src->background.color;
-    p_dst->background.image = sdscpy(p_dst->background.image, p_src->background.image);
-    p_dst->background.repeat = p_src->background.repeat;
-    p_dst->background.position = p_src->background.position;
-    p_dst->background.attachment = p_src->background.attachment;
+
+    p_dst->background_color = p_src->background.color;
+    p_dst->foreground_color = KLB_ARGB8888(255, 61, 61, 61);
+
+    p_dst->pos_image = sdsempty();
+    p_dst->pos_color = KLB_ARGB8888(255, 128, 128, 220);
 }
 
 static void klbui_slider_attributes_quit(klbui_slider_attributes_t* p_attr)
 {
-    KLB_FREE_BY(p_attr->background.image, sdsfree);
     KLB_FREE_BY(p_attr->pos_image, sdsfree);
 }
 
@@ -247,6 +269,10 @@ static void klbui_slider_init_attribute(klb_wnd_t* p_wnd, klbui_slider_t* p_slid
     p_slider->min = 0;
     p_slider->max = 100;
     p_slider->value = 50;
+
+    p_slider->foreground_h = 6;
+    p_slider->pos_w = 6;
+    p_slider->pos_h = 16;
 }
 
 static void klbui_slider_quit_attribute(klbui_slider_t* p_slider)
@@ -314,52 +340,95 @@ static void on_klbui_slider_padding_left(klb_wnd_t* p_wnd, klbui_slider_t* p_sli
     klbuicssex_padding_left(&p_slider->padding, p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_text_color(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_slider_color(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_text_color(&(p_slider->normal.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_text_color_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_slider_color_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_text_color(&(p_slider->focus.text), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_text_color_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_slider_color_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_text_color(&(p_slider->disable.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_slider_background_color(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_slider->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_color(&(p_slider->normal.background_color), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_slider_background_color_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_slider->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_color(&(p_slider->focus.background_color), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_slider_background_color_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_slider->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_color(&(p_slider->disable.background_color), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_background_image(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_slider_foreground_color(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_slider->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_color(&(p_slider->normal.foreground_color), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_background_image_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_slider_foreground_color_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_slider->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_color(&(p_slider->focus.foreground_color), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_background_image_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_slider_foreground_color_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_slider->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_color(&(p_slider->disable.foreground_color), p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_slider_foreground_height(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_slider->foreground_h), p_wnd, method, p_in, p_out);
+}
 
+static void on_klbui_slider_pos_color(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_color(&(p_slider->normal.pos_color), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_color_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_color(&(p_slider->focus.pos_color), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_color_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_color(&(p_slider->disable.pos_color), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_image(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_image(&(p_slider->normal.pos_image), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_image_focus(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_image(&(p_slider->focus.pos_image), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_image_disable(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_image(&(p_slider->disable.pos_image), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_width(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_slider->pos_w), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_pos_height(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_slider->pos_h), p_wnd, method, p_in, p_out);
+}
 
 //////////////////////////////////////
 // 自定义属性
@@ -367,6 +436,16 @@ static void on_klbui_slider_background_image_disable(klb_wnd_t* p_wnd, klbui_sli
 static void on_klbui_slider_value(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_slider->value), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_min(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_slider->min), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_slider_max(klb_wnd_t* p_wnd, klbui_slider_t* p_slider, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_slider->max), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -408,25 +487,46 @@ static void klbui_slider_init_func_map(klb_wnd_t* p_wnd, klbui_slider_t* p_slide
     KLBUI_slider_bind("padding-bottom", on_klbui_slider_padding_bottom);
     KLBUI_slider_bind("padding-left", on_klbui_slider_padding_left);
 
-    // 文本颜色 color
-    KLBUI_slider_bind("color", on_klbui_slider_text_color);
-    KLBUI_slider_bind("color:focus", on_klbui_slider_text_color_focus);
-    KLBUI_slider_bind("color:disable", on_klbui_slider_text_color_disable);
+    // 滑块区域左侧区域颜色 color
+    KLBUI_slider_bind("color", on_klbui_slider_color);
+    KLBUI_slider_bind("color:focus", on_klbui_slider_color_focus);
+    KLBUI_slider_bind("color:disable", on_klbui_slider_color_disable);
 
-    // 背景色 background-color
+    // 背景色: background-color
     KLBUI_slider_bind("background-color", on_klbui_slider_background_color);
     KLBUI_slider_bind("background-color:focus", on_klbui_slider_background_color_focus);
     KLBUI_slider_bind("background-color:disable", on_klbui_slider_background_color_disable);
 
-    // 背景图片 background-image
-    KLBUI_slider_bind("background-image", on_klbui_slider_background_image);
-    KLBUI_slider_bind("background-image:focus", on_klbui_slider_background_image_focus);
-    KLBUI_slider_bind("background-image:disable", on_klbui_slider_background_image_disable);
+    // 滑块区域前景色: foreground-color
+    KLBUI_slider_bind("foreground-color", on_klbui_slider_foreground_color);
+    KLBUI_slider_bind("foreground-color:focus", on_klbui_slider_foreground_color_focus);
+    KLBUI_slider_bind("foreground-color:disable", on_klbui_slider_foreground_color_disable);
+
+    // 滑块区域前景高度: foreground-height
+    KLBUI_slider_bind("foreground-height", on_klbui_slider_foreground_height);
+
+    // 子区域: 中间指示 - color
+    KLBUI_slider_bind("pos.color", on_klbui_slider_pos_color);
+    KLBUI_slider_bind("pos.color:focus", on_klbui_slider_pos_color_focus);
+    KLBUI_slider_bind("pos.color:disable", on_klbui_slider_pos_color_disable);
+
+    // 子区域: 中间指示 - 图片
+    KLBUI_slider_bind("pos.image", on_klbui_slider_pos_image);
+    KLBUI_slider_bind("pos.image:focus", on_klbui_slider_pos_image_focus);
+    KLBUI_slider_bind("pos.image:disable", on_klbui_slider_pos_image_disable);
+
+    // 子区域: 中间指示 - 宽度
+    KLBUI_slider_bind("pos.width", on_klbui_slider_pos_width);
+
+    // 子区域: 中间指示 - 高度
+    KLBUI_slider_bind("pos.height", on_klbui_slider_pos_height);
 
     //////////////////////////////////////////////
     // 自定义方法
 
     KLBUI_slider_bind("value", on_klbui_slider_value);
+    KLBUI_slider_bind("min", on_klbui_slider_min);
+    KLBUI_slider_bind("max", on_klbui_slider_max);
 }
 
 klb_wnd_t* klbui_slider_create(klb_gui_t* p_gui, int x, int y, int w, int h)

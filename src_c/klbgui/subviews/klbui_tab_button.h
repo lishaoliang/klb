@@ -29,8 +29,8 @@ typedef struct klbui_tab_botton_t_
     sds                     title;          ///< 标题
 
     // normal
-    klbuicss_margin_t       margin;         ///< 外边框
-    klbuicss_padding_t      padding;        ///< 内边框
+    klbuicss_margin_t       margin;         ///< 外边距
+    klbuicss_padding_t      padding;        ///< 内边距
 
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数

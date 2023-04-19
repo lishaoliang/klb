@@ -10,7 +10,7 @@ extern "C" {
 #endif
 
 
-int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd);
+//int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd);
 
 
 klb_wnd_t* klb_wnd_get_top(klb_wnd_t* p_wnd);

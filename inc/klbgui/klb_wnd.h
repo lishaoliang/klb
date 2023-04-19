@@ -246,10 +246,22 @@ KLB_API void klb_wnd_update(klb_wnd_t* p_wnd);
 KLB_API int klb_wnd_bind_command(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* p_obj);
 
 
+//////////////////////////////////////////////////////////////////////////
+// 窗口关系 
+
+KLB_API int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 设置 / 获取
+
 /// @brief 参数设置 / 获取
 KLB_API int klb_wnd_set(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 KLB_API klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 
+
+//////////////////////////////////////////////////////////////////////////
+// 绘图
 
 /// @brief 绘图接口
 KLB_API int klb_wnd_set_draw_color(klb_wnd_t* p_wnd, uint32_t color);
