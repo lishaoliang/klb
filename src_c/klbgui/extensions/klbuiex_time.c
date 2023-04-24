@@ -1,4 +1,5 @@
-﻿#include "klbgui/extensions/klbuiex_time.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbgui/extensions/klbuiex_time.h"
 #include "klbmem/klb_mem.h"
 
 
@@ -43,6 +44,11 @@ static int klbuiex_time_loop_once(void* ptr, klb_gui_t* p_gui, int64_t now)
 
 //////////////////////////////////////////////////////////////////////////
 
+klbuiex_time_t* klbuiex_get_time(klb_gui_t* p_gui)
+{
+    return (klbuiex_time_t*)klb_gui_get_extension(p_gui, KLBUIEX_TIME);
+}
+
 int klbuiex_register_time(klb_gui_t* p_gui)
 {
     klb_gui_extension_t ex = { 0 };
@@ -56,7 +62,3 @@ int klbuiex_register_time(klb_gui_t* p_gui)
     return 0;
 }
 
-klbuiex_time_t* klbuiex_get_time(klb_gui_t* p_gui)
-{
-    return (klbuiex_time_t*)klb_gui_get_extension(p_gui, KLBUIEX_TIME);
-}

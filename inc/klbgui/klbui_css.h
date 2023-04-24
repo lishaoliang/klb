@@ -7,6 +7,8 @@
 ///   命名规则,含义,用法等尽可能参考 CSS3
 /// @version 0.1
 /// @history 修改历史
+///   \n [2023-4] 使用宏来区分是否支持高级CSS3: __KLB_GUI_CSS3__
+///               默认情况下, 使用基础CSS
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLBUI_CSS_H__
@@ -117,6 +119,7 @@ typedef struct klbuicss_text_t_
 #define KLBUICSS_text1_center 1 ///< ["text-align"] = "center" 中心对齐
 #define KLBUICSS_text1_right  2 ///< ["text-align"] = "right" 右对齐
 
+#if defined(__KLB_GUI_CSS3__)
     int         transform;      ///< ["text-transform"] 文本转换
 
     int         indent;         ///< ["text-indent"] 属性用于指定文本第一行的缩进
@@ -124,6 +127,7 @@ typedef struct klbuicss_text_t_
     int         line_height;    ///< ["line-height"] 属性用于指定行之间的间距
     int         word_spacing;   ///< ["word-spacing"] 属性用于指定文本中单词之间的间距
     int         white_space;    ///< ["white-space"] 属性指定元素内部空白的处理方式
+#endif
 }klbuicss_text_t;
 
 

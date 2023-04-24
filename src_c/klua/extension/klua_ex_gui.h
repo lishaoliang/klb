@@ -33,6 +33,8 @@ klb_gui_t* klua_ex_gui_get(klua_ex_gui_t* p_ex);
 
 int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int idx);
 
+int klua_ex_gui_clear(klua_ex_gui_t* p_ex);
+
 
 #ifdef __cplusplus
 }

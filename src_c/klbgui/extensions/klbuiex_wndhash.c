@@ -39,6 +39,13 @@ int klbuiex_wndhash_register(klbuiex_wndhash_t* p_wndhash, const char* p_type, k
     return 0;
 }
 
+klb_wnd_create_cb klbuiex_wndhash_get_creater(klbuiex_wndhash_t* p_wndhash, const char* p_type)
+{
+    int len = strlen(p_type);
+
+    return (klb_wnd_create_cb)klb_hlist_find(p_wndhash->p_create_map, p_type, len);
+}
+
 static void klbuiex_wndhash_split_path_name(const char* p_path_name, char** p_dir, int* p_dir_len)
 {
     const char* p = p_path_name ? strrchr(p_path_name, '/') : NULL;

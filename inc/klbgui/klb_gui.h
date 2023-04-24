@@ -23,8 +23,11 @@
 #include "klbgui/klb_msg.h"
 #include "klbgui/klbui_event.h"
 #include "klbgui/klbui_default.h"
+#include "klbgui/klbui_extension.h"
 #include "klbgui/klbui_css.h"
+#include "klbgui/klbui_css_ex.h"
 #include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_shwnd.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -44,44 +47,6 @@ KLB_API klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas);
 /// @param [in] *p_gui          GUI对象
 /// @return 无
 KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
-
-
-/// @struct klb_gui_extension_t
-/// @brief  gui扩展
-typedef struct klb_gui_extension_t_
-{
-    /// @brief 创建扩展
-    /// @param [in] *p_gui          gui对象
-    /// @return void* 扩展的指针
-    void* (*cb_create)(klb_gui_t* p_gui);
-
-    /// @brief 销毁扩展
-    /// @param [in] *ptr            扩展的指针
-    /// @return 无
-    void(*cb_destroy)(void* ptr, klb_gui_t* p_gui);
-
-    /// @brief 常规调用一次
-    /// @param [in] *ptr            扩展的指针
-    /// @param [in] *p_gui          gui对象
-    /// @param [in] now             当前滴答数
-    /// @return int 0
-    int(*cb_loop_once)(void* ptr, klb_gui_t* p_gui, int64_t now);
-}klb_gui_extension_t;
-
-
-/// @brief 注册gui扩展
-/// @param [in] *p_gui              gui对象
-/// @param [in] *p_name             名称
-/// @param [in] *p_extension        扩展的接口函数
-/// @return int 0
-KLB_API int klb_gui_register_extension(klb_gui_t* p_gui, const char* p_name, const klb_gui_extension_t* p_extension);
-
-
-/// @brief 获取gui扩展
-/// @param [in] *p_gui              gui对象
-/// @param [in] *p_name             名称
-/// @return void* 扩展的指针
-KLB_API void* klb_gui_get_extension(klb_gui_t* p_gui, const char* p_name);
 
 
 /// @brief 附加到 klua_env_t*
@@ -134,11 +99,20 @@ typedef klb_wnd_t* (*klb_wnd_create_cb)(klb_gui_t* p_gui, int x, int y, int w, i
 KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_create);
 
 
+/// @brief 获取注册的窗口类型的 创建函数
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         窗口类型名
+/// @return klb_wnd_create_cb 创建函数; 或 NULL
+KLB_API klb_wnd_create_cb klb_gui_get_creater(klb_gui_t* p_gui, const char* p_type);
+
+
 /// @brief 加载图片资源
 KLB_API int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path);
 
+
 /// @brief 获取图片资源大小
 KLB_API int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w, int* p_out_h);
+
 
 /// @brief 添加窗口
 /// @param [in] *p_gui          GUI对象
@@ -159,6 +133,20 @@ KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_p
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name);
+
+
+/// @brief 清理所有窗口
+/// @param [in] *p_gui          GUI对象
+/// @return int 0.成功; 非0.失败(错误码)
+/// @note 当修改分辨率等需要将所有UI清理掉时
+///     清理内容:
+///       1. klb_gui_append 添加的所有窗口
+///       2. klb_gui_load_image 加载的所有图片资源
+///       3. klb_gui_push_shwnd 添加的所有共享窗口
+///     不清理内容
+///       a. klb_gui_register 注册的控件类型
+///       b. klb_gui_register_extension 注册的扩展
+KLB_API int klb_gui_clear(klb_gui_t* p_gui);
 
 
 /// @brief 模态显示窗口

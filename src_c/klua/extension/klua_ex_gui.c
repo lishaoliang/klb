@@ -177,6 +177,13 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
     return ret;
 }
 
+int klua_ex_gui_clear(klua_ex_gui_t* p_ex)
+{
+    int ret = klb_gui_clear(p_ex->p_gui);
+
+    return ret;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 

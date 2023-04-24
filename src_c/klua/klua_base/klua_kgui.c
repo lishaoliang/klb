@@ -424,6 +424,16 @@ static int klua_kgui_remove(lua_State* L)
     return 0;
 }
 
+static int klua_kgui_clear(lua_State* L)
+{
+    klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
+
+    int ret = klua_ex_gui_clear(p_ex);
+
+    lua_pushinteger(L, ret);                                ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
 static int klua_kgui_bind_command(lua_State* L)
 {
     klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
@@ -608,6 +618,7 @@ int klua_open_kgui(lua_State* L)
 
         { "append",             klua_kgui_append },
         { "remove",             klua_kgui_remove },
+        { "clear",              klua_kgui_clear },
         { "bind_command",       klua_kgui_bind_command },
 
         { "set",                klua_kgui_set },

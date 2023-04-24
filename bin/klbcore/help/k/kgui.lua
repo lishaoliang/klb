@@ -54,6 +54,20 @@ kgui.remove = function (path)
 end
 
 
+-- @brief 清理所有窗口
+-- @return int 0.成功; 非0.失败(错误码)
+-- @note 当修改分辨率等需要将所有UI清理掉时
+--     清理内容:
+--       1. klb_gui_append 添加的所有窗口
+--       2. klb_gui_load_image 加载的所有图片资源
+--       3. klb_gui_push_shwnd 添加的所有共享窗口
+--     不清理内容
+--       a. klb_gui_register 注册的控件类型
+--       b. klb_gui_register_extension 注册的扩展
+kgui.clear = function ()
+	return 0
+end
+
 -- @brief 绑定消息(事件)处理函数
 -- @param [in] path[string]			窗口路径名: eg. "/home/btn1"
 -- @param [in] func[function]		lua函数

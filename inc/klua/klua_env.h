@@ -14,6 +14,7 @@
 #include "klb_type.h"
 #include "klbthird/sds.h"
 #include "klbmem/klb_buf.h"
+#include "klua/klua_env_extension.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -138,60 +139,6 @@ typedef struct klua_msg_t_
 
 
 KLB_API void klua_msg_free(klua_msg_t* p_msg);
-
-
-/// @struct klua_env_extension_t
-/// @brief  lua环境扩展
-typedef struct klua_env_extension_t_
-{
-    /// @brief 创建扩展
-    /// @param [in] *p_env          lua环境
-    /// @return void* 扩展的指针
-    void* (*cb_create)(klua_env_t* p_env);
-
-    /// @brief 销毁扩展
-    /// @param [in] *ptr            扩展的指针
-    /// @return 无
-    void  (*cb_destroy)(void* ptr);
-
-    /// @brief 对扩展直接控制设置
-    /// @param [in] *ptr            扩展的指针
-    /// @param [in] *p_env          lua环境
-    /// @param [in] *p_param        控制参数
-    /// @return klua_msg_t* 返回信息
-    /// @note eg. 设置扩展的参数, 获取扩展的参数等.
-    klua_msg_t* (*cb_ctrl)(void* ptr, klua_env_t* p_env, klua_msg_t* p_msg);
-
-    /// @brief 消息处理
-    /// @param [in] *ptr            扩展的指针
-    /// @param [in] *p_env          lua环境
-    /// @param [in] now             当前滴答数
-    /// @return int 0
-    int  (*cb_msg)(void* ptr, klua_env_t* p_env, int64_t now, klua_msg_t* p_msg);
-
-    /// @brief 常规调用一次
-    /// @param [in] *ptr            扩展的指针
-    /// @param [in] *p_env          lua环境
-    /// @param [in] last_tc         上一次的滴答数
-    /// @param [in] now             当前滴答数
-    /// @return int 0
-    int  (*cb_loop_once)(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now);
-}klua_env_extension_t;
-
-
-/// @brief 注册lua环境扩展
-/// @param [in] *p_env              lua环境
-/// @param [in] *p_name             名称
-/// @param [in] *p_extension        扩展的接口函数
-/// @return int 0
-KLB_API int klua_env_register_extension(klua_env_t* p_env, const char* p_name, const klua_env_extension_t* p_extension);
-
-
-/// @brief 获取lua环境扩展
-/// @param [in] *p_env              lua环境
-/// @param [in] *p_name             名称
-/// @return void* 扩展的指针
-KLB_API void* klua_env_get_extension(klua_env_t* p_env, const char* p_name);
 
 
 /// @brief 调用一次lua环境; 需要定期调用

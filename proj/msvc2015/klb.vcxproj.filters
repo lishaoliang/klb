@@ -1346,6 +1346,18 @@
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_combo_menu.h">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_shwnd.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_extension.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_env_extension.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2241,6 +2253,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_combo_menu.c">
       <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c">
+      <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -60,6 +60,10 @@ typedef struct klb_canvas_vtable_t_
     /// @return int 0.成功; 非0.失败
     int(*image_size)(klb_canvas_t* p_canvas, const char* p_key, int* p_out_w, int* p_out_h);
 
+    /// @brief 清空所有图片资源
+    /// @return int 0.成功; 非0.失败
+    int(*clear_image)(klb_canvas_t* p_canvas);
+
     /// @brief 使用单色清空屏幕
     /// @param [in] color       颜色
     /// @return int 0.成功; 非0.失败

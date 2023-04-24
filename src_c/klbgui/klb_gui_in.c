@@ -1,8 +1,13 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/klb_gui.h"
 #include "klbgui/klb_gui_in.h"
+#include "klbgui/extensions/klbuiex_shwnd.h"
 #include <assert.h>
 
+
+
+//////////////////////////////////////////////////////////////////////////
+// klbui_css.h
 
 bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color)
 {
@@ -77,4 +82,17 @@ klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type)
 {
     klb_map_set_map(&p_gui->css_map, p_type, NULL); // 重设置一个 map
     return klb_map_to_map(&p_gui->css_map, p_type);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// klbui_shwnd.h
+
+int klb_gui_push_shwnd(klb_gui_t* p_gui, const char* p_path, klb_wnd_t* p_top_wnd)
+{
+    return klbuiex_shwnd_push(klbuiex_get_shwnd(p_gui), p_path, p_top_wnd);
+}
+
+klb_wnd_t* klb_gui_get_shwnd(klb_gui_t* p_gui, const char* p_path)
+{
+    return klbuiex_shwnd_get(klbuiex_get_shwnd(p_gui), p_path);
 }

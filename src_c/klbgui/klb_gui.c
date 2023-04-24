@@ -220,6 +220,14 @@ int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_
     return klbuiex_wndhash_register(p_gui->p_wndhash, p_type, cb_create);
 }
 
+klb_wnd_create_cb klb_gui_get_creater(klb_gui_t* p_gui, const char* p_type)
+{
+    assert(NULL != p_gui);
+    assert(NULL != p_type);
+
+    return klbuiex_wndhash_get_creater(p_gui, p_type);
+}
+
 int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
 {
     if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_image)
@@ -248,6 +256,11 @@ int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name
 int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)
 {
     return klbuiex_wndhash_remove(p_gui->p_wndhash, p_path_name);
+}
+
+int klb_gui_clear(klb_gui_t* p_gui)
+{
+    return 0;
 }
 
 static void klb_gui_load_wnd(klb_wnd_t* p_wnd)

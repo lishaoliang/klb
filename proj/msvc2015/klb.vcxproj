@@ -177,6 +177,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klbui_css_ex.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_default.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_event.h" />
+    <ClInclude Include="..\..\inc\klbgui\klbui_extension.h" />
+    <ClInclude Include="..\..\inc\klbgui\klbui_shwnd.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
@@ -344,6 +346,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klua\klua.h" />
     <ClInclude Include="..\..\inc\klua\klua_coroutine.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
+    <ClInclude Include="..\..\inc\klua\klua_env_extension.h" />
     <ClInclude Include="..\..\inc\klua\klua_gui.h" />
     <ClInclude Include="..\..\inc\klua\klua_multiplex.h" />
     <ClInclude Include="..\..\inc\klua\klua_object.h" />
@@ -379,6 +382,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\cpu.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h" />
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
@@ -577,6 +581,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbformat\klb_flv.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />

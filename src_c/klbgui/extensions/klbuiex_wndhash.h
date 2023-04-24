@@ -33,6 +33,13 @@ klbuiex_wndhash_t* klbuiex_get_wndhash(klb_gui_t* p_gui);
 ///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
 int klbuiex_wndhash_register(klbuiex_wndhash_t* p_wndhash, const char* p_type, klb_wnd_create_cb cb_create);
 
+/// @brief 获取注册的窗口类型的 创建函数
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         窗口类型名
+/// @return klb_wnd_create_cb 创建函数; 或 NULL
+klb_wnd_create_cb klbuiex_wndhash_get_creater(klbuiex_wndhash_t* p_wndhash, const char* p_type);
+
+
 /// @brief 添加窗口
 int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
 
