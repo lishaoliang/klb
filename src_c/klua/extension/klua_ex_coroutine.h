@@ -18,6 +18,15 @@ extern "C" {
 typedef struct klua_ex_coroutine_t_ klua_ex_coroutine_t;
 
 
+/// @brief 当出现需要中断协程时的回调函数
+/// @param [in] *ptr        附加对象
+/// @param [in] *p_ex       协程扩展
+/// @param [in] *p_co       Lua协程
+/// @param [in] opt         消息: klua_env_extension_opt_e
+/// @return int 0.成功
+typedef int(*klua_ex_coroutine_yield_cb)(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt);
+
+
 typedef struct klua_coroutine_env_t_
 {
     lua_State*  p_main;     ///< 主程
@@ -25,6 +34,10 @@ typedef struct klua_coroutine_env_t_
 
     int         param_num;  ///< 附加参数数目
     int         co_reg;     ///< 协程 ref函数
+
+    // 一个协程, 只可能有一处，处于 yield
+    klua_ex_coroutine_yield_cb  cb_wakeup;  ///< 唤醒 yield 的回调函数 
+    void*                       ptr;        ///< 附加指针
 }klua_coroutine_env_t;
 
 
@@ -51,6 +64,13 @@ int klua_ex_coroutine_wakeup_timeout(klua_ex_coroutine_t* p_ex, lua_State* p_co,
 
 
 lua_State* klua_ex_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co);
+
+
+// Bug. 直接使用 lua_yield, 当退出时, 若未满足唤醒条件, 则没有时机去唤醒, 协程一直被阻塞
+// 使用 klua_ex_coroutine_yield 替代, 当退出时, 触发强制唤醒协程时机
+// 因唤醒协程, 可能有上下文需要处理, 故使用回调函数, 交由调用者处理相关情况
+// 对于一个协程而言, 同一时间内, 只可能有一个位置处于 yield 
+int klua_ex_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klua_ex_coroutine_yield_cb cb, void* ptr);
 
 
 #ifdef __cplusplus

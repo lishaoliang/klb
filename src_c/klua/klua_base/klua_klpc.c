@@ -17,12 +17,13 @@ typedef struct klua_klpc_module_t_
 {
     klua_env_t*             p_env;          ///< lua环境
     lua_State*              L;              ///< L
-    klua_ex_lpc_t*          p_lpc;
+    klua_ex_lpc_t*          p_lpc;          ///< lpc
+    klua_ex_coroutine_t*    p_ex_coroutine; ///< ex co
 
     sds                     name;           ///< 模块名称
 
     lua_State*              co_recv;        ///< "co_recv"函数对应的协程
-    klb_nlist_t*             p_msg_list;     ///< 收到的消息列表: 当未通过携程收消息时暂存于此
+    klb_nlist_t*            p_msg_list;     ///< 收到的消息列表: 当未通过携程收消息时暂存于此
 
     bool                    run;            ///< 是否正常运行
     int                     err_co_recv;    ///< 错误"co_recv"计数
@@ -150,6 +151,15 @@ static int klua_klpc_module_status(lua_State* L)
     return 1;
 }
 
+static int on_yield_klua_klpc_module_co_recv(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_klpc_module_t* p_mo = (klua_klpc_module_t*)ptr;
+
+    call_lua_reg_on_recv_klua_klpc_module(p_mo, NULL);
+
+    return 0;
+}
+
 static int klua_klpc_module_co_recv(lua_State* L)
 {
     klua_check_coroutine(L, "klpc.new_module():co_recv() must in coroutine!");
@@ -185,7 +195,8 @@ static int klua_klpc_module_co_recv(lua_State* L)
         assert(NULL == p_mo->co_recv);
         p_mo->co_recv = L;
 
-        return lua_yield(L, lua_gettop(L));
+        return klua_ex_coroutine_yield(p_mo->p_ex_coroutine, L, on_yield_klua_klpc_module_co_recv, p_mo);
+        //return lua_yield(L, lua_gettop(L));
     }
 }
 
@@ -315,6 +326,7 @@ static int lib_klua_klpc_new_module(lua_State* L)
     p_mo->p_env = klua_env_get_by_L(L);
     p_mo->L = L;
     p_mo->p_lpc = klua_ex_get_lpc(p_mo->p_env);
+    p_mo->p_ex_coroutine = klua_ex_get_coroutine(p_mo->p_env);
     p_mo->name = sdsnew(p_name);
 
     p_mo->p_msg_list = klb_nlist_create();
@@ -335,7 +347,8 @@ typedef struct klua_klpc_t_
 {
     klua_env_t*             p_env;          ///< lua环境
     lua_State*              L;              ///< L
-    klua_ex_lpc_t*          p_lpc;
+    klua_ex_lpc_t*          p_lpc;          ///< lpc
+    klua_ex_coroutine_t*    p_ex_coroutine; ///< ex co
 
     sds                     name;
 
@@ -359,10 +372,15 @@ static int call_lua_reg_co_recv_klua_klpc(klua_klpc_t* p_klpc, klua_msg_t* p_msg
 
         p_klpc->co_recv = NULL; // 清空
 
-        const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
-        int data_len = p_msg->p_data->end - p_msg->p_data->start;
+        int num = 0;
+        if (NULL != p_msg)
+        {
+            const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
+            int data_len = p_msg->p_data->end - p_msg->p_data->start;
 
-        int num = luaseri_map_binary_unpack(L, 1, p_data, data_len);
+            num = luaseri_map_binary_unpack(L, 1, p_data, data_len);
+        }
+
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
@@ -383,10 +401,15 @@ static int call_lua_reg_co_recv_notify_klua_klpc(klua_klpc_t* p_klpc, klua_msg_t
 
         p_klpc->co_recv_notify = NULL; // 清空
 
-        const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
-        int data_len = p_msg->p_data->end - p_msg->p_data->start;
+        int num = 0;     
+        if (NULL != p_msg)
+        {
+            const char* p_data = p_msg->p_data->p_buf + p_msg->p_data->start;
+            int data_len = p_msg->p_data->end - p_msg->p_data->start;
 
-        int num = luaseri_map_binary_unpack(L, 1, p_data, data_len);
+            num = luaseri_map_binary_unpack(L, 1, p_data, data_len);
+        }
+
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
@@ -484,6 +507,15 @@ static int klua_klpc_post(lua_State* L)
     return 1;
 }
 
+static int on_yield_klua_klpc_co_call(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_klpc_t* p_klpc = (klua_klpc_t*)ptr;
+
+    call_lua_reg_co_recv_klua_klpc(p_klpc, NULL);
+
+    return 0;
+}
+
 static int klua_klpc_co_call(lua_State* L)
 {
     klua_check_coroutine(L, "klpc.new():co_call() must in coroutine!");
@@ -504,7 +536,8 @@ static int klua_klpc_co_call(lua_State* L)
         assert(NULL == p_klpc->co_recv);
         p_klpc->co_recv = L;
 
-        return lua_yield(L, lua_gettop(L));
+        return klua_ex_coroutine_yield(p_klpc->p_ex_coroutine, L, on_yield_klua_klpc_co_call, p_klpc);
+        //return lua_yield(L, lua_gettop(L));
     }
     else
     {
@@ -512,6 +545,15 @@ static int klua_klpc_co_call(lua_State* L)
         klua_msg_free(ptr);
         return 0;
     }
+}
+
+static int on_yield_klua_klpc_co_recv_notify(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_klpc_t* p_klpc = (klua_klpc_t*)ptr;
+
+    call_lua_reg_co_recv_notify_klua_klpc(p_klpc, NULL);
+
+    return 0;
 }
 
 static int klua_klpc_co_recv_notify(lua_State* L)
@@ -567,6 +609,7 @@ static int lib_klua_klpc_new(lua_State* L)
     p_klpc->p_env = klua_env_get_by_L(L);
     p_klpc->L = L;
     p_klpc->p_lpc = klua_ex_get_lpc(p_klpc->p_env);
+    p_klpc->p_ex_coroutine = klua_ex_get_coroutine(p_klpc->p_env);
 
     p_klpc->name = klua_ex_lpc_new_lpc(p_klpc->p_lpc, cb_msg_klua_klpc, p_klpc);
 

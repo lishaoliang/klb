@@ -9,6 +9,16 @@
 #include <assert.h>
 
 
+typedef struct klua_ex_gui_t_ klua_ex_gui_t;
+
+
+typedef struct klua_kgui_bind_t_
+{
+    klua_ex_gui_t*  p_ex;
+    int             on_command;         ///< 绑定的 lua函数
+}klua_kgui_bind_t;
+
+
 typedef struct klua_ex_gui_t_
 {
     klua_env_t*     p_env;              ///< Lua环境
@@ -19,13 +29,23 @@ typedef struct klua_ex_gui_t_
     klb_hlist_t*    p_bind_hlist;       ///< klua_kgui_bind_t*
 }klua_ex_gui_t;
 
+//////////////////////////////////////////////////////////////////////////
 
-typedef struct klua_kgui_bind_t_
+static void klua_ex_gui_clear_bind(klua_ex_gui_t* p_ex)
 {
-    klua_ex_gui_t*  p_ex;
-    int             on_command;         ///< 绑定的 lua函数
-}klua_kgui_bind_t;
+    // 清空
+    while (0 < klb_hlist_size(p_ex->p_bind_hlist))
+    {
+        klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)klb_hlist_pop_head(p_ex->p_bind_hlist);
+        if (0 < p_bind->on_command)
+        {
+            luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_bind->on_command);
+            p_bind->on_command = 0;
+        }
 
+        KLB_FREE(p_bind);
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -51,17 +71,7 @@ static void klua_ex_gui_destroy(void* ptr)
     klua_env_t* p_env = p_ex->p_env;
 
     // 清空
-    while (0 < klb_hlist_size(p_ex->p_bind_hlist))
-    {
-        klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)klb_hlist_pop_head(p_ex->p_bind_hlist);
-        if (0 < p_bind->on_command)
-        {
-            luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_bind->on_command);
-            p_bind->on_command = 0;
-        }
-
-        KLB_FREE(p_bind);
-    }
+    klua_ex_gui_clear_bind(p_ex);
 
     KLB_FREE_BY(p_ex->p_bind_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_ex->p_gui, klb_gui_destroy);
@@ -180,6 +190,7 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
 int klua_ex_gui_clear(klua_ex_gui_t* p_ex)
 {
     int ret = klb_gui_clear(p_ex->p_gui);
+    klua_ex_gui_clear_bind(p_ex);
 
     return ret;
 }

@@ -73,6 +73,56 @@ static void klua_ex_coroutine_destroy(void* ptr)
     KLB_FREE(p_ex);
 }
 
+static int on_exit_klua_ex_coroutine(klua_ex_coroutine_t* p_ex, klua_env_t* p_env)
+{
+    // 当被通知, 需要退出时, 中断所有当前处于柱塞下的协程    
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_ex->p_co_hlist);
+    while (NULL != p_iter)
+    {
+        // Bug. 退出唤醒后, 协程可能在 cb 函数调用后, 被释放掉;
+        // 这里先取下一个协程
+        klb_hlist_iter_t* p_cur = p_iter;
+        p_iter = klb_hlist_next(p_cur);
+
+        klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_data(p_cur);
+
+        if (p_co_env && p_co_env->cb_wakeup)
+        {
+            klua_ex_coroutine_yield_cb cb = p_co_env->cb_wakeup;
+            void* ptr = p_co_env->ptr;
+
+            cb(ptr, p_ex, p_co_env->p_co, KLUA_ENV_EX_exit);
+        }
+    }
+
+    return 0;
+}
+
+
+/// @brief 对扩展直接控制设置
+/// @param [in] *ptr            扩展的指针
+/// @param [in] *p_env          Lua环境
+/// @param [in] opt             控制消息
+/// @param [in] *p_param_in_out 控制参数
+/// @param [in] param_size      参数大小
+/// @return int 0
+static int klua_ex_coroutine_ctrl(void* ptr, klua_env_t* p_env, int opt, uint8_t* p_param_in_out, int param_size)
+{
+    klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)ptr;
+
+    switch (opt)
+    {
+    case KLUA_ENV_EX_exit:
+        on_exit_klua_ex_coroutine(p_ex, p_env);
+        break;
+    default:
+        break;
+    }
+
+
+    return 0;
+}
+
 static int klua_ex_coroutine_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now)
 {
     klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)ptr;
@@ -179,10 +229,31 @@ lua_State* klua_ex_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co)
     if (NULL != p_co_env)
     {
         lua_rawgeti(p_co_env->p_main, LUA_REGISTRYINDEX, p_co_env->co_reg); /* to call 'co_reg' in protected mode */
+
+        // 清除中断回调地址函数
+        p_co_env->cb_wakeup = NULL;
+        p_co_env->ptr = NULL;
+
         return p_co_env->p_main;
     }
 
     return NULL;
+}
+
+int klua_ex_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klua_ex_coroutine_yield_cb cb, void* ptr)
+{
+    klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+
+    if (NULL != p_co_env)
+    {
+        assert(p_co_env->p_co == p_co);
+
+        // 记录中断回调地址函数
+        p_co_env->cb_wakeup = cb;
+        p_co_env->ptr = ptr;
+    }
+
+    return lua_yield(p_co, lua_gettop(p_co));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -193,6 +264,7 @@ int klua_ex_register_coroutine(klua_env_t* p_env)
 
     ex.cb_create = klua_ex_coroutine_create;
     ex.cb_destroy = klua_ex_coroutine_destroy;
+    ex.cb_ctrl = klua_ex_coroutine_ctrl;
     ex.cb_loop_once = klua_ex_coroutine_loop_once;
 
     klua_env_register_extension(p_env, KLUA_EX_COROUTINE_NAME, &ex);

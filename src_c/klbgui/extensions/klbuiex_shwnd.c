@@ -17,17 +17,7 @@ typedef struct klbuiex_shwnd_t_
 
 
 //////////////////////////////////////////////////////////////////////////
-// create / destroy
-
-static void* klbuiex_shwnd_create(klb_gui_t* p_gui)
-{
-    klbuiex_shwnd_t* p_shwnd = KLB_MALLOCZ(klbuiex_shwnd_t, 1, 0);
-
-    p_shwnd->p_gui = p_gui;
-    p_shwnd->p_hlist = klb_hlist_create(0);
-
-    return p_shwnd;
-}
+// on
 
 static int cb_clear_top_wnd_klbuiex_shwnd(void* p_obj, void* p_data)
 {
@@ -41,15 +31,51 @@ static int cb_clear_top_wnd_klbuiex_shwnd(void* p_obj, void* p_data)
     return 0;
 }
 
+static void on_klbuiex_shwnd_clear(klbuiex_shwnd_t* p_shwnd)
+{
+    klb_hlist_clear(p_shwnd->p_hlist, cb_clear_top_wnd_klbuiex_shwnd, p_shwnd);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// create / destroy
+
+static void* klbuiex_shwnd_create(klb_gui_t* p_gui)
+{
+    klbuiex_shwnd_t* p_shwnd = KLB_MALLOCZ(klbuiex_shwnd_t, 1, 0);
+
+    p_shwnd->p_gui = p_gui;
+    p_shwnd->p_hlist = klb_hlist_create(0);
+
+    return p_shwnd;
+}
+
 static void klbuiex_shwnd_destroy(void* ptr, klb_gui_t* p_gui)
 {
     klbuiex_shwnd_t* p_shwnd = (klbuiex_shwnd_t*)ptr;
 
     // 释放窗口
-    klb_hlist_clear(p_shwnd->p_hlist, cb_clear_top_wnd_klbuiex_shwnd, p_shwnd);
+    on_klbuiex_shwnd_clear(p_shwnd);
 
     KLB_FREE_BY(p_shwnd->p_hlist, klb_hlist_destroy);
     KLB_FREE(p_shwnd)
+}
+
+/// @brief 控制操作消息
+static int klbuiex_shwnd_control(void* ptr, klb_gui_t* p_gui, int msg, uint8_t* p_param_in_out, int param_size)
+{
+    klbuiex_shwnd_t* p_shwnd = (klbuiex_shwnd_t*)ptr;
+
+    switch (msg)
+    {
+    case KLBUI_EX_MSG_clear:
+        on_klbuiex_shwnd_clear(p_shwnd);
+        break;
+    default:
+        break;
+    }
+
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////

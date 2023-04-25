@@ -24,8 +24,16 @@ typedef struct klua_env_t_ klua_env_t;
 typedef struct klua_msg_t_ klua_msg_t;
 
 
+/// @enum  klua_env_extension_opt_e
+/// @brief Lua环境扩展的 操作
+typedef enum klua_env_extension_opt_e_
+{
+    KLUA_ENV_EX_exit = 1,           ///< 退出消息
+}klua_env_extension_opt_e;
+
+
 /// @struct klua_env_extension_t
-/// @brief  lua环境扩展
+/// @brief  Lua环境扩展
 typedef struct klua_env_extension_t_
 {
     /// @brief 创建扩展
@@ -40,11 +48,12 @@ typedef struct klua_env_extension_t_
 
     /// @brief 对扩展直接控制设置
     /// @param [in] *ptr            扩展的指针
-    /// @param [in] *p_env          lua环境
-    /// @param [in] *p_param        控制参数
-    /// @return klua_msg_t* 返回信息
-    /// @note eg. 设置扩展的参数, 获取扩展的参数等.
-    klua_msg_t* (*cb_ctrl)(void* ptr, klua_env_t* p_env, klua_msg_t* p_msg);
+    /// @param [in] *p_env          Lua环境
+    /// @param [in] opt             控制消息
+    /// @param [in] *p_param_in_out 控制参数
+    /// @param [in] param_size      参数大小
+    /// @return int 0
+    int (*cb_ctrl)(void* ptr, klua_env_t* p_env, int opt, uint8_t* p_param_in_out, int param_size);
 
     /// @brief 消息处理
     /// @param [in] *ptr            扩展的指针

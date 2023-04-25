@@ -107,6 +107,7 @@ typedef struct klua_khttp_t_
     {
         klua_ex_multiplex_t*    p_ex;           ///< 复用扩展
         klb_multiplex_t*        p_multi;        ///< 复用
+        klua_ex_coroutine_t*    p_ex_coroutine; ///< ex co
     };
 
     klua_khttp_inter_t*         p_inter;        ///< C内部实现
@@ -705,6 +706,15 @@ static int klua_khttp_disconnect(lua_State* L)
     return 0;
 }
 
+static int on_yield_klua_khttp_co_recv(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int msg)
+{
+    klua_khttp_t* p_khttp = (klua_khttp_t*)ptr;
+
+    call_lua_reg_on_recv_klua_khttp_error(p_khttp, "timeout", s_klua_khttp_error_str[2]);
+
+    return 0;
+}
+
 static int klua_khttp_co_recv(lua_State* L)
 {
     klua_khttp_t* p_khttp = to_klua_khttp(L, 1);
@@ -720,7 +730,8 @@ static int klua_khttp_co_recv(lua_State* L)
     assert(NULL == p_khttp->co_recv);
     p_khttp->co_recv = L;
 
-    return lua_yield(L, lua_gettop(L));
+    return klua_ex_coroutine_yield(p_khttp->p_ex_coroutine, L, on_yield_klua_khttp_co_recv, p_khttp);
+    //return lua_yield(L, lua_gettop(L));
 }
 
 static void klua_khttp_createmeta(lua_State* L)
@@ -811,6 +822,7 @@ klua_khttp_t* new_connect_klua_khttp(lua_State* L, klb_socket_fd fd, klua_khttp_
     p_khttp->p_env = klua_env_get_by_L(L);
     p_khttp->p_ex = klua_ex_get_multiplex(p_khttp->p_env);
     p_khttp->p_multi = klua_ex_multiplex_get(p_khttp->p_ex);
+    p_khttp->p_ex_coroutine = klua_ex_get_coroutine(p_khttp->p_env);
     p_khttp->p_inter = p_inter;
 
     memcpy(&p_inter->param, p_param, sizeof(klua_khttp_param_t));
@@ -965,6 +977,31 @@ static int klua_khttp_listen_close(lua_State* L)
     return 0;
 }
 
+static int on_yield_klua_khttp_listen_accept(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int msg)
+{
+    klua_khttp_listen_t* p_listen = (klua_khttp_listen_t*)ptr;
+
+    if (p_listen->co_accept)
+    {
+        // 先判定是否是协程使用环境
+        lua_State* L = klua_ex_coroutine_rawgeti(klua_ex_get_coroutine(p_listen->p_env), p_listen->co_accept);
+        if (NULL == L)
+        {
+            return EXIT_FAILURE;
+        }
+
+        p_listen->co_accept = NULL; // 协程模式下, 一次"accept", 对应一次唤醒, 唤醒后清空
+
+        lua_pushnil(L);                                     /* 1st argument */
+        int status = lua_pcall(L, 1, 0, 0);                 /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
+
+    return 0;
+}
+
 static int klua_khttp_listen_accept(lua_State* L)
 {
     klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
@@ -978,7 +1015,8 @@ static int klua_khttp_listen_accept(lua_State* L)
     assert(NULL == p_listen->co_accept);
     p_listen->co_accept = L;
 
-    return lua_yield(L, lua_gettop(L));
+    return klua_ex_coroutine_yield(p_listen->p_ex_coroutine, L, on_yield_klua_khttp_listen_accept, p_listen);
+    //return lua_yield(L, lua_gettop(L));
 }
 
 static int klua_khttp_listen_gc(lua_State* L)

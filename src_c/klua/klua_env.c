@@ -406,6 +406,25 @@ static int klua_pmain(lua_State *L)
     return 1;
 }
 
+static void klua_pquit_extension_opt(klua_env_t* p_env)
+{
+    // 向所有扩展调用退出消息
+    // klb_hlist_t* p_extension_activate_hlist
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_env->p_extension_activate_hlist);
+    
+    while (NULL != p_iter)
+    {
+        klua_env_extension_activate_t* p_activate = (klua_env_extension_activate_t*)klb_hlist_data(p_iter);
+
+        if (p_activate && p_activate->ex.cb_ctrl)
+        {
+            p_activate->ex.cb_ctrl(p_activate->ptr, p_env, KLUA_ENV_EX_exit, NULL, 0);
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+}
+
 static int klua_pquit(lua_State *L)
 {
     klua_env_t* p_env = (klua_env_t*)lua_touserdata(L, 1);
@@ -413,7 +432,10 @@ static int klua_pquit(lua_State *L)
     // call kexit
     klua_env_call_kexit(p_env);
 
-    // exit
+    // exit extension opt
+    klua_pquit_extension_opt(p_env);
+
+    // exit coroutine
     klua_ex_coroutine_exit(p_env, p_env->tc);
 
     // unref

@@ -68,6 +68,11 @@ void klb_canvas_destroy(klb_canvas_t* p_canvas)
 /// @brief 设置绘制颜色
 int klb_canvas_set_draw_color(klb_canvas_t* p_canvas, uint32_t color)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.set_draw_color)
     {
         return p_canvas->vtable.set_draw_color(p_canvas, color);
@@ -79,6 +84,11 @@ int klb_canvas_set_draw_color(klb_canvas_t* p_canvas, uint32_t color)
 /// @brief 获取绘制颜色
 uint32_t klb_canvas_get_draw_color(klb_canvas_t* p_canvas)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.get_draw_color)
     {
         return p_canvas->vtable.get_draw_color(p_canvas);
@@ -89,6 +99,11 @@ uint32_t klb_canvas_get_draw_color(klb_canvas_t* p_canvas)
 
 int klb_canvas_set_font_height(klb_canvas_t* p_canvas, int h)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.set_font_height)
     {
         return p_canvas->vtable.set_font_height(p_canvas, h);
@@ -99,6 +114,11 @@ int klb_canvas_set_font_height(klb_canvas_t* p_canvas, int h)
 
 int klb_canvas_get_font_height(klb_canvas_t* p_canvas)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.get_font_height)
     {
         return p_canvas->vtable.get_font_height(p_canvas);
@@ -109,6 +129,11 @@ int klb_canvas_get_font_height(klb_canvas_t* p_canvas)
 
 int klb_canvas_draw_clear(klb_canvas_t* p_canvas)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.draw_clear)
     {
         return p_canvas->vtable.draw_clear(p_canvas);
@@ -119,6 +144,11 @@ int klb_canvas_draw_clear(klb_canvas_t* p_canvas)
 
 int klb_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.draw_point)
     {
         return p_canvas->vtable.draw_point(p_canvas, x, y);
@@ -129,6 +159,11 @@ int klb_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y)
 
 int klb_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (NULL != p_canvas->vtable.draw_points)
     {
         return p_canvas->vtable.draw_points(p_canvas, p_points, count);
@@ -139,6 +174,11 @@ int klb_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, 
 
 int klb_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_line)
     {
         return p_canvas->vtable.draw_line(p_canvas, x1, y1, x2, y2);
@@ -188,6 +228,11 @@ int klb_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2)
 
 int klb_canvas_draw_lines(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_lines)
     {
         return p_canvas->vtable.draw_lines(p_canvas, p_points, count);
@@ -198,6 +243,11 @@ int klb_canvas_draw_lines(klb_canvas_t* p_canvas, const klb_point_t* p_points, i
 
 int klb_canvas_draw_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_rect)
     {
         return p_canvas->vtable.draw_rect(p_canvas, p_rect);
@@ -208,6 +258,11 @@ int klb_canvas_draw_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 
 int klb_canvas_draw_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_rects)
     {
         return p_canvas->vtable.draw_rects(p_canvas, p_rects, count);
@@ -218,6 +273,11 @@ int klb_canvas_draw_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int
 
 int klb_canvas_draw_fill_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_fill_rect)
     {
         return p_canvas->vtable.draw_fill_rect(p_canvas, p_rect);
@@ -228,6 +288,11 @@ int klb_canvas_draw_fill_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 
 int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_fill_rects)
     {
         return p_canvas->vtable.draw_fill_rects(p_canvas, p_rects, count);
@@ -241,6 +306,11 @@ int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects
 /// @return int 0
 int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_text)
     {
         return p_canvas->vtable.draw_text(p_canvas, p_rect, p_utf8, utf8_len);
@@ -251,6 +321,11 @@ int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const
 
 int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.text_size)
     {
         return p_canvas->vtable.text_size(p_canvas, p_utf8, utf8_len, p_out_w, p_out_h);
@@ -261,6 +336,11 @@ int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_le
 
 int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out_w, int* p_out_h)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.image_size)
     {
         return p_canvas->vtable.image_size(p_canvas, p_path, p_out_w, p_out_h);
@@ -271,6 +351,11 @@ int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out
 
 int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.draw_image)
     {
         return p_canvas->vtable.draw_image(p_canvas, p_dst_rect, p_path, NULL);
@@ -281,6 +366,11 @@ int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, 
 
 int klb_canvas_refresh_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.refresh_rect)
     {
         return p_canvas->vtable.refresh_rect(p_canvas, p_rect);
@@ -291,6 +381,11 @@ int klb_canvas_refresh_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect)
 
 int klb_canvas_refresh_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count)
 {
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
     if (p_canvas->vtable.refresh_rects)
     {
         return p_canvas->vtable.refresh_rects(p_canvas, p_rects, count);

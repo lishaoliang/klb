@@ -132,6 +132,7 @@ static int cb_thread_klua_kthread(void* p_obj, volatile int* p_run)
         }
     }
 
+    klua_env_exit(p_env); // 退出线程时, 将Lua环境置为退出状态
     klua_env_doend(p_env);
 
     return 0;

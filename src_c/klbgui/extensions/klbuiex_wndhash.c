@@ -132,6 +132,16 @@ klb_wnd_t* klbuiex_wndhash_find(klbuiex_wndhash_t* p_wndhash, const char* p_path
     return (klb_wnd_t*)klb_hlist_find(p_wndhash->p_wnd_map, p_path_name, strlen(p_path_name));
 }
 
+
+static void on_klbuiex_wndhash_clear(klbuiex_wndhash_t* p_wndhash)
+{
+    // TODO. 清理窗口
+
+    // 暂时直接清空
+    klb_hlist_clear(p_wndhash->p_wnd_map, NULL, NULL);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // 
 
@@ -152,10 +162,9 @@ static void klbuiex_wndhash_destroy(void* ptr, klb_gui_t* p_gui)
     klbuiex_wndhash_t* p_wndhash = (klbuiex_wndhash_t*)ptr;
 
     // 释放窗口, todo.
-    klb_hlist_clear(p_wndhash->p_wnd_map, NULL, NULL);
+    on_klbuiex_wndhash_clear(p_wndhash);
 
-
-    // 释放类型
+    // 释放类型, todo.
     klb_hlist_clear(p_wndhash->p_create_map, NULL, NULL);
 
     KLB_FREE_BY(p_wndhash->p_wnd_map, klb_hlist_destroy);
@@ -164,7 +173,30 @@ static void klbuiex_wndhash_destroy(void* ptr, klb_gui_t* p_gui)
     KLB_FREE(p_wndhash)
 }
 
+/// @brief 控制操作消息
+static int klbuiex_wndhash_control(void* ptr, klb_gui_t* p_gui, int msg, uint8_t* p_param_in_out, int param_size)
+{
+    klbuiex_wndhash_t* p_wndhash = (klbuiex_wndhash_t*)ptr;
+
+    switch (msg)
+    {
+    case KLBUI_EX_MSG_clear:
+        on_klbuiex_wndhash_clear(p_wndhash);
+        break;
+    default:
+        break;
+    }
+
+    return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
+// register / get
+
+klbuiex_wndhash_t* klbuiex_get_wndhash(klb_gui_t* p_gui)
+{
+    return (klbuiex_wndhash_t*)klb_gui_get_extension(p_gui, KLBUIEX_WNDHASH);
+}
 
 int klbuiex_register_wndhash(klb_gui_t* p_gui)
 {
@@ -172,14 +204,10 @@ int klbuiex_register_wndhash(klb_gui_t* p_gui)
 
     ex.cb_create = klbuiex_wndhash_create;
     ex.cb_destroy = klbuiex_wndhash_destroy;
+    ex.cb_control = klbuiex_wndhash_control;
     ex.cb_loop_once = NULL;
 
     klb_gui_register_extension(p_gui, KLBUIEX_WNDHASH, &ex);
 
     return 0;
-}
-
-klbuiex_wndhash_t* klbuiex_get_wndhash(klb_gui_t* p_gui)
-{
-    return (klbuiex_wndhash_t*)klb_gui_get_extension(p_gui, KLBUIEX_WNDHASH);
 }

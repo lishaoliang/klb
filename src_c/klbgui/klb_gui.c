@@ -225,7 +225,7 @@ klb_wnd_create_cb klb_gui_get_creater(klb_gui_t* p_gui, const char* p_type)
     assert(NULL != p_gui);
     assert(NULL != p_type);
 
-    return klbuiex_wndhash_get_creater(p_gui, p_type);
+    return klbuiex_wndhash_get_creater(p_gui->p_wndhash, p_type);
 }
 
 int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
@@ -260,6 +260,38 @@ int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)
 
 int klb_gui_clear(klb_gui_t* p_gui)
 {
+    // 去除所有当前窗口
+    p_gui->modal_num = 0;
+    p_gui->popup_num = 0;
+    p_gui->p_msg_box = NULL;
+    p_gui->p_tip = NULL;
+    p_gui->p_focus_top = NULL;
+    p_gui->p_focus = NULL;
+
+    // 所有激活的扩展清理
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
+
+    while (NULL != p_iter)
+    {
+        klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_data(p_iter);
+        
+        if (p_activated && p_activated->ex.cb_control)
+        {
+            p_activated->ex.cb_control(p_activated->ptr, p_gui, KLBUI_EX_MSG_clear, NULL, 0);
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+
+    // 若申请了其他画布, 需释放其他画布
+
+
+    // 卸载图片资源
+    if (p_gui->p_canvas && p_gui->p_canvas->vtable.clear_image)
+    {
+        p_gui->p_canvas->vtable.clear_image(p_gui->p_canvas);
+    }
+
     return 0;
 }
 
@@ -716,7 +748,7 @@ int klb_gui_refresh(klb_gui_t* p_gui)
 {
     if (p_gui->refresh)
     {
-        if (p_gui->p_canvas->vtable.refresh_rect)
+        if (p_gui->p_canvas && p_gui->p_canvas->vtable.refresh_rect)
         {
             p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
         }
@@ -885,7 +917,11 @@ static int klb_gui_process_message_once(klb_gui_t* p_gui)
     klb_msg_t* p_msg = NULL;
     if (0 == klb_gui_pop_message(p_gui, &p_msg))
     {
-        int ret = klb_gui_dispatch_message(p_gui, p_msg);
+        if (p_gui->p_canvas)
+        {
+            // 设置了画布, 才处理消息
+            klb_gui_dispatch_message(p_gui, p_msg);
+        }
 
         KLB_FREE(p_msg);
         return 0; // 有消息处理

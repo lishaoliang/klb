@@ -73,6 +73,7 @@ typedef struct klua_krpc_t_
 
     struct
     {
+        klua_ex_coroutine_t*    p_coroutine;    ///< 协程扩展
         klb_multiplex_t*        p_multi;        ///< 复用
         klb_nsc_t*              p_nsc;          ///< 单个网络连接(客户端)
         int                     protocol;       ///< 协议类型: klb_protocol_e
@@ -84,7 +85,7 @@ typedef struct klua_krpc_t_
 
         bool                    b_notify;       ///< 是否收取 "notify" 信息
         int32_t                 notify_num;     ///< 缓存的数据大小
-        klb_nlist_t*             p_notify_list;  ///< 缓存的数据列表: klua_krpc_data_t*
+        klb_nlist_t*            p_notify_list;  ///< 缓存的数据列表: klua_krpc_data_t*
     };
 
     uint32_t                    next_sequence;  ///< 下一个sequence序列号
@@ -419,6 +420,16 @@ static int klua_krpc_post(lua_State* L)
     return 1;
 }
 
+static int on_yield_klua_krpc_co_recv_notify(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_krpc_t* p_krpc = (klua_krpc_t*)ptr;
+
+    call_lua_co_recv_notify_klua_krpc(p_krpc, 0, 0, NULL, 0);
+
+    return 0;
+}
+
+
 static int klua_krpc_co_recv_notify(lua_State* L)
 {
     klua_krpc_t* p_krpc = to_klua_krpc(L, 1);
@@ -468,8 +479,18 @@ static int klua_krpc_co_recv_notify(lua_State* L)
         assert(NULL == p_krpc->co_recv_notify);
         p_krpc->co_recv_notify = L;
 
-        return lua_yield(L, lua_gettop(L));
+        return klua_ex_coroutine_yield(p_krpc->p_coroutine, L, on_yield_klua_krpc_co_recv_notify, p_krpc);
+        //return lua_yield(L, lua_gettop(L));
     }
+
+    return 0;
+}
+
+static int on_yield_klua_krpc_co_call(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_krpc_t* p_krpc = (klua_krpc_t*)ptr;
+
+    call_lua_co_recv_klua_krpc(p_krpc, 0, 0, NULL, 0);
 
     return 0;
 }
@@ -496,7 +517,8 @@ static int klua_krpc_co_call(lua_State* L)
     assert(NULL == p_krpc->co_recv);
     p_krpc->co_recv = L;
 
-    return lua_yield(L, lua_gettop(L));
+    return klua_ex_coroutine_yield(p_krpc->p_coroutine, L, on_yield_klua_krpc_co_call, p_krpc);
+    //return lua_yield(L, lua_gettop(L));
 }
 
 static void klua_krpc_createmeta(lua_State* L)
@@ -599,6 +621,7 @@ klua_krpc_t* new_connect_klua_krpc(lua_State* L, klua_krpc_param_t* p_param, klb
     klua_krpc_t* p_krpc = new_klua_krpc(L);
     p_krpc->L = L;
     p_krpc->p_env = klua_env_get_by_L(L);
+    p_krpc->p_coroutine = klua_ex_get_coroutine(p_krpc->p_env);
     p_krpc->p_multi = klua_ex_multiplex_get_by_L(L);
     p_krpc->p_nsc = klb_nsc_create(p_krpc->p_multi);
     p_krpc->protocol = p_param->protocol;
@@ -667,7 +690,7 @@ typedef struct klua_krpc_module_t_
         klb_ncm_t*              p_ncm;          ///< ncm模块
 
         int32_t                 recv_num;       ///< 缓存的数据大小
-        klb_nlist_t*             p_recv_list;    ///< 缓存的数据列表: klua_krpc_data_t*
+        klb_nlist_t*            p_recv_list;    ///< 缓存的数据列表: klua_krpc_data_t*
     };
 }klua_krpc_module_t;
 
@@ -749,6 +772,16 @@ static int klua_krpc_module_route(lua_State* L)
     return 0;
 }
 
+static int on_yield_klua_krpc_module_co_recv(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_krpc_module_t* p_mo = (klua_krpc_module_t*)ptr;
+
+    call_lua_co_recv_klua_krpc_module(p_mo, 0, 0, 0, NULL, 0);
+
+    return 0;
+}
+
+
 // "co_recv"接收消息
 // 接收由客户端发起的 co_call(request)请求, post消息
 // sequence序列号: 小于1000: 为无需回应的(post)消息; 
@@ -821,7 +854,8 @@ static int klua_krpc_module_co_recv(lua_State* L)
     assert(NULL == p_mo->co_recv);
     p_mo->co_recv = L;
 
-    return lua_yield(L, lua_gettop(L));
+    return klua_ex_coroutine_yield(p_mo->p_coroutine, L, on_yield_klua_krpc_module_co_recv, p_mo);
+    //return lua_yield(L, lua_gettop(L));
 }
 
 // "response"回复

@@ -67,6 +67,7 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
         }
     }
 
+    klua_env_exit(p_env); // 退出线程时, 将Lua环境置为退出状态
     klua_env_doend(p_env);
 
 end:
