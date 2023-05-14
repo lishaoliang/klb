@@ -228,6 +228,18 @@
     <Filter Include="src_c\klbgui\extensions">
       <UniqueIdentifier>{c28430d4-368e-4dec-8c93-868d39624c65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\klbgui\wnd">
+      <UniqueIdentifier>{465dcafd-51b2-4c7c-9200-43f65f67a101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbgui\wnd">
+      <UniqueIdentifier>{9efa0b4d-637d-49cc-9299-1b5895044a3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbgui\shwnd">
+      <UniqueIdentifier>{f971b3ac-d6fd-463d-b3f1-6173036a98d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbgui\shwnd">
+      <UniqueIdentifier>{d13d28a9-3d0f-41b6-a9f2-081d389acd0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1358,6 +1370,93 @@
     <ClInclude Include="..\..\inc\klua\klua_env_extension.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_button.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_datetime.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_util.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\shwnd\klbshw_calendar.h">
+      <Filter>inc\klbgui\shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_calendar.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_view.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_static.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_check.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_combo.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_date.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_edit.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_hscrollbar.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_ip.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_picture.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_progress.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_radio.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_slider.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_spin.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_time.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_vscrollbar.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_animation.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_group.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_list.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_rich_text.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_tab.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\wnd\klbwnd_calendar_days.h">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\wnd\klbwnd_calendar_months.h">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\wnd\klbwnd_calendar_years.h">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2256,6 +2355,93 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c">
       <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_button.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klbui_datetime.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_calendar.c">
+      <Filter>src_c\klbgui\shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_calendar.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.c">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_calendar_days.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_calendar_months.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_calendar_years.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_view.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_static.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_check.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_combo.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_date.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_edit.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_hscrollbar.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_ip.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_picture.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_progress.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_radio.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_slider.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_spin.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_time.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_vscrollbar.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_animation.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_group.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_list.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_rich_text.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_tab.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_time.c">
+      <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

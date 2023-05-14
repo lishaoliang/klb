@@ -28,6 +28,8 @@
 #include "klbgui/klbui_css_ex.h"
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_shwnd.h"
+#include "klbgui/klbui_util.h"
+#include "klbgui/klbui_datetime.h"
 
 #if defined(__cplusplus)
 extern "C" {

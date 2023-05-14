@@ -33,6 +33,9 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     // 取得window hash指针
     p_gui->p_wndhash = klbuiex_get_wndhash(p_gui);
 
+    // 取得重绘记录指针
+    p_gui->p_redraw = klbuiex_get_redraw(p_gui);
+
     // 注册标准窗口类型
     KLB_GUI_REGISTER_STD(p_gui);
 
@@ -261,6 +264,7 @@ int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)
 int klb_gui_clear(klb_gui_t* p_gui)
 {
     // 去除所有当前窗口
+    klbuiex_redraw_clear(p_gui->p_redraw);
     p_gui->modal_num = 0;
     p_gui->popup_num = 0;
     p_gui->p_msg_box = NULL;
@@ -350,7 +354,9 @@ int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
         }
 
         klb_wnd_set_calculate(p_wnd, true);
-        p_gui->redraw = true;
+
+        // 标记重绘所有
+        klbuiex_redraw_all(p_gui->p_redraw);
 
         return 0;
     }
@@ -388,7 +394,8 @@ static void klb_gui_model_end_last(klb_gui_t* p_gui)
         p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
     }
 
-    p_gui->redraw = true;
+    // 标记重绘所有
+    klbuiex_redraw_all(p_gui->p_redraw);
 }
 
 
@@ -444,7 +451,9 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
         }
 
         klb_wnd_set_calculate(p_wnd, true);
-        p_gui->redraw = true;
+
+        // 标记重绘所有
+        klbuiex_redraw_all(p_gui->p_redraw);
 
         return 0;
     }
@@ -482,7 +491,10 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
             p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
         }
 
-        p_gui->redraw = true;
+        klb_wnd_set_calculate(p_wnd, true);
+
+        // 标记重绘所有
+        klbuiex_redraw_all(p_gui->p_redraw);
 
         return 0;
     }
@@ -520,7 +532,8 @@ static void klb_gui_popup_end_last(klb_gui_t* p_gui)
         p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
     }
 
-    p_gui->redraw = true;
+    // 标记重绘所有
+    klbuiex_redraw_all(p_gui->p_redraw);
 }
 
 int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
@@ -572,7 +585,10 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
         }
 
         klb_wnd_set_calculate(p_wnd, true);
-        p_gui->redraw = true;
+
+        // 标记重绘所有
+        klbuiex_redraw_all(p_gui->p_redraw);
+
         return 0;
     }
 
@@ -604,7 +620,9 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
     }
 
     p_gui->p_msg_box = NULL;
-    p_gui->redraw = true;
+
+    // 标记重绘所有
+    klbuiex_redraw_all(p_gui->p_redraw);
 
     return 0;
 }
@@ -708,53 +726,117 @@ int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
     return 0;
 }
 
+
+// 重绘所有
+static void klb_gui_redraw_all(klb_gui_t* p_gui, klb_rect_t* p_rect)
+{
+    klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
+    klb_canvas_draw_clear(p_gui->p_canvas);
+
+    for (int i = 0; i < p_gui->modal_num; i++)
+    {
+        klb_wnd_draw(p_gui->p_modal_wnd[i]);
+    }
+
+    for (int i = 0; i < p_gui->popup_num; i++)
+    {
+        klb_wnd_draw(p_gui->p_popup_wnd[i]);
+    }
+
+    if (NULL != p_gui->p_msg_box)
+    {
+        klb_wnd_draw(p_gui->p_msg_box);
+    }
+
+    //全部区域
+    *p_rect = p_gui->p_canvas->rect;
+}
+
+// 按列表重绘
+static void klb_gui_redraw_wnd_hlist(klb_gui_t* p_gui, klb_hlist_t* p_hlist, klb_rect_t* p_rect)
+{
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_hlist);
+
+    bool first = true;
+
+    // 依次绘制所有窗口
+    while (NULL != p_iter)
+    {
+        klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_data(p_iter);
+
+        klb_wnd_draw(p_wnd);
+
+        if (first)
+        {
+            *p_rect = p_wnd->pos.rect_in_canvas;
+            first = false;
+        }
+        else
+        {
+            klb_rect_t rect1 = *p_rect;
+            klb_rect_union(p_rect, &rect1, &p_wnd->pos.rect_in_canvas); // 需要刷新区域, 取并集
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+}
+
+static void refresh_canvas_klb_gui(klb_gui_t* p_gui, klb_rect_t* p_rect)
+{
+    if (p_gui->p_canvas && p_gui->p_canvas->vtable.refresh_rect)
+    {
+        klb_rect_t rect = { 0 };
+        if (klb_rect_intersect(&rect, p_rect, &p_gui->p_canvas->rect) && 0 < rect.w && 0 < rect.h)
+        {
+            p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &rect);
+        }
+    }
+}
+
 int klb_gui_redraw(klb_gui_t* p_gui)
 {
-    if (p_gui->redraw)
+    bool redraw_all = false;
+    if (klbuiex_redraw_need_repaint(p_gui->p_redraw, &redraw_all))
     {
-        klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
-        klb_canvas_draw_clear(p_gui->p_canvas);
+        klb_rect_t rect = { 0 };
 
-        for (int i = 0; i < p_gui->modal_num; i++)
+        if (redraw_all)
         {
-            klb_wnd_draw(p_gui->p_modal_wnd[i]);
+            klb_gui_redraw_all(p_gui, &rect);
+        }
+        else
+        {
+            klb_gui_redraw_wnd_hlist(p_gui, klbuiex_redraw_get_hlist(p_gui->p_redraw), &rect);
         }
 
-        for (int i = 0; i < p_gui->popup_num; i++)
-        {
-            klb_wnd_draw(p_gui->p_popup_wnd[i]);
-        }
+        // 清空
+        klbuiex_redraw_clear(p_gui->p_redraw);
 
-        if (NULL != p_gui->p_msg_box)
-        {
-            klb_wnd_draw(p_gui->p_msg_box);
-        }
-
-        klb_gui_update_rect(p_gui, NULL);
-        p_gui->redraw = false;
+        // 刷新
+        refresh_canvas_klb_gui(p_gui, &rect);
     }
 
     return 0;
 }
 
-int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect)
+int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 {
-    p_gui->redraw = true;
-    p_gui->refresh = true;
+    klbuiex_redraw_push(p_gui->p_redraw, p_wnd);
+
     return 0;
 }
 
 int klb_gui_refresh(klb_gui_t* p_gui)
 {
-    if (p_gui->refresh)
-    {
-        if (p_gui->p_canvas && p_gui->p_canvas->vtable.refresh_rect)
-        {
-            p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
-        }
+    //if (p_gui->refresh)
+    //{
+    //    if (p_gui->p_canvas && p_gui->p_canvas->vtable.refresh_rect)
+    //    {
+    //        p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
+    //    }
 
-        p_gui->refresh = false;
-    }
+    //    p_gui->refresh = false;
+    //}
 
     return 0;
 }
@@ -825,18 +907,13 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         if (NULL != p_gui->p_focus && p_focus != p_gui->p_focus)
         {
             klb_wnd_set_focus(p_gui->p_focus, false);
-
-            klb_wnd_draw(p_gui->p_focus);
-            klb_gui_update_rect(p_gui, NULL);
+            klb_wnd_update(p_gui->p_focus);
         }
 
         if (NULL != p_focus && p_focus != p_gui->p_focus)
         {
             klb_wnd_set_focus(p_focus, true);
-
-
-            klb_wnd_draw(p_focus);
-            klb_gui_update_rect(p_gui, NULL);
+            klb_wnd_update(p_focus);
         }
 
         p_gui->p_focus_top = p_focus_top;

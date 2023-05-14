@@ -136,6 +136,7 @@ typedef struct klbuicss_text_t_
 ///   参考: https://www.w3school.com.cn/css/css_font.asp
 typedef struct klbuicss_font_t_
 {
+#if defined(__KLB_GUI_CSS3__)
     int         style;             ///< ["font-style"] 属性主要用于指定斜体文本
 #define KLBUICSS_font1_normal   0  ///< ["font-style"] = "normal" 文字正常显示
 #define KLBUICSS_font1_italic   1  ///< ["font-style"] = "italic" 文本以斜体显示
@@ -144,6 +145,7 @@ typedef struct klbuicss_font_t_
     int         weight;             ///< ["font-weight"] 属性指定字体的粗细
 #define KLBUICSS_font2_normal   0   ///< ["font-weight"] = "normal"
 #define KLBUICSS_font2_bold     1   ///< ["font-weight"] = "bold"
+#endif
 
     int         size;               ///< ["font-size"] 属性设置文本的大小
 }klbuicss_font_t;
@@ -156,9 +158,12 @@ typedef struct klbuicss_background_t_
 {
     uint32_t    color;      ///< "background-color" 属性指定元素的背景色
     sds         image;      ///< "background-image" 属性指定用作元素背景的图像
+
+#if defined(__KLB_GUI_CSS3__)
     int         repeat;     ///< "background-repeat" 属性指定重复图像
     int         position;   ///< "background-position" 属性用于指定背景图像的位置
     int         attachment; ///< "background-attachment" 属性指定背景图像是应该滚动还是固定的(不会随页面的其余部分一起滚动)
+#endif
 }klbuicss_background_t;
 
 
@@ -167,6 +172,7 @@ typedef struct klbuicss_background_t_
 ///   参考: https://www.w3school.com.cn/css/css_border.asp
 typedef struct klbuicss_border_t_
 {
+#if defined(__KLB_GUI_CSS3__)
     struct
     {
         int     top;
@@ -183,6 +189,9 @@ typedef struct klbuicss_border_t_
 #define KLBUICSS_border1_inset  6   ///< ["border-style"] = "inset" 定义3D inset边框
 #define KLBUICSS_border1_outset 7   ///< ["border-style"] = "outset" 定义3D outset边框
 
+    int         radius;             ///< "border-radius" 属性用于向元素添加圆角边框
+#endif
+
     struct
     {
         int     top;
@@ -198,8 +207,6 @@ typedef struct klbuicss_border_t_
         uint32_t bottom;
         uint32_t left;
     }color;                         ///< "border-color" 属性用于设置四个边框的颜色
-
-    int         radius;             ///< "border-radius" 属性用于向元素添加圆角边框
 }klbuicss_border_t;
 
 

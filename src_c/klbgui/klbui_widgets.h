@@ -28,6 +28,7 @@ klb_wnd_t* klbui_edit_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_date_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_time_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_ip_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_picture_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -56,6 +57,7 @@ klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 #define KLBUI_kcheck            "kcheck"
 #define KLBUI_kcombo            "kcombo"
 #define KLBUI_kdate             "kdate"
+#define KLBUI_ktime             "ktime"
 #define KLBUI_kip               "kip"
 #define KLBUI_kpicture          "kpicture"
 #define KLBUI_kradio            "kradio"
@@ -85,6 +87,7 @@ klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klb_gui_register((PTR_GUI_), KLBUI_kcheck,      klbui_check_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kcombo,      klbui_combo_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kdate,       klbui_date_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_ktime,       klbui_time_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_kip,         klbui_ip_create);           \
     klb_gui_register((PTR_GUI_), KLBUI_kpicture,    klbui_picture_create);      \
     klb_gui_register((PTR_GUI_), KLBUI_kradio,      klbui_radio_create);        \

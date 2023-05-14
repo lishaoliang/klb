@@ -67,6 +67,7 @@ typedef struct klb_gui_t_
 
     // 窗口管理
     klbuiex_wndhash_t*  p_wndhash;                      ///< 窗口创建,查找等
+    klbuiex_redraw_t*   p_redraw;                       ///< 重绘记录
 
     // 当前绘制窗口, 窗口显示次序
     struct
@@ -90,13 +91,6 @@ typedef struct klb_gui_t_
         klb_wnd_t*      p_focus;
     };
 
-    // 刷新
-    struct
-    {
-        bool            redraw;
-        bool            refresh;
-    };
-
     // 消息
     struct
     {
@@ -110,14 +104,23 @@ typedef struct klb_gui_t_
         klua_env_t*     p_klua_env;
     };
 
+    int                 datefmt;    ///< 时间格式: KLBUI_DATE_YMD1
+    int                 timefmt;    ///< 日期格式: KLBUI_TIME_24H
+
     /// @brief css属性函数表
     klb_map_t           css_map;
 }klb_gui_t;
 
+
+// 更新窗口
+int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd);
+
+// 重绘
 int klb_gui_redraw(klb_gui_t* p_gui);
 
-int klb_gui_update_rect(klb_gui_t* p_gui, const klb_rect_t* p_rect);
+// 刷新
 int klb_gui_refresh(klb_gui_t* p_gui);
+
 
 //////////////////////////////////////////////////////////////////////////
 

@@ -111,7 +111,7 @@ void klb_wnd_update(klb_wnd_t* p_wnd)
 
     if (NULL != p_wnd->p_gui)
     {
-        klb_gui_update_rect(p_wnd->p_gui, &p_wnd->pos.rect_in_canvas);
+        klb_gui_update_wnd(p_wnd->p_gui, p_wnd);
     }
 }
 

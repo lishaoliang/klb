@@ -61,7 +61,7 @@ static int klua_kwnd_get(lua_State* L)
     int n = 0;
     if (NULL != p_out)
     {
-        n = klua_seri_map_unpack(L, 0, p_out);
+        n = klua_seri_map_unpack(L, 1, p_out);
     }
 
     KLB_FREE_BY(p_in, klb_map_destroy);
@@ -377,7 +377,7 @@ static int klua_kgui_get_default_css(lua_State* L)
     int n = 0;
     if (NULL != p_out)
     {
-        n = klua_seri_map_unpack(L, 0, p_out);
+        n = klua_seri_map_unpack(L, 1, p_out);
     }
 
     KLB_FREE_BY(p_in, klb_map_destroy);
@@ -470,7 +470,7 @@ static int klua_kgui_get(lua_State* L)
     int n = 0;
     if (NULL != p_out)
     {
-        n = klua_seri_map_unpack(L, 0, p_out);
+        n = klua_seri_map_unpack(L, 1, p_out);
     }
 
     KLB_FREE_BY(p_in, klb_map_destroy);

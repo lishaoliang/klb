@@ -1,100 +1,40 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/klbui_widgets.h"
+#include "klbgui/wnd/klbwnd_static.h"
 #include "klbmem/klb_mem.h"
-#include "klbutil/klb_log.h"
-#include "klbgui/klbui_css_ex.h"
-#include "klbutil/klb_map.h"
-#include "klbgui/klb_gui.h"
 
 
-// 静态文本框
+/// @struct klbui_static_t
+/// @brief  静态文本框
 typedef struct klbui_static_t_
 {
-    sds                         title;          ///< 标题
+    klbwnd_static_t     sta;            ///< 必须首位, 保持内存一致
+    klbwnd_static_css_t css;            ///< 样式
 
-    // normal
-    klbuicss_margin_t           margin;         ///< 外边距
-    klbuicss_padding_t          padding;        ///< 内边距
-
-    klbuicssex_attributes_t     normal;         ///< 集合属性
-
-    klb_map_t*                  p_func_map;     ///< 属性函数表
+    klb_map_t*          p_func_map;     ///< CSS属性函数表
 }klbui_static_t;
 
 
 //////////////////////////////////////////////////////////////////////////
-
-static void klbui_static_quit_attribute(klbui_static_t* p_static);
+// 前置定义
 typedef void(*klbui_static_cb)(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 继承/重写方法
 
 
 static void klbui_static_destroy(klb_wnd_t* p_wnd)
 {
     klbui_static_t* p_static = (klbui_static_t*)p_wnd->ctrl;
 
-    klbui_static_quit_attribute(p_static);
-    p_static->p_func_map = NULL;
+    // 退出基础部分
+    klbwnd_static_quit(p_wnd);
+
+    // 退出css
+    klbwnd_static_css_quit(&p_static->css);
 
     KLB_FREE(p_wnd);
-}
-
-static void klbui_static_on_paint_status(klb_wnd_t* p_wnd, klbui_static_t* p_static, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
-{
-    if (0 < sdslen(p_attr->background.image))
-    {
-        // 图片
-        klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
-    }
-    else
-    {
-        // 纯色背景
-        klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
-        
-        // 边框
-        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
-    }
-
-    // 标题文本
-    klbuicssex_draw_text(p_wnd, p_static->title, p_rect, &p_attr->border, &p_static->padding, &p_attr->text, &p_attr->font);
-}
-
-static int klbui_static_on_paint(klb_wnd_t* p_wnd)
-{
-    klbui_static_t* p_static = (klbui_static_t*)p_wnd->ctrl;
-    klb_rect_t* p_rect = &p_wnd->pos.rect_in_canvas;
-
-    if (KLB_WND_STATUS_HIDE & p_wnd->state.status)
-    {
-        return 0;
-    }
-
-    // 绘图区域
-    klb_rect_t paint_rect = *p_rect;
-
-    // 移除外边距
-    paint_rect.x += p_static->margin.left;
-    paint_rect.y += p_static->margin.top;
-    paint_rect.w -= (p_static->margin.left + p_static->margin.right);
-    paint_rect.h -= (p_static->margin.top + p_static->margin.bottom);
-
-    klbui_static_on_paint_status(p_wnd, p_static, &(p_static->normal), &paint_rect);
-
-    return 0;
-}
-
-static int klbui_static_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    klbui_static_t* p_static = (klbui_static_t*)p_wnd->ctrl;
-
-    switch (msg)
-    {
-    case KLBUI_onpaint:
-        return klbui_static_on_paint(p_wnd);
-    default:
-        break;
-    }
-
-    return 0;
 }
 
 static int klbui_static_on_set(klb_wnd_t* p_wnd, const klb_map_t* p_map)
@@ -130,35 +70,6 @@ static klb_map_t* klbui_static_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// 初始化属性默认值
-
-static void klbui_static_init_attribute(klb_wnd_t* p_wnd, klbui_static_t* p_static, klb_gui_t* p_gui)
-{
-    const klbui_default_t* p_default = klb_gui_get_std_default(p_gui);
-
-    // init
-    p_static->title = sdsempty();
-
-    klbuicssex_attributes_init(&p_static->normal, &p_default->normal);
-
-    p_static->normal.border.width.top = 0;
-    p_static->normal.border.width.right = 0;
-    p_static->normal.border.width.bottom = 0;
-    p_static->normal.border.width.left = 0;
-}
-
-static void klbui_static_quit_attribute(klbui_static_t* p_static)
-{
-    KLB_FREE_BY(p_static->title, sdsfree);
-
-    klbuicssex_attributes_quit(&p_static->normal);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// 属性处理方法
-
-
-/////////////////////////////////////
 // 仿 CSS 方法
 
 static void on_klbui_static_visibility(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -168,115 +79,120 @@ static void on_klbui_static_visibility(klb_wnd_t* p_wnd, klbui_static_t* p_stati
 
 static void on_klbui_static_margin(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin(&p_static->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin(&(p_static->css.margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_top(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->margin.top), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.margin.top), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_right(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->margin.right), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.margin.right), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_bottom(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->margin.bottom), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.margin.bottom), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_left(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->margin.left), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.margin.left), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding(&p_static->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding(&(p_static->css.padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_top(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->padding.top), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.padding.top), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_right(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->padding.right), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.padding.right), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_bottom(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->padding.bottom), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.padding.bottom), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_left(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_static->padding.left), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int(&(p_static->css.padding.left), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_text_color(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_static->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_static->css.normal.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_text_align(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_static->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_static->css.normal.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_font_style(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_style(&(p_static->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_style(&(p_static->css.normal.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_font_weight(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_weight(&(p_static->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_weight(&(p_static->css.normal.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_font_size(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_static->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_static->css.normal.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_background_color(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_static->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_static->css.normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_background_image(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_static->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_static->css.normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_border_style(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_style(&(p_static->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_style(&(p_static->css.normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_border_width(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_static->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_static->css.normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_border_color(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_static->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_static->css.normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_border_radius(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_radius(&(p_static->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_radius(&(p_static->css.normal.border), p_wnd, method, p_in, p_out);
 }
+
+//////////////////////////////////////
+// 自定义属性
 
 static void on_klbui_static_title(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_static->title), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_sds(&(p_static->sta.title), p_wnd, method, p_in, p_out);
 }
 
-/////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+// css func
+
 #define KLBUI_static_bind(KEY_, FUNC_) { klb_map_set_ptr(p_static->p_func_map, (KEY_), (void*)(FUNC_), p_static); }
 
 static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_static, klb_gui_t* p_gui)
@@ -320,12 +236,6 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     // 文本对齐 text-align
     KLBUI_static_bind("text-align", on_klbui_static_text_align);
 
-    // 斜体 font-style
-    //KLBUI_static_bind("font-style", on_klbui_static_font_style);
-
-    // 字体粗细 font-weight
-    //KLBUI_static_bind("font-weight", on_klbui_static_font_weight);
-
     // 字体大小 font-size
     KLBUI_static_bind("font-size", on_klbui_static_font_size);
 
@@ -335,17 +245,11 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     // 背景图片 background-image
     KLBUI_static_bind("background-image", on_klbui_static_background_image);
 
-    // 边框类型 border-style
-    //KLBUI_static_bind("border-style", on_klbui_static_border_style);
-
     // 边框的宽度 border-width
     KLBUI_static_bind("border-width", on_klbui_static_border_width);
 
     // 边框的颜色 border-color
     KLBUI_static_bind("border-color", on_klbui_static_border_color);
-
-    // 圆角边框 border-radius
-    //KLBUI_static_bind("border-radius", on_klbui_static_border_radius);
 
     //////////////////////////////////////////////
     // 自定义方法
@@ -354,32 +258,27 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     KLBUI_static_bind("value", on_klbui_static_title);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// create
 
 klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_static_t));
     klbui_static_t* p_static = (klbui_static_t*)p_wnd->ctrl;
 
-    p_wnd->pos.rect_in_parent.x = x;
-    p_wnd->pos.rect_in_parent.y = y;
-    p_wnd->pos.rect_in_parent.w = w;
-    p_wnd->pos.rect_in_parent.h = h;
+    // 初始化基础部分
+    klbwnd_static_init(p_wnd, p_gui, x, y, w, h);
 
+    // 重写部分函数
     p_wnd->vtable.destroy = klbui_static_destroy;
-    p_wnd->vtable.on_control = klbui_static_on_control;
-    p_wnd->vtable.on_command = NULL;
     p_wnd->vtable.on_set = klbui_static_on_set;
     p_wnd->vtable.on_get = klbui_static_on_get;
 
-    p_wnd->p_gui = p_gui;
+    // css
+    klbwnd_static_css_init(&p_static->css, p_gui);
+    klbwnd_static_set_css(p_wnd, &p_static->css);
 
-    // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_NOFOCUS;
-
-    // 初始化属性
-    klbui_static_init_attribute(p_wnd, p_static, p_gui);
-
-    // 初始化属性方法表
+    // 初始化CSS 支持的方法
     klbui_static_init_func_map(p_wnd, p_static, p_gui);
 
     return p_wnd;

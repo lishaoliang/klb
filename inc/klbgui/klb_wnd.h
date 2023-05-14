@@ -174,9 +174,6 @@ typedef struct klb_wnd_t_
     klb_wnd_pos_t       pos;        ///< 窗口位置
     klb_wnd_state_t     state;      ///< 窗口状态的参数
 
-    sds                 name;       ///< 窗口名称
-    sds                 type;       ///< 窗口类型
-
     // 用户数据
     void*               p_udata;    ///< public user data, [公共用户数据]
 
@@ -200,7 +197,7 @@ typedef struct klb_wnd_t_
 #define KLB_FREE_WND(WND_) { \
     if(NULL!=(WND_)){ \
         klb_wnd_destroy_cb destroy=(WND_)->vtable.destroy; \
-        destroy(WND_); \
+        if(destroy) { destroy(WND_); } \
         (WND_)=NULL; \
     } \
 }
@@ -238,7 +235,7 @@ KLB_API void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y);
 KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
 
 
-/// @brief 需要刷新
+/// @brief 标记窗口需要刷新
 KLB_API void klb_wnd_update(klb_wnd_t* p_wnd);
 
 

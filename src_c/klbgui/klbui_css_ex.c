@@ -15,9 +15,12 @@ void klbuicssex_attributes_init(klbuicssex_attributes_t* p_dst, const klbuicssex
     p_dst->background.image = sdsempty();
     p_dst->background.color = p_src->background.color;
     p_dst->background.image = sdscpy(p_dst->background.image, p_src->background.image);
+
+#if defined(__KLB_GUI_CSS3__)
     p_dst->background.repeat = p_src->background.repeat;
     p_dst->background.position = p_src->background.position;
     p_dst->background.attachment = p_src->background.attachment;
+#endif
 
     p_dst->border = p_src->border;
 }
@@ -465,6 +468,7 @@ void klbuicssex_text_align(klbuicss_text_t* p_text, klb_wnd_t* p_wnd, int method
 // 斜体 font-style
 void klbuicssex_font_style(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+#if defined(__KLB_GUI_CSS3__)
     if (KLBUI_CSSEX_get == method)
     {
         switch (p_font->style)
@@ -502,11 +506,13 @@ void klbuicssex_font_style(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method
             klb_wnd_update(p_wnd);
         }
     }
+#endif
 }
 
 // 字体粗细 font-weight
 void klbuicssex_font_weight(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+#if defined(__KLB_GUI_CSS3__)
     if (KLBUI_CSSEX_get == method)
     {
         switch (p_font->weight)
@@ -544,6 +550,7 @@ void klbuicssex_font_weight(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int metho
             klb_wnd_update(p_wnd);
         }
     }
+#endif
 }
 
 // 字体大小 font-size
@@ -573,6 +580,7 @@ void klbuicssex_background_image(klbuicss_background_t* p_background, klb_wnd_t*
 // 边框类型 border-style
 void klbuicssex_border_style(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+#if defined(__KLB_GUI_CSS3__)
     if (KLBUI_CSSEX_get == method)
     {
         klb_map_set_idx_string(p_out, 0, "normal");
@@ -601,6 +609,7 @@ void klbuicssex_border_style(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
             klb_wnd_update(p_wnd);
         }
     }
+#endif
 }
 
 // 边框宽度 border-width
@@ -690,7 +699,9 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
 // 圆角边框 border-radius
 void klbuicssex_border_radius(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
+#if defined(__KLB_GUI_CSS3__)
     klbuicssex_attribute_int(&(p_border->radius), p_wnd, method, p_in, p_out);
+#endif
 }
 
 
