@@ -16,7 +16,7 @@ static void klbwnd_spin_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_spin_t* p_spin = (klbwnd_spin_t*)p_wnd->ctrl;
 
-    klbwnd_spin_quit_attribute(p_spin);
+    klbwnd_spin_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

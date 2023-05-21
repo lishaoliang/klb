@@ -13,6 +13,7 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
+#include "klbgui/wnd/klbwnd_btnex.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -27,6 +28,8 @@ typedef struct klbwnd_hscrollbar_css_t_
     klbuicssex_attributes_t normal;             ///< normal 常规状态参数
     klbuicssex_attributes_t focus;              ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;            ///< disable 不使能状态参数
+
+    klbwnd_btnex_css_t      btnex;              ///< 按钮css
 }klbwnd_hscrollbar_css_t;
 
 
@@ -36,6 +39,10 @@ typedef struct klbwnd_hscrollbar_t_
 
     sds                         title;          ///< 标题
     sds                         value;          ///< 值
+
+    klb_wnd_t*                  p_left;         ///< 向左 : klbwnd_btnex_create
+    klb_wnd_t*                  p_right;        ///< 向右 : klbwnd_btnex_create
+    klb_wnd_t*                  p_middle;       ///< 中间滑块 : klbwnd_btnex_create
 }klbwnd_hscrollbar_t;
 
 

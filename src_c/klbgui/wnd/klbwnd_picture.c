@@ -16,7 +16,7 @@ static void klbwnd_picture_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_picture_t* p_pic = (klbwnd_picture_t*)p_wnd->ctrl;
 
-    klbwnd_picture_quit_attribute(p_pic);
+    klbwnd_picture_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

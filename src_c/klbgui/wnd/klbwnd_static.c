@@ -16,7 +16,7 @@ static void klbwnd_static_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_static_t* p_static = (klbwnd_static_t*)p_wnd->ctrl;
 
-    klbwnd_static_quit_attribute(p_static);
+    klbwnd_static_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }
@@ -169,7 +169,7 @@ void klbwnd_static_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w,
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_NOFOCUS;
+    p_wnd->state.style = KLB_WND_STYLE_NOFOCUS | KLB_WND_STYLE_NOCOMMAND;
 
     // 
     klbwnd_static_init_attribute(p_static);

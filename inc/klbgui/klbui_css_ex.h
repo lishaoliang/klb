@@ -163,6 +163,9 @@ KLB_API void klbuicssex_draw_border(klb_wnd_t* p_wnd, klb_rect_t* p_rect, klbuic
 // 绘制文本
 KLB_API void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font);
 
+// 绘制文本2
+KLB_API void klbuicssex_draw_text2(klb_wnd_t* p_wnd, const char* p_txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font);
+
 
 #ifdef __cplusplus
 }

@@ -16,7 +16,7 @@ static void klbwnd_group_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_group_t* p_group = (klbwnd_group_t*)p_wnd->ctrl;
 
-    klbwnd_group_quit_attribute(p_group);
+    klbwnd_group_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

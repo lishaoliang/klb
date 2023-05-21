@@ -235,12 +235,12 @@ static void on_klbui_calendar_border_color_disable(klb_wnd_t* p_wnd, klbui_calen
 
 static void on_klbui_calendar_title(klb_wnd_t* p_wnd, klbui_calendar_t* p_cal, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_cal->calendar.title), p_wnd, method, p_in, p_out);
+    //klbuicssex_attribute_sds(&(p_cal->calendar.title), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_calendar_value(klb_wnd_t* p_wnd, klbui_calendar_t* p_cal, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_cal->calendar.value), p_wnd, method, p_in, p_out);
+    //klbuicssex_attribute_sds(&(p_cal->calendar.value), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ static void klbui_calendar_init_func_map(klb_wnd_t* p_wnd, klbui_calendar_t* p_c
     // 显隐
     KLBUI_calendar_bind("visibility", on_klbui_calendar_visibility); // 显示/隐藏
 
-                                                              // 外边距 margin
+    // 外边距 margin
     KLBUI_calendar_bind("margin", on_klbui_calendar_margin);
     KLBUI_calendar_bind("margin-top", on_klbui_calendar_margin_top);
     KLBUI_calendar_bind("margin-right", on_klbui_calendar_margin_right);

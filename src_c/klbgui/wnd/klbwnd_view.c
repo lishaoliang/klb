@@ -16,7 +16,7 @@ static void klbwnd_view_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_view_t* p_view = (klbwnd_view_t*)p_wnd->ctrl;
 
-    klbwnd_view_quit_attribute(p_view);
+    klbwnd_view_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

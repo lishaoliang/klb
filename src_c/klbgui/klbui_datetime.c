@@ -1,26 +1,27 @@
-﻿#include "klbgui/klbui_datetime.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbgui/klbui_datetime.h"
 #include "klbgui/klb_gui_in.h"
 #include <assert.h>
 
 
 void klb_gui_set_datefmt(klb_gui_t* p_gui, int fmt)
 {
-    p_gui->datefmt = fmt;
+    p_gui->p_util->datefmt = fmt;
 }
 
 int klb_gui_get_datefmt(klb_gui_t* p_gui)
 {
-    return p_gui->datefmt;
+    return p_gui->p_util->datefmt;
 }
 
 void klb_gui_set_timefmt(klb_gui_t* p_gui, int fmt)
 {
-    p_gui->timefmt = fmt;
+    p_gui->p_util->timefmt = fmt;
 }
 
 int klb_gui_get_timefmt(klb_gui_t* p_gui)
 {
-    return p_gui->timefmt;
+    return p_gui->p_util->timefmt;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,31 +87,31 @@ int klbui_weekday(int year, int month, int day)
     return w;
 }
 
-void klbui_prev_month(int year, int month, int* p_front_year, int* p_front_month)
+void klbui_prev_month(int year, int month, int* p_prev_year, int* p_prev_month)
 {
     if (1 == month)
     {
-        *p_front_month = 12;
-        *p_front_year = year - 1;
+        *p_prev_month = 12;
+        *p_prev_year = year - 1;
     }
     else
     {
-        *p_front_month = month - 1;
-        *p_front_year = year;
+        *p_prev_month = month - 1;
+        *p_prev_year = year;
     }
 }
 
-void klbui_next_month(int year, int month, int* p_front_year, int* p_front_month)
+void klbui_next_month(int year, int month, int* p_next_year, int* p_next_month)
 {
     if (12 == month)
     {
-        *p_front_month = 1;
-        *p_front_year = year + 1;
+        *p_next_month = 1;
+        *p_next_year = year + 1;
     }
     else
     {
-        *p_front_month = month + 1;
-        *p_front_year = year;
+        *p_next_month = month + 1;
+        *p_next_year = year;
     }
 }
 

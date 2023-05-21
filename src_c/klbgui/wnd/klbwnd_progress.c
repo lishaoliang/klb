@@ -16,7 +16,7 @@ static void klbwnd_progress_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_progress_t* p_prog = (klbwnd_progress_t*)p_wnd->ctrl;
 
-    klbwnd_progress_quit_attribute(p_prog);
+    klbwnd_progress_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

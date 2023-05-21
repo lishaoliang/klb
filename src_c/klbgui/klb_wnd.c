@@ -297,8 +297,20 @@ klb_wnd_t* klb_wnd_pt_in(klb_wnd_t* p_wnd, int x, int y)
 
 int klb_wnd_bind_command(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* p_obj)
 {
+    if (p_wnd->state.style & KLB_WND_STYLE_NOCOMMAND)
+    {
+        return 2; // 不能绑定 on_command 响应
+    }
+
     p_wnd->p_udata = p_obj;
     p_wnd->vtable.on_command = on_command;
+
+    return 0;
+}
+
+int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint)
+{
+    p_wnd->vtable.on_paint = on_paint;
 
     return 0;
 }

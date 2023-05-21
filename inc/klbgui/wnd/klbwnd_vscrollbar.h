@@ -13,6 +13,7 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
+#include "klbgui/wnd/klbwnd_btnex.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -27,6 +28,8 @@ typedef struct klbwnd_vscrollbar_css_t_
     klbuicssex_attributes_t     normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t     focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t     disable;        ///< disable 不使能状态参数
+
+    klbwnd_btnex_css_t          btnex;          ///< 按钮CSS
 }klbwnd_vscrollbar_css_t;
 
 
@@ -34,8 +37,21 @@ typedef struct klbwnd_vscrollbar_t_
 {
     klbwnd_vscrollbar_css_t*    p_css;          ///< 样式
 
-    sds                         title;          ///< 标题
-    sds                         value;          ///< 值
+    // 子控件
+    struct
+    {
+        klb_wnd_t*              p_up;           ///< 向上 : klbwnd_btnex_create
+        klb_wnd_t*              p_down;         ///< 向下 : klbwnd_btnex_create
+        klb_wnd_t*              p_middle;       ///< 中间滑块 : klbwnd_btnex_create
+    };
+
+    // 值/范围
+    struct
+    {
+        int                     min;
+        int                     max;
+        int                     value;
+    };
 }klbwnd_vscrollbar_t;
 
 
@@ -54,14 +70,9 @@ KLB_API void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css);
 KLB_API void klbwnd_vscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_vscrollbar_css_t* p_css);
 
 
-/// @brief set/get title
-KLB_API void klbwnd_vscrollbar_set_title(klb_wnd_t* p_wnd, const char* p_title);
-KLB_API const sds klbwnd_vscrollbar_get_title(klb_wnd_t* p_wnd);
-
-
 /// @brief set/get value
-KLB_API void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, const char* p_value);
-KLB_API const sds klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd);
+KLB_API void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, int value);
+KLB_API int klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

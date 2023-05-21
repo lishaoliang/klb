@@ -233,14 +233,48 @@ static void on_klbui_time_border_color_disable(klb_wnd_t* p_wnd, klbui_time_t* p
 //////////////////////////////////////
 // 自定义属性
 
-static void on_klbui_time_title(klb_wnd_t* p_wnd, klbui_time_t* p_time, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_attribute_sds(&(p_time->time.title), p_wnd, method, p_in, p_out);
-}
-
 static void on_klbui_time_value(klb_wnd_t* p_wnd, klbui_time_t* p_time, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_time->time.value), p_wnd, method, p_in, p_out);
+    if (KLBUI_CSSEX_get == method)
+    {
+        int hour = 0, minute = 0, second = 0;
+        klbwnd_time_get_value(p_wnd, &hour, &minute, &second);
+
+        klb_map_t* p_hms = klb_map_create();
+        klb_map_set_int64(p_hms, "hour", hour);
+        klb_map_set_int64(p_hms, "minute", minute);
+        klb_map_set_int64(p_hms, "second", second);
+
+        klb_map_set_idx_map(p_out, 0, p_hms);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        int t = klb_map_array_type(p_in, start);
+        if (KLB_ADT_map == t)
+        {
+            klb_map_t* p_in_hms = klb_map_idx_to_map(p_in, start);
+
+            int hour = 0, minute = 0, second = 0;
+            if (0 < klb_map_array_size(p_in_hms))
+            {
+                hour = (int)klb_map_idx_to_int64(p_in_hms, 0);
+                minute = (int)klb_map_idx_to_int64(p_in_hms, 0);
+                second = (int)klb_map_idx_to_int64(p_in_hms, 0);
+            }
+            else
+            {
+                hour = (int)klb_map_to_int64(p_in_hms, "hour");
+                minute = (int)klb_map_to_int64(p_in_hms, "minute");
+                second = (int)klb_map_to_int64(p_in_hms, "second");
+            }
+
+            klbwnd_time_set_value(p_wnd, hour, minute, second);
+
+            // 刷新
+            klb_wnd_update(p_wnd);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,7 +355,6 @@ static void klbui_time_init_func_map(klb_wnd_t* p_wnd, klbui_time_t* p_time, klb
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_time_bind("title", on_klbui_time_title);
     KLBUI_time_bind("value", on_klbui_time_value);
 }
 

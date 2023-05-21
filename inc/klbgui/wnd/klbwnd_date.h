@@ -13,7 +13,8 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
-#include "klbthird/sds.h"
+#include "klbutil/klb_sds.h"
+#include "klbgui/shwnd/klbshw_calendar.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -37,6 +38,15 @@ typedef struct klbwnd_date_t_
 
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
+
+    struct
+    {
+        int                 year;           ///< 年
+        int                 month;          ///< 月
+        int                 day;            ///< 日
+    };
+
+    klb_wnd_t*              p_calendar;     ///< 弹出日历菜单; klbui_shwnd_get_calendar
 }klbwnd_date_t;
 
 
@@ -61,8 +71,8 @@ KLB_API const sds klbwnd_date_get_title(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get value
-KLB_API void klbwnd_date_set_value(klb_wnd_t* p_wnd, const char* p_value);
-KLB_API const sds klbwnd_date_get_value(klb_wnd_t* p_wnd);
+KLB_API void klbwnd_date_set_value(klb_wnd_t* p_wnd, int year, int month, int day);
+KLB_API void klbwnd_date_get_value(klb_wnd_t* p_wnd, int* p_year, int* p_month, int* p_day);
 
 
 #if defined(__cplusplus)

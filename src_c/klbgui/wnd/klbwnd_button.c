@@ -16,7 +16,7 @@ static void klbwnd_button_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_button_t* p_btn = (klbwnd_button_t*)p_wnd->ctrl;
 
-    klbwnd_button_quit_attribute(p_btn);
+    klbwnd_button_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

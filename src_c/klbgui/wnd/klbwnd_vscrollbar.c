@@ -16,7 +16,7 @@ static void klbwnd_vscrollbar_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
 
-    klbwnd_vscrollbar_quit_attribute(p_vsc);
+    klbwnd_vscrollbar_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }
@@ -36,9 +36,6 @@ static void klbwnd_vscrollbar_on_paint_status(klb_wnd_t* p_wnd, klbwnd_vscrollba
         // 边框
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
-
-    // 标题文本
-    klbuicssex_draw_text(p_wnd, p_vsc->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
 }
 
 static int klbwnd_vscrollbar_on_paint(klb_wnd_t* p_wnd)
@@ -100,6 +97,94 @@ static int klbwnd_vscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 私有函数
+
+static void klbwnd_vscrollbar_relayout(klb_wnd_t* p_wnd_vsc, klbwnd_vscrollbar_t* p_vsc)
+{
+    int w = p_wnd_vsc->pos.rect_in_parent.w;
+    int h = p_wnd_vsc->pos.rect_in_parent.h;
+
+    int w_up = w - 2, h_up = w - 2;
+
+    klb_wnd_move(p_vsc->p_up, 1, 1);
+    klb_wnd_resize(p_vsc->p_up, w_up, h_up);
+
+    int w_down = w - 2, h_down = w - 2;
+
+    klb_wnd_move(p_vsc->p_down, 1,  h - h_down - 2);
+    klb_wnd_resize(p_vsc->p_down, w_down, h_down);
+
+    klb_rect_t r = { 0, 0, w, h };
+    r.y += (h_up + 2);
+    r.h -= (h_up + 2);
+    //r.y += (h_down + 2);
+    r.h -= (h_down + 2);
+
+    int w_middle = w - 2, h_middle = 42;
+    int sy = r.y;
+
+    sy = r.y + (p_vsc->value - p_vsc->min) * (r.h - h_middle) / (p_vsc->max - p_vsc->min);
+
+    klb_wnd_move(p_vsc->p_middle, 1, sy);
+    klb_wnd_resize(p_vsc->p_middle, w_middle, h_middle);
+}
+
+// 向上按钮响应
+static int on_command_bnt_up_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd_vsc->ctrl;
+
+    if (KLBUI_click == e || KLBUI_dblclick == e)
+    {
+        int value = p_vsc->value - 1;
+        if (value < p_vsc->min) { value = p_vsc->min; }
+
+        if (value != p_vsc->value)
+        {
+            p_vsc->value = value;
+
+            klbwnd_vscrollbar_relayout(p_wnd_vsc, p_vsc);
+            klb_wnd_update(p_wnd_vsc);
+        }
+    }
+
+    return 0;
+}
+
+// 向下按钮响应
+static int on_command_bnt_down_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd_vsc->ctrl;
+
+    if (KLBUI_click == e || KLBUI_dblclick == e)
+    {
+        int value = p_vsc->value + 1;
+        if (p_vsc->max < value) { value = p_vsc->max; }
+
+        if (value != p_vsc->value)
+        {
+            p_vsc->value = value;
+
+            klbwnd_vscrollbar_relayout(p_wnd_vsc, p_vsc);
+            klb_wnd_update(p_wnd_vsc);
+        }
+    }
+
+    return 0;
+}
+
+// 中间滑块响应
+static int on_command_bnt_middle_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd_vsc->ctrl;
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // export 导出函数
 
 void klbwnd_vscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_vscrollbar_css_t* p_css)
@@ -107,30 +192,20 @@ void klbwnd_vscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_vscrollbar_css_t* p_css)
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
 
     p_vsc->p_css = p_css;
+
+    klbwnd_btnex_set_css(p_vsc->p_up, &p_css->btnex);
+    klbwnd_btnex_set_css(p_vsc->p_down, &p_css->btnex);
+    klbwnd_btnex_set_css(p_vsc->p_middle, &p_css->btnex);
 }
 
-void klbwnd_vscrollbar_set_title(klb_wnd_t* p_wnd, const char* p_title)
+void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, int value)
 {
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
 
-    p_vsc->title = sdscpy(p_vsc->title, p_title);
+    p_vsc->value = value;
 }
 
-const sds klbwnd_vscrollbar_get_title(klb_wnd_t* p_wnd)
-{
-    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
-
-    return p_vsc->title;
-}
-
-void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, const char* p_value)
-{
-    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
-
-    p_vsc->value = sdscpy(p_vsc->value, p_value);
-}
-
-const sds klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd)
+int klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd)
 {
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
 
@@ -142,14 +217,14 @@ const sds klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd)
 
 static void klbwnd_vscrollbar_init_attribute(klbwnd_vscrollbar_t* p_vsc)
 {
-    p_vsc->title = sdsempty();
-    p_vsc->value = sdsempty();
+    p_vsc->min = 0;
+    p_vsc->max = 100;
+    p_vsc->value = 0;
 }
 
 static void klbwnd_vscrollbar_quit_attribute(klbwnd_vscrollbar_t* p_vsc)
 {
-    KLB_FREE_BY(p_vsc->title, sdsfree);
-    KLB_FREE_BY(p_vsc->value, sdsfree);
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,6 +240,8 @@ void klbwnd_vscrollbar_css_init(klbwnd_vscrollbar_css_t* p_css, klb_gui_t* p_gui
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    klbwnd_btnex_css_init(&p_css->btnex, p_gui);
 }
 
 void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css)
@@ -172,10 +249,51 @@ void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->normal);
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
+
+    klbwnd_btnex_css_quit(&p_css->btnex);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // init / quit
+
+static void klbwnd_vscrollbar_init_subwnds(klb_wnd_t* p_wnd)
+{
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
+    klb_gui_t* p_gui = p_wnd->p_gui;
+
+    int w = p_wnd->pos.rect_in_parent.w;
+    int h = p_wnd->pos.rect_in_parent.h;
+
+    int h_up = w;
+    int h_down = w;
+
+    // 向上
+    {
+        p_vsc->p_up = klbwnd_btnex_create(p_gui, 1, 1, w - 2, h_up);
+        klb_wnd_push_child(p_wnd, p_vsc->p_up);
+
+        klbwnd_btnex_set_type(p_vsc->p_up, KLBWND_BTNEX_triangle_up);
+        klb_wnd_bind_command(p_vsc->p_up, on_command_bnt_up_klbwnd_vscrollbar, p_wnd);
+    }
+
+    // 向下
+    {
+        p_vsc->p_down = klbwnd_btnex_create(p_gui, 1, h - h_up - 1, w - 2, h_up);
+        klb_wnd_push_child(p_wnd, p_vsc->p_down);
+
+        klbwnd_btnex_set_type(p_vsc->p_down, KLBWND_BTNEX_triangle_down);
+        klb_wnd_bind_command(p_vsc->p_down, on_command_bnt_down_klbwnd_vscrollbar, p_wnd);
+    }
+
+    // 中间滑块
+    {
+        p_vsc->p_middle = klbwnd_btnex_create(p_gui, 1, (h - 80) / 2, w - 2, 80);
+        klb_wnd_push_child(p_wnd, p_vsc->p_middle);
+
+        klbwnd_btnex_set_type(p_vsc->p_middle, KLBWND_BTNEX_rectangle);
+        klb_wnd_bind_command(p_vsc->p_middle, on_command_bnt_middle_klbwnd_vscrollbar, p_wnd);
+    }
+}
 
 void klbwnd_vscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h)
 {
@@ -197,8 +315,14 @@ void klbwnd_vscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
     // 样式 style
     p_wnd->state.style = 0x0;
 
-    // 
+    // 初始化内部方属性
     klbwnd_vscrollbar_init_attribute(p_vsc);
+
+    // 初始化子窗口
+    klbwnd_vscrollbar_init_subwnds(p_wnd);
+
+    // 初始化布局
+    klbwnd_vscrollbar_relayout(p_wnd, p_vsc);
 }
 
 void klbwnd_vscrollbar_quit(klb_wnd_t* p_wnd)

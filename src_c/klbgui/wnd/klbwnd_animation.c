@@ -16,7 +16,7 @@ static void klbwnd_animation_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_animation_t* p_ani = (klbwnd_animation_t*)p_wnd->ctrl;
 
-    klbwnd_animation_quit_attribute(p_ani);
+    klbwnd_animation_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

@@ -16,6 +16,13 @@ bool klb_pt_in_rect(const klb_rect_t* p_rect, int x, int y)
     return false;
 }
 
+void klb_rect_init(klb_rect_t* p_dst, int x, int y, int w, int h)
+{
+    p_dst->x = x;
+    p_dst->y = y;
+    p_dst->w = w;
+    p_dst->h = h;
+}
 
 void klb_rect_union(klb_rect_t* p_dst, const klb_rect_t* p_rect1, const klb_rect_t* p_rect2)
 {

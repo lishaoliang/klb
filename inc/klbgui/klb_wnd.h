@@ -6,6 +6,7 @@
 /// @version 0.1
 /// @history 修改历史
 ///   \n [2023-4] 提供 klb_wnd_push_child 函数, 允许使用者 在扩展控件开发中 自行构建窗口树
+///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发替换绘图函数
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
 #define __KLB_WND_H__
@@ -44,6 +45,7 @@ typedef enum klb_wnd_style_e_
     KLB_WND_STYLE_TOP            = 0x0001,   ///< 顶层窗口
     KLB_WND_STYLE_BORDERLESS     = 0x0002,   ///< 无边框/标题栏
     KLB_WND_STYLE_NOFOCUS        = 0x0004,   ///< 无聚焦状态
+    KLB_WND_STYLE_NOCOMMAND      = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
 }klb_wnd_style_e;
 
 
@@ -87,9 +89,6 @@ typedef int(*klb_wnd_on_control_cb)(klb_wnd_t* p_wnd, int msg, const klb_point_t
 /// @param [in] *p_p1       点1
 /// @param [in] *p_p2       点2
 /// @return int
-///  \n 0. 消息终止,不再"冒泡"
-///  \n msg. 任然以msg"冒泡"
-///  \n 非0. 转换为其他消息"冒泡"
 typedef int(*klb_wnd_on_command_cb)(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
@@ -107,6 +106,12 @@ typedef int(*klb_wnd_on_set_cb)(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 /// @return klb_map_t* map数据集合
 /// @note map 具体数据格式由控件定义
 typedef klb_map_t* (*klb_wnd_on_get_cb)(klb_wnd_t* p_wnd, const klb_map_t* p_map);
+
+
+/// @brief 窗口绘制函数
+/// @param [in] *p_wnd      窗体对象
+/// @return int
+typedef int(*klb_wnd_on_paint_cb)(klb_wnd_t* p_wnd);
 
 
 /// @struct klb_wnd_vtable_t
@@ -136,6 +141,12 @@ typedef struct klb_wnd_vtable_t_
     ///  \n msg. 任然以msg"冒泡"
     ///  \n 非0. 转换为其他消息"冒泡"
     klb_wnd_on_command_cb   on_command;
+
+    /// @brief 自定义绘图
+    /// @param [in] *p_wnd      窗体对象
+    /// @return int
+    /// @note 自定义绘图, 需要在控件中自行处理, 不会被框架调用
+    klb_wnd_on_paint_cb     on_paint;
 
     /// @brief 向控件设置数据: 样式\显示\状态等等
     /// @param [in] *p_wnd      窗体对象
@@ -210,6 +221,8 @@ KLB_API klb_gui_t* klb_wnd_get_gui(klb_wnd_t* p_wnd);
 /// @brief 获取画布
 /// @param [in] *p_wnd      窗口对象
 /// @return klb_canvas_t* 画布指针
+/// @note 不要缓存窗口画布指针; 需要使用时, 临时获取
+///       框架可能会依据当前状态情况, 变更窗口画布
 KLB_API klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd);
 
 
@@ -236,11 +249,18 @@ KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
 
 
 /// @brief 标记窗口需要刷新
+/// @note 仅标记, 由框架决定合适的刷新时机
 KLB_API void klb_wnd_update(klb_wnd_t* p_wnd);
 
 
 /// @brief 绑定响应函数
 KLB_API int klb_wnd_bind_command(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* p_obj);
+
+
+/// @brief 绑定自定义绘图
+/// @note 绑定之后, 控件部分处理绘图
+///       由控件决定是否使用外加的绘图
+KLB_API int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint);
 
 
 //////////////////////////////////////////////////////////////////////////

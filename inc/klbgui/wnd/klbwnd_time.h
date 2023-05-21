@@ -13,11 +13,24 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
+#include "klbgui/shwnd/klbshw_decimal.h"
+#include "klbutil/klb_sds.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
+
+#define KLBWND_TIME_idx_hour            0
+#define KLBWND_TIME_idx_minute          1
+#define KLBWND_TIME_idx_second          2
+
+
+typedef struct klbwnd_time_region_t_
+{
+    klb_rect_t              rect;
+    sds                     title;
+}klbwnd_time_region_t;
 
 typedef struct klbwnd_time_css_t_
 {
@@ -34,8 +47,21 @@ typedef struct klbwnd_time_t_
 {
     klbwnd_time_css_t*      p_css;          ///< 样式
 
-    sds                     title;          ///< 标题
-    sds                     value;          ///< 值
+    klb_wnd_t*              p_decimal;      ///< 10进制软件键盘: klbui_shwnd_get_decimal
+
+    klbwnd_time_region_t    hms[3];         ///< 时分秒
+    klbwnd_time_region_t    colon[2];       ///< 冒号:
+    klbwnd_time_region_t    apm;            ///< 12小时制: AM/PM
+
+    int                     sel_idx;        ///< 选中序号
+
+    // 值
+    struct
+    {
+        int                 hour;           ///< 小时
+        int                 minute;         ///< 分钟
+        int                 second;         ///< 秒钟
+    };
 }klbwnd_time_t;
 
 
@@ -54,14 +80,9 @@ KLB_API void klbwnd_time_css_quit(klbwnd_time_css_t* p_css);
 KLB_API void klbwnd_time_set_css(klb_wnd_t* p_wnd, klbwnd_time_css_t* p_css);
 
 
-/// @brief set/get title
-KLB_API void klbwnd_time_set_title(klb_wnd_t* p_wnd, const char* p_title);
-KLB_API const sds klbwnd_time_get_title(klb_wnd_t* p_wnd);
-
-
 /// @brief set/get value
-KLB_API void klbwnd_time_set_value(klb_wnd_t* p_wnd, const char* p_value);
-KLB_API const sds klbwnd_time_get_value(klb_wnd_t* p_wnd);
+KLB_API void klbwnd_time_set_value(klb_wnd_t* p_wnd, int hour, int minute, int second);
+KLB_API void klbwnd_time_get_value(klb_wnd_t* p_wnd, int* p_hour, int* p_minute, int* p_second);
 
 
 #if defined(__cplusplus)

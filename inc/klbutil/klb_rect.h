@@ -54,6 +54,10 @@ typedef struct klb_rect_t_
 KLB_API bool klb_pt_in_rect(const klb_rect_t* p_rect, int x, int y);
 
 
+/// @brief 初始化
+KLB_API void klb_rect_init(klb_rect_t* p_dst, int x, int y, int w, int h);
+
+
 /// @brief 求取2个矩形的并集
 /// @param [out] *p_dst     输出并集区域
 /// @param [in] *p_rect1    区域1

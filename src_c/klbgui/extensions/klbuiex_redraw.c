@@ -66,6 +66,27 @@ static bool is_in_hlist_klbuiex_redraw(klbuiex_redraw_t* p_re, klb_wnd_t* p_wnd)
     return false;
 }
 
+// 窗口是否为隐藏的
+static bool is_hide_wnd_klbuiex_redraw(klbuiex_redraw_t* p_re, klb_wnd_t* p_wnd)
+{
+    // 检查自身及整个窗口链
+    // 若父(祖)级处于隐藏状态, 则也为隐藏
+
+    klb_wnd_t* p_cur = p_wnd;
+    while (NULL != p_cur)
+    {
+        if (p_cur->state.status & KLB_WND_STATUS_HIDE)
+        {
+            return true;
+        }
+
+        p_cur = p_cur->p_parent;
+    }
+
+
+    return false;
+}
+
 // 唯一性
 static void check_only_one_wnd_klbuiex_redraw(klbuiex_redraw_t* p_re)
 {
@@ -90,7 +111,11 @@ static void check_only_one_wnd_klbuiex_redraw(klbuiex_redraw_t* p_re)
             // 则剔除当前窗口
             klb_hlist_remove(p_re->p_hlist, p_cur);
         }
-
+        else if(is_hide_wnd_klbuiex_redraw(p_re, p_wnd))
+        {
+            // 处于隐藏状态, 则剔除当前窗口
+            klb_hlist_remove(p_re->p_hlist, p_cur);
+        }
     }
 }
 
@@ -128,17 +153,19 @@ bool klbuiex_redraw_need_repaint(klbuiex_redraw_t* p_re, bool* p_redraw_all)
     bool ret = false;
 
     // redraw_all / 或有记录, 则需要重新绘制
-    if (p_re->redraw_all || 0 < klb_hlist_size(p_re->p_hlist))
+    int count = klb_hlist_size(p_re->p_hlist);
+    
+    if (p_re->redraw_all || 0 < count)
     {
         ret = true;
-        //klb_hlist_clear(p_re->p_hlist, NULL, NULL);
-    }
-    else if(0 < klb_hlist_size(p_re->p_hlist))
-    {
-        // 存在先放子窗口, 再放父窗口的情况
-        // 所有需要一次性清理一下
-        check_only_one_wnd_klbuiex_redraw(p_re);
-    }
+
+        if (0 < count)
+        {
+            // 存在先放子窗口, 再放父窗口的情况
+            // 所有需要一次性清理一下
+            check_only_one_wnd_klbuiex_redraw(p_re);
+        }
+    } 
 
     *p_redraw_all = p_re->redraw_all;
 

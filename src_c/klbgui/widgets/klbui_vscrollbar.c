@@ -235,12 +235,12 @@ static void on_klbui_vscrollbar_border_color_disable(klb_wnd_t* p_wnd, klbui_vsc
 
 static void on_klbui_vscrollbar_title(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_vsc, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_vsc->vscrollbar.title), p_wnd, method, p_in, p_out);
+    //klbuicssex_attribute_sds(&(p_vsc->vscrollbar.title), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_vscrollbar_value(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_vsc, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_vsc->vscrollbar.value), p_wnd, method, p_in, p_out);
+    //klbuicssex_attribute_sds(&(p_vsc->vscrollbar.value), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -181,6 +181,8 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
             luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_bind->on_command);
             p_bind->on_command = 0;
         }
+
+        klb_hlist_remove_bykey(p_ex->p_bind_hlist, p_path_name, name_len);
         KLB_FREE(p_bind);
     }
 

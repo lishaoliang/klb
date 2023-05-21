@@ -1,6 +1,7 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/klbui_widgets.h"
 #include "klbgui/wnd/klbwnd_date.h"
+#include "klbgui/wnd/klbwnd_calendar.h"
 #include "klbmem/klb_mem.h"
 
 
@@ -233,14 +234,48 @@ static void on_klbui_date_border_color_disable(klb_wnd_t* p_wnd, klbui_date_t* p
 //////////////////////////////////////
 // 自定义属性
 
-static void on_klbui_date_title(klb_wnd_t* p_wnd, klbui_date_t* p_date, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_attribute_sds(&(p_date->date.title), p_wnd, method, p_in, p_out);
-}
-
 static void on_klbui_date_value(klb_wnd_t* p_wnd, klbui_date_t* p_date, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_date->date.value), p_wnd, method, p_in, p_out);
+    if (KLBUI_CSSEX_get == method)
+    {
+        int year = 0, month = 0, day = 0;
+        klbwnd_date_get_value(p_wnd, &year, &month, &day);
+
+        klb_map_t* p_ymd = klb_map_create();
+        klb_map_set_int64(p_ymd, "year", year);
+        klb_map_set_int64(p_ymd, "month", month);
+        klb_map_set_int64(p_ymd, "day", day);
+
+        klb_map_set_idx_map(p_out, 0, p_ymd);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        int t = klb_map_array_type(p_in, start);
+        if(KLB_ADT_map == t)
+        {
+            klb_map_t* p_in_ymd = klb_map_idx_to_map(p_in, start);
+
+            int year = 0, month = 0, day = 0;
+            if (0 < klb_map_array_size(p_in_ymd))
+            {
+                year = klb_map_idx_to_int64(p_in_ymd, 0);
+                month = klb_map_idx_to_int64(p_in_ymd, 0);
+                day = klb_map_idx_to_int64(p_in_ymd, 0);
+            }
+            else
+            {
+                year = klb_map_to_int64(p_in_ymd, "year");
+                month = klb_map_to_int64(p_in_ymd, "month");
+                day = klb_map_to_int64(p_in_ymd, "day");
+            }
+
+            klbwnd_date_set_value(p_wnd, year, month, day);
+
+            // 刷新
+            klb_wnd_update(p_wnd);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,7 +356,6 @@ static void klbui_date_init_func_map(klb_wnd_t* p_wnd, klbui_date_t* p_date, klb
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_date_bind("title", on_klbui_date_title);
     KLBUI_date_bind("value", on_klbui_date_value);
 }
 

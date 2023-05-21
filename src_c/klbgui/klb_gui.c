@@ -11,6 +11,11 @@
 
 
 //////////////////////////////////////////////////////////////////////////
+// 前置定义
+static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y);
+
+
+//////////////////////////////////////////////////////////////////////////
 // klb_gui.h
 
 klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
@@ -35,6 +40,9 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
     // 取得重绘记录指针
     p_gui->p_redraw = klbuiex_get_redraw(p_gui);
+
+    // util
+    p_gui->p_util = klbuiex_get_util(p_gui);
 
     // 注册标准窗口类型
     KLB_GUI_REGISTER_STD(p_gui);
@@ -299,7 +307,41 @@ int klb_gui_clear(klb_gui_t* p_gui)
     return 0;
 }
 
-static void klb_gui_load_wnd(klb_wnd_t* p_wnd)
+// 控件 on_command 事件
+// wnd.vtable.on_command
+static int on_command_klb_wnd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    if (p_wnd && p_wnd->vtable.on_command)
+    {
+        klb_point_t pt = { 0, 0 };
+        const klb_point_t* p1 = (NULL != p_pt1) ? p_pt1 : &pt;
+        const klb_point_t* p2 = (NULL != p_pt2) ? p_pt2 : &pt;
+
+        return p_wnd->vtable.on_command(p_wnd, e, p1, p2, lparam, wparam);
+    }
+
+    return 0;
+}
+
+
+// 控件 on_control 事件
+// wnd.vtable.on_control
+static int on_control_klb_wnd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    if (p_wnd && p_wnd->vtable.on_control)
+    {
+        klb_point_t pt = { 0, 0 };
+        const klb_point_t* p1 = (NULL != p_pt1) ? p_pt1 : &pt;
+        const klb_point_t* p2 = (NULL != p_pt2) ? p_pt2 : &pt;
+
+        return p_wnd->vtable.on_control(p_wnd, e, p1, p2, lparam, wparam);
+    }
+
+    return 0;
+}
+
+// 需要递归执行的窗口事件: eg. KLBUI_onload
+static void do_control_event_recursive_klb_wnd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     if (NULL == p_wnd)
     {
@@ -310,17 +352,90 @@ static void klb_gui_load_wnd(klb_wnd_t* p_wnd)
 
     while (NULL != p_next)
     {
-        klb_gui_load_wnd(p_next);
+        do_control_event_recursive_klb_wnd(p_next, e, p_pt1, p_pt2, lparam, wparam);
 
         p_next = p_next->p_next;
     }
 
-    if (NULL != p_wnd->vtable.on_control)
-    {
-        klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_control(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
-    }
+    on_control_klb_wnd(p_wnd, e, p_pt1, p_pt2, lparam, wparam);
 }
+
+
+// "压栈"待显示窗口流程
+static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
+{
+    // 清除焦点
+    {
+        if (NULL != p_gui->p_focus)
+        {
+            klb_wnd_set_focus(p_gui->p_focus, false);
+
+            p_gui->p_focus_top = NULL;
+            p_gui->p_focus = NULL;
+        }
+    }
+
+    // 设置顶层窗口标记
+    klb_wnd_set_style(p_wnd, klb_wnd_get_style(p_wnd) | KLB_WND_STYLE_TOP);
+
+    // "onload" 事件
+    {
+        // on_control 递归调用所有的控件
+        do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onload, NULL, NULL, 0, 0);
+
+        // 只有最顶层窗口拥有 "onload"事件响应
+        on_command_klb_wnd(p_wnd, KLBUI_onload, NULL, NULL, 0, 0);
+    }
+
+    // "onpredraw" 事件
+    {
+        // on_control 递归调用所有的控件
+        do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onpredraw, NULL, NULL, 0, 0);
+    }
+
+    // 处理基于画布绝对坐标
+    // 注意: 在此之前, 基于画布绝对坐标都是不可靠的
+    {
+        klb_wnd_set_calculate(p_wnd, true);
+        klb_wnd_try_calculate_rect(p_wnd);
+    }
+
+    // 重新查找焦点窗口
+    {
+        refind_focus_klb_gui(p_gui, p_gui->p_util->mouse_pt.x, p_gui->p_util->mouse_pt.y);
+    }
+
+    // 标记重绘所有
+    klbuiex_redraw_all(p_gui->p_redraw);
+}
+
+// "出栈"待显示窗口流程
+static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
+{
+    // 清除焦点
+    {
+        if (NULL != p_gui->p_focus)
+        {
+            klb_wnd_set_focus(p_gui->p_focus, false);
+
+            p_gui->p_focus_top = NULL;
+            p_gui->p_focus = NULL;
+        }
+    }
+
+    // "onunload" 事件
+    {
+        // 只有最顶层窗口拥有 "onunload"事件响应
+        on_command_klb_wnd(p_wnd, KLBUI_onunload, NULL, NULL, 0, 0);
+
+        // on_control 递归调用所有的控件
+        do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onunload, NULL, NULL, 0, 0);
+    }
+
+    // 标记重绘所有
+    klbuiex_redraw_all(p_gui->p_redraw);
+}
+
 
 int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
 {
@@ -345,18 +460,8 @@ int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_modal_wnd[p_gui->modal_num] = p_wnd;
         p_gui->modal_num += 1;
 
-        // KLBUI_LOAD
-        klb_gui_load_wnd(p_wnd);
-        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-        {
-            klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
-        }
-
-        klb_wnd_set_calculate(p_wnd, true);
-
-        // 标记重绘所有
-        klbuiex_redraw_all(p_gui->p_redraw);
+        // 压栈待显示窗口流程
+        do_push_stack_top_wnd(p_gui, p_wnd);
 
         return 0;
     }
@@ -376,26 +481,11 @@ static void klb_gui_model_end_last(klb_gui_t* p_gui)
     klb_wnd_t* p_top = p_gui->p_modal_wnd[index];
     klb_wnd_t* p_wnd = p_top;
 
-    if (NULL != p_gui->p_focus_top && p_top == p_gui->p_focus_top)
-    {
-        klb_wnd_set_focus(p_gui->p_focus, false);
-
-        p_gui->p_focus_top = NULL;
-        p_gui->p_focus = NULL;
-    }
-
     p_gui->p_modal_wnd[index] = NULL;
     p_gui->modal_num = index;
 
-    // KLBUI_onunload
-    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-    {
-        klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
-    }
-
-    // 标记重绘所有
-    klbuiex_redraw_all(p_gui->p_redraw);
+    // 出栈待显示窗口流程
+    do_pop_statck_top_wnd(p_gui, p_wnd);
 }
 
 
@@ -442,18 +532,8 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_popup_wnd[p_gui->popup_num] = p_wnd;
         p_gui->popup_num += 1;
 
-        // KLBUI_LOAD
-        klb_gui_load_wnd(p_wnd);
-        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-        {
-            klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
-        }
-
-        klb_wnd_set_calculate(p_wnd, true);
-
-        // 标记重绘所有
-        klbuiex_redraw_all(p_gui->p_redraw);
+        // 压栈待显示窗口流程
+        do_push_stack_top_wnd(p_gui, p_wnd);
 
         return 0;
     }
@@ -483,18 +563,8 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         p_gui->p_popup_wnd[p_gui->popup_num] = p_wnd;
         p_gui->popup_num += 1;
 
-        // KLBUI_onload
-        klb_gui_load_wnd(p_wnd);
-        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-        {
-            klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
-        }
-
-        klb_wnd_set_calculate(p_wnd, true);
-
-        // 标记重绘所有
-        klbuiex_redraw_all(p_gui->p_redraw);
+        // 压栈待显示窗口流程
+        do_push_stack_top_wnd(p_gui, p_wnd);
 
         return 0;
     }
@@ -514,26 +584,12 @@ static void klb_gui_popup_end_last(klb_gui_t* p_gui)
     klb_wnd_t* p_top = p_gui->p_popup_wnd[index];
     klb_wnd_t* p_wnd = p_top;
 
-    if (NULL != p_gui->p_focus_top && p_top == p_gui->p_focus_top)
-    {
-        klb_wnd_set_focus(p_gui->p_focus, false);
-
-        p_gui->p_focus_top = NULL;
-        p_gui->p_focus = NULL;
-    }
-
     p_gui->p_popup_wnd[index] = NULL;
     p_gui->popup_num = index;
 
-    // KLBUI_onunload
-    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-    {
-        klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
-    }
 
-    // 标记重绘所有
-    klbuiex_redraw_all(p_gui->p_redraw);
+    // 出栈待显示窗口流程
+    do_pop_statck_top_wnd(p_gui, p_wnd);
 }
 
 int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
@@ -566,28 +622,10 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
-        if (NULL != p_gui->p_focus)
-        {
-            klb_wnd_set_focus(p_gui->p_focus, false);
-
-            p_gui->p_focus_top = NULL;
-            p_gui->p_focus = NULL;
-        }
-
         p_gui->p_msg_box = p_wnd;
 
-        // KLBUI_LOAD
-        klb_gui_load_wnd(p_wnd);
-        if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-        {
-            klb_point_t pt = { 0, 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_onload, &pt, &pt, 0, 0);
-        }
-
-        klb_wnd_set_calculate(p_wnd, true);
-
-        // 标记重绘所有
-        klbuiex_redraw_all(p_gui->p_redraw);
+        // 压栈待显示窗口流程
+        do_push_stack_top_wnd(p_gui, p_wnd);
 
         return 0;
     }
@@ -601,28 +639,13 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
     {
         return 1;
     }
-    
-    if (NULL != p_gui->p_focus)
-    {
-        klb_wnd_set_focus(p_gui->p_focus, false);
-
-        p_gui->p_focus_top = NULL;
-        p_gui->p_focus = NULL;
-    }
 
     klb_wnd_t* p_wnd = p_gui->p_msg_box;
 
-    // KLBUI_UNLOAD
-    if (NULL != p_wnd && NULL != p_wnd->vtable.on_command)
-    {
-        klb_point_t pt = { 0, 0 };
-        p_wnd->vtable.on_command(p_wnd, KLBUI_onunload, &pt, &pt, 0, 0);
-    }
-
     p_gui->p_msg_box = NULL;
 
-    // 标记重绘所有
-    klbuiex_redraw_all(p_gui->p_redraw);
+    // 出栈待显示窗口流程
+    do_pop_statck_top_wnd(p_gui, p_wnd);
 
     return 0;
 }
@@ -632,13 +655,10 @@ int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_c
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
     {
-        return 1;
+        return 1; // 未找到
     }
 
-    p_wnd->p_udata= p_obj;
-    p_wnd->vtable.on_command = on_command;
-
-    return 0;
+    return klb_wnd_bind_command(p_wnd, on_command, p_obj);
 }
 
 int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map)
@@ -844,7 +864,8 @@ int klb_gui_refresh(klb_gui_t* p_gui)
 //////////////////////////////////////////////////////////////////////////
 // loop message
 
-static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t** p_top)
+// 查找(x,y), 处于哪个窗口中
+static klb_wnd_t* find_focus_klb_gui(klb_gui_t* p_gui, int x, int y, klb_wnd_t** p_top)
 {
     // messagebox
     if (NULL != p_gui->p_msg_box)
@@ -897,27 +918,38 @@ static klb_wnd_t* klb_gui_find_focus(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
     return NULL;
 }
 
+// 重新寻找鼠标焦点
+static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
+{
+    // 寻找焦点窗口
+    klb_wnd_t* p_focus_top = NULL;
+    klb_wnd_t* p_focus = find_focus_klb_gui(p_gui, x, y, &p_focus_top);
+
+    if (NULL != p_gui->p_focus && p_focus != p_gui->p_focus)
+    {
+        klb_wnd_set_focus(p_gui->p_focus, false);
+        klb_wnd_update(p_gui->p_focus);
+    }
+
+    if (NULL != p_focus && p_focus != p_gui->p_focus)
+    {
+        klb_wnd_set_focus(p_focus, true);
+        klb_wnd_update(p_focus);
+    }
+
+    p_gui->p_focus_top = p_focus_top;
+    p_gui->p_focus = p_focus;
+}
+
 static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 {
     if (KLBUI_mousemove == p_msg->msg)
     {
-        klb_wnd_t* p_focus_top = NULL;
-        klb_wnd_t* p_focus = klb_gui_find_focus(p_gui, p_msg->pt1.x, p_msg->pt1.y, &p_focus_top);
+        // 更新记录鼠标位置
+        p_gui->p_util->mouse_pt = p_msg->pt1;
 
-        if (NULL != p_gui->p_focus && p_focus != p_gui->p_focus)
-        {
-            klb_wnd_set_focus(p_gui->p_focus, false);
-            klb_wnd_update(p_gui->p_focus);
-        }
-
-        if (NULL != p_focus && p_focus != p_gui->p_focus)
-        {
-            klb_wnd_set_focus(p_focus, true);
-            klb_wnd_update(p_focus);
-        }
-
-        p_gui->p_focus_top = p_focus_top;
-        p_gui->p_focus = p_focus;
+        // 重新寻找焦点窗口
+        refind_focus_klb_gui(p_gui, p_msg->pt1.x, p_msg->pt1.y);
     }
 
     // 处理窗口消息
@@ -937,35 +969,26 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         }
     }
 
-
     if (NULL != p_wnd)
     {
+        // "消息冒泡"
+        // 这里裁剪 "冒泡" 流程, 只将消息事件交给焦点窗口和顶层窗口处理
+
         // 这里 on_control / on_command 函数都需要处理, eg. 组件可能需要响应部分消息
-        // 先调用组件自身的处理函数
-        if (NULL != p_wnd->vtable.on_control)
         {
-            p_wnd->vtable.on_control(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            // 先调用组件自身的处理函数
+            on_control_klb_wnd(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+
+            // 再调用绑定的用户函数
+            on_command_klb_wnd(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
         }
 
-        // 再调用绑定的用户函数
-        if (NULL != p_wnd->vtable.on_command)
-        {
-            p_wnd->vtable.on_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-        }
-
-        // 最后将消息交给顶层窗口处理
+        // 最后将消息事件交给顶层窗口处理
         klb_wnd_t* p_wnd_top = klb_wnd_get_top(p_wnd);
         if (p_wnd != p_wnd_top)
         {
-            if (NULL != p_wnd_top->vtable.on_control)
-            {
-                p_wnd_top->vtable.on_control(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-            }
-
-            if (NULL != p_wnd_top->vtable.on_command)
-            {
-                p_wnd_top->vtable.on_command(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-            }
+            on_control_klb_wnd(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            on_command_klb_wnd(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
         }
     }
 

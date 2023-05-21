@@ -16,7 +16,7 @@ static void klbwnd_slider_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_slider_t* p_slider = (klbwnd_slider_t*)p_wnd->ctrl;
 
-    klbwnd_slider_quit_attribute(p_slider);
+    klbwnd_slider_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

@@ -16,7 +16,7 @@ static void klbwnd_hscrollbar_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
 
-    klbwnd_hscrollbar_quit_attribute(p_hsc);
+    klbwnd_hscrollbar_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }
@@ -100,6 +100,47 @@ static int klbwnd_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 私有函数
+
+// 向左按钮响应
+static int on_command_bnt_left_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd_vsc->ctrl;
+
+    if (KLBUI_click == e || KLBUI_dblclick == e)
+    {
+
+    }
+
+    return 0;
+}
+
+// 向右按钮响应
+static int on_command_bnt_right_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd_vsc->ctrl;
+
+    if (KLBUI_click == e || KLBUI_dblclick == e)
+    {
+
+    }
+
+    return 0;
+}
+
+// 中间滑块响应
+static int on_command_bnt_middle_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd_vsc->ctrl;
+
+    return 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 // export 导出函数
 
 void klbwnd_hscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_hscrollbar_css_t* p_css)
@@ -107,6 +148,10 @@ void klbwnd_hscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_hscrollbar_css_t* p_css)
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
 
     p_hsc->p_css = p_css;
+
+    klbwnd_btnex_set_css(p_hsc->p_left, &p_css->btnex);
+    klbwnd_btnex_set_css(p_hsc->p_right, &p_css->btnex);
+    klbwnd_btnex_set_css(p_hsc->p_middle, &p_css->btnex);
 }
 
 void klbwnd_hscrollbar_set_title(klb_wnd_t* p_wnd, const char* p_title)
@@ -140,7 +185,7 @@ const sds klbwnd_hscrollbar_get_value(klb_wnd_t* p_wnd)
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
-static void klbwnd_hscrollbar_init_attribute(klbwnd_hscrollbar_t* p_hsc)
+static void klbwnd_hscrollbar_init_attribute(klb_wnd_t* p_wnd, klbwnd_hscrollbar_t* p_hsc)
 {
     p_hsc->title = sdsempty();
     p_hsc->value = sdsempty();
@@ -165,6 +210,8 @@ void klbwnd_hscrollbar_css_init(klbwnd_hscrollbar_css_t* p_css, klb_gui_t* p_gui
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    klbwnd_btnex_css_init(&p_css->btnex, p_gui);
 }
 
 void klbwnd_hscrollbar_css_quit(klbwnd_hscrollbar_css_t* p_css)
@@ -172,10 +219,51 @@ void klbwnd_hscrollbar_css_quit(klbwnd_hscrollbar_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->normal);
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
+
+    klbwnd_btnex_css_quit(&p_css->btnex);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // init / quit
+
+static void klbwnd_hscrollbar_init_subwnds(klb_wnd_t* p_wnd)
+{
+    klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
+    klb_gui_t* p_gui = p_wnd->p_gui;
+
+    int w = p_wnd->pos.rect_in_parent.w;
+    int h = p_wnd->pos.rect_in_parent.h;
+
+    int w_left = h;
+    int w_right = h;
+
+    // 向左
+    {
+        p_hsc->p_left = klbwnd_btnex_create(p_gui, 1, 1, w_left, h - 2);
+        klb_wnd_push_child(p_wnd, p_hsc->p_left);
+
+        klbwnd_btnex_set_type(p_hsc->p_left, KLBWND_BTNEX_triangle_left);
+        klb_wnd_bind_command(p_hsc->p_left, on_command_bnt_left_klbwnd_hscrollbar, p_wnd);
+    }
+
+    // 向右
+    {
+        p_hsc->p_right = klbwnd_btnex_create(p_gui, w - w_right - 1, 1, w_right, h - 2);
+        klb_wnd_push_child(p_wnd, p_hsc->p_right);
+
+        klbwnd_btnex_set_type(p_hsc->p_right, KLBWND_BTNEX_triangle_right);
+        klb_wnd_bind_command(p_hsc->p_right, on_command_bnt_right_klbwnd_hscrollbar, p_wnd);
+    }
+
+    // 中间
+    {
+        p_hsc->p_middle = klbwnd_btnex_create(p_gui, w / 2, 1, 80, h - 2);
+        klb_wnd_push_child(p_wnd, p_hsc->p_middle);
+
+        klbwnd_btnex_set_type(p_hsc->p_middle, KLBWND_BTNEX_rectangle);
+        klb_wnd_bind_command(p_hsc->p_middle, on_command_bnt_middle_klbwnd_hscrollbar, p_wnd);
+    }
+}
 
 void klbwnd_hscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h)
 {
@@ -197,8 +285,11 @@ void klbwnd_hscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
     // 样式 style
     p_wnd->state.style = 0x0;
 
-    // 
-    klbwnd_hscrollbar_init_attribute(p_hsc);
+    // 初始化内置属性
+    klbwnd_hscrollbar_init_attribute(p_wnd, p_hsc);
+
+    // 初始化子窗口
+    klbwnd_hscrollbar_init_subwnds(p_wnd);
 }
 
 void klbwnd_hscrollbar_quit(klb_wnd_t* p_wnd)

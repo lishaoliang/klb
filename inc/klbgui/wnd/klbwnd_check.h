@@ -2,7 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbwnd_check.h
-/// @brief   klb window check
+/// @brief   klb window check: 选择框
 /// @version 0.1
 /// @history 修改历史
 ///////////////////////////////////////////////////////////////////////////
@@ -19,24 +19,26 @@ extern "C" {
 #endif
 
 
-
 typedef struct klbwnd_check_css_t_
 {
     klbuicss_margin_t       margin;         ///< 外边距
     klbuicss_padding_t      padding;        ///< 内边距
 
-    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+    klbuicssex_attributes_t on;             ///< 选中状态, 常规
+    klbuicssex_attributes_t on_focus;       ///< 选中状态, 聚焦
+    klbuicssex_attributes_t on_disable;     ///< 选中状态, 不使能
+
+    klbuicssex_attributes_t off;            ///< 未选中, 常规
+    klbuicssex_attributes_t off_focus;      ///< 未选中, 聚焦
+    klbuicssex_attributes_t off_disable;    ///< 未选中, 不使能
 }klbwnd_check_css_t;
 
 
 typedef struct klbwnd_check_t_
 {
-    klbwnd_check_css_t*    p_css;          ///< 样式
+    klbwnd_check_css_t*     p_css;          ///< 样式
 
-    sds                     title;          ///< 标题
-    sds                     value;          ///< 值
+    bool                    check;          ///< 是否选中
 }klbwnd_check_t;
 
 
@@ -55,14 +57,9 @@ KLB_API void klbwnd_check_css_quit(klbwnd_check_css_t* p_css);
 KLB_API void klbwnd_check_set_css(klb_wnd_t* p_wnd, klbwnd_check_css_t* p_css);
 
 
-/// @brief set/get title
-KLB_API void klbwnd_check_set_title(klb_wnd_t* p_wnd, const char* p_title);
-KLB_API const sds klbwnd_check_get_title(klb_wnd_t* p_wnd);
-
-
-/// @brief set/get value
-KLB_API void klbwnd_check_set_value(klb_wnd_t* p_wnd, const char* p_value);
-KLB_API const sds klbwnd_check_get_value(klb_wnd_t* p_wnd);
+/// @brief set/get check
+KLB_API void klbwnd_check_set_check(klb_wnd_t* p_wnd, bool check);
+KLB_API bool klbwnd_check_get_check(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

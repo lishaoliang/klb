@@ -11,6 +11,9 @@
 #define __KLBUI_UTIL_H__
 
 #include "klb_type.h"
+#include "klbutil/klb_rect.h"
+#include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_css.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -46,6 +49,40 @@ extern "C" {
         LEN_ = 2; \
     } \
 }
+
+//////////////////////////////////////////////////////////////////////////
+// 一些函数
+
+/// @brief 矩形, 移除 外边距/内边距/边框
+KLB_API void klbuiutil_remove_margin(klb_rect_t* p_rect, klbuicss_margin_t* p_margin);
+KLB_API void klbuiutil_remove_padding(klb_rect_t* p_rect, klbuicss_padding_t* p_padding);
+KLB_API void klbuiutil_remove_border(klb_rect_t* p_rect, klbuicss_border_t* p_border);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 常用绘制图形函数
+
+//////////////////////////////////////
+// 矩形
+
+/// @brief 绘制实体矩形
+KLB_API void klbuiutil_draw_rectangle(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+
+//////////////////////////////////////
+// 三角形
+
+/// @brief 绘制向左实体三角形
+KLB_API void klbuiutil_draw_triangle_left(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+/// @brief 绘制向右实体三角形
+KLB_API void klbuiutil_draw_triangle_right(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+/// @brief 绘制向上实体三角形
+KLB_API void klbuiutil_draw_triangle_up(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+/// @brief 绘制向下实体三角形
+KLB_API void klbuiutil_draw_triangle_down(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
 
 
 #if defined(__cplusplus)

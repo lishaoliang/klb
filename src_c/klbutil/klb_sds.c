@@ -1,0 +1,66 @@
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbutil/klb_sds.h"
+#include <string.h>
+#include <stdio.h>
+
+
+sds klb_sdscpy(sds s, const char* p_str)
+{
+    sds dst = (NULL != s) ? s : sdsempty();
+    return sdscpy(dst, p_str);
+}
+
+sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
+{
+    sds dst = (NULL != s) ? s : sdsempty();
+
+    switch (klb_adt_type(p_adt))
+    {
+    case KLB_ADT_bool:
+        {
+            if (klb_adt_to_bool(p_adt))
+            {
+                dst = sdscpy(dst, "true");
+            }
+            else
+            {
+                dst = sdscpy(dst, "false");
+            }
+        }
+        break;
+    case KLB_ADT_string:
+        {
+            int len = 0;
+            const char* p_str = klb_adt_to_lstring(p_adt, &len);
+            dst = sdscpylen(dst, p_str, len);
+        }
+        break;
+    case KLB_ADT_double:
+        {
+            char str[128];
+            snprintf(str, sizeof(str) - 1, "%.6f", klb_adt_to_double(p_adt));
+            
+            dst = sdscpy(dst, str);
+        }
+        break;
+    case KLB_ADT_uint64:
+        {
+            sdsclear(dst);
+            dst = sdscatfmt(dst, "%U", klb_adt_to_uint64(p_adt));
+        }
+        break;
+    case KLB_ADT_int64:
+        {
+            sdsclear(dst);
+            dst = sdscatfmt(dst, "%I", klb_adt_to_int64(p_adt));
+        }
+        break;
+    default:
+        {
+            dst = sdscpy(dst, "");
+        }
+        break;
+    }
+
+    return dst;
+}

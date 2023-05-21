@@ -9,6 +9,21 @@
 /// @history 修改历史
 ///   \n [2023-1]调整自定义message名称为 event 事件
 /// @warning 没有警告
+/// @note 窗口流程:
+///        -> *_create(...) / klb_wnd_push_child(...) / klb_gui_append(...)         创建及加入窗口树
+///        -> klb_gui_model(...) / klb_gui_popup(...) / klb_gui_messagebox(...)     model/popup/messagebox等方式压入栈待显示
+///        -> KLBUI_onload          加载事件: "onload"
+///        -> KLBUI_onpredraw       预绘制事件: "onpredraw"
+///        -> klb_wnd_draw(...)     绘制动作(框架内部函数)
+///        -> KLBUI_onpaint(...)    绘制事件: "onpaint"
+///        -> ... click/focus/...   中间用户操作等事件
+///        -> klb_gui_model_end(...)/klb_gui_popup_end(...)/klb_gui_messagebox_end(...)     结束显示
+///        -> KLBUI_onunload        卸载事件: "onunload"
+///        -> *_destroy(...)        销毁
+///        -------------------------------------------------
+///        @ *_create(..) / *_destroy(...) 一般只执行一次
+///        @ model/popup/messagebox ~ model_end/popup_end/messagebox_end(onunload) 一般流程在这些之间
+///        @ "onpredraw" 一般进行"补位"动作, 第一次绘制之前, 最后调整窗口的时机; eg. 某些页面需要自动处理流程, 在这里处理
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLBUI_EVENT_H__
 #define __KLBUI_EVENT_H__
@@ -83,10 +98,14 @@ extern "C" {
 #define KLBUI_onerror           0x501           // onerror
 
 
+/// @def   KLBUI_onpredraw
+/// @brief 预绘制事件: 在第一次窗口绘制之前(on pre-draw)
+#define KLBUI_onpredraw         0x518           // onpredraw
+
+
 /// @def   KLBUI_onpaint
 /// @brief 绘制事件: 当需要窗口组件绘制时触发
 #define KLBUI_onpaint           0x520           // onpaint
-
 
 
 /// @def   KLBUI_onload
@@ -108,6 +127,12 @@ extern "C" {
 /// @def   KLBUI_onchange
 /// @brief 内容变更事件: 当窗口组件内容变更时触发
 #define KLBUI_onchange          0x604           // onchange
+
+
+
+///////////////////////////////////////
+// 焦点相关
+
 
 /// @def   KLBUI_focusin
 /// @brief 即将获得焦点事件: 窗口组件即将获得焦点时触发
@@ -136,7 +161,7 @@ extern "C" {
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义事件 [0x1000 ~ -]
+// 自定义事件 [0x1000 ~ - 0xFFFF]
 
 
 

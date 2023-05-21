@@ -16,7 +16,7 @@ static void klbwnd_radio_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_radio_t* p_radio = (klbwnd_radio_t*)p_wnd->ctrl;
 
-    klbwnd_radio_quit_attribute(p_radio);
+    klbwnd_radio_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

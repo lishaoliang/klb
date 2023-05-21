@@ -65,9 +65,13 @@ typedef struct klb_gui_t_
         klb_hlist_t*    p_extension_activated_hlist;    ///< 激活的扩展; klb_gui_extension_activated_t*
     };
 
-    // 窗口管理
-    klbuiex_wndhash_t*  p_wndhash;                      ///< 窗口创建,查找等
-    klbuiex_redraw_t*   p_redraw;                       ///< 重绘记录
+    // 常用的扩展
+    struct
+    {
+        klbuiex_wndhash_t*  p_wndhash;                  ///< 窗口创建,查找等
+        klbuiex_redraw_t*   p_redraw;                   ///< 重绘记录
+        klbuiex_util_t*     p_util;                     ///< util
+    };
 
     // 当前绘制窗口, 窗口显示次序
     struct
@@ -103,9 +107,6 @@ typedef struct klb_gui_t_
     {
         klua_env_t*     p_klua_env;
     };
-
-    int                 datefmt;    ///< 时间格式: KLBUI_DATE_YMD1
-    int                 timefmt;    ///< 日期格式: KLBUI_TIME_24H
 
     /// @brief css属性函数表
     klb_map_t           css_map;

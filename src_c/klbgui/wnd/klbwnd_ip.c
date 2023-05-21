@@ -16,7 +16,7 @@ static void klbwnd_ip_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_ip_t* p_ip = (klbwnd_ip_t*)p_wnd->ctrl;
 
-    klbwnd_ip_quit_attribute(p_ip);
+    klbwnd_ip_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

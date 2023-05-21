@@ -16,7 +16,7 @@ static void klbwnd_edit_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_edit_t* p_edit = (klbwnd_edit_t*)p_wnd->ctrl;
 
-    klbwnd_edit_quit_attribute(p_edit);
+    klbwnd_edit_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

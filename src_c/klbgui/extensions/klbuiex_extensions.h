@@ -20,6 +20,7 @@
 #include "klbgui/extensions/klbuiex_time.h"
 #include "klbgui/extensions/klbuiex_shwnd.h"
 #include "klbgui/extensions/klbuiex_redraw.h"
+#include "klbgui/extensions/klbuiex_util.h"
 
 
 #if defined(__cplusplus)
@@ -27,10 +28,11 @@ extern "C" {
 #endif
 
 
-/// @def   KLBUIEX_register_extensions_std
-/// @brief 注册内部标准扩展
+    /// @def   KLBUIEX_register_extensions_std
+    /// @brief 注册内部标准扩展
 #define KLBUIEX_register_extensions_std(GUI_) \
 { \
+    klbuiex_register_util((GUI_));      \
     klbuiex_register_wndhash((GUI_));   \
     klbuiex_register_default((GUI_));   \
     klbuiex_register_time((GUI_));      \

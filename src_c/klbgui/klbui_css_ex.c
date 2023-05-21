@@ -1,4 +1,5 @@
-﻿#include "klbgui/klbui_css_ex.h"
+﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbgui/klbui_css_ex.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 #include <string.h>
@@ -750,16 +751,8 @@ void klbuicssex_draw_border(klb_wnd_t* p_wnd, klb_rect_t* p_rect, klbuicss_borde
     }
 }
 
-// 绘制文本
-void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font)
+static void klbuicssex_draw_text_internal(klb_wnd_t* p_wnd, const char* p_txt, int txt_len, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font)
 {
-    assert(NULL != p_wnd);
-
-    if (NULL == txt || sdslen(txt) <= 0)
-    {
-        return;
-    }
-
     klb_rect_t text_rect = *p_rect;
 
     // 移除边框
@@ -784,18 +777,18 @@ void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuics
     {
         // 居中
         int need_w = 0;
-        klb_wnd_text_size2(p_wnd, txt, sdslen(txt), p_css_font->size, &need_w, NULL);
+        klb_wnd_text_size2(p_wnd, p_txt, txt_len, p_css_font->size, &need_w, NULL);
 
         if (need_w < text_rect.w)
         {
             text_rect.x += (text_rect.w - need_w) / 2;
         }
     }
-    else if(KLBUICSS_text1_right == p_css_text->align)
+    else if (KLBUICSS_text1_right == p_css_text->align)
     {
         // 右对其
         int need_w = 0;
-        klb_wnd_text_size2(p_wnd, txt, sdslen(txt), p_css_font->size, &need_w, NULL);
+        klb_wnd_text_size2(p_wnd, p_txt, txt_len, p_css_font->size, &need_w, NULL);
 
         if (need_w < text_rect.w)
         {
@@ -807,5 +800,36 @@ void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuics
         // 左对其, 无需处理
     }
 
-    klb_wnd_draw_text2(p_wnd, &text_rect, txt, sdslen(txt), p_css_text->color, p_css_font->size);
+    klb_wnd_draw_text2(p_wnd, &text_rect, p_txt, txt_len, p_css_text->color, p_css_font->size);
+}
+
+// 绘制文本
+void klbuicssex_draw_text(klb_wnd_t* p_wnd, sds txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font)
+{
+    assert(NULL != p_wnd);
+
+    if (NULL == txt || sdslen(txt) <= 0)
+    {
+        return;
+    }
+
+    klbuicssex_draw_text_internal(p_wnd, txt, sdslen(txt), p_rect, p_border, p_padding, p_css_text, p_css_font);
+}
+
+void klbuicssex_draw_text2(klb_wnd_t* p_wnd, const char* p_txt, klb_rect_t* p_rect, klbuicss_border_t* p_border, klbuicss_padding_t* p_padding, klbuicss_text_t* p_css_text, klbuicss_font_t* p_css_font)
+{
+    assert(NULL != p_wnd);
+
+    if (NULL == p_txt)
+    {
+        return;
+    }
+
+    int txt_len = strlen(p_txt);
+    if (txt_len <= 0)
+    {
+        return;
+    }
+
+    klbuicssex_draw_text_internal(p_wnd, p_txt, txt_len, p_rect, p_border, p_padding, p_css_text, p_css_font);
 }

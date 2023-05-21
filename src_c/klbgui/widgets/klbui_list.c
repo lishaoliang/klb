@@ -5,7 +5,7 @@
 
 
 /// @struct klbui_list_t
-/// @brief  常规按钮
+/// @brief  简易列表框
 typedef struct klbui_list_t_
 {
     klbwnd_list_t       list;           ///< 必须首位, 保持内存一致
@@ -233,14 +233,115 @@ static void on_klbui_list_border_color_disable(klb_wnd_t* p_wnd, klbui_list_t* p
 //////////////////////////////////////
 // 自定义属性
 
-static void on_klbui_list_title(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_list_append_column(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_list->list.title), p_wnd, method, p_in, p_out);
+    // 添加列
+    if (KLBUI_CSSEX_set == method)
+    {
+        /* eg.
+        jq('list1')['append-column']({
+                {['width']=128,['title']='列1'},
+                {['width']=128,['title']='列2'},
+                {['width']=128,['title']='列3'},
+            })
+        */
+        int start = 1;
+        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_array)
+        {
+            int count = klb_map_array_size(p_in_array);
+            for (int i = 0; i < count; i++)
+            {
+                klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
+                if (NULL != p_item_map)
+                {
+                    int width = 0;
+                    width = (int)klb_map_to_int64(p_item_map, "width");
+                    if (width <= 0)
+                    {
+                        width = (int)klb_map_to_uint64(p_item_map, "width");
+                    }
+
+                    // 宽度必须大于0, 才认可有效列
+                    if (0 < width)
+                    {
+                        klbwnd_list_append_column(p_wnd, width, klb_map_to_string(p_item_map, "title"));
+                    }
+                }
+            }
+        }
+    }
+}
+
+static void on_klbui_list_append(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 添加数据
+    if (KLBUI_CSSEX_set == method)
+    {
+        /* eg.
+            jq('list1').append({
+                {{['11']='行11'}, {['12']='行12'}, {['13']='行13'}},
+                {{['21']='行21'}, {['22']='行12'}, {['23']='行23'}},
+                {{['31']='行31'}, {['32']='行12'}, {['33']='行33'}},
+            })
+
+            或
+
+            jq('list1').append({
+                {'行11', '行12', '行13'},
+                {'行21', '行22', '行23'},
+                {'行31', '行32', '行33'},
+            })
+        */
+        int start = 1;
+        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_array)
+        {
+            klb_map_t* p_data_map = klbwnd_list_get_data_map(p_wnd);
+
+            int count = klb_map_array_size(p_in_array);
+            for (int i = 0; i < count; i++)
+            {
+                klb_map_append_adt_clone(p_data_map, klb_map_idx_to_adt(p_in_array, i));
+            }
+        }
+    }
+}
+
+static void on_klbui_list_clear(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 清空
+    klbwnd_list_clear(p_wnd);
+    klb_wnd_update(p_wnd);
 }
 
 static void on_klbui_list_value(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_list->list.value), p_wnd, method, p_in, p_out);
+    // 值
+    if (KLBUI_CSSEX_get == method)
+    {
+        int sel = -1;
+        klb_map_t* p_sel_map = klbwnd_list_get_sel(p_wnd, &sel);
+
+        if (0 <= sel) sel += 1; // Lua从1开始
+
+        klb_map_set_idx_int64(p_out, 0, sel);
+        klb_map_set_idx_map_clone(p_out, 1, p_sel_map);
+        
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+
+        if (KLB_ADT_int64 == klb_map_array_type(p_in, start))
+        {
+            int sel = (int)klb_map_idx_to_int64(p_in, start);
+            sel -= 1; // Lua从1开始
+
+            klbwnd_list_set_sel(p_wnd, sel);
+            klb_wnd_update(p_wnd);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,7 +422,10 @@ static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_list_bind("title", on_klbui_list_title);
+    KLBUI_list_bind("append-column", on_klbui_list_append_column);
+    KLBUI_list_bind("append", on_klbui_list_append);
+    KLBUI_list_bind("clear", on_klbui_list_clear);
+
     KLBUI_list_bind("value", on_klbui_list_value);
 }
 

@@ -16,7 +16,7 @@ static void klbwnd_combo_destroy(klb_wnd_t* p_wnd)
 {
     klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
 
-    klbwnd_combo_quit_attribute(p_combo);
+    klbwnd_combo_quit(p_wnd);
 
     KLB_FREE(p_wnd);
 }

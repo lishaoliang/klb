@@ -24,13 +24,13 @@ typedef struct klb_gui_t_ klb_gui_t;
 
 
 // 日期格式
-#define KLBUI_DATE_YMD1         0       // 年月日: "YY/MM/DD"
-#define KLBUI_DATE_MDY1         1       // 月日年: "MM/DD/YY"
-#define KLBUI_DATE_DMY1         2       // 日月年: "DD/MM/YY"
+#define KLBUI_DATE_YMD1         0       // 年月日: "YYYY/MM/DD"
+#define KLBUI_DATE_MDY1         1       // 月日年: "MM/DD/YYYY"
+#define KLBUI_DATE_DMY1         2       // 日月年: "DD/MM/YYYY"
 
-#define KLBUI_DATE_YMD2         3       // 年月日: "YY-MM-DD"
-#define KLBUI_DATE_MDY2         4       // 月日年: "MM-DD-YY"
-#define KLBUI_DATE_DMY2         5       // 日月年: "DD-MM-YY"
+#define KLBUI_DATE_YMD2         3       // 年月日: "YYYY-MM-DD"
+#define KLBUI_DATE_MDY2         4       // 月日年: "MM-DD-YYYY"
+#define KLBUI_DATE_DMY2         5       // 日月年: "DD-MM-YYYY"
 
 
 // 时间格式
@@ -61,11 +61,11 @@ KLB_API int klbui_weekday(int year, int month, int day);
 
 
 /// @brief 获取某年某月的 前一个月份
-KLB_API void klbui_prev_month(int year, int month, int* p_front_year, int* p_front_month);
+KLB_API void klbui_prev_month(int year, int month, int* p_prev_year, int* p_prev_month);
 
 
 /// @brief 获取某年某月的 后一个月份
-KLB_API void klbui_next_month(int year, int month, int* p_front_year, int* p_front_month);
+KLB_API void klbui_next_month(int year, int month, int* p_next_year, int* p_next_month);
 
 
 #if defined(__cplusplus)
