@@ -3,7 +3,7 @@
 #include "klbmem/klb_mem.h"
 
 
-#define KLBUIEX_TIME   "_KLBUIEX_TIME_"
+#define KLBUIEX_TIME   "KLBUIEX-time"
 
 typedef struct klbuiex_time_t_
 {

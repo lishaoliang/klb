@@ -25,6 +25,7 @@ klb_wnd_t* klb_dialog_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_edit_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_num_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_date_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -35,6 +36,7 @@ klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_slider_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_group_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_list_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_listex_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_progress_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_rich_text_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_spin_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -54,6 +56,7 @@ klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 #define KLBUI_kstatic           "kstatic"
 #define KLBUI_kbutton           "kbutton"
 #define KLBUI_kedit             "kedit"
+#define KLBUI_knum              "knum"
 #define KLBUI_kcheck            "kcheck"
 #define KLBUI_kcombo            "kcombo"
 #define KLBUI_kdate             "kdate"
@@ -64,6 +67,7 @@ klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 #define KLBUI_kslider           "kslider"
 #define KLBUI_kgroup            "kgroup"
 #define KLBUI_klist             "klist"
+#define KLBUI_klistex           "klistex"
 #define KLBUI_kprogress         "kprogress"
 #define KLBUI_krichtext         "krichtext"
 #define KLBUI_kspin             "kspin"
@@ -84,6 +88,7 @@ klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klb_gui_register((PTR_GUI_), KLBUI_kstatic,     klbui_static_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kbutton,     klbui_button_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kedit,       klbui_edit_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_knum,        klbui_num_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_kcheck,      klbui_check_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kcombo,      klbui_combo_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kdate,       klbui_date_create);         \
@@ -94,6 +99,7 @@ klb_wnd_t* klbui_messagebox_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klb_gui_register((PTR_GUI_), KLBUI_kslider,     klbui_slider_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kgroup,      klbui_group_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_klist,       klbui_list_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_klistex,     klbui_listex_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kprogress,   klbui_progress_create);     \
     klb_gui_register((PTR_GUI_), KLBUI_krichtext,   klbui_rich_text_create);    \
     klb_gui_register((PTR_GUI_), KLBUI_kspin,       klbui_spin_create);         \

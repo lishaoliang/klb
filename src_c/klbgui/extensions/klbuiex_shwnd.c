@@ -5,7 +5,7 @@
 #include <string.h>
 
 
-#define KLBUIEX_SHWND   "_KLBUIEX_SHWND_"
+#define KLBUIEX_SHWND   "KLBUIEX-shwnd"
 
 
 typedef struct klbuiex_shwnd_t_
@@ -24,9 +24,8 @@ static int cb_clear_top_wnd_klbuiex_shwnd(void* p_obj, void* p_data)
     klbuiex_shwnd_t* p_shwnd = (klbuiex_shwnd_t*)p_obj;
     klb_wnd_t* p_top_wnd = (klb_wnd_t*)p_data;
 
-    // 释放顶层窗口
-    // TODO. 释放窗口树
-    KLB_FREE_WND(p_top_wnd);
+    // 释放顶层窗口树
+	klb_wnd_destroy_tree(p_top_wnd);
 
     return 0;
 }

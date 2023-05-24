@@ -50,6 +50,7 @@ typedef struct klbwnd_vscrollbar_t_
     {
         int                     min;
         int                     max;
+		int						step;
         int                     value;
     };
 }klbwnd_vscrollbar_t;
@@ -73,6 +74,10 @@ KLB_API void klbwnd_vscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_vscrollbar_css_t
 /// @brief set/get value
 KLB_API void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, int value);
 KLB_API int klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd);
+
+
+/// @brief 设置范围
+KLB_API void klbwnd_vscrollbar_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step);
 
 
 #if defined(__cplusplus)

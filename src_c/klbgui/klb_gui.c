@@ -30,8 +30,6 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     p_gui->p_msg_list = klb_nlist_create();
     p_gui->p_msg_mutex = klb_mutex_create();
 
-    klb_map_init(&p_gui->css_map);
-
     // 注册标准扩展
     KLBUIEX_register_extensions_std(p_gui);
 
@@ -48,20 +46,6 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     KLB_GUI_REGISTER_STD(p_gui);
 
     return p_gui;
-}
-
-static void klb_gui_destroy_wnd(klb_wnd_t* p_wnd)
-{
-    klb_wnd_t* p_next = p_wnd->p_child;
-    while (NULL != p_next)
-    {
-        klb_wnd_t* p_cur = p_next;
-        p_next = p_next->p_next;
-
-        klb_gui_destroy_wnd(p_cur);
-    }
-
-    KLB_FREE_WND(p_wnd);
 }
 
 static void klb_gui_quit_extensions(klb_gui_t* p_gui)
@@ -95,7 +79,6 @@ void klb_gui_destroy(klb_gui_t* p_gui)
     }
 
     klb_gui_quit_extensions(p_gui);
-    klb_map_quit(&p_gui->css_map);
 
     KLB_FREE_BY(p_gui->p_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_gui->p_msg_mutex, klb_mutex_destroy);
@@ -396,8 +379,8 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
     // 处理基于画布绝对坐标
     // 注意: 在此之前, 基于画布绝对坐标都是不可靠的
     {
-        klb_wnd_set_calculate(p_wnd, true);
-        klb_wnd_try_calculate_rect(p_wnd);
+		klb_wnd_update_canvas_rect(p_wnd);
+        klb_wnd_calculate_canvas_rect(p_wnd, 0, 0);
     }
 
     // 重新查找焦点窗口

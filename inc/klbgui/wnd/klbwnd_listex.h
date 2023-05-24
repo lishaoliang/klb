@@ -1,0 +1,133 @@
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klbwnd_listexex.h
+/// @brief   klb window listex extend; 扩展列表框
+/// @version 0.1
+/// @history 修改历史
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLBWND_LISTEX_H__
+#define __KLBWND_LISTEX_H__
+
+#include "klb_type.h"
+#include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_css.h"
+#include "klbgui/klbui_css_ex.h"
+#include "klbutil/klb_sds.h"
+#include "klbutil/klb_map.h"
+#include "klbgui/wnd/klbwnd_check.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
+#define KLBWND_LISTEX_column_max      12      ///< 列最大值
+#define KLBWND_LISTEX_row_max         64      ///< 行最大值
+
+
+typedef struct klbwnd_listex_row_t_ klbwnd_listex_row_t;
+
+
+typedef struct klbwnd_listex_head_column_t_
+{
+    bool        enable;
+    int         width;
+    sds         title;
+
+    klb_map_t*  p_child;                    ///< 子窗口属性; 若有, 则表示含有子窗口
+}klbwnd_listex_head_column_t;
+
+typedef struct klbwnd_listex_head_t_
+{
+    klbwnd_listex_head_column_t column[KLBWND_LISTEX_column_max];
+    int                         column_count;
+}klbwnd_listex_head_t;
+
+
+typedef struct klbwnd_listex_row_css_t_
+{
+    klbuicss_margin_t       margin;         ///< 外边距
+    klbuicss_padding_t      padding;        ///< 内边距
+
+    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
+    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
+    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+}klbwnd_listex_row_css_t;
+
+
+typedef struct klbwnd_listex_css_t_
+{
+    klbuicss_margin_t       margin;         ///< 外边距
+    klbuicss_padding_t      padding;        ///< 内边距
+
+    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
+    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
+    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+
+    klbwnd_listex_row_css_t listex_row;     ///< 行控件CSS
+    klbwnd_check_css_t      check;          ///< check控件CSS
+}klbwnd_listex_css_t;
+
+
+typedef struct klbwnd_listex_t_
+{
+    klbwnd_listex_css_t*    p_css;          ///< 样式
+    sds                     tmp;            ///< 临时使用参数
+
+    // 题头
+    klbwnd_listex_head_t    head;
+
+    // 子控件: klbwnd_listex_row_t
+    klb_wnd_t*              p_rows[KLBWND_LISTEX_row_max]; ///< 
+    int                     rows_count;     ///< 
+
+    int                     sel;            ///< 当前选中的行
+
+    // 第0列, 选择框
+    struct
+    {
+        klb_wnd_t*          p_check;
+        int                 w0;
+    };    
+
+    // 数据
+    klb_map_t               data_map;       ///< 数据
+}klbwnd_listex_t;
+
+
+/// @brief init/quit/create
+KLB_API void klbwnd_listex_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h);
+KLB_API void klbwnd_listex_quit(klb_wnd_t* p_wnd);
+KLB_API klb_wnd_t* klbwnd_listex_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+
+
+/// @brief css init/quit
+KLB_API void klbwnd_listex_css_init(klbwnd_listex_css_t* p_css, klb_gui_t* p_gui);
+KLB_API void klbwnd_listex_css_quit(klbwnd_listex_css_t* p_css);
+
+
+/// @brief set css
+KLB_API void klbwnd_listex_set_css(klb_wnd_t* p_wnd, klbwnd_listex_css_t* p_css);
+
+
+/// @brief 添加列
+KLB_API int klbwnd_listex_append_column(klb_wnd_t* p_wnd, int w_column, const char* p_title, const klb_map_t* p_child);
+
+/// @brief 数据列表
+KLB_API klb_map_t* klbwnd_listex_get_data_map(klb_wnd_t* p_wnd);
+
+/// @brief 清空
+KLB_API void klbwnd_listex_clear(klb_wnd_t* p_wnd);
+
+/// @brief 设置/获取选中的数据
+KLB_API void klbwnd_listex_set_sel(klb_wnd_t* p_wnd, int sel);
+KLB_API klb_map_t* klbwnd_listex_get_sel(klb_wnd_t* p_wnd, int* p_sel);
+
+
+#if defined(__cplusplus)
+}
+#endif
+
+#endif // __KLBWND_LISTEX_H__
+//end

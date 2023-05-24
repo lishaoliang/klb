@@ -8,8 +8,8 @@
 /// @brief  分组
 typedef struct klbui_group_t_
 {
-    klbwnd_group_t     group;           ///< 必须首位, 保持内存一致
-    klbwnd_group_css_t css;             ///< 样式
+    klbwnd_group_t      group;          ///< 必须首位, 保持内存一致
+    klbwnd_group_css_t  css;            ///< 样式
 
     klb_map_t*          p_func_map;     ///< CSS属性函数表
 }klbui_group_t;

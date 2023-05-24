@@ -93,15 +93,7 @@ static int klbwnd_btnex_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
     {
     case KLBUI_onpaint:
         {
-            // 许可自定义绘图
-            if (p_wnd->vtable.on_paint)
-            {
-                return p_wnd->vtable.on_paint(p_wnd);
-            }
-            else
-            {
-                return klbwnd_btnex_on_paint(p_wnd);
-            }
+			return klbwnd_btnex_on_paint(p_wnd);
         }
         break;
     default:
@@ -186,7 +178,7 @@ int klbwnd_btnex_get_value_int(klb_wnd_t* p_wnd)
 }
 
 /// @brief set/get value bool
-void klbwnd_btnex_set_value_bool(klb_wnd_t* p_wnd, int value)
+void klbwnd_btnex_set_value_bool(klb_wnd_t* p_wnd, bool value)
 {
     klbwnd_btnex_t* p_btn = (klbwnd_btnex_t*)p_wnd->ctrl;
 

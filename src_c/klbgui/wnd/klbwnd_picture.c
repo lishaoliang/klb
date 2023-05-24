@@ -28,17 +28,9 @@ static void klbwnd_picture_on_paint_status(klb_wnd_t* p_wnd, klbwnd_picture_t* p
         // 图片背景
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
     }
-    else
-    {
-        // 纯色背景
-        klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
 
-        // 边框
-        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
-    }
-
-    // 标题文本
-    klbuicssex_draw_text(p_wnd, p_pic->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
+	// 边框
+	klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
 }
 
 static int klbwnd_picture_on_paint(klb_wnd_t* p_wnd)
@@ -165,6 +157,22 @@ void klbwnd_picture_css_init(klbwnd_picture_css_t* p_css, klb_gui_t* p_gui)
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    p_css->normal.border.width.top = 0;
+    p_css->normal.border.width.right = 0;
+    p_css->normal.border.width.bottom = 0;
+    p_css->normal.border.width.left = 0;
+
+    p_css->focus.border.width.top = 0;
+    p_css->focus.border.width.right = 0;
+    p_css->focus.border.width.bottom = 0;
+    p_css->focus.border.width.left = 0;
+
+    p_css->disable.border.width.top = 0;
+    p_css->disable.border.width.right = 0;
+    p_css->disable.border.width.bottom = 0;
+    p_css->disable.border.width.left = 0;
+
 }
 
 void klbwnd_picture_css_quit(klbwnd_picture_css_t* p_css)
@@ -195,9 +203,9 @@ void klbwnd_picture_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = 0x0;
+    p_wnd->state.style = KLB_WND_STYLE_NOFOCUS;
 
-    // 
+    // 初始化内部属性
     klbwnd_picture_init_attribute(p_pic);
 }
 

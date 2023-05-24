@@ -38,7 +38,7 @@ typedef enum klbwnd_btnex_type_e_
     KLBWND_BTNEX_rectangle          = 20,   ///< 实体矩形
     KLBWND_BTNEX_triangle_left,             ///< 实体向左三角(直角,边角45度)
     KLBWND_BTNEX_triangle_up,               ///< 实体向上三角(直角,边角45度)
-    KLBWND_BTNEX_triangle_right,             ///< 实体向右三角(直角,边角45度)
+    KLBWND_BTNEX_triangle_right,            ///< 实体向右三角(直角,边角45度)
     KLBWND_BTNEX_triangle_down,             ///< 实体向下三角(直角,边角45度)
 }klbwnd_btnex_type_e;
 
@@ -106,7 +106,7 @@ KLB_API int klbwnd_btnex_get_value_int(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get value bool
-KLB_API void klbwnd_btnex_set_value_bool(klb_wnd_t* p_wnd, int value);
+KLB_API void klbwnd_btnex_set_value_bool(klb_wnd_t* p_wnd, bool value);
 KLB_API bool klbwnd_btnex_get_value_bool(klb_wnd_t* p_wnd);
 
 

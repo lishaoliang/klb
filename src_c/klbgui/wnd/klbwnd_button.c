@@ -92,6 +92,7 @@ static int klbwnd_button_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
     {
     case KLBUI_onpaint:
         return klbwnd_button_on_paint(p_wnd);
+        break;
     default:
         break;
     }
@@ -140,7 +141,7 @@ const sds klbwnd_button_get_value(klb_wnd_t* p_wnd)
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
-static void klbwnd_button_init_attribute(klbwnd_button_t* p_btn)
+static void klbwnd_button_init_attribute(klb_wnd_t* p_wnd, klbwnd_button_t* p_btn)
 {
     p_btn->title = sdsempty();
     p_btn->value = sdsempty();
@@ -197,8 +198,8 @@ void klbwnd_button_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w,
     // 样式 style
     p_wnd->state.style = 0x0;
 
-    // 
-    klbwnd_button_init_attribute(p_btn);
+    // 初始化内部变量
+    klbwnd_button_init_attribute(p_wnd, p_btn);
 }
 
 void klbwnd_button_quit(klb_wnd_t* p_wnd)

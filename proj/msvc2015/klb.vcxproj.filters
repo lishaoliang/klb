@@ -1484,6 +1484,15 @@
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_btnex_paint.h">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_listex.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_listex_row.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_num.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2499,6 +2508,21 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_btnex_paint.c">
       <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_listex.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_listex.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_listex_row.c">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_num.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_num.c">
+      <Filter>src_c\klbgui\wnd</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

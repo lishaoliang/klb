@@ -55,7 +55,7 @@ typedef enum klb_wnd_status_e_
 {
     KLB_WND_STATUS_HIDE          = 0x0001,   ///< 隐藏
     KLB_WND_STATUS_FOCUS         = 0x1000,   ///< 鼠标聚焦
-    KLB_WND_STATUS_RE_CALCULATE  = 0x8000,   ///< 顶层窗口才具有的属性: 需要重新计算窗口基于屏幕的位置
+    KLB_WND_STATUS_CANVAS_RECT   = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
 }klb_wnd_status_e;
 
 
@@ -145,7 +145,6 @@ typedef struct klb_wnd_vtable_t_
     /// @brief 自定义绘图
     /// @param [in] *p_wnd      窗体对象
     /// @return int
-    /// @note 自定义绘图, 需要在控件中自行处理, 不会被框架调用
     klb_wnd_on_paint_cb     on_paint;
 
     /// @brief 向控件设置数据: 样式\显示\状态等等
@@ -214,6 +213,10 @@ typedef struct klb_wnd_t_
 }
 
 
+/// @brief 销毁窗口, 及其所有子窗口
+KLB_API void klb_wnd_destroy_tree(klb_wnd_t* p_wnd);
+
+
 /// @brief 获取gui
 KLB_API klb_gui_t* klb_wnd_get_gui(klb_wnd_t* p_wnd);
 
@@ -238,11 +241,14 @@ KLB_API uint32_t klb_wnd_get_style(klb_wnd_t* p_wnd);
 /// @return 无
 KLB_API void klb_wnd_set_style(klb_wnd_t* p_wnd, uint32_t style);
 
+
 /// @brief 设置是否显示
 KLB_API void klb_wnd_show(klb_wnd_t* p_wnd, bool show);
 
+
 /// @brief 基于父窗口移动(相对坐标)
 KLB_API void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y);
+
 
 /// @brief 重新设置控件大小
 KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
@@ -253,13 +259,20 @@ KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
 KLB_API void klb_wnd_update(klb_wnd_t* p_wnd);
 
 
+/// @brief 标记窗口需要更新 基于画布的坐标(屏幕/顶层窗口)
+/// @note 仅标记, 由框架决定合适的更新时机
+KLB_API void klb_wnd_update_canvas_rect(klb_wnd_t* p_wnd);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 绑定外部回调函数
+
+
 /// @brief 绑定响应函数
 KLB_API int klb_wnd_bind_command(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* p_obj);
 
 
 /// @brief 绑定自定义绘图
-/// @note 绑定之后, 控件部分处理绘图
-///       由控件决定是否使用外加的绘图
 KLB_API int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint);
 
 

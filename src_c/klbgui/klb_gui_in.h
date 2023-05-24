@@ -107,9 +107,6 @@ typedef struct klb_gui_t_
     {
         klua_env_t*     p_klua_env;
     };
-
-    /// @brief css属性函数表
-    klb_map_t           css_map;
 }klb_gui_t;
 
 

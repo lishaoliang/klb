@@ -4,7 +4,7 @@
 #include "klbgui/klb_wnd_in.h"
 
 
-#define KLBUIEX_WNDHASH   "_KLBUIEX_WNDHASH_"
+#define KLBUIEX_WNDHASH   "KLBUIEX-wndhash"
 
 
 /// @struct klbuiex_wndhash_t

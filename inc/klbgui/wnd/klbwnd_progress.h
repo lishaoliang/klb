@@ -35,7 +35,7 @@ typedef struct klbwnd_progress_t_
     klbwnd_progress_css_t*  p_css;          ///< 样式
 
     sds                     title;          ///< 标题
-    sds                     value;          ///< 值
+    int                     value;          ///< 值
 }klbwnd_progress_t;
 
 
@@ -60,8 +60,8 @@ KLB_API const sds klbwnd_progress_get_title(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get value
-KLB_API void klbwnd_progress_set_value(klb_wnd_t* p_wnd, const char* p_value);
-KLB_API const sds klbwnd_progress_get_value(klb_wnd_t* p_wnd);
+KLB_API void klbwnd_progress_set_value(klb_wnd_t* p_wnd, int value);
+KLB_API int klbwnd_progress_get_value(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

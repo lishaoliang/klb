@@ -19,13 +19,22 @@ static void* klbuiex_util_create(klb_gui_t* p_gui)
 
     p_util->p_gui = p_gui;
 
-
     // 日期时间
     {
         p_util->datefmt = KLBUI_DATE_YMD1;
         p_util->timefmt = KLBUI_TIME_24H;
     }
 
+    // 当前鼠标位置
+    {
+        p_util->mouse_pt.x = 0;
+        p_util->mouse_pt.y = 0;
+    }
+
+    // CSS
+    {
+        klb_map_init(&p_util->css_map);
+    }
 
     return p_util;
 }
@@ -33,6 +42,11 @@ static void* klbuiex_util_create(klb_gui_t* p_gui)
 static void klbuiex_util_destroy(void* ptr, klb_gui_t* p_gui)
 {
     klbuiex_util_t* p_util = (klbuiex_util_t*)ptr;
+
+    // CSS
+    {
+        klb_map_quit(&p_util->css_map);
+    }
 
     KLB_FREE(p_util)
 }

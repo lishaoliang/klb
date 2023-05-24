@@ -36,13 +36,35 @@ int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd)
         p_wnd->p_prev = p_next;
     }
 
-    // todo.
-    klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
-    klb_wnd_set_calculate(p_top, true);
+    // 标记更新屏幕坐标
+	klb_wnd_update_canvas_rect(p_wnd);
+
     return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+static void on_destroy_tree_klb_wnd(klb_wnd_t* p_wnd)
+{
+	// step1. 递归所有子窗口
+	klb_wnd_t* p_next = p_wnd->p_child;
+	while (NULL != p_next)
+	{
+		klb_wnd_t* p_cur = p_next;
+		p_next = p_next->p_next;
+
+		on_destroy_tree_klb_wnd(p_cur);
+	}
+
+	// step2. 销毁当前本窗口
+	KLB_FREE_WND(p_wnd);
+}
+
+void klb_wnd_destroy_tree(klb_wnd_t* p_wnd)
+{
+	on_destroy_tree_klb_wnd(p_wnd);
+}
+
 klb_gui_t* klb_wnd_get_gui(klb_wnd_t* p_wnd)
 {
     assert(NULL != p_wnd);
@@ -115,6 +137,11 @@ void klb_wnd_update(klb_wnd_t* p_wnd)
     }
 }
 
+void klb_wnd_update_canvas_rect(klb_wnd_t* p_wnd)
+{
+    p_wnd->state.status |= KLB_WND_STATUS_CANVAS_RECT;
+}
+
 klb_wnd_t* klb_wnd_get_top(klb_wnd_t* p_wnd)
 {
     klb_wnd_t* p_top = p_wnd;
@@ -145,18 +172,6 @@ bool klb_wnd_is_top(klb_wnd_t* p_wnd)
     return (p_wnd->state.style & KLB_WND_STYLE_TOP) ? true : false;
 }
 
-//void klb_wnd_set_hide(klb_wnd_t* p_wnd, bool hide)
-//{
-//    if (hide)
-//    {
-//        p_wnd->state.status |= KLB_WND_STATUS_HIDE;
-//    }
-//    else
-//    {
-//        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_HIDE);
-//    }
-//}
-
 void klb_wnd_set_focus(klb_wnd_t* p_wnd, bool focus)
 {
     if (focus)
@@ -169,99 +184,95 @@ void klb_wnd_set_focus(klb_wnd_t* p_wnd, bool focus)
     }
 }
 
-void klb_wnd_set_calculate(klb_wnd_t* p_wnd, bool calculate)
-{
-    if (calculate)
-    {
-        p_wnd->state.status |= KLB_WND_STATUS_RE_CALCULATE;
-    }
-    else
-    {
-        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_RE_CALCULATE);
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////
 
-int klb_wnd_draw(klb_wnd_t* p_wnd)
+void klb_wnd_calculate_canvas_rect(klb_wnd_t* p_wnd, int offset_x, int offset_y)
 {
-    // todo.
-    klb_wnd_try_calculate_rect(p_wnd);
-
-    klb_wnd_on_draw(p_wnd);
-
-    return 0;
-}
-
-int klb_wnd_on_draw(klb_wnd_t* p_wnd)
-{
-    if (KLB_WND_STATUS_HIDE & p_wnd->state.status)
-    {
-        return 0;
-    }
-
-    klb_wnd_on_paint(p_wnd);
-
-    klb_wnd_t* p_next = p_wnd->p_child;
-    while (NULL != p_next)
-    {
-        klb_wnd_on_draw(p_next);
-        p_next = p_next->p_next;
-    }
-
-    return 0;
-}
-
-int klb_wnd_on_paint(klb_wnd_t* p_wnd)
-{
-    //KLB_GUI_CTRL_PAINT
-
-    if (p_wnd->vtable.on_control)
-    {
-        return p_wnd->vtable.on_control(p_wnd, KLBUI_onpaint, NULL, NULL, 0, 0);
-    }
-
-    return 0;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-int klb_wnd_try_calculate_rect(klb_wnd_t* p_wnd)
-{
-    if (KLB_WND_STYLE_TOP & p_wnd->state.style)
-    {
-        if (KLB_WND_STATUS_RE_CALCULATE & p_wnd->state.status)
-        {
-            klb_wnd_calculate_rect_in_canvas(p_wnd);
-            klb_wnd_set_calculate(p_wnd, false);
-            return 0;
-        }
-    }
-    
-    return 1;
-}
-
-static void klb_wnd_calculate_rect(klb_wnd_t* p_wnd, int offset_x, int offset_y)
-{
+    // step1. 更新屏幕坐标
     p_wnd->pos.rect_in_canvas.x = p_wnd->pos.rect_in_parent.x + offset_x;
     p_wnd->pos.rect_in_canvas.y = p_wnd->pos.rect_in_parent.y + offset_y;
     p_wnd->pos.rect_in_canvas.w = p_wnd->pos.rect_in_parent.w;
     p_wnd->pos.rect_in_canvas.h = p_wnd->pos.rect_in_parent.h;
 
+    // step2. 取消更新屏幕坐标标记
+    p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_CANVAS_RECT);
+
+    // step3. 递归更新子窗口
     klb_wnd_t* p_next = p_wnd->p_child;
     while (NULL != p_next)
     {
-        klb_wnd_calculate_rect(p_next, p_wnd->pos.rect_in_canvas.x, p_wnd->pos.rect_in_canvas.y);
+        klb_wnd_calculate_canvas_rect(p_next, p_wnd->pos.rect_in_canvas.x, p_wnd->pos.rect_in_canvas.y);
+
         p_next = p_next->p_next;
     }
 }
 
-void klb_wnd_calculate_rect_in_canvas(klb_wnd_t* p_wnd)
+static int klb_wnd_on_paint(klb_wnd_t* p_wnd)
 {
-    klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
+	// step1. 优先使用绑定绘图函数
+	if (p_wnd->vtable.on_paint)
+	{
+		return p_wnd->vtable.on_paint(p_wnd);
+	}
 
-    klb_wnd_calculate_rect(p_top, 0, 0);
+	// step2. 再使用 on_control 的 KLBUI_onpaint 事件
+    if (p_wnd->vtable.on_control)
+    {
+		klb_point_t pt = { 0 };
+        return p_wnd->vtable.on_control(p_wnd, KLBUI_onpaint, &pt, &pt, 0, 0);
+    }
+
+    return 0;
 }
+
+static int klb_wnd_on_draw(klb_wnd_t* p_wnd)
+{
+    // step1. 更新屏幕坐标
+    if (KLB_WND_STATUS_CANVAS_RECT & p_wnd->state.status)
+    {
+        // 需要重新计算窗口基于屏幕的位置
+        int off_x = 0, off_y = 0;
+
+        klb_wnd_t* p_parent = p_wnd->p_parent;
+        if (NULL != p_parent)
+        {
+            off_x = p_parent->pos.rect_in_canvas.x;
+            off_y = p_parent->pos.rect_in_canvas.y;
+        }
+
+        // 更新自身及所有子窗口
+        klb_wnd_calculate_canvas_rect(p_wnd, off_x, off_y);
+    }
+
+    // step2. 检查隐藏
+    if (KLB_WND_STATUS_HIDE & p_wnd->state.status)
+    {
+        return 0;
+    }
+
+    // step3. 绘制自身
+    klb_wnd_on_paint(p_wnd);
+
+    // step4. 递归子窗口
+    klb_wnd_t* p_next = p_wnd->p_child;
+    while (NULL != p_next)
+    {
+        klb_wnd_on_draw(p_next);
+
+        p_next = p_next->p_next;
+    }
+
+    return 0;
+}
+
+int klb_wnd_draw(klb_wnd_t* p_wnd)
+{
+    klb_wnd_on_draw(p_wnd);
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 klb_wnd_t* klb_wnd_pt_in(klb_wnd_t* p_wnd, int x, int y)
 {

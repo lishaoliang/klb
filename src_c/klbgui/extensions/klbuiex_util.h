@@ -13,6 +13,7 @@
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
 #include "klbutil/klb_rect.h"
+#include "klbutil/klb_map.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -34,6 +35,8 @@ typedef struct klbuiex_util_t_
     // 用于重新获取当前焦点等
     klb_point_t     mouse_pt;
 
+    // CSS
+    klb_map_t       css_map;    ///< css属性函数表
 }klbuiex_util_t;
 
 

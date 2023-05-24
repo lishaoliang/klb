@@ -37,8 +37,25 @@ static void klbwnd_progress_on_paint_status(klb_wnd_t* p_wnd, klbwnd_progress_t*
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
+	if (p_prog->value <= 0)
+	{
+
+	}
+	else if(100 <= p_prog->value)
+	{
+		klb_rect_t rect_prog = { p_rect->x + 2, p_rect->y + 2, p_rect->w - 4, p_rect->h - 4 };
+		klb_wnd_draw_fill_rect2(p_wnd, &rect_prog, p_attr->text.color);
+	}
+	else
+	{
+		int w_prog = (int64_t)(p_rect->w - 4) * p_prog->value / 100;
+		klb_rect_t rect_prog = { p_rect->x + 2, p_rect->y + 2, w_prog, p_rect->h - 4 };
+
+		klb_wnd_draw_fill_rect2(p_wnd, &rect_prog, p_attr->text.color);
+	}
+
     // 标题文本
-    klbuicssex_draw_text(p_wnd, p_prog->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
+    //klbuicssex_draw_text(p_wnd, p_prog->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
 }
 
 static int klbwnd_progress_on_paint(klb_wnd_t* p_wnd)
@@ -123,14 +140,17 @@ const sds klbwnd_progress_get_title(klb_wnd_t* p_wnd)
     return p_prog->title;
 }
 
-void klbwnd_progress_set_value(klb_wnd_t* p_wnd, const char* p_value)
+void klbwnd_progress_set_value(klb_wnd_t* p_wnd, int value)
 {
     klbwnd_progress_t* p_prog = (klbwnd_progress_t*)p_wnd->ctrl;
 
-    p_prog->value = sdscpy(p_prog->value, p_value);
+	if (value < 0) { value = 0; };
+	if (100 < value) { value = 100; };
+
+	p_prog->value = value;
 }
 
-const sds klbwnd_progress_get_value(klb_wnd_t* p_wnd)
+int klbwnd_progress_get_value(klb_wnd_t* p_wnd)
 {
     klbwnd_progress_t* p_prog = (klbwnd_progress_t*)p_wnd->ctrl;
 

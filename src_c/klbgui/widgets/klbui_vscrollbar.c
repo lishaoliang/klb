@@ -233,14 +233,65 @@ static void on_klbui_vscrollbar_border_color_disable(klb_wnd_t* p_wnd, klbui_vsc
 //////////////////////////////////////
 // 自定义属性
 
-static void on_klbui_vscrollbar_title(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_vsc, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    //klbuicssex_attribute_sds(&(p_vsc->vscrollbar.title), p_wnd, method, p_in, p_out);
-}
-
 static void on_klbui_vscrollbar_value(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_vsc, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    //klbuicssex_attribute_sds(&(p_vsc->vscrollbar.value), p_wnd, method, p_in, p_out);
+	if (KLBUI_CSSEX_get == method)
+	{
+		klb_map_set_idx_int64(p_out, 0, klbwnd_vscrollbar_get_value(p_wnd));
+	}
+	else if (KLBUI_CSSEX_set == method)
+	{
+		int start = 1;
+		int type = klb_map_array_type(p_in, start);
+		switch (type)
+		{
+		case KLB_ADT_int64:
+			{
+				int v = (int)klb_map_idx_to_int64(p_in, start);
+				klbwnd_vscrollbar_set_value(p_wnd, v);
+				//klb_wnd_update(p_wnd);
+			}
+			break;
+		case KLB_ADT_uint64:
+			{
+				int v = (int)klb_map_idx_to_uint64(p_in, start);
+				klbwnd_vscrollbar_set_value(p_wnd, v);
+				//klb_wnd_update(p_wnd);
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+static void on_klbui_vscrollbar_ranges(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_vsc, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+	if (KLBUI_CSSEX_set == method)
+	{
+		int start = 1;
+		int t = klb_map_array_type(p_in, start);
+		if (KLB_ADT_map == t)
+		{
+			klb_map_t* p_in_hms = klb_map_idx_to_map(p_in, start);
+
+			int min = 0, max = 0, step = 0;
+			if (0 < klb_map_array_size(p_in_hms))
+			{
+				min = (int)klb_map_idx_to_int64(p_in_hms, 0);
+				max = (int)klb_map_idx_to_int64(p_in_hms, 0);
+				step = (int)klb_map_idx_to_int64(p_in_hms, 0);
+			}
+			else
+			{
+				min = (int)klb_map_to_int64(p_in_hms, "min");
+				max = (int)klb_map_to_int64(p_in_hms, "max");
+				step = (int)klb_map_to_int64(p_in_hms, "step");
+			}
+
+			klbwnd_vscrollbar_set_ranges(p_wnd, min, max, step);
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -321,8 +372,8 @@ static void klbui_vscrollbar_init_func_map(klb_wnd_t* p_wnd, klbui_vscrollbar_t*
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_vscrollbar_bind("title", on_klbui_vscrollbar_title);
     KLBUI_vscrollbar_bind("value", on_klbui_vscrollbar_value);
+	KLBUI_vscrollbar_bind("ranges", on_klbui_vscrollbar_ranges);
 }
 
 //////////////////////////////////////////////////////////////////////////

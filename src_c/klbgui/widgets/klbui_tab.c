@@ -188,8 +188,6 @@ static int klbui_tab_on_load(klb_wnd_t* p_wnd, klbui_tab_t* p_tab)
 
     klbui_tab_show_page(p_tab, 0);
 
-    klb_wnd_set_calculate(klb_wnd_get_top(p_wnd), true);
-
     return 0;
 }
 

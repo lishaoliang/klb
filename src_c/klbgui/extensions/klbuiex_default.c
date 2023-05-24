@@ -4,7 +4,7 @@
 #include "klbutil/klb_map.h"
 
 
-#define KLBUIEX_DEFAULT   "_KLBUIEX_DEFAULT_"
+#define KLBUIEX_DEFAULT   "KLBUIEX-default"
 
 
 typedef struct klbuiex_default_t_
