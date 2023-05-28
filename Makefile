@@ -41,7 +41,7 @@ MY_DIRS += ./src_c/klbgui/shwnd
 # klua
 MY_DIRS += ./src_c/klua ./src_c/klua/extension ./src_c/klua/klua_platform ./src_c/klua/klua_util ./src_c/klua/klua_base
 MY_DIRS += ./src_c/klua/klua_multithread ./src_c/klua/klua_net ./src_c/klua/klua_format
-MY_DIRS += ./src_c/klua/lua-5.4.1/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/lpeg-1.0.2 ./src_c/klua/luafilesystem-2.0/src
+MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/lpeg-1.0.2 ./src_c/klua/luafilesystem-2.0/src
 MY_DIRS += ./src_c/klua/lsqlite3 ./src_c/klua/LuaXML_130610 ./src_c/klua/lua-skynet
 
 # libavutil
@@ -83,7 +83,7 @@ MY_INCLUDES += -I ./src_c/klbthird/pcre2/src
 MY_INCLUDES += -I ./inc/klbthird
 
 # 第三方库头文件
-MY_INCLUDES += -I ./src_c/klua/lua-5.4.1/src
+MY_INCLUDES += -I ./src_c/klua/lua-5.4.6/src
 
 # cpp
 MY_INCLUDES += -I ./inc_hpp
