@@ -63,7 +63,7 @@ static void get_column_title_klbwnd_listex_row(sds* p_dst, klb_map_t* p_row_map,
 
 static void klbwnd_listex_row_on_paint_status(klb_wnd_t* p_wnd, klbwnd_listex_row_t* p_row, klbwnd_listex_row_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    if (p_row->check)
+    if (p_row->b_select)
     {
         // 选中状态
         klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 32, 32, 61));
@@ -171,6 +171,32 @@ static int klbwnd_listex_row_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 私有函数
+
+// 行控件里面的 check 子控件响应
+static int on_command_check_klbwnd_listex_row(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_row = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd_row->ctrl;
+
+    if (KLBUI_onchange == e)
+    {
+        bool check = klbwnd_check_get_check(p_wnd);
+        p_row->b_check = check;
+
+        if (p_row->p_show_data)
+        {
+            klb_map_set_bool(p_row->p_show_data, "check", check);
+        }
+
+        // check 内容变更
+        klb_wnd_on_command(p_wnd_row, KLBUI_onchange, NULL, NULL, lparam, wparam);
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // export 导出函数
 
 void klbwnd_listex_row_set_css(klb_wnd_t* p_wnd, klbwnd_listex_row_css_t* p_row_css, klbwnd_listex_css_t* p_css)
@@ -190,18 +216,18 @@ void klbwnd_listex_row_set_index(klb_wnd_t* p_wnd, int idx)
     p_row->idx = idx;
 }
 
-void klbwnd_listex_row_set_check(klb_wnd_t* p_wnd, bool check)
+void klbwnd_listex_row_set_select(klb_wnd_t* p_wnd, bool check)
 {
     klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd->ctrl;
 
-    p_row->check = check;
+    p_row->b_select = check;
 }
 
-bool klbwnd_listex_row_get_check(klb_wnd_t* p_wnd)
+bool klbwnd_listex_row_get_select(klb_wnd_t* p_wnd)
 {
     klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd->ctrl;
 
-    return p_row->check;
+    return p_row->b_select;
 }
 
 void klbwnd_listex_row_set_head(klb_wnd_t* p_wnd, klbwnd_listex_head_t* p_head)
@@ -211,19 +237,19 @@ void klbwnd_listex_row_set_head(klb_wnd_t* p_wnd, klbwnd_listex_head_t* p_head)
     p_row->p_head = p_head;
 }
 
-static int on_commond_child_klbwnd_listex_row(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    klb_wnd_t* p_wnd_row = (klb_wnd_t*)p_wnd->p_udata;
+//static int on_commond_child_klbwnd_listex_row(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+//{
+//    klb_wnd_t* p_wnd_row = (klb_wnd_t*)p_wnd->p_udata;
+//
+//    if (NULL != p_wnd_row->vtable.on_command)
+//    {
+//        p_wnd_row->vtable.on_command(p_wnd_row, e, p_pt1, p_pt2, lparam, wparam);
+//    }
+//
+//    return 0;
+//}
 
-    if (NULL != p_wnd_row->vtable.on_command)
-    {
-        p_wnd_row->vtable.on_command(p_wnd_row, e, p_pt1, p_pt2, lparam, wparam);
-    }
-
-    return 0;
-}
-
-static void init_child_klbwnd_listex_row(klb_wnd_t* p_wnd, klbwnd_listex_row_t* p_row, int m, int n, klb_map_t* p_params, int offx)
+static void init_child_klbwnd_listex_row(klb_wnd_t* p_wnd, klbwnd_listex_row_t* p_row, int m, int n, klb_map_t* p_params, int offx, klb_wnd_on_command_cb on_command, void* ptr)
 {
     klb_gui_t* p_gui = p_wnd->p_gui;
 
@@ -251,7 +277,8 @@ static void init_child_klbwnd_listex_row(klb_wnd_t* p_wnd, klbwnd_listex_row_t* 
         klb_wnd_t* p_child = create(p_gui, rect.x, rect.y, rect.w, rect.h);
         klb_wnd_push_child(p_wnd, p_child);
 
-        klb_wnd_bind_command(p_child, on_commond_child_klbwnd_listex_row, p_wnd);
+        //klb_wnd_bind_command(p_child, on_commond_child_klbwnd_listex_row, p_wnd);
+        klb_wnd_bind_command(p_child, on_command, ptr);
 
         p_row->p_child[m][n] = p_child;
     }
@@ -274,7 +301,7 @@ static void init_child_klbwnd_listex_row(klb_wnd_t* p_wnd, klbwnd_listex_row_t* 
     klb_map_quit(&child_param);
 }
 
-void klbwnd_listex_row_child(klb_wnd_t* p_wnd)
+void klbwnd_listex_row_child(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* ptr)
 {
     klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd->ctrl;
     assert(NULL != p_row->p_head);
@@ -291,7 +318,7 @@ void klbwnd_listex_row_child(klb_wnd_t* p_wnd)
             for (int k = 0; k < count; k++)
             {
                 klb_map_t* p_params = klb_map_idx_to_map(p_child, k);
-                init_child_klbwnd_listex_row(p_wnd, p_row, i, k, p_params, offx);
+                init_child_klbwnd_listex_row(p_wnd, p_row, i, k, p_params, offx, on_command, ptr);
             }
         }
 
@@ -306,8 +333,15 @@ void klbwnd_listex_row_set_show_data(klb_wnd_t* p_wnd, klb_map_t* p_show_data)
     p_row->p_show_data = p_show_data;
 
     bool show = (NULL != p_show_data) ? true : false;
-
     klb_wnd_show(p_row->p_check, show);
+
+    if (NULL != p_show_data)
+    {
+        bool check = klb_map_to_bool(p_show_data, "check");
+
+        p_row->b_check = check;
+        klbwnd_check_set_check(p_row->p_check, check);
+    }
 
     for (int m = 0; m < KLBWND_LISTEX_column_max; m++)
     {
@@ -344,12 +378,20 @@ void klbwnd_listex_row_set_show_data(klb_wnd_t* p_wnd, klb_map_t* p_show_data)
     }
 }
 
+bool klbwnd_listex_row_get_check(klb_wnd_t* p_wnd)
+{
+    klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd->ctrl;
+
+    return p_row->b_check;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
 static void klbwnd_listex_row_init_attribute(klb_wnd_t* p_wnd, klbwnd_listex_row_t* p_row)
 {
-    p_row->check = false;
+    p_row->b_select = false;
+    p_row->b_check = false;
 }
 
 static void klbwnd_listex_row_quit_attribute(klbwnd_listex_row_t* p_row)
@@ -396,6 +438,8 @@ static void klbwnd_listex_row_init_subwnds(klb_wnd_t* p_wnd)
 
     p_row->p_check = klbwnd_check_create(p_gui, (p_row->w0 - w_check) / 2, (h - h_check) / 2, w_check, w_check);
     klb_wnd_push_child(p_wnd, p_row->p_check);
+
+    klb_wnd_bind_command(p_row->p_check, on_command_check_klbwnd_listex_row, p_wnd);
 }
 
 void klbwnd_listex_row_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h)

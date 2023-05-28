@@ -207,7 +207,7 @@ void klb_wnd_calculate_canvas_rect(klb_wnd_t* p_wnd, int offset_x, int offset_y)
     }
 }
 
-static int klb_wnd_on_paint(klb_wnd_t* p_wnd)
+static int on_paint_klb_wnd(klb_wnd_t* p_wnd)
 {
 	// step1. 优先使用绑定绘图函数
 	if (p_wnd->vtable.on_paint)
@@ -225,7 +225,7 @@ static int klb_wnd_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
-static int klb_wnd_on_draw(klb_wnd_t* p_wnd)
+static int on_draw_klb_wnd(klb_wnd_t* p_wnd)
 {
     // step1. 更新屏幕坐标
     if (KLB_WND_STATUS_CANVAS_RECT & p_wnd->state.status)
@@ -251,13 +251,13 @@ static int klb_wnd_on_draw(klb_wnd_t* p_wnd)
     }
 
     // step3. 绘制自身
-    klb_wnd_on_paint(p_wnd);
+    on_paint_klb_wnd(p_wnd);
 
     // step4. 递归子窗口
     klb_wnd_t* p_next = p_wnd->p_child;
     while (NULL != p_next)
     {
-        klb_wnd_on_draw(p_next);
+        on_draw_klb_wnd(p_next);
 
         p_next = p_next->p_next;
     }
@@ -267,7 +267,7 @@ static int klb_wnd_on_draw(klb_wnd_t* p_wnd)
 
 int klb_wnd_draw(klb_wnd_t* p_wnd)
 {
-    klb_wnd_on_draw(p_wnd);
+    on_draw_klb_wnd(p_wnd);
 
     return 0;
 }
@@ -322,6 +322,39 @@ int klb_wnd_bind_command(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, voi
 int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint)
 {
     p_wnd->vtable.on_paint = on_paint;
+
+    return 0;
+}
+
+
+/// @brief 调用on_control函数
+int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    if (NULL != p_wnd && p_wnd->vtable.on_control)
+    {
+        klb_point_t pt = { 0 };
+
+        if (NULL == p_pt1) { p_pt1 = &pt; };
+        if (NULL == p_pt2) { p_pt2 = &pt; };
+
+        return p_wnd->vtable.on_control(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+    }
+
+    return 0;
+}
+
+/// @brief 调用on_command函数
+int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    if (NULL != p_wnd && p_wnd->vtable.on_command)
+    {
+        klb_point_t pt = { 0 };
+
+        if (NULL == p_pt1) { p_pt1 = &pt; };
+        if (NULL == p_pt2) { p_pt2 = &pt; };
+
+        return p_wnd->vtable.on_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+    }
 
     return 0;
 }

@@ -36,7 +36,8 @@ typedef struct klbwnd_listex_row_t_
 {
     sds                         title;          ///< 显示标题
     int                         idx;            ///< 排到的序号
-    bool                        check;          ///< 选中状态
+    bool                        b_select;       ///< 选中状态
+    bool                        b_check;        ///< check 状态
 
     klb_map_t*                  p_show_data;    ///< 当前行数据
 
@@ -76,18 +77,22 @@ void klbwnd_listex_row_set_css(klb_wnd_t* p_wnd, klbwnd_listex_row_css_t* p_row_
 void klbwnd_listex_row_set_index(klb_wnd_t* p_wnd, int idx);
 
 /// @brief 设置/获取选中
-void klbwnd_listex_row_set_check(klb_wnd_t* p_wnd, bool check);
-bool klbwnd_listex_row_get_check(klb_wnd_t* p_wnd);
+void klbwnd_listex_row_set_select(klb_wnd_t* p_wnd, bool check);
+bool klbwnd_listex_row_get_select(klb_wnd_t* p_wnd);
 
 /// @brief 设置题头
 void klbwnd_listex_row_set_head(klb_wnd_t* p_wnd, klbwnd_listex_head_t* p_head);
 
 /// @brief 初始化子窗口
-void klbwnd_listex_row_child(klb_wnd_t* p_wnd);
+void klbwnd_listex_row_child(klb_wnd_t* p_wnd, klb_wnd_on_command_cb on_command, void* ptr);
 
 
 /// @brief 设置待显示的数据
 void klbwnd_listex_row_set_show_data(klb_wnd_t* p_wnd, klb_map_t* p_show_data);
+
+
+/// @brief 获取 check 状态
+bool klbwnd_listex_row_get_check(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

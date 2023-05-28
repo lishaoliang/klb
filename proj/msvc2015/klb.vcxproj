@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,7 +130,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.1\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -456,34 +456,34 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lptypes.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.h" />
     <ClInclude Include="..\..\src_c\klua\lsqlite3\sqlite3.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lapi.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lcode.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lctype.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ldebug.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ldo.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lfunc.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lgc.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ljumptab.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\llex.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\llimits.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lmem.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lobject.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lopcodes.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lopnames.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lparser.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lprefix.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lstate.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lstring.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ltable.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ltm.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lua.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lua.hpp" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\luaconf.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lualib.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lundump.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lvm.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lzio.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lapi.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lauxlib.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lcode.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lctype.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ldebug.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ldo.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lfunc.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lgc.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ljumptab.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\llex.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\llimits.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lmem.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lobject.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lopcodes.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lopnames.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lparser.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lprefix.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lstate.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lstring.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ltable.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ltm.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lua.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lua.hpp" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\luaconf.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lualib.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lundump.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lvm.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lzio.h" />
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.h" />
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.h" />
     <ClInclude Include="..\..\src_c\klua\lua-skynet\lua-seri.h" />
@@ -818,38 +818,40 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.c" />
     <ClCompile Include="..\..\src_c\klua\lsqlite3\lsqlite3.c" />
     <ClCompile Include="..\..\src_c\klua\lsqlite3\sqlite3.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lapi.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lbaselib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lcode.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lcorolib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lctype.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldblib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldebug.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldo.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldump.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lfunc.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lgc.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\linit.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\liolib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\llex.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lmathlib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lmem.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\loadlib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lobject.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lopcodes.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\loslib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lparser.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstate.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstring.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstrlib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltable.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltablib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltm.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lundump.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lutf8lib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lvm.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lzio.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lapi.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lauxlib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lbaselib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lcode.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lcorolib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lctype.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldblib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldebug.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldo.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldump.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lfunc.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lgc.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\linit.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\liolib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\llex.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lmathlib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lmem.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\loadlib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lobject.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lopcodes.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\loslib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lparser.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lstate.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lstring.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lstrlib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ltable.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ltablib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ltm.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lua.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\luac.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lundump.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lutf8lib.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lvm.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lzio.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\lua_cjson.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.c" />

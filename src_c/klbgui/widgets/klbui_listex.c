@@ -239,38 +239,38 @@ static void on_klbui_listex_append_column(klb_wnd_t* p_wnd, klbui_listex_t* p_li
     // 添加列
     if (KLBUI_CSSEX_set == method)
     {
-        /* eg.
-        jq('list1')['append-column']({
-            {['width']=128,['title']='列1'},
-            {['width']=128,['title']='列2'},
-            {['width']=128,['title']='列3'},
-        })
-        */
-        int start = 1;
-        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
-        if (NULL != p_in_array)
+/* eg.
+jq('list1')['append-column']({
+    {['width']=128,['title']='列1'},
+    {['width']=128,['title']='列2'},
+    {['width']=128,['title']='列3'},
+})
+*/
+int start = 1;
+klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+if (NULL != p_in_array)
+{
+    int count = klb_map_array_size(p_in_array);
+    for (int i = 0; i < count; i++)
+    {
+        klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
+        if (NULL != p_item_map)
         {
-            int count = klb_map_array_size(p_in_array);
-            for (int i = 0; i < count; i++)
+            int width = 0;
+            width = (int)klb_map_to_int64(p_item_map, "width");
+            if (width <= 0)
             {
-                klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
-                if (NULL != p_item_map)
-                {
-                    int width = 0;
-                    width = (int)klb_map_to_int64(p_item_map, "width");
-                    if (width <= 0)
-                    {
-                        width = (int)klb_map_to_uint64(p_item_map, "width");
-                    }
+                width = (int)klb_map_to_uint64(p_item_map, "width");
+            }
 
-                    // 宽度必须大于0, 才认可有效列
-                    if (0 < width)
-                    {
-                        klbwnd_listex_append_column(p_wnd, width, klb_map_to_string(p_item_map, "title"), klb_map_to_map(p_item_map, "child"));
-                    }
-                }
+            // 宽度必须大于0, 才认可有效列
+            if (0 < width)
+            {
+                klbwnd_listex_append_column(p_wnd, width, klb_map_to_string(p_item_map, "title"), klb_map_to_map(p_item_map, "child"));
             }
         }
+    }
+}
     }
 }
 
@@ -321,27 +321,60 @@ static void on_klbui_listex_value(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int 
     // 值
     if (KLBUI_CSSEX_get == method)
     {
-        int sel = -1;
-        klb_map_t* p_sel_map = klbwnd_listex_get_sel(p_wnd, &sel);
+        klb_map_t* p_checks_map = klb_map_create();
+        klb_map_t* p_data_map = klbwnd_listex_get_data_map(p_wnd);
 
-        if (0 <= sel) sel += 1; // Lua从1开始
+        int array_size = klb_map_array_size(p_data_map);
+        for (int i = 0; i < array_size; i++)
+        {
+            klb_map_t* p_row_map = klb_map_idx_to_map(p_data_map, i);
+            if (NULL != p_row_map && klb_map_to_bool(p_row_map, "check"))
+            {
+                klb_map_append_map_clone(p_checks_map, p_row_map);
+            }   
+        }
 
-        klb_map_set_idx_int64(p_out, 0, sel);
-        klb_map_set_idx_map_clone(p_out, 1, p_sel_map);
-
+        klb_map_set_idx_map(p_out, 0, p_checks_map);
     }
     else if (KLBUI_CSSEX_set == method)
     {
-        int start = 1;
 
-        if (KLB_ADT_int64 == klb_map_array_type(p_in, start))
-        {
-            int sel = (int)klb_map_idx_to_int64(p_in, start);
-            sel -= 1; // Lua从1开始
+    }
+}
 
-            klbwnd_listex_set_sel(p_wnd, sel);
-            klb_wnd_update(p_wnd);
-        }
+static void on_klbui_listex_event_wnd(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klb_wnd_t* p_event_wnd =  klbwnd_listex_get_event_wnd(p_wnd);
+    if (NULL == p_event_wnd)
+    {
+        return;
+    }
+
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_t param_in = { 0 };
+        klb_map_init(&param_in);
+
+        klb_map_set_idx_adt_clone(&param_in, 0, klb_map_idx_to_adt(p_in, 1));
+
+        klb_map_t* ptr = klb_wnd_get(p_event_wnd, &param_in);
+
+        klb_map_copy(p_out, ptr);
+
+        klb_map_quit(&param_in);
+        KLB_FREE_BY(ptr, klb_map_destroy);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        klb_map_t param_in = { 0 };
+        klb_map_init(&param_in);
+
+        klb_map_set_idx_adt_clone(&param_in, 0, klb_map_idx_to_adt(p_in, 1));
+        klb_map_set_idx_adt_clone(&param_in, 1, klb_map_idx_to_adt(p_in, 2));
+
+        klb_wnd_set(p_event_wnd, &param_in);
+
+        klb_map_quit(&param_in);
     }
 }
 
@@ -428,6 +461,8 @@ static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list,
     KLBUI_listex_bind("clear", on_klbui_listex_clear);
 
     KLBUI_listex_bind("value", on_klbui_listex_value);
+
+    KLBUI_listex_bind("event-wnd", on_klbui_listex_event_wnd);
 }
 
 //////////////////////////////////////////////////////////////////////////

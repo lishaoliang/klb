@@ -111,9 +111,6 @@
     <Filter Include="src_c\klua\lsqlite3">
       <UniqueIdentifier>{313fd276-c7b2-4174-9415-9a1af2bea510}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klua\lua-5.4.1">
-      <UniqueIdentifier>{7263c1fa-5ff5-428b-a43d-cd49f80d9ac3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klua\lua-cjson-2.1.0">
       <UniqueIdentifier>{8af64f21-e5bf-413a-a335-b7930056f0ab}</UniqueIdentifier>
     </Filter>
@@ -122,9 +119,6 @@
     </Filter>
     <Filter Include="src_c\klua\luazip-1.2.7">
       <UniqueIdentifier>{7ef202fe-f4b1-4e25-82cb-ccd8ecc10dcc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klua\lua-5.4.1\src">
-      <UniqueIdentifier>{9cf7d9bb-496e-4492-9c25-3b5cee68c684}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klua\luafilesystem-2.0\src">
       <UniqueIdentifier>{9a0eccee-3998-4b14-ade5-3783b4717d63}</UniqueIdentifier>
@@ -239,6 +233,12 @@
     </Filter>
     <Filter Include="src_c\klbgui\shwnd">
       <UniqueIdentifier>{d13d28a9-3d0f-41b6-a9f2-081d389acd0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lua-5.4.6">
+      <UniqueIdentifier>{3d506c4f-2125-44d6-bd92-a035bfc3b5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lua-5.4.6\src">
+      <UniqueIdentifier>{fd318c85-855e-425c-bd41-b688ecc42421}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1067,90 +1067,6 @@
     <ClInclude Include="..\..\src_c\klua\lsqlite3\sqlite3.h">
       <Filter>src_c\klua\lsqlite3</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lapi.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lcode.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lctype.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ldebug.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ldo.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lfunc.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lgc.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ljumptab.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\llex.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\llimits.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lmem.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lobject.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lopcodes.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lopnames.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lparser.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lprefix.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lstate.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lstring.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ltable.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\ltm.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lua.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lua.hpp">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\luaconf.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lualib.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lundump.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lvm.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\lua-5.4.1\src\lzio.h">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.h">
       <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
     </ClInclude>
@@ -1492,6 +1408,90 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_num.h">
       <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lapi.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lauxlib.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lcode.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lctype.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ldebug.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ldo.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lfunc.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lgc.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ljumptab.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\llex.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\llimits.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lmem.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lobject.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lopcodes.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lopnames.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lparser.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lprefix.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lstate.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lstring.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ltable.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\ltm.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lua.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lua.hpp">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\luaconf.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lualib.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lundump.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lvm.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lzio.h">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1923,102 +1923,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lsqlite3\sqlite3.c">
       <Filter>src_c\klua\lsqlite3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lapi.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lauxlib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lbaselib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lcode.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lcorolib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lctype.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldblib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldebug.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldo.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ldump.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lfunc.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lgc.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\linit.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\liolib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\llex.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lmathlib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lmem.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\loadlib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lobject.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lopcodes.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\loslib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lparser.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstate.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstring.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lstrlib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltable.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltablib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\ltm.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lundump.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lutf8lib.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lvm.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\lua-5.4.1\src\lzio.c">
-      <Filter>src_c\klua\lua-5.4.1\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.c">
       <Filter>src_c\klua\lua-cjson-2.1.0</Filter>
@@ -2523,6 +2427,108 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_num.c">
       <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lapi.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lauxlib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lbaselib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lcode.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lcorolib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lctype.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldblib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldebug.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldo.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ldump.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lfunc.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lgc.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\linit.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\liolib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\llex.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lmathlib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lmem.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\loadlib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lobject.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lopcodes.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\loslib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lparser.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lstate.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lstring.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lstrlib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ltable.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ltablib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\ltm.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lua.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\luac.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lundump.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lutf8lib.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lvm.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lzio.c">
+      <Filter>src_c\klua\lua-5.4.6\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

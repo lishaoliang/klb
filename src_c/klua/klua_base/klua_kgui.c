@@ -607,6 +607,40 @@ static int klua_kgui_get_wh(lua_State* L)
     return 2;
 }
 
+static int klua_kgui_to_event(lua_State* L)
+{
+    int32_t e = (int32_t)luaL_checkinteger(L, 1);
+
+    e &= 0x00FFFFFF;
+
+    lua_pushinteger(L, e);
+    return 1;
+}
+
+static int klua_kgui_b1_event(lua_State* L)
+{
+    int32_t e = (int32_t)luaL_checkinteger(L, 1);
+
+    lua_pushboolean(L, (e & KLBUI_event_bit1) ? true : false);
+    return 1;
+}
+
+static int klua_kgui_b2_event(lua_State* L)
+{
+    int32_t e = (int32_t)luaL_checkinteger(L, 1);
+
+    lua_pushboolean(L, (e & KLBUI_event_bit2) ? true : false);
+    return 1;
+}
+
+static int klua_kgui_b3_event(lua_State* L)
+{
+    int32_t e = (int32_t)luaL_checkinteger(L, 1);
+
+    lua_pushboolean(L, (e & KLBUI_event_bit3) ? true : false);
+    return 1;
+}
+
 int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
@@ -638,8 +672,15 @@ int klua_open_kgui(lua_State* L)
         { "move",               klua_kgui_move },
         { "resize",             klua_kgui_resize },
 
-        // gui
+        // gui get (w,h)
         { "wh",                 klua_kgui_get_wh },
+
+
+        // 事件辅助函数
+        { "to_event",           klua_kgui_to_event },
+        { "b1_event",           klua_kgui_b1_event },
+        { "b2_event",           klua_kgui_b2_event },
+        { "b3_event",           klua_kgui_b3_event },
 
         { NULL,                 NULL }
     };

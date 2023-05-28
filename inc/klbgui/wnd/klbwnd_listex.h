@@ -16,6 +16,7 @@
 #include "klbutil/klb_sds.h"
 #include "klbutil/klb_map.h"
 #include "klbgui/wnd/klbwnd_check.h"
+#include "klbgui/wnd/klbwnd_vscrollbar.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -67,6 +68,7 @@ typedef struct klbwnd_listex_css_t_
 
     klbwnd_listex_row_css_t listex_row;     ///< 行控件CSS
     klbwnd_check_css_t      check;          ///< check控件CSS
+    klbwnd_vscrollbar_css_t vscrollbar;     ///< 垂直滚动条CSS
 }klbwnd_listex_css_t;
 
 
@@ -82,14 +84,31 @@ typedef struct klbwnd_listex_t_
     klb_wnd_t*              p_rows[KLBWND_LISTEX_row_max]; ///< 
     int                     rows_count;     ///< 
 
-    int                     sel;            ///< 当前选中的行
+    // 右侧垂直滚动条
+    struct
+    {
+        klb_wnd_t*          p_vscrollbar;   ///< 右侧垂直滚动条
+
+        int                 vsc_min;
+        int                 vsc_max;
+        int                 vsc_value;
+    };
 
     // 第0列, 选择框
     struct
     {
-        klb_wnd_t*          p_check;
+        klb_wnd_t*          p_check;        ///< 全选选中框(左上角)
         int                 w0;
-    };    
+    };
+
+    // 事件控件
+    struct
+    {
+        klb_wnd_t*          p_event_wnd;
+    };
+
+    int                     sel;            ///< 当前选中的行
+    bool                    enable_sel;     ///< 是能选中单行
 
     // 数据
     klb_map_t               data_map;       ///< 数据
@@ -123,6 +142,9 @@ KLB_API void klbwnd_listex_clear(klb_wnd_t* p_wnd);
 /// @brief 设置/获取选中的数据
 KLB_API void klbwnd_listex_set_sel(klb_wnd_t* p_wnd, int sel);
 KLB_API klb_map_t* klbwnd_listex_get_sel(klb_wnd_t* p_wnd, int* p_sel);
+
+/// @brief 获取当前事件窗口
+KLB_API klb_wnd_t* klbwnd_listex_get_event_wnd(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

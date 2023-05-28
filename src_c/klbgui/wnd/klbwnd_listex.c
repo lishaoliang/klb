@@ -8,7 +8,10 @@
 //////////////////////////////////////////////////////////////////////////
 // 前置定义
 static void klbwnd_listex_quit_attribute(klbwnd_listex_t* p_list);
-
+static int on_command_vscrollbar_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+static int on_command_check_all_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+static int on_command_child_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+static int on_command_listex_row_klbwnd_listex(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 //////////////////////////////////////////////////////////////////////////
 // 继承重写方法
@@ -75,7 +78,7 @@ static void klbwnd_listex_on_paint_status_body(klb_wnd_t* p_wnd, klbwnd_listex_t
 
     // 数据的数组大小
     int array_size = klb_map_array_size(p_data_map);
-    int start = 0; // 显示数据的起始位置
+    int start = p_list->vsc_value; // 显示数据的起始位置
 
     for (int i = 0; i < p_list->rows_count; i++)
     {
@@ -95,11 +98,11 @@ static void klbwnd_listex_on_paint_status_body(klb_wnd_t* p_wnd, klbwnd_listex_t
         // 选中状态
         if (0 <= p_list->sel &&  p_list->sel < array_size && p_list->sel == i + start)
         {
-            klbwnd_listex_row_set_check(p_list_row, true);
+            klbwnd_listex_row_set_select(p_list_row, true);
         }
         else
         {
-            klbwnd_listex_row_set_check(p_list_row, false);
+            klbwnd_listex_row_set_select(p_list_row, false);
         }
     }
 }
@@ -135,8 +138,6 @@ static void klbwnd_listex_on_paint_status(klb_wnd_t* p_wnd, klbwnd_listex_t* p_l
 
     // 内容体
     klbwnd_listex_on_paint_status_body(p_wnd, p_list, p_css, p_attr);
-
-    // todo. 垂直滚动条
 }
 
 static int klbwnd_listex_on_paint(klb_wnd_t* p_wnd)
@@ -184,6 +185,35 @@ static int klbwnd_listex_on_paint(klb_wnd_t* p_wnd)
 // 重新布局
 static int relayout_body_klbwnd_listex(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list, klb_rect_t* p_rect, int row_h)
 {
+    // 滚动条
+    klb_map_t* p_data_map = &p_list->data_map;
+    int array_size = klb_map_array_size(p_data_map);
+
+    if (p_list->rows_count < array_size)
+    {
+        // 需要滚动条
+        p_list->vsc_max = array_size - p_list->rows_count / 2;
+
+        if (p_list->vsc_value < p_list->vsc_min) { p_list->vsc_value = p_list->vsc_min; };
+        if (p_list->vsc_max < p_list->vsc_value) { p_list->vsc_value = p_list->vsc_max; };
+
+        klbwnd_vscrollbar_set_ranges(p_list->p_vscrollbar, p_list->vsc_min, p_list->vsc_max, 1);
+        klbwnd_vscrollbar_set_value(p_list->p_vscrollbar, p_list->vsc_value);
+
+        klb_wnd_move(p_list->p_vscrollbar, p_rect->x + p_rect->w - 20, p_rect->y);
+        klb_wnd_resize(p_list->p_vscrollbar, 20, p_rect->h);
+
+        p_rect->w -= 20;
+
+        klb_wnd_show(p_list->p_vscrollbar, true);
+    }
+    else
+    {
+        // 不需要滚动条
+        klb_wnd_show(p_list->p_vscrollbar, false);
+        p_list->vsc_value = 0;
+    }
+
     int offy = p_rect->y;
 
     for (int i = 0; i < p_list->rows_count; i++)
@@ -198,55 +228,6 @@ static int relayout_body_klbwnd_listex(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list
         klb_wnd_resize(p_list_row, rect_row.w, rect_row.h);
 
         offy += row_h;
-    }
-
-    return 0;
-}
-
-
-// 子行 控件响应
-static int on_command_listex_row_klbwnd_listex(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd->ctrl;
-    klb_wnd_t* p_wnd_listex = (klb_wnd_t*)p_wnd->p_udata;
-    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd_listex->ctrl;
-
-    switch (msg)
-    {
-    case KLBUI_click:
-    case KLBUI_dblclick:
-    {
-        // 有效的选中点击
-        if (NULL != p_row->p_head && NULL != p_row->p_show_data)
-        {
-            if (p_list->sel != p_row->idx)
-            {
-                for (int i = 0; i < p_list->rows_count; i++)
-                {
-                    if (klbwnd_listex_row_get_check(p_list->p_rows[i]))
-                    {
-                        klbwnd_listex_row_set_check(p_list->p_rows[i], false);
-                        klb_wnd_update(p_list->p_rows[i]);
-                    }
-                }
-
-                p_list->sel = p_row->idx;
-                klbwnd_listex_row_set_check(p_wnd, true);
-
-                // 列表框的 内容变更事件 KLBUI_onchange
-                if (NULL != p_wnd_listex->vtable.on_command)
-                {
-                    klb_point_t pt = { 0 };
-                    p_wnd_listex->vtable.on_command(p_wnd_listex, KLBUI_onchange, &pt, &pt, 0, 0);
-                }
-
-                klb_wnd_update(p_wnd);
-            }
-        }
-    }
-    break;
-    default:
-        break;
     }
 
     return 0;
@@ -282,12 +263,15 @@ static int klbwnd_listex_on_predraw(klb_wnd_t* p_wnd)
             if (NULL == p_list_row)
             {
                 p_list_row = klbwnd_listex_row_create(p_wnd->p_gui, 0, 0, rect_body.w, row_h);
-
-                klb_wnd_bind_command(p_list_row, on_command_listex_row_klbwnd_listex, p_wnd);
                 klb_wnd_push_child(p_wnd, p_list_row);
 
+                // 自身响应
+                klb_wnd_bind_command(p_list_row, on_command_listex_row_klbwnd_listex, p_wnd);
+
                 klbwnd_listex_row_set_head(p_list_row, &p_list->head);
-                klbwnd_listex_row_child(p_list_row);
+
+                // 子控件响应
+                klbwnd_listex_row_child(p_list_row, on_command_child_klbwnd_listex, p_wnd);
 
                 p_list->p_rows[i] = p_list_row;
             }
@@ -307,18 +291,6 @@ static int klbwnd_listex_on_predraw(klb_wnd_t* p_wnd)
     }
 
     p_list->rows_count = row_count;
-
-    // check 
-    p_list->w0 = row_h;
-    int w_check = (row_h * 2) / 3, h_check = w_check;
-
-    p_list->p_check = klbwnd_check_create(p_wnd->p_gui, (p_list->w0 - w_check) / 2, (head_h - h_check) / 2, w_check, h_check);
-    klb_wnd_push_child(p_wnd, p_list->p_check);
-
-    if (p_list->p_css)
-    {
-        klbwnd_check_set_css(p_list->p_check, &p_list->p_css->check);
-    }
 
     // 重新布局
     relayout_body_klbwnd_listex(p_wnd, p_list, &rect_body, row_h);
@@ -346,6 +318,134 @@ static int klbwnd_listex_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 私有函数
+
+// 滚动条事件
+static int on_command_vscrollbar_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_listex = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd_listex->ctrl;
+
+    if (KLBUI_onchange == e)
+    {
+        p_list->vsc_value = klbwnd_vscrollbar_get_value(p_list->p_vscrollbar);
+
+        klb_wnd_update(p_wnd_listex);
+    }
+
+    return 0;
+}
+
+// 左上角 check all 事件
+static int on_command_check_all_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_listex = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd_listex->ctrl;
+
+    if (KLBUI_onchange == e)
+    {
+        bool check_all = klbwnd_check_get_check(p_wnd);
+
+        klb_map_t* p_data_map = klbwnd_listex_get_data_map(p_wnd_listex);
+        int array_size = klb_map_array_size(p_data_map);
+        for (int i = 0; i < array_size; i++)
+        {
+            klb_map_t* p_row_map = klb_map_idx_to_map(p_data_map, i);
+            if (p_row_map)
+            {
+                klb_map_set_bool(p_row_map, "check", check_all);
+            }
+        }
+
+        klb_wnd_update(p_wnd_listex);
+    }
+
+    return 0;
+}
+
+// 行控件里面的 子控件响应
+static int on_command_child_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_listex = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd_listex->ctrl;
+
+    // 子控件响应之后, 发现难以使用标准的消息格式来表达所有情况
+    // 这里临时记录子控件, 若调用者需要控件信息, 可读取其指针, 并通过其指针访问具体信息
+    // 注意: 记录的信息很快会被替换掉
+    p_list->p_event_wnd = p_wnd;
+
+    // 添加bit2标记, 转换为特殊事件
+    e |= KLBUI_event_bit2;
+
+    // 转换为 listex 的事件
+    klb_wnd_on_command(p_wnd_listex, e, p_pt1, p_pt2, lparam, wparam);
+
+    return 0;
+}
+
+// 子行 控件响应
+static int on_command_listex_row_klbwnd_listex(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klbwnd_listex_row_t* p_row = (klbwnd_listex_row_t*)p_wnd->ctrl;
+    klb_wnd_t* p_wnd_listex = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd_listex->ctrl;
+
+    if (KLBUI_click == msg || KLBUI_dblclick == msg)
+    {
+        // 单行选中
+        if (p_list->enable_sel)
+        {
+            // 有效的选中点击
+            if (NULL != p_row->p_head && NULL != p_row->p_show_data)
+            {
+                if (p_list->sel != p_row->idx)
+                {
+                    for (int i = 0; i < p_list->rows_count; i++)
+                    {
+                        if (klbwnd_listex_row_get_select(p_list->p_rows[i]))
+                        {
+                            klbwnd_listex_row_set_select(p_list->p_rows[i], false);
+                            klb_wnd_update(p_list->p_rows[i]);
+                        }
+                    }
+
+                    p_list->sel = p_row->idx;
+
+                    klbwnd_listex_row_set_select(p_wnd, true);
+                    klb_wnd_update(p_wnd);
+
+                    klb_wnd_on_command(p_wnd_listex, KLBUI_onchange, NULL, NULL, 0, 0);
+                }
+            }
+        }
+    }
+    else if (KLBUI_onchange == msg)
+    {
+        // 有 check 被选中了, 检查数据
+        bool check_all = true;
+
+        klb_map_t* p_data_map = klbwnd_listex_get_data_map(p_wnd_listex);
+        int array_size = klb_map_array_size(p_data_map);
+        for (int i = 0; i < array_size; i++)
+        {
+            klb_map_t* p_row_map = klb_map_idx_to_map(p_data_map, i);
+            bool check = (NULL != p_row_map) ? klb_map_to_bool(p_row_map, "check") : false;
+
+            if (!check)
+            {
+                check_all = false;
+                break;
+            }
+        }
+
+        klbwnd_check_set_check(p_list->p_check, check_all);
+        klb_wnd_update(p_list->p_check);
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // export 导出函数
 
 void klbwnd_listex_set_css(klb_wnd_t* p_wnd, klbwnd_listex_css_t* p_css)
@@ -357,6 +457,11 @@ void klbwnd_listex_set_css(klb_wnd_t* p_wnd, klbwnd_listex_css_t* p_css)
     if (p_list->p_check)
     {
         klbwnd_check_set_css(p_list->p_check, &p_css->check);
+    }
+
+    if (p_list->p_vscrollbar)
+    {
+        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_css->vscrollbar);
     }
 }
 
@@ -444,6 +549,14 @@ klb_map_t* klbwnd_listex_get_sel(klb_wnd_t* p_wnd, int* p_sel)
     return NULL;
 }
 
+/// @brief 获取当前事件窗口
+klb_wnd_t* klbwnd_listex_get_event_wnd(klb_wnd_t* p_wnd)
+{
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;
+
+    return p_list->p_event_wnd;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
@@ -454,6 +567,7 @@ static void klbwnd_listex_init_attribute(klb_wnd_t* p_wnd, klbwnd_listex_t* p_li
     klb_map_init(&p_list->data_map);
 
     p_list->sel = -1;
+    p_list->enable_sel = false;
 }
 
 static void klbwnd_listex_quit_attribute(klbwnd_listex_t* p_list)
@@ -488,6 +602,9 @@ void klbwnd_listex_css_init(klbwnd_listex_css_t* p_css, klb_gui_t* p_gui)
 
     // check
     klbwnd_check_css_init(&p_css->check, p_gui);
+
+    // 垂直滚动条
+    klbwnd_vscrollbar_css_init(&p_css->vscrollbar, p_gui);
 }
 
 void klbwnd_listex_css_quit(klbwnd_listex_css_t* p_css)
@@ -498,10 +615,48 @@ void klbwnd_listex_css_quit(klbwnd_listex_css_t* p_css)
 
     // 行控件 CSS
     klbwnd_listex_row_css_quit(&p_css->listex_row);
+
+    // check
+    klbwnd_check_css_quit(&p_css->check);
+
+    // 垂直滚动条
+    klbwnd_vscrollbar_css_quit(&p_css->vscrollbar);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // init / quit
+
+static void klbwnd_listex_init_subwnds(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list)
+{
+    klb_rect_t* p_rect = &p_wnd->pos.rect_in_parent;
+
+    int head_h = 42;
+    int row_h = 32;
+
+    // 全选 选中框check 
+    p_list->w0 = row_h;
+    int w_check = (row_h * 2) / 3, h_check = w_check;
+
+    p_list->p_check = klbwnd_check_create(p_wnd->p_gui, (p_list->w0 - w_check) / 2, (head_h - h_check) / 2, w_check, h_check);
+    klb_wnd_push_child(p_wnd, p_list->p_check);
+    klb_wnd_bind_command(p_list->p_check, on_command_check_all_klbwnd_listex, p_wnd);
+
+    if (p_list->p_css)
+    {
+        klbwnd_check_set_css(p_list->p_check, &p_list->p_css->check);
+    }
+
+    // 右侧滚动条
+    p_list->p_vscrollbar = klbwnd_vscrollbar_create(p_wnd->p_gui, 0, head_h, 20, p_rect->h - head_h);
+    klb_wnd_push_child(p_wnd, p_list->p_vscrollbar);
+
+    klb_wnd_bind_command(p_list->p_vscrollbar, on_command_vscrollbar_klbwnd_listex, p_wnd);
+
+    if (p_list->p_css)
+    {
+        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_list->p_css->vscrollbar);
+    }
+}
 
 void klbwnd_listex_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h)
 {
@@ -525,6 +680,9 @@ void klbwnd_listex_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w,
 
     // 初始化属性
     klbwnd_listex_init_attribute(p_wnd, p_list);
+
+    // 初始化子窗口
+    klbwnd_listex_init_subwnds(p_wnd, p_list);
 }
 
 void klbwnd_listex_quit(klb_wnd_t* p_wnd)

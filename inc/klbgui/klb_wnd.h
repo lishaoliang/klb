@@ -277,6 +277,18 @@ KLB_API int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint);
 
 
 //////////////////////////////////////////////////////////////////////////
+// 调用函数
+
+
+/// @brief 调用on_control函数
+KLB_API int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+/// @brief 调用on_command函数
+KLB_API int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+//////////////////////////////////////////////////////////////////////////
 // 窗口关系 
 
 KLB_API int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd);
