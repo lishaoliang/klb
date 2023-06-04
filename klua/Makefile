@@ -37,7 +37,7 @@ MY_INCLUDES := -I . -I ../inc
 
 
 # 第三方库头文件
-MY_INCLUDES += -I ../src_c/klua/lua-5.4.1/src
+MY_INCLUDES += -I ../src_c/klua/lua-5.4.6/src
 
 
 # 引用的静态库

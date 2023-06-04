@@ -50,14 +50,19 @@ local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 	-- 1. cmds1 动态命令集 
 	-- 2. cmds2 由 parse 第二参数 外部静态命令集
 	-- 3. cmds3 由 parse 第一参数 dialog 里面静态命令集
-	local event_str = event.transform(msg)
+	local b1 = kgui.b1_event(msg)
+	local b2 = kgui.b2_event(msg)
+	local b3 = kgui.b3_event(msg)
+	local e = kgui.to_event(msg)	
+	
+	local event_str = event.transform(e)
 	if 'string' == type(event_str) then		
 		if 'function' == type(cmds1[event_str]) then
-			cmds1[event_str](x1, y1, x2, y2, lparam, wparam)
+			cmds1[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
 		elseif 'function' == type(cmds2[event_str]) then
-			cmds2[event_str](x1, y1, x2, y2, lparam, wparam)
+			cmds2[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
 		elseif 'function' == type(cmds3[event_str]) then
-			cmds3[event_str](x1, y1, x2, y2, lparam, wparam)
+			cmds3[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
 		end
 	end
 	

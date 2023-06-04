@@ -61,6 +61,16 @@ typedef struct klb_buf_t_
     int32_t vtype : 8;          ///< 媒体数据帧类型: klb_mnp_vtype_e, format=KLB_BUF_FMT_SLICE/KLB_BUF_FMT_FRAME时有效
     int32_t udata : 16;         ///< 用户数据: user data
 
+    union
+    {
+        uint64_t    udata64;    ///< 用户数据: user data 64
+        struct
+        {
+            uint32_t udata1;    ///< 用户数据: user data 1
+            uint32_t udata2;    ///< 用户数据: user data 2
+        };
+    };
+
     struct klb_buf_t_* p_next;  ///< 下一个节点
 
     char    extra[4];           ///< 附加数据: 可变长度

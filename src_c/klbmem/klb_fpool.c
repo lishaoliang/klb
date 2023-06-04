@@ -25,6 +25,7 @@ typedef struct klb_fpool_t_
 {
     long volatile   atomic_lock;        ///< 申请/释放的原子锁: 支持夸线程申请/释放
 
+    int             aligned;            ///< 内存对齐
     size_t          item_size;          ///< 元素项大小(字节)
 
     // 整体缓存
@@ -55,15 +56,24 @@ static klb_buf_t* get_buf_by_idx_klb_fpool(klb_fpool_t* p_pool, int idx)
     return (klb_buf_t*)(p_pool->p_idx_buf + offset);
 }
 
-klb_fpool_t* klb_fpool_create(int item_size, int item_num)
+klb_fpool_t* klb_fpool_create(int item_size, int item_num, int aligned)
 {
     klb_fpool_t* p_pool = (klb_fpool_t*)KLB_MALLOCZ(klb_fpool_t, 1, 0);
+
+    p_pool->aligned = aligned;
 
     // buf
     p_pool->item_size = item_size;
     p_pool->buf_len = item_num * p_pool->item_size;
 
-    p_pool->p_buf = (char*)KLB_MALLOC(char, p_pool->buf_len, 0);
+    if (0 < aligned)
+    {
+        p_pool->p_buf = (char*)KLB_MALLOC_ALIGNED(char, p_pool->buf_len, 0, aligned);
+    }
+    else
+    {
+        p_pool->p_buf = (char*)KLB_MALLOC(char, p_pool->buf_len, 0);
+    }
 
     // index
     p_pool->idx_max = item_num;
@@ -105,7 +115,15 @@ void klb_fpool_destroy(klb_fpool_t* p_pool)
 {
     assert(NULL != p_pool);
 
-    KLB_FREE(p_pool->p_buf);
+    if (0 < p_pool->aligned)
+    {
+        KLB_FREE_ALIGNED(p_pool->p_buf);
+    }
+    else
+    {
+        KLB_FREE(p_pool->p_buf);
+    }
+
     KLB_FREE(p_pool->p_idx_buf);
     KLB_FREE(p_pool);
 }
@@ -115,8 +133,13 @@ klb_buf_t* klb_fpool_malloc(void* ptr, size_t size)
     klb_fpool_t* p_pool = (klb_fpool_t*)ptr;
     assert(NULL != p_pool);
 
-    size_t num = (size + p_pool->item_size - 1) / p_pool->item_size;
-    assert(size <= p_pool->item_size * num);
+    size_t num = 1;
+
+    if (0 < size)
+    {
+        num = (size + p_pool->item_size - 1) / p_pool->item_size;
+        assert(size <= p_pool->item_size * num);
+    }
 
     if (0 < num)
     {

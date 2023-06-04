@@ -8,6 +8,8 @@
 ///  \n 2019 0.1 创建文件
 ///  \n 2022 0.2 a.修改心跳机制: 由ping发起, pong回应
 ///              b.添加 RPC Lua, RPC Json数据分包, 在底层协议直接支持RPC
+///  \n 2023 0.3 a.为 klb_mnp_media_t/klb_mnp_common_t 结构体, 添加 padding 对齐字段, 方便做内存对齐处理
+///              b.调整chnn/sidx, 从uint32_t调整为uint16_t, 并联合取名为 sid
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_MNP_H__
@@ -38,8 +40,8 @@ typedef struct klb_mnp_t_
 
     uint8_t  opt : 2;           ///< 包组合方式: klb_mnp_opt_e
     uint8_t  packtype : 5;      ///< 包类型: klb_mnp_packtype_e
-    uint8_t  resv1 : 1;         ///< 0
-    uint8_t  resv2;             ///< 0
+    uint8_t  resv1 : 1;         ///< 保留: 0
+    uint8_t  resv2;             ///< 保留: 0
     //- 4 + 4 = 8 Byte
 }klb_mnp_t;
 
@@ -53,49 +55,68 @@ typedef struct klb_mnp_t_
 typedef struct klb_mnp_media_t_
 {
     uint32_t         size;              ///< 完整数据长度(data size, 包含本结构体)
-    uint32_t         dtype;             ///< 数据类型(data type): klb_mnp_dtype_e
+    uint16_t         padding;           ///< 末尾对齐数据
+    uint16_t         dtype;             ///< 数据类型(data type): klb_mnp_dtype_e
     //- 4 + 4 = 8 Byte
 
-    uint32_t         chnn;              ///< 通道(channel)
-    uint32_t         sidx;              ///< 流序号(stream index): klb_mnp_sidx_e
-    //- 8 + 8 = 16 Byte
+    // 标识号
+    union
+    {
+        uint32_t     sid;               ///< 编号
+
+        struct
+        {
+            uint16_t chnn;              ///< 通道(channel)
+            uint16_t sidx;              ///< 流序号(stream index): klb_mnp_sidx_e
+        };
+    };
+    //- 8 + 4 = 12 Byte
 
     int64_t          time;              ///< 时间戳(基于1970年基准,微妙)(范围约:[-292471年, 292471年]
-    //- 16 + 8 = 24 Byte
+    //- 12 + 8 = 20 Byte
 
     union
     {
         uint64_t     resv;              ///< 0
 
+        // 视频参数
         struct
         {
             uint8_t  vtype;             ///< 视频类型(video type): klb_mnp_vtype_e;
+            uint8_t  vtype2;            ///< 
         };
 
+        // 音频参数
         struct
         {
-            uint8_t  tracks;                ///< 音频声道数; 1, 2, 5.1;
-            uint8_t  bits_per_sample;       ///< 音频编码数; 1(8比特), 2(16比特)
+            uint8_t  tracks;            ///< 音频声道数; 1, 2, 5.1;
+            uint8_t  bits_per_sample;   ///< 音频编码数; 1(8比特), 2(16比特)
             uint16_t resv2;
-            uint32_t samples;               ///< 音频采样率; 44100
+            uint32_t samples;           ///< 音频采样率; 44100
         };
     };
-    //- 24 + 8 = 32 Byte
+    //- 20 + 8 = 28 Byte
+
+    uint32_t         rsv;               ///< 保留: 0
+    //- 28 + 4 = 32 Byte
 }klb_mnp_media_t;
 
 /// @struct klb_mnp_common_t
 /// @brief  text/binary header
-///  \n F包: [klb_mnp_t][klb_mnp_common_t][extra][data...]
-///  \n B包: [klb_mnp_t][klb_mnp_common_t][extra][data...]
-///  \n C包: [klb_mnp_t][data...]
-///  \n E包: [klb_mnp_t][data...]
+///  \n F包: [klb_mnp_t][klb_mnp_common_t][head...][data...][padding...]
+///  \n B包: [klb_mnp_t][klb_mnp_common_t][head...][data...][padding...]
+///  \n C包: [klb_mnp_t][head...][data...][padding...]
+///  \n E包: [klb_mnp_t][head...][data...][padding...]
 typedef struct klb_mnp_common_t_
 {
     uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
-    uint32_t    head;       ///< 数据头部长度; 正式数据长度 = size - extra - sizeof(klb_mnp_common_t)
+    uint32_t    head;       ///< 数据头部长度; 正式数据长度 = size - head - sizeof(klb_mnp_common_t) - padding
     uint32_t    sequence;   ///< 序列号
     uint32_t    uid;        ///< 用户自定义ID(user defined id)
-    // - 4 + 4 + 4 + 4 = 16 Byte
+
+    uint16_t    padding;    ///< 末尾对齐数据
+    uint16_t    rsv;        ///< 保留: 0
+    // - 4 + 4 + 4 + 4 + 4 = 20 Byte
 }klb_mnp_common_t;
 
 #pragma pack()
@@ -164,6 +185,8 @@ typedef enum klb_mnp_sidx_e_
     KLB_MNP_SIDX_I1     = 0x0061,    ///< Image 1
     KLB_MNP_SIDX_I2     = 0x0062,    ///< Image 2
     KLB_MNP_SIDX_I3     = 0x0063,    ///< Image 3
+
+    KLB_MNP_SIDX_MAX    = 0x7FFF,    ///< max sidx
 }klb_mnp_sidx_e;
 
 
@@ -179,9 +202,9 @@ typedef enum klb_mnp_dtype_e_
 
     KLB_MNP_DTYPE_AAC   = 0x1001,   ///< AV_CODEC_ID_AAC
 
-    KLB_MNP_DTYPE_JPEG  = 0x2001,
+    KLB_MNP_DTYPE_JPEG  = 0x2001,   ///< JPEG
 
-    KLB_MNP_DTYPE_MAX   = 0x7FFFFFFF,
+    KLB_MNP_DTYPE_MAX   = 0x7FFF,   ///< max data type
 }klb_mnp_dtype_e;
 
 

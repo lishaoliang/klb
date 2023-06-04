@@ -389,7 +389,7 @@ static void init_klua_kh26x(klua_kh26x_t* p_kh26x, klb_buf_t* p_file, int frame_
     p_kh26x->p_frame = KLB_MALLOCZ(klb_buf_t*, frame_num, 0);
 
     int block_num = ((h26x_len + 4095) / 4096) * 3 / 2;
-    p_kh26x->p_fpool = klb_fpool_create(4096, block_num);
+    p_kh26x->p_fpool = klb_fpool_create(4096, block_num, 4096);
 
     int idx = 0;
     char* p_sps = NULL, * p_pps = NULL;

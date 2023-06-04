@@ -75,7 +75,7 @@ KLB_API void* klb_mallocz(size_t size);
 #define KLB_FREE_BY(PTR_, FUNC_FREE_)       {if(NULL!=(PTR_)){(FUNC_FREE_)(PTR_);(PTR_)=NULL;}}
 
 
-/// @def   KLB_MALLOC
+/// @def   KLB_MALLOC_ALIGNED
 /// @brief 申请对齐内存; 按结构体数目 + 对齐字节; ALIGN_对齐(一般2^N对齐, 4, 8, 4K等)
 #define KLB_MALLOC_ALIGNED(ST_, NUM_, PADDING_, ALIGN_) (ST_*)_aligned_malloc(sizeof(ST_) * (NUM_) + (PADDING_), ALIGN_)
 

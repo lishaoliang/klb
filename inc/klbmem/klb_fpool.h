@@ -21,7 +21,7 @@ extern "C" {
 typedef struct klb_fpool_t_ klb_fpool_t;
 
 
-KLB_API klb_fpool_t* klb_fpool_create(int item_size, int item_num);
+KLB_API klb_fpool_t* klb_fpool_create(int item_size, int item_num, int aligned);
 KLB_API void klb_fpool_destroy(klb_fpool_t* p_pool);
 
 
