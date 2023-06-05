@@ -13,7 +13,7 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
-#include "klbthird/sds.h"
+#include "klbutil/klb_sds.h"
 
 #if defined(__cplusplus)
 extern "C" {

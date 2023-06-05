@@ -2,7 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbwnd_tab.h
-/// @brief   klb window tab
+/// @brief   klb window tab, Tab页面
 /// @version 0.1
 /// @history 修改历史
 ///////////////////////////////////////////////////////////////////////////
@@ -19,8 +19,10 @@
 extern "C" {
 #endif
 
+#define KLBWND_TAB_max          8           ///< Tab 页面最大值
 
-typedef struct klbwnd_tab_css_t_
+
+typedef struct klbwnd_tab_btn_css_t_
 {
     klbuicss_margin_t       margin;         ///< 外边距
     klbuicss_padding_t      padding;        ///< 内边距
@@ -28,6 +30,18 @@ typedef struct klbwnd_tab_css_t_
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+}klbwnd_tab_btn_css_t;
+
+
+typedef struct klbwnd_tab_css_t_
+{
+    klbuicss_margin_t       margin;         ///< 外边距
+    klbuicss_padding_t      padding;        ///< 内边距
+
+    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
+
+    int                     btn_height;     ///< 按钮(tab按钮条)高度
+    klbwnd_tab_btn_css_t    btn_css;
 }klbwnd_tab_css_t;
 
 
@@ -37,6 +51,9 @@ typedef struct klbwnd_tab_t_
 
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
+
+    klb_wnd_t*              p_btns[KLBWND_TAB_max]; ///< klbwnd_tab_btn_create
+    int                     btn_count;              ///< Tab 按钮数(页面数目)
 }klbwnd_tab_t;
 
 

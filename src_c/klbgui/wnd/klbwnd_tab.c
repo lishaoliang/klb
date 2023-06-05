@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/wnd/klbwnd_tab.h"
+#include "klbgui/subviews/klbwnd_tab_btn.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 
@@ -67,18 +68,7 @@ static int klbwnd_tab_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
-    {
-        klbwnd_tab_on_paint_status(p_wnd, p_tab, p_css, &p_css->disable, &paint_rect);
-    }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbwnd_tab_on_paint_status(p_wnd, p_tab, p_css, &p_css->focus, &paint_rect);
-    }
-    else
-    {
-        klbwnd_tab_on_paint_status(p_wnd, p_tab, p_css, &p_css->normal, &paint_rect);
-    }
+    klbwnd_tab_on_paint_status(p_wnd, p_tab, p_css, &p_css->normal, &paint_rect);
 
     return 0;
 }
@@ -163,15 +153,16 @@ void klbwnd_tab_css_init(klbwnd_tab_css_t* p_css, klb_gui_t* p_gui)
     p_css->padding = p_default->padding;
 
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
-    klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
-    klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+ 
+    p_css->btn_height = 32;
+
+    klbwnd_tab_btn_css_init(&p_css->btn_css, p_gui);
 }
 
 void klbwnd_tab_css_quit(klbwnd_tab_css_t* p_css)
 {
     klbuicssex_attributes_quit(&p_css->normal);
-    klbuicssex_attributes_quit(&p_css->focus);
-    klbuicssex_attributes_quit(&p_css->disable);
+    klbwnd_tab_btn_css_quit(&p_css->btn_css);
 }
 
 //////////////////////////////////////////////////////////////////////////

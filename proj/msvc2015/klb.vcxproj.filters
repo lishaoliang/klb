@@ -1493,6 +1493,9 @@
     <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lzio.h">
       <Filter>src_c\klua\lua-5.4.6\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2529,6 +2532,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lzio.c">
       <Filter>src_c\klua\lua-5.4.6\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.c">
+      <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

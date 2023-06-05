@@ -433,6 +433,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_calendar_years.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_listex_row.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_list_row.h" />
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.h" />
     <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h" />
@@ -649,6 +650,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_calendar_years.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_listex_row.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_list_row.c" />
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_animation.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_button.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_calendar.c" />
