@@ -73,6 +73,9 @@ void klbwnd_tab_btn_check(klb_wnd_t* p_wnd, bool check);
 /// @brief 依绑定窗口, 更新标题
 void klbwnd_tab_btn_update_title(klb_wnd_t* p_wnd);
 
+/// @brief 获取标题需要的尺寸
+int  klbwnd_tab_btn_title_size(klb_wnd_t* p_wnd, int* p_out_w, int* p_out_h);
+
 
 #ifdef __cplusplus
 }

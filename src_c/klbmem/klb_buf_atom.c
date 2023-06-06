@@ -10,7 +10,7 @@
 
 typedef struct klb_buf_atom_t_
 {
-    long volatile   atomic_count;       ///< klb_buf_t 使用计数
+    klb_atomic_t volatile atomic_count; ///< klb_buf_t 使用计数
 }klb_buf_atom_t;
 
 #pragma pack()

@@ -37,6 +37,17 @@ static void klbwnd_tab_btn_on_paint_status(klb_wnd_t* p_wnd, klbwnd_tab_btn_t* p
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
+    // 选中
+    if (0 < p_css->check_height)
+    {
+        klb_rect_t check_rect = { p_rect->x, p_rect->y + p_rect->h - p_css->check_height, p_rect->w, p_css->check_height };
+
+        if (p_btn->is_check)
+        {
+            klb_wnd_draw_fill_rect2(p_wnd, &check_rect, p_css->check_background_color);
+        }
+    }
+
     // 标题文本
     klbuicssex_draw_text(p_wnd, p_btn->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
 }
@@ -173,6 +184,8 @@ void klbwnd_tab_btn_check(klb_wnd_t* p_wnd, bool check)
     klbwnd_tab_btn_t* p_btn = (klbwnd_tab_btn_t*)p_wnd->ctrl;
 
     p_btn->is_check = check;
+
+    klb_wnd_update(p_wnd);
 }
 
 void klbwnd_tab_btn_update_title(klb_wnd_t* p_wnd)
@@ -200,6 +213,19 @@ void klbwnd_tab_btn_update_title(klb_wnd_t* p_wnd)
     }
 
     klb_map_quit(&in);
+}
+
+int klbwnd_tab_btn_title_size(klb_wnd_t* p_wnd, int* p_out_w, int* p_out_h)
+{
+    klbwnd_tab_btn_t* p_btn = (klbwnd_tab_btn_t*)p_wnd->ctrl;
+
+    if (NULL != p_btn->p_css)
+    {
+        // 按常规状态测算标题长度
+        klb_wnd_text_size2(p_wnd, p_btn->title, sdslen(p_btn->title), p_btn->p_css->normal.font.size, p_out_w, p_out_h);
+    }
+
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -230,6 +256,26 @@ void klbwnd_tab_btn_css_init(klbwnd_tab_btn_css_t* p_css, klb_gui_t* p_gui)
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    p_css->normal.border.width.top = 0;
+    p_css->normal.border.width.right = 0;
+    p_css->normal.border.width.bottom = 0;
+    p_css->normal.border.width.left = 0;
+
+    p_css->normal.background.color = KLB_ARGB8888(255, 46, 46, 46);
+
+    p_css->focus.border.width.top = 0;
+    p_css->focus.border.width.right = 0;
+    p_css->focus.border.width.bottom = 0;
+    p_css->focus.border.width.left = 0;
+
+    p_css->check_height = 2;
+    p_css->check_background_color = KLB_ARGB8888(255, 120, 120, 120);
+    p_css->uncheck_background_color = p_default->normal.background.color;
+
+    p_css->height = 32;
+    p_css->width_min = 200;
+    p_css->width_max = 800;
 }
 
 void klbwnd_tab_btn_css_quit(klbwnd_tab_btn_css_t* p_css)

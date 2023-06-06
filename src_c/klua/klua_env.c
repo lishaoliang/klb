@@ -42,10 +42,10 @@ typedef struct klua_env_t_
 {
     struct
     {
-        long volatile   is_get_lpc_msg; ///< 是否 取 LPC 消息
-        long volatile   lpc_msg_lock;   ///< p_lpc_msg_list锁
-        klb_nlist_t*     p_lpc_msg_list; ///< LPC 消息列表
+        klb_atomic_t volatile   is_get_lpc_msg; ///< 是否 取 LPC 消息
+        klb_atomic_t volatile   lpc_msg_lock;   ///< p_lpc_msg_list锁
 
+        klb_nlist_t*     p_lpc_msg_list; ///< LPC 消息列表
         klb_nlist_t*     p_msg_list;     ///< 待处理消息列表
     };
 

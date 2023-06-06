@@ -22,7 +22,7 @@
 /// @brief  线程信息
 typedef struct klua_kthread_item_t_
 {
-    volatile int    wait;               ///< true: 需等待; false: 不需等待
+    int volatile    wait;               ///< true: 需等待; false: 不需等待
 
 #define KLUA_KTHREAD_OWNER      0       ///< 本模块管理生命周期
 #define KLUA_KTHREAD_OTHER      1       ///< 外部模块管理生命周期
@@ -39,16 +39,16 @@ typedef struct klua_kthread_item_t_
 /// @brief  全局 线程,LPC,LPC模块等信息
 typedef struct klua_kthread_t_
 {
-    long volatile       module_lock;        ///< p_module_hlist锁
-    long volatile       lpc_lock;           ///< p_lpc_hlist锁
+    klb_atomic_t volatile   module_lock;        ///< p_module_hlist锁
+    klb_atomic_t volatile   lpc_lock;           ///< p_lpc_hlist锁
 
-    klb_hlist_t*        p_module_hlist;     ///< 模块(供LPC通信)列表: klua_env_t*
-    klb_hlist_t*        p_lpc_hlist;        ///< LPC列表: klua_env_t*
+    klb_hlist_t*            p_module_hlist;     ///< 模块(供LPC通信)列表: klua_env_t*
+    klb_hlist_t*            p_lpc_hlist;        ///< LPC列表: klua_env_t*
 
-    klb_mutex_t*        p_thread_mutex;     ///< 线程锁
-    klb_hlist_t*        p_thread_hlist;     ///< 所有线程: klua_kthread_item_t*
+    klb_mutex_t*            p_thread_mutex;     ///< 线程锁
+    klb_hlist_t*            p_thread_hlist;     ///< 所有线程: klua_kthread_item_t*
 
-    klua_openlibs_cb    pre_openlibs;       ///< lua环境预加载库
+    klua_openlibs_cb        pre_openlibs;       ///< lua环境预加载库
 }klua_kthread_t;
 
 

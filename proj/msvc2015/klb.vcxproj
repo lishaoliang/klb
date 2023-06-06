@@ -232,6 +232,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_websocket.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_atomic.h" />
+    <ClInclude Include="..\..\inc\klbplatform\klb_cond.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_dynamic_link.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_mutex.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_rwlock.h" />
@@ -736,6 +737,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_atomic.c" />
+    <ClCompile Include="..\..\src_c\klbplatform\klb_cond.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_dynamic_link.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_mutex.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_rwlock.c" />

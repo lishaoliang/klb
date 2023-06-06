@@ -30,6 +30,14 @@ typedef struct klbwnd_tab_btn_css_t_
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+
+    int                     check_height;               ///< 选中区, 高度
+    uint32_t                check_background_color;     ///< 选中区, 颜色
+    uint32_t                uncheck_background_color;   ///< 未选中区, 颜色
+
+    int                     height;         ///< 按钮高度
+    int                     width_min;      ///< 宽度最小值
+    int                     width_max;      ///< 宽度最大值
 }klbwnd_tab_btn_css_t;
 
 
@@ -40,8 +48,11 @@ typedef struct klbwnd_tab_css_t_
 
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
 
-    int                     btn_height;     ///< 按钮(tab按钮条)高度
     klbwnd_tab_btn_css_t    btn_css;
+
+    uint32_t                head_background;            ///< 头部背景色
+    uint32_t                head_line_background_color; ///< 头部下方线条颜色
+    int                     head_line_h;                ///< 头部下方线条高度
 }klbwnd_tab_css_t;
 
 

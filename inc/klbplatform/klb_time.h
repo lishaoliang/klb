@@ -17,8 +17,6 @@
 extern "C" {
 #endif
 
-#if !defined(__STM32__)
-
 
 /// @brief 获取系统滴答数(毫秒)
 /// @return uint32_t 系统滴答
@@ -33,7 +31,6 @@ KLB_API uint64_t klb_tick_count64();
 /// @return int64_t 系统滴答
 KLB_API int64_t klb_tick_counti64();
 
-#endif
 
 /// @def   KLB_TIME_1S
 /// @brief 1秒 = 1000毫秒

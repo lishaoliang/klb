@@ -13,8 +13,8 @@
 
 typedef struct klb_fpool_buf_extra_t_
 {
-    long volatile   atomic_count;       ///< klb_buf_t 使用计数
-    klb_fpool_t*    p_pool;             ///< 来自哪个内存池
+    klb_atomic_t volatile atomic_count; ///< klb_buf_t 使用计数
+    klb_fpool_t* p_pool;                ///< 来自哪个内存池
 }klb_fpool_buf_extra_t;
 
 #pragma pack()

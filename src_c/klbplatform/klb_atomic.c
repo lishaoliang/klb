@@ -18,37 +18,37 @@
 
 #ifdef _WIN32
 
-void klb_atomic_set_zero(long volatile* p_atomic)
+void klb_atomic_set_zero(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     InterlockedExchange(p_atomic, 0);
 }
 
-int klb_atomic_set_value(long volatile* p_atomic, int value)
+int klb_atomic_set_value(klb_atomic_t volatile* p_atomic, klb_atomic_t value)
 {
     assert(NULL != p_atomic);
     return InterlockedExchange(p_atomic, value);
 }
 
-int klb_atomic_get_value(long volatile* p_atomic)
+int klb_atomic_get_value(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     return InterlockedExchangeAdd(p_atomic, 0);
 }
 
-int klb_atomic_add(long volatile* p_atomic)
+int klb_atomic_add(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     return InterlockedExchangeAdd(p_atomic, 1);
 }
 
-int klb_atomic_sub(long volatile* p_atomic)
+int klb_atomic_sub(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     return InterlockedExchangeAdd(p_atomic, -1);
 }
 
-bool klb_atomic_is_zero(long volatile* p_atomic)
+bool klb_atomic_is_zero(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
 
@@ -62,7 +62,7 @@ bool klb_atomic_is_zero(long volatile* p_atomic)
     }
 }
 
-void klb_atomic_lock(long volatile* p_atomic)
+void klb_atomic_lock(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
 
@@ -81,7 +81,7 @@ void klb_atomic_lock(long volatile* p_atomic)
     };
 }
 
-bool klb_atomic_try_lock(long volatile* p_atomic)
+bool klb_atomic_try_lock(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
 
@@ -97,7 +97,7 @@ bool klb_atomic_try_lock(long volatile* p_atomic)
     }
 }
 
-void klb_atomic_unlock(long volatile* p_atomic)
+void klb_atomic_unlock(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     InterlockedExchange(p_atomic, 0);
@@ -105,37 +105,38 @@ void klb_atomic_unlock(long volatile* p_atomic)
 
 #else
 
-void klb_atomic_set_zero(long volatile* p_atomic)
+void klb_atomic_set_zero(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     __sync_lock_release(p_atomic);
 }
 
-int klb_atomic_set_value(long volatile* p_atomic, int value)
+int klb_atomic_set_value(klb_atomic_t volatile* p_atomic, klb_atomic_t value)
 {
     assert(NULL != p_atomic);
     return __sync_lock_test_and_set(p_atomic, value);
 }
 
-int klb_atomic_get_value(long volatile* p_atomic)
+int klb_atomic_get_value(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
-    return __sync_fetch_and_and(p_atomic, 0xffffffff);
+    uintptr_t ffff = -1;
+    return __sync_fetch_and_and(p_atomic, ffff/*0xffffffff*/);
 }
 
-int klb_atomic_add(long volatile* p_atomic)
+int klb_atomic_add(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     return __sync_fetch_and_add(p_atomic, 1);
 }
 
-int klb_atomic_sub(long volatile* p_atomic)
+int klb_atomic_sub(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     return __sync_fetch_and_sub(p_atomic, 1);
 }
 
-bool klb_atomic_is_zero(long volatile* p_atomic)
+bool klb_atomic_is_zero(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
 
@@ -149,13 +150,13 @@ bool klb_atomic_is_zero(long volatile* p_atomic)
     }
 }
 
-void klb_atomic_lock(long volatile* p_atomic)
+void klb_atomic_lock(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     while (!__sync_bool_compare_and_swap(p_atomic, 0, 1));
 }
 
-bool klb_atomic_try_lock(long volatile* p_atomic)
+bool klb_atomic_try_lock(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     if (__sync_bool_compare_and_swap(p_atomic, 0, 1))
@@ -170,7 +171,7 @@ bool klb_atomic_try_lock(long volatile* p_atomic)
     }
 }
 
-void klb_atomic_unlock(long volatile* p_atomic)
+void klb_atomic_unlock(klb_atomic_t volatile* p_atomic)
 {
     assert(NULL != p_atomic);
     __sync_lock_release(p_atomic);

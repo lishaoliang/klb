@@ -16,8 +16,8 @@
 /// @brief  线程间共享缓存数据
 typedef struct klua_klist_item_t_
 {
-    long volatile   lock_list;  ///< p_list 的原子锁
-    klb_nlist_t*    p_list;     ///< 存储 klb_obj_t*
+    klb_atomic_t volatile   lock_list;  ///< p_list 的原子锁
+    klb_nlist_t*            p_list;     ///< 存储 klb_obj_t*
 }klua_klist_item_t;
 
 
@@ -27,8 +27,8 @@ typedef struct klua_klist_item_t_
 ///  \n 用于多个线程之间 交换 重量级 数据: eg. 监听到的socket,媒体数据流等
 typedef struct klua_klist_t_
 {
-    long volatile   lock_hlist; ///< p_hlist 的原子锁 
-    klb_hlist_t*    p_hlist;    ///< 存储 klua_klist_item_t*
+    klb_atomic_t volatile   lock_hlist; ///< p_hlist 的原子锁 
+    klb_hlist_t*            p_hlist;    ///< 存储 klua_klist_item_t*
 }klua_klist_t;
 
 

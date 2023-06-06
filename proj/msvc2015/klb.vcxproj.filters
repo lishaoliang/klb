@@ -1496,6 +1496,9 @@
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.h">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_cond.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2535,6 +2538,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.c">
       <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_cond.c">
+      <Filter>src_c\klbplatform</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
