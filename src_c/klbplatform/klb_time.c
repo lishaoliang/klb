@@ -50,3 +50,41 @@ int64_t klb_tick_counti64()
 
     return (int64_t)(u64 & 0x7fffffffffffffff);
 }
+
+int64_t klb_gmt_time_ms()
+{
+    int64_t t64 = 0;
+
+#ifdef _WIN32
+    SYSTEMTIME systime;
+    GetSystemTime(&systime);
+
+    FILETIME filetime;
+    if (SystemTimeToFileTime(&systime, &filetime))
+    {
+        t64 = filetime.dwHighDateTime;
+        t64 <<= 32;
+        t64 += filetime.dwLowDateTime;
+        t64 /= 10000; //毫秒
+        t64 -= 11644473600000L; //毫秒
+    }
+    else
+    {
+        assert(false);
+    }
+#else
+    struct timeval tv = { 0 };
+    if (0 == gettimeofday(&tv, NULL))
+    {
+        t64 = tv.tv_sec;
+        t64 *= 1000;
+        t64 += tv.tv_usec / 1000;
+    }
+    else
+    {
+        assert(false);
+    }
+#endif
+
+    return t64;
+}

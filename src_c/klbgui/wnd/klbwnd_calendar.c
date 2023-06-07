@@ -352,7 +352,7 @@ static int on_command_btn_days_klbwnd_calendar(klb_wnd_t* p_wnd, int msg, const 
             // 获取年月日, 可能夸年夸月了
             int year = 0, month = 0, day = 0;
             klbwnd_calendar_btn_get_ymd(p_wnd, &year, &month, &day);
-            klbwnd_calendar_set_date_page(p_wnd_calendar, year, month, day);
+            //klbwnd_calendar_set_date_page(p_wnd_calendar, year, month, day);
 
             bool change = false;
             if (year != p_cal->date.year || month != p_cal->date.month || day != p_cal->date.day)

@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#if !defined(__STM32__) && !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__)
 
 /// @struct klb_thread_t
 /// @brief  线程

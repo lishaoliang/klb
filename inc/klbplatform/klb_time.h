@@ -32,6 +32,11 @@ KLB_API uint64_t klb_tick_count64();
 KLB_API int64_t klb_tick_counti64();
 
 
+/// @brief 获取GMT0时区的时间(毫秒)
+/// @note 从1970-1-1零点零分到当前, 系统所偏移的毫秒数
+KLB_API int64_t klb_gmt_time_ms();
+
+
 /// @def   KLB_TIME_1S
 /// @brief 1秒 = 1000毫秒
 #define KLB_TIME_1S         1000
