@@ -83,7 +83,8 @@ static int klua_kh26x_read(lua_State* L)
     if (NULL != p_buf)
     {
         klb_mnp_media_t* p_media = (klb_mnp_media_t*)(p_buf->p_buf + sizeof(klb_mnp_t));
-        p_media->time = klb_tick_counti64();
+        //p_media->time = klb_tick_counti64();
+        p_media->time = klb_gmt_time_ms();
 
         if (KLB_MNP_VTYPE_CFG == p_media->vtype)
         {

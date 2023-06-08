@@ -305,6 +305,8 @@ static void on_klbui_listex_append(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int
             {
                 klb_map_append_adt_clone(p_data_map, klb_map_idx_to_adt(p_in_array, i));
             }
+
+            klb_wnd_update(p_wnd);
         }
     }
 }
@@ -313,6 +315,13 @@ static void on_klbui_listex_clear(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int 
 {
     // 清空
     klbwnd_listex_clear(p_wnd);
+    klb_wnd_update(p_wnd);
+}
+
+static void on_klbui_listex_clear_data(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 清空
+    klbwnd_listex_clear_data(p_wnd);
     klb_wnd_update(p_wnd);
 }
 
@@ -456,13 +465,14 @@ static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list,
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_listex_bind("append-column", on_klbui_listex_append_column);
+    KLBUI_listex_bind("append_column", on_klbui_listex_append_column);
     KLBUI_listex_bind("append", on_klbui_listex_append);
     KLBUI_listex_bind("clear", on_klbui_listex_clear);
+    KLBUI_listex_bind("clear_data", on_klbui_listex_clear_data);
 
     KLBUI_listex_bind("value", on_klbui_listex_value);
 
-    KLBUI_listex_bind("event-wnd", on_klbui_listex_event_wnd);
+    KLBUI_listex_bind("event_wnd", on_klbui_listex_event_wnd);
 }
 
 //////////////////////////////////////////////////////////////////////////

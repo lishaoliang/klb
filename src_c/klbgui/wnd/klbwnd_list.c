@@ -368,6 +368,17 @@ klb_map_t* klbwnd_list_get_data_map(klb_wnd_t* p_wnd)
     return &p_list->data_map;
 }
 
+void klbwnd_list_clear_data(klb_wnd_t* p_wnd)
+{
+    klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
+
+    // 清空选中
+    p_list->sel = -1;
+
+    // 清空数据
+    klb_map_clear(&p_list->data_map);
+}
+
 void klbwnd_list_clear(klb_wnd_t* p_wnd)
 {
     klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;

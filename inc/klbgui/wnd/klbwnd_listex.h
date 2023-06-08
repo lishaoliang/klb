@@ -139,6 +139,9 @@ KLB_API klb_map_t* klbwnd_listex_get_data_map(klb_wnd_t* p_wnd);
 /// @brief 清空
 KLB_API void klbwnd_listex_clear(klb_wnd_t* p_wnd);
 
+/// @brief 清空数据
+KLB_API void klbwnd_listex_clear_data(klb_wnd_t* p_wnd);
+
 /// @brief 设置/获取选中的数据
 KLB_API void klbwnd_listex_set_sel(klb_wnd_t* p_wnd, int sel);
 KLB_API klb_map_t* klbwnd_listex_get_sel(klb_wnd_t* p_wnd, int* p_sel);

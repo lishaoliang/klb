@@ -521,6 +521,17 @@ void klbwnd_listex_clear(klb_wnd_t* p_wnd)
     klb_map_clear(&p_list->data_map);
 }
 
+void klbwnd_listex_clear_data(klb_wnd_t* p_wnd)
+{
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;
+
+    // 清空选中
+    p_list->sel = -1;
+
+    // 清空数据
+    klb_map_clear(&p_list->data_map);
+}
+
 void klbwnd_listex_set_sel(klb_wnd_t* p_wnd, int sel)
 {
     klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;

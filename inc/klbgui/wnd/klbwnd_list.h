@@ -110,7 +110,10 @@ KLB_API int klbwnd_list_append_column(klb_wnd_t* p_wnd, int w_column, const char
 /// @brief 数据列表
 KLB_API klb_map_t* klbwnd_list_get_data_map(klb_wnd_t* p_wnd);
 
-/// @brief 清空
+/// @brief 清空数据
+KLB_API void klbwnd_list_clear_data(klb_wnd_t* p_wnd);
+
+/// @brief 清空所有
 KLB_API void klbwnd_list_clear(klb_wnd_t* p_wnd);
 
 /// @brief 设置/获取选中的数据

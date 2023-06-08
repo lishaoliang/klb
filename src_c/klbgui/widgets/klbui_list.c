@@ -304,6 +304,8 @@ static void on_klbui_list_append(klb_wnd_t* p_wnd, klbui_list_t* p_list, int met
             {
                 klb_map_append_adt_clone(p_data_map, klb_map_idx_to_adt(p_in_array, i));
             }
+
+            klb_wnd_update(p_wnd);
         }
     }
 }
@@ -312,6 +314,13 @@ static void on_klbui_list_clear(klb_wnd_t* p_wnd, klbui_list_t* p_list, int meth
 {
     // 清空
     klbwnd_list_clear(p_wnd);
+    klb_wnd_update(p_wnd);
+}
+
+static void on_klbui_list_clear_data(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 清空数据
+    klbwnd_list_clear_data(p_wnd);
     klb_wnd_update(p_wnd);
 }
 
@@ -422,9 +431,10 @@ static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_list_bind("append-column", on_klbui_list_append_column);
+    KLBUI_list_bind("append_column", on_klbui_list_append_column);
     KLBUI_list_bind("append", on_klbui_list_append);
     KLBUI_list_bind("clear", on_klbui_list_clear);
+    KLBUI_list_bind("clear_data", on_klbui_list_clear_data);
 
     KLBUI_list_bind("value", on_klbui_list_value);
 }

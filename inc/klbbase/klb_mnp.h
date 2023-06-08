@@ -72,7 +72,7 @@ typedef struct klb_mnp_media_t_
     };
     //- 8 + 4 = 12 Byte
 
-    int64_t          time;              ///< 时间戳(基于1970年基准,微妙)(范围约:[-292471年, 292471年]
+    int64_t          time;              ///< 时间戳(基于1970年基准,毫秒)
     //- 12 + 8 = 20 Byte
 
     union
