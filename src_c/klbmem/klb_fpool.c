@@ -13,8 +13,9 @@
 
 typedef struct klb_fpool_buf_extra_t_
 {
-    klb_atomic_t volatile atomic_count; ///< klb_buf_t 使用计数
-    klb_fpool_t* p_pool;                ///< 来自哪个内存池
+    klb_buf_t               buf;                ///< buf
+    klb_atomic_t volatile   atomic_count;       ///< klb_buf_t 使用计数
+    klb_fpool_t*            p_pool;             ///< 来自哪个内存池
 }klb_fpool_buf_extra_t;
 
 #pragma pack()
@@ -50,10 +51,10 @@ typedef struct klb_fpool_t_
 
 //////////////////////////////////////////////////////////////////////////
 
-static klb_buf_t* get_buf_by_idx_klb_fpool(klb_fpool_t* p_pool, int idx)
+static klb_fpool_buf_extra_t* get_buf_by_idx_klb_fpool(klb_fpool_t* p_pool, int idx)
 {
-    int offset = idx * (sizeof(klb_buf_t) + sizeof(klb_fpool_buf_extra_t));
-    return (klb_buf_t*)(p_pool->p_idx_buf + offset);
+    int offset = idx * sizeof(klb_fpool_buf_extra_t);
+    return (klb_fpool_buf_extra_t*)(p_pool->p_idx_buf + offset);
 }
 
 klb_fpool_t* klb_fpool_create(int item_size, int item_num, int aligned)
@@ -77,29 +78,26 @@ klb_fpool_t* klb_fpool_create(int item_size, int item_num, int aligned)
 
     // index
     p_pool->idx_max = item_num;
-    p_pool->idx_buf_len = p_pool->idx_max * (sizeof(klb_buf_t) + sizeof(klb_fpool_buf_extra_t));
-
+    p_pool->idx_buf_len = p_pool->idx_max * (sizeof(klb_fpool_buf_extra_t));
     p_pool->p_idx_buf = (char*)KLB_MALLOCZ(char, p_pool->idx_buf_len, 0);
-    memset(p_pool->p_idx_buf, 0, p_pool->idx_buf_len);
 
     // init
     char* ptr = p_pool->p_buf;
 
     for (size_t i = 0; i < p_pool->idx_max; i++)
     {
-        klb_buf_t* p_buf = get_buf_by_idx_klb_fpool(p_pool, i);
-        klb_fpool_buf_extra_t* p_buf_ex = (klb_fpool_buf_extra_t*)p_buf->extra;
+        klb_fpool_buf_extra_t* p_buf_ex = get_buf_by_idx_klb_fpool(p_pool, i);
 
-        p_buf->type = KLB_BUF_FIX_POOL;
-        p_buf->p_buf = ptr;
-        p_buf->buf_len = p_pool->item_size;
+        p_buf_ex->buf.type = KLB_BUF_FIX_POOL;
+        p_buf_ex->buf.p_buf = ptr;
+        p_buf_ex->buf.buf_len = p_pool->item_size;
 
         klb_atomic_set_zero(&p_buf_ex->atomic_count);
         p_buf_ex->p_pool = p_pool;
 
         //
-        p_buf->p_next = p_pool->p_idle;
-        p_pool->p_idle = p_buf;
+        p_buf_ex->buf.p_next = p_pool->p_idle;
+        p_pool->p_idle = (klb_buf_t*)p_buf_ex;
         p_pool->idle_num += 1;
 
         // 
@@ -126,6 +124,11 @@ void klb_fpool_destroy(klb_fpool_t* p_pool)
 
     KLB_FREE(p_pool->p_idx_buf);
     KLB_FREE(p_pool);
+}
+
+size_t klb_fpool_total_size(klb_fpool_t* p_pool)
+{
+    return p_pool->buf_len + p_pool->idx_buf_len;
 }
 
 klb_buf_t* klb_fpool_malloc(void* ptr, size_t size)
@@ -170,7 +173,7 @@ klb_buf_t* klb_fpool_malloc(void* ptr, size_t size)
         {
             assert(KLB_BUF_FIX_POOL == p_cur->type);
 
-            klb_fpool_buf_extra_t* p_ex = (klb_fpool_buf_extra_t*)p_cur->extra;
+            klb_fpool_buf_extra_t* p_ex = (klb_fpool_buf_extra_t*)p_cur;
             klb_atomic_set_value(&p_ex->atomic_count, 1);
 
             p_cur->start = 0;
@@ -191,7 +194,7 @@ int klb_fpool_ref(klb_buf_t* p_buf)
     assert(NULL != p_buf);
     assert(KLB_BUF_FIX_POOL == p_buf->type);
 
-    klb_fpool_buf_extra_t* p_buf_ex = (klb_fpool_buf_extra_t*)p_buf->extra;
+    klb_fpool_buf_extra_t* p_buf_ex = (klb_fpool_buf_extra_t*)p_buf;
 
     int n = klb_atomic_add(&p_buf_ex->atomic_count);
 
@@ -203,7 +206,7 @@ int klb_fpool_unref(klb_buf_t* p_buf)
     assert(NULL != p_buf);
     assert(KLB_BUF_FIX_POOL == p_buf->type);
 
-    klb_fpool_buf_extra_t* p_buf_ex = (klb_fpool_buf_extra_t*)p_buf->extra;
+    klb_fpool_buf_extra_t* p_buf_ex = (klb_fpool_buf_extra_t*)p_buf;
 
     int n = klb_atomic_sub(&p_buf_ex->atomic_count);
 

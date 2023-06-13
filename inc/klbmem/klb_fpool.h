@@ -12,6 +12,7 @@
 
 #include "klb_type.h"
 #include "klbmem/klb_buf.h"
+#include "string.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -24,6 +25,9 @@ typedef struct klb_fpool_t_ klb_fpool_t;
 KLB_API klb_fpool_t* klb_fpool_create(int item_size, int item_num, int aligned);
 KLB_API void klb_fpool_destroy(klb_fpool_t* p_pool);
 
+/// @brief 获取内存池, 使用的内存总大小
+/// @return size_t 大小
+KLB_API size_t klb_fpool_total_size(klb_fpool_t* p_pool);
 
 KLB_API klb_buf_t* klb_fpool_malloc(void* p_pool, size_t size);
 

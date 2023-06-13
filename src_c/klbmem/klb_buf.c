@@ -13,7 +13,7 @@ klb_buf_t* klb_buf_malloc(int buf_len, bool zero)
     klb_buf_t* p_buf = (klb_buf_t*)KLB_MALLOC(char, sizeof(klb_buf_t) + buf_len, 0);
     KLB_MEMSET(p_buf, 0, sizeof(klb_buf_t));
 
-    p_buf->p_buf = p_buf->extra;
+    p_buf->p_buf = (char*)p_buf + sizeof(klb_buf_t);
     p_buf->buf_len = buf_len;
     p_buf->type = KLB_BUF_EXTRA;
 

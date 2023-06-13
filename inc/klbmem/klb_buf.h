@@ -72,8 +72,6 @@ typedef struct klb_buf_t_
     };
 
     struct klb_buf_t_* p_next;  ///< 下一个节点
-
-    char    extra[];            ///< 附加数据: 可变长度
 }klb_buf_t;
 
 #pragma pack()
