@@ -305,6 +305,8 @@ static void on_klbui_list_append(klb_wnd_t* p_wnd, klbui_list_t* p_list, int met
                 klb_map_append_adt_clone(p_data_map, klb_map_idx_to_adt(p_in_array, i));
             }
 
+            klbwnd_list_relayout(p_wnd); // 重新布局
+
             klb_wnd_update(p_wnd);
         }
     }

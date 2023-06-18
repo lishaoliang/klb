@@ -136,6 +136,9 @@ KLB_API int klbwnd_listex_append_column(klb_wnd_t* p_wnd, int w_column, const ch
 /// @brief 数据列表
 KLB_API klb_map_t* klbwnd_listex_get_data_map(klb_wnd_t* p_wnd);
 
+/// @brief 重新布局
+KLB_API void klbwnd_listex_relayout(klb_wnd_t* p_wnd);
+
 /// @brief 清空
 KLB_API void klbwnd_listex_clear(klb_wnd_t* p_wnd);
 

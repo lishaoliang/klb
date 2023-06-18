@@ -50,28 +50,35 @@ typedef enum klb_buf_format_e_
 /// @brief  缓存
 typedef struct klb_buf_t_
 {
-    char*   p_buf;              ///< 缓存指针
-    int     buf_len;            ///< 缓存大小
+    char*               p_buf;      ///< 缓存指针
+    int                 buf_len;    ///< 缓存大小
 
-    int     start;              ///< 有效数据起始位置
-    int     end;                ///< 有效数据末尾
-
-    int32_t type : 5;           ///< 缓存类型: klb_buf_type_e
-    int32_t format : 3;         ///< 数据类型与组织格式: klb_buf_format_e
-    int32_t vtype : 8;          ///< 媒体数据帧类型: klb_mnp_vtype_e, format=KLB_BUF_FMT_SLICE/KLB_BUF_FMT_FRAME时有效
-    int32_t udata : 16;         ///< 用户数据: user data
+    int                 start;      ///< 有效数据起始位置
+    int                 end;        ///< 有效数据末尾
 
     union
     {
-        uint64_t    udata64;    ///< 用户数据: user data 64
+        uint32_t        udata32;    ///< 用户数据: user data 32
         struct
         {
-            uint32_t udata1;    ///< 用户数据: user data 1
-            uint32_t udata2;    ///< 用户数据: user data 2
+            int32_t     type : 5;   ///< 缓存类型: klb_buf_type_e
+            int32_t     format : 3; ///< 数据类型与组织格式: klb_buf_format_e
+            int32_t     vtype : 8;  ///< 媒体数据帧类型: klb_mnp_vtype_e, format=KLB_BUF_FMT_SLICE/KLB_BUF_FMT_FRAME时有效
+            int32_t     udata : 16; ///< 用户数据: user data
         };
     };
 
-    struct klb_buf_t_* p_next;  ///< 下一个节点
+    union
+    {
+        uint64_t        udata64;    ///< 用户数据: user data 64
+        struct
+        {
+            uint32_t    udata1;    ///< 用户数据: user data 1
+            uint32_t    udata2;    ///< 用户数据: user data 2
+        };
+    };
+
+    struct klb_buf_t_*  p_next;     ///< 下一个节点
 }klb_buf_t;
 
 #pragma pack()

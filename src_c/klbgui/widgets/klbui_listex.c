@@ -239,38 +239,38 @@ static void on_klbui_listex_append_column(klb_wnd_t* p_wnd, klbui_listex_t* p_li
     // 添加列
     if (KLBUI_CSSEX_set == method)
     {
-/* eg.
-jq('list1')['append-column']({
-    {['width']=128,['title']='列1'},
-    {['width']=128,['title']='列2'},
-    {['width']=128,['title']='列3'},
-})
-*/
-int start = 1;
-klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
-if (NULL != p_in_array)
-{
-    int count = klb_map_array_size(p_in_array);
-    for (int i = 0; i < count; i++)
-    {
-        klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
-        if (NULL != p_item_map)
+        /* eg.
+            jq('list1')['append_column']({
+                {['width']=128,['title']='列1'},
+                {['width']=128,['title']='列2'},
+                {['width']=128,['title']='列3'},
+            })
+        */
+        int start = 1;
+        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_array)
         {
-            int width = 0;
-            width = (int)klb_map_to_int64(p_item_map, "width");
-            if (width <= 0)
+            int count = klb_map_array_size(p_in_array);
+            for (int i = 0; i < count; i++)
             {
-                width = (int)klb_map_to_uint64(p_item_map, "width");
-            }
+                klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
+                if (NULL != p_item_map)
+                {
+                    int width = 0;
+                    width = (int)klb_map_to_int64(p_item_map, "width");
+                    if (width <= 0)
+                    {
+                        width = (int)klb_map_to_uint64(p_item_map, "width");
+                    }
 
-            // 宽度必须大于0, 才认可有效列
-            if (0 < width)
-            {
-                klbwnd_listex_append_column(p_wnd, width, klb_map_to_string(p_item_map, "title"), klb_map_to_map(p_item_map, "child"));
+                    // 宽度必须大于0, 才认可有效列
+                    if (0 < width)
+                    {
+                        klbwnd_listex_append_column(p_wnd, width, klb_map_to_string(p_item_map, "title"), klb_map_to_map(p_item_map, "child"));
+                    }
+                }
             }
         }
-    }
-}
     }
 }
 
@@ -305,6 +305,8 @@ static void on_klbui_listex_append(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int
             {
                 klb_map_append_adt_clone(p_data_map, klb_map_idx_to_adt(p_in_array, i));
             }
+
+            klbwnd_listex_relayout(p_wnd); // 重新布局
 
             klb_wnd_update(p_wnd);
         }

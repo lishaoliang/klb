@@ -75,7 +75,7 @@ static void klbwnd_list_on_paint_status_body(klb_wnd_t* p_wnd, klbwnd_list_t* p_
 
     // 数据的数组大小
     int array_size = klb_map_array_size(p_data_map);
-    int start = 0; // 显示数据的起始位置
+    int start = p_list->vsc_value; // 显示数据的起始位置
 
     for (int i = 0; i < p_list->list_row_count; i++)
     {
@@ -135,8 +135,6 @@ static void klbwnd_list_on_paint_status(klb_wnd_t* p_wnd, klbwnd_list_t* p_list,
 
     // 内容体
     klbwnd_list_on_paint_status_body(p_wnd, p_list, p_css, p_attr);
-
-    // todo. 垂直滚动条
 }
 
 static int klbwnd_list_on_paint(klb_wnd_t* p_wnd)
@@ -184,6 +182,35 @@ static int klbwnd_list_on_paint(klb_wnd_t* p_wnd)
 // 重新布局
 static int relayout_body_klbwnd_list(klb_wnd_t* p_wnd, klbwnd_list_t* p_list, klb_rect_t* p_rect, int row_h)
 {
+    // 滚动条
+    klb_map_t* p_data_map = &p_list->data_map;
+    int array_size = klb_map_array_size(p_data_map);
+
+    if (p_list->list_row_count < array_size)
+    {
+        // 需要滚动条
+        p_list->vsc_max = array_size - p_list->list_row_count / 2;
+
+        if (p_list->vsc_value < p_list->vsc_min) { p_list->vsc_value = p_list->vsc_min; };
+        if (p_list->vsc_max < p_list->vsc_value) { p_list->vsc_value = p_list->vsc_max; };
+
+        klbwnd_vscrollbar_set_ranges(p_list->p_vscrollbar, p_list->vsc_min, p_list->vsc_max, 1);
+        klbwnd_vscrollbar_set_value(p_list->p_vscrollbar, p_list->vsc_value);
+
+        klb_wnd_move(p_list->p_vscrollbar, p_rect->x + p_rect->w - 20, p_rect->y);
+        klb_wnd_resize(p_list->p_vscrollbar, 20, p_rect->h);
+
+        p_rect->w -= 20;
+
+        klb_wnd_show(p_list->p_vscrollbar, true);
+    }
+    else
+    {
+        // 不需要滚动条
+        klb_wnd_show(p_list->p_vscrollbar, false);
+        p_list->vsc_value = 0;
+    }
+
     int offy = p_rect->y;
 
     for (int i = 0; i < p_list->list_row_count; i++)
@@ -331,6 +358,25 @@ static int klbwnd_list_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 私有函数
+
+// 滚动条事件
+static int on_command_vscrollbar_klbwnd_list(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_list = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd_list->ctrl;
+
+    if (KLBUI_onchange == e)
+    {
+        p_list->vsc_value = klbwnd_vscrollbar_get_value(p_list->p_vscrollbar);
+
+        klb_wnd_update(p_wnd_list);
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // export 导出函数
 
 void klbwnd_list_set_css(klb_wnd_t* p_wnd, klbwnd_list_css_t* p_css)
@@ -338,6 +384,11 @@ void klbwnd_list_set_css(klb_wnd_t* p_wnd, klbwnd_list_css_t* p_css)
     klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
 
     p_list->p_css = p_css;
+
+    if (p_list->p_vscrollbar)
+    {
+        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_css->vscrollbar);
+    }
 }
 
 int klbwnd_list_append_column(klb_wnd_t* p_wnd, int w_column, const char* p_title)
@@ -368,6 +419,30 @@ klb_map_t* klbwnd_list_get_data_map(klb_wnd_t* p_wnd)
     return &p_list->data_map;
 }
 
+void klbwnd_list_relayout(klb_wnd_t* p_wnd)
+{
+    klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
+
+    klb_rect_t* p_rect = &p_wnd->pos.rect_in_parent;
+
+    // 在预绘制事件中, 处理列表框的 行控件
+    klbwnd_list_css_t* p_css = p_list->p_css;
+
+    int head_h = 42;
+    int row_h = 32;
+
+    klb_rect_t rect_body = { 0 };
+    rect_body.x = p_css->normal.border.width.left;
+    rect_body.y = p_css->normal.border.width.top + head_h;
+    rect_body.w = p_rect->w - (p_css->normal.border.width.left + p_css->normal.border.width.right);
+    rect_body.h = p_rect->h - (p_css->normal.border.width.top + p_css->normal.border.width.bottom) - head_h - 1;
+
+    relayout_body_klbwnd_list(p_wnd, p_list, &rect_body, row_h);
+
+    // 需要重新更新画布坐标
+    klb_wnd_update_canvas_rect(p_wnd);
+}
+
 void klbwnd_list_clear_data(klb_wnd_t* p_wnd)
 {
     klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
@@ -377,6 +452,9 @@ void klbwnd_list_clear_data(klb_wnd_t* p_wnd)
 
     // 清空数据
     klb_map_clear(&p_list->data_map);
+
+    // 重新布局
+    klbwnd_list_relayout(p_wnd);
 }
 
 void klbwnd_list_clear(klb_wnd_t* p_wnd)
@@ -391,6 +469,9 @@ void klbwnd_list_clear(klb_wnd_t* p_wnd)
 
     // 清空数据
     klb_map_clear(&p_list->data_map);
+
+    // 重新布局
+    klbwnd_list_relayout(p_wnd);
 }
 
 void klbwnd_list_set_sel(klb_wnd_t* p_wnd, int sel)
@@ -461,6 +542,9 @@ void klbwnd_list_css_init(klbwnd_list_css_t* p_css, klb_gui_t* p_gui)
 
     // 行控件 CSS
     klbwnd_list_row_css_init(&p_css->list_row, p_gui);
+
+    // 垂直滚动条
+    klbwnd_vscrollbar_css_init(&p_css->vscrollbar, p_gui);
 }
 
 void klbwnd_list_css_quit(klbwnd_list_css_t* p_css)
@@ -471,10 +555,33 @@ void klbwnd_list_css_quit(klbwnd_list_css_t* p_css)
 
     // 行控件 CSS
     klbwnd_list_row_css_quit(&p_css->list_row);
+
+    // 垂直滚动条
+    klbwnd_vscrollbar_css_quit(&p_css->vscrollbar);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // init / quit
+
+static void klbwnd_list_init_subwnds(klb_wnd_t* p_wnd, klbwnd_list_t* p_list)
+{
+    klb_rect_t* p_rect = &p_wnd->pos.rect_in_parent;
+
+    int head_h = 42;
+    int row_h = 32;
+
+    // 右侧滚动条
+    p_list->p_vscrollbar = klbwnd_vscrollbar_create(p_wnd->p_gui, 0, head_h, 20, p_rect->h - head_h);
+    klb_wnd_push_child(p_wnd, p_list->p_vscrollbar);
+    klb_wnd_show(p_list->p_vscrollbar, false);
+
+    klb_wnd_bind_command(p_list->p_vscrollbar, on_command_vscrollbar_klbwnd_list, p_wnd);
+
+    if (p_list->p_css)
+    {
+        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_list->p_css->vscrollbar);
+    }
+}
 
 void klbwnd_list_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h)
 {
@@ -496,8 +603,11 @@ void klbwnd_list_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, i
     // 样式 style
     p_wnd->state.style = KLB_WND_STYLE_NOFOCUS;
 
-    // 
+    // 初始化属性
     klbwnd_list_init_attribute(p_list);
+
+    // 初始化子控件
+    klbwnd_list_init_subwnds(p_wnd, p_list);
 }
 
 void klbwnd_list_quit(klb_wnd_t* p_wnd)

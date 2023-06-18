@@ -126,9 +126,19 @@ void klb_fpool_destroy(klb_fpool_t* p_pool)
     KLB_FREE(p_pool);
 }
 
-size_t klb_fpool_total_size(klb_fpool_t* p_pool)
+size_t klb_fpool_total_mem_size(klb_fpool_t* p_pool)
 {
     return p_pool->buf_len + p_pool->idx_buf_len;
+}
+
+size_t klb_fpool_item_size(klb_fpool_t* p_pool)
+{
+    return p_pool->item_size;
+}
+
+size_t klb_fpool_idle_num(klb_fpool_t* p_pool)
+{
+    return p_pool->idle_num;
 }
 
 klb_buf_t* klb_fpool_malloc(void* ptr, size_t size)

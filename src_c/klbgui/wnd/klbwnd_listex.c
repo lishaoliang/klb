@@ -507,6 +507,31 @@ klb_map_t* klbwnd_listex_get_data_map(klb_wnd_t* p_wnd)
     return &p_list->data_map;
 }
 
+/// @brief 重新布局
+void klbwnd_listex_relayout(klb_wnd_t* p_wnd)
+{
+    klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;
+    klb_rect_t* p_rect = &p_wnd->pos.rect_in_parent;
+
+    // 在预绘制事件中, 处理列表框的 行控件
+    klbwnd_listex_css_t* p_css = p_list->p_css;
+
+    int head_h = 42;
+    int row_h = 32;
+
+    klb_rect_t rect_body = { 0 };
+    rect_body.x = p_css->normal.border.width.left;
+    rect_body.y = p_css->normal.border.width.top + head_h;
+    rect_body.w = p_rect->w - (p_css->normal.border.width.left + p_css->normal.border.width.right);
+    rect_body.h = p_rect->h - (p_css->normal.border.width.top + p_css->normal.border.width.bottom) - head_h - 1;
+
+    // 重新布局
+    relayout_body_klbwnd_listex(p_wnd, p_list, &rect_body, row_h);
+
+    // 需要重新更新画布坐标
+    klb_wnd_update_canvas_rect(p_wnd);
+}
+
 void klbwnd_listex_clear(klb_wnd_t* p_wnd)
 {
     klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;
@@ -519,6 +544,9 @@ void klbwnd_listex_clear(klb_wnd_t* p_wnd)
 
     // 清空数据
     klb_map_clear(&p_list->data_map);
+
+    // 重新布局
+    klbwnd_listex_relayout(p_wnd);
 }
 
 void klbwnd_listex_clear_data(klb_wnd_t* p_wnd)
@@ -530,6 +558,9 @@ void klbwnd_listex_clear_data(klb_wnd_t* p_wnd)
 
     // 清空数据
     klb_map_clear(&p_list->data_map);
+
+    // 重新布局
+    klbwnd_listex_relayout(p_wnd);
 }
 
 void klbwnd_listex_set_sel(klb_wnd_t* p_wnd, int sel)
@@ -660,6 +691,7 @@ static void klbwnd_listex_init_subwnds(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list
     // 右侧滚动条
     p_list->p_vscrollbar = klbwnd_vscrollbar_create(p_wnd->p_gui, 0, head_h, 20, p_rect->h - head_h);
     klb_wnd_push_child(p_wnd, p_list->p_vscrollbar);
+    klb_wnd_show(p_list->p_vscrollbar, false);
 
     klb_wnd_bind_command(p_list->p_vscrollbar, on_command_vscrollbar_klbwnd_listex, p_wnd);
 

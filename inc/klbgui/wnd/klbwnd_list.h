@@ -16,6 +16,7 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
+#include "klbgui/wnd/klbwnd_vscrollbar.h"
 #include "klbutil/klb_sds.h"
 #include "klbutil/klb_map.h"
 
@@ -67,6 +68,7 @@ typedef struct klbwnd_list_css_t_
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
 
     klbwnd_list_row_css_t   list_row;       ///< 行控件CSS
+    klbwnd_vscrollbar_css_t vscrollbar;     ///< 垂直滚动条CSS
 }klbwnd_list_css_t;
 
 
@@ -81,6 +83,16 @@ typedef struct klbwnd_list_t_
     // 子控件: klbwnd_list_row_t
     klb_wnd_t*              p_list_row[KLBWND_LIST_row_max]; ///< 
     int                     list_row_count; ///< 
+
+    // 右侧垂直滚动条
+    struct
+    {
+        klb_wnd_t*          p_vscrollbar;   ///< 右侧垂直滚动条
+
+        int                 vsc_min;
+        int                 vsc_max;
+        int                 vsc_value;
+    };
 
     int                     sel;            ///< 当前选中的行
 
@@ -109,6 +121,9 @@ KLB_API int klbwnd_list_append_column(klb_wnd_t* p_wnd, int w_column, const char
 
 /// @brief 数据列表
 KLB_API klb_map_t* klbwnd_list_get_data_map(klb_wnd_t* p_wnd);
+
+/// @brief 重新布局
+KLB_API void klbwnd_list_relayout(klb_wnd_t* p_wnd);
 
 /// @brief 清空数据
 KLB_API void klbwnd_list_clear_data(klb_wnd_t* p_wnd);
