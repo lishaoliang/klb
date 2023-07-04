@@ -37,29 +37,29 @@ typedef enum klb_shmem_e_
 /// @param [in]  *p_name        名称: eg."aaa"
 /// @param [in]  size           大小: 推荐4K整数倍
 /// @return klb_shmem_t* 对象指针
-klb_shmem_t* klb_shmem_create(int flag, const char* p_name, size_t size);
+KLB_API klb_shmem_t* klb_shmem_create(int flag, const char* p_name, size_t size);
 
 
 /// @brief 创建进程之间共享内存
 /// @param [in]  *p_name        名称: eg."aaa"
 /// @param [in]  size           大小: 推荐4K整数倍
 /// @return klb_shmem_t* 对象指针
-klb_shmem_t* klb_shmem_open(const char* p_name, size_t size);
+KLB_API klb_shmem_t* klb_shmem_open(const char* p_name, size_t size);
 
 
 /// @brief 销毁
 /// @return 无
-void klb_shmem_destroy(klb_shmem_t* p_shmem);
+KLB_API void klb_shmem_destroy(klb_shmem_t* p_shmem);
 
 
 /// @brief 获取映射的虚拟地址
 /// @return void* 虚拟地址
-void* klb_shmem_address(klb_shmem_t* p_shmem);
+KLB_API void* klb_shmem_address(klb_shmem_t* p_shmem);
 
 
 /// @brief 获取映射的内存大小
 /// @return size_t 内存大小
-size_t klb_shmem_size(klb_shmem_t* p_shmem);
+KLB_API size_t klb_shmem_size(klb_shmem_t* p_shmem);
 
 
 #ifdef __cplusplus

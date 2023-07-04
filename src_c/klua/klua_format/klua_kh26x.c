@@ -228,7 +228,7 @@ static char s_0001[] = {0x0, 0x0, 0x0, 0x1};
 
 static void copy_sps_pps_klua_kh26x(klb_buf_t* p_dst, char* p_sps, int sps_len, char* p_pps, int pps_len)
 {
-    int data_len = sps_len + 4 + pps_len + 4 + sizeof(klb_mnp_media_t);
+    int data_len = sps_len + sizeof(s_0001) + pps_len + sizeof(s_0001) + sizeof(klb_mnp_media_t);
     klb_buf_t* ptr = p_dst;
 
     klb_mnp_t mnp = { 0 };
@@ -246,9 +246,9 @@ static void copy_sps_pps_klua_kh26x(klb_buf_t* p_dst, char* p_sps, int sps_len, 
     int offset = 0;
     memcpy(ptr->p_buf + offset, &mnp, sizeof(klb_mnp_t));           offset += sizeof(klb_mnp_t);
     memcpy(ptr->p_buf + offset, &media, sizeof(klb_mnp_media_t));   offset += sizeof(klb_mnp_media_t);
-    memcpy(ptr->p_buf + offset, s_0001, 4);                         offset += 4;
+    memcpy(ptr->p_buf + offset, s_0001, sizeof(s_0001));            offset += sizeof(s_0001);
     memcpy(ptr->p_buf + offset, p_sps, sps_len);                    offset += sps_len;
-    memcpy(ptr->p_buf + offset, s_0001, 4);                         offset += 4;
+    memcpy(ptr->p_buf + offset, s_0001, sizeof(s_0001));            offset += sizeof(s_0001);
     memcpy(ptr->p_buf + offset, p_pps, pps_len);                    offset += pps_len;
 
     ptr->end = mnp.size;

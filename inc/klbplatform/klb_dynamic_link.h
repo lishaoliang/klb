@@ -23,20 +23,20 @@ typedef struct klb_dl_t_ klb_dl_t;
 /// @brief 打开动态库
 /// @param [in] *p_file_name        动态库路径
 /// @return klb_dl_t* 动态库对象
-klb_dl_t* klb_dlopen(const char* p_path_name);
+KLB_API klb_dl_t* klb_dlopen(const char* p_path_name);
 
 
 /// @brief 关闭动态库
 /// @param [in] *p_dl               动态库对象
 /// @return 无
-void klb_dlclose(klb_dl_t* p_dl);
+KLB_API void klb_dlclose(klb_dl_t* p_dl);
 
 
 /// @brief 获取动态库函数
 /// @param [in] *p_dl               动态库对象
 /// @param [in] *p_procname         函数名称
 /// @return void*   函数指针
-void* klb_dlsym(klb_dl_t* p_dl, const char* p_procname);
+KLB_API void* klb_dlsym(klb_dl_t* p_dl, const char* p_procname);
 
 
 #ifdef __cplusplus
