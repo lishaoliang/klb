@@ -28,6 +28,10 @@ event.mousedown = 0x403		-- mousedown
 event.mouseup = 0x409		-- mouseup
 
 
+-- @def   KLBUI_outwindow
+-- @brief 在popup窗口外点击事件
+event.outwindow = 0x450		-- outwindow
+
 
 -- @def   KLBUI_onabort
 -- @brief 窗口加载崩溃事件: 当窗口加载失败时触发; 完全崩溃, 无法使用
@@ -71,7 +75,11 @@ local transform_map = {
 	[event.mousedown] = 'mousedown',	-- 
 
 	['mouseup'] = event.mouseup,		-- 
-	[event.mouseup] = 'mouseup',	-- 
+	[event.mouseup] = 'mouseup',		-- 
+	
+	
+	['outwindow'] = event.outwindow,	-- 在popup窗口外点击事件
+	[event.outwindow] = 'outwindow',	-- 在popup窗口外点击事件
 	
 	['onabort'] = event.onabort,		-- 窗口加载崩溃事件
 	[event.onabort] = 'onabort',		-- 窗口加载崩溃事件

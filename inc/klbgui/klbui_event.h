@@ -93,6 +93,11 @@ extern "C" {
 #define KLBUI_mouseup           0x409           // mouseup
 
 
+/// @def   KLBUI_outwindow
+/// @brief 在popup窗口外点击事件
+#define KLBUI_outwindow         0x450           // outwindow
+
+
 ///////////////////////////////////////
 // 窗口系统事件定义
 

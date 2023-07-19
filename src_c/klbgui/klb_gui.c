@@ -935,6 +935,8 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         refind_focus_klb_gui(p_gui, p_msg->pt1.x, p_msg->pt1.y);
     }
 
+    bool outwindow = false;
+
     // 处理窗口消息
     klb_wnd_t* p_wnd = p_gui->p_focus; // 焦点窗口
 
@@ -949,6 +951,15 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         else if(0 < p_gui->popup_num)
         {
             p_wnd = p_gui->p_popup_wnd[0]; // 首次popup 的窗口
+
+            // 判定是否在popup窗口之外点击
+            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mouseenter == p_msg->msg)
+            {
+                if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
+                {
+                    outwindow = true;
+                }
+            }
         }
     }
 
@@ -972,6 +983,13 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             on_control_klb_wnd(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
             on_command_klb_wnd(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        }
+
+        // 补充事件 outwindow
+        if (outwindow)
+        {
+            on_control_klb_wnd(p_wnd_top, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            on_command_klb_wnd(p_wnd_top, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
         }
     }
 

@@ -41,10 +41,10 @@ MY_INCLUDES += -I ../src_c/klua/lua-5.4.6/src
 
 
 # 引用的静态库
-MY_LIB_STATIC := -L ../lib -Bstatic ../lib/libklb.a
+MY_LIB_STATIC := -L ../lib -Bstatic
 
 # 引用的动态库
-MY_LIB_DYNAMIC := -L ../lib -Bdynamic 
+MY_LIB_DYNAMIC := -L ../lib -Bdynamic -lklb
 MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 
 # openssl

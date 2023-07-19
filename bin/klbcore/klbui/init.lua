@@ -148,7 +148,7 @@ end
 -- @brief 结束一个popup方式的菜单
 -- @param [in] all[boolean]			是否关闭全部popup: 默认true
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.popup_end = function (all)
+klbui.popup_end = function (all)
 	return kgui.popup_end(all)
 end
 

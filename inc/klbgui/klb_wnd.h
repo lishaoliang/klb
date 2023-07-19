@@ -55,6 +55,7 @@ typedef enum klb_wnd_status_e_
 {
     KLB_WND_STATUS_HIDE          = 0x0001,   ///< 隐藏
     KLB_WND_STATUS_FOCUS         = 0x1000,   ///< 鼠标聚焦
+    KLB_WND_STATUS_DISABLE       = 0x2000,   ///< 不使能
     KLB_WND_STATUS_CANVAS_RECT   = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
 }klb_wnd_status_e;
 

@@ -109,6 +109,10 @@ ifneq ($(MY_VERSION),release)
 	MY_CFLAGS += -g
 endif
 
+# 
+MY_CFLAGS += -Wl,--no-undefined
+
+
 # 编译目标名称
 MY_TARGET_NAME := klb
 MY_TARGET_A := ./lib/lib$(MY_TARGET_NAME).a
@@ -154,7 +158,7 @@ $(MY_TARGET_A): $(MY_LIB_A_OBJS)
 
 $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(my_tip)
-	$(CXX) -shared -fPIC -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
+	$(CXX) -shared -fPIC $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI) -o $@
 
 strip:
 #	$(CSTRIP) $(MY_TARGET_A)
