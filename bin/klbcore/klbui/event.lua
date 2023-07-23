@@ -23,6 +23,30 @@ event.dblclick = 0x402		-- dblclick
 event.mousedown = 0x403		-- mousedown
 
 
+-- @def   KLBUI_mouseenter
+-- @brief 
+event.mouseenter = 0x404	-- mouseenter
+
+
+-- @def   KLBUI_mouseleave
+-- @brief 
+event.mouseleave = 0x405	-- mouseleave
+
+
+-- @def   KLBUI_mousemove
+-- @brief 
+event.mousemove = 0x406		-- mousemove
+
+
+-- @def   KLBUI_mouseout
+-- @brief 
+event.mouseout = 0x407		-- mouseout
+
+-- @def   KLBUI_mouseover
+-- @brief 
+event.mouseover = 0x408		-- mouseover
+
+
 -- @def   KLBUI_mouseup
 -- @brief 
 event.mouseup = 0x409		-- mouseup
@@ -43,6 +67,11 @@ event.onabort = 0x500		-- onabort
 event.onerror = 0x501		-- onerror
 
 
+-- @def   KLBUI_onpredraw
+-- @brief 预绘制事件: 在第一次窗口绘制之前(on pre-draw)
+event.onpredraw = 0x518		-- onpredraw
+
+
 -- @def   KLBUI_onpaint
 -- @brief 绘制事件: 当需要窗口组件绘制时触发
 event.onpaint = 0x520		-- onpaint
@@ -57,6 +86,9 @@ event.onload = 0x601		-- onload
 -- @brief 卸载事件: 对话框/文档/资源 卸载时触发
 event.onunload = 0x602		-- onunload
 
+-- @def   KLBUI_onresize
+-- @brief 窗口尺寸变化事件: 当窗口尺寸变化时触发
+event.onresize = 0x603		-- onresize
 
 -- @def   KLBUI_onchange
 -- @brief 内容变更事件
@@ -74,9 +106,23 @@ local transform_map = {
 	['mousedown'] = event.mousedown,	-- 
 	[event.mousedown] = 'mousedown',	-- 
 
-	['mouseup'] = event.mouseup,		-- 
-	[event.mouseup] = 'mouseup',		-- 
+	['mouseenter'] = event.mouseenter,	--
+	[event.mouseenter] = 'mouseenter',	--
+
+	['mouseleave'] = event.mouseleave,	--
+	[event.mouseleave] = 'mouseleave',	--
+
+	['mousemove'] = event.mousemove,	--
+	[event.mousemove] = 'mousemove',	--
+
+	['mouseout'] = event.mouseout,		--
+	[event.mouseout] = 'mouseout',		--
 	
+	['mouseover'] = event.mouseover,	--
+	[event.mouseover] = 'mouseover',	--
+
+	['mouseup'] = event.mouseup,		-- 
+	[event.mouseup] = 'mouseup',		-- 	
 	
 	['outwindow'] = event.outwindow,	-- 在popup窗口外点击事件
 	[event.outwindow] = 'outwindow',	-- 在popup窗口外点击事件
@@ -87,6 +133,9 @@ local transform_map = {
 	['onerror'] = event.onerror,		-- 窗口加载发生错误事件
 	[event.onerror] = 'onerror',		-- 窗口加载发生错误事件
 
+	['onpredraw'] = event.onpredraw,	--
+	[event.onpredraw] = 'onpredraw',	--
+
 	['onpaint'] = event.onpaint,		-- 绘制事件
 	[event.onpaint] = 'onpaint',		-- 绘制事件
 	
@@ -95,6 +144,9 @@ local transform_map = {
 	
 	['onunload'] = event.onunload,		-- 卸载事件
 	[event.onunload] = 'onunload',		-- 卸载事件
+
+	['onresize'] = event.onresize,		--
+	[event.onresize] = 'onresize',		--
 	
 	['onchange'] = event.onchange,		-- 内容变更事件
 	[event.onchange] = 'onchange',		-- 内容变更事件

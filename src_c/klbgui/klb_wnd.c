@@ -99,14 +99,18 @@ void klb_wnd_show(klb_wnd_t* p_wnd, bool show)
     if (show)
     {
         p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_HIDE);
+
+        // 更新
+        klb_wnd_update(p_wnd);
     }
     else
     {
         p_wnd->state.status |= KLB_WND_STATUS_HIDE;
-    }
 
-    // 更新
-    klb_wnd_update(p_wnd);
+        // 更新
+        klb_wnd_t* ptr = (NULL != p_wnd->p_parent) ? p_wnd->p_parent : p_wnd;
+        klb_wnd_update(ptr);
+    }
 }
 
 /// @brief 基于父窗口移动(相对坐标)
