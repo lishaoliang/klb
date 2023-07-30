@@ -52,6 +52,11 @@ event.mouseover = 0x408		-- mouseover
 event.mouseup = 0x409		-- mouseup
 
 
+-- @def   KLBUI_mousedrag
+-- @brief 鼠标拖拽事件
+event.mousedrag = 0x410		-- mousedrag
+
+
 -- @def   KLBUI_outwindow
 -- @brief 在popup窗口外点击事件
 event.outwindow = 0x450		-- outwindow
@@ -123,6 +128,9 @@ local transform_map = {
 
 	['mouseup'] = event.mouseup,		-- 
 	[event.mouseup] = 'mouseup',		-- 	
+
+	['mousedrag'] = event.mousedrag,	-- 鼠标拖拽事件
+	[event.mousedrag] = 'mousedrag',
 	
 	['outwindow'] = event.outwindow,	-- 在popup窗口外点击事件
 	[event.outwindow] = 'outwindow',	-- 在popup窗口外点击事件

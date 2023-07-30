@@ -64,6 +64,15 @@ extern "C" {
 /// @brief 左键双击事件: 当左键双击并释放鼠标左键时触发
 #define KLBUI_dblclick          0x402           // dblclick
 
+/// @def   klbui_mousedrag_lparam_e
+/// @brief 鼠标按下事件的 lparam 参数
+typedef enum klbui_mousedown_lparam_e_
+{
+    KLBUI_MOUSEDOWN_left = 1,       ///< 鼠标左键
+    KLBUI_MOUSEDOWN_right,          ///< 鼠标右键
+    KLBUI_MOUSEDOWN_middle          ///< 鼠标中键
+}klbui_mousedown_lparam_e;
+
 /// @def   KLBUI_mousedown
 /// @brief 
 #define KLBUI_mousedown         0x403           // mousedown
@@ -92,6 +101,19 @@ extern "C" {
 /// @brief 
 #define KLBUI_mouseup           0x409           // mouseup
 
+
+/// @def   klbui_mousedrag_lparam_e
+/// @brief 鼠标拖拽事件的 lparam 参数
+typedef enum klbui_mousedrag_lparam_e_
+{
+    KLBUI_MOUSEDRAG_start = 1,      ///< 拖拽事件开始
+    KLBUI_MOUSEDRAG_move,           ///< 拖拽移动中
+    KLBUI_MOUSEDRAG_end             ///< 拖拽事件结束
+}klbui_mousedrag_lparam_e;
+
+/// @def   KLBUI_mousedrag
+/// @brief 鼠标拖拽事件
+#define KLBUI_mousedrag         0x410           // mousedrag
 
 /// @def   KLBUI_outwindow
 /// @brief 在popup窗口外点击事件

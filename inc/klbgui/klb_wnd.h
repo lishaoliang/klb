@@ -5,7 +5,7 @@
 /// @brief   窗口定义
 /// @version 0.1
 /// @history 修改历史
-///   \n [2023-4] 提供 klb_wnd_push_child 函数, 允许使用者 在扩展控件开发中 自行构建窗口树
+///   \n [2023-4] 提供 klb_wnd_push_child 函数, 许可在扩展控件开发中 自行构建窗口树
 ///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发替换绘图函数
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
@@ -42,10 +42,11 @@ typedef struct klb_wnd_pos_t_
 /// @brief 窗口样式标记
 typedef enum klb_wnd_style_e_
 {
-    KLB_WND_STYLE_TOP            = 0x0001,   ///< 顶层窗口
-    KLB_WND_STYLE_BORDERLESS     = 0x0002,   ///< 无边框/标题栏
-    KLB_WND_STYLE_NOFOCUS        = 0x0004,   ///< 无聚焦状态
-    KLB_WND_STYLE_NOCOMMAND      = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
+    KLB_WND_STYLE_TOP                   = 0x0001,   ///< 顶层窗口
+    KLB_WND_STYLE_BORDERLESS            = 0x0002,   ///< 无边框/标题栏
+    KLB_WND_STYLE_NOFOCUS               = 0x0004,   ///< 无聚焦状态
+    KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
+    KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘
 }klb_wnd_style_e;
 
 
@@ -53,10 +54,10 @@ typedef enum klb_wnd_style_e_
 /// @brief 窗口状态标记
 typedef enum klb_wnd_status_e_
 {
-    KLB_WND_STATUS_HIDE          = 0x0001,   ///< 隐藏
-    KLB_WND_STATUS_FOCUS         = 0x1000,   ///< 鼠标聚焦
-    KLB_WND_STATUS_DISABLE       = 0x2000,   ///< 不使能
-    KLB_WND_STATUS_CANVAS_RECT   = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
+    KLB_WND_STATUS_HIDE                 = 0x0001,   ///< 隐藏
+    KLB_WND_STATUS_FOCUS                = 0x1000,   ///< 鼠标聚焦
+    KLB_WND_STATUS_DISABLE              = 0x2000,   ///< 不使能
+    KLB_WND_STATUS_CANVAS_RECT          = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
 }klb_wnd_status_e;
 
 
@@ -137,15 +138,19 @@ typedef struct klb_wnd_vtable_t_
     /// @param [in] msg         消息命令
     /// @param [in] *p_p1       点1
     /// @param [in] *p_p2       点2
+    /// @param [in] lparam      附加参数1
+    /// @param [in] wparam      附加参数2
     /// @return int
-    ///  \n 0. 消息终止,不再"冒泡"
-    ///  \n msg. 任然以msg"冒泡"
-    ///  \n 非0. 转换为其他消息"冒泡"
+    /// @note
+    ///  \n 不使用完整"消息冒泡"机制
+    ///  \n 简化为 : 聚焦窗口和其最顶层窗口响应  
     klb_wnd_on_command_cb   on_command;
 
     /// @brief 自定义绘图
     /// @param [in] *p_wnd      窗体对象
     /// @return int
+    /// @note
+    ///  \n 若有自定义绘图, 则优先使用自定义绘图来完成重绘
     klb_wnd_on_paint_cb     on_paint;
 
     /// @brief 向控件设置数据: 样式\显示\状态等等
@@ -157,7 +162,7 @@ typedef struct klb_wnd_vtable_t_
     /// @brief 向控件获取数据: 样式\显示\状态等等
     /// @param [in] *p_wnd      窗体对象
     /// @param [in] **p_map     map数据集合
-    /// @return char* JSON串或NULL
+    /// @return map* map数据集合
     klb_wnd_on_get_cb       on_get;
 }klb_wnd_vtable_t;
 
@@ -186,7 +191,7 @@ typedef struct klb_wnd_t_
     klb_wnd_state_t     state;      ///< 窗口状态的参数
 
     // 用户数据
-    void*               p_udata;    ///< public user data, [公共用户数据]
+    void*               p_udata;    ///< public user data, [绑定响应函数的附加指针]
 
     // 组件(控件)数据
     char                ctrl[];     ///< 控件私有数据域, (控件数据)

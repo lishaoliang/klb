@@ -910,14 +910,40 @@ static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
 
     if (NULL != p_gui->p_focus && p_focus != p_gui->p_focus)
     {
+        // 即将失去焦点事件
+        on_control_klb_wnd(p_gui->p_focus, KLBUI_focusout, NULL, NULL, 0, 0);
+
+        // 失去焦点
         klb_wnd_set_focus(p_gui->p_focus, false);
-        klb_wnd_update(p_gui->p_focus);
+
+        // 失去焦点事件
+        on_control_klb_wnd(p_gui->p_focus, KLBUI_blur, NULL, NULL, 0, 0);
+
+        // 更新窗口
+        // KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW 样式, 许可将窗口设计为可响应事件, 但不自动重绘
+        // 使用者需要自行维护相关绘图部分设计
+        if (!(KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW & p_gui->p_focus->state.style))
+        {
+            klb_wnd_update(p_gui->p_focus);
+        }
     }
 
     if (NULL != p_focus && p_focus != p_gui->p_focus)
     {
+        // 即将得到焦点事件
+        on_control_klb_wnd(p_focus, KLBUI_focusin, NULL, NULL, 0, 0);
+
+        // 得到焦点
         klb_wnd_set_focus(p_focus, true);
-        klb_wnd_update(p_focus);
+
+        // 得到焦点事件
+        on_control_klb_wnd(p_focus, KLBUI_focus, NULL, NULL, 0, 0);
+
+        // 更新窗口
+        if (!(KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW & p_focus->state.style))
+        {
+            klb_wnd_update(p_focus);
+        }
     }
 
     p_gui->p_focus_top = p_focus_top;
