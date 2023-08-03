@@ -113,13 +113,96 @@ void klb_wnd_show(klb_wnd_t* p_wnd, bool show)
     }
 }
 
-/// @brief 基于父窗口移动(相对坐标)
+/// @brief 获取是否显示
+bool klb_wnd_is_show(klb_wnd_t* p_wnd)
+{
+    assert(NULL != p_wnd);
+    return (KLB_WND_STATUS_HIDE & p_wnd->state.status) ? false : true;
+}
+
+void klb_wnd_hide(klb_wnd_t* p_wnd, bool hide)
+{
+    assert(NULL != p_wnd);
+    if (hide)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_HIDE;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_HIDE);
+    }
+}
+
+/// @brief 设置输入状态
+void klb_wnd_input(klb_wnd_t* p_wnd, bool input)
+{
+    assert(NULL != p_wnd);
+    if (input)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_INPUT;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_INPUT);
+    }
+}
+
+/// @brief 获取是否是输入状态
+bool klb_wnd_is_input(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_INPUT & p_wnd->state.status) ? true : false;
+}
+
+/// @brief 设置选中状态
+void klb_wnd_check(klb_wnd_t* p_wnd, bool check)
+{
+    assert(NULL != p_wnd);
+    if (check)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_CHECK;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_CHECK);
+    }
+}
+
+/// @brief 获取是否是选中状态
+bool klb_wnd_is_check(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_CHECK & p_wnd->state.status) ? true : false;
+}
+
+/// @brief 设置不使能状态
+void klb_wnd_disable(klb_wnd_t* p_wnd, bool disable)
+{
+    assert(NULL != p_wnd);
+    if (disable)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_DISABLE;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_DISABLE);
+    }
+}
+
+/// @brief 获取是否是 不使能
+bool klb_wnd_is_disable(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_DISABLE & p_wnd->state.status) ? true : false;
+}
+
+/// @brief 基于父窗口移动到指定的相对坐标
 void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y)
 {
     assert(NULL != p_wnd);
 
     p_wnd->pos.rect_in_parent.x = x;
     p_wnd->pos.rect_in_parent.y = y;
+
+    // 需要更新屏幕坐标
+    klb_wnd_update_canvas_rect(p_wnd);
 }
 
 /// @brief 重置控件大小
@@ -129,6 +212,12 @@ void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h)
 
     p_wnd->pos.rect_in_parent.w = w;
     p_wnd->pos.rect_in_parent.h = h;
+
+    // 标记窗口 resize, 后续在适当的时机 会触发 事件 KLBUI_onresize 供控件调整窗口
+    p_wnd->state.status |= KLB_WND_STATUS_RESIZE;
+
+    // 需要更新屏幕坐标
+    klb_wnd_update_canvas_rect(p_wnd);
 }
 
 void klb_wnd_update(klb_wnd_t* p_wnd)
@@ -201,7 +290,18 @@ void klb_wnd_calculate_canvas_rect(klb_wnd_t* p_wnd, int offset_x, int offset_y)
     // step2. 取消更新屏幕坐标标记
     p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_CANVAS_RECT);
 
-    // step3. 递归更新子窗口
+    // step3. 查看是否需要处理 KLBUI_onresize
+    // 有 KLB_WND_STATUS_RESIZE 标记, 必定会有 KLB_WND_STATUS_CANVAS_RECT标记
+    // onresize 流程放在这里处理
+    if (p_wnd->state.status & KLB_WND_STATUS_RESIZE)
+    {
+        klb_wnd_on_control(p_wnd, KLBUI_onresize, NULL, NULL, 0, 0);
+        klb_wnd_on_command(p_wnd, KLBUI_onresize, NULL, NULL, 0, 0);
+
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_RESIZE);
+    }
+
+    // step4. 递归更新子窗口
     klb_wnd_t* p_next = p_wnd->p_child;
     while (NULL != p_next)
     {

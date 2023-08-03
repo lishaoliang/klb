@@ -54,9 +54,12 @@ typedef enum klb_wnd_style_e_
 /// @brief 窗口状态标记
 typedef enum klb_wnd_status_e_
 {
-    KLB_WND_STATUS_HIDE                 = 0x0001,   ///< 隐藏
+    KLB_WND_STATUS_HIDE                 = 0x0001,   ///< 隐藏状态
+    KLB_WND_STATUS_INPUT                = 0x0002,   ///< 输入状态
+    KLB_WND_STATUS_CHECK                = 0x0004,   ///< 选中状态
+    KLB_WND_STATUS_DISABLE              = 0x0008,   ///< 不使能
     KLB_WND_STATUS_FOCUS                = 0x1000,   ///< 鼠标聚焦
-    KLB_WND_STATUS_DISABLE              = 0x2000,   ///< 不使能
+    KLB_WND_STATUS_RESIZE               = 0x4000,   ///< 重置了窗口大小, 需要控件处理布局问题
     KLB_WND_STATUS_CANVAS_RECT          = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
 }klb_wnd_status_e;
 
@@ -218,6 +221,8 @@ typedef struct klb_wnd_t_
     } \
 }
 
+//////////////////////////////////////////////////////////////////////////
+// 通用
 
 /// @brief 销毁窗口, 及其所有子窗口
 KLB_API void klb_wnd_destroy_tree(klb_wnd_t* p_wnd);
@@ -234,6 +239,8 @@ KLB_API klb_gui_t* klb_wnd_get_gui(klb_wnd_t* p_wnd);
 ///       框架可能会依据当前状态情况, 变更窗口画布
 KLB_API klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd);
 
+//////////////////////////////////////////////////////////////////////////
+// 样式
 
 /// @brief 获取样式
 /// @param [in] *p_wnd      窗口对象
@@ -247,18 +254,51 @@ KLB_API uint32_t klb_wnd_get_style(klb_wnd_t* p_wnd);
 /// @return 无
 KLB_API void klb_wnd_set_style(klb_wnd_t* p_wnd, uint32_t style);
 
+//////////////////////////////////////////////////////////////////////////
+// 状态
 
-/// @brief 设置是否显示
+/// @brief 设置是否显示: 附带标记更新 窗口
 KLB_API void klb_wnd_show(klb_wnd_t* p_wnd, bool show);
 
+/// @brief 获取是否显示
+KLB_API bool klb_wnd_is_show(klb_wnd_t* p_wnd);
 
-/// @brief 基于父窗口移动(相对坐标)
+/// @brief 设置是否隐藏: 只设置状态
+/// @note  多数时候, 可能只是需要设置显隐标记, 并不需要触发更新标记
+///        这里使用 hide / show 函数来区分
+KLB_API void klb_wnd_hide(klb_wnd_t* p_wnd, bool hide);
+
+/// @brief 设置输入状态
+KLB_API void klb_wnd_input(klb_wnd_t* p_wnd, bool input);
+
+/// @brief 获取是否是输入状态
+KLB_API bool klb_wnd_is_input(klb_wnd_t* p_wnd);
+
+/// @brief 设置选中状态
+KLB_API void klb_wnd_check(klb_wnd_t* p_wnd, bool check);
+
+/// @brief 获取是否是选中状态
+KLB_API bool klb_wnd_is_check(klb_wnd_t* p_wnd);
+
+/// @brief 设置不使能状态
+KLB_API void klb_wnd_disable(klb_wnd_t* p_wnd, bool disable);
+
+/// @brief 获取是否是 不使能
+KLB_API bool klb_wnd_is_disable(klb_wnd_t* p_wnd);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 窗口位置/大小
+
+/// @brief 基于父窗口移动到指定的相对坐标
 KLB_API void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y);
 
 
 /// @brief 重新设置控件大小
 KLB_API void klb_wnd_resize(klb_wnd_t* p_wnd, int w, int h);
 
+//////////////////////////////////////////////////////////////////////////
+// 刷新
 
 /// @brief 标记窗口需要刷新
 /// @note 仅标记, 由框架决定合适的刷新时机

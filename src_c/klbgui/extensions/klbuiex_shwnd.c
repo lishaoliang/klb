@@ -107,6 +107,30 @@ klb_wnd_t* klbuiex_shwnd_get(klbuiex_shwnd_t* p_shwnd, const char* p_path)
     return (klb_wnd_t*)klb_hlist_find(p_shwnd->p_hlist, p_path, len);
 }
 
+/// @brief 设置共享窗口的CSS值
+int klbuiex_shwnd_css_set(klbuiex_shwnd_t* p_shwnd, const char* p_path, const klb_map_t* p_map)
+{
+    klb_wnd_t* p_wnd = klbuiex_shwnd_get(p_shwnd, p_path);
+    if (NULL != p_wnd)
+    {
+        return klb_wnd_set(p_wnd, p_map);
+    }
+
+    return 0;
+}
+
+/// @brief 获取共享窗口的CSS值
+klb_map_t* klbuiex_shwnd_css_get(klbuiex_shwnd_t* p_shwnd, const char* p_path, const klb_map_t* p_map)
+{
+    klb_wnd_t* p_wnd = klbuiex_shwnd_get(p_shwnd, p_path);
+    if (NULL != p_wnd)
+    {
+        return klb_wnd_get(p_wnd, p_map);
+    }
+
+    return NULL;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // register / get
 

@@ -9,6 +9,20 @@
 local event = {}
 
 
+-- 鼠标按键
+event.MOUSE_left = 1		-- KLBUI_MOUSE_left, 鼠标左键
+event.MOUSE_middle = 2		-- KLBUI_MOUSE_middle, 鼠标中键
+event.MOUSE_right = 3		-- KLBUI_MOUSE_right, 鼠标右键
+event.MOUSE_x1 = 4			-- KLBUI_MOUSE_x1, 扩展x1
+event.MOUSE_x2 = 4			-- KLBUI_MOUSE_x2, 扩展x2
+
+
+-- 鼠标拖拽事件
+event.MOUSEDRAG_start = 1	-- KLBUI_MOUSEDRAG_start, 拖拽事件开始
+event.MOUSEDRAG_move = 2	-- KLBUI_MOUSEDRAG_move, 拖拽移动中
+event.MOUSEDRAG_end = 3		-- KLBUI_MOUSEDRAG_end, 拖拽事件结束
+
+
 -- @def   KLBUI_click
 -- @brief 左键单击事件: 当左键点击并释放鼠标左键时触发
 event.click = 0x401			-- click
@@ -100,6 +114,23 @@ event.onresize = 0x603		-- onresize
 event.onchange = 0x604		-- onchange
 
 
+-- @def   KLBUI_focusin
+-- @brief 即将获得焦点事件: 窗口组件即将获得焦点时触发
+event.focusin = 0x700		-- focusin
+
+-- @def   KLBUI_focus
+-- @brief 聚焦事件: 窗口组件获得焦点时触发
+event.focus = 0x701			-- focus
+
+-- @def   KLBUI_focusout
+-- @brief 即将失去聚焦事件: 窗口组件即将失去焦点时触发
+event.focusout = 0x702		-- focusout
+
+-- @def   KLBUI_blur
+-- @brief 失去聚焦事件: 窗口组件失去焦点时触发
+event.blur = 0x703			-- blur
+
+
 -- @brief 转换表
 local transform_map = {
 	['click'] = event.click,			-- 左键单击事件
@@ -158,6 +189,18 @@ local transform_map = {
 	
 	['onchange'] = event.onchange,		-- 内容变更事件
 	[event.onchange] = 'onchange',		-- 内容变更事件
+	
+	['focusin'] = event.focusin,		-- 即将获得焦点事件: 窗口组件即将获得焦点时触发
+	[event.focusin] = 'focusin',
+	
+	['focus'] = event.focus,			-- 聚焦事件: 窗口组件获得焦点时触发
+	[event.focus] = 'focus',
+	
+	['focusout'] = event.focusout,		-- 即将失去聚焦事件: 窗口组件即将失去焦点时触发
+	[event.focusout] = 'focusout',
+	
+	['blur'] = event.blur,				-- 失去聚焦事件: 窗口组件失去焦点时触发
+	[event.blur] = 'blur',
 }
 
 

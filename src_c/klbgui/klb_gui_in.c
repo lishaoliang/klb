@@ -96,3 +96,13 @@ klb_wnd_t* klb_gui_get_shwnd(klb_gui_t* p_gui, const char* p_path)
 {
     return klbuiex_shwnd_get(klbuiex_get_shwnd(p_gui), p_path);
 }
+
+int klb_gui_shwnd_css_set(klb_gui_t* p_gui, const char* p_path, const klb_map_t* p_map)
+{
+    return klbuiex_shwnd_css_set(klbuiex_get_shwnd(p_gui), p_path, p_map);
+}
+
+klb_map_t* klb_gui_shwnd_css_get(klb_gui_t* p_gui, const char* p_path, const klb_map_t* p_map)
+{
+    return klbuiex_shwnd_css_get(klbuiex_get_shwnd(p_gui), p_path, p_map);
+}

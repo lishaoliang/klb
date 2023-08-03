@@ -67,7 +67,7 @@ static int klbwnd_button_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         klbwnd_button_on_paint_status(p_wnd, p_btn, p_css, &p_css->disable, &paint_rect);
     }

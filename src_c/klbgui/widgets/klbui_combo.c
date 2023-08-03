@@ -1,222 +1,44 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/klbui_widgets.h"
+#include "klbgui/wnd/klbwnd_combo.h"
+#include "klbgui/shwnd/klbshw_combomenu.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
-#include "klbutil/klb_color.h"
 #include "klbutil/klb_map.h"
-#include "klbgui/subviews/klbui_combo_menu.h"
 
 
-/// @struct klbui_combo_button_t
-/// @brief  下拉组合控件的按钮
-typedef struct klbui_combo_button_t_
-{
-    klbuicss_padding_t      padding;        ///< 内边框
-
-    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
-}klbui_combo_button_t;
-
-
-/// @struct klbui_button_t
-/// @brief  下拉组合控件
+/// @struct klbui_combo_t
+/// @brief  combo box
 typedef struct klbui_combo_t_
 {
-    // 自定义属性
-    sds                     title;          ///< 标题: 用于显示
-    sds                     value;          ///< 值: 用于做业务逻辑
+    klbwnd_combo_t      combo;          ///< 必须首位, 保持内存一致
+    klbwnd_combo_css_t  css;            ///< 样式
 
-    klb_map_t*              p_data_array;   ///< 存储数组 : {{['1'] = '项目1'}, {['2'] = '项目2'}}
-
-    // CSS属性
-    // normal
-    klbuicss_margin_t       margin;         ///< 外边框
-    klbuicss_padding_t      padding;        ///< 内边框
-
-    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
-
-    klbui_combo_button_t    button_right;   ///< 右侧按钮
-
-    klbui_combo_menu_css_t  menu_css;       ///< 弹出菜单样式
-
-    klb_wnd_t*              p_menu;
-
-    klb_map_t*              p_func_map;     ///< 属性函数表
+    klb_map_t*          p_func_map;     ///< CSS属性函数表
 }klbui_combo_t;
 
 
 //////////////////////////////////////////////////////////////////////////
-
-static void klbui_combo_quit_attribute(klbui_combo_t* p_combo);
+// 前置定义
 typedef void(*klbui_combo_cb)(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 继承/重写方法
 
 static void klbui_combo_destroy(klb_wnd_t* p_wnd)
 {
     klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
 
-    // 清理属性
-    klbui_combo_quit_attribute(p_combo);
-    klbui_combo_menu_css_quit(&p_combo->menu_css);
-    p_combo->p_func_map = NULL;
+    // 退出基础部分
+    klbwnd_combo_quit(p_wnd);
+
+    // 退出css
+    klbwnd_combo_css_quit(&p_combo->css);
 
     KLB_FREE(p_wnd);
-}
-
-static void klbui_combo_on_paint_button_status(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
-{
-    klb_rect_t r = *p_rect;
-
-    r.x += p_combo->button_right.padding.left;
-    r.y += p_combo->button_right.padding.top;
-    r.w -= (p_combo->button_right.padding.left + p_combo->button_right.padding.right);
-    r.h -= (p_combo->button_right.padding.top + p_combo->button_right.padding.bottom);
-
-    // 倒三角
-    int h = r.w / 2;
-    int x = r.x + (r.w - h) /2 - 1;
-    int y = r.y + (r.h - h) / 2;
-    for (int i = h; i > 0; i--)
-    {
-        klb_wnd_draw_line2(p_wnd, x - i, y, x + i, y, p_attr->text.color);
-        y += 1;
-    }
-}
-
-static void klbui_combo_on_paint_status(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
-{
-    if (0 < sdslen(p_attr->background.image))
-    {
-        // 图片背景
-        klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
-    }
-    else
-    {
-        // 纯色背景
-        klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
-
-        // 边框
-        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
-    }
-
-    // 标题文本
-    klb_rect_t text_rect = *p_rect;
-    text_rect.w -= 14;
-
-    klbuicssex_draw_text(p_wnd, p_combo->title, &text_rect, &p_attr->border, &p_combo->padding, &p_attr->text, &p_attr->font);
-}
-
-static int klbui_combo_on_paint(klb_wnd_t* p_wnd)
-{
-    klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
-    klb_rect_t* p_rect = &p_wnd->pos.rect_in_canvas;
-
-    if (KLB_WND_STATUS_HIDE & p_wnd->state.status)
-    {
-        return 0;
-    }
-
-    // 绘图区域
-    klb_rect_t paint_rect = *p_rect;
-
-    // 移除外边距
-    paint_rect.x += p_combo->margin.left;
-    paint_rect.y += p_combo->margin.top;
-    paint_rect.w -= (p_combo->margin.left + p_combo->margin.right);
-    paint_rect.h -= (p_combo->margin.top + p_combo->margin.bottom);
-
-    int btn_right_w = 12;
-    klb_rect_t btn_right_rect = { paint_rect.x + paint_rect.w - btn_right_w, paint_rect.y + 1,
-        btn_right_w, paint_rect.h - 2};
-
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
-    {
-        klbui_combo_on_paint_status(p_wnd, p_combo, &p_combo->disable, &paint_rect);
-        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->button_right.disable), &btn_right_rect);
-    }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbui_combo_on_paint_status(p_wnd, p_combo, &p_combo->focus, &paint_rect);
-        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->button_right.focus), &btn_right_rect);
-    }
-    else
-    {
-        klbui_combo_on_paint_status(p_wnd, p_combo, &p_combo->normal, &paint_rect);
-        klbui_combo_on_paint_button_status(p_wnd, p_combo, &(p_combo->button_right.normal), &btn_right_rect);
-    }
-
-    return 0;
-}
-
-static int cb_klbui_combo_value_title(klb_wnd_t* p_wnd, sds value, sds title)
-{
-    klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
-
-    bool change = false;
-    if (0 != sdscmp(p_combo->value, value))
-    {
-        change = true;
-    }
-
-    // 用户已经点击了某个选项
-    p_combo->value = sdscpy(p_combo->value, value);
-    p_combo->title = sdscpy(p_combo->title, title);
-
-    if (change)
-    {
-        // 内容变更事件 KLBUI_onchange
-        if (NULL != p_wnd->vtable.on_command)
-        {
-            klb_point_t pt = { 0 };
-            p_wnd->vtable.on_command(p_wnd, KLBUI_onchange, &pt, &pt, 0, 0);
-        }
-    }
-
-    klb_wnd_update(p_wnd);
-
-    return 0;
-}
-
-static int klbui_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
-
-    switch (msg)
-    {
-    case KLBUI_onpaint:
-        return klbui_combo_on_paint(p_wnd);
-        break;
-    case KLBUI_click:
-    case KLBUI_dblclick:
-        {
-            int screen_w = 0, screen_h = 0;
-            klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
-
-            int menu_w = 0, menu_h = 0;
-            klbui_combo_menu_bind(p_combo->p_menu, &p_combo->menu_css, p_combo->p_data_array, cb_klbui_combo_value_title, p_wnd, &menu_w, &menu_h);
-            
-            menu_w = p_wnd->pos.rect_in_parent.w;
-
-            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-            int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
-            int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
-
-            klb_wnd_move(p_combo->p_menu, x, y);
-            klb_wnd_resize(p_combo->p_menu, menu_w, menu_h);
-
-            klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
-        }
-        break;
-    default:
-        break;
-    }
-
-    return 0;
 }
 
 static int klbui_combo_on_set(klb_wnd_t* p_wnd, const klb_map_t* p_map)
@@ -251,41 +73,6 @@ static klb_map_t* klbui_combo_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// 初始化属性默认值
-static void klbui_combo_init_attribute(klb_wnd_t* p_wnd, klbui_combo_t* p_combo)
-{
-    const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
-
-    p_combo->title = sdsempty();
-    p_combo->value = sdsempty();
-
-    p_combo->p_data_array = klb_map_create();
-
-    klbuicssex_attributes_init(&p_combo->normal, &p_default->normal);
-    klbuicssex_attributes_init(&p_combo->focus, &p_default->focus);
-    klbuicssex_attributes_init(&p_combo->disable, &p_default->disable);
-
-    klbuicssex_attributes_init(&(p_combo->button_right.normal), &p_default->normal);
-    klbuicssex_attributes_init(&(p_combo->button_right.focus), &p_default->focus);
-    klbuicssex_attributes_init(&(p_combo->button_right.disable), &p_default->disable);
-}
-
-static void klbui_combo_quit_attribute(klbui_combo_t* p_combo)
-{
-    KLB_FREE_BY(p_combo->title, sdsfree);
-    KLB_FREE_BY(p_combo->value, sdsfree);
-    KLB_FREE_BY(p_combo->p_data_array, klb_map_destroy);
-
-    klbuicssex_attributes_quit(&p_combo->normal);
-    klbuicssex_attributes_quit(&p_combo->focus);
-    klbuicssex_attributes_quit(&p_combo->disable);
-
-    klbuicssex_attributes_quit(&(p_combo->button_right.normal));
-    klbuicssex_attributes_quit(&(p_combo->button_right.focus));
-    klbuicssex_attributes_quit(&(p_combo->button_right.disable));
-}
-
-//////////////////////////////////////////////////////////////////////////
 // 仿 CSS 方法
 
 static void on_klbui_combo_visibility(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -295,325 +82,157 @@ static void on_klbui_combo_visibility(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
 
 static void on_klbui_combo_margin(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin(&p_combo->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin(&(p_combo->css.margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_margin_top(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_top(&p_combo->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_top(&(p_combo->css.margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_margin_right(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_right(&p_combo->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_right(&(p_combo->css.margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_margin_bottom(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_bottom(&p_combo->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_bottom(&(p_combo->css.margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_margin_left(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin_left(&p_combo->margin, p_wnd, method, p_in, p_out);
+    klbuicssex_margin_left(&(p_combo->css.margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_padding(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding(&p_combo->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding(&(p_combo->css.padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_padding_top(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_top(&p_combo->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_top(&(p_combo->css.padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_padding_right(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_right(&p_combo->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_right(&(p_combo->css.padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_padding_bottom(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_bottom(&p_combo->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_bottom(&(p_combo->css.padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_padding_left(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding_left(&p_combo->padding, p_wnd, method, p_in, p_out);
+    klbuicssex_padding_left(&(p_combo->css.padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_text_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_combo->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_combo->css.normal.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_text_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_combo->focus.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_combo->css.focus.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_text_color_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_combo->disable.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_combo->css.disable.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_text_align(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_combo->normal.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_combo->css.normal.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_text_align_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_combo->focus.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_combo->css.focus.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_text_align_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_align(&(p_combo->disable.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_font_style(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_style(&(p_combo->normal.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_font_style_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_style(&(p_combo->focus.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_font_style_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_style(&(p_combo->disable.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_font_weight(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_weight(&(p_combo->normal.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_font_weight_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_weight(&(p_combo->focus.font), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_font_weight_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_font_weight(&(p_combo->disable.font), p_wnd, method, p_in, p_out);
+    klbuicssex_text_align(&(p_combo->css.disable.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_font_size(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_combo->normal.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_combo->css.normal.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_font_size_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_combo->focus.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_combo->css.focus.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_font_size_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_font_size(&(p_combo->disable.font), p_wnd, method, p_in, p_out);
+    klbuicssex_font_size(&(p_combo->css.disable.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_background_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_combo->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_combo->css.normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_background_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_combo->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_combo->css.focus.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_background_color_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_combo->disable.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_combo->css.disable.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_background_image(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_combo->normal.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_combo->css.normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_background_image_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_combo->focus.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_combo->css.focus.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_background_image_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_combo->disable.background), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_border_style(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_style(&(p_combo->normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_border_style_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_style(&(p_combo->focus.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_border_style_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_style(&(p_combo->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_combo->css.disable.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_border_width(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_combo->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_combo->css.normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_border_width_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_combo->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_combo->css.focus.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_border_width_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_combo->disable.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_combo->css.disable.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_border_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_combo->normal.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_combo->css.normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_border_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_combo->focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_combo->css.focus.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_border_color_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_combo->disable.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_border_radius(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_radius(&(p_combo->normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_border_radius_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_radius(&(p_combo->focus.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_border_radius_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_radius(&(p_combo->disable.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_button_right_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_color(&(p_combo->button_right.normal.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_button_right_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_color(&(p_combo->button_right.focus.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_button_right_color_disable(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_color(&(p_combo->button_right.disable.text), p_wnd, method, p_in, p_out);
-}
-
-////////////////////////////////////
-// combo_menu
-
-static void on_klbui_combo_menu_padding(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_padding(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_padding_top(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_padding_top(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_padding_right(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_padding_right(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_padding_bottom(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_padding_bottom(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_padding_left(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_padding_left(&p_combo->menu_css.padding, p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_background_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_background_color(&(p_combo->menu_css.normal.background), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_border_width(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_width(&(p_combo->menu_css.normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_border_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_color(&(p_combo->menu_css.normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_text_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_color(&(p_combo->menu_css.item_normal.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_text_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_color(&(p_combo->menu_css.item_focus.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_text_align(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_align(&(p_combo->menu_css.item_normal.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_text_align_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_text_align(&(p_combo->menu_css.item_focus.text), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_background_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_background_color(&(p_combo->menu_css.item_normal.background), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_background_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_background_color(&(p_combo->menu_css.item_focus.background), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_border_width(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_width(&(p_combo->menu_css.item_normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_border_width_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_width(&(p_combo->menu_css.item_focus.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_border_color(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_color(&(p_combo->menu_css.item_normal.border), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_combo_menu_item_border_color_focus(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_border_color(&(p_combo->menu_css.item_focus.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_combo->css.disable.border), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////
@@ -621,14 +240,12 @@ static void on_klbui_combo_menu_item_border_color_focus(klb_wnd_t* p_wnd, klbui_
 
 static void on_klbui_combo_title(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_combo->title), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_sds(&(p_combo->combo.title), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_value(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_sds(&(p_combo->value), p_wnd, method, p_in, p_out);
-
-    int count = klb_map_array_size(p_combo->p_data_array);
+    klbuicssex_attribute_sds(&(p_combo->combo.value), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_combo_append(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -654,25 +271,20 @@ static void on_klbui_combo_append(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int 
         klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
         if (NULL != p_in_array)
         {
-            int count = klb_map_array_size(p_in_array);
-            for (int i = 0; i < count; i++)
-            {
-                klb_map_append_adt_clone(p_combo->p_data_array, klb_map_idx_to_adt(p_in_array, i));
-            }
+            klbwnd_combo_append(p_wnd, p_in_array);
+
+            klb_wnd_update(p_wnd);
         }
     }
 }
 
 static void on_klbui_combo_clear(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    // 清空待选列表
-    klb_map_clear(p_combo->p_data_array);
-
-    sdsclear(p_combo->title);
-    sdsclear(p_combo->value);
+    klbwnd_combo_clear(p_wnd);
 }
 
 //////////////////////////////////////////////////////////////////////////
+// css func
 
 #define KLBUI_combo_bind(KEY_, FUNC_) { klb_map_set_ptr(p_combo->p_func_map, (KEY_), (void*)(FUNC_), p_combo); }
 
@@ -721,16 +333,6 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("text-align:focus", on_klbui_combo_text_align_focus);
     KLBUI_combo_bind("text-align:disable", on_klbui_combo_text_align_disable);
 
-    // 斜体 font-style
-    //KLBUI_combo_bind("font-style", on_klbui_combo_font_style);
-    //KLBUI_combo_bind("font-style:focus", on_klbui_combo_font_style_focus);
-    //KLBUI_combo_bind("font-style:disable", on_klbui_combo_font_style_disable);
-
-    // 字体粗细 font-weight
-    //KLBUI_combo_bind("font-weight", on_klbui_combo_font_weight);
-    //KLBUI_combo_bind("font-weight:focus", on_klbui_combo_font_weight_focus);
-    //KLBUI_combo_bind("font-weight:disable", on_klbui_combo_font_weight_disable);
-
     // 字体大小 font-size
     KLBUI_combo_bind("font-size", on_klbui_combo_font_size);
     KLBUI_combo_bind("font-size:focus", on_klbui_combo_font_size_focus);
@@ -742,14 +344,9 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("background-color:disable", on_klbui_combo_background_color_disable);
 
     // 背景图片 background-image
-    //KLBUI_combo_bind("background-image", on_klbui_combo_background_image);
-    //KLBUI_combo_bind("background-image:focus", on_klbui_combo_background_image_focus);
-    //KLBUI_combo_bind("background-image:disable", on_klbui_combo_background_image_disable);
-
-    // 边框类型 border-style
-    //KLBUI_combo_bind("border-style", on_klbui_combo_border_style);
-    //KLBUI_combo_bind("border-style:focus", on_klbui_combo_border_style_focus);
-    //KLBUI_combo_bind("border-style:disable", on_klbui_combo_border_style_disable);
+    KLBUI_combo_bind("background-image", on_klbui_combo_background_image);
+    KLBUI_combo_bind("background-image:focus", on_klbui_combo_background_image_focus);
+    KLBUI_combo_bind("background-image:disable", on_klbui_combo_background_image_disable);
 
     // 边框的宽度 border-width
     KLBUI_combo_bind("border-width", on_klbui_combo_border_width);
@@ -761,58 +358,6 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("border-color:focus", on_klbui_combo_border_color_focus);
     KLBUI_combo_bind("border-color:disable", on_klbui_combo_border_color_disable);
 
-    // 圆角边框 border-radius
-    //KLBUI_combo_bind("border-radius", on_klbui_combo_border_radius);
-    //KLBUI_combo_bind("border-radius:focus", on_klbui_combo_border_radius_focus);
-    //KLBUI_combo_bind("border-radius:disable", on_klbui_combo_border_radius_disable);
-
-
-    //////////////////////////////////////////////
-    // 右侧倒三角按钮 前景色 button_right color
-    KLBUI_combo_bind("button_right.color", on_klbui_combo_button_right_color);
-    KLBUI_combo_bind("button_right.color:focus", on_klbui_combo_button_right_color_focus);
-    KLBUI_combo_bind("button_right.color:disable", on_klbui_combo_button_right_color_disable);
-
-
-    //////////////////////////////////////////////
-    // 弹出菜单CSS属性
-
-    // 菜单 - 内边距 padding
-    KLBUI_combo_bind("menu.padding", on_klbui_combo_menu_padding);
-    KLBUI_combo_bind("menu.padding-top", on_klbui_combo_menu_padding_top);
-    KLBUI_combo_bind("menu.padding-right", on_klbui_combo_menu_padding_right);
-    KLBUI_combo_bind("menu.padding-bottom", on_klbui_combo_menu_padding_bottom);
-    KLBUI_combo_bind("menu.padding-left", on_klbui_combo_menu_padding_left);
-
-    // 菜单 - 背景色 background-color
-    KLBUI_combo_bind("menu.background-color", on_klbui_combo_menu_background_color);
-
-    // 菜单 - 边框的宽度 border-width
-    KLBUI_combo_bind("menu.border-width", on_klbui_combo_menu_border_width);
-
-    // 菜单 - 边框的颜色 border-color
-    KLBUI_combo_bind("menu.border-color", on_klbui_combo_menu_border_color);
-
-    // 菜单 - 弹出项 - 文本颜色 color
-    KLBUI_combo_bind("menu_item.color", on_klbui_combo_menu_item_text_color);
-    KLBUI_combo_bind("menu_item.color:focus", on_klbui_combo_menu_item_text_color_focus);
-
-    // 菜单 - 弹出项 - 文本对齐 text-align
-    KLBUI_combo_bind("menu_item.text-align", on_klbui_combo_menu_item_text_align);
-    KLBUI_combo_bind("menu_item.text-align:focus", on_klbui_combo_menu_item_text_align_focus);
-
-    // 菜单 - 弹出项 - 背景色 background-color
-    KLBUI_combo_bind("menu_item.background-color", on_klbui_combo_menu_item_background_color);
-    KLBUI_combo_bind("menu_item.background-color:focus", on_klbui_combo_menu_item_background_color_focus);
-
-    // 菜单 - 弹出项 - 边框的宽度 border-width
-    KLBUI_combo_bind("menu_item.border-width", on_klbui_combo_menu_item_border_width);
-    KLBUI_combo_bind("menu_item.border-width:focus", on_klbui_combo_menu_item_border_width_focus);
-
-    // 菜单 - 弹出项 - 边框的颜色 border-color
-    KLBUI_combo_bind("menu_item.border-color", on_klbui_combo_menu_item_border_color);
-    KLBUI_combo_bind("menu_item.border-color:focus", on_klbui_combo_menu_item_border_color_focus);
-
     //////////////////////////////////////////////
     // 自定义方法
 
@@ -823,35 +368,28 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     KLBUI_combo_bind("clear", on_klbui_combo_clear);
 }
 
+//////////////////////////////////////////////////////////////////////////
+// create
+
 klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_combo_t));
     klbui_combo_t* p_combo = (klbui_combo_t*)p_wnd->ctrl;
 
-    p_wnd->pos.rect_in_parent.x = x;
-    p_wnd->pos.rect_in_parent.y = y;
-    p_wnd->pos.rect_in_parent.w = w;
-    p_wnd->pos.rect_in_parent.h = h;
+    // 初始化基础部分
+    klbwnd_combo_init(p_wnd, p_gui, x, y, w, h);
 
+    // 重写部分函数
     p_wnd->vtable.destroy = klbui_combo_destroy;
-    p_wnd->vtable.on_control = klbui_combo_on_control;
-    p_wnd->vtable.on_command = NULL;
     p_wnd->vtable.on_set = klbui_combo_on_set;
     p_wnd->vtable.on_get = klbui_combo_on_get;
 
-    p_wnd->state.style = 0x0;   // 默认样式
+    // css
+    klbwnd_combo_css_init(&p_combo->css, p_gui);
+    klbwnd_combo_set_css(p_wnd, &p_combo->css);
 
-    p_wnd->p_gui = p_gui;
-
-    // 初始化默认值
-    klbui_combo_init_attribute(p_wnd, p_combo);
-    klbui_combo_menu_css_init(klb_gui_get_std_default(p_wnd->p_gui), &p_combo->menu_css);
-
-    // 初始化 支持的方法
+    // 初始化CSS 支持的方法
     klbui_combo_init_func_map(p_wnd, p_combo, p_gui);
-
-    // 初始化弹出菜单
-    p_combo->p_menu = klbui_combo_menu_create(p_gui, 0, 0, w, 28 * 9);
 
     return p_wnd;
 }

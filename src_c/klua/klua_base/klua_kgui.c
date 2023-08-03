@@ -385,6 +385,38 @@ static int klua_kgui_get_default_css(lua_State* L)
     return n;
 }
 
+static int klua_kgui_set_shwnd_css(lua_State* L)
+{
+    const char* p_path = luaL_checkstring(L, 1);
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    int ret = klb_gui_shwnd_css_set(p_gui, p_path, p_in);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    return 1;
+}
+
+static int klua_kgui_get_shwnd_css(lua_State* L)
+{
+    const char* p_path = luaL_checkstring(L, 1);
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    klb_map_t* p_out = klb_gui_shwnd_css_get(p_gui, p_path, p_in);
+
+    int n = 0;
+    if (NULL != p_out)
+    {
+        n = klua_seri_map_unpack(L, 1, p_out);
+    }
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    KLB_FREE_BY(p_out, klb_map_destroy);
+    return n;
+}
 
 static int klua_kgui_load_image(lua_State* L)
 {
@@ -647,6 +679,9 @@ int klua_open_kgui(lua_State* L)
     {
         { "set_default_css",    klua_kgui_set_default_css },
         { "get_default_css",    klua_kgui_get_default_css },
+
+        { "set_shwnd_css",      klua_kgui_set_shwnd_css },
+        { "get_shwnd_css",      klua_kgui_get_shwnd_css },
 
         { "load_image",         klua_kgui_load_image },
 

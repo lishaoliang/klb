@@ -109,9 +109,11 @@ ifneq ($(MY_VERSION),release)
 	MY_CFLAGS += -g
 endif
 
-# 
+# 防止未定义函数
 MY_CFLAGS += -Wl,--no-undefined
 
+# 优化
+MY_CFLAGS += -Os
 
 # 编译目标名称
 MY_TARGET_NAME := klb

@@ -1271,9 +1271,6 @@
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_combo_menu.h">
-      <Filter>src_c\klbgui\subviews</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbgui\klbui_shwnd.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
@@ -1498,6 +1495,15 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbplatform\klb_cond.h">
       <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\shwnd\klbshw_combomenu.h">
+      <Filter>inc\klbgui\shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu_item.h">
+      <Filter>src_c\klbgui\subviews</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2296,9 +2302,6 @@
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_combo_menu.c">
-      <Filter>src_c\klbgui\subviews</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
@@ -2541,6 +2544,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbplatform\klb_cond.c">
       <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_combomenu.c">
+      <Filter>src_c\klbgui\shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu.c">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu_item.c">
+      <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

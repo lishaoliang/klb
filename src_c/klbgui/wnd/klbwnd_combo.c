@@ -1,5 +1,7 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/wnd/klbwnd_combo.h"
+#include "klbgui/shwnd/klbshw_combomenu.h"
+#include "klbgui/klbui_util.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 
@@ -23,22 +25,23 @@ static void klbwnd_combo_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_combo_on_paint_status(klb_wnd_t* p_wnd, klbwnd_combo_t* p_combo, klbwnd_combo_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    if (0 < sdslen(p_attr->background.image))
-    {
-        // 图片背景
-        klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
-    }
-    else
-    {
-        // 纯色背景
-        klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+    // 纯色背景
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
 
-        // 边框
-        klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
-    }
+    // 边框
+    klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
 
     // 标题文本
     klbuicssex_draw_text(p_wnd, p_combo->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
+
+    // 右侧倒三角
+    klb_rect_t rect_triangle = { 0 };
+    rect_triangle.h = p_rect->h - 2;
+    rect_triangle.w = rect_triangle.h / 2;
+    rect_triangle.x = p_rect->x + p_rect->w - rect_triangle.w - 2;
+    rect_triangle.y = p_rect->y + 1;
+
+    klbuiutil_draw_triangle_down(p_wnd, &rect_triangle, p_attr->text.color);
 }
 
 static int klbwnd_combo_on_paint(klb_wnd_t* p_wnd)
@@ -67,7 +70,7 @@ static int klbwnd_combo_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         klbwnd_combo_on_paint_status(p_wnd, p_combo, p_css, &p_css->disable, &paint_rect);
     }
@@ -83,6 +86,34 @@ static int klbwnd_combo_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+static int on_result_combomenu_klbui_combo(void* ptr, bool ok, const sds value, const sds title)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)ptr;
+    klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
+
+    if (ok)
+    {
+        bool change = false;
+        if (0 != sdscmp(p_combo->value, value))
+        {
+            change = true;
+        }
+
+        // 用户已经点击了某个选项
+        p_combo->value = sdscpy(p_combo->value, value);
+        p_combo->title = sdscpy(p_combo->title, title);
+
+        if (change)
+        {
+            // 内容变更事件 KLBUI_onchange
+            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+        }
+
+        klb_wnd_update(p_wnd);
+    }
+
+    return 0;
+}
 
 static int klbwnd_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
@@ -92,6 +123,36 @@ static int klbwnd_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
     {
     case KLBUI_onpaint:
         return klbwnd_combo_on_paint(p_wnd);
+        break;
+
+    case KLBUI_click:
+    case KLBUI_dblclick:
+        {
+            // 1. 设置初始值
+
+            // 2. 设置css
+
+            // 3. 绑定响应
+            int menu_w = 0, menu_h = 0;
+            klbshw_combomenu_bind(p_combo->p_menu, on_result_combomenu_klbui_combo, p_wnd, &p_combo->data, &menu_w, &menu_h);
+
+            // 4. 处理位置 
+            int screen_w = 0, screen_h = 0;
+            klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
+
+            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+            int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
+            int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
+
+            klb_wnd_move(p_combo->p_menu, x, y);
+            klb_wnd_resize(p_combo->p_menu, menu_w, menu_h);
+
+            // 5. popup
+            klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
+        }
+        break;
+
     default:
         break;
     }
@@ -137,6 +198,28 @@ const sds klbwnd_combo_get_value(klb_wnd_t* p_wnd)
     return p_combo->value;
 }
 
+void klbwnd_combo_append(klb_wnd_t* p_wnd, klb_map_t* p_array)
+{
+    klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
+    
+    int count = klb_map_array_size(p_array);
+    for (int i = 0; i < count; i++)
+    {
+        klb_map_append_adt_clone(&p_combo->data, klb_map_idx_to_adt(p_array, i));
+    }
+}
+
+void klbwnd_combo_clear(klb_wnd_t* p_wnd)
+{
+    klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
+
+    // 清空待选列表
+    klb_map_clear(&p_combo->data);
+
+    sdsclear(p_combo->title);
+    sdsclear(p_combo->value);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
@@ -144,10 +227,14 @@ static void klbwnd_combo_init_attribute(klbwnd_combo_t* p_combo)
 {
     p_combo->title = sdsempty();
     p_combo->value = sdsempty();
+
+    klb_map_init(&p_combo->data);
 }
 
 static void klbwnd_combo_quit_attribute(klbwnd_combo_t* p_combo)
 {
+    klb_map_quit(&p_combo->data);
+
     KLB_FREE_BY(p_combo->title, sdsfree);
     KLB_FREE_BY(p_combo->value, sdsfree);
 }
@@ -199,6 +286,9 @@ void klbwnd_combo_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, 
 
     // 
     klbwnd_combo_init_attribute(p_combo);
+
+    // 弹出菜单
+    p_combo->p_menu = klbui_shwnd_get_combomenu(p_gui);
 }
 
 void klbwnd_combo_quit(klb_wnd_t* p_wnd)

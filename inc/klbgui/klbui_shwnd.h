@@ -40,6 +40,13 @@ KLB_API int klb_gui_push_shwnd(klb_gui_t* p_gui, const char* p_path, klb_wnd_t* 
 KLB_API klb_wnd_t* klb_gui_get_shwnd(klb_gui_t* p_gui, const char* p_path);
 
 
+/// @brief 设置共享窗口的CSS值
+KLB_API int klb_gui_shwnd_css_set(klb_gui_t* p_gui, const char* p_path, const klb_map_t* p_map);
+
+
+/// @brief 获取共享窗口的CSS值
+KLB_API klb_map_t* klb_gui_shwnd_css_get(klb_gui_t* p_gui, const char* p_path, const klb_map_t* p_map);
+
 
 #if defined(__cplusplus)
 }

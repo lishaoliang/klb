@@ -108,6 +108,11 @@ static int klbwnd_vscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 			}
 		}
 		break;
+    case KLBUI_onresize:
+        {
+            klbwnd_vscrollbar_relayout(p_wnd, p_vsc);
+        }
+        break;
     default:
         break;
     }

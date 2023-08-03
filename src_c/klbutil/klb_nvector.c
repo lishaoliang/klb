@@ -161,7 +161,7 @@ void* klb_nvector_pop_head(klb_nvector_t* p_vector)
     int idx = 0;
     if (idx < p_vector->size)
     {
-        memmove(p_vector->p_idx + idx, p_vector->p_idx + idx + 1, sizeof(char*) * p_vector->size - idx);
+        memmove(p_vector->p_idx + idx, p_vector->p_idx + idx + 1, sizeof(char*) * (p_vector->size - idx));
     }
 
     klb_nvector_check_resize_dec(p_vector);
@@ -237,7 +237,7 @@ void* klb_nvector_remove(klb_nvector_t* p_vector, int index)
         int idx = index;
         if (idx < p_vector->size)
         {
-            memmove(p_vector->p_idx + idx, p_vector->p_idx + idx + 1, sizeof(char*) * p_vector->size - idx);
+            memmove(p_vector->p_idx + idx, p_vector->p_idx + idx + 1, sizeof(char*) * (p_vector->size - idx));
         }
 
         klb_nvector_check_resize_dec(p_vector);

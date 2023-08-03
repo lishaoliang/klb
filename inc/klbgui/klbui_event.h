@@ -55,6 +55,17 @@ extern "C" {
 ///////////////////////////////////////
 // 键鼠事件定义
 
+/// @def   klbui_mouse_button_e
+/// @brief 鼠标按键
+typedef enum klbui_mouse_button_e_
+{
+    KLBUI_MOUSE_left    = 1,        ///< 鼠标左键
+    KLBUI_MOUSE_middle  = 2,        ///< 鼠标中键
+    KLBUI_MOUSE_right   = 3,        ///< 鼠标右键
+    KLBUI_MOUSE_x1      = 4,        ///< 扩展x1
+    KLBUI_MOUSE_x2      = 5,        ///< 扩展x2
+}klbui_mouse_button_e;
+
 
 /// @def   KLBUI_click
 /// @brief 左键单击事件: 当左键点击并释放鼠标左键时触发
@@ -64,17 +75,11 @@ extern "C" {
 /// @brief 左键双击事件: 当左键双击并释放鼠标左键时触发
 #define KLBUI_dblclick          0x402           // dblclick
 
-/// @def   klbui_mousedrag_lparam_e
-/// @brief 鼠标按下事件的 lparam 参数
-typedef enum klbui_mousedown_lparam_e_
-{
-    KLBUI_MOUSEDOWN_left = 1,       ///< 鼠标左键
-    KLBUI_MOUSEDOWN_right,          ///< 鼠标右键
-    KLBUI_MOUSEDOWN_middle          ///< 鼠标中键
-}klbui_mousedown_lparam_e;
-
 /// @def   KLBUI_mousedown
-/// @brief 
+/// @brief 鼠标按下事件
+/// @note 参数说明
+///     pt1     参数表示当前鼠标位置
+///     lparam  参数表示按下的鼠标按钮: klbui_mouse_button_e
 #define KLBUI_mousedown         0x403           // mousedown
 
 /// @def   KLBUI_mouseenter
@@ -86,7 +91,7 @@ typedef enum klbui_mousedown_lparam_e_
 #define KLBUI_mouseleave        0x405           // mouseleave
 
 /// @def   KLBUI_mousemove
-/// @brief 
+/// @brief  鼠标移动
 #define KLBUI_mousemove         0x406           // mousemove
 
 /// @def   KLBUI_mouseout
@@ -98,7 +103,7 @@ typedef enum klbui_mousedown_lparam_e_
 #define KLBUI_mouseover         0x408           // mouseover
 
 /// @def   KLBUI_mouseup
-/// @brief 
+/// @brief 鼠标弹起事件
 #define KLBUI_mouseup           0x409           // mouseup
 
 
@@ -107,13 +112,27 @@ typedef enum klbui_mousedown_lparam_e_
 typedef enum klbui_mousedrag_lparam_e_
 {
     KLBUI_MOUSEDRAG_start = 1,      ///< 拖拽事件开始
-    KLBUI_MOUSEDRAG_move,           ///< 拖拽移动中
-    KLBUI_MOUSEDRAG_end             ///< 拖拽事件结束
+    KLBUI_MOUSEDRAG_move  = 2,      ///< 拖拽移动中
+    KLBUI_MOUSEDRAG_end   = 3,      ///< 拖拽事件结束
 }klbui_mousedrag_lparam_e;
 
 /// @def   KLBUI_mousedrag
 /// @brief 鼠标拖拽事件
+/// @note 参数说明
+///     pt1     参数表示当前鼠标位置
+///     pt2     参数表示拖拽起始鼠标位置
+///     lparam  参数表示啥情况: klbui_mousedrag_lparam_e
+///     wparam  参数表示拖拽的鼠标按钮: klbui_mouse_button_e
 #define KLBUI_mousedrag         0x410           // mousedrag
+
+
+/// @def   KLBUI_mousewheel
+/// @brief 鼠标滚轮事件
+/// @note 参数说明
+///     pt1     参数表示当前鼠标位置
+///     lparam  参数表示滚轮滚动情况, 负数/正数均有效
+#define KLBUI_mousewheel        0x411           // mousewheel
+
 
 /// @def   KLBUI_outwindow
 /// @brief 在popup窗口外点击事件
@@ -191,7 +210,16 @@ typedef enum klbui_mousedrag_lparam_e_
 
 
 //////////////////////////////////////////////////////////////////////////
-// 组件私有事件 [0x800 ~ 0x9FF]
+// 其他 [0x8A0 ~ 0x8FF]
+
+
+/// @def   KLBUI_meminfo
+/// @brief 窗口组件消耗的内存统计
+#define KLBUI_meminfo           0x8A1           // meminfo
+
+
+//////////////////////////////////////////////////////////////////////////
+// 组件私有事件 [0x900 ~ 0x9FF]
 
 
 

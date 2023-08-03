@@ -13,6 +13,7 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
+#include "klbutil/klb_map.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -36,8 +37,11 @@ typedef struct klbwnd_combo_t_
 
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
-}klbwnd_combo_t;
 
+    klb_map_t               data;           ///< 数据
+
+    klb_wnd_t*              p_menu;         ///< 菜单: klbui_shwnd_get_combomenu
+}klbwnd_combo_t;
 
 /// @brief init/quit/create
 KLB_API void klbwnd_combo_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -62,6 +66,11 @@ KLB_API const sds klbwnd_combo_get_title(klb_wnd_t* p_wnd);
 /// @brief set/get value
 KLB_API void klbwnd_combo_set_value(klb_wnd_t* p_wnd, const char* p_value);
 KLB_API const sds klbwnd_combo_get_value(klb_wnd_t* p_wnd);
+
+
+/// @brief 追加数据/清空数据
+KLB_API void klbwnd_combo_append(klb_wnd_t* p_wnd, klb_map_t* p_array);
+KLB_API void klbwnd_combo_clear(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)
