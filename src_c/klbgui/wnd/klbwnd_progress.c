@@ -163,13 +163,12 @@ int klbwnd_progress_get_value(klb_wnd_t* p_wnd)
 static void klbwnd_progress_init_attribute(klbwnd_progress_t* p_prog)
 {
     p_prog->title = sdsempty();
-    p_prog->value = sdsempty();
+    p_prog->value = 0;
 }
 
 static void klbwnd_progress_quit_attribute(klbwnd_progress_t* p_prog)
 {
     KLB_FREE_BY(p_prog->title, sdsfree);
-    KLB_FREE_BY(p_prog->value, sdsfree);
 }
 
 //////////////////////////////////////////////////////////////////////////

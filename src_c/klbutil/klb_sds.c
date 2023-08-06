@@ -13,12 +13,13 @@ sds klb_sdscpy(sds s, const char* p_str)
 sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
 {
     sds dst = (NULL != s) ? s : sdsempty();
+    klb_adt_t* p_src = (klb_adt_t*)p_adt;
 
-    switch (klb_adt_type(p_adt))
+    switch (klb_adt_type(p_src))
     {
     case KLB_ADT_bool:
         {
-            if (klb_adt_to_bool(p_adt))
+            if (klb_adt_to_bool(p_src))
             {
                 dst = sdscpy(dst, "true");
             }
@@ -31,14 +32,14 @@ sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
     case KLB_ADT_string:
         {
             int len = 0;
-            const char* p_str = klb_adt_to_lstring(p_adt, &len);
+            const char* p_str = klb_adt_to_lstring(p_src, &len);
             dst = sdscpylen(dst, p_str, len);
         }
         break;
     case KLB_ADT_double:
         {
             char str[128];
-            snprintf(str, sizeof(str) - 1, "%.6f", klb_adt_to_double(p_adt));
+            snprintf(str, sizeof(str) - 1, "%.6f", klb_adt_to_double(p_src));
             
             dst = sdscpy(dst, str);
         }
@@ -46,13 +47,13 @@ sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
     case KLB_ADT_uint64:
         {
             sdsclear(dst);
-            dst = sdscatfmt(dst, "%U", klb_adt_to_uint64(p_adt));
+            dst = sdscatfmt(dst, "%U", klb_adt_to_uint64(p_src));
         }
         break;
     case KLB_ADT_int64:
         {
             sdsclear(dst);
-            dst = sdscatfmt(dst, "%I", klb_adt_to_int64(p_adt));
+            dst = sdscatfmt(dst, "%I", klb_adt_to_int64(p_src));
         }
         break;
     default:

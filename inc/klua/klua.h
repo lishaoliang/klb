@@ -101,11 +101,12 @@ KLB_API int klua_open_cjson(lua_State* L);
 KLB_API int klua_open_cjson_safe(lua_State* L);
 
 
+#if !defined(__KLB_NO_LPEG__)
 /// @brief 扩展库"lpeg"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_lpeg(lua_State *L);
-
+#endif
 
 /// @brief 扩展库"lfs"
 /// @param [in] *L          Lua状态
@@ -113,11 +114,12 @@ KLB_API int klua_open_lpeg(lua_State *L);
 KLB_API int klua_open_lfs(lua_State *L);
 
 
+#if !defined(__KLB_NO_SQLITE__)
 /// @brief 扩展库"lsqlite3"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_lsqlite3(lua_State* L);
-
+#endif
 
 /// @brief 扩展库"LuaXML_lib"
 /// @param [in] *L          Lua状态
@@ -263,48 +265,10 @@ KLB_API int klua_open_kh26x(lua_State* L);
 KLB_API int klua_loadlib_all(lua_State* L);
 
 
-/// @def   KLB_KLUA_LOADLIBS
-/// @brief 预加载扩展库
-#define KLUA_LOADLIBS(L) {                                  \
-    klua_loadlib(L, klua_open_cjson,        "cjson");       \
-    klua_loadlib(L, klua_open_cjson_safe,   "cjson.safe");  \
-    klua_loadlib(L, klua_open_lpeg,         "lpeg");        \
-    klua_loadlib(L, klua_open_lfs,          "lfs");         \
-    klua_loadlib(L, klua_open_lsqlite3,     "lsqlite3");    \
-    klua_loadlib(L, klua_open_LuaXML_lib,   "LuaXML_lib");  \
-    klua_loadlib(L, klua_open_kco,          "kco");         \
-    klua_loadlib(L, klua_open_kos,          "kos");         \
-    klua_loadlib(L, klua_open_ksys,         "ksys");        \
-    klua_loadlib(L, klua_open_krand,        "krand");       \
-    klua_loadlib(L, klua_open_ktime,        "ktime");       \
-    klua_loadlib(L, klua_open_kmcache,      "kmcache");     \
-    klua_loadlib(L, klua_open_klist,        "klist");       \
-    klua_loadlib(L, klua_open_kthread,      "kthread");     \
-    klua_loadlib(L, klua_open_kkpa,         "kkpa");        \
-    klua_loadlib(L, klua_open_klpc,         "klpc");        \
-    klua_loadlib(L, klua_open_kgui,         "kgui");        \
-    klua_loadlib(L, klua_open_kwnd,         "kwnd");        \
-    klua_loadlib(L, klua_open_kurl,         "kurl");        \
-    klua_loadlib(L, klua_open_ktcp,         "ktcp");        \
-    klua_loadlib(L, klua_open_kudp,         "kudp");        \
-    klua_loadlib(L, klua_open_khttp,        "khttp");       \
-    klua_loadlib(L, klua_open_kws,          "kws");         \
-    klua_loadlib(L, klua_open_kmnp,         "kmnp");        \
-    klua_loadlib(L, klua_open_kncm,         "kncm");        \
-    klua_loadlib(L, klua_open_krtsp,        "krtsp");       \
-    klua_loadlib(L, klua_open_khttp_flv,    "khttp_flv");   \
-    klua_loadlib(L, klua_open_khttp_mnp,    "khttp_mnp");   \
-    klua_loadlib(L, klua_open_kws_flv,      "kws_flv");     \
-    klua_loadlib(L, klua_open_kws_mnp,      "kws_mnp");     \
-    klua_loadlib(L, klua_open_krpc,         "krpc");        \
-    klua_loadlib(L, klua_open_kh26x,        "kh26x");       \
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 // ./klb/src_packages
 
-
+#if !defined(__KLB_NO_PACKAGES__)
 KLB_API int klua_open_kpa_mgui(lua_State* L);
 KLB_API int klua_open_kpa_http(lua_State* L);
 KLB_API int klua_open_kpa_ws(lua_State* L);
@@ -312,17 +276,7 @@ KLB_API int klua_open_kpa_mnp(lua_State* L);
 KLB_API int klua_open_kpa_rtsp(lua_State* L);
 KLB_API int klua_open_kpa_flv(lua_State* L);
 KLB_API int klua_open_kpa_sip(lua_State* L);
-
-
-#define KLUA_LOADLIBS_PACKAGES(L) {                         \
-    klua_loadlib(L, klua_open_kpa_mgui,     "kpa_mgui");    \
-    klua_loadlib(L, klua_open_kpa_http,     "kpa_http");    \
-    klua_loadlib(L, klua_open_kpa_ws,       "kpa_ws");      \
-    klua_loadlib(L, klua_open_kpa_mnp,      "kpa_mnp");     \
-    klua_loadlib(L, klua_open_kpa_rtsp,     "kpa_rtsp");    \
-    klua_loadlib(L, klua_open_kpa_flv,      "kpa_flv");     \
-    klua_loadlib(L, klua_open_kpa_sip,      "kpa_sip");     \
-}
+#endif
 
 
 #ifdef __cplusplus

@@ -142,7 +142,7 @@ static int cb_clean_klb_vector(void* p_obj, void* p_data)
 static void clean_klb_vector(klb_vector_t* p_vector)
 {
     // 清空 vector
-    klb_nvector_clear(p_vector, cb_clean_klb_vector, p_vector);
+    klb_nvector_clear(p_vector->p_nvector, cb_clean_klb_vector, p_vector);
 }
 
 void klb_vector_clear(klb_vector_t* p_vector)

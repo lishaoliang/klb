@@ -51,8 +51,7 @@ static void klua_ex_gui_clear_bind(klua_ex_gui_t* p_ex)
 
 static void* klua_ex_gui_create(klua_env_t* p_env)
 {
-    klua_ex_gui_t* p_ex = KLB_MALLOC(klua_ex_gui_t, 1, 0);
-    KLB_MEMSET(p_ex, 0, sizeof(klua_ex_gui_t));
+    klua_ex_gui_t* p_ex = KLB_MALLOCZ(klua_ex_gui_t, 1, 0);
 
     p_ex->p_env = p_env;
     p_ex->L = klua_env_get_L(p_env);
@@ -76,6 +75,31 @@ static void klua_ex_gui_destroy(void* ptr)
     KLB_FREE_BY(p_ex->p_bind_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_ex->p_gui, klb_gui_destroy);
     KLB_FREE(p_ex);
+}
+
+// 要退出了, 清理资源等
+static int on_exit_klua_ex_gui(klua_ex_gui_t* p_ex)
+{
+    klua_ex_gui_clear(p_ex);
+
+    return 0;
+}
+
+static int klua_ex_gui_ctrl(void* ptr, klua_env_t* p_env, int opt, uint8_t* p_param_in_out, int param_size)
+{
+    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)ptr;
+
+    switch (opt)
+    {
+    case KLUA_ENV_EX_exit:
+        return on_exit_klua_ex_gui(p_ex);
+        break;
+
+    default:
+        break;
+    }
+
+    return 0;
 }
 
 static int klua_ex_gui_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now)
@@ -206,6 +230,7 @@ int klua_ex_register_gui(klua_env_t* p_env)
 
     ex.cb_create = klua_ex_gui_create;
     ex.cb_destroy = klua_ex_gui_destroy;
+    ex.cb_ctrl = klua_ex_gui_ctrl;
     ex.cb_loop_once = klua_ex_gui_loop_once;
 
     klua_env_register_extension(p_env, KLUA_EX_GUI_NAME, &ex);

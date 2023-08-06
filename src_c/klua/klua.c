@@ -160,6 +160,7 @@ int klua_open_cjson_safe(lua_State* L)
     return luaopen_cjson_safe(L);
 }
 
+#if !defined(__KLB_NO_LPEG__)
 // from ./klb/src_c/klua/lpeg-1.0.2/lptree.c
 extern int luaopen_lpeg(lua_State *L);
 
@@ -167,6 +168,7 @@ int klua_open_lpeg(lua_State *L)
 {
     return luaopen_lpeg(L);
 }
+#endif
 
 // from ./klb/src_c/klua/luafilesystem-2.0/src/lfs.c
 extern int luaopen_lfs(lua_State *L);
@@ -176,7 +178,7 @@ int klua_open_lfs(lua_State *L)
     return luaopen_lfs(L);
 }
 
-
+#if !defined(__KLB_NO_SQLITE__)
 // from ./klb/src_c/klua/lsqlite3/src/lsqlite3.c
 extern int luaopen_lsqlite3(lua_State *L);
 
@@ -184,7 +186,7 @@ int klua_open_lsqlite3(lua_State* L)
 {
     return luaopen_lsqlite3(L);
 }
-
+#endif
 
 // from ./klb/src_c/klua/LuaXML_130610/LuaXML_lib.c
 extern int luaopen_LuaXML_lib(lua_State *L);
@@ -199,11 +201,66 @@ int klua_open_LuaXML_lib(lua_State* L)
 
 int klua_loadlib_all(lua_State* L)
 {
-    // 基础包
-    KLUA_LOADLIBS(L);
+    // 这里加载所有klb内置包
+    // 若需要裁剪, 可自行定义相关函数
 
-    // 扩展包
-    KLUA_LOADLIBS_PACKAGES(L);
+    // 预加载基础包
+    {
+        klua_loadlib(L, klua_open_cjson, "cjson");
+        klua_loadlib(L, klua_open_cjson_safe, "cjson.safe");
+
+#if !defined(__KLB_NO_LPEG__)
+        klua_loadlib(L, klua_open_lpeg, "lpeg");
+#endif
+
+        klua_loadlib(L, klua_open_lfs, "lfs");
+
+#if !defined(__KLB_NO_SQLITE__)
+        klua_loadlib(L, klua_open_lsqlite3, "lsqlite3");
+#endif
+
+        klua_loadlib(L, klua_open_LuaXML_lib, "LuaXML_lib");
+
+        klua_loadlib(L, klua_open_kco, "kco");
+        klua_loadlib(L, klua_open_kos, "kos");
+        klua_loadlib(L, klua_open_ksys, "ksys");
+        klua_loadlib(L, klua_open_krand, "krand");
+        klua_loadlib(L, klua_open_ktime, "ktime");
+        klua_loadlib(L, klua_open_kmcache, "kmcache");
+        klua_loadlib(L, klua_open_klist, "klist");
+        klua_loadlib(L, klua_open_kthread, "kthread");
+        klua_loadlib(L, klua_open_kkpa, "kkpa");
+        klua_loadlib(L, klua_open_klpc, "klpc");
+        klua_loadlib(L, klua_open_kgui, "kgui");
+        klua_loadlib(L, klua_open_kwnd, "kwnd");
+        klua_loadlib(L, klua_open_kurl, "kurl");
+        klua_loadlib(L, klua_open_ktcp, "ktcp");
+        klua_loadlib(L, klua_open_kudp, "kudp");
+        klua_loadlib(L, klua_open_khttp, "khttp"); 
+        klua_loadlib(L, klua_open_kws, "kws");
+        klua_loadlib(L, klua_open_kmnp, "kmnp");
+        klua_loadlib(L, klua_open_kncm, "kncm");
+        klua_loadlib(L, klua_open_krtsp, "krtsp");
+        klua_loadlib(L, klua_open_khttp_flv, "khttp_flv");
+        klua_loadlib(L, klua_open_khttp_mnp, "khttp_mnp");
+        klua_loadlib(L, klua_open_kws_flv, "kws_flv");
+        klua_loadlib(L, klua_open_kws_mnp, "kws_mnp");
+        klua_loadlib(L, klua_open_krpc, "krpc");
+        klua_loadlib(L, klua_open_kh26x, "kh26x");
+    }
+
+    // 预加载扩展包
+    {
+#if !defined(__KLB_NO_PACKAGES__)
+        klua_loadlib(L, klua_open_kpa_mgui, "kpa_mgui");
+        klua_loadlib(L, klua_open_kpa_http, "kpa_http");
+        klua_loadlib(L, klua_open_kpa_ws, "kpa_ws");
+        klua_loadlib(L, klua_open_kpa_mnp, "kpa_mnp");
+        klua_loadlib(L, klua_open_kpa_rtsp, "kpa_rtsp");
+        klua_loadlib(L, klua_open_kpa_flv, "kpa_flv");
+        klua_loadlib(L, klua_open_kpa_sip, "kpa_sip");
+#endif
+    }
 
     return 0;
 }

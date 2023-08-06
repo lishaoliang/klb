@@ -24,7 +24,7 @@ typedef struct klb_fpool_buf_extra_t_
 // 固定缓存大小内存池
 typedef struct klb_fpool_t_
 {
-    long volatile   atomic_lock;        ///< 申请/释放的原子锁: 支持夸线程申请/释放
+    klb_atomic_t volatile   atomic_lock;        ///< 申请/释放的原子锁: 支持夸线程申请/释放
 
     int             aligned;            ///< 内存对齐
     size_t          item_size;          ///< 元素项大小(字节)

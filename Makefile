@@ -1,5 +1,7 @@
 # 编译命令 : make
 # make MY_VERSION=release MY_TOOL_CHAIN=arm-himix200-linux- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
+# 裁剪参数 MY_CLIP="no-all no-lpeg no-sqlite no-packages"
+#
 
 SHELL = /bin/bash
 PWD = `pwd`
@@ -9,6 +11,7 @@ PWD = `pwd`
 MY_TOOL_CHAIN ?= 
 MY_CFLAGS_EX ?= 
 MY_VERSION ?= debug
+MY_CLIP ?= 
 
 # gcc编译工具链
 CC		:= $(MY_TOOL_CHAIN)gcc
@@ -41,8 +44,7 @@ MY_DIRS += ./src_c/klbgui/shwnd
 # klua
 MY_DIRS += ./src_c/klua ./src_c/klua/extension ./src_c/klua/klua_platform ./src_c/klua/klua_util ./src_c/klua/klua_base
 MY_DIRS += ./src_c/klua/klua_multithread ./src_c/klua/klua_net ./src_c/klua/klua_format
-MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/lpeg-1.0.2 ./src_c/klua/luafilesystem-2.0/src
-MY_DIRS += ./src_c/klua/lsqlite3 ./src_c/klua/LuaXML_130610 ./src_c/klua/lua-skynet
+MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/LuaXML_130610 ./src_c/klua/luafilesystem-2.0/src
 
 # libavutil
 MY_DIRS += ./src_c/compat ./src_c/libavutil
@@ -54,19 +56,49 @@ MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
 MY_DIRS += ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbnet
 MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klua 
 
+################################################
+# 裁剪代码
+MY_CLIP_TAG := $(MY_CLIP)
+MY_CLIP_FLAGS :=
 
-# src_packages
-MY_DIRS += ./src_packages/kpa_flv
-MY_DIRS += ./src_packages/kpa_http 
-MY_DIRS += ./src_packages/kpa_mgui 
-MY_DIRS += ./src_packages/kpa_mnp 
-MY_DIRS += ./src_packages/kpa_rtsp 
-MY_DIRS += ./src_packages/kpa_sip 
-MY_DIRS += ./src_packages/kpa_ws 
+# 默认所有可裁剪参数 MY_CLIP = no-all
+ifeq ($(filter no-all, $(MY_CLIP_TAG)), )
+	MY_CLIP_TAG += 
+else
+	MY_CLIP_TAG += no-lpeg no-sqlite no-packages
+endif
 
+# 可裁剪参数: MY_CLIP = no-lpeg
+ifeq ($(filter no-lpeg, $(MY_CLIP_TAG)), )
+	MY_DIRS += ./src_c/klua/lpeg-1.0.2
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_LPEG__
+endif
+
+# 可裁剪参数: MY_CLIP = no-sqlite
+ifeq ($(filter no-sqlite, $(MY_CLIP_TAG)), )
+	MY_DIRS += ./src_c/klua/lsqlite3
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_SQLITE__
+endif
+
+# 可裁剪参数: MY_CLIP = no-packages
+ifeq ($(filter no-packages, $(MY_CLIP_TAG)), )
+	MY_DIRS += ./src_packages/kpa_flv
+	MY_DIRS += ./src_packages/kpa_http
+	MY_DIRS += ./src_packages/kpa_mgui
+	MY_DIRS += ./src_packages/kpa_mnp
+	MY_DIRS += ./src_packages/kpa_rtsp
+	MY_DIRS += ./src_packages/kpa_sip
+	MY_DIRS += ./src_packages/kpa_ws
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_PACKAGES__
+endif
+
+###########################################################
 
 # 编译选项 -D__XXX_XXX__
-MY_CFLAGS := $(MY_CFLAGS_EX) -D_GNU_SOURCE 
+MY_CFLAGS := $(MY_CLIP_FLAGS) $(MY_CFLAGS_EX) -D_GNU_SOURCE 
 
 # lua的宏
 MY_CFLAGS += -DLUA_USE_LINUX
@@ -175,15 +207,20 @@ clean:
 	$(RM_F) $(MY_TARGET_SO)
 	@echo "+++++++++++++++++++++++++"
 
+info:
+	$(my_tip)
 
 define my_tip
 	@echo "++++++ make tip ++++++"
 	@echo "+ MY_TOOL_CHAIN = $(MY_TOOL_CHAIN)"
 	@echo "+ CC = $(CC)"
-	@echo "+ CXX = $(CXX)"
+	@echo "+ CXX = $(CXX)"	
+	@echo "+ MY_CLIP = $(MY_CLIP)"
+	@echo "+ MY_CLIP_TAG = $(MY_CLIP_TAG)"
+	@echo "+ MY_CFLAGS = $(MY_CFLAGS)"
+	@echo "+ MY_CLIP_FLAGS = $(MY_CLIP_FLAGS)"
 	@echo "+ MY_SOURCES = $(MY_SOURCES)"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
-	@echo "+ MY_CFLAGS = $(MY_CFLAGS)"
 	@echo "+ MY_TARGET_A = $(MY_TARGET_A)"
 	@echo "++++++++++++++++++++++"
 endef

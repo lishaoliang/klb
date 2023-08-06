@@ -147,7 +147,7 @@ int klb_buffer_write(klb_buffer_t* p_buffer, const char* p_data, int data_len)
 int klb_buffer_write_rbuf(klb_buffer_t* p_buffer, const klb_rbuf_t* p_rbuf)
 {
     int data_len = 0;
-    char* p_data = klb_rbuf_data(p_rbuf, &data_len);
+    char* p_data = klb_rbuf_data((klb_rbuf_t*)p_rbuf, &data_len);
 
     return klb_buffer_write(p_buffer, p_data, data_len);
 }

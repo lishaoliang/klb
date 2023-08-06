@@ -608,8 +608,8 @@ static int klua_kgui_show(lua_State* L)
 static int klua_kgui_move(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
-    int x = luaL_checkinteger(L, 2);                    ///< @2. 基于父窗口X
-    int y = luaL_checkinteger(L, 3);                    ///< @3. 基于父窗口Y
+    int x = (int)luaL_checkinteger(L, 2);                    ///< @2. 基于父窗口X
+    int y = (int)luaL_checkinteger(L, 3);                    ///< @3. 基于父窗口Y
 
     int ret = klb_gui_move(klua_gui_get_by_L(L), p_path_name, x, y);
 
@@ -620,8 +620,8 @@ static int klua_kgui_move(lua_State* L)
 static int klua_kgui_resize(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
-    int w = luaL_checkinteger(L, 2);                    ///< @2. 宽
-    int h = luaL_checkinteger(L, 3);                    ///< @3. 高
+    int w = (int)luaL_checkinteger(L, 2);                    ///< @2. 宽
+    int h = (int)luaL_checkinteger(L, 3);                    ///< @3. 高
 
     int ret = klb_gui_resize(klua_gui_get_by_L(L), p_path_name, w, h);
 
