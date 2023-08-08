@@ -30,20 +30,25 @@ typedef struct klua_ex_gui_t_
 }klua_ex_gui_t;
 
 //////////////////////////////////////////////////////////////////////////
+static int klua_ex_gui_quit(klua_ex_gui_t* p_ex);
+
 
 static void klua_ex_gui_clear_bind(klua_ex_gui_t* p_ex)
 {
-    // 清空
-    while (0 < klb_hlist_size(p_ex->p_bind_hlist))
+    if (NULL != p_ex->p_bind_hlist)
     {
-        klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)klb_hlist_pop_head(p_ex->p_bind_hlist);
-        if (0 < p_bind->on_command)
+        // 清空绑定
+        while (0 < klb_hlist_size(p_ex->p_bind_hlist))
         {
-            luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_bind->on_command);
-            p_bind->on_command = 0;
-        }
+            klua_kgui_bind_t* p_bind = (klua_kgui_bind_t*)klb_hlist_pop_head(p_ex->p_bind_hlist);
+            if (0 < p_bind->on_command)
+            {
+                luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_bind->on_command);
+                p_bind->on_command = 0;
+            }
 
-        KLB_FREE(p_bind);
+            KLB_FREE(p_bind);
+        }
     }
 }
 
@@ -69,18 +74,28 @@ static void klua_ex_gui_destroy(void* ptr)
     klua_ex_gui_t* p_ex = (klua_ex_gui_t*)ptr;
     klua_env_t* p_env = p_ex->p_env;
 
-    // 清空
-    klua_ex_gui_clear_bind(p_ex);
+    // 退出清理
+    klua_ex_gui_quit(p_ex);
 
-    KLB_FREE_BY(p_ex->p_bind_hlist, klb_hlist_destroy);
-    KLB_FREE_BY(p_ex->p_gui, klb_gui_destroy);
     KLB_FREE(p_ex);
 }
 
 // 要退出了, 清理资源等
-static int on_exit_klua_ex_gui(klua_ex_gui_t* p_ex)
+static int klua_ex_gui_quit(klua_ex_gui_t* p_ex)
 {
-    klua_ex_gui_clear(p_ex);
+    // KLUA_ENV_EX_quit / klua_ex_gui_destroy 时都会调用
+
+    // 清空gui使用的数据
+    if (NULL != p_ex->p_gui)
+    {
+        klb_gui_clear(p_ex->p_gui);
+    }
+
+    klua_ex_gui_clear_bind(p_ex);
+
+    // 直接销毁
+    KLB_FREE_BY(p_ex->p_bind_hlist, klb_hlist_destroy);
+    KLB_FREE_BY(p_ex->p_gui, klb_gui_destroy);
 
     return 0;
 }
@@ -91,8 +106,8 @@ static int klua_ex_gui_ctrl(void* ptr, klua_env_t* p_env, int opt, uint8_t* p_pa
 
     switch (opt)
     {
-    case KLUA_ENV_EX_exit:
-        return on_exit_klua_ex_gui(p_ex);
+    case KLUA_ENV_EX_quit:
+        return klua_ex_gui_quit(p_ex);
         break;
 
     default:

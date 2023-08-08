@@ -240,6 +240,15 @@
     <Filter Include="src_c\klua\lua-5.4.6\src">
       <UniqueIdentifier>{fd318c85-855e-425c-bd41-b688ecc42421}</UniqueIdentifier>
     </Filter>
+    <Filter Include="proj">
+      <UniqueIdentifier>{e1b82de7-9fdd-4a0f-be07-0cc69cb8a614}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="proj\Visual Leak Detector">
+      <UniqueIdentifier>{a8c147e8-8879-4cd6-a4ee-77bd1d60d699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="proj\Visual Leak Detector\include">
+      <UniqueIdentifier>{4dcf528e-275d-4ab2-9bce-2d44df5c84a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1504,6 +1513,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu_item.h">
       <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Visual Leak Detector\include\vld.h">
+      <Filter>proj\Visual Leak Detector\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Visual Leak Detector\include\vld_def.h">
+      <Filter>proj\Visual Leak Detector\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

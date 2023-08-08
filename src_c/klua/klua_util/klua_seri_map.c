@@ -573,6 +573,7 @@ static klb_buf_t* luaseri_map_binary_write_from(lua_State* L, int from)
     }
 
     luaseri_map_binary_write_end(p_buffer, &rbuf);
+    klb_rbuf_quit(&rbuf);
 
     klb_buf_t* p_buf = klb_buffer_join(p_buffer, NULL, NULL);
     klb_buffer_destroy(p_buffer);

@@ -6,7 +6,7 @@
 
 /// @def   KLB_NVECTOR_MIN
 /// @brief 容量/掩码表序号的最小值
-#define KLB_NVECTOR_MIN  6       // 2^6 = 64
+#define KLB_NVECTOR_MIN  3       // 2^3 = 8
 
 
 /// @def   KLB_NVECTOR_MAX

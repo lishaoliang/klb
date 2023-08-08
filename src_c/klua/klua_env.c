@@ -23,7 +23,7 @@
 #define KLUA_ENV_PTR            "_KLUA_ENV_PTR_"
 #endif
 
-#define KLUA_ENV_GC_TIME_OUT    600000
+#define KLUA_ENV_GC_TIME_OUT    30000   ///< 30 * 1000 = 30秒
 
 
 /// @struct klua_env_extension_activate_t
@@ -418,7 +418,7 @@ static void klua_pquit_extension_opt(klua_env_t* p_env)
 
         if (p_activate && p_activate->ex.cb_ctrl)
         {
-            p_activate->ex.cb_ctrl(p_activate->ptr, p_env, KLUA_ENV_EX_exit, NULL, 0);
+            p_activate->ex.cb_ctrl(p_activate->ptr, p_env, KLUA_ENV_EX_quit, NULL, 0);
         }
 
         p_iter = klb_hlist_next(p_iter);

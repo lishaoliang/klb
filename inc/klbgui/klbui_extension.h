@@ -26,7 +26,8 @@ typedef struct klb_gui_t_ klb_gui_t;
 /// @brief  对gui扩展的消息
 typedef enum klb_gui_extension_msg_e_
 {
-    KLBUI_EX_MSG_clear = 1,        ///< 清理UI框架(调用klb_gui_clear)时, 触发; 无附加参数
+    KLBUI_EX_MSG_quit   = 1,        ///< 退出UI框架: (清理所有)即将destroy时触发
+    KLBUI_EX_MSG_clear  = 2,        ///< 清理UI数据: (调用klb_gui_clear)时, 触发; 无附加参数
 }klb_gui_extension_msg_e;
 
 

@@ -94,18 +94,21 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Visual Leak Detector\lib\Win32;..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4049,4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y $(ProjectName)_$(Configuration)\libklb.dll ..\..\bin
-xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
+xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib
+xcopy /Y "..\Visual Leak Detector\bin\Win32\dbghelp.dll" ..\..\bin
+xcopy /Y "..\Visual Leak Detector\bin\Win32\vld_x86.dll" ..\..\bin
+xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -586,6 +589,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.h" />
     <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.h" />
     <ClInclude Include="..\..\src_packages\kpa_rtsp\rtp.h" />
+    <ClInclude Include="..\Visual Leak Detector\include\vld.h" />
+    <ClInclude Include="..\Visual Leak Detector\include\vld_def.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\linux\Makefile" />

@@ -451,9 +451,14 @@ static int klua_kgui_append(lua_State* L)
 
 static int klua_kgui_remove(lua_State* L)
 {
+    const char* p_path_name = luaL_checkstring(L, 1);       ///< @1. 路径名: eg. "/home"
+
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
 
-    return 0;
+    int ret = klb_gui_remove(p_gui, p_path_name);
+
+    lua_pushinteger(L, ret);                                ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
 }
 
 static int klua_kgui_clear(lua_State* L)

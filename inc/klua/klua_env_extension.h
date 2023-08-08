@@ -28,7 +28,7 @@ typedef struct klua_msg_t_ klua_msg_t;
 /// @brief Lua环境扩展的 操作
 typedef enum klua_env_extension_opt_e_
 {
-    KLUA_ENV_EX_exit = 1,           ///< 退出消息
+    KLUA_ENV_EX_quit = 1,           ///< 退出消息
 }klua_env_extension_opt_e;
 
 

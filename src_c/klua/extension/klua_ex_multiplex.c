@@ -19,8 +19,7 @@ typedef struct klua_ex_multiplex_t_
 
 static void* klua_ex_multiplex_create(klua_env_t* p_env)
 {
-    klua_ex_multiplex_t* p_ex = KLB_MALLOC(klua_ex_multiplex_t, 1, 0);
-    KLB_MEMSET(p_ex, 0, sizeof(klua_ex_multiplex_t));
+    klua_ex_multiplex_t* p_ex = KLB_MALLOCZ(klua_ex_multiplex_t, 1, 0);
 
     p_ex->p_env = p_env;
 

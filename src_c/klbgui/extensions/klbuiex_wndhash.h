@@ -2,9 +2,12 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbuiex_wndhash.h
-/// @brief   window hash : 存储wnd,及hash查找表
+/// @brief   klb gui extensions window hash : 存储wnd创建函数,存储wnd,及hash查找表
 /// @version 0.1
 /// @history 修改历史
+///   \n [2023-8]将窗口查找方式从一级, 调整为采用二级索引
+///      调整后: 第一级从"根目录"(即顶层窗口路径, eg."/home")做hash
+///              第二级以单个顶层窗口为单位做hash
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLBUIEX_WNDHASH_H__

@@ -146,10 +146,14 @@ int klb_listen_open(klb_listen_t* p_listen, int port, int max_connect)
     klb_socket_fd fd = klb_socket_listen(port, max_connect);
     assert(INVALID_SOCKET != fd);
 
+#if 1
+    klb_socket_t* p_socket = klb_socket_async_create(fd);
+#else
     klb_socket_t* p_socket = KLB_MALLOCZ(klb_socket_t, 1, 0);
 
     p_socket->fd = fd;
     p_socket->status = KLB_SOCKET_OK;
+#endif
 
     p_listen->fd_listen = fd;
     p_listen->p_socket = p_socket;

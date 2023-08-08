@@ -3,9 +3,12 @@
 #include "klua/klua.h"
 #include "klbbase/klb_base.h"
 
-#if defined(WIN32) && defined(DEBUG_VLD)
+
+// vld - debug
+#if defined(WIN32) && defined(_DEBUG)
 #include "vld.h"
-#endif
+#endif // 
+
 
 static int klua_openlibs(lua_State* L)
 {

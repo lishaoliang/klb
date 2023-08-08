@@ -91,7 +91,7 @@ static int on_exit_klua_ex_coroutine(klua_ex_coroutine_t* p_ex, klua_env_t* p_en
             klua_ex_coroutine_yield_cb cb = p_co_env->cb_wakeup;
             void* ptr = p_co_env->ptr;
 
-            cb(ptr, p_ex, p_co_env->p_co, KLUA_ENV_EX_exit);
+            cb(ptr, p_ex, p_co_env->p_co, KLUA_ENV_EX_quit);
         }
     }
 
@@ -112,7 +112,7 @@ static int klua_ex_coroutine_ctrl(void* ptr, klua_env_t* p_env, int opt, uint8_t
 
     switch (opt)
     {
-    case KLUA_ENV_EX_exit:
+    case KLUA_ENV_EX_quit:
         on_exit_klua_ex_coroutine(p_ex, p_env);
         break;
     default:

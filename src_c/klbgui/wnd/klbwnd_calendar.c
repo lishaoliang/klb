@@ -507,7 +507,6 @@ void klbwnd_calendar_css_init(klbwnd_calendar_css_t* p_css, klb_gui_t* p_gui)
 
     klbwnd_calendar_btn_css_init(&p_css->btn, p_gui);
     klbwnd_static_css_init(&p_css->sta, p_gui);
-    klbwnd_calendar_btn_css_init(&p_css->btn, p_gui);
 }
 
 void klbwnd_calendar_css_quit(klbwnd_calendar_css_t* p_css)
@@ -518,7 +517,6 @@ void klbwnd_calendar_css_quit(klbwnd_calendar_css_t* p_css)
 
     klbwnd_calendar_btn_css_quit(&p_css->btn);
     klbwnd_static_css_quit(&p_css->sta);
-    klbwnd_calendar_btn_css_quit(&p_css->btn);
 }
 
 //////////////////////////////////////////////////////////////////////////

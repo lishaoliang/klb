@@ -614,7 +614,8 @@ void klbwnd_list_quit(klb_wnd_t* p_wnd)
 {
     klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
     
-    klbwnd_list_clear(p_wnd);
+    klb_map_clear(&p_list->data_map);
+
     klbwnd_list_quit_attribute(p_list);
 }
 

@@ -732,7 +732,7 @@ void klbwnd_listex_quit(klb_wnd_t* p_wnd)
 {
     klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;
 
-    klbwnd_listex_clear(p_wnd);
+    klb_map_clear(&p_list->data_map);
     klbwnd_listex_quit_attribute(p_list);
 }
 

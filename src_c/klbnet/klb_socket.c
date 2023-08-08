@@ -643,8 +643,7 @@ klb_socket_t* klb_socket_async_create(klb_socket_fd fd)
 {
     assert(INVALID_SOCKET != fd);
 
-    klb_socket_t* p_socket = KLB_MALLOC(klb_socket_t, 1, 0);
-    KLB_MEMSET(p_socket, 0, sizeof(klb_socket_t));
+    klb_socket_t* p_socket = KLB_MALLOCZ(klb_socket_t, 1, 0);
 
     p_socket->vtable.cb_destroy = klb_socket_async_destroy;
     p_socket->vtable.cb_send = klb_socket_async_send;

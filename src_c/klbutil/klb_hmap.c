@@ -13,7 +13,7 @@
 
 /// @def   KLB_HMAP_IDX_TABLE_MIN
 /// @brief 容量/掩码表序号的最小值
-#define KLB_HMAP_IDX_TABLE_MIN  8       // 2^8 = 256
+#define KLB_HMAP_IDX_TABLE_MIN  3       // 2^3 = 8
 
 
 /// @def   KLB_HMAP_IDX_TABLE_MAX

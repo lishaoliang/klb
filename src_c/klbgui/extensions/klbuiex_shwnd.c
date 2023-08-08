@@ -12,8 +12,11 @@ typedef struct klbuiex_shwnd_t_
 {
     klb_gui_t*      p_gui;          ///< GUI
 
-    klb_hlist_t*    p_hlist;        ///< 存储所有顶层窗口: klb_wnd_t*
+    klb_hlist_t*    p_hlist;        ///< 存储所有(共享的)顶层窗口: klb_wnd_t*
 }klbuiex_shwnd_t;
+
+//////////////////////////////////////////////////////////////////////////
+static void klbuiex_shwnd_quit(klbuiex_shwnd_t* p_shwnd);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -30,11 +33,10 @@ static int cb_clear_top_wnd_klbuiex_shwnd(void* p_obj, void* p_data)
     return 0;
 }
 
-static void on_klbuiex_shwnd_clear(klbuiex_shwnd_t* p_shwnd)
+static void klbuiex_shwnd_clear(klbuiex_shwnd_t* p_shwnd)
 {
     klb_hlist_clear(p_shwnd->p_hlist, cb_clear_top_wnd_klbuiex_shwnd, p_shwnd);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create / destroy
@@ -54,10 +56,15 @@ static void klbuiex_shwnd_destroy(void* ptr, klb_gui_t* p_gui)
     klbuiex_shwnd_t* p_shwnd = (klbuiex_shwnd_t*)ptr;
 
     // 释放窗口
-    on_klbuiex_shwnd_clear(p_shwnd);
+    klbuiex_shwnd_quit(p_shwnd);
 
     KLB_FREE_BY(p_shwnd->p_hlist, klb_hlist_destroy);
     KLB_FREE(p_shwnd)
+}
+
+static void klbuiex_shwnd_quit(klbuiex_shwnd_t* p_shwnd)
+{
+    klbuiex_shwnd_clear(p_shwnd);
 }
 
 /// @brief 控制操作消息
@@ -67,9 +74,14 @@ static int klbuiex_shwnd_control(void* ptr, klb_gui_t* p_gui, int msg, uint8_t* 
 
     switch (msg)
     {
-    case KLBUI_EX_MSG_clear:
-        on_klbuiex_shwnd_clear(p_shwnd);
+    case KLBUI_EX_MSG_quit:
+        klbuiex_shwnd_quit(p_shwnd);
         break;
+
+    case KLBUI_EX_MSG_clear:
+        klbuiex_shwnd_clear(p_shwnd);
+        break;
+
     default:
         break;
     }

@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klb", "klb.vcxproj", "{B78879D3-8CED-421E-838D-791FCF545F18}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klua", "klua.vcxproj", "{E14FC34B-3D34-4A08-A344-5CD372BC8C82}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wlua", "wlua.vcxproj", "{773436F9-0364-476D-BE64-2186BDEFC173}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +31,6 @@ Global
 		{E14FC34B-3D34-4A08-A344-5CD372BC8C82}.Release|x64.Build.0 = Release|x64
 		{E14FC34B-3D34-4A08-A344-5CD372BC8C82}.Release|x86.ActiveCfg = Release|Win32
 		{E14FC34B-3D34-4A08-A344-5CD372BC8C82}.Release|x86.Build.0 = Release|Win32
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Debug|x64.ActiveCfg = Debug|x64
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Debug|x64.Build.0 = Debug|x64
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Debug|x86.ActiveCfg = Debug|Win32
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Debug|x86.Build.0 = Debug|Win32
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Release|x64.ActiveCfg = Release|x64
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Release|x64.Build.0 = Release|x64
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Release|x86.ActiveCfg = Release|Win32
-		{773436F9-0364-476D-BE64-2186BDEFC173}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

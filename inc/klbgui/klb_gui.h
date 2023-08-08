@@ -63,8 +63,7 @@ KLB_API klua_env_t* klb_gui_get_klua_env(klb_gui_t* p_gui);
 /// @param [in] *p_gui          GUI对象
 /// @param [in] tc              系统滴答数(毫秒)
 /// @return int 0.有消息(事件处理); 非0.无消息处理
-/// @note 此函数为替代 start/stop 流程, 由外部申请线程, 处理UI流程
-///  \n 与 start/stop 不能同时使用
+/// @note 由外部申请线程, 处理UI流程
 ///  \n 当有消息(事件)时调用; 定时器定时调用
 KLB_API int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc);
 
@@ -78,7 +77,7 @@ KLB_API void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas);
 
 /// @brief 向GUI中放入消息
 /// @param [in] *p_gui          GUI对象
-/// @param [in] msg             消息类型: "./gui/klb_msg.h"
+/// @param [in] msg             消息/事件: eg. KLBUI_click
 /// @return 无
 KLB_API void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam);
 
@@ -124,7 +123,6 @@ KLB_API int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w
 /// @param [in] y               相对父窗口Y坐标
 /// @param [in] w               宽
 /// @param [in] h               高
-/// @param [out] **p_out_wnd    窗口指针: 仅可访问
 /// @return int 0.成功; 非0.失败(错误码)
 /// @note 前父窗口必须存在; eg. "/home/btn1" 则需要 "/home" 必须存在, 才能添加
 KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
@@ -148,6 +146,7 @@ KLB_API int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name);
 ///     不清理内容
 ///       a. klb_gui_register 注册的控件类型
 ///       b. klb_gui_register_extension 注册的扩展
+///     !!!注意: 不能在GUI的流程中, 调用此函数, 否则内部数据异常
 KLB_API int klb_gui_clear(klb_gui_t* p_gui);
 
 

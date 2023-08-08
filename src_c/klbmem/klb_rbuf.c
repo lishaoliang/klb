@@ -120,6 +120,11 @@ static void klb_rbuf_check_buf_size(klb_rbuf_t* p_buf, int add_len)
         int newlen = p_buf->end + add_len; // 新缓存长度
         assert(0 < newlen);
 
+        if (newlen < 8)
+        {
+            newlen = 8;
+        }
+
         if (newlen < KLB_RBUF_MAX_PREALLOC)
         {
             newlen *= 2;

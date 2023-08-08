@@ -50,6 +50,20 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
 static void klb_gui_quit_extensions(klb_gui_t* p_gui)
 {
+    // 激活扩展的 退出消息
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
+    while (NULL != p_iter)
+    {
+        klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_data(p_iter);
+
+        if (NULL != p_activated && NULL != p_activated->ex.cb_control)
+        {
+            p_activated->ex.cb_control(p_activated->ptr, p_gui, KLBUI_EX_MSG_quit, NULL, 0);
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+
     // 退出已经激活的扩展
     while (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
     {
@@ -72,14 +86,17 @@ void klb_gui_destroy(klb_gui_t* p_gui)
 {
     assert(NULL != p_gui);
 
+    // 清理消息
     while (0 < klb_nlist_size(p_gui->p_msg_list))
     {
         klb_msg_t* p_msg = (klb_msg_t*)klb_nlist_pop_head(p_gui->p_msg_list);
         KLB_FREE(p_msg);
     }
 
+    // 退出扩展
     klb_gui_quit_extensions(p_gui);
 
+    // 销毁
     KLB_FREE_BY(p_gui->p_msg_list, klb_nlist_destroy);
     KLB_FREE_BY(p_gui->p_msg_mutex, klb_mutex_destroy);
 

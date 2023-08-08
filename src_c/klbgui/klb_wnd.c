@@ -250,12 +250,11 @@ klb_wnd_t* klb_wnd_get_top(klb_wnd_t* p_wnd)
 //////////////////////////////////////////////////////////////////////////
 
 
-int klb_wnd_set_top(klb_wnd_t* p_wnd, klb_gui_t* p_gui)
+int klb_wnd_set_top(klb_wnd_t* p_wnd)
 {
     assert(NULL == p_wnd->p_parent);
 
     p_wnd->state.style |= KLB_WND_STYLE_TOP;
-    p_wnd->p_gui = p_gui;
 
     return 0;
 }

@@ -8,6 +8,12 @@
 #include <assert.h>
 
 
+// vld - debug
+#if defined(WIN32) && defined(_DEBUG)
+#include "vld.h"
+#endif // 
+
+
 int klb_base_init(const char* p_cfg)
 {
     // 初始化伪随机

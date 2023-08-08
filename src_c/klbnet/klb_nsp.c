@@ -86,6 +86,7 @@ void klb_nsp_destroy(klb_nsp_t* p_nsp)
     }
 
     KLB_FREE_BY(p_nsp->p_socket_hlist, klb_hlist_destroy);
+    KLB_FREE_BY(p_nsp->p_route_hlist, klb_hlist_destroy);
     KLB_FREE(p_nsp);
 }
 
