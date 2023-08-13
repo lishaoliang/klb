@@ -3,6 +3,7 @@
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"
+#include "klbgui/shwnd/klbshw_messagebox.h"
 #include "klbutil/klb_obj.h"
 #include "klbmem/klb_mem.h"
 #include "klua/klua_help.h"
@@ -465,7 +466,7 @@ static int klua_kgui_clear(lua_State* L)
 {
     klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
 
-    int ret = klua_ex_gui_clear(p_ex);
+    int ret = klua_ex_gui_clear_async(p_ex, 1);             ///< @1. Lua函数
 
     lua_pushinteger(L, ret);                                ///< #1. 0.成功; 非0.失败(错误码)
     return 1;
@@ -598,6 +599,40 @@ static int klua_kgui_messagebox_end(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_messagebox_std(lua_State* L)
+{
+    const char* p_title = luaL_checkstring(L, 1);           ///< @1. 标题
+    const char* p_body_text = luaL_checkstring(L, 2);       ///< @2. 提示内容
+
+    // 获取共享的消息框
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    klb_wnd_t* p_wnd = klbui_shwnd_get_messagebox(p_gui);
+
+    // 设置参数
+    {
+        klbshw_messagebox_set_title(p_wnd, p_title);
+        klbshw_messagebox_set_body_text(p_wnd, p_body_text);
+    }
+
+    // 移动到屏幕中心
+    {
+        int w = 0, h = 0;
+        klbshw_messagebox_wh(p_gui, &w, &h);
+
+        int screen_w = 0, screen_h = 0;
+        klb_gui_get_wh(p_gui, &screen_w, &screen_h);
+
+        int x = (screen_w - w) / 2;
+        int y = (screen_h - h) / 2;
+        klb_wnd_move(p_wnd, x, y);
+    }
+
+    // 弹出消息框
+    int ret = klb_gui_messagebox_wnd(p_gui, p_wnd);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
 
 static int klua_kgui_show(lua_State* L)
 {
@@ -682,22 +717,27 @@ int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
     {
+        // css
         { "set_default_css",    klua_kgui_set_default_css },
         { "get_default_css",    klua_kgui_get_default_css },
 
         { "set_shwnd_css",      klua_kgui_set_shwnd_css },
         { "get_shwnd_css",      klua_kgui_get_shwnd_css },
 
+        // image
         { "load_image",         klua_kgui_load_image },
 
+        // wnd
         { "append",             klua_kgui_append },
         { "remove",             klua_kgui_remove },
         { "clear",              klua_kgui_clear },
         { "bind_command",       klua_kgui_bind_command },
 
+        // get/set param
         { "set",                klua_kgui_set },
         { "get",                klua_kgui_get },
 
+        // dialog
         { "model",              klua_kgui_model },
         { "model_end",          klua_kgui_model_end },
 
@@ -707,6 +747,8 @@ int klua_open_kgui(lua_State* L)
         { "messagebox",         klua_kgui_messagebox },
         { "messagebox_end",     klua_kgui_messagebox_end },
 
+        { "messagebox_std",     klua_kgui_messagebox_std },   // 弹出内置的共享消息框
+
         // wnd
         { "show",               klua_kgui_show },
         { "move",               klua_kgui_move },
@@ -714,7 +756,6 @@ int klua_open_kgui(lua_State* L)
 
         // gui get (w,h)
         { "wh",                 klua_kgui_get_wh },
-
 
         // 事件辅助函数
         { "to_event",           klua_kgui_to_event },

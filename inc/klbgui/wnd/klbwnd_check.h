@@ -37,8 +37,6 @@ typedef struct klbwnd_check_css_t_
 typedef struct klbwnd_check_t_
 {
     klbwnd_check_css_t*     p_css;          ///< 样式
-
-    bool                    check;          ///< 是否选中
 }klbwnd_check_t;
 
 
@@ -55,11 +53,6 @@ KLB_API void klbwnd_check_css_quit(klbwnd_check_css_t* p_css);
 
 /// @brief set css
 KLB_API void klbwnd_check_set_css(klb_wnd_t* p_wnd, klbwnd_check_css_t* p_css);
-
-
-/// @brief set/get check
-KLB_API void klbwnd_check_set_check(klb_wnd_t* p_wnd, bool check);
-KLB_API bool klbwnd_check_get_check(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

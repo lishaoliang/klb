@@ -166,6 +166,11 @@ klbui.messagebox_end = function ()
 	return kgui.messagebox_end()
 end
 
+-- @brief 弹出预定制的消息框
+klbui.messagebox_std = function (title, body_text)
+	return kgui.messagebox_std(title, body_text)
+end
+
 
 -- @brief 显示或隐藏窗口
 -- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
@@ -226,7 +231,8 @@ end
 ------------------------------------------------
 -- 清理
 
--- @brief 清理所有窗口
+-- @brief 异步清理所有
+-- @param [in] func[function]			清理完成之后的通知回调函数
 -- @return int 0.成功; 非0.失败(错误码)
 -- @note 当修改分辨率等需要将所有UI清理掉时
 --     清理内容:
@@ -236,11 +242,14 @@ end
 --     不清理内容
 --       a. klb_gui_register 注册的控件类型
 --       b. klb_gui_register_extension 注册的扩展
-klbui.clear = function ()
+-- @note func = function ()
+--		    ...
+--		 end
+klbui.clear = function (func)
 	width = 0
 	height = 0
 	
-	return kgui.clear()
+	return kgui.clear(func)
 end
 
 

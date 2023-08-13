@@ -21,7 +21,7 @@ static void klbwnd_radio_destroy(klb_wnd_t* p_wnd)
     KLB_FREE(p_wnd);
 }
 
-static void klbwnd_radio_on_paint_status(klb_wnd_t* p_wnd, klbwnd_radio_t* p_radio, klbwnd_radio_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+static void klbwnd_radio_on_paint_status(klb_wnd_t* p_wnd, klbwnd_radio_t* p_radio, klbwnd_radio_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect, bool is_check)
 {
     if (0 < sdslen(p_attr->background.image))
     {
@@ -35,10 +35,18 @@ static void klbwnd_radio_on_paint_status(klb_wnd_t* p_wnd, klbwnd_radio_t* p_rad
 
         // 边框
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
-    }
 
-    // 标题文本
-    klbuicssex_draw_text(p_wnd, p_radio->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
+        if (is_check)
+        {
+            klb_rect_t paint_rect = *p_rect;
+            klb_rect_t check_rect = { paint_rect.x + paint_rect.w / 4,
+                                        paint_rect.y + paint_rect.h / 4,
+                                        paint_rect.w / 2,
+                                        paint_rect.h / 2 };
+
+            klb_wnd_draw_fill_rect2(p_wnd, &check_rect, p_attr->text.color /*KLB_ARGB8888(255, 220, 20, 20)*/);
+        }
+    }
 }
 
 static int klbwnd_radio_on_paint(klb_wnd_t* p_wnd)
@@ -67,17 +75,39 @@ static int klbwnd_radio_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (klb_wnd_is_check(p_wnd))
     {
-        klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->disable, &paint_rect);
-    }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->focus, &paint_rect);
+        // 选中
+
+        if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
+        {
+            klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->on_disable, &paint_rect, true);
+        }
+        else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+        {
+            klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->on_focus, &paint_rect, true);
+        }
+        else
+        {
+            klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->on_normal, &paint_rect, true);
+        }
     }
     else
     {
-        klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->normal, &paint_rect);
+        // 未选中
+
+        if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
+        {
+            klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->off_disable, &paint_rect, false);
+        }
+        else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+        {
+            klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->off_focus, &paint_rect, false);
+        }
+        else
+        {
+            klbwnd_radio_on_paint_status(p_wnd, p_radio, p_css, &p_css->off_normal, &paint_rect, false);
+        }
     }
 
     return 0;
@@ -92,6 +122,16 @@ static int klbwnd_radio_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
     {
     case KLBUI_onpaint:
         return klbwnd_radio_on_paint(p_wnd);
+
+    case KLBUI_click:
+    case KLBUI_dblclick:
+        {
+            klb_wnd_check(p_wnd, !klb_wnd_is_check(p_wnd)); 
+            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_update(p_wnd);
+        }
+        break;
+
     default:
         break;
     }
@@ -162,16 +202,24 @@ void klbwnd_radio_css_init(klbwnd_radio_css_t* p_css, klb_gui_t* p_gui)
     p_css->margin = p_default->margin;
     p_css->padding = p_default->padding;
 
-    klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
-    klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
-    klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+    klbuicssex_attributes_init(&p_css->on_normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_css->on_focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_css->on_disable, &p_default->disable);
+
+    klbuicssex_attributes_init(&p_css->off_normal, &p_default->normal);
+    klbuicssex_attributes_init(&p_css->off_focus, &p_default->focus);
+    klbuicssex_attributes_init(&p_css->off_disable, &p_default->disable);
 }
 
 void klbwnd_radio_css_quit(klbwnd_radio_css_t* p_css)
 {
-    klbuicssex_attributes_quit(&p_css->normal);
-    klbuicssex_attributes_quit(&p_css->focus);
-    klbuicssex_attributes_quit(&p_css->disable);
+    klbuicssex_attributes_quit(&p_css->on_normal);
+    klbuicssex_attributes_quit(&p_css->on_focus);
+    klbuicssex_attributes_quit(&p_css->on_disable);
+
+    klbuicssex_attributes_quit(&p_css->off_normal);
+    klbuicssex_attributes_quit(&p_css->off_focus);
+    klbuicssex_attributes_quit(&p_css->off_disable);
 }
 
 //////////////////////////////////////////////////////////////////////////

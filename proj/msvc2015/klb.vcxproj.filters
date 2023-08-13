@@ -1520,6 +1520,12 @@
     <ClInclude Include="..\Visual Leak Detector\include\vld_def.h">
       <Filter>proj\Visual Leak Detector\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\shwnd\klbshw_messagebox.h">
+      <Filter>inc\klbgui\shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_messagebox.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2305,9 +2311,6 @@
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menu.c">
       <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_messagebox.c">
-      <Filter>src_c\klbgui\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
@@ -2567,6 +2570,12 @@
       <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu_item.c">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_messagebox.c">
+      <Filter>src_c\klbgui\shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_messagebox.c">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
   </ItemGroup>

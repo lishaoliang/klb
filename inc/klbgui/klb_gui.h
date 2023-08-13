@@ -150,6 +150,30 @@ KLB_API int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name);
 KLB_API int klb_gui_clear(klb_gui_t* p_gui);
 
 
+/// @brief 异步清理窗口之后的回调函数
+/// @param [in] *ptr            调用者附加参数指针
+/// @param [in] *p_gui          GUI对象
+/// @return int 0.成功; 非0.失败(错误码)
+typedef int (*klb_gui_clear_result_cb)(void* ptr, klb_gui_t* p_gui);
+
+
+/// @brief 异步等待合适时机, 清理所有窗口
+/// @param [in] *p_gui          GUI对象
+/// @param [in] cb_clear        清理完成的回调函数
+/// @param [in] *ptr            清理完成的回调函数
+/// @return int 0.成功; 非0.失败(错误码)
+/// @note 当修改分辨率等需要将所有UI清理掉时
+///     清理内容:
+///       1. klb_gui_append 添加的所有窗口
+///       2. klb_gui_load_image 加载的所有图片资源
+///       3. klb_gui_push_shwnd 添加的所有共享窗口
+///     不清理内容
+///       a. klb_gui_register 注册的控件类型
+///       b. klb_gui_register_extension 注册的扩展
+///     注意: 清理窗口会在GUI特定的合适时机清理， 清理完成之后再使用回调函数通知调用者
+KLB_API int klb_gui_clear_async(klb_gui_t* p_gui, klb_gui_clear_result_cb cb_clear, void* ptr);
+
+
 /// @brief 模态显示窗口
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
@@ -187,6 +211,13 @@ KLB_API int klb_gui_popup_end(klb_gui_t* p_gui, bool all);
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/messagebox1"
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name);
+
+
+/// @brief 消息框: 弹出消息框
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_top          外部自定义窗口: 由外部管理生命周期
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
 
 
 /// @brief 关闭消息框

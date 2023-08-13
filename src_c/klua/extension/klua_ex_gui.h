@@ -37,7 +37,7 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
 
 
 /// @brief 清空gui
-int klua_ex_gui_clear(klua_ex_gui_t* p_ex);
+int klua_ex_gui_clear_async(klua_ex_gui_t* p_ex, int idx);
 
 
 #ifdef __cplusplus

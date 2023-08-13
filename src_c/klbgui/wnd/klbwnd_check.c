@@ -22,7 +22,7 @@ static void klbwnd_check_destroy(klb_wnd_t* p_wnd)
 }
 
 
-static void klbwnd_check_on_paint_status(klb_wnd_t* p_wnd, klbwnd_check_t* p_check, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+static void klbwnd_check_on_paint_status(klb_wnd_t* p_wnd, klbwnd_check_t* p_check, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect, bool is_check)
 {
     if (0 < sdslen(p_attr->background.image))
     {
@@ -37,7 +37,7 @@ static void klbwnd_check_on_paint_status(klb_wnd_t* p_wnd, klbwnd_check_t* p_che
         // 边框
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
 
-        if (p_check->check)
+        if (is_check)
         {
             klb_rect_t paint_rect = *p_rect;
             klb_rect_t check_rect = { paint_rect.x + paint_rect.w / 4,
@@ -76,34 +76,34 @@ static int klbwnd_check_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (p_check->check)
+    if (klb_wnd_is_check(p_wnd))
     {
-        if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+        if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on_disable, &paint_rect);   // 选中 - 不使能
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on_disable, &paint_rect, true);   // 选中 - 不使能
         }
         else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on_focus, &paint_rect);   // 选中 - 聚焦
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on_focus, &paint_rect, true);   // 选中 - 聚焦
         }
         else
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on, &paint_rect);         // 选中 - 常规
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on, &paint_rect, true);         // 选中 - 常规
         }
     }
     else
     {
-        if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+        if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off_disable, &paint_rect);  // 未选中 - 不使能
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off_disable, &paint_rect, false);  // 未选中 - 不使能
         }
         else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off_focus, &paint_rect);  // 未选中 - 常规
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off_focus, &paint_rect, false);  // 未选中 - 常规
         }
         else
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off, &paint_rect);        // 未选中 - 常规
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off, &paint_rect, false);        // 未选中 - 常规
         }
     }
 
@@ -120,21 +120,16 @@ static int klbwnd_check_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
     case KLBUI_onpaint:
         return klbwnd_check_on_paint(p_wnd);
         break;
+
     case KLBUI_click:
     case KLBUI_dblclick:
         {
-            p_check->check = !p_check->check;
-
-            // 内容变更事件 KLBUI_onchange
-            if (NULL != p_wnd->vtable.on_command)
-            {
-                klb_point_t pt = { 0 };
-                p_wnd->vtable.on_command(p_wnd, KLBUI_onchange, p_pt1, p_pt2, lparam, wparam);
-            }
-
+            klb_wnd_check(p_wnd, !klb_wnd_is_check(p_wnd));
+            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
             klb_wnd_update(p_wnd);
         }
         break;
+
     default:
         break;
     }
@@ -152,26 +147,12 @@ void klbwnd_check_set_css(klb_wnd_t* p_wnd, klbwnd_check_css_t* p_css)
     p_check->p_css = p_css;
 }
 
-void klbwnd_check_set_check(klb_wnd_t* p_wnd, bool check)
-{
-    klbwnd_check_t* p_check = (klbwnd_check_t*)p_wnd->ctrl;
-
-    p_check->check = check;
-}
-
-bool klbwnd_check_get_check(klb_wnd_t* p_wnd)
-{
-    klbwnd_check_t* p_check = (klbwnd_check_t*)p_wnd->ctrl;
-
-    return p_check->check;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
 static void klbwnd_check_init_attribute(klbwnd_check_t* p_check)
 {
-    p_check->check = false;
+
 }
 
 static void klbwnd_check_quit_attribute(klbwnd_check_t* p_check)

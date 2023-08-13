@@ -181,7 +181,7 @@ static int on_command_check_klbwnd_listex_row(klb_wnd_t* p_wnd, int e, const klb
 
     if (KLBUI_onchange == e)
     {
-        bool check = klbwnd_check_get_check(p_wnd);
+        bool check = klb_wnd_is_check(p_wnd);
         p_row->b_check = check;
 
         if (p_row->p_show_data)
@@ -340,7 +340,7 @@ void klbwnd_listex_row_set_show_data(klb_wnd_t* p_wnd, klb_map_t* p_show_data)
         bool check = klb_map_to_bool(p_show_data, "check");
 
         p_row->b_check = check;
-        klbwnd_check_set_check(p_row->p_check, check);
+        klb_wnd_check(p_row->p_check, check);
     }
 
     for (int m = 0; m < KLBWND_LISTEX_column_max; m++)

@@ -30,6 +30,9 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     p_gui->p_msg_list = klb_nlist_create();
     p_gui->p_msg_mutex = klb_mutex_create();
 
+    p_gui->is_need_clear = false;
+
+    ////////////////////////////////////////////
     // 注册标准扩展
     KLBUIEX_register_extensions_std(p_gui);
 
@@ -305,6 +308,21 @@ int klb_gui_clear(klb_gui_t* p_gui)
     }
 
     return 0;
+}
+
+int klb_gui_clear_async(klb_gui_t* p_gui, klb_gui_clear_result_cb cb_clear, void* ptr)
+{
+    if (!p_gui->is_need_clear)
+    {
+        p_gui->cb_clear_result = cb_clear;
+        p_gui->p_clear_result = ptr;
+
+        p_gui->is_need_clear = true;
+
+        return 0;
+    }
+
+    return 1;
 }
 
 // 控件 on_command 事件
@@ -620,6 +638,28 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
     int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
+    if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
+    {
+        p_gui->p_msg_box = p_wnd;
+
+        // 压栈待显示窗口流程
+        do_push_stack_top_wnd(p_gui, p_wnd);
+
+        return 0;
+    }
+
+    return 1;
+}
+
+/// @brief 消息框: 弹出消息框
+int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
+{
+    if (NULL != p_gui->p_msg_box)
+    {
+        return 1; // 已经弹出
+    }
+
+    klb_wnd_t* p_wnd = p_top;
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
         p_gui->p_msg_box = p_wnd;
@@ -990,6 +1030,15 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         if (NULL != p_gui->p_msg_box)
         {
             p_wnd = p_gui->p_msg_box;
+
+            // 判定是否在messagebox窗口之外点击
+            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mouseenter == p_msg->msg)
+            {
+                if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
+                {
+                    outwindow = true;
+                }
+            }
         }
         else if(0 < p_gui->popup_num)
         {
@@ -1059,7 +1108,7 @@ static int klb_gui_pop_message(klb_gui_t* p_gui, klb_msg_t** p_msg)
 static int klb_gui_process_message_once(klb_gui_t* p_gui)
 {
     klb_msg_t* p_msg = NULL;
-    if (0 == klb_gui_pop_message(p_gui, &p_msg))
+    if (!p_gui->is_need_clear && 0 == klb_gui_pop_message(p_gui, &p_msg))
     {
         if (p_gui->p_canvas)
         {
@@ -1101,6 +1150,21 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 
             p_iter = klb_hlist_next(p_iter);
         }
+    }
+
+    // 是否需要清理
+    // 这里控件等事件处理完毕, 在这里执行清理动作
+    if (p_gui->is_need_clear)
+    {
+        klb_gui_clear(p_gui); // 清理
+
+        // 清理完毕之后, 回调
+        if (p_gui->cb_clear_result)
+        {
+            p_gui->cb_clear_result(p_gui->p_clear_result, p_gui);
+        }
+
+        p_gui->is_need_clear = false;
     }
 
     // 是否重绘

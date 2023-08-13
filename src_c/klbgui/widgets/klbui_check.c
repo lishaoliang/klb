@@ -284,7 +284,7 @@ static void on_klbui_check_value(klb_wnd_t* p_wnd, klbui_check_t* p_check, int m
 {
     if (KLBUI_CSSEX_get == method)
     {
-        klb_map_set_idx_bool(p_out, 0, klbwnd_check_get_check(p_wnd));
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_check(p_wnd));
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -295,7 +295,7 @@ static void on_klbui_check_value(klb_wnd_t* p_wnd, klbui_check_t* p_check, int m
         case KLB_ADT_bool:
             {
                 bool check = klb_map_idx_to_bool(p_in, start);
-                klbwnd_check_set_check(p_wnd, check);
+                klb_wnd_check(p_wnd, check);
 
                 klb_wnd_update(p_wnd);
             }

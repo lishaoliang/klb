@@ -344,7 +344,7 @@ static int on_command_check_all_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb
 
     if (KLBUI_onchange == e)
     {
-        bool check_all = klbwnd_check_get_check(p_wnd);
+        bool check_all = klb_wnd_is_check(p_wnd);
 
         klb_map_t* p_data_map = klbwnd_listex_get_data_map(p_wnd_listex);
         int array_size = klb_map_array_size(p_data_map);
@@ -438,7 +438,7 @@ static int on_command_listex_row_klbwnd_listex(klb_wnd_t* p_wnd, int msg, const 
             }
         }
 
-        klbwnd_check_set_check(p_list->p_check, check_all);
+        klb_wnd_check(p_list->p_check, check_all);
         klb_wnd_update(p_list->p_check);
     }
 

@@ -166,6 +166,10 @@ void klbwnd_button_css_init(klbwnd_button_css_t* p_css, klb_gui_t* p_gui)
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    p_css->normal.text.align = KLBUICSS_text1_center;
+    p_css->focus.text.align = KLBUICSS_text1_center;
+    p_css->disable.text.align = KLBUICSS_text1_center;
 }
 
 void klbwnd_button_css_quit(klbwnd_button_css_t* p_css)

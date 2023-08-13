@@ -24,15 +24,19 @@ typedef struct klbwnd_radio_css_t_
     klbuicss_margin_t       margin;         ///< 外边距
     klbuicss_padding_t      padding;        ///< 内边距
 
-    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+    klbuicssex_attributes_t on_normal;      ///< normal 常规状态参数
+    klbuicssex_attributes_t on_focus;       ///< focus 聚焦状态参数
+    klbuicssex_attributes_t on_disable;     ///< disable 不使能状态参数
+
+    klbuicssex_attributes_t off_normal;     ///< 未选中,normal 常规状态参数
+    klbuicssex_attributes_t off_focus;      ///< 未选中,focus 聚焦状态参数
+    klbuicssex_attributes_t off_disable;    ///< 未选中,disable 不使能状态参数
 }klbwnd_radio_css_t;
 
 
 typedef struct klbwnd_radio_t_
 {
-    klbwnd_radio_css_t*    p_css;          ///< 样式
+    klbwnd_radio_css_t*     p_css;          ///< 样式
 
     sds                     title;          ///< 标题
     sds                     value;          ///< 值

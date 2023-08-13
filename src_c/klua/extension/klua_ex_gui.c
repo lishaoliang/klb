@@ -27,6 +27,8 @@ typedef struct klua_ex_gui_t_
     klb_gui_t*      p_gui;              ///< gui实例
 
     klb_hlist_t*    p_bind_hlist;       ///< klua_kgui_bind_t*
+
+    int             on_clear;           ///< 清理之后Lua调用函数
 }klua_ex_gui_t;
 
 //////////////////////////////////////////////////////////////////////////
@@ -228,12 +230,70 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
     return ret;
 }
 
-int klua_ex_gui_clear(klua_ex_gui_t* p_ex)
+static int call_on_clear_klua_ex_gui(klua_ex_gui_t* p_ex, int on_clear)
 {
-    int ret = klb_gui_clear(p_ex->p_gui);
+    if (on_clear <= 0)
+    {
+        return 0;
+    }
+
+    lua_State* L = p_ex->L;
+    KLUA_HELP_TOP_B(L);
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, on_clear);                // @0. 压入命令
+
+    int status = lua_pcall(L, 0, 0, 0);
+    klua_env_report_by_L(L, status);
+
+    KLUA_HELP_TOP_E(L);
+    return 0;
+}
+
+static int on_clear_result_klua_ex_gui(void* ptr, klb_gui_t* p_gui)
+{
+    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)ptr;
+
+    // GUI框架清理完成之后
+
+    // 清理绑定
     klua_ex_gui_clear_bind(p_ex);
 
-    return ret;
+    // 回调 并 删除 on_clear
+    if (0 < p_ex->on_clear)
+    {
+        call_on_clear_klua_ex_gui(p_ex, p_ex->on_clear);
+
+        luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_ex->on_clear);
+        p_ex->on_clear = 0;
+    }
+
+    return 0;
+}
+
+int klua_ex_gui_clear_async(klua_ex_gui_t* p_ex, int idx)
+{
+    // 设置异步清理
+    if (0 == klb_gui_clear_async(p_ex->p_gui, on_clear_result_klua_ex_gui, p_ex))
+    {
+        // 绑定Lua清理完成之后的回调函数
+        luaL_checktype(p_ex->L, idx, LUA_TFUNCTION);
+        lua_pushvalue(p_ex->L, idx);
+
+        int func = luaL_ref(p_ex->L, LUA_REGISTRYINDEX);
+        assert(0 < func);
+
+        if (0 < p_ex->on_clear)
+        {
+            luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_ex->on_clear);
+            p_ex->on_clear = 0;
+        }
+
+        p_ex->on_clear = func;
+
+        return 0;
+    }
+
+    return 1;
 }
 
 
