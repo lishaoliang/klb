@@ -275,6 +275,21 @@ KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y
 KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
 
 
+/// @brief 控件建议宽
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_suggestw(klb_gui_t* p_gui, const char* p_path_name, int* p_out_w);
+
+
+/// @brief 控件建议高
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
+/// @return int 0.成功; 非0.失败(错误码)
+KLB_API int klb_gui_suggesth(klb_gui_t* p_gui, const char* p_path_name, int* p_out_h);
+
+
+
 /// @brief 获取主画布(主屏幕)的分辨率
 /// @param [in]  *p_gui         GUI对象
 /// @param [out] *p_out_w       输出窗口宽

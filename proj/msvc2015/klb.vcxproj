@@ -208,6 +208,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_ip.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_list.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_listex.h" />
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_menu.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_num.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_picture.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_progress.h" />
@@ -424,12 +425,14 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_tip.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_util.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h" />
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
+    <ClInclude Include="..\..\src_c\klbgui\shwnd\klbshw_tip.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbui_tab_button.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_btnex_paint.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_calendar_btn.h" />
@@ -440,8 +443,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu_item.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_listex_row.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_list_row.h" />
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_menu_2rd.h" />
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_menu_item.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_messagebox.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.h" />
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tip.h" />
     <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h" />
@@ -637,6 +643,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_tip.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_util.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
@@ -653,6 +660,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_hexadecimal.c" />
     <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_keyboard_en.c" />
     <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_messagebox.c" />
+    <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_tip.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_tab_button.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_btnex_paint.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_calendar_btn.c" />
@@ -663,8 +671,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_combomenu_item.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_listex_row.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_list_row.c" />
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_menu_2rd.c" />
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_menu_item.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_messagebox.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.c" />
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tip.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_animation.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_button.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_calendar.c" />
@@ -678,7 +689,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_list.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_listex.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menu.c" />
-    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menubar.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_num.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_progress.c" />
@@ -704,6 +714,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_ip.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_list.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_listex.c" />
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_menu.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_num.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_progress.c" />

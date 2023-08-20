@@ -24,11 +24,11 @@ typedef struct klbwnd_check_css_t_
     klbuicss_margin_t       margin;         ///< 外边距
     klbuicss_padding_t      padding;        ///< 内边距
 
-    klbuicssex_attributes_t on;             ///< 选中状态, 常规
+    klbuicssex_attributes_t on_normal;      ///< 选中状态, 常规
     klbuicssex_attributes_t on_focus;       ///< 选中状态, 聚焦
     klbuicssex_attributes_t on_disable;     ///< 选中状态, 不使能
 
-    klbuicssex_attributes_t off;            ///< 未选中, 常规
+    klbuicssex_attributes_t off_normal;     ///< 未选中, 常规
     klbuicssex_attributes_t off_focus;      ///< 未选中, 聚焦
     klbuicssex_attributes_t off_disable;    ///< 未选中, 不使能
 }klbwnd_check_css_t;

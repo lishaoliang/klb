@@ -88,7 +88,7 @@ static int klbwnd_check_on_paint(klb_wnd_t* p_wnd)
         }
         else
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on, &paint_rect, true);         // 选中 - 常规
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->on_normal, &paint_rect, true);         // 选中 - 常规
         }
     }
     else
@@ -103,7 +103,7 @@ static int klbwnd_check_on_paint(klb_wnd_t* p_wnd)
         }
         else
         {
-            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off, &paint_rect, false);        // 未选中 - 常规
+            klbwnd_check_on_paint_status(p_wnd, p_check, &p_css->off_normal, &paint_rect, false);        // 未选中 - 常规
         }
     }
 
@@ -170,22 +170,22 @@ void klbwnd_check_css_init(klbwnd_check_css_t* p_css, klb_gui_t* p_gui)
     p_css->margin = p_default->margin;
     p_css->padding = p_default->padding;
 
-    klbuicssex_attributes_init(&p_css->on, &p_default->normal);
+    klbuicssex_attributes_init(&p_css->on_normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->on_focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->on_disable, &p_default->disable);
 
-    klbuicssex_attributes_init(&p_css->off, &p_default->normal);
+    klbuicssex_attributes_init(&p_css->off_normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->off_focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->off_disable, &p_default->disable);
 }
 
 void klbwnd_check_css_quit(klbwnd_check_css_t* p_css)
 {
-    klbuicssex_attributes_quit(&p_css->on);
+    klbuicssex_attributes_quit(&p_css->on_normal);
     klbuicssex_attributes_quit(&p_css->on_focus);
     klbuicssex_attributes_quit(&p_css->on_disable);
 
-    klbuicssex_attributes_quit(&p_css->off);
+    klbuicssex_attributes_quit(&p_css->off_normal);
     klbuicssex_attributes_quit(&p_css->off_focus);
     klbuicssex_attributes_quit(&p_css->off_disable);
 }

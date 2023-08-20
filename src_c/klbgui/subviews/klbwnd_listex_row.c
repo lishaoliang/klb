@@ -138,7 +138,7 @@ static int klbwnd_listex_row_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->disable, &paint_rect);
     }
@@ -206,7 +206,7 @@ void klbwnd_listex_row_set_css(klb_wnd_t* p_wnd, klbwnd_listex_row_css_t* p_row_
     p_row->p_row_css = p_row_css;
     p_row->p_css = p_css;
 
-    klbwnd_check_set_css(p_row->p_check, &p_css->check);
+    klbwnd_check_set_css(p_row->p_check, &p_css->css_check);
 }
 
 void klbwnd_listex_row_set_index(klb_wnd_t* p_wnd, int idx)

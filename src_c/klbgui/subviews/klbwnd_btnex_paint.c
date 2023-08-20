@@ -25,7 +25,7 @@
     paint_rect.w -= (p_css->margin.left + p_css->margin.right); \
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom); \
 \
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style) \
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status) \
     { \
         (PAINT_STATUS)(p_wnd, p_btn, p_css, &p_css->disable, &paint_rect); \
     } \
@@ -91,7 +91,7 @@ static int on_paint_klbwnd_btnex_select(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         on_paint_status_klbwnd_btnex_select(p_wnd, p_btn, p_css, &p_css->disable, &paint_rect);
     }

@@ -12,6 +12,7 @@
 #define __KLB_WND_H__
 
 #include "klb_type.h"
+#include "klbmem/klb_mem.h"
 #include "klbutil/klb_rect.h"
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_canvas.h"
@@ -47,6 +48,8 @@ typedef enum klb_wnd_style_e_
     KLB_WND_STYLE_NOFOCUS               = 0x0004,   ///< 无聚焦状态
     KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
     KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘
+
+    KLB_WND_STYLE_LAYER_TIP             = 0x8000,   ///< TIP 图层
 }klb_wnd_style_e;
 
 
@@ -193,6 +196,9 @@ typedef struct klb_wnd_t_
     klb_wnd_pos_t       pos;        ///< 窗口位置
     klb_wnd_state_t     state;      ///< 窗口状态的参数
 
+    // tip
+    sds                 tip;        ///< 聚焦之后的tip数据
+
     // 用户数据
     void*               p_udata;    ///< public user data, [绑定响应函数的附加指针]
 
@@ -216,6 +222,7 @@ typedef struct klb_wnd_t_
 #define KLB_FREE_WND(WND_) { \
     if(NULL!=(WND_)){ \
         klb_wnd_destroy_cb destroy=(WND_)->vtable.destroy; \
+        KLB_FREE_BY(((WND_)->tip), sdsfree); \
         if(destroy) { destroy(WND_); } \
         (WND_)=NULL; \
     } \
@@ -288,6 +295,14 @@ KLB_API bool klb_wnd_is_disable(klb_wnd_t* p_wnd);
 
 
 //////////////////////////////////////////////////////////////////////////
+// tip
+
+/// @brief 设置,获取 tip
+KLB_API void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip);
+KLB_API const sds klb_wnd_get_tip(klb_wnd_t* p_wnd);
+
+
+//////////////////////////////////////////////////////////////////////////
 // 窗口位置/大小
 
 /// @brief 基于父窗口移动到指定的相对坐标
@@ -332,6 +347,21 @@ KLB_API int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_p
 
 /// @brief 调用on_command函数
 KLB_API int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+/// @brief 1.调用on_control函数; 2.调用on_command函数
+KLB_API int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 控件建议宽/高
+
+/// @brief 获取建议宽
+KLB_API int klb_wnd_suggestw(klb_wnd_t* p_wnd);
+
+
+/// @brief 获取建议高
+KLB_API int klb_wnd_suggesth(klb_wnd_t* p_wnd);
 
 
 //////////////////////////////////////////////////////////////////////////

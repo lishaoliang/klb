@@ -66,7 +66,7 @@ static int klbwnd_vscrollbar_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         klbwnd_vscrollbar_on_paint_status(p_wnd, p_vsc, p_css, &p_css->disable, &paint_rect);
     }
@@ -234,9 +234,9 @@ void klbwnd_vscrollbar_set_css(klb_wnd_t* p_wnd, klbwnd_vscrollbar_css_t* p_css)
 
     p_vsc->p_css = p_css;
 
-    klbwnd_btnex_set_css(p_vsc->p_up, &p_css->btnex);
-    klbwnd_btnex_set_css(p_vsc->p_down, &p_css->btnex);
-    klbwnd_btnex_set_css(p_vsc->p_middle, &p_css->btnex);
+    klbwnd_btnex_set_css(p_vsc->p_up, &p_css->css_btnex);
+    klbwnd_btnex_set_css(p_vsc->p_down, &p_css->css_btnex);
+    klbwnd_btnex_set_css(p_vsc->p_middle, &p_css->css_btnex);
 }
 
 void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, int value)
@@ -292,7 +292,7 @@ void klbwnd_vscrollbar_css_init(klbwnd_vscrollbar_css_t* p_css, klb_gui_t* p_gui
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
 
-    klbwnd_btnex_css_init(&p_css->btnex, p_gui);
+    klbwnd_btnex_css_init(&p_css->css_btnex, p_gui);
 }
 
 void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css)
@@ -301,7 +301,7 @@ void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
 
-    klbwnd_btnex_css_quit(&p_css->btnex);
+    klbwnd_btnex_css_quit(&p_css->css_btnex);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -20,6 +20,7 @@
 #include "klbgui/extensions/klbuiex_time.h"
 #include "klbgui/extensions/klbuiex_shwnd.h"
 #include "klbgui/extensions/klbuiex_redraw.h"
+#include "klbgui/extensions/klbuiex_tip.h"
 #include "klbgui/extensions/klbuiex_util.h"
 
 
@@ -38,6 +39,7 @@ extern "C" {
     klbuiex_register_time((GUI_));      \
     klbuiex_register_shwnd((GUI_));     \
     klbuiex_register_redraw((GUI_));    \
+    klbuiex_register_tip((GUI_));       \
 }
 
 

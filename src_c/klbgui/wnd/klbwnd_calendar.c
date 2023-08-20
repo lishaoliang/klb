@@ -68,7 +68,7 @@ static int klbwnd_calendar_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         klbwnd_calendar_on_paint_status(p_wnd, p_cal, p_css, &p_css->disable, &paint_rect);
     }
@@ -391,9 +391,9 @@ void klbwnd_calendar_set_css(klb_wnd_t* p_wnd, klbwnd_calendar_css_t* p_css)
 
     if (NULL != p_css)
     {
-        klbwnd_calendar_btn_set_css(p_cal->p_btn_ymd, &p_css->btn);
-        klbwnd_calendar_btn_set_css(p_cal->p_btn_prev, &p_css->btn);
-        klbwnd_calendar_btn_set_css(p_cal->p_btn_next, &p_css->btn);
+        klbwnd_calendar_btn_set_css(p_cal->p_btn_ymd, &p_css->css_btn);
+        klbwnd_calendar_btn_set_css(p_cal->p_btn_prev, &p_css->css_btn);
+        klbwnd_calendar_btn_set_css(p_cal->p_btn_next, &p_css->css_btn);
 
         klbwnd_calendar_years_set_css(p_cal->p_years, p_css);
         klbwnd_calendar_months_set_css(p_cal->p_months, p_css);
@@ -505,8 +505,8 @@ void klbwnd_calendar_css_init(klbwnd_calendar_css_t* p_css, klb_gui_t* p_gui)
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
 
-    klbwnd_calendar_btn_css_init(&p_css->btn, p_gui);
-    klbwnd_static_css_init(&p_css->sta, p_gui);
+    klbwnd_calendar_btn_css_init(&p_css->css_btn, p_gui);
+    klbwnd_static_css_init(&p_css->css_sta, p_gui);
 }
 
 void klbwnd_calendar_css_quit(klbwnd_calendar_css_t* p_css)
@@ -515,8 +515,8 @@ void klbwnd_calendar_css_quit(klbwnd_calendar_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
 
-    klbwnd_calendar_btn_css_quit(&p_css->btn);
-    klbwnd_static_css_quit(&p_css->sta);
+    klbwnd_calendar_btn_css_quit(&p_css->css_btn);
+    klbwnd_static_css_quit(&p_css->css_sta);
 }
 
 //////////////////////////////////////////////////////////////////////////

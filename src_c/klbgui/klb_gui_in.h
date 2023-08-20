@@ -70,6 +70,7 @@ typedef struct klb_gui_t_
     {
         klbuiex_wndhash_t*  p_wndhash;                  ///< 窗口创建,查找等
         klbuiex_redraw_t*   p_redraw;                   ///< 重绘记录
+        klbuiex_tip_t*      p_tip;                      ///< tip
         klbuiex_util_t*     p_util;                     ///< util
     };
 
@@ -85,7 +86,6 @@ typedef struct klb_gui_t_
         klb_wnd_t*      p_popup_wnd[KLBUI_POPUP_WND_MAX];
 
         klb_wnd_t*      p_msg_box;      ///< message box
-        klb_wnd_t*      p_tip;          ///< tip
     };
 
     // 聚焦等
@@ -124,12 +124,6 @@ typedef struct klb_gui_t_
 
 // 更新窗口
 int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd);
-
-// 重绘
-int klb_gui_redraw(klb_gui_t* p_gui);
-
-// 刷新
-int klb_gui_refresh(klb_gui_t* p_gui);
 
 
 //////////////////////////////////////////////////////////////////////////

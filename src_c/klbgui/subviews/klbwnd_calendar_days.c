@@ -75,7 +75,7 @@ void klbwnd_calendar_days_set_css(klb_wnd_t* p_wnd, klbwnd_calendar_css_t* p_css
     for (int i = 0; i < KLBWND_CAL_DAYS_column; i++)
     {
         klb_wnd_t* p_sta = p_days->p_statics[i];
-        klbwnd_static_set_css(p_sta, &p_css->sta);
+        klbwnd_static_set_css(p_sta, &p_css->css_sta);
     }
 
     // 第二排 ~ 第七排, 按钮
@@ -84,7 +84,7 @@ void klbwnd_calendar_days_set_css(klb_wnd_t* p_wnd, klbwnd_calendar_css_t* p_css
         for (int n = 0; n < KLBWND_CAL_DAYS_column; n++)
         {
             klb_wnd_t* p_btn = p_days->p_btns[m * KLBWND_CAL_DAYS_column + n];
-            klbwnd_calendar_btn_set_css(p_btn, &p_css->btn);
+            klbwnd_calendar_btn_set_css(p_btn, &p_css->css_btn);
         }
     }
 }

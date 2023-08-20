@@ -163,7 +163,7 @@ static int klbwnd_list_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STYLE_NOFOCUS & p_wnd->state.style)
+    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
         klbwnd_list_on_paint_status(p_wnd, p_list, p_css, &p_css->disable, &paint_rect);
     }
@@ -316,7 +316,7 @@ static int klbwnd_list_on_predraw(klb_wnd_t* p_wnd)
                 p_list->p_list_row[i] = p_list_row;
             }
 
-            klbwnd_list_row_set_css(p_list_row, &p_list->p_css->list_row);
+            klbwnd_list_row_set_css(p_list_row, &p_list->p_css->css_list_row);
             klbwnd_list_row_set_index(p_list_row, i);
             klb_wnd_show(p_list_row, true);
         }
@@ -387,7 +387,7 @@ void klbwnd_list_set_css(klb_wnd_t* p_wnd, klbwnd_list_css_t* p_css)
 
     if (p_list->p_vscrollbar)
     {
-        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_css->vscrollbar);
+        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_css->css_vscrollbar);
     }
 }
 
@@ -541,10 +541,10 @@ void klbwnd_list_css_init(klbwnd_list_css_t* p_css, klb_gui_t* p_gui)
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
 
     // 行控件 CSS
-    klbwnd_list_row_css_init(&p_css->list_row, p_gui);
+    klbwnd_list_row_css_init(&p_css->css_list_row, p_gui);
 
     // 垂直滚动条
-    klbwnd_vscrollbar_css_init(&p_css->vscrollbar, p_gui);
+    klbwnd_vscrollbar_css_init(&p_css->css_vscrollbar, p_gui);
 }
 
 void klbwnd_list_css_quit(klbwnd_list_css_t* p_css)
@@ -554,10 +554,10 @@ void klbwnd_list_css_quit(klbwnd_list_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->disable);
 
     // 行控件 CSS
-    klbwnd_list_row_css_quit(&p_css->list_row);
+    klbwnd_list_row_css_quit(&p_css->css_list_row);
 
     // 垂直滚动条
-    klbwnd_vscrollbar_css_quit(&p_css->vscrollbar);
+    klbwnd_vscrollbar_css_quit(&p_css->css_vscrollbar);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -579,7 +579,7 @@ static void klbwnd_list_init_subwnds(klb_wnd_t* p_wnd, klbwnd_list_t* p_list)
 
     if (p_list->p_css)
     {
-        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_list->p_css->vscrollbar);
+        klbwnd_vscrollbar_set_css(p_list->p_vscrollbar, &p_list->p_css->css_vscrollbar);
     }
 }
 

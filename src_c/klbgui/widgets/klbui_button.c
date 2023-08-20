@@ -70,6 +70,21 @@ static klb_map_t* klbui_button_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 //////////////////////////////////////////////////////////////////////////
 // 仿 CSS 方法
 
+static void on_klbui_button_tip(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_string(p_out, 0, klb_wnd_get_tip(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        const char* p_tip = klb_map_idx_to_string(p_in, start);
+
+        klb_wnd_set_tip(p_wnd, p_tip);
+    }
+}
+
 static void on_klbui_button_visibility(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
@@ -265,6 +280,9 @@ static void klbui_button_init_func_map(klb_wnd_t* p_wnd, klbui_button_t* p_btn, 
     //////////////////////////////////////////////
     // 若第一次, 则添加全局属性解析方法
     // 仿 CSS 方法
+
+    // tip
+    KLBUI_btn_bind("tip", on_klbui_button_tip);
 
     // 显隐
     KLBUI_btn_bind("visibility", on_klbui_button_visibility); // 显示/隐藏

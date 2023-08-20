@@ -60,8 +60,8 @@ typedef struct klbwnd_calendar_css_t_
     klbuicssex_attributes_t     focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t     disable;        ///< disable 不使能状态参数
 
-    klbwnd_static_css_t         sta;            ///< 静态文本
-    klbwnd_calendar_btn_css_t   btn;            ///< 按钮
+    klbwnd_static_css_t         css_sta;        ///< 静态文本
+    klbwnd_calendar_btn_css_t   css_btn;        ///< 按钮
 }klbwnd_calendar_css_t;
 
 

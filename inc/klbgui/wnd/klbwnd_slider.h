@@ -19,23 +19,46 @@ extern "C" {
 #endif
 
 
+/// @struct klbui_slider_attributes_t
+/// @brief  滑动条状态属性
+typedef struct klbui_slider_attributes_t_
+{
+    uint32_t                background_color;   ///< 整个背景色
+    uint32_t                foreground_color;   ///< 滑块颜色
+
+    klbuicss_text_t         text;               ///< 左侧值占据的颜色
+
+    uint32_t                pos_color;          ///< 中间指示颜色(非图片时)
+    sds                     pos_image;          ///< 中间指示位置图片
+}klbui_slider_attributes_t;
+
+
+/// @brief  滑动条CSS属性
 typedef struct klbwnd_slider_css_t_
 {
-    klbuicss_margin_t       margin;         ///< 外边距
-    klbuicss_padding_t      padding;        ///< 内边距
+    int         foreground_h;   ///< 滑块高度
+    int         pos_w;          ///< 中间指示宽度
+    int         pos_h;          ///< 中间指示高度
 
-    klbuicssex_attributes_t normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+    klbuicss_margin_t         margin;         ///< 外边距
+    klbuicss_padding_t        padding;        ///< 内边距
+
+    klbui_slider_attributes_t normal;         ///< normal 常规状态参数
+    klbui_slider_attributes_t focus;          ///< focus 聚焦状态参数
+    klbui_slider_attributes_t disable;        ///< disable 不使能状态参数
 }klbwnd_slider_css_t;
 
 
+/// @brief  滑动条
 typedef struct klbwnd_slider_t_
 {
     klbwnd_slider_css_t*    p_css;          ///< 样式
 
     sds                     title;          ///< 标题
-    sds                     value;          ///< 值
+
+    int                     min;            ///< 最小值
+    int                     max;            ///< 最大值
+    int                     value;          ///< 当前值
 }klbwnd_slider_t;
 
 
@@ -57,11 +80,6 @@ KLB_API void klbwnd_slider_set_css(klb_wnd_t* p_wnd, klbwnd_slider_css_t* p_css)
 /// @brief set/get title
 KLB_API void klbwnd_slider_set_title(klb_wnd_t* p_wnd, const char* p_title);
 KLB_API const sds klbwnd_slider_get_title(klb_wnd_t* p_wnd);
-
-
-/// @brief set/get value
-KLB_API void klbwnd_slider_set_value(klb_wnd_t* p_wnd, const char* p_value);
-KLB_API const sds klbwnd_slider_get_value(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

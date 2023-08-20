@@ -74,7 +74,7 @@ void klbwnd_calendar_months_set_css(klb_wnd_t* p_wnd, klbwnd_calendar_css_t* p_c
         for (int n = 0; n < KLBWND_CAL_MONTHS_column; n++)
         {
             klb_wnd_t* p_btn = p_months->p_btns[m][n];
-            klbwnd_calendar_btn_set_css(p_btn, &p_css->btn);
+            klbwnd_calendar_btn_set_css(p_btn, &p_css->css_btn);
         }
     }
 }

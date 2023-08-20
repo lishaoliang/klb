@@ -128,7 +128,7 @@ static void on_klbui_check_padding_left(klb_wnd_t* p_wnd, klbui_check_t* p_check
 
 static void on_klbui_check_text_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_check->css.off.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_check->css.off_normal.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_text_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -143,7 +143,7 @@ static void on_klbui_check_text_color_disable(klb_wnd_t* p_wnd, klbui_check_t* p
 
 static void on_klbui_check_on_text_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_text_color(&(p_check->css.on.text), p_wnd, method, p_in, p_out);
+    klbuicssex_text_color(&(p_check->css.on_normal.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_on_text_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -158,7 +158,7 @@ static void on_klbui_check_on_text_color_disable(klb_wnd_t* p_wnd, klbui_check_t
 
 static void on_klbui_check_background_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_check->css.off.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_check->css.off_normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_background_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -173,7 +173,7 @@ static void on_klbui_check_background_color_disable(klb_wnd_t* p_wnd, klbui_chec
 
 static void on_klbui_check_on_background_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(p_check->css.on.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_color(&(p_check->css.on_normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_on_background_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -188,7 +188,7 @@ static void on_klbui_check_on_background_color_disable(klb_wnd_t* p_wnd, klbui_c
 
 static void on_klbui_check_background_image(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_check->css.off.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_check->css.off_normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_background_image_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -203,7 +203,7 @@ static void on_klbui_check_background_image_disable(klb_wnd_t* p_wnd, klbui_chec
 
 static void on_klbui_check_on_background_image(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(p_check->css.on.background), p_wnd, method, p_in, p_out);
+    klbuicssex_background_image(&(p_check->css.on_normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_on_background_image_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -218,7 +218,7 @@ static void on_klbui_check_on_background_image_disable(klb_wnd_t* p_wnd, klbui_c
 
 static void on_klbui_check_border_width(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_check->css.off.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_check->css.off_normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_border_width_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -233,7 +233,7 @@ static void on_klbui_check_border_width_disable(klb_wnd_t* p_wnd, klbui_check_t*
 
 static void on_klbui_check_on_border_width(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(p_check->css.on.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_width(&(p_check->css.on_normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_on_border_width_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -248,7 +248,7 @@ static void on_klbui_check_on_border_width_disable(klb_wnd_t* p_wnd, klbui_check
 
 static void on_klbui_check_border_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_check->css.off.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_check->css.off_normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_border_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -263,7 +263,7 @@ static void on_klbui_check_border_color_disable(klb_wnd_t* p_wnd, klbui_check_t*
 
 static void on_klbui_check_on_border_color(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(p_check->css.on.border), p_wnd, method, p_in, p_out);
+    klbuicssex_border_color(&(p_check->css.on_normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_check_on_border_color_focus(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)

@@ -13,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 // 前置定义
 static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y);
+static void unfocus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -22,28 +23,39 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 {
     klb_gui_t* p_gui = KLB_MALLOCZ(klb_gui_t, 1, 0);
 
-    p_gui->p_canvas = p_canvas;
+    ////////////////////////////////////////////
+    // 初始化内存
+    {
+        p_gui->p_canvas = p_canvas;
 
-    p_gui->p_extension_hlist = klb_hlist_create(0);
-    p_gui->p_extension_activated_hlist = klb_hlist_create(0);
+        p_gui->p_extension_hlist = klb_hlist_create(0);
+        p_gui->p_extension_activated_hlist = klb_hlist_create(0);
 
-    p_gui->p_msg_list = klb_nlist_create();
-    p_gui->p_msg_mutex = klb_mutex_create();
+        p_gui->p_msg_list = klb_nlist_create();
+        p_gui->p_msg_mutex = klb_mutex_create();
 
-    p_gui->is_need_clear = false;
+        p_gui->is_need_clear = false;
+    }
+
 
     ////////////////////////////////////////////
     // 注册标准扩展
     KLBUIEX_register_extensions_std(p_gui);
 
-    // 取得window hash指针
-    p_gui->p_wndhash = klbuiex_get_wndhash(p_gui);
+    // 取得常用扩展指针
+    {
+        // 取得window hash指针
+        p_gui->p_wndhash = klbuiex_get_wndhash(p_gui);
 
-    // 取得重绘记录指针
-    p_gui->p_redraw = klbuiex_get_redraw(p_gui);
+        // 取得重绘记录指针
+        p_gui->p_redraw = klbuiex_get_redraw(p_gui);
 
-    // util
-    p_gui->p_util = klbuiex_get_util(p_gui);
+        // 取得tip
+        p_gui->p_tip = klbuiex_get_tip(p_gui);
+
+        // util
+        p_gui->p_util = klbuiex_get_util(p_gui);
+    }
 
     // 注册标准窗口类型
     KLB_GUI_REGISTER_STD(p_gui);
@@ -88,6 +100,9 @@ static void klb_gui_quit_extensions(klb_gui_t* p_gui)
 void klb_gui_destroy(klb_gui_t* p_gui)
 {
     assert(NULL != p_gui);
+
+    // 清理画布
+    klb_gui_attach_canvas(p_gui, NULL);
 
     // 清理消息
     while (0 < klb_nlist_size(p_gui->p_msg_list))
@@ -205,6 +220,8 @@ void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas)
     assert(NULL != p_gui);
 
     p_gui->p_canvas = p_canvas;
+
+    klbuiex_tip_attach_canvas(p_gui->p_tip, p_canvas); // tip 画布
 }
 
 void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
@@ -279,7 +296,6 @@ int klb_gui_clear(klb_gui_t* p_gui)
     p_gui->modal_num = 0;
     p_gui->popup_num = 0;
     p_gui->p_msg_box = NULL;
-    p_gui->p_tip = NULL;
     p_gui->p_focus_top = NULL;
     p_gui->p_focus = NULL;
 
@@ -325,39 +341,6 @@ int klb_gui_clear_async(klb_gui_t* p_gui, klb_gui_clear_result_cb cb_clear, void
     return 1;
 }
 
-// 控件 on_command 事件
-// wnd.vtable.on_command
-static int on_command_klb_wnd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    if (p_wnd && p_wnd->vtable.on_command)
-    {
-        klb_point_t pt = { 0, 0 };
-        const klb_point_t* p1 = (NULL != p_pt1) ? p_pt1 : &pt;
-        const klb_point_t* p2 = (NULL != p_pt2) ? p_pt2 : &pt;
-
-        return p_wnd->vtable.on_command(p_wnd, e, p1, p2, lparam, wparam);
-    }
-
-    return 0;
-}
-
-
-// 控件 on_control 事件
-// wnd.vtable.on_control
-static int on_control_klb_wnd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    if (p_wnd && p_wnd->vtable.on_control)
-    {
-        klb_point_t pt = { 0, 0 };
-        const klb_point_t* p1 = (NULL != p_pt1) ? p_pt1 : &pt;
-        const klb_point_t* p2 = (NULL != p_pt2) ? p_pt2 : &pt;
-
-        return p_wnd->vtable.on_control(p_wnd, e, p1, p2, lparam, wparam);
-    }
-
-    return 0;
-}
-
 // 需要递归执行的窗口事件: eg. KLBUI_onload
 static void do_control_event_recursive_klb_wnd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
@@ -375,7 +358,7 @@ static void do_control_event_recursive_klb_wnd(klb_wnd_t* p_wnd, int e, const kl
         p_next = p_next->p_next;
     }
 
-    on_control_klb_wnd(p_wnd, e, p_pt1, p_pt2, lparam, wparam);
+    klb_wnd_on_control(p_wnd, e, p_pt1, p_pt2, lparam, wparam);
 }
 
 
@@ -386,7 +369,8 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
     {
         if (NULL != p_gui->p_focus)
         {
-            klb_wnd_set_focus(p_gui->p_focus, false);
+            // 失去焦点流程
+            unfocus_windows_klb_gui(p_gui, p_gui->p_focus);
 
             p_gui->p_focus_top = NULL;
             p_gui->p_focus = NULL;
@@ -402,7 +386,7 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
         do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onload, NULL, NULL, 0, 0);
 
         // 只有最顶层窗口拥有 "onload"事件响应
-        on_command_klb_wnd(p_wnd, KLBUI_onload, NULL, NULL, 0, 0);
+        klb_wnd_on_command(p_wnd, KLBUI_onload, NULL, NULL, 0, 0);
     }
 
     // "onpredraw" 事件
@@ -434,7 +418,8 @@ static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
     {
         if (NULL != p_gui->p_focus)
         {
-            klb_wnd_set_focus(p_gui->p_focus, false);
+            // 失去焦点流程
+            unfocus_windows_klb_gui(p_gui, p_gui->p_focus);
 
             p_gui->p_focus_top = NULL;
             p_gui->p_focus = NULL;
@@ -444,7 +429,7 @@ static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
     // "onunload" 事件
     {
         // 只有最顶层窗口拥有 "onunload"事件响应
-        on_command_klb_wnd(p_wnd, KLBUI_onunload, NULL, NULL, 0, 0);
+        klb_wnd_on_command(p_wnd, KLBUI_onunload, NULL, NULL, 0, 0);
 
         // on_control 递归调用所有的控件
         do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onunload, NULL, NULL, 0, 0);
@@ -771,6 +756,41 @@ int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h)
     return 0;
 }
 
+/// @brief 控件建议宽
+int klb_gui_suggestw(klb_gui_t* p_gui, const char* p_path_name, int* p_out_w)
+{
+    if (NULL != p_path_name && NULL != p_out_w)
+    {
+        klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+        if (NULL == p_wnd)
+        {
+            return 1;
+        }
+
+        *p_out_w = klb_wnd_suggestw(p_wnd);
+    }
+
+    return 0;
+}
+
+
+/// @brief 控件建议高
+int klb_gui_suggesth(klb_gui_t* p_gui, const char* p_path_name, int* p_out_h)
+{
+    if (NULL != p_path_name && NULL != p_out_h)
+    {
+        klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+        if (NULL == p_wnd)
+        {
+            return 1;
+        }
+
+        *p_out_h = klb_wnd_suggesth(p_wnd);
+    }
+
+    return 0;
+}
+
 int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
 {
     if (NULL != p_out_w)
@@ -786,6 +806,14 @@ int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
     return 0;
 }
 
+int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
+{
+    klbuiex_redraw_push(p_gui->p_redraw, p_wnd);
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 // 重绘所有
 static void klb_gui_redraw_all(klb_gui_t* p_gui, klb_rect_t* p_rect)
@@ -841,26 +869,20 @@ static void klb_gui_redraw_wnd_hlist(klb_gui_t* p_gui, klb_hlist_t* p_hlist, klb
     }
 }
 
-static void refresh_canvas_klb_gui(klb_gui_t* p_gui, klb_rect_t* p_rect)
+// 重绘,刷新
+static int klb_gui_redraw_and_refresh(klb_gui_t* p_gui)
 {
-    if (p_gui->p_canvas && p_gui->p_canvas->vtable.refresh_rect)
-    {
-        klb_rect_t rect = { 0 };
-        if (klb_rect_intersect(&rect, p_rect, &p_gui->p_canvas->rect) && 0 < rect.w && 0 < rect.h)
-        {
-            p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &rect);
-        }
-    }
-}
+    // step1. 处理主画布绘制
+    bool is_refresh_main = false;
+    klb_rect_t rect_main = { 0 };
 
-int klb_gui_redraw(klb_gui_t* p_gui)
-{
-    bool redraw_all = false;
-    if (klbuiex_redraw_need_repaint(p_gui->p_redraw, &redraw_all))
+    // 检查主画布的刷新
+    bool is_redraw_all = false;
+    if (klbuiex_redraw_need_repaint(p_gui->p_redraw, &is_redraw_all))
     {
         klb_rect_t rect = { 0 };
 
-        if (redraw_all)
+        if (is_redraw_all)
         {
             klb_gui_redraw_all(p_gui, &rect);
         }
@@ -869,34 +891,100 @@ int klb_gui_redraw(klb_gui_t* p_gui)
             klb_gui_redraw_wnd_hlist(p_gui, klbuiex_redraw_get_hlist(p_gui->p_redraw), &rect);
         }
 
-        // 清空
+        // 绘制完成, 清空 redraw 标记
         klbuiex_redraw_clear(p_gui->p_redraw);
 
-        // 刷新
-        refresh_canvas_klb_gui(p_gui, &rect);
+        // 与主画布做交集, 并检查是否需要刷新主画布
+        if (klb_rect_intersect(&rect_main, &rect, &p_gui->p_canvas->rect) && 0 < rect_main.w && 0 < rect_main.h)
+        {
+            is_refresh_main = true;
+        }
     }
 
-    return 0;
-}
+    // step2. 处理tip图层绘制
+    bool is_redraw_tip = false;
+    if (klbuiex_tip_need_repaint(p_gui->p_tip))
+    {
+        // 重新绘制 tip
+        klbuiex_tip_redraw(p_gui->p_tip);
 
-int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
-{
-    klbuiex_redraw_push(p_gui->p_redraw, p_wnd);
+        is_redraw_tip = true;
+    }
 
-    return 0;
-}
+    bool is_refresh_tip = false;
+    klb_rect_t rect_tip_dst = { 0 };
+    klb_rect_t rect_tip_src = { 0 };
+    klb_canvas_t* p_tip_canvas = NULL;
 
-int klb_gui_refresh(klb_gui_t* p_gui)
-{
-    //if (p_gui->refresh)
-    //{
-    //    if (p_gui->p_canvas && p_gui->p_canvas->vtable.refresh_rect)
-    //    {
-    //        p_gui->p_canvas->vtable.refresh_rect(p_gui->p_canvas, &p_gui->p_canvas->rect);
-    //    }
+    bool is_show_tip = false;
+    p_tip_canvas = klbuiex_tip_get_refresh(p_gui->p_tip, &is_show_tip, &rect_tip_dst, &rect_tip_src);
 
-    //    p_gui->refresh = false;
-    //}
+    if (is_show_tip &&
+        (NULL != p_tip_canvas) &&
+        (is_redraw_tip || is_refresh_main))
+    {
+        is_refresh_tip = true;
+    }
+
+    // step3. 恢复上次的tip区域
+    bool is_refresh_old = false;
+    klb_rect_t rect_old = { 0 };
+
+    if (klbuiex_tip_get_old(p_gui->p_tip, &rect_old))
+    {
+        if (is_refresh_main || is_refresh_tip)
+        {
+            is_refresh_old = true;
+            klbuiex_tip_set_old_refresh(p_gui->p_tip, false);
+        }
+    }
+
+    // step4. 最终汇总刷新参数
+    int layer_count = 0, idx = 0;
+    klb_rect_t dst[KLB_CANVAS_LAYER_max];
+    klb_rect_t src[KLB_CANVAS_LAYER_max];
+    klb_canvas_t* p_tmp_canvas[KLB_CANVAS_LAYER_max];
+
+    {
+        if (is_refresh_main)
+        {
+            dst[idx] = rect_main;
+            src[idx] = rect_main;
+            p_tmp_canvas[idx] = p_gui->p_canvas;
+
+            idx += 1;
+        }
+
+        if (is_refresh_old)
+        {
+            dst[idx] = rect_old;
+            src[idx] = rect_old;
+            p_tmp_canvas[idx] = p_gui->p_canvas;
+
+            idx += 1;
+        }
+
+        if (is_refresh_tip)
+        {
+            dst[idx] = rect_tip_dst;
+            src[idx] = rect_tip_src;
+            p_tmp_canvas[idx] = p_tip_canvas;
+
+            klbuiex_tip_set_old(p_gui->p_tip, &rect_tip_dst);
+            klbuiex_tip_set_old_refresh(p_gui->p_tip, true);
+
+            idx += 1;
+        }
+
+        layer_count = idx;
+    }
+
+    // step4. 汇总刷新
+    if (0 < layer_count)
+    {
+        // 刷新画布到"显存"; 注意: 刷到"显存"必须使用主画布
+        klb_canvas_refresh(p_gui->p_canvas, dst, p_tmp_canvas, src, layer_count);
+    }
 
     return 0;
 }
@@ -921,18 +1009,21 @@ static klb_wnd_t* find_focus_klb_gui(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
     }
 
     // popup
-    for (int i = p_gui->popup_num - 1; 0 <= i; i--)
+    if (0 < p_gui->popup_num)
     {
-        klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_popup_wnd[i], x, y);
-
-        if (NULL != p_focus)
+        for (int i = p_gui->popup_num - 1; 0 <= i; i--)
         {
-            if (NULL != p_top)
-            {
-                *p_top = p_gui->p_popup_wnd[i];
-            }
+            klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_popup_wnd[i], x, y);
 
-            return p_focus;
+            if (NULL != p_focus)
+            {
+                if (NULL != p_top)
+                {
+                    *p_top = p_gui->p_popup_wnd[i];
+                }
+
+                return p_focus;
+            }
         }
 
         // 在有 popup 时, 只在 popup 里面寻找
@@ -958,6 +1049,56 @@ static klb_wnd_t* find_focus_klb_gui(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
     return NULL;
 }
 
+// 聚焦窗口流程
+static void focus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd, int x, int y)
+{
+    // 即将得到焦点事件
+    klb_wnd_on_control_and_command(p_wnd, KLBUI_focusin, NULL, NULL, 0, 0);
+
+    // 得到焦点
+    klb_wnd_set_focus(p_wnd, true);
+
+    // 得到焦点事件
+    klb_wnd_on_control_and_command(p_wnd, KLBUI_focus, NULL, NULL, 0, 0);
+
+    // 显示tip
+    const sds tip = klb_wnd_get_tip(p_wnd);
+    if (NULL != tip && 0 < sdslen(tip))
+    {
+        klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+        int w = 0, h = 0;
+        klbuiex_tip_set_tilte(p_gui->p_tip, tip, &w, &h);
+
+        int screen_w = 0, screen_h = 0;
+        klb_gui_get_wh(p_gui, &screen_w, &screen_h);
+
+        //int sx = rect.x + rect.w / 2;
+        int sy = rect.y + rect.h + 1;
+
+        //if (screen_w < sx + w) { sx = screen_w - w; };
+        if (screen_h < sy + h) { sy = screen_h - h - 1; };
+
+        klbuiex_tip_show(p_gui->p_tip, true, x, sy);
+    }
+}
+
+// 取消聚焦流程
+static void unfocus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
+{
+    // 即将失去焦点事件
+    klb_wnd_on_control_and_command(p_wnd, KLBUI_focusout, NULL, NULL, 0, 0);
+
+    // 失去焦点
+    klb_wnd_set_focus(p_wnd, false);
+
+    // 失去焦点事件
+    klb_wnd_on_control_and_command(p_wnd, KLBUI_blur, NULL, NULL, 0, 0);
+
+    // 隐藏tip
+    klbuiex_tip_show(p_gui->p_tip, false, 0, 0);
+}
+
 // 重新寻找鼠标焦点
 static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
 {
@@ -967,14 +1108,8 @@ static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
 
     if (NULL != p_gui->p_focus && p_focus != p_gui->p_focus)
     {
-        // 即将失去焦点事件
-        on_control_klb_wnd(p_gui->p_focus, KLBUI_focusout, NULL, NULL, 0, 0);
-
-        // 失去焦点
-        klb_wnd_set_focus(p_gui->p_focus, false);
-
-        // 失去焦点事件
-        on_control_klb_wnd(p_gui->p_focus, KLBUI_blur, NULL, NULL, 0, 0);
+        // 取消焦点流程
+        unfocus_windows_klb_gui(p_gui, p_gui->p_focus);
 
         // 更新窗口
         // KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW 样式, 许可将窗口设计为可响应事件, 但不自动重绘
@@ -987,14 +1122,8 @@ static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
 
     if (NULL != p_focus && p_focus != p_gui->p_focus)
     {
-        // 即将得到焦点事件
-        on_control_klb_wnd(p_focus, KLBUI_focusin, NULL, NULL, 0, 0);
-
-        // 得到焦点
-        klb_wnd_set_focus(p_focus, true);
-
-        // 得到焦点事件
-        on_control_klb_wnd(p_focus, KLBUI_focus, NULL, NULL, 0, 0);
+        // 聚焦流程
+        focus_windows_klb_gui(p_gui, p_focus, x, y);
 
         // 更新窗口
         if (!(KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW & p_focus->state.style))
@@ -1063,25 +1192,21 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         // 这里 on_control / on_command 函数都需要处理, eg. 组件可能需要响应部分消息
         {
             // 先调用组件自身的处理函数
-            on_control_klb_wnd(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-
             // 再调用绑定的用户函数
-            on_command_klb_wnd(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            klb_wnd_on_control_and_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
         }
 
         // 最后将消息事件交给顶层窗口处理
         klb_wnd_t* p_wnd_top = klb_wnd_get_top(p_wnd);
         if (p_wnd != p_wnd_top)
         {
-            on_control_klb_wnd(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-            on_command_klb_wnd(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            klb_wnd_on_control_and_command(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
         }
 
         // 补充事件 outwindow
         if (outwindow)
         {
-            on_control_klb_wnd(p_wnd_top, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-            on_command_klb_wnd(p_wnd_top, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            klb_wnd_on_control_and_command(p_wnd_top, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
         }
     }
 
@@ -1127,7 +1252,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 {
     int ret = 0;
 
-    // 消息处理
+    // step1. 消息处理
     while (true)
     {
         if (0 != klb_gui_process_message_once(p_gui))
@@ -1136,7 +1261,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         }
     }
 
-    // 依次处理, 激活的扩展
+    // step2. 依次处理, 激活的扩展
     if (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
     {
         klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
@@ -1152,7 +1277,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         }
     }
 
-    // 是否需要清理
+    // step3. 是否需要清理
     // 这里控件等事件处理完毕, 在这里执行清理动作
     if (p_gui->is_need_clear)
     {
@@ -1167,11 +1292,8 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         p_gui->is_need_clear = false;
     }
 
-    // 是否重绘
-    klb_gui_redraw(p_gui);
-
-    // 刷新
-    klb_gui_refresh(p_gui);
+    // step 4. 检查重绘, 刷新
+    klb_gui_redraw_and_refresh(p_gui);
 
     return ret;
 }

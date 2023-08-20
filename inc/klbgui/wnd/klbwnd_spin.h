@@ -32,7 +32,7 @@ typedef struct klbwnd_spin_css_t_
 
 typedef struct klbwnd_spin_t_
 {
-    klbwnd_spin_css_t*    p_css;          ///< 样式
+    klbwnd_spin_css_t*      p_css;          ///< 样式
 
     sds                     title;          ///< 标题
     sds                     value;          ///< 值

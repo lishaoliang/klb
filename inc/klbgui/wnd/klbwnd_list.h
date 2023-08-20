@@ -67,8 +67,8 @@ typedef struct klbwnd_list_css_t_
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
 
-    klbwnd_list_row_css_t   list_row;       ///< 行控件CSS
-    klbwnd_vscrollbar_css_t vscrollbar;     ///< 垂直滚动条CSS
+    klbwnd_list_row_css_t   css_list_row;   ///< 行控件CSS
+    klbwnd_vscrollbar_css_t css_vscrollbar; ///< 垂直滚动条CSS
 }klbwnd_list_css_t;
 
 

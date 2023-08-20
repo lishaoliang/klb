@@ -669,6 +669,28 @@ static int klua_kgui_resize(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_suggestw(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
+
+    int w = 0;
+    klb_gui_suggestw(klua_gui_get_by_L(L), p_path_name, &w);
+
+    lua_pushinteger(L, w);                              ///< #1. 建议宽度
+    return 1;
+}
+
+static int klua_kgui_suggesth(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
+
+    int h = 0;
+    klb_gui_suggesth(klua_gui_get_by_L(L), p_path_name, &h);
+
+    lua_pushinteger(L, h);                              ///< #1. 建议高度
+    return 1;
+}
+
 static int klua_kgui_get_wh(lua_State* L)
 {
     int w = 0, h = 0;
@@ -753,6 +775,9 @@ int klua_open_kgui(lua_State* L)
         { "show",               klua_kgui_show },
         { "move",               klua_kgui_move },
         { "resize",             klua_kgui_resize },
+
+        { "suggestw",           klua_kgui_suggestw },
+        { "suggesth",           klua_kgui_suggesth },
 
         // gui get (w,h)
         { "wh",                 klua_kgui_get_wh },

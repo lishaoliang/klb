@@ -394,6 +394,40 @@ int klb_canvas_refresh_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, 
     return 0;
 }
 
+int klb_canvas_refresh(klb_canvas_t* p_canvas,                                  // 主画布
+                        const klb_rect_t dst[KLB_CANVAS_LAYER_max],             // 目标主显存对应区域
+                        klb_canvas_t* p_src_canvas[KLB_CANVAS_LAYER_max],       // 待刷新的源画布
+                        const klb_rect_t src[KLB_CANVAS_LAYER_max],             // 源区域
+                        int layer_count)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.refresh)
+    {
+        return p_canvas->vtable.refresh(p_canvas, dst, p_src_canvas, src, layer_count);
+    }
+
+    return 0;
+}
+
+klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int color_fmt)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.malloc)
+    {
+        return p_canvas->vtable.malloc(p_canvas, w, h, color_fmt);
+    }
+
+    return 0;
+}
+
 //
 //int klb_canvas_draw_fill(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color)
 //{

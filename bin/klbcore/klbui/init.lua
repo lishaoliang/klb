@@ -200,6 +200,23 @@ klbui.resize = function (path, w, h)
 	return kgui.resize(path, w, h)
 end
 
+
+-- @brief 获取窗口建议的宽度
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @return [number(int)] 	宽度
+klbui.suggestw = function (path)
+	return kgui.suggestw(path)
+end
+
+
+-- @brief 获取窗口建议的高度
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @return [number(int)] 	高度
+klbui.suggesth = function (path)
+	return kgui.suggesth(path)
+end
+
+
 ------------------------------------------------
 -- W, H
 

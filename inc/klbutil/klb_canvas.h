@@ -5,6 +5,7 @@
 /// @brief   画布
 /// @version 0.1
 /// @history 修改历史
+///   \n [2023-8] 添加支持多图层合并刷新
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_CANVAS_H__
@@ -17,6 +18,12 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+/// @def   KLB_CANVAS_LAYER_max
+/// @brief 最大图层数
+#define KLB_CANVAS_LAYER_max            8
+
 
 typedef struct klb_canvas_t_ klb_canvas_t;
 
@@ -142,6 +149,13 @@ typedef struct klb_canvas_vtable_t_
     /// @brief 刷新画布到显存(屏幕)
     int(*refresh_rects)(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
 
+    /// @brief 刷新画布到显存(屏幕), 支持多图层合并刷新
+    int(*refresh)(klb_canvas_t* p_canvas,                               // 主画布
+                const klb_rect_t dst[KLB_CANVAS_LAYER_max],             // 目标主显存对应区域
+                klb_canvas_t* p_src_canvas[KLB_CANVAS_LAYER_max],       // 待刷新的源画布
+                const klb_rect_t src[KLB_CANVAS_LAYER_max],             // 源区域
+                int layer_count);                                       // 图层数
+
     /// @brief 申请画布
     /// @param [in] w           宽
     /// @param [in] h           高
@@ -217,8 +231,8 @@ KLB_API int klb_canvas_draw_clear(klb_canvas_t* p_canvas);
 /// @param [in] w           宽
 /// @param [in] h           高
 /// @return int 0
-int klb_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y);
-int klb_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count);
+KLB_API int klb_canvas_draw_point(klb_canvas_t* p_canvas, int x, int y);
+KLB_API int klb_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count);
 
 
 /// @brief 绘制线段
@@ -230,32 +244,42 @@ int klb_canvas_draw_points(klb_canvas_t* p_canvas, const klb_point_t* p_points, 
 /// @param [in] color       颜色
 /// @param [in] width       线宽
 /// @return int 0
-int klb_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2);
-int klb_canvas_draw_lines(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count);
+KLB_API int klb_canvas_draw_line(klb_canvas_t* p_canvas, int x1, int y1, int x2, int y2);
+KLB_API int klb_canvas_draw_lines(klb_canvas_t* p_canvas, const klb_point_t* p_points, int count);
 
-int klb_canvas_draw_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect);
-int klb_canvas_draw_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
+KLB_API int klb_canvas_draw_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect);
+KLB_API int klb_canvas_draw_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
 
 
-int klb_canvas_draw_fill_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect);
-int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
+KLB_API int klb_canvas_draw_fill_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect);
+KLB_API int klb_canvas_draw_fill_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
 
 /// @brief 绘制文字
 /// @param [in] *p_canvas       画布对象
 /// @return int 0
-int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len);
+KLB_API int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len);
 
 /// @brief 获取以当前字体大小, 绘制utf8文本所需要的宽高
-int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h);
+KLB_API int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h);
 
 /// @brief 获取图片尺寸
-int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out_w, int* p_out_h);
+KLB_API int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out_w, int* p_out_h);
 
 /// @brief 绘制图片
-int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path);
+KLB_API int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path);
 
-int klb_canvas_refresh_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect);
-int klb_canvas_refresh_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
+/// @brief 刷新
+KLB_API int klb_canvas_refresh_rect(klb_canvas_t* p_canvas, const klb_rect_t* p_rect);
+KLB_API int klb_canvas_refresh_rects(klb_canvas_t* p_canvas, const klb_rect_t* p_rects, int count);
+
+KLB_API int klb_canvas_refresh(klb_canvas_t* p_canvas,                              // 主画布
+                                const klb_rect_t dst[KLB_CANVAS_LAYER_max],         // 目标主显存对应区域
+                                klb_canvas_t* p_src_canvas[KLB_CANVAS_LAYER_max],   // 待刷新的源画布
+                                const klb_rect_t src[KLB_CANVAS_LAYER_max],         // 源区域
+                                int layer_count);
+
+/// @brief 申请新画布
+KLB_API klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int color_fmt);
 
 
 #ifdef __cplusplus

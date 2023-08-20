@@ -78,6 +78,13 @@ klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd)
     assert(NULL != p_wnd);
     klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
 
+    if (KLB_WND_STYLE_LAYER_TIP & p_top->state.style)
+    {
+        // tip 图层画布
+        return p_top->p_gui->p_tip->p_canvas;
+    }
+
+    // 主图层画布
     return p_top->p_gui->p_canvas;
 }
 
@@ -193,6 +200,21 @@ bool klb_wnd_is_disable(klb_wnd_t* p_wnd)
     return (KLB_WND_STATUS_DISABLE & p_wnd->state.status) ? true : false;
 }
 
+void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip)
+{
+    if (NULL == p_wnd->tip)
+    {
+        p_wnd->tip = sdsempty(); // 首次设置
+    }
+
+    p_wnd->tip = sdscpy(p_wnd->tip, p_tip);
+}
+
+const sds klb_wnd_get_tip(klb_wnd_t* p_wnd)
+{
+    return p_wnd->tip; // 可能为 NULL
+}
+
 /// @brief 基于父窗口移动到指定的相对坐标
 void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y)
 {
@@ -224,7 +246,10 @@ void klb_wnd_update(klb_wnd_t* p_wnd)
 {
     assert(NULL != p_wnd);
 
-    if (NULL != p_wnd->p_gui)
+    klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
+
+    if (NULL != p_wnd->p_gui && 
+        !(KLB_WND_STYLE_LAYER_TIP & p_top->state.style))
     {
         klb_gui_update_wnd(p_wnd->p_gui, p_wnd);
     }
@@ -460,6 +485,41 @@ int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, cons
     }
 
     return 0;
+}
+
+int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    if (NULL != p_wnd)
+    {
+        klb_point_t pt = { 0 };
+
+        if (NULL == p_pt1) { p_pt1 = &pt; };
+        if (NULL == p_pt2) { p_pt2 = &pt; };
+
+        if (NULL != p_wnd->vtable.on_control)
+        {
+            p_wnd->vtable.on_control(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+        }
+
+        if (NULL != p_wnd->vtable.on_command)
+        {
+            p_wnd->vtable.on_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+        }
+    }
+
+    return 0;
+}
+
+/// @brief 获取建议宽
+int klb_wnd_suggestw(klb_wnd_t* p_wnd)
+{
+    return klb_wnd_on_control(p_wnd, KLBUI_suggestw, NULL, NULL, 0, 0);
+}
+
+/// @brief 获取建议高
+int klb_wnd_suggesth(klb_wnd_t* p_wnd)
+{
+    return klb_wnd_on_control(p_wnd, KLBUI_suggesth, NULL, NULL, 0, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////

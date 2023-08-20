@@ -1526,6 +1526,24 @@
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_messagebox.h">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_menu.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_menu_item.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_menu_2rd.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_tip.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tip.h">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\shwnd\klbshw_tip.h">
+      <Filter>src_c\klbgui\shwnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2305,9 +2323,6 @@
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbui_tab_button.c">
       <Filter>src_c\klbgui\subviews</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menubar.c">
-      <Filter>src_c\klbgui\widgets</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menu.c">
       <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
@@ -2577,6 +2592,24 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_messagebox.c">
       <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_menu.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_menu_item.c">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_menu_2rd.c">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_tip.c">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tip.c">
+      <Filter>src_c\klbgui\subviews</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_tip.c">
+      <Filter>src_c\klbgui\shwnd</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

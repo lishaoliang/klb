@@ -29,7 +29,7 @@ typedef struct klbwnd_hscrollbar_css_t_
     klbuicssex_attributes_t focus;              ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;            ///< disable 不使能状态参数
 
-    klbwnd_btnex_css_t      btnex;              ///< 按钮css
+    klbwnd_btnex_css_t      css_btnex;          ///< 按钮css
 }klbwnd_hscrollbar_css_t;
 
 
