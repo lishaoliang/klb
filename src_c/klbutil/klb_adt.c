@@ -69,18 +69,32 @@ void klb_adt_set_bool(klb_adt_t* p_adt, bool b)
 
 void klb_adt_set_string(klb_adt_t* p_adt, const char* p_str)
 {
-    klb_adt_quit(p_adt);
+    if (KLB_ADT_string == p_adt->type)
+    {
+        p_adt->str = sdscpy(p_adt->str, p_str);
+    }
+    else
+    {
+        klb_adt_quit(p_adt);
 
-    p_adt->type = KLB_ADT_string;
-    p_adt->str = sdsnew(p_str);
+        p_adt->type = KLB_ADT_string;
+        p_adt->str = sdsnew(p_str);
+    }
 }
 
 void klb_adt_set_lstring(klb_adt_t* p_adt, const char* p_str, int str_len)
 {
-    klb_adt_quit(p_adt);
+    if (KLB_ADT_string == p_adt->type)
+    {
+        p_adt->str = sdscpylen(p_adt->str, p_str, str_len);
+    }
+    else
+    {
+        klb_adt_quit(p_adt);
 
-    p_adt->type = KLB_ADT_string;
-    p_adt->str = sdsnewlen(p_str, str_len);
+        p_adt->type = KLB_ADT_string;
+        p_adt->str = sdsnewlen(p_str, str_len);
+    }
 }
 
 void klb_adt_set_ptr(klb_adt_t* p_adt, const void* ptr1, const void* ptr2)

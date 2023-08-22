@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,7 +133,7 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -212,6 +212,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_num.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_picture.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_progress.h" />
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_qrcode.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_radio.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_rich_text.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_slider.h" />
@@ -590,6 +591,16 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h" />
     <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h" />
     <ClInclude Include="..\..\src_c\libavutil\xtea.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\bitstream.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\mask.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\mmask.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\mqrspec.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrencode.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrencode_inner.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrinput.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrspec.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\rsecc.h" />
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\split.h" />
     <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtp.h" />
     <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.h" />
     <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.h" />
@@ -692,6 +703,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_num.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_progress.c" />
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_qrcode.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_radio.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_rich_text.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_slider.c" />
@@ -718,6 +730,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_num.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_progress.c" />
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_qrcode.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_radio.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_rich_text.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_slider.c" />
@@ -945,6 +958,15 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\libavutil\utils.c" />
     <ClCompile Include="..\..\src_c\libavutil\xga_font_data.c" />
     <ClCompile Include="..\..\src_c\libavutil\xtea.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\bitstream.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\mask.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\mmask.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\mqrspec.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\qrencode.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\qrinput.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\qrspec.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\rsecc.c" />
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\split.c" />
     <ClCompile Include="..\..\src_packages\kpa_flv\klua_kpa_flv.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_http\klua_kpa_http.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_mgui\klua_kpa_mgui.cpp" />

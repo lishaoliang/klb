@@ -17,11 +17,9 @@
 static klb_adt_t* luaseri_map_pack_one_object(lua_State *L, int idx, int depth);
 
 
-static klb_map_t* luaseri_map_pack_table_array(lua_State* L, int idx, int depth)
+static klb_map_t* luaseri_map_pack_table_array(lua_State* L, int idx, int depth, klb_map_t* p_array)
 {
     int array_size = (int)lua_rawlen(L, idx);
-
-    klb_map_t* p_array = klb_map_create();
 
     for (int i = 1; i <= array_size; i++)
     {
@@ -36,10 +34,8 @@ static klb_map_t* luaseri_map_pack_table_array(lua_State* L, int idx, int depth)
     return p_array;
 }
 
-static klb_map_t* luaseri_map_pack_table_hash(lua_State* L, int idx, int depth, int array_size)
+static klb_map_t* luaseri_map_pack_table_hash(lua_State* L, int idx, int depth, int array_size, klb_map_t* p_map)
 {
-    klb_map_t* p_map = klb_map_create();
-
     lua_pushnil(L);
     while (lua_next(L, idx) != 0) {
         int t = lua_type(L, -2);
@@ -78,15 +74,17 @@ static klb_map_t* luaseri_map_pack_table(lua_State* L, int idx, int depth)
         idx = lua_gettop(L) + idx + 1;
     }
 
+    klb_map_t* p_map = klb_map_create();
+
     int array_size = (int)lua_rawlen(L, idx);
     if (0 < array_size)
     {
-        return luaseri_map_pack_table_array(L, idx, depth);
+        luaseri_map_pack_table_array(L, idx, depth, p_map);
     }
-    else
-    {
-        return luaseri_map_pack_table_hash(L, idx, depth, array_size);
-    }
+
+    luaseri_map_pack_table_hash(L, idx, depth, array_size, p_map);
+
+    return p_map;
 }
 
 static klb_adt_t* luaseri_map_pack_one_object(lua_State* L, int idx, int depth)

@@ -249,6 +249,9 @@
     <Filter Include="proj\Visual Leak Detector\include">
       <UniqueIdentifier>{4dcf528e-275d-4ab2-9bce-2d44df5c84a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\qrencode-4.1.1">
+      <UniqueIdentifier>{65d4efbb-2414-45be-ab4d-78b5aca58aff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1544,6 +1547,39 @@
     <ClInclude Include="..\..\src_c\klbgui\shwnd\klbshw_tip.h">
       <Filter>src_c\klbgui\shwnd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\bitstream.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\mask.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\mmask.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\mqrspec.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrencode.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrencode_inner.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrinput.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\qrspec.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\rsecc.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\qrencode-4.1.1\split.h">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_qrcode.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2610,6 +2646,39 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_tip.c">
       <Filter>src_c\klbgui\shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\bitstream.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\mask.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\mmask.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\mqrspec.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\qrencode.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\qrinput.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\qrspec.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\rsecc.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\qrencode-4.1.1\split.c">
+      <Filter>src_c\qrencode-4.1.1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_qrcode.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_qrcode.c">
+      <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

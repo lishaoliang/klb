@@ -51,6 +51,7 @@ MY_DIRS += ./src_c/compat ./src_c/libavutil
 
 # 第三方库
 MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
+MY_DIRS += ./src_c/qrencode-4.1.1
 
 # cpp / src_cpp
 MY_DIRS += ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbnet
@@ -116,6 +117,7 @@ MY_INCLUDES += -I ./inc/klbthird
 
 # 第三方库头文件
 MY_INCLUDES += -I ./src_c/klua/lua-5.4.6/src
+MY_INCLUDES += -I ./src_c/qrencode-4.1.1
 
 # cpp
 MY_INCLUDES += -I ./inc_hpp

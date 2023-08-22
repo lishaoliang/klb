@@ -47,6 +47,7 @@ klb_wnd_t* klbui_vscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
 #define KLBUI_kdialog           "kdialog"
@@ -75,6 +76,7 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_kcalendar         "kcalendar"
 #define KLBUI_kanimation        "kanimation"
 #define KLBUI_kmenu             "kmenu"
+#define KLBUI_kqrcode           "kqrcode"
 
 
 #define KLB_GUI_REGISTER_STD(PTR_GUI_)  { \
@@ -104,6 +106,7 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kcalendar,   klbui_calendar_create);     \
     klb_gui_register((PTR_GUI_), KLBUI_kanimation,  klbui_animation_create);    \
     klb_gui_register((PTR_GUI_), KLBUI_kmenu,       klbui_menu_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kqrcode,     klbui_qrcode_create);       \
 }
 
 

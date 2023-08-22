@@ -243,7 +243,12 @@ void klbwnd_vscrollbar_set_value(klb_wnd_t* p_wnd, int value)
 {
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
 
-	klbwnd_vscrollbar_update_value(p_wnd, p_vsc, value);
+    if (value < p_vsc->min) { value = p_vsc->min; }
+    if (p_vsc->max < value) { value = p_vsc->max; }
+
+    p_vsc->value = value;
+
+    klbwnd_vscrollbar_relayout(p_wnd, p_vsc);
 }
 
 int klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd)

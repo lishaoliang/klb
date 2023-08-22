@@ -44,7 +44,7 @@ extern "C" {
 
 
 //////////////////////////////////////////////////////////////////////////
-// 公共事件[0x400 ~ 0x7FF]
+// 公共事件[0x400 ~ 0x3FFF]
 
 
 /// @def   KLBUI_guievent
@@ -235,15 +235,20 @@ typedef enum klbui_mousedrag_lparam_e_
 
 
 //////////////////////////////////////////////////////////////////////////
-// 组件私有事件 [0x3A00 ~ 0x3FFF]
+// 组件事件 [0x3A00 ~ 0x3FFF]
 
+/// @def   KLBUI_event_ctrl
+/// @brief 窗口组件私有事件
+#define KLBUI_event_ctrl        0x3A00          // 组件私有事件开始
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义事件 [0x4000 ~ - 0xFFFF]
+// 自定义私有事件 [0x4000 ~ - 0xFFFF]
 
-#define KLBUI_event_user        0x4000          // 自定义事件
 
+/// @def   KLBUI_event_user
+/// @brief 自定义私有事件
+#define KLBUI_event_user        0x4000          // 自定义事件开始
 
 
 #ifdef __cplusplus
