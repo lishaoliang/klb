@@ -54,6 +54,8 @@ void klbuiex_tip_attach_canvas(klbuiex_tip_t* p_ex, klb_canvas_t* p_canvas);
 /// @brief 是否需要重绘
 bool klbuiex_tip_need_repaint(klbuiex_tip_t* p_ex);
 
+/// @brief 更新了, 需要重新绘制
+void klbuiex_tip_update(klbuiex_tip_t* p_ex, const char* p_tilte);
 
 /// @brief 重绘
 void klbuiex_tip_redraw(klbuiex_tip_t* p_ex);

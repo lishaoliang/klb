@@ -268,11 +268,19 @@ KLB_API int klb_gui_show(klb_gui_t* p_gui, const char* p_path_name, bool show);
 KLB_API int klb_gui_move(klb_gui_t* p_gui, const char* p_path_name, int x, int y);
 
 
-/// @brief 重置控件大小
+/// @brief 重新设置控件大小
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h);
+
+
+/// @brief 获取基于画布的窗口区域
+KLB_API int klb_gui_wndpos_in_canvas(klb_gui_t* p_gui, const char* p_path_name, klb_rect_t* p_out_rect);
+
+
+/// @brief 获取基于父窗口的区域
+KLB_API int klb_gui_wndpos_in_parent(klb_gui_t* p_gui, const char* p_path_name, klb_rect_t* p_out_rect);
 
 
 /// @brief 控件建议宽

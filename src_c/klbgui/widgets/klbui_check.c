@@ -71,11 +71,6 @@ static klb_map_t* klbui_check_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 //////////////////////////////////////////////////////////////////////////
 // 仿 CSS 方法
 
-static void on_klbui_check_visibility(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_visibility(p_wnd, method, p_in, p_out);
-}
-
 static void on_klbui_check_margin(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_margin(&(p_check->css.margin), p_wnd, method, p_in, p_out);
@@ -323,14 +318,12 @@ static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, 
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBUI_kcheck);
     p_check->p_func_map = ptr;
+    klb_gui_css_map_append_std_function(ptr, p_check); // 添加公共方法
 
 
     //////////////////////////////////////////////
     // 若第一次, 则添加全局属性解析方法
     // 仿 CSS 方法
-
-    // 显隐
-    KLBUI_check_bind("visibility", on_klbui_check_visibility); // 显示/隐藏
 
     // 外边距 margin
     KLBUI_check_bind("margin", on_klbui_check_margin);

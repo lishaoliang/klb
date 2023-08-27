@@ -92,6 +92,23 @@ bool klbuiex_tip_need_repaint(klbuiex_tip_t* p_ex)
     return p_ex->is_redraw;
 }
 
+void klbuiex_tip_update(klbuiex_tip_t* p_ex, const char* p_tilte)
+{
+    if (p_ex->is_show)
+    {
+        // note. 更新 tip标题 之后, 可能导致 需求的区域变更
+        // 需要重新计算位置
+
+        int x = p_ex->rect_dst.x;
+        int y = p_ex->rect_dst.y;
+
+        klbuiex_tip_set_tilte(p_ex, p_tilte, NULL, NULL);
+        klbuiex_tip_show(p_ex, true, x, y);
+
+        p_ex->is_redraw = true;
+    }
+}
+
 void klbuiex_tip_redraw(klbuiex_tip_t* p_ex)
 {
     if (NULL != p_ex->p_tip_wnd && p_ex->is_show)

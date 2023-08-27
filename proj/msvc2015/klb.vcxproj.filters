@@ -1580,6 +1580,9 @@
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_qrcode.h">
       <Filter>inc\klbgui\wnd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_vslider.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2679,6 +2682,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_qrcode.c">
       <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_vslider.c">
+      <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_vslider.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klbui_css_std_function.c">
+      <Filter>src_c\klbgui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

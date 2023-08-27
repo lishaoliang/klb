@@ -201,6 +201,15 @@ klbui.resize = function (path, w, h)
 end
 
 
+-- @brief 获取窗口位置
+-- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
+-- @param [in] is_in_canvas[bool]	画布坐标(默认true)
+-- @return [table]		{x=0,y=0,w=1024,h=768} 或 {}
+klbui.wndpos = function (path, is_in_canvas)
+	return kgui.wndpos(path, is_in_canvas)
+end
+
+
 -- @brief 获取窗口建议的宽度
 -- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
 -- @return [number(int)] 	宽度

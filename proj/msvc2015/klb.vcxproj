@@ -222,6 +222,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_time.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_view.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_vscrollbar.h" />
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_vslider.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf_atom.h" />
@@ -659,6 +660,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klbui_css_std_function.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_datetime.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_util.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c" />
@@ -713,6 +715,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_view.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_vscrollbar.c" />
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_vslider.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_animation.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_btnex.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_button.c" />
@@ -740,6 +743,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_view.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_vscrollbar.c" />
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_vslider.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf_atom.c" />

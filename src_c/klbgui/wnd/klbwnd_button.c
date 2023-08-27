@@ -93,6 +93,7 @@ static int klbwnd_button_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
     case KLBUI_onpaint:
         return klbwnd_button_on_paint(p_wnd);
         break;
+
     default:
         break;
     }

@@ -352,7 +352,7 @@ static void klbwnd_combomenu_relayout(klb_wnd_t* p_wnd)
 
     if (is_show_vscrollbar)
     {
-        w -= 20;
+        w -= (20 + x);
     }
 
     for (int i = 0; i < KLBWND_COMBOMENU_item_max; i++)
@@ -380,7 +380,7 @@ static void klbwnd_combomenu_relayout(klb_wnd_t* p_wnd)
         klbwnd_vscrollbar_set_ranges(p_menu->p_vscrollbar, 0, data_count - item_count / 2, 1);
         klbwnd_vscrollbar_set_value(p_menu->p_vscrollbar, 0);
 
-        klb_wnd_move(p_menu->p_vscrollbar, w, 1);
+        klb_wnd_move(p_menu->p_vscrollbar, x + w, 1);
         klb_wnd_resize(p_menu->p_vscrollbar, 20, total_h - 2);
 
         klb_wnd_hide(p_menu->p_vscrollbar, false); // 显示

@@ -70,11 +70,6 @@ static klb_map_t* klbui_radio_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 //////////////////////////////////////////////////////////////////////////
 // 仿 CSS 方法
 
-static void on_klbui_radio_visibility(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_visibility(p_wnd, method, p_in, p_out);
-}
-
 static void on_klbui_radio_margin(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_margin(&(p_radio->css.margin), p_wnd, method, p_in, p_out);
@@ -381,14 +376,12 @@ static void klbui_radio_init_func_map(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, 
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBUI_kradio);
     p_radio->p_func_map = ptr;
+    klb_gui_css_map_append_std_function(ptr, p_radio); // 添加公共方法
 
 
     //////////////////////////////////////////////
     // 若第一次, 则添加全局属性解析方法
     // 仿 CSS 方法
-
-    // 显隐
-    KLBUI_radio_bind("visibility", on_klbui_radio_visibility); // 显示/隐藏
 
     // 外边距 margin
     KLBUI_radio_bind("margin", on_klbui_radio_margin);

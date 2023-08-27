@@ -56,7 +56,7 @@ extern "C" {
 // 键鼠事件定义
 
 /// @def   klbui_mouse_button_e
-/// @brief 鼠标按键
+/// @brief 鼠标按键, 参考SDL2.X定义
 typedef enum klbui_mouse_button_e_
 {
     KLBUI_MOUSE_left    = 1,        ///< 鼠标左键
@@ -124,6 +124,12 @@ typedef enum klbui_mousedrag_lparam_e_
 ///     lparam  参数表示啥情况: klbui_mousedrag_lparam_e
 ///     wparam  参数表示拖拽的鼠标按钮: klbui_mouse_button_e
 #define KLBUI_mousedrag         0x410           // mousedrag
+
+
+/// @brief 鼠标滚轮事件, lparam 表示的滚轮方向
+#define KLBUI_MOUSEWHEEL_is_up(Y_)      ((Y_) > 0)      // 向上滚动
+#define KLBUI_MOUSEWHEEL_is_down(Y_)    ((Y_) < 0)      // 向下滚动
+#define KLBUI_MOUSEWHEEL_value(Y_)      (ABS(Y_))       // 滚动的值
 
 
 /// @def   KLBUI_mousewheel

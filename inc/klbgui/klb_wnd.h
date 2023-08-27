@@ -301,6 +301,11 @@ KLB_API bool klb_wnd_is_disable(klb_wnd_t* p_wnd);
 KLB_API void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip);
 KLB_API const sds klb_wnd_get_tip(klb_wnd_t* p_wnd);
 
+/// @brief 标记刷新 tip
+/// @note 仅标记, 由框架决定合适的刷新时机
+///       仅 设置了tip 且处于显示的情况下 生效
+KLB_API void klb_wnd_tip_update(klb_wnd_t* p_wnd);
+
 
 //////////////////////////////////////////////////////////////////////////
 // 窗口位置/大小

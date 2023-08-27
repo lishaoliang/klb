@@ -34,6 +34,7 @@ klb_wnd_t* klbui_ip_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_picture_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_slider_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_vslider_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_group_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_list_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_listex_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -46,8 +47,8 @@ klb_wnd_t* klbui_hscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 klb_wnd_t* klbui_vscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h);
-klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
 #define KLBUI_kdialog           "kdialog"
@@ -63,6 +64,7 @@ klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_kpicture          "kpicture"
 #define KLBUI_kradio            "kradio"
 #define KLBUI_kslider           "kslider"
+#define KLBUI_kvslider          "kvslider"
 #define KLBUI_kgroup            "kgroup"
 #define KLBUI_klist             "klist"
 #define KLBUI_klistex           "klistex"
@@ -75,8 +77,8 @@ klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_kvscrollbar       "kvscrollbar"
 #define KLBUI_kcalendar         "kcalendar"
 #define KLBUI_kanimation        "kanimation"
-#define KLBUI_kmenu             "kmenu"
 #define KLBUI_kqrcode           "kqrcode"
+#define KLBUI_kmenu             "kmenu"
 
 
 #define KLB_GUI_REGISTER_STD(PTR_GUI_)  { \
@@ -84,7 +86,7 @@ klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kstatic,     klbui_static_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kbutton,     klbui_button_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kedit,       klbui_edit_create);         \
-    klb_gui_register((PTR_GUI_), KLBUI_knum,        klbui_num_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_knum,        klbui_num_create);          \
     klb_gui_register((PTR_GUI_), KLBUI_kcheck,      klbui_check_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kcombo,      klbui_combo_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kdate,       klbui_date_create);         \
@@ -93,6 +95,7 @@ klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kpicture,    klbui_picture_create);      \
     klb_gui_register((PTR_GUI_), KLBUI_kradio,      klbui_radio_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kslider,     klbui_slider_create);       \
+    klb_gui_register((PTR_GUI_), KLBUI_kvslider,    klbui_vslider_create);      \
     klb_gui_register((PTR_GUI_), KLBUI_kgroup,      klbui_group_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_klist,       klbui_list_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_klistex,     klbui_listex_create);       \
@@ -105,8 +108,8 @@ klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kvscrollbar, klbui_vscrollbar_create);   \
     klb_gui_register((PTR_GUI_), KLBUI_kcalendar,   klbui_calendar_create);     \
     klb_gui_register((PTR_GUI_), KLBUI_kanimation,  klbui_animation_create);    \
-    klb_gui_register((PTR_GUI_), KLBUI_kmenu,       klbui_menu_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_kqrcode,     klbui_qrcode_create);       \
+    klb_gui_register((PTR_GUI_), KLBUI_kmenu,       klbui_menu_create);         \
 }
 
 

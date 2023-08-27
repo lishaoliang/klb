@@ -215,6 +215,14 @@ const sds klb_wnd_get_tip(klb_wnd_t* p_wnd)
     return p_wnd->tip; // 可能为 NULL
 }
 
+void klb_wnd_tip_update(klb_wnd_t* p_wnd)
+{
+    if (NULL != p_wnd->p_gui && NULL != p_wnd->tip && 0 < sdslen(p_wnd->tip))
+    {
+        klb_gui_update_tip(p_wnd->p_gui, p_wnd->tip);
+    }
+}
+
 /// @brief 基于父窗口移动到指定的相对坐标
 void klb_wnd_move(klb_wnd_t* p_wnd, int x, int y)
 {

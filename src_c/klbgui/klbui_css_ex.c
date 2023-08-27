@@ -191,6 +191,22 @@ void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, cons
 //////////////////////////////////////////////////////////////////////////
 // CSS基础
 
+// tip
+void klbuicssex_tip(klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_string(p_out, 0, klb_wnd_get_tip(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        const char* p_tip = klb_map_idx_to_string(p_in, start);
+
+        klb_wnd_set_tip(p_wnd, p_tip);
+    }
+}
+
 // 显隐 visibility
 void klbuicssex_visibility(klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {

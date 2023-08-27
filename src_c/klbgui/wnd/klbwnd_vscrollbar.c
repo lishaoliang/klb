@@ -66,15 +66,15 @@ static int klbwnd_vscrollbar_on_paint(klb_wnd_t* p_wnd)
     paint_rect.w -= (p_css->margin.left + p_css->margin.right);
     paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
 
-    if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
-    {
-        klbwnd_vscrollbar_on_paint_status(p_wnd, p_vsc, p_css, &p_css->disable, &paint_rect);
-    }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbwnd_vscrollbar_on_paint_status(p_wnd, p_vsc, p_css, &p_css->focus, &paint_rect);
-    }
-    else
+    //if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
+    //{
+    //    klbwnd_vscrollbar_on_paint_status(p_wnd, p_vsc, p_css, &p_css->disable, &paint_rect);
+    //}
+    //else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+    //{
+    //    klbwnd_vscrollbar_on_paint_status(p_wnd, p_vsc, p_css, &p_css->focus, &paint_rect);
+    //}
+    //else
     {
         klbwnd_vscrollbar_on_paint_status(p_wnd, p_vsc, p_css, &p_css->normal, &paint_rect);
     }
@@ -369,7 +369,7 @@ void klbwnd_vscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = 0x0;
+    p_wnd->state.style = KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
 
     // 初始化内部方属性
     klbwnd_vscrollbar_init_attribute(p_vsc);

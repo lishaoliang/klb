@@ -61,6 +61,10 @@ KLB_API void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int meth
 //////////////////////////////////////////////////////////////////////////
 // CSS基础
 
+// Tip 
+KLB_API void klbuicssex_tip(klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
 // 显隐 visibility
 KLB_API void klbuicssex_visibility(klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 

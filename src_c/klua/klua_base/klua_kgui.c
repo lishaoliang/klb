@@ -669,6 +669,35 @@ static int klua_kgui_resize(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_wndpos(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);           ///< @1. 路径名: eg. "/home/btn1"
+    bool is_in_canvas = klua_check_option_boolean(L, 2, true);  ///< @2. 默认(true); true:相对于画布;  false:相对父窗口 
+
+    klb_rect_t rect = { 0 };
+    int ret = 0;
+
+    if (is_in_canvas)
+    {
+        ret = klb_gui_wndpos_in_canvas(klua_gui_get_by_L(L), p_path_name, &rect);
+    }
+    else
+    {
+        ret = klb_gui_wndpos_in_parent(klua_gui_get_by_L(L), p_path_name, &rect);
+    }
+
+    lua_newtable(L);                                            ///< #1. table
+    if (0 == ret)
+    {
+        klua_setfield_integer(L, "x", rect.x);
+        klua_setfield_integer(L, "y", rect.y);
+        klua_setfield_integer(L, "w", rect.w);
+        klua_setfield_integer(L, "h", rect.h);
+    }
+
+    return 1;
+}
+
 static int klua_kgui_suggestw(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
@@ -769,18 +798,19 @@ int klua_open_kgui(lua_State* L)
         { "messagebox",         klua_kgui_messagebox },
         { "messagebox_end",     klua_kgui_messagebox_end },
 
-        { "messagebox_std",     klua_kgui_messagebox_std },   // 弹出内置的共享消息框
+        { "messagebox_std",     klua_kgui_messagebox_std },     // 弹出内置的共享消息框
 
         // wnd
         { "show",               klua_kgui_show },
         { "move",               klua_kgui_move },
         { "resize",             klua_kgui_resize },
+        { "wndpos",             klua_kgui_wndpos },             // 获取窗口位置
 
-        { "suggestw",           klua_kgui_suggestw },
-        { "suggesth",           klua_kgui_suggesth },
+        { "suggestw",           klua_kgui_suggestw },           // 窗口建议宽度
+        { "suggesth",           klua_kgui_suggesth },           // 窗口建议高度
 
         // gui get (w,h)
-        { "wh",                 klua_kgui_get_wh },
+        { "wh",                 klua_kgui_get_wh },             // 获取主画布宽高(即屏幕宽高)
 
         // 事件辅助函数
         { "to_event",           klua_kgui_to_event },

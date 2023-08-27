@@ -756,6 +756,40 @@ int klb_gui_resize(klb_gui_t* p_gui, const char* p_path_name, int w, int h)
     return 0;
 }
 
+/// @brief 获取基于画布的窗口区域
+int klb_gui_wndpos_in_canvas(klb_gui_t* p_gui, const char* p_path_name, klb_rect_t* p_out_rect)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+    if (NULL == p_wnd)
+    {
+        return 1;
+    }
+
+    if (NULL != p_out_rect)
+    {
+        *p_out_rect = p_wnd->pos.rect_in_canvas;
+    }
+
+    return 0;
+}
+
+/// @brief 获取基于父窗口的区域
+int klb_gui_wndpos_in_parent(klb_gui_t* p_gui, const char* p_path_name, klb_rect_t* p_out_rect)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+    if (NULL == p_wnd)
+    {
+        return 1;
+    }
+
+    if (NULL != p_out_rect)
+    {
+        *p_out_rect = p_wnd->pos.rect_in_parent;
+    }
+
+    return 0;
+}
+
 /// @brief 控件建议宽
 int klb_gui_suggestw(klb_gui_t* p_gui, const char* p_path_name, int* p_out_w)
 {
@@ -809,6 +843,13 @@ int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
 int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 {
     klbuiex_redraw_push(p_gui->p_redraw, p_wnd);
+
+    return 0;
+}
+
+int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip)
+{
+    klbuiex_tip_update(p_gui->p_tip, p_tip);
 
     return 0;
 }
@@ -932,7 +973,7 @@ static int klb_gui_redraw_and_refresh(klb_gui_t* p_gui)
 
     if (klbuiex_tip_get_old(p_gui->p_tip, &rect_old))
     {
-        if (is_refresh_main || is_refresh_tip)
+        if (is_refresh_main || is_redraw_tip || is_refresh_tip)
         {
             is_refresh_old = true;
             klbuiex_tip_set_old_refresh(p_gui->p_tip, false);
