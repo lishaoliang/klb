@@ -1,10 +1,10 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbnet/klb_ncm.h"
+#include "klbnet/klb_multiplex.h"
+#include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf_atom.h"
-#include "klbnet/klb_multiplex.h"
 #include "klbutil/klb_hlist.h"
-#include "klbnet/klb_ncm_ops/klb_ncm_ops.h"
 #include "klbutil/klb_log.h"
 #include "klbbase/klb_mnp.h"
 #include <assert.h>

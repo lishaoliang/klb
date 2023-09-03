@@ -11,8 +11,8 @@
 #define __KLUA_MULTIPLEX_H__
 
 #include "klb_type.h"
-#include "klua/klua_env.h"
 #include "klbnet/klb_multiplex.h"
+#include "klua/klua_env.h"
 
 #if defined(__cplusplus)
 extern "C" {

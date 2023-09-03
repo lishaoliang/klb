@@ -40,6 +40,10 @@ typedef enum klbwnd_btnex_type_e_
     KLBWND_BTNEX_triangle_up,               ///< 实体向上三角(直角,边角45度)
     KLBWND_BTNEX_triangle_right,            ///< 实体向右三角(直角,边角45度)
     KLBWND_BTNEX_triangle_down,             ///< 实体向下三角(直角,边角45度)
+
+    KLBWND_BTNEX_line_plus          = 30,   ///< 实体符号 "+"
+    KLBWND_BTNEX_line_minus,                ///< 实体符号 "-"
+    KLBWND_BTNEX_line_x,                    ///< 实体符号 "X"
 }klbwnd_btnex_type_e;
 
 
@@ -88,6 +92,11 @@ KLB_API void klbwnd_btnex_set_css(klb_wnd_t* p_wnd, klbwnd_btnex_css_t* p_css);
 /// @brief 设置/获取类型
 KLB_API void klbwnd_btnex_set_type(klb_wnd_t* p_wnd, int type);
 KLB_API int klbwnd_btnex_get_type(klb_wnd_t* p_wnd);
+
+
+/// @brief 设置/获取类型字符串
+KLB_API void klbwnd_btnex_set_type_str(klb_wnd_t* p_wnd, const char* p_type);
+KLB_API const char* klbwnd_btnex_get_type_str(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get title string

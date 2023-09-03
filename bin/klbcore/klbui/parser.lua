@@ -40,12 +40,12 @@ local CONST_keys = {
 	['child'] = true,		-- 包含的子窗口
 	
 	-- 命令集
-	['commonds'] = true,	-- 静态命令集
-	['_commonds'] = true,	-- 动态命令集
+	['commands'] = true,	-- 静态命令集
+	['_commands'] = true,	-- 动态命令集
 }
 
 
-local function OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
+local function OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
 	-- commond 命令 优先集次序
 	-- 1. cmds1 动态命令集 
 	-- 2. cmds2 由 parse 第二参数 外部静态命令集
@@ -74,7 +74,7 @@ end
 -- 4位字符串, 最大范围为 63^4 = 15752961
 local CONST_rand_max = 4
 
-local function ParseWnd(wnd, commonds, css, root_path, first)
+local function ParseWnd(wnd, commands, css, root_path, first)
 	if 'table' ~= type(wnd) then
 		return
 	end
@@ -156,39 +156,39 @@ local function ParseWnd(wnd, commonds, css, root_path, first)
 	local id = wnd['id'] or ''
 		
 	local cmds2 = E		
-	if 'table' == type(commonds[path]) then
-		cmds2 = commonds[path]	-- 1. 依据路径判定
-	elseif '' ~= id and 'table' == type(commonds[id]) then
-		cmds2 = commonds[id]	-- 2. 依据id判定
-	elseif '' ~= name and 'table' == type(commonds[name]) then
-		cmds2 = commonds[name]	-- 3. 依据名称判定
+	if 'table' == type(commands[path]) then
+		cmds2 = commands[path]	-- 1. 依据路径判定
+	elseif '' ~= id and 'table' == type(commands[id]) then
+		cmds2 = commands[id]	-- 2. 依据id判定
+	elseif '' ~= name and 'table' == type(commands[name]) then
+		cmds2 = commands[name]	-- 3. 依据名称判定
 	end		
 	
 	-- cmds3, 内嵌在 dialog里面的
-	local cmds3 = ('table' == type(wnd['commonds']) and wnd['commonds']) or E	
+	local cmds3 = ('table' == type(wnd['commands']) and wnd['commands']) or E	
 
 	-- 绑定命令函数
 	kgui.bind_command(path, function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 		-- cmds1, 动态绑定表, 每次响应时动态计算
-		local cmds1 = ('table' == type(wnd['_commonds']) and wnd['_commonds']) or E
+		local cmds1 = ('table' == type(wnd['_commands']) and wnd['_commands']) or E
 		
-		return OnCommond(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
+		return OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
 	end)
 	
 	-- 子窗口: 第1种表达方式
 	for _, v in ipairs(wnd) do
-		ParseWnd(v, commonds, css, path, false)
+		ParseWnd(v, commands, css, path, false)
 	end
 	
 	-- 子窗口: 第2种表达方式
 	local child = wnd['child'] or {}
 	for _, v in ipairs(child) do
-		ParseWnd(v, commonds, css, path, false)
+		ParseWnd(v, commands, css, path, false)
 	end
 end
 
-function parser.parse(dialog, commonds, css)
-	local param_cmds = commonds or {}
+function parser.parse(dialog, commands, css)
+	local param_cmds = commands or {}
 	local param_css = css or {}
 	local root_path = dialog['path'] or table.concat({'/', krand.rand_string(CONST_rand_max)}) -- 根路径
 	

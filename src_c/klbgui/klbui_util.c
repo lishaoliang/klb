@@ -207,3 +207,112 @@ void klbuiutil_draw_triangle_down(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t
         w += 1;
     }
 }
+
+/// @brief 绘制实体符号 "+"
+void klbuiutil_draw_line_plus(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // 求取矩形中的最大正方形, 且居中
+    int w = MIN(p_rect->w, p_rect->h);
+
+    klb_rect_t r = { 0 };
+    r.x = p_rect->x + (p_rect->w - w) / 2;
+    r.y = p_rect->y + (p_rect->h - w) / 2;
+    r.w = w;
+    r.h = w;
+
+    // 在此正方形中绘制 "+"
+    int line_w = MAX((w / 4), 1);
+
+    // 绘制水平矩形
+    {
+        klb_rect_t rect1 = { 0 };
+        rect1.x = r.x;
+        rect1.y = r.y + (r.h - line_w) / 2;
+        rect1.w = r.w;
+        rect1.h = line_w;
+
+        klb_wnd_draw_fill_rect2(p_wnd, &rect1, color);
+    }
+
+    // 绘制垂直矩形
+    {
+        klb_rect_t rect2 = { 0 };
+        rect2.x = r.x + (r.w - line_w) / 2;
+        rect2.y = r.y;
+        rect2.w = line_w;
+        rect2.h = r.h;
+
+        klb_wnd_draw_fill_rect2(p_wnd, &rect2, color);
+    }
+}
+
+/// @brief 绘制实体符号 "-"
+void klbuiutil_draw_line_minus(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // 求取矩形中的最大正方形, 且居中
+    int w = MIN(p_rect->w, p_rect->h);
+
+    klb_rect_t r = { 0 };
+    r.x = p_rect->x + (p_rect->w - w) / 2;
+    r.y = p_rect->y + (p_rect->h - w) / 2;
+    r.w = w;
+    r.h = w;
+
+    // 在此正方形中绘制 "-"
+    int line_w = MAX((w / 4), 1);
+
+    // 绘制水平矩形
+    {
+        klb_rect_t rect1 = { 0 };
+        rect1.x = r.x;
+        rect1.y = r.y + (r.h - line_w) / 2;
+        rect1.w = r.w;
+        rect1.h = line_w;
+
+        klb_wnd_draw_fill_rect2(p_wnd, &rect1, color);
+    }
+}
+
+/// @brief 绘制实体符号 "X"
+void klbuiutil_draw_line_x(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // 求取矩形中的最大正方形, 且居中
+    int w = MIN(p_rect->w, p_rect->h);
+
+    klb_rect_t r = { 0 };
+    r.x = p_rect->x + (p_rect->w - w) / 2;
+    r.y = p_rect->y + (p_rect->h - w) / 2;
+    r.w = w;
+    r.h = w;
+
+    // "X" =>  两个正方形错开一定宽度
+    int line_w = MAX((w / 8), 1);
+    r.y += line_w / 2;
+    r.h -= line_w;
+
+    klb_rect_t r1 = r; // 偏左正方形
+    r1.w = r.h;
+
+    klb_rect_t r2 = r; // 偏右正方形
+    r1.x += line_w;
+    r2.w = r.h;
+
+    int x1 = r1.x, y1 = r1.y;
+    int x2 = r2.x, y2 = r2.y;
+
+    int x3 = r1.x, y3 = r1.y + r1.h;
+    int x4 = r2.x, y4 = r2.y + r2.h;
+
+    for (int i = 0; i <= r1.w; i++)
+    {
+        klb_wnd_draw_line2(p_wnd, x1, y1, x2, y2, color);
+
+        x1 += 1;    y1 += 1;
+        x2 += 1;    y2 += 1;
+
+        klb_wnd_draw_line2(p_wnd, x3, y3, x4, y4, color);
+
+        x3 += 1;    y3 -= 1;
+        x4 += 1;    y4 -= 1;
+    }
+}

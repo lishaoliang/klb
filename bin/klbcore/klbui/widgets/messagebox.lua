@@ -55,7 +55,7 @@ messagebox.dialog = {
 jq = klbui.select(messagebox.dialog)	-- 单选
 
 
-messagebox.commonds = {
+messagebox.commands = {
 	['/messagebox/btn-ok'] = {
 		['click'] = function ()
 			klbui.messagebox_end()

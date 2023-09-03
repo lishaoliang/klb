@@ -12,8 +12,8 @@
 
 
 #include "klb_type.h"
-#include "klbnet/klb_multiplex.h"
 #include "klbnet/klb_socket.h"
+#include "klbnet/klb_multiplex.h"
 #include "klbmem/klb_buf.h"
 #include "klbthird/sds.h"
 

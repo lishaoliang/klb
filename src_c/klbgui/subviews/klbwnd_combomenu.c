@@ -100,7 +100,7 @@ static int klbwnd_combomenu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
                 p_menu->cb_result(p_menu->ptr, false, NULL, NULL);
             }
 
-            klb_gui_popup_end(p_wnd->p_gui, true);
+            klb_gui_popup_end(p_wnd->p_gui, false);
         }
         break;
 
@@ -140,7 +140,7 @@ static int on_command_item_klbwnd_combomenu(klb_wnd_t* p_wnd, int msg, const klb
         }
 
         // 结束
-        klb_gui_popup_end(p_wnd->p_gui, true);
+        klb_gui_popup_end(p_wnd->p_gui, false);
     }
 
     return 0;

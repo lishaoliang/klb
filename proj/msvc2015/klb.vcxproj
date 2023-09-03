@@ -663,7 +663,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_std_function.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_datetime.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_util.c" />
-    <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_gui_in.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
@@ -690,6 +689,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tab_btn.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tip.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_animation.c" />
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_btnex.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_button.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_calendar.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_check.c" />

@@ -85,6 +85,20 @@ KLB_API void klbuiutil_draw_triangle_up(klb_wnd_t* p_wnd, klb_rect_t* p_rect, ui
 KLB_API void klbuiutil_draw_triangle_down(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
 
 
+//////////////////////////////////////////////////////////////////////////
+// 实线
+
+/// @brief 绘制实体符号 "+"
+KLB_API void klbuiutil_draw_line_plus(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+/// @brief 绘制实体符号 "-"
+KLB_API void klbuiutil_draw_line_minus(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+/// @brief 绘制实体符号 "X"
+KLB_API void klbuiutil_draw_line_x(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color);
+
+
+
 #if defined(__cplusplus)
 }
 #endif

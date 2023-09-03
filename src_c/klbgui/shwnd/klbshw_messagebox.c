@@ -272,14 +272,12 @@ static void klbshw_messagebox_init_func_map(klb_wnd_t* p_wnd, klbshw_messagebox_
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBSHW_messagebox);
     p_msgbox->p_func_map = ptr;
+    klb_gui_css_map_append_std_function(ptr, p_msgbox); // 添加公共方法
 
 
     //////////////////////////////////////////////
     // 若第一次, 则添加全局属性解析方法
     // 仿 CSS 方法
-
-    // 显隐
-    KLBUI_msgbox_bind("visibility", on_klbshw_messagebox_visibility); // 显示/隐藏
 
     // 外边距 margin
     KLBUI_msgbox_bind("margin", on_klbshw_messagebox_margin);

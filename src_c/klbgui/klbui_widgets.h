@@ -21,9 +21,9 @@ extern "C" {
 #endif
 
 
-klb_wnd_t* klb_dialog_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_btnex_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_edit_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_num_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -51,9 +51,9 @@ klb_wnd_t* klbui_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
-#define KLBUI_kdialog           "kdialog"
 #define KLBUI_kstatic           "kstatic"
 #define KLBUI_kbutton           "kbutton"
+#define KLBUI_kbtnex            "kbtnex"
 #define KLBUI_kedit             "kedit"
 #define KLBUI_knum              "knum"
 #define KLBUI_kcheck            "kcheck"
@@ -82,9 +82,9 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 
 #define KLB_GUI_REGISTER_STD(PTR_GUI_)  { \
-    klb_gui_register((PTR_GUI_), KLBUI_kdialog,     klb_dialog_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_kstatic,     klbui_static_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kbutton,     klbui_button_create);       \
+    klb_gui_register((PTR_GUI_), KLBUI_kbtnex,      klbui_btnex_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kedit,       klbui_edit_create);         \
     klb_gui_register((PTR_GUI_), KLBUI_knum,        klbui_num_create);          \
     klb_gui_register((PTR_GUI_), KLBUI_kcheck,      klbui_check_create);        \

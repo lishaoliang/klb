@@ -1624,9 +1624,6 @@
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c">
       <Filter>src_c\klbformat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\klb_dialog.c">
-      <Filter>src_c\klbgui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c">
       <Filter>src_c\klbgui</Filter>
     </ClCompile>
@@ -2691,6 +2688,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_std_function.c">
       <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_btnex.c">
+      <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

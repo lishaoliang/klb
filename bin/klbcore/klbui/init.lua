@@ -18,7 +18,7 @@ local klbui = {}
 
 -- @brief 解析对话框/命令, 并完成gui窗口树初始创建
 -- @param [in]      dialog[table]		对话框描述table
--- @param [in]		commonds[nil,table]	[可选]命令响应集合(数组)
+-- @param [in]		commands[nil,table]	[可选]命令响应集合(数组)
 -- @param [in]      css[nil,table]		[可选]CSS描述table
 -- @return 无
 -- @note eg.
@@ -27,7 +27,7 @@ local klbui = {}
 --		['title'] = '测试解析对话框!',
 --		['child'] = {{...}, {...}, {...}}
 --	}
---	local commonds = {
+--	local commands = {
 --		['/home'] = {
 --			['load'] = function ()
 --				...
@@ -47,8 +47,8 @@ local klbui = {}
 --		['name'] = {...},
 --		['id'] = {...},
 --	}
-klbui.parse = function (dialog, commonds, css)
-	return parser.parse(dialog, commonds, css)
+klbui.parse = function (dialog, commands, css)
+	return parser.parse(dialog, commands, css)
 end
 
 

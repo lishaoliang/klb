@@ -133,6 +133,61 @@ int klbwnd_btnex_get_type(klb_wnd_t* p_wnd)
     return p_btn->type;
 }
 
+void klbwnd_btnex_set_type_str(klb_wnd_t* p_wnd, const char* p_type)
+{
+    int type = KLBWND_BTNEX_normal;
+    if (0 == strcmp(p_type,         "rectangle")) { type = KLBWND_BTNEX_rectangle; }
+    else if (0 == strcmp(p_type,    "triangle-left")) { type = KLBWND_BTNEX_triangle_left; }
+    else if (0 == strcmp(p_type,    "triangle-up")) { type = KLBWND_BTNEX_triangle_up; }
+    else if (0 == strcmp(p_type,    "triangle-right")) { type = KLBWND_BTNEX_triangle_right; }
+    else if (0 == strcmp(p_type,    "triangle-down")) { type = KLBWND_BTNEX_triangle_down; }
+    else if (0 == strcmp(p_type,    "line-plus")) { type = KLBWND_BTNEX_line_plus; }
+    else if (0 == strcmp(p_type,    "line-minus")) { type = KLBWND_BTNEX_line_minus; }
+    else if (0 == strcmp(p_type,    "line-x")) { type = KLBWND_BTNEX_line_x; }
+
+    klbwnd_btnex_set_type(p_wnd, type);
+}
+
+const char* klbwnd_btnex_get_type_str(klb_wnd_t* p_wnd)
+{
+    int type = klbwnd_btnex_get_type(p_wnd);
+
+    switch (type)
+    {
+    case KLBWND_BTNEX_rectangle:
+        return "rectangle";
+        break;
+
+    case KLBWND_BTNEX_triangle_left:
+        return "triangle-left";
+        break;
+    case KLBWND_BTNEX_triangle_up:
+        return "triangle-up";
+        break;
+    case KLBWND_BTNEX_triangle_right:
+        return "triangle-right";
+        break;
+    case KLBWND_BTNEX_triangle_down:
+        return "triangle-down";
+        break;
+
+    case KLBWND_BTNEX_line_plus:
+        return "line-plus";
+        break;
+    case KLBWND_BTNEX_line_minus:
+        return "line-minus";
+        break;
+    case KLBWND_BTNEX_line_x:
+        return "line-x";
+        break;
+
+    default:
+        break;
+    }
+
+    return "normal";
+}
+
 void klbwnd_btnex_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_btnex_t* p_btn = (klbwnd_btnex_t*)p_wnd->ctrl;

@@ -1,4 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#include "klbnet/klb_socket.h"                  // Bug. MINGW32/MINGW64 必须先引用 <winsock2.h>, 再 引用 <windows.h>
 #include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_object.h"
 #include "klua/extension/klua_ex_time.h"

@@ -184,14 +184,12 @@ static void klbshw_combomenu_init_func_map(klb_wnd_t* p_wnd, klbshw_combomenu_t*
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBSHW_combomenu);
     p_menu->p_func_map = ptr;
+    klb_gui_css_map_append_std_function(ptr, p_menu); // 添加公共方法
 
 
     //////////////////////////////////////////////
     // 若第一次, 则添加全局属性解析方法
     // 仿 CSS 方法
-
-    // 显隐
-    KLBUI_btn_bind("visibility", on_klbshw_combomenu_visibility); // 显示/隐藏
 
     // 外边距 margin
     KLBUI_btn_bind("margin", on_klbshw_combomenu_margin);

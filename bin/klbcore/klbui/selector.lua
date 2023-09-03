@@ -121,7 +121,7 @@ selector.select = function (dlg, multi)
 		end
 		
 		-- wnds 中第一个wnd的路径
-		local function wnds_first_path()
+		local function WndsFirstPath()
 			if 1 <= #wnds then
 				local tmp_path = wnds[1]['path']
 				return ('string' == type(tmp_path) and tmp_path) or ''
@@ -136,7 +136,7 @@ selector.select = function (dlg, multi)
 		
 		-- 标准 get / set 控件属性方法
 		t.get = function (...)
-			return kgui.get(wnds_first_path(), ...)
+			return kgui.get(WndsFirstPath(), ...)
 		end
 		
 		t.set = function (...)
@@ -167,23 +167,11 @@ selector.select = function (dlg, multi)
 						end
 					end
 				else
-					return kgui.get(wnds_first_path(), ...)
+					return kgui.get(WndsFirstPath(), ...)
 				end
 			end
 			
 			return t
-		end
-		
-		t.position = function ()
-			
-		end
-		
-		t.height = function ()
-			
-		end
-		
-		t.width = function ()
-			
 		end
 		
 		-- 直接控制属性等
@@ -191,19 +179,19 @@ selector.select = function (dlg, multi)
 			__index = function (t, k)
 				return function (...)
 					local args = {...}
-					local function wnd_insert_commond(wnd, func)
-						if 'table' ~= type(wnd['_commonds']) then
-							wnd['_commonds'] = {
+					local function WndInsertCommand(wnd, func)
+						if 'table' ~= type(wnd['_commands']) then
+							wnd['_commands'] = {
 								[k] = func
 							}
 						else
-							wnd['_commonds'][k] = func
+							wnd['_commands'][k] = func
 						end
 					end
 					
 					if 'function' == type(args[1]) then
 						for _, v in ipairs(wnds) do
-							wnd_insert_commond(v, args[1])
+							WndInsertCommand(v, args[1])
 						end
 					else
 						if 1 <= #args then
@@ -214,7 +202,7 @@ selector.select = function (dlg, multi)
 							
 							return t
 						else
-							return kgui.get(wnds_first_path(), k, ...)
+							return kgui.get(WndsFirstPath(), k, ...)
 						end
 					end
 				end

@@ -131,6 +131,18 @@ event.focusout = 0x702		-- focusout
 event.blur = 0x703			-- blur
 
 
+--------------------------------
+-- @def   KLBUI_event_ctrl
+-- @brief 控件自定义事件起始
+event.ctrl = 0x3A00
+
+
+--------------------------------
+-- @def   KLBUI_event_user
+-- @brief 用户自定事件起始
+event.user = 0x4000
+
+
 -- @brief 转换表
 local transform_map = {
 	['click'] = event.click,			-- 左键单击事件
@@ -201,6 +213,66 @@ local transform_map = {
 	
 	['blur'] = event.blur,				-- 失去聚焦事件: 窗口组件失去焦点时触发
 	[event.blur] = 'blur',
+	
+	
+	--------------------------------
+	-- 控件自定义事件起始
+	['ctrl+1'] = event.ctrl + 1,
+	[event.ctrl + 1] = 'ctrl+1',
+	
+	['ctrl+2'] = event.ctrl + 2,
+	[event.ctrl + 2] = 'ctrl+2',
+	
+	['ctrl+3'] = event.ctrl + 3,
+	[event.ctrl + 3] = 'ctrl+3',
+
+	['ctrl+4'] = event.ctrl + 4,
+	[event.ctrl + 4] = 'ctrl+4',
+
+	['ctrl+5'] = event.ctrl + 5,
+	[event.ctrl + 5] = 'ctrl+5',
+
+	['ctrl+6'] = event.ctrl + 6,
+	[event.ctrl + 6] = 'ctrl+6',
+
+	['ctrl+7'] = event.ctrl + 7,
+	[event.ctrl + 7] = 'ctrl+7',
+
+	['ctrl+8'] = event.ctrl + 8,
+	[event.ctrl + 8] = 'ctrl+8',
+
+	['ctrl+9'] = event.ctrl + 9,
+	[event.ctrl + 9] = 'ctrl+9',
+	
+	
+	--------------------------------
+	-- 用户自定事件起始
+	['user+1'] = event.user + 1,
+	[event.user + 1] = 'user+1',
+	
+	['user+2'] = event.user + 2,
+	[event.user + 2] = 'user+2',
+	
+	['user+3'] = event.user + 3,
+	[event.user + 3] = 'user+3',
+
+	['user+4'] = event.user + 4,
+	[event.user + 4] = 'user+4',
+	
+	['user+5'] = event.user + 5,
+	[event.user + 5] = 'user+5',
+	
+	['user+6'] = event.user + 6,
+	[event.user + 6] = 'user+6',
+
+	['user+7'] = event.user + 7,
+	[event.user + 7] = 'user+7',
+	
+	['user+8'] = event.user + 8,
+	[event.user + 8] = 'user+8',
+	
+	['user+9'] = event.user + 9,
+	[event.user + 9] = 'user+9',
 }
 
 
