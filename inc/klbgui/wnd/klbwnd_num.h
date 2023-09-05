@@ -36,6 +36,7 @@ typedef struct klbwnd_num_t_
 {
     klbwnd_num_css_t*       p_css;          ///< 样式
 
+    int                     index;          ///< 序号
     sds                     title;          ///< 标题
 
     int                     value;          ///< 值
@@ -59,6 +60,11 @@ KLB_API void klbwnd_num_css_quit(klbwnd_num_css_t* p_css);
 
 /// @brief set css
 KLB_API void klbwnd_num_set_css(klb_wnd_t* p_wnd, klbwnd_num_css_t* p_css);
+
+
+/// @brief 设置/获取序号
+KLB_API void klbwnd_num_set_index(klb_wnd_t* p_wnd, int index);
+KLB_API int  klbwnd_num_get_index(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get value

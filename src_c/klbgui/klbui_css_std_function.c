@@ -122,6 +122,15 @@ static void on_klbguicssmapstd_disable(klb_wnd_t* p_wnd, void* ptr, int method, 
     }
 }
 
+// 所有窗口中的最顶层
+static void on_klbguicssmapstd_topmost(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_topmost(p_wnd));
+    }
+}
+
 // tip
 static void on_klbguicssmapstd_tip(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -166,7 +175,7 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 
     // 状态
     KLBGUI_cssmapstd_bind("disable", on_klbguicssmapstd_disable);       // 不使能
-
+    KLBGUI_cssmapstd_bind("topmost", on_klbguicssmapstd_topmost);       // 所有窗口中的最顶层
 
     // tip
     KLBGUI_cssmapstd_bind("tip", on_klbguicssmapstd_tip);

@@ -149,6 +149,20 @@ void klbwnd_radio_set_css(klb_wnd_t* p_wnd, klbwnd_radio_css_t* p_css)
     p_radio->p_css = p_css;
 }
 
+void klbwnd_radio_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_radio_t* p_radio = (klbwnd_radio_t*)p_wnd->ctrl;
+
+    p_radio->index = index;
+}
+
+int klbwnd_radio_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_radio_t* p_radio = (klbwnd_radio_t*)p_wnd->ctrl;
+
+    return p_radio->index;
+}
+
 void klbwnd_radio_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_radio_t* p_radio = (klbwnd_radio_t*)p_wnd->ctrl;
@@ -182,6 +196,7 @@ const sds klbwnd_radio_get_value(klb_wnd_t* p_wnd)
 
 static void klbwnd_radio_init_attribute(klbwnd_radio_t* p_radio)
 {
+    p_radio->index = 0;
     p_radio->title = sdsempty();
     p_radio->value = sdsempty();
 }

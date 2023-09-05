@@ -185,6 +185,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klbui_event.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_extension.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_shwnd.h" />
+    <ClInclude Include="..\..\inc\klbgui\klbui_timer.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_util.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />

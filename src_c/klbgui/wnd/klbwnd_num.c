@@ -186,6 +186,20 @@ void klbwnd_num_set_css(klb_wnd_t* p_wnd, klbwnd_num_css_t* p_css)
     p_num->p_css = p_css;
 }
 
+void klbwnd_num_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_num_t* p_num = (klbwnd_num_t*)p_wnd->ctrl;
+
+    p_num->index = index;
+}
+
+int klbwnd_num_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_num_t* p_num = (klbwnd_num_t*)p_wnd->ctrl;
+
+    return p_num->index;
+}
+
 void klbwnd_num_set_value(klb_wnd_t* p_wnd, int value)
 {
     klbwnd_num_t* p_num = (klbwnd_num_t*)p_wnd->ctrl;
@@ -213,6 +227,7 @@ void klbwnd_num_set_ranges(klb_wnd_t* p_wnd, int min, int max)
 
 static void klbwnd_num_init_attribute(klb_wnd_t* p_wnd, klbwnd_num_t* p_num)
 {
+    p_num->index = 0;
     p_num->title = sdsempty();
 
     p_num->value = 0;

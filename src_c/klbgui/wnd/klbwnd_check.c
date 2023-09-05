@@ -147,12 +147,26 @@ void klbwnd_check_set_css(klb_wnd_t* p_wnd, klbwnd_check_css_t* p_css)
     p_check->p_css = p_css;
 }
 
+void klbwnd_check_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_check_t* p_check = (klbwnd_check_t*)p_wnd->ctrl;
+
+    p_check->index = index;
+}
+
+int klbwnd_check_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_check_t* p_check = (klbwnd_check_t*)p_wnd->ctrl;
+
+    return p_check->index;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
 static void klbwnd_check_init_attribute(klbwnd_check_t* p_check)
 {
-
+    p_check->index = 0;
 }
 
 static void klbwnd_check_quit_attribute(klbwnd_check_t* p_check)

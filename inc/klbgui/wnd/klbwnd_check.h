@@ -37,6 +37,8 @@ typedef struct klbwnd_check_css_t_
 typedef struct klbwnd_check_t_
 {
     klbwnd_check_css_t*     p_css;          ///< 样式
+
+    int                     index;          ///< 序号
 }klbwnd_check_t;
 
 
@@ -53,6 +55,11 @@ KLB_API void klbwnd_check_css_quit(klbwnd_check_css_t* p_css);
 
 /// @brief set css
 KLB_API void klbwnd_check_set_css(klb_wnd_t* p_wnd, klbwnd_check_css_t* p_css);
+
+
+/// @brief 设置/获取序号
+KLB_API void klbwnd_check_set_index(klb_wnd_t* p_wnd, int index);
+KLB_API int  klbwnd_check_get_index(klb_wnd_t* p_wnd);
 
 
 #if defined(__cplusplus)

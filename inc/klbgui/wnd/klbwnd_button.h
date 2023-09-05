@@ -35,6 +35,7 @@ typedef struct klbwnd_button_t_
 {
     klbwnd_button_css_t*    p_css;          ///< 样式
 
+    int                     index;          ///< 序号
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
 }klbwnd_button_t;
@@ -53,6 +54,11 @@ KLB_API void klbwnd_button_css_quit(klbwnd_button_css_t* p_css);
 
 /// @brief set css
 KLB_API void klbwnd_button_set_css(klb_wnd_t* p_wnd, klbwnd_button_css_t* p_css);
+
+
+/// @brief 设置/获取序号
+KLB_API void klbwnd_button_set_index(klb_wnd_t* p_wnd, int index);
+KLB_API int  klbwnd_button_get_index(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get title

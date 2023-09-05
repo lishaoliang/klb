@@ -111,6 +111,20 @@ void klbwnd_button_set_css(klb_wnd_t* p_wnd, klbwnd_button_css_t* p_css)
     p_btn->p_css = p_css;
 }
 
+void klbwnd_button_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_button_t* p_btn = (klbwnd_button_t*)p_wnd->ctrl;
+
+    p_btn->index = index;
+}
+
+int klbwnd_button_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_button_t* p_btn = (klbwnd_button_t*)p_wnd->ctrl;
+
+    return p_btn->index;
+}
+
 void klbwnd_button_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_button_t* p_btn = (klbwnd_button_t*)p_wnd->ctrl;
@@ -144,6 +158,7 @@ const sds klbwnd_button_get_value(klb_wnd_t* p_wnd)
 
 static void klbwnd_button_init_attribute(klb_wnd_t* p_wnd, klbwnd_button_t* p_btn)
 {
+    p_btn->index = 0;
     p_btn->title = sdsempty();
     p_btn->value = sdsempty();
 }

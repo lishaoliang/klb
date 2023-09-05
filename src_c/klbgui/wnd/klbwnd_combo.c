@@ -170,6 +170,20 @@ void klbwnd_combo_set_css(klb_wnd_t* p_wnd, klbwnd_combo_css_t* p_css)
     p_combo->p_css = p_css;
 }
 
+void klbwnd_combo_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
+
+    p_combo->index = index;
+}
+
+int klbwnd_combo_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
+
+    return p_combo->index;
+}
+
 void klbwnd_combo_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
@@ -225,6 +239,7 @@ void klbwnd_combo_clear(klb_wnd_t* p_wnd)
 
 static void klbwnd_combo_init_attribute(klbwnd_combo_t* p_combo)
 {
+    p_combo->index = 0;
     p_combo->title = sdsempty();
     p_combo->value = sdsempty();
 

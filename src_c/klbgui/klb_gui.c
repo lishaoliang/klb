@@ -472,6 +472,39 @@ int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
     return 1;
 }
 
+/// @brief 模态显示窗口
+/// @return int 0.成功; 非0.失败(错误码)
+int klb_gui_model_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
+{
+    if (KLBUI_MODAL_WND_MAX <= p_gui->modal_num)
+    {
+        return 1; // 超过最大弹出数目
+    }
+
+    klb_wnd_t* p_wnd = p_top;
+
+    if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
+    {
+        for (int i = 0; i < p_gui->modal_num; i++)
+        {
+            if (p_wnd == p_gui->p_modal_wnd[i])
+            {
+                return 1; // 已经被弹出
+            }
+        }
+
+        p_gui->p_modal_wnd[p_gui->modal_num] = p_wnd;
+        p_gui->modal_num += 1;
+
+        // 压栈待显示窗口流程
+        do_push_stack_top_wnd(p_gui, p_wnd);
+
+        return 0;
+    }
+
+    return 1;
+}
+
 static void klb_gui_model_end_last(klb_gui_t* p_gui)
 {
     if (p_gui->modal_num <= 0)

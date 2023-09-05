@@ -1583,6 +1583,9 @@
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_vslider.h">
       <Filter>inc\klbgui\wnd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_timer.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">

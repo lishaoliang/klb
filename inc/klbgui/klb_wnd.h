@@ -44,7 +44,7 @@ typedef struct klb_wnd_pos_t_
 typedef enum klb_wnd_style_e_
 {
     KLB_WND_STYLE_TOP                   = 0x0001,   ///< 顶层窗口
-    KLB_WND_STYLE_BORDERLESS            = 0x0002,   ///< 无边框/标题栏
+    KLB_WND_STYLE_PEEK_EVENT            = 0x0002,   ///< 需要读取消息事件: 若需要响应部分子窗口事件, 可使用此标记
     KLB_WND_STYLE_NOFOCUS               = 0x0004,   ///< 无聚焦状态
     KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
     KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘
@@ -61,6 +61,7 @@ typedef enum klb_wnd_status_e_
     KLB_WND_STATUS_INPUT                = 0x0002,   ///< 输入状态
     KLB_WND_STATUS_CHECK                = 0x0004,   ///< 选中状态
     KLB_WND_STATUS_DISABLE              = 0x0008,   ///< 不使能
+    KLB_WND_STATUS_TOPMOST              = 0x0100,   ///< 激活中的最顶层窗口: 所有 "modal"/"popup"/"messagebox"中处于最顶层
     KLB_WND_STATUS_FOCUS                = 0x1000,   ///< 鼠标聚焦
     KLB_WND_STATUS_RESIZE               = 0x4000,   ///< 重置了窗口大小, 需要控件处理布局问题
     KLB_WND_STATUS_CANVAS_RECT          = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
@@ -131,17 +132,20 @@ typedef struct klb_wnd_vtable_t_
     /// @return 无
     klb_wnd_destroy_cb      destroy;
 
-    /// @brief 消息控制函数
+    /// @brief 消息控制函数: 一般由控件内部定义函数完成
     /// @param [in] *p_wnd      窗体对象
-    /// @param [in] msg         消息命令
+    /// @param [in] msg         消息事件
     /// @param [in] *p_p1       点1
     /// @param [in] *p_p2       点2
     /// @return int 0
+    ///  \n 不使用完整"消息冒泡"机制
+    ///  \n 简化为 : 聚焦窗口和其最顶层窗口响应
+    ///  \n 若控件需要处理子窗口消息: 额外添加标记 KLB_WND_STYLE_PEEK_EVENT
     klb_wnd_on_control_cb   on_control;
 
-    /// @brief 消息响应函数
+    /// @brief 消息响应函数: 一般由使用者绑定外部函数
     /// @param [in] *p_wnd      窗体对象
-    /// @param [in] msg         消息命令
+    /// @param [in] msg         消息事件
     /// @param [in] *p_p1       点1
     /// @param [in] *p_p2       点2
     /// @param [in] lparam      附加参数1
@@ -149,7 +153,8 @@ typedef struct klb_wnd_vtable_t_
     /// @return int
     /// @note
     ///  \n 不使用完整"消息冒泡"机制
-    ///  \n 简化为 : 聚焦窗口和其最顶层窗口响应  
+    ///  \n 简化为 : 聚焦窗口和其最顶层窗口响应
+    ///  \n 若控件需要处理子窗口消息: 额外添加标记 KLB_WND_STYLE_PEEK_EVENT
     klb_wnd_on_command_cb   on_command;
 
     /// @brief 自定义绘图
@@ -292,6 +297,10 @@ KLB_API void klb_wnd_disable(klb_wnd_t* p_wnd, bool disable);
 
 /// @brief 获取是否是 不使能
 KLB_API bool klb_wnd_is_disable(klb_wnd_t* p_wnd);
+
+/// @brief 获取是否是 所有激活窗口中的最顶层
+/// @note  此状态的设置函数, 只能由框架内部决定
+KLB_API bool klb_wnd_is_topmost(klb_wnd_t* p_wnd);
 
 
 //////////////////////////////////////////////////////////////////////////

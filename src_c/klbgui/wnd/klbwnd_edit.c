@@ -109,6 +109,20 @@ void klbwnd_edit_set_css(klb_wnd_t* p_wnd, klbwnd_edit_css_t* p_css)
     p_edit->p_css = p_css;
 }
 
+void klbwnd_edit_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_edit_t* p_edit = (klbwnd_edit_t*)p_wnd->ctrl;
+
+    p_edit->index = index;
+}
+
+int klbwnd_edit_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_edit_t* p_edit = (klbwnd_edit_t*)p_wnd->ctrl;
+
+    return p_edit->index;
+}
+
 void klbwnd_edit_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_edit_t* p_edit = (klbwnd_edit_t*)p_wnd->ctrl;
@@ -142,6 +156,7 @@ const sds klbwnd_edit_get_value(klb_wnd_t* p_wnd)
 
 static void klbwnd_edit_init_attribute(klbwnd_edit_t* p_edit)
 {
+    p_edit->index = 0;
     p_edit->title = sdsempty();
     p_edit->value = sdsempty();
 }

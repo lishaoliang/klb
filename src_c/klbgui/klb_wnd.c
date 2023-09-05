@@ -200,6 +200,26 @@ bool klb_wnd_is_disable(klb_wnd_t* p_wnd)
     return (KLB_WND_STATUS_DISABLE & p_wnd->state.status) ? true : false;
 }
 
+/// @brief 设置 所有激活窗口中的最顶层
+void klb_wnd_topmost(klb_wnd_t* p_wnd, bool topmost)
+{
+    assert(NULL != p_wnd);
+    if (topmost)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_TOPMOST;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_TOPMOST);
+    }
+}
+
+/// @brief 获取是否是 所有激活窗口中的最顶层
+bool klb_wnd_is_topmost(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_TOPMOST & p_wnd->state.status) ? true : false;
+}
+
 void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip)
 {
     if (NULL == p_wnd->tip)

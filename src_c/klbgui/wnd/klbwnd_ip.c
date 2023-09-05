@@ -109,6 +109,20 @@ void klbwnd_ip_set_css(klb_wnd_t* p_wnd, klbwnd_ip_css_t* p_css)
     p_ip->p_css = p_css;
 }
 
+void klbwnd_ip_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_ip_t* p_ip = (klbwnd_ip_t*)p_wnd->ctrl;
+
+    p_ip->index = index;
+}
+
+int klbwnd_ip_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_ip_t* p_ip = (klbwnd_ip_t*)p_wnd->ctrl;
+
+    return p_ip->index;
+}
+
 void klbwnd_ip_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_ip_t* p_ip = (klbwnd_ip_t*)p_wnd->ctrl;
@@ -142,6 +156,7 @@ const sds klbwnd_ip_get_value(klb_wnd_t* p_wnd)
 
 static void klbwnd_ip_init_attribute(klbwnd_ip_t* p_ip)
 {
+    p_ip->index = 0;
     p_ip->title = sdsempty();
     p_ip->value = sdsempty();
 }

@@ -18,6 +18,10 @@ klb_wnd_t* klb_wnd_get_top(klb_wnd_t* p_wnd);
 int klb_wnd_set_top(klb_wnd_t* p_wnd);
 bool klb_wnd_is_top(klb_wnd_t* p_wnd);
 
+/// @brief 设置 所有激活窗口中的最顶层
+void klb_wnd_topmost(klb_wnd_t* p_wnd, bool topmost);
+
+
 // 设置聚焦
 void klb_wnd_set_focus(klb_wnd_t* p_wnd, bool focus);
 

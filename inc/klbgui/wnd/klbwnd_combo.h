@@ -35,6 +35,7 @@ typedef struct klbwnd_combo_t_
 {
     klbwnd_combo_css_t*     p_css;          ///< 样式
 
+    int                     index;          ///< 序号
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
 
@@ -56,6 +57,11 @@ KLB_API void klbwnd_combo_css_quit(klbwnd_combo_css_t* p_css);
 
 /// @brief set css
 KLB_API void klbwnd_combo_set_css(klb_wnd_t* p_wnd, klbwnd_combo_css_t* p_css);
+
+
+/// @brief 设置/获取序号
+KLB_API void klbwnd_combo_set_index(klb_wnd_t* p_wnd, int index);
+KLB_API int  klbwnd_combo_get_index(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get title

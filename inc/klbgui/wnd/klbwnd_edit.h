@@ -34,6 +34,7 @@ typedef struct klbwnd_edit_t_
 {
     klbwnd_edit_css_t*      p_css;          ///< 样式
 
+    int                     index;          ///< 序号
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
 }klbwnd_edit_t;
@@ -52,6 +53,11 @@ KLB_API void klbwnd_edit_css_quit(klbwnd_edit_css_t* p_css);
 
 /// @brief set css
 KLB_API void klbwnd_edit_set_css(klb_wnd_t* p_wnd, klbwnd_edit_css_t* p_css);
+
+
+/// @brief 设置/获取序号
+KLB_API void klbwnd_edit_set_index(klb_wnd_t* p_wnd, int index);
+KLB_API int  klbwnd_edit_get_index(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get title
