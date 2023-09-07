@@ -316,3 +316,262 @@ void klbuiutil_draw_line_x(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
         x4 += 1;    y4 -= 1;
     }
 }
+
+/// @brief 绘制实线符号 ">"
+void klbuiutil_draw_line_1(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // step1. 取得内部满足如下条件的最大矩形
+    // 求取 r, 满足如下条件
+    // 1. 高 = 宽 * 2              =>     r.h = r.w * 2
+    // 2. 在原矩形之内的最大矩形   =>     r.h < p_rect->h && r.w < p_rect->w && (r.h,r.w)为最大值
+    klb_rect_t src = *p_rect;
+    klb_rect_t r = { 0 };
+
+    if (src.w * 2 <= src.h)
+    {
+        r.w = src.w;
+        r.h = r.w * 2;
+    }
+    else
+    {
+        r.h = (src.h / 2) * 2;
+        r.w = r.h / 2;
+    }
+
+    r.x = src.x + (src.w - r.w) / 2;
+    r.y = src.y + (src.h - r.h) / 2;
+
+    // step2. 在矩形r 中按水平方向分拆出和step1条件相同的 2个 矩形
+    int line_w = MAX((r.w / 4), 1);
+
+    klb_rect_t r1 = r; // 偏左 矩形
+    r1.y += line_w;
+    r1.w -= line_w;
+    r1.h -= line_w * 2;
+
+    klb_rect_t r2 = r; // 偏右 矩形
+    r2.x += line_w;
+    r2.y += line_w;
+    r2.w -= line_w;
+    r2.h -= line_w * 2;
+
+    // step3. 绘制线条, 以中线线向 上下 两个方向绘制
+    int x1 = r1.x + r1.w, y1 = r1.y + r1.h / 2; // 中线右侧点
+    int x2 = r2.x + r2.w, y2 = r2.y + r2.h / 2;
+
+    int x3 = r1.x + r1.w, y3 = r1.y + r1.h / 2;
+    int x4 = r2.x + r2.w, y4 = r2.y + r2.h / 2;
+
+    for (int i = 0; i < r1.w; i++)
+    {
+        klb_wnd_draw_line2(p_wnd, x1, y1, x2, y2, color);
+
+        x1 -= 1;    y1 -= 1;
+        x2 -= 1;    y2 -= 1;
+
+        klb_wnd_draw_line2(p_wnd, x3, y3, x4, y4, color);
+
+        x3 -= 1;    y3 += 1;
+        x4 -= 1;    y4 += 1;
+    }
+}
+
+/// @brief 绘制实线符号 ">|"
+void klbuiutil_draw_line_2(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // step1. 取得内部满足如下条件的最大矩形
+    // 求取 r, 满足如下条件
+    // 1. 高 = 宽 * 2              =>     r.h = r.w * 2
+    // 2. 在原矩形之内的最大矩形   =>     r.h < p_rect->h && r.w < p_rect->w && (r.h,r.w)为最大值
+    klb_rect_t src = *p_rect;
+    klb_rect_t r = { 0 };
+
+    int w = (src.w * 2 <= src.h) ? src.w : (src.h / 2);
+    int line_w = MAX((w / 5), 1);
+    src.w -= (line_w + 2);
+
+    if (src.w * 2 <= src.h)
+    {
+        r.w = src.w;
+        r.h = r.w * 2;
+    }
+    else
+    {
+        r.h = (src.h / 2) * 2;
+        r.w = r.h / 2;
+    }
+
+    r.x = src.x + (src.w - r.w) / 2;
+    r.y = src.y + (src.h - r.h) / 2;
+
+    // step2. 在矩形r 中按水平方向分拆出和step1条件相同的 2个 矩形
+    klb_rect_t r1 = r; // 偏左 矩形
+    r1.y += line_w;
+    r1.w -= line_w;
+    r1.h -= line_w * 2;
+
+    klb_rect_t r2 = r; // 偏右 矩形
+    r2.x += line_w;
+    r2.y += line_w;
+    r2.w -= line_w;
+    r2.h -= line_w * 2;
+
+    // step3. 绘制线条, 以中线线向 上下 两个方向绘制
+    int x1 = r1.x + r1.w, y1 = r1.y + r1.h / 2; // 中线右侧点
+    int x2 = r2.x + r2.w, y2 = r2.y + r2.h / 2;
+
+    int x3 = r1.x + r1.w, y3 = r1.y + r1.h / 2;
+    int x4 = r2.x + r2.w, y4 = r2.y + r2.h / 2;
+
+    for (int i = 0; i < r1.w; i++)
+    {
+        klb_wnd_draw_line2(p_wnd, x1, y1, x2, y2, color);
+
+        x1 -= 1;    y1 -= 1;
+        x2 -= 1;    y2 -= 1;
+
+        klb_wnd_draw_line2(p_wnd, x3, y3, x4, y4, color);
+
+        x3 -= 1;    y3 += 1;
+        x4 -= 1;    y4 += 1;
+    }
+
+    // 右侧 "|"
+    klb_rect_t r3 = { 0 }; // 偏右 矩形
+    r3.x = r2.x + r2.w + 2;
+    r3.y = r2.y;
+    r3.w = line_w;
+    r3.h = r1.w * 2 + 1;
+
+    klb_wnd_draw_fill_rect2(p_wnd, &r3, color);
+}
+
+/// @brief 绘制实线符号 "<"
+void klbuiutil_draw_line_3(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // step1. 取得内部满足如下条件的最大矩形
+    // 求取 r, 满足如下条件
+    // 1. 高 = 宽 * 2              =>     r.h = r.w * 2
+    // 2. 在原矩形之内的最大矩形   =>     r.h < p_rect->h && r.w < p_rect->w && (r.h,r.w)为最大值
+    klb_rect_t src = *p_rect;
+    klb_rect_t r = { 0 };
+
+    if (src.w * 2 <= src.h)
+    {
+        r.w = src.w;
+        r.h = r.w * 2;
+    }
+    else
+    {
+        r.h = (src.h / 2) * 2;
+        r.w = r.h / 2;
+    }
+
+    r.x = src.x + (src.w - r.w) / 2;
+    r.y = src.y + (src.h - r.h) / 2;
+
+    // step2. 在矩形r 中按水平方向分拆出和step1条件相同的 2个 矩形
+    int line_w = MAX((r.w / 4), 1);
+
+    klb_rect_t r1 = r; // 偏左 矩形
+    r1.y += line_w;
+    r1.w -= line_w;
+    r1.h -= line_w * 2;
+
+    klb_rect_t r2 = r; // 偏右 矩形
+    r2.x += line_w;
+    r2.y += line_w;
+    r2.w -= line_w;
+    r2.h -= line_w * 2;
+
+    // step3. 绘制线条, 以中线线向 上下 两个方向绘制
+    int x1 = r1.x, y1 = r1.y + r1.h / 2; // 中线左侧点
+    int x2 = r2.x, y2 = r2.y + r2.h / 2;
+
+    int x3 = r1.x, y3 = r1.y + r1.h / 2;
+    int x4 = r2.x, y4 = r2.y + r2.h / 2;
+
+    for (int i = 0; i < r1.w; i++)
+    {
+        klb_wnd_draw_line2(p_wnd, x1, y1, x2, y2, color);
+
+        x1 += 1;    y1 -= 1;
+        x2 += 1;    y2 -= 1;
+
+        klb_wnd_draw_line2(p_wnd, x3, y3, x4, y4, color);
+
+        x3 += 1;    y3 += 1;
+        x4 += 1;    y4 += 1;
+    }
+}
+
+/// @brief 绘制实线符号 "|<"
+void klbuiutil_draw_line_4(klb_wnd_t* p_wnd, klb_rect_t* p_rect, uint32_t color)
+{
+    // step1. 取得内部满足如下条件的最大矩形
+    // 求取 r, 满足如下条件
+    // 1. 高 = 宽 * 2              =>     r.h = r.w * 2
+    // 2. 在原矩形之内的最大矩形   =>     r.h < p_rect->h && r.w < p_rect->w && (r.h,r.w)为最大值
+    klb_rect_t src = *p_rect;
+    klb_rect_t r = { 0 };
+
+    int w = (src.w * 2 <= src.h) ? src.w : (src.h / 2);
+    int line_w = MAX((w / 5), 1);
+    src.x += (line_w + 2);
+    src.w -= (line_w + 2);
+
+    if (src.w * 2 <= src.h)
+    {
+        r.w = src.w;
+        r.h = r.w * 2;
+    }
+    else
+    {
+        r.h = (src.h / 2) * 2;
+        r.w = r.h / 2;
+    }
+
+    r.x = src.x + (src.w - r.w) / 2;
+    r.y = src.y + (src.h - r.h) / 2;
+
+    // step2. 在矩形r 中按水平方向分拆出和step1条件相同的 2个 矩形
+    klb_rect_t r1 = r; // 偏左 矩形
+    r1.y += line_w;
+    r1.w -= line_w;
+    r1.h -= line_w * 2;
+
+    klb_rect_t r2 = r; // 偏右 矩形
+    r2.x += line_w;
+    r2.y += line_w;
+    r2.w -= line_w;
+    r2.h -= line_w * 2;
+
+    // step3. 绘制线条, 以中线线向 上下 两个方向绘制
+    int x1 = r1.x, y1 = r1.y + r1.h / 2; // 中线左侧点
+    int x2 = r2.x, y2 = r2.y + r2.h / 2;
+
+    int x3 = r1.x, y3 = r1.y + r1.h / 2;
+    int x4 = r2.x, y4 = r2.y + r2.h / 2;
+
+    for (int i = 0; i < r1.w; i++)
+    {
+        klb_wnd_draw_line2(p_wnd, x1, y1, x2, y2, color);
+
+        x1 += 1;    y1 -= 1;
+        x2 += 1;    y2 -= 1;
+
+        klb_wnd_draw_line2(p_wnd, x3, y3, x4, y4, color);
+
+        x3 += 1;    y3 += 1;
+        x4 += 1;    y4 += 1;
+    }
+
+    // 左侧 "|"
+    klb_rect_t r3 = { 0 }; // 偏右 矩形
+    r3.x = r1.x - 2 - line_w;
+    r3.y = r1.y;
+    r3.w = line_w;
+    r3.h = r1.w * 2 + 1;
+
+    klb_wnd_draw_fill_rect2(p_wnd, &r3, color);
+}

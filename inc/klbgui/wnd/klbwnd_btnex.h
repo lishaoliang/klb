@@ -41,9 +41,13 @@ typedef enum klbwnd_btnex_type_e_
     KLBWND_BTNEX_triangle_right,            ///< 实体向右三角(直角,边角45度)
     KLBWND_BTNEX_triangle_down,             ///< 实体向下三角(直角,边角45度)
 
-    KLBWND_BTNEX_line_plus          = 30,   ///< 实体符号 "+"
-    KLBWND_BTNEX_line_minus,                ///< 实体符号 "-"
-    KLBWND_BTNEX_line_x,                    ///< 实体符号 "X"
+    KLBWND_BTNEX_line_plus          = 30,   ///< 实线符号 "+"
+    KLBWND_BTNEX_line_minus,                ///< 实线符号 "-"
+    KLBWND_BTNEX_line_x,                    ///< 实线符号 "X"
+    KLBWND_BTNEX_line_1,                    ///< 实线符号 ">"
+    KLBWND_BTNEX_line_2,                    ///< 实线符号 ">|"
+    KLBWND_BTNEX_line_3,                    ///< 实线符号 "<"
+    KLBWND_BTNEX_line_4,                    ///< 实线符号 "|<"
 }klbwnd_btnex_type_e;
 
 

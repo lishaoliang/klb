@@ -144,6 +144,10 @@ void klbwnd_btnex_set_type_str(klb_wnd_t* p_wnd, const char* p_type)
     else if (0 == strcmp(p_type,    "line-plus")) { type = KLBWND_BTNEX_line_plus; }
     else if (0 == strcmp(p_type,    "line-minus")) { type = KLBWND_BTNEX_line_minus; }
     else if (0 == strcmp(p_type,    "line-x")) { type = KLBWND_BTNEX_line_x; }
+    else if (0 == strcmp(p_type,    "line-1")) { type = KLBWND_BTNEX_line_1; }
+    else if (0 == strcmp(p_type,    "line-2")) { type = KLBWND_BTNEX_line_2; }
+    else if (0 == strcmp(p_type,    "line-3")) { type = KLBWND_BTNEX_line_3; }
+    else if (0 == strcmp(p_type,    "line-4")) { type = KLBWND_BTNEX_line_4; }
 
     klbwnd_btnex_set_type(p_wnd, type);
 }
@@ -179,6 +183,18 @@ const char* klbwnd_btnex_get_type_str(klb_wnd_t* p_wnd)
         break;
     case KLBWND_BTNEX_line_x:
         return "line-x";
+        break;
+    case KLBWND_BTNEX_line_1:
+        return "line-1";
+        break;
+    case KLBWND_BTNEX_line_2:
+        return "line-2";
+        break;
+    case KLBWND_BTNEX_line_3:
+        return "line-3";
+        break;
+    case KLBWND_BTNEX_line_4:
+        return "line-4";
         break;
 
     default:

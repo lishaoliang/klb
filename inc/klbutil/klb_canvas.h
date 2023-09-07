@@ -28,6 +28,17 @@ extern "C" {
 typedef struct klb_canvas_t_ klb_canvas_t;
 
 
+/// @enum  klb_canvas_layer_type_e
+/// @brief 画布图层类型
+/// @note  待探讨: 可以否将GUI画布 与 视频 画布 做 融合 啥的???
+typedef enum klb_canvas_layer_type_e_
+{
+    KLB_CANVAS_LAYER_main   = 0,        ///< 主画布: (GUI)用于显示 model/popup/messagebox
+    KLB_CANVAS_LAYER_any,               ///< 任意(可选): 未明确用途
+    KLB_CANVAS_LAYER_tip,               ///< TIP画布图层(可选): (GUI)用户显示 tip
+}klb_canvas_layer_type_e;
+
+
 /// @struct klb_canvas_vtable_t
 /// @brief  canvas画布操作
 typedef struct klb_canvas_vtable_t_
@@ -159,10 +170,11 @@ typedef struct klb_canvas_vtable_t_
     /// @brief 申请画布
     /// @param [in] w           宽
     /// @param [in] h           高
-    /// @param [in] color_fmt   颜色格式
+    /// @param [in] layer_type  图层类型: eg. KLB_CANVAS_LAYER_tip
     /// @return klb_canvas_t* 画布对象
     ///  \n 可申请使用硬件的画布
-    klb_canvas_t* (*malloc)(klb_canvas_t* p_canvas, int w, int h, int color_fmt);
+    ///  \n 仅主画布可以使用此函数, 若与主画布相关, 则新申请的画布bpp(位宽)与主画布一致
+    klb_canvas_t* (*malloc)(klb_canvas_t* p_canvas, int w, int h, int layer_type);
 
     /// @brief 释放画布
     /// @param [in] *p_canvas   画布对象
@@ -279,7 +291,7 @@ KLB_API int klb_canvas_refresh(klb_canvas_t* p_canvas,                          
                                 int layer_count);
 
 /// @brief 申请新画布
-KLB_API klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int color_fmt);
+KLB_API klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int layer_type);
 
 
 #ifdef __cplusplus

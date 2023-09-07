@@ -413,7 +413,7 @@ int klb_canvas_refresh(klb_canvas_t* p_canvas,                                  
     return 0;
 }
 
-klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int color_fmt)
+klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int layer_type)
 {
     if (NULL == p_canvas)
     {
@@ -422,7 +422,7 @@ klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int color_
 
     if (p_canvas->vtable.malloc)
     {
-        return p_canvas->vtable.malloc(p_canvas, w, h, color_fmt);
+        return p_canvas->vtable.malloc(p_canvas, w, h, layer_type);
     }
 
     return 0;

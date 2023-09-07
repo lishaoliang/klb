@@ -300,6 +300,102 @@ static int on_paint_line_x_klbwnd_btnex(klb_wnd_t* p_wnd)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// KLBWND_BTNEX_line_1: 实线符号 ">"
+
+static void on_paint_line_1_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+{
+    // 纯色背景
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+
+    // 边框
+    klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
+
+    klb_rect_t content_rect = *p_rect;
+    klbuiutil_remove_border(&content_rect, &p_attr->border);
+    klbuiutil_remove_padding(&content_rect, &p_css->padding);
+
+    klbuiutil_draw_line_1(p_wnd, &content_rect, p_attr->text.color);
+}
+
+static int on_paint_line_1_klbwnd_btnex(klb_wnd_t* p_wnd)
+{
+    KLBWND_BTNEX_ON_PAINT(on_paint_line_1_status_klbwnd_btnex);
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// KLBWND_BTNEX_line_2: 实线符号 ">|"
+
+static void on_paint_line_2_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+{
+    // 纯色背景
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+
+    // 边框
+    klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
+
+    klb_rect_t content_rect = *p_rect;
+    klbuiutil_remove_border(&content_rect, &p_attr->border);
+    klbuiutil_remove_padding(&content_rect, &p_css->padding);
+
+    klbuiutil_draw_line_2(p_wnd, &content_rect, p_attr->text.color);
+}
+
+static int on_paint_line_2_klbwnd_btnex(klb_wnd_t* p_wnd)
+{
+    KLBWND_BTNEX_ON_PAINT(on_paint_line_2_status_klbwnd_btnex);
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// KLBWND_BTNEX_line_3: 实线符号 "<"
+
+static void on_paint_line_3_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+{
+    // 纯色背景
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+
+    // 边框
+    klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
+
+    klb_rect_t content_rect = *p_rect;
+    klbuiutil_remove_border(&content_rect, &p_attr->border);
+    klbuiutil_remove_padding(&content_rect, &p_css->padding);
+
+    klbuiutil_draw_line_3(p_wnd, &content_rect, p_attr->text.color);
+}
+
+static int on_paint_line_3_klbwnd_btnex(klb_wnd_t* p_wnd)
+{
+    KLBWND_BTNEX_ON_PAINT(on_paint_line_3_status_klbwnd_btnex);
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// KLBWND_BTNEX_line_3: 实线符号 "|<"
+
+static void on_paint_line_4_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+{
+    // 纯色背景
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+
+    // 边框
+    klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
+
+    klb_rect_t content_rect = *p_rect;
+    klbuiutil_remove_border(&content_rect, &p_attr->border);
+    klbuiutil_remove_padding(&content_rect, &p_css->padding);
+
+    klbuiutil_draw_line_4(p_wnd, &content_rect, p_attr->text.color);
+}
+
+static int on_paint_line_4_klbwnd_btnex(klb_wnd_t* p_wnd)
+{
+    KLBWND_BTNEX_ON_PAINT(on_paint_line_4_status_klbwnd_btnex);
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 
 int klbwnd_btnex_paint_select(klb_wnd_t* p_wnd, int type)
@@ -323,14 +419,26 @@ int klbwnd_btnex_paint_select(klb_wnd_t* p_wnd, int type)
         klb_wnd_bind_paint(p_wnd, on_paint_triangle_down_klbwnd_btnex);
         break;
 
-    case KLBWND_BTNEX_line_plus:        ///< 实体符号 "+"
+    case KLBWND_BTNEX_line_plus:        ///< 实线符号 "+"
         klb_wnd_bind_paint(p_wnd, on_paint_line_plus_klbwnd_btnex);
         break;
-    case KLBWND_BTNEX_line_minus:       ///< 实体符号 "-"
+    case KLBWND_BTNEX_line_minus:       ///< 实线符号 "-"
         klb_wnd_bind_paint(p_wnd, on_paint_line_minus_klbwnd_btnex);
         break;
-    case KLBWND_BTNEX_line_x:           ///< 实体符号 "X"
+    case KLBWND_BTNEX_line_x:           ///< 实线符号 "X"
         klb_wnd_bind_paint(p_wnd, on_paint_line_x_klbwnd_btnex);
+        break;
+    case KLBWND_BTNEX_line_1:           ///< 实线符号 ">"
+        klb_wnd_bind_paint(p_wnd, on_paint_line_1_klbwnd_btnex);
+        break;
+    case KLBWND_BTNEX_line_2:           ///< 实线符号 ">|"
+        klb_wnd_bind_paint(p_wnd, on_paint_line_2_klbwnd_btnex);
+        break;
+    case KLBWND_BTNEX_line_3:           ///< 实线符号 "<"
+        klb_wnd_bind_paint(p_wnd, on_paint_line_3_klbwnd_btnex);
+        break;
+    case KLBWND_BTNEX_line_4:           ///< 实线符号 "|<"
+        klb_wnd_bind_paint(p_wnd, on_paint_line_4_klbwnd_btnex);
         break;
 
     default:
