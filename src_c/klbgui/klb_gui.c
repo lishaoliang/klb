@@ -34,6 +34,7 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
         p_gui->p_msg_list = klb_nlist_create();
         p_gui->p_msg_mutex = klb_mutex_create();
 
+        p_gui->is_drop_msg_dispatch = false;
         p_gui->is_need_clear = false;
     }
 
@@ -291,6 +292,9 @@ int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)
 
 int klb_gui_clear(klb_gui_t* p_gui)
 {
+    // 放弃消息"冒泡"
+    klb_gui_drop_msg_dispatch(p_gui, true);
+
     // 去除所有当前窗口
     klbuiex_redraw_clear(p_gui->p_redraw);
     p_gui->modal_num = 0;
@@ -365,6 +369,9 @@ static void do_control_event_recursive_klb_wnd(klb_wnd_t* p_wnd, int e, const kl
 // "压栈"待显示窗口流程
 static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 {
+    // 放弃消息"冒泡"
+    klb_gui_drop_msg_dispatch(p_gui, true);
+
     // 清除焦点
     {
         if (NULL != p_gui->p_focus)
@@ -414,6 +421,9 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 // "出栈"待显示窗口流程
 static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 {
+    // 放弃消息"冒泡"
+    klb_gui_drop_msg_dispatch(p_gui, true);
+
     // 清除焦点
     {
         if (NULL != p_gui->p_focus)
@@ -887,6 +897,16 @@ int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip)
     return 0;
 }
 
+void klb_gui_drop_msg_dispatch(klb_gui_t* p_gui, bool drop)
+{
+    p_gui->is_drop_msg_dispatch = drop;
+}
+
+bool klb_gui_is_drop_msg_dispatch(klb_gui_t* p_gui)
+{
+    return p_gui->is_drop_msg_dispatch;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // 重绘所有
@@ -914,6 +934,40 @@ static void klb_gui_redraw_all(klb_gui_t* p_gui, klb_rect_t* p_rect)
     *p_rect = p_gui->p_canvas->rect;
 }
 
+// 检查窗口 是否在 model/popup/messagebox 中
+static bool is_in_model_popup_msgbox_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
+{
+    // 判定其顶层窗口即可
+    // 若不在其中, 则不需要绘制
+    klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
+
+    // messagebox
+    if (p_top == p_gui->p_msg_box)
+    {
+        return true;
+    }
+
+    // popup
+    for (int m = p_gui->popup_num - 1; 0 <= m; m--)
+    {
+        if (p_top == p_gui->p_popup_wnd[m])
+        {
+            return true;
+        }
+    }
+
+    // modal
+    for (int n = p_gui->modal_num - 1; 0 <= n; n--)
+    {
+        if (p_top == p_gui->p_modal_wnd[n])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // 按列表重绘
 static void klb_gui_redraw_wnd_hlist(klb_gui_t* p_gui, klb_hlist_t* p_hlist, klb_rect_t* p_rect)
 {
@@ -926,17 +980,22 @@ static void klb_gui_redraw_wnd_hlist(klb_gui_t* p_gui, klb_hlist_t* p_hlist, klb
     {
         klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_data(p_iter);
 
-        klb_wnd_draw(p_wnd);
+        // Bug. 这里还有一种情况: 放入刷新列表的窗口, 根本不在 所有需要绘制的窗口链中
+        // 在这里排除: 检查其顶层窗口, 是否在 model/popup/messagebox 中
+        if (is_in_model_popup_msgbox_klb_gui(p_gui, p_wnd))
+        {
+            klb_wnd_draw(p_wnd);
 
-        if (first)
-        {
-            *p_rect = p_wnd->pos.rect_in_canvas;
-            first = false;
-        }
-        else
-        {
-            klb_rect_t rect1 = *p_rect;
-            klb_rect_union(p_rect, &rect1, &p_wnd->pos.rect_in_canvas); // 需要刷新区域, 取并集
+            if (first)
+            {
+                *p_rect = p_wnd->pos.rect_in_canvas;
+                first = false;
+            }
+            else
+            {
+                klb_rect_t rect1 = *p_rect;
+                klb_rect_union(p_rect, &rect1, &p_wnd->pos.rect_in_canvas); // 需要刷新区域, 取并集
+            }
         }
 
         p_iter = klb_hlist_next(p_iter);
@@ -1212,6 +1271,19 @@ static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
 
 static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 {
+    // Note. 消息事件处理流程
+    // 并不仅仅是焦点窗口需要处理
+    // 此外, 调用者可能需要直接处理相关消息
+    // 则 所有消息 总归有一个最顶层窗口处理
+
+    // Bug. klb_wnd_on_control_and_command 调用后
+    // 在其响应函数中可能使用 model/popup/messagebox, 甚至 remove/clear 等函数
+    // 此时 已经破坏正常消息处理流程 的条件
+    // 所以 这些情况下, 需要终止消息事件 继续传递处理
+    // 解决方案1. on_control/on_command函数返回值, 标记是否终止消息 "冒泡". (ps.以前这么处理的, 较为繁琐, 调用者需要谨慎区分)
+    // 解决方案2. 将有影响的函数调用中, 做个标记, 这里检测到标记, 终止消息 "冒泡". (ps.当前处理方案)
+
+    // step1. 移动消息; 更新坐标/焦点窗口
     if (KLBUI_mousemove == p_msg->msg)
     {
         // 更新记录鼠标位置
@@ -1221,12 +1293,75 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         refind_focus_klb_gui(p_gui, p_msg->pt1.x, p_msg->pt1.y);
     }
 
-    bool outwindow = false;
 
-    // 处理窗口消息
-    klb_wnd_t* p_wnd = p_gui->p_focus; // 焦点窗口
+    // step2. 开始处理消息, 先清理标记
+    klb_gui_drop_msg_dispatch(p_gui, false);
 
-    if (NULL == p_wnd)
+
+    // step3. 若有焦点窗口, 处理焦点窗口消息事件
+    klb_wnd_t* p_wnd = p_gui->p_focus;
+
+    if (NULL != p_wnd)
+    {
+        // 焦点窗口事件
+        klb_wnd_on_control_and_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
+
+        // 检查窗口链中 需要抓取 KLB_WND_STYLE_PEEK_EVENT 标记的窗口
+        // 若有标记, 则响应消息
+        klb_wnd_t* p_tmp = p_wnd->p_parent;
+        while (NULL != p_tmp && NULL != p_tmp->p_parent)
+        {
+            if (KLB_WND_STYLE_PEEK_EVENT & p_tmp->state.style)
+            {
+                klb_wnd_on_control_and_command(p_tmp, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+                if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
+            }
+
+            p_tmp = p_tmp->p_parent;
+        }
+
+        // 当前焦点窗口的最顶层窗口, 响应消息
+        klb_wnd_t* p_top_wnd = (NULL != p_tmp) ? p_tmp : p_wnd;
+        if (p_wnd != p_top_wnd)
+        {
+            klb_wnd_on_control_and_command(p_top_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
+        }
+    }
+
+
+    // step4. 若无焦点窗口, 则将消息 交给 messagebox/popup/modal 绘图次序中最后的 那个顶层窗口
+    p_wnd = NULL;
+    if (NULL == p_gui->p_focus)
+    {
+        // 处在最后绘制的 顶层窗口
+        if (NULL != p_gui->p_msg_box)
+        {
+            p_wnd = p_gui->p_msg_box;
+        }
+        else if(0 < p_gui->popup_num)
+        {
+            p_wnd = p_gui->p_popup_wnd[p_gui->popup_num - 1];
+        }
+        else if(0 < p_gui->modal_num)
+        {
+            p_wnd = p_gui->p_modal_wnd[p_gui->modal_num - 1];
+        }
+
+        // 最顶层窗口处理消息
+        if (NULL != p_wnd)
+        {
+            klb_wnd_on_control_and_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
+        }
+    }
+
+    // step5. 若无焦点窗口, 处理 messagebox/popup 窗口的 KLBUI_outwindow 消息
+    // 方便关闭窗口
+    p_wnd = NULL;
+    bool is_outwindow = false;
+    if (NULL == p_gui->p_focus)
     {
         // 若无焦点窗口, 则检查是否有 messagebox / popup 窗口
         // 若有messagebox / popup , 则将消息交个顶层窗口处理
@@ -1235,53 +1370,33 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
             p_wnd = p_gui->p_msg_box;
 
             // 判定是否在messagebox窗口之外点击
-            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mouseenter == p_msg->msg)
+            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mousedown == p_msg->msg)
             {
                 if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
                 {
-                    outwindow = true;
+                    is_outwindow = true;
                 }
             }
         }
-        else if(0 < p_gui->popup_num)
+        else if (0 < p_gui->popup_num)
         {
-            p_wnd = p_gui->p_popup_wnd[0]; // 首次popup 的窗口
+            p_wnd = p_gui->p_popup_wnd[p_gui->popup_num - 1];
 
             // 判定是否在popup窗口之外点击
-            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mouseenter == p_msg->msg)
+            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mousedown == p_msg->msg)
             {
                 if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
                 {
-                    outwindow = true;
+                    is_outwindow = true;
                 }
             }
         }
     }
 
-    if (NULL != p_wnd)
+    if (is_outwindow && NULL != p_wnd)
     {
-        // "消息冒泡"
-        // 这里裁剪 "冒泡" 流程, 只将消息事件交给焦点窗口和顶层窗口处理
-
-        // 这里 on_control / on_command 函数都需要处理, eg. 组件可能需要响应部分消息
-        {
-            // 先调用组件自身的处理函数
-            // 再调用绑定的用户函数
-            klb_wnd_on_control_and_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-        }
-
-        // 最后将消息事件交给顶层窗口处理
-        klb_wnd_t* p_wnd_top = klb_wnd_get_top(p_wnd);
-        if (p_wnd != p_wnd_top)
-        {
-            klb_wnd_on_control_and_command(p_wnd_top, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-        }
-
-        // 补充事件 outwindow
-        if (outwindow)
-        {
-            klb_wnd_on_control_and_command(p_wnd_top, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
-        }
+        klb_wnd_on_control_and_command(p_wnd, KLBUI_outwindow, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
     }
 
     return 0;

@@ -273,7 +273,7 @@ static void on_klbui_btnex_graph(klb_wnd_t* p_wnd, klbui_btnex_t* p_btnex, int m
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_btnex_bind(KEY_, FUNC_) { klb_map_set_ptr(p_btnex->p_func_map, (KEY_), (void*)(FUNC_), p_btnex); }
+#define KLBUI_btnex_bind(KEY_, FUNC_) { klb_map_set_ptr(p_btnex->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_btnex_init_func_map(klb_wnd_t* p_wnd, klbui_btnex_t* p_btnex, klb_gui_t* p_gui)
 {

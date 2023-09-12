@@ -127,6 +127,19 @@ static int klbwnd_messagebox_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 /////////////////////////////////////////////
 // 子窗口响应函数
 
+static int on_btnex_close_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd_msgbox = (klb_wnd_t*)p_wnd->p_udata;
+    klbwnd_messagebox_t* p_msgbox = (klbwnd_messagebox_t*)p_wnd_msgbox->ctrl;
+
+    if (KLBUI_click == msg || KLBUI_dblclick == msg)
+    {
+        klb_gui_messagebox_end(p_wnd->p_gui);
+    }
+
+    return 0;
+}
+
 static int on_btn_ok_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klb_wnd_t* p_wnd_msgbox = (klb_wnd_t*)p_wnd->p_udata;
@@ -164,6 +177,7 @@ void klbwnd_messagebox_set_css(klb_wnd_t* p_wnd, klbwnd_messagebox_css_t* p_css)
 
     if (NULL != p_css)
     {
+        klbwnd_btnex_set_css(p_msgbox->p_btnex_close, &p_css->css_btnex);
         klbwnd_button_set_css(p_msgbox->p_btn_ok, &p_css->css_btn);
         klbwnd_button_set_css(p_msgbox->p_btn_cancel, &p_css->css_btn);
 
@@ -234,8 +248,21 @@ void klbwnd_messagebox_css_init(klbwnd_messagebox_css_t* p_css, klb_gui_t* p_gui
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
 
     klbwnd_button_css_init(&p_css->css_btn, p_gui);
+    klbwnd_btnex_css_init(&p_css->css_btnex, p_gui);
     klbwnd_static_css_init(&p_css->css_sta, p_gui);
     klbwnd_picture_css_init(&p_css->css_pic, p_gui);
+
+    p_css->css_btnex.padding.top = 6;
+    p_css->css_btnex.padding.bottom = 6;
+    p_css->css_btnex.normal.border.width.top = 0;
+    p_css->css_btnex.normal.border.width.right = 0;
+    p_css->css_btnex.normal.border.width.bottom = 0;
+    p_css->css_btnex.normal.border.width.left = 0;
+
+    p_css->css_btnex.focus.border.width = p_css->css_btnex.normal.border.width;
+
+    p_css->css_btnex.normal.background.color = KLB_ARGB8888(255, 45, 45, 48);
+    p_css->css_btnex.focus.background.color = KLB_ARGB8888(255, 60, 60, 60);
 }
 
 void klbwnd_messagebox_css_quit(klbwnd_messagebox_css_t* p_css)
@@ -245,6 +272,7 @@ void klbwnd_messagebox_css_quit(klbwnd_messagebox_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->disable);
 
     klbwnd_button_css_quit(&p_css->css_btn);
+    klbwnd_btnex_css_quit(&p_css->css_btnex);
     klbwnd_static_css_quit(&p_css->css_sta);
     klbwnd_picture_css_quit(&p_css->css_pic);
 }
@@ -264,6 +292,16 @@ static void klbwnd_messagebox_init_subwnds(klb_wnd_t* p_wnd)
 
     int pic_w = 40;
     int pic_h = 40;
+
+    // button close
+    {
+        p_msgbox->p_btnex_close = klbwnd_btnex_create(p_gui, 0, 0, 36, 28);
+
+        klb_wnd_push_child(p_wnd, p_msgbox->p_btnex_close);
+        klb_wnd_bind_command(p_msgbox->p_btnex_close, on_btnex_close_klbwnd_messagebox, p_wnd);
+
+        klbwnd_btnex_set_type(p_msgbox->p_btnex_close, KLBWND_BTNEX_line_x);
+    }
 
     // button ok
     {
@@ -326,6 +364,14 @@ static void klbwnd_messagebox_relayout(klb_wnd_t* p_wnd)
 
     int pic_w = 40;
     int pic_h = 40;
+
+    // 右上角 关闭按钮
+    {
+        int x = w - p_msgbox->p_btnex_close->pos.rect_in_parent.w - 10;
+        int y = (title_h - p_msgbox->p_btnex_close->pos.rect_in_parent.h) / 2;
+
+        klb_wnd_move(p_msgbox->p_btnex_close, x, y);
+    }
 
     // 图片框
     //{

@@ -34,9 +34,36 @@ static void* klbuiex_util_create(klb_gui_t* p_gui)
     // CSS
     {
         klb_map_init(&p_util->css_map);
+        klb_map_init(&p_util->globalcss_map);
+        klb_map_init(&p_util->globalcss_attr_map);
     }
 
     return p_util;
+}
+
+static void klbuiex_util_clear_globalcss_attr_map(klbuiex_util_t* p_util)
+{
+    klb_map_iter_t* p_iter = klb_map_begin(&p_util->globalcss_attr_map);
+
+    // 遍历, 销毁CSS
+    while (NULL != p_iter)
+    {
+        klb_adt_t* p_adt = klb_map_data(p_iter);
+
+        void* ptr = NULL;
+        void* p_css = (void*)klb_adt_to_ptr(p_adt, &ptr);
+
+        klb_gui_globalcss_destroy_cb cb_destroy = (klb_gui_globalcss_destroy_cb)ptr;
+
+        if (NULL != p_css && NULL != cb_destroy)
+        {
+            cb_destroy(p_css);
+        }
+
+        p_iter = klb_map_next(p_iter);
+    }
+
+    klb_map_clear(&p_util->globalcss_attr_map);
 }
 
 static void klbuiex_util_destroy(void* ptr, klb_gui_t* p_gui)
@@ -45,7 +72,12 @@ static void klbuiex_util_destroy(void* ptr, klb_gui_t* p_gui)
 
     // CSS
     {
+        // p_util->globalcss_attr_map 存储的数据需要手动释放
+        klbuiex_util_clear_globalcss_attr_map(p_util);
+
         klb_map_quit(&p_util->css_map);
+        klb_map_quit(&p_util->globalcss_map);
+        klb_map_quit(&p_util->globalcss_attr_map);
     }
 
     KLB_FREE(p_util)

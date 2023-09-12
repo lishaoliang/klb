@@ -241,7 +241,7 @@ static void on_klbui_button_value(klb_wnd_t* p_wnd, klbui_button_t* p_btn, int m
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_btn_bind(KEY_, FUNC_) { klb_map_set_ptr(p_btn->p_func_map, (KEY_), (void*)(FUNC_), p_btn); }
+#define KLBUI_btn_bind(KEY_, FUNC_) { klb_map_set_ptr(p_btn->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_button_init_func_map(klb_wnd_t* p_wnd, klbui_button_t* p_btn, klb_gui_t* p_gui)
 {

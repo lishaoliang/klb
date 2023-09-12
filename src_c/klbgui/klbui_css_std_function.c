@@ -145,7 +145,7 @@ static void on_klbguicssmapstd_visibility(klb_wnd_t* p_wnd, void* ptr, int metho
 //////////////////////////////////////////////////////////////////////////
 // 控件通用 css 属性方法
 
-#define KLBGUI_cssmapstd_bind(KEY_, FUNC_) { klb_map_set_ptr(p_css_map, (KEY_), (void*)(FUNC_), ptr); }
+#define KLBGUI_cssmapstd_bind(KEY_, FUNC_) { klb_map_set_ptr(p_css_map, (KEY_), (void*)(FUNC_), NULL); }
 
 void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 {

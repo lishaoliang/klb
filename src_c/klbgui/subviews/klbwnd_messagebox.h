@@ -15,6 +15,7 @@
 #include "klbgui/klbui_css_ex.h"
 #include "klbutil/klb_sds.h"
 #include "klbgui/wnd/klbwnd_button.h"
+#include "klbgui/wnd/klbwnd_btnex.h"
 #include "klbgui/wnd/klbwnd_static.h"
 #include "klbgui/wnd/klbwnd_picture.h"
 
@@ -40,6 +41,7 @@ typedef struct klbwnd_messagebox_css_t_
     klbwnd_picture_css_t    css_pic;        ///< 图片框css
     klbwnd_static_css_t     css_sta;        ///< 静态框css
     klbwnd_button_css_t     css_btn;        ///< 按钮的css
+    klbwnd_btnex_css_t      css_btnex;      ///< 扩展按钮的css
 }klbwnd_messagebox_css_t;
 
 
@@ -49,6 +51,8 @@ typedef struct klbwnd_messagebox_t_
 
     sds                      title;         ///< 标题
     int                      value;         ///< 值
+
+    klb_wnd_t*               p_btnex_close; ///< 右上角退出按钮
 
     klb_wnd_t*               p_pic_image;   ///< 图片框: klbwnd_picture_create
     klb_wnd_t*               p_sta_txt;     ///< 文本框: klbwnd_static_create

@@ -2695,5 +2695,8 @@
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_btnex.c">
       <Filter>src_c\klbgui\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klbui_css.c">
+      <Filter>src_c\klbgui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

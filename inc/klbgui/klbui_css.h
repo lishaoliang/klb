@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 typedef struct klb_gui_t_ klb_gui_t;
+typedef struct klb_wnd_t_ klb_wnd_t;
 
 
 /// @brief 边框模型
@@ -37,7 +38,7 @@ typedef struct klb_gui_t_ klb_gui_t;
 ///  |  |  *---------- padding(内边距) -----------*  |  |
 ///  |  |  |  *--------------------------------*  |  |  |
 ///  |  |  |  |                                |  |  |  |
-///  |  |  |  |        element(元素/wnd)       |  |  |  |
+///  |  |  |  |        element(元素/window)    |  |  |  |
 ///  |  |  |  |                                |  |  |  |
 ///  |  |  |  *--------------------------------*  |  |  |
 ///  |  |  *--------------------------------------*  |  |
@@ -252,11 +253,16 @@ typedef struct klbuicss_util_t_
 KLB_API bool klb_gui_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color);
 
 
+
+//////////////////////////////////////////////////////////////////////////
+// 同类型控件, 私有CSS属性 函数处理表
+
+
 /// @brief 通过组件类型获取 css 属性函数处理 map
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_type         组件类型名
-/// @return klb_map_t* 函数处理表名称
-///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
+/// @return klb_map_t* 函数处理表
+///  \n 标准控件类型名命名规则为 "k*", eg."kbutton"
 ///  \n 相同组件, 使用同一套函数处理表, 目的是为了 精简组件体积
 KLB_API klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type);
 
@@ -264,7 +270,7 @@ KLB_API klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type);
 /// @brief 新建 css 属性函数处理 map
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_type         组件类型名
-/// @return klb_map_t* 函数处理表名称
+/// @return klb_map_t* 函数处理表
 KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 
 
@@ -273,6 +279,77 @@ KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 /// @param [in] *ptr            组件
 /// @return 无
 KLB_API void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr);
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// 同类型控件, 全局公共CSS属性 函数处理表
+// 原因: 1. 同一套UI中设计中, 80%以上同类型控件会采用一致的CSS属性设置
+//       2. CSS属性数据一般比窗口属性数据 大 很多倍, 若每个控件都单独持有CSS属性, 窗口数据量大(例如十万级以上), 会消耗非常多内存
+//       3. 本GUI框架主要针对 嵌入式/资源受限 环境, 在内存与CPU消耗上, 需要谨慎对待!
+// 方案: 在基于 节省内存, 不降低使用体验的情况下, 采用如下思路:
+//       A. 默认情况下的控件, 直接使用全局公共CSS属性
+//       B. 若控件的"set"(设置CSS)方法被调用, 则新建立私有CSS属性, 转为使用私有CSS属性
+//       C. 提供操作全局公共CSS属性的一些接口
+// 其他: 在节省内存方面, 还有待考量思路:
+//       1).每个控件尽可能精简CSS属性. 缺点: 没有标准处理方法, 需要逐个去对待
+//       2).使用CSS-MINI, 精简每个属性占用的字节数: eg. 将 klbuicss_padding_t.top 属性 由"int" 修改为 "int8_t"
+
+
+/// @brief 通过组件类型获取 全局公共CSS处理表
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return klb_map_t* 函数处理表
+KLB_API klb_map_t* klb_gui_globalcss_map(klb_gui_t* p_gui, const char* p_type);
+
+
+/// @brief 新建 全局公共CSS处理表
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return klb_map_t* 函数处理表
+KLB_API klb_map_t* klb_gui_new_globalcss_map(klb_gui_t* p_gui, const char* p_type);
+
+
+/// @brief 销毁 全局公共CSS属性
+/// @param [in] *p_css      窗体对象
+/// @return 无
+typedef void(*klb_gui_globalcss_destroy_cb)(void* p_css);
+
+
+/// @brief 设置 全局公共CSS属性 指针
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @param [in] *p_css          全局公共CSS属性; 设置后, 由GUI框架托管
+/// @param [in] cb_destroy      *p_css的销毁函数
+/// @return 无
+/// @note 若重复设置, 以最后设置的为准;
+///       注意: 不要轻易覆盖, 可能造成 缓存的指针失效!
+KLB_API void klb_gui_globalcss_set_ptr(klb_gui_t* p_gui, const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
+
+
+/// @brief 获取 全局公共CSS属性 指针
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         组件类型名
+/// @return void* 全局公共CSS属性 指针
+/// @note 控件自定义其CSS属性 结构体
+KLB_API void* klb_gui_globalcss_get_ptr(klb_gui_t* p_gui, const char* p_type);
+
+
+/// @brief 全局公共CSS属性 设置/获取 函数
+/// @param [in] *ptr            CSS指针
+/// @param [in] method          设置/获取:  KLBUI_CSSEX_get, KLBUI_CSSEX_set
+/// @return 无
+typedef void(*klb_gui_globalcss_cb)(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
+/// @brief 设置 全局公共CSS属性
+/// @note 参考 klb_wnd_set
+KLB_API int klb_gui_globalcss_set(klb_gui_t* p_gui, const char* p_type, const klb_map_t* p_map);
+
+
+/// @brief 获取 全局公共CSS属性
+/// @note 参考 klb_wnd_get
+KLB_API klb_map_t* klb_gui_globalcss_get(klb_gui_t* p_gui, const char* p_type, const klb_map_t* p_map);
 
 
 #ifdef __cplusplus

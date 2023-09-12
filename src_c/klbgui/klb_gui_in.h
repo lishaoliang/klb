@@ -95,6 +95,12 @@ typedef struct klb_gui_t_
         klb_wnd_t*      p_focus;
     };
 
+    // 消息处理流程
+    struct
+    {
+        bool            is_drop_msg_dispatch;       ///< 是否放弃消息"冒泡"
+    };
+
     // 消息
     struct
     {
@@ -127,6 +133,13 @@ int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd);
 
 // 更新tip
 int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip);
+
+
+//////////////////////////////////////////
+
+// 设置/获取 放弃消息"冒泡"
+void klb_gui_drop_msg_dispatch(klb_gui_t* p_gui, bool drop);
+bool klb_gui_is_drop_msg_dispatch(klb_gui_t* p_gui);
 
 
 //////////////////////////////////////////////////////////////////////////

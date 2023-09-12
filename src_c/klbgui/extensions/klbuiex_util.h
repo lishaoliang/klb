@@ -36,7 +36,12 @@ typedef struct klbuiex_util_t_
     klb_point_t     mouse_pt;
 
     // CSS
-    klb_map_t       css_map;    ///< css属性函数表
+    struct
+    {
+        klb_map_t  css_map;             ///< CSS属性函数表
+        klb_map_t  globalcss_map;       ///< 全局CSS属性函数表
+        klb_map_t  globalcss_attr_map;  ///< 全局CSS属性
+    };  
 }klbuiex_util_t;
 
 
