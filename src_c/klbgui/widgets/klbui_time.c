@@ -289,7 +289,6 @@ static void klbui_time_init_func_map(klb_wnd_t* p_wnd, klbui_time_t* p_time, klb
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBUI_ktime);
     p_time->p_func_map = ptr;
-    klb_gui_css_map_append_std_function(ptr, p_time); // 添加公共方法
 
 
     //////////////////////////////////////////////

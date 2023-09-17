@@ -255,7 +255,6 @@ static void klbui_rich_text_init_func_map(klb_wnd_t* p_wnd, klbui_rich_text_t* p
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBUI_krichtext);
     p_rich->p_func_map = ptr;
-    klb_gui_css_map_append_std_function(ptr, p_rich); // 添加公共方法
 
 
     //////////////////////////////////////////////

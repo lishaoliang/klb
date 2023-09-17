@@ -82,7 +82,14 @@ klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type)
 klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type)
 {
     klb_map_set_map(&p_gui->p_util->css_map, p_type, NULL); // 重设置一个 map
-    return klb_map_to_map(&p_gui->p_util->css_map, p_type);
+
+    // 新建的CSS-map
+    klb_map_t* p_map = klb_map_to_map(&p_gui->p_util->css_map, p_type);
+
+    // 添加 基础CSS 函数
+    klb_gui_css_map_append_std_function(p_map, NULL);
+
+    return p_map;
 }
 
 

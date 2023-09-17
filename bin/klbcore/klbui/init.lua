@@ -111,6 +111,33 @@ klbui.default_css = function (...)
 end
 
 
+-- @brief 设置/获取全局CSS属性参数
+-- @param [in]	t[string]			控件类型type: eg. 'kbutton'
+-- @param [in]	[任意]...			参数
+-- @return [任意]...				值
+-- @note 注意若是设置, 则必须在控件创建之前, 才能在初始化控件时生效;
+--   eg. 获取 local text_color = klbui.global_css('kbutton', 'color')
+--   eg. 设置 klbui.global_css('kbutton', {['color']={255,220,220,220}})
+klbui.global_css = function (t, ...)
+	local args = {...}
+	
+	if 1 < #args then
+		kgui.set_global_css(t, ...)
+	elseif 1 == #args then
+		if 'table' == type(args[1]) then
+			for k1, v1 in pairs(args[1]) do
+				-- set
+				kgui.set_global_css(t, k1, v1)
+			end
+		else
+			return kgui.get_global_css(t, ...)
+		end
+	end
+	
+	return klbui
+end
+
+
 -- @brief 加载资源图片
 -- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径

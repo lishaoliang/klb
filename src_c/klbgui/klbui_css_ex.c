@@ -31,6 +31,28 @@ void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr)
     KLB_FREE_BY(p_attr->background.image, sdsfree);
 }
 
+void klbuicssex_attributes_copy(klbuicssex_attributes_t* p_dst, const klbuicssex_attributes_t* p_src)
+{
+    if (NULL == p_dst->background.image)
+    {
+        p_dst->background.image = sdsempty();
+    }
+
+    p_dst->text = p_src->text;
+    p_dst->font = p_src->font;
+
+    p_dst->background.color = p_src->background.color;
+    p_dst->background.image = sdscpy(p_dst->background.image, p_src->background.image);
+
+#if defined(__KLB_GUI_CSS3__)
+    p_dst->background.repeat = p_src->background.repeat;
+    p_dst->background.position = p_src->background.position;
+    p_dst->background.attachment = p_src->background.attachment;
+#endif
+
+    p_dst->border = p_src->border;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // 公共 单属性操作
 

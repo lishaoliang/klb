@@ -46,6 +46,7 @@ typedef struct klbuicssex_attributes_t_
 // 默认属性初始化/退出
 KLB_API void klbuicssex_attributes_init(klbuicssex_attributes_t* p_attr, const klbuicssex_attributes_t* p_src);
 KLB_API void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr);
+KLB_API void klbuicssex_attributes_copy(klbuicssex_attributes_t* p_dst, const klbuicssex_attributes_t* p_src);
 
 
 //////////////////////////////////////////////////////////////////////////

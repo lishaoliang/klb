@@ -267,7 +267,6 @@ static void klbui_progress_init_func_map(klb_wnd_t* p_wnd, klbui_progress_t* p_p
 	// 未找到, 则新添加 解析map, 及处理函数
 	ptr = klb_gui_new_css_map(p_gui, KLBUI_kprogress);
 	p_prog->p_func_map = ptr;
-    klb_gui_css_map_append_std_function(ptr, p_prog); // 添加公共方法
 
 
 	//////////////////////////////////////////////

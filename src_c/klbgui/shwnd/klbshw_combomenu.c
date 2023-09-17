@@ -184,7 +184,6 @@ static void klbshw_combomenu_init_func_map(klb_wnd_t* p_wnd, klbshw_combomenu_t*
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBSHW_combomenu);
     p_menu->p_func_map = ptr;
-    klb_gui_css_map_append_std_function(ptr, p_menu); // 添加公共方法
 
 
     //////////////////////////////////////////////

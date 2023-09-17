@@ -98,6 +98,20 @@ void klbwnd_static_set_css(klb_wnd_t* p_wnd, klbwnd_static_css_t* p_css)
     p_static->p_css = p_css;
 }
 
+void klbwnd_static_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_static_t* p_static = (klbwnd_static_t*)p_wnd->ctrl;
+
+    p_static->index = index;
+}
+
+int klbwnd_static_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_static_t* p_static = (klbwnd_static_t*)p_wnd->ctrl;
+
+    return p_static->index;
+}
+
 void klbwnd_static_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_static_t* p_static = (klbwnd_static_t*)p_wnd->ctrl;
@@ -117,6 +131,8 @@ const sds klbwnd_static_get_title(klb_wnd_t* p_wnd)
 
 static void klbwnd_static_init_attribute(klbwnd_static_t* p_static)
 {
+    p_static->index = 0;
+
     p_static->title = sdsempty();
 }
 
@@ -146,6 +162,14 @@ void klbwnd_static_css_init(klbwnd_static_css_t* p_css, klb_gui_t* p_gui)
 void klbwnd_static_css_quit(klbwnd_static_css_t* p_css)
 {
     klbuicssex_attributes_quit(&p_css->normal);
+}
+
+void klbwnd_static_css_copy(klbwnd_static_css_t* p_dst, klbwnd_static_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
 }
 
 //////////////////////////////////////////////////////////////////////////

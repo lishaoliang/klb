@@ -21,6 +21,16 @@ extern "C" {
 #endif
 
 
+void klbui_static_init_globalcss(klb_gui_t* p_gui);
+void klbui_button_init_globalcss(klb_gui_t* p_gui);
+void klbui_btnex_init_globalcss(klb_gui_t* p_gui);
+void klbui_edit_init_globalcss(klb_gui_t* p_gui);
+void klbui_check_init_globalcss(klb_gui_t* p_gui);
+void klbui_combo_init_globalcss(klb_gui_t* p_gui);
+void klbui_date_init_globalcss(klb_gui_t* p_gui);
+void klbui_view_init_globalcss(klb_gui_t* p_gui);
+
+
 klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_btnex_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -81,6 +91,8 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_kmenu             "kmenu"
 
 
+/// @def   KLB_GUI_REGISTER_STD
+/// @brief 注册标准GUI控件
 #define KLB_GUI_REGISTER_STD(PTR_GUI_)  { \
     klb_gui_register((PTR_GUI_), KLBUI_kstatic,     klbui_static_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kbutton,     klbui_button_create);       \
@@ -110,6 +122,14 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kanimation,  klbui_animation_create);    \
     klb_gui_register((PTR_GUI_), KLBUI_kqrcode,     klbui_qrcode_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kmenu,       klbui_menu_create);         \
+    klbui_static_init_globalcss((PTR_GUI_));    \
+    klbui_button_init_globalcss((PTR_GUI_));    \
+    klbui_btnex_init_globalcss((PTR_GUI_));     \
+    klbui_edit_init_globalcss((PTR_GUI_));      \
+    klbui_check_init_globalcss((PTR_GUI_));     \
+    klbui_combo_init_globalcss((PTR_GUI_));     \
+    klbui_date_init_globalcss((PTR_GUI_));      \
+    klbui_view_init_globalcss((PTR_GUI_));      \
 }
 
 

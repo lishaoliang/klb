@@ -68,6 +68,7 @@ typedef struct klbwnd_btnex_t_
 
     int                     type;           ///< 类型: KLBWND_BTNEX_normal
 
+    int                     index;          ///< 序号
     sds                     title;          ///< 标题
 
     sds                     value;          ///< 值
@@ -87,6 +88,7 @@ KLB_API klb_wnd_t* klbwnd_btnex_create(klb_gui_t* p_gui, int x, int y, int w, in
 /// @brief css init/quit
 KLB_API void klbwnd_btnex_css_init(klbwnd_btnex_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_btnex_css_quit(klbwnd_btnex_css_t* p_css);
+KLB_API void klbwnd_btnex_css_copy(klbwnd_btnex_css_t* p_dst, klbwnd_btnex_css_t* p_src);
 
 
 /// @brief set css
@@ -101,6 +103,11 @@ KLB_API int klbwnd_btnex_get_type(klb_wnd_t* p_wnd);
 /// @brief 设置/获取类型字符串
 KLB_API void klbwnd_btnex_set_type_str(klb_wnd_t* p_wnd, const char* p_type);
 KLB_API const char* klbwnd_btnex_get_type_str(klb_wnd_t* p_wnd);
+
+
+/// @brief 设置/获取序号
+KLB_API void klbwnd_btnex_set_index(klb_wnd_t* p_wnd, int index);
+KLB_API int klbwnd_btnex_get_index(klb_wnd_t* p_wnd);
 
 
 /// @brief set/get title string

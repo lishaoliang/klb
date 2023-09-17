@@ -140,6 +140,14 @@ void klbwnd_view_css_quit(klbwnd_view_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->normal);
 }
 
+void klbwnd_view_css_copy(klbwnd_view_css_t* p_dst, klbwnd_view_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

@@ -45,6 +45,8 @@ KLB_API klb_wnd_t* klbwnd_view_create(klb_gui_t* p_gui, int x, int y, int w, int
 /// @brief css init/quit
 KLB_API void klbwnd_view_css_init(klbwnd_view_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_view_css_quit(klbwnd_view_css_t* p_css);
+KLB_API void klbwnd_view_css_copy(klbwnd_view_css_t* p_dst, klbwnd_view_css_t* p_src);
+
 
 /// @brief set css
 KLB_API void klbwnd_view_set_css(klb_wnd_t* p_wnd, klbwnd_view_css_t* p_css);

@@ -97,6 +97,56 @@ static void on_klbguicssmapstd_suggesth(klb_wnd_t* p_wnd, void* ptr, int method,
     }
 }
 
+// 显示隐藏
+static void on_klbguicssmapstd_show(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_show(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool show = klb_map_idx_to_bool(p_in, start);
+
+        klb_wnd_show(p_wnd, show);
+    }
+}
+
+// 输入状态
+static void on_klbguicssmapstd_input(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_input(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool input = klb_map_idx_to_bool(p_in, start);
+
+        klb_wnd_input(p_wnd, input);
+        klb_wnd_update(p_wnd);
+    }
+}
+
+// 选中
+static void on_klbguicssmapstd_check(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_check(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool check = klb_map_idx_to_bool(p_in, start);
+
+        klb_wnd_check(p_wnd, check);
+        klb_wnd_update(p_wnd);
+    }
+}
+
 // 不使能
 static void on_klbguicssmapstd_disable(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -107,18 +157,10 @@ static void on_klbguicssmapstd_disable(klb_wnd_t* p_wnd, void* ptr, int method, 
     else if(KLBUI_CSSEX_set == method)
     {
         int start = 1;
-        int type = klb_map_array_type(p_in, start);
-        switch (type)
-        {
-        case KLB_ADT_bool:
-            {
-                klb_wnd_disable(p_wnd, klb_map_idx_to_bool(p_in, start));
-                klb_wnd_update(p_wnd);
-            }
-            break;
-        default:
-            break;
-        }
+        bool disable = klb_map_idx_to_bool(p_in, start);
+
+        klb_wnd_disable(p_wnd, disable);
+        klb_wnd_update(p_wnd);
     }
 }
 
@@ -153,7 +195,6 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     // void on_xxx(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
     // 其中 void* ptr 为具体控件指针, 公共方法中无法处理此指针
     // 公共方法, 可以处理 所有与 klb_wnd_t* 相关的部分
-    // 公共方法不强制使用: 若需要, 在 klb_gui_new_css_map 之后调用本函数即可
 
     // 窗口坐标
     KLBGUI_cssmapstd_bind("wndpos-canvas", on_klbguicssmapstd_wndpos_canvas); // 基于窗口画布坐标
@@ -174,6 +215,9 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 
 
     // 状态
+    KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show)
+    KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input)
+    KLBGUI_cssmapstd_bind("check", on_klbguicssmapstd_check);           // 选中
     KLBGUI_cssmapstd_bind("disable", on_klbguicssmapstd_disable);       // 不使能
     KLBGUI_cssmapstd_bind("topmost", on_klbguicssmapstd_topmost);       // 所有窗口中的最顶层
 

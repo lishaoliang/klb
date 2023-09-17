@@ -189,6 +189,16 @@ void klbwnd_edit_css_quit(klbwnd_edit_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->disable);
 }
 
+void klbwnd_edit_css_copy(klbwnd_edit_css_t* p_dst, klbwnd_edit_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

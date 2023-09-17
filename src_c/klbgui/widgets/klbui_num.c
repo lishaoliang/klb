@@ -260,7 +260,6 @@ static void klbui_num_init_func_map(klb_wnd_t* p_wnd, klbui_num_t* p_num, klb_gu
     // 未找到, 则新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBUI_knum);
     p_num->p_func_map = ptr;
-    klb_gui_css_map_append_std_function(ptr, p_num); // 添加公共方法
 
 
     //////////////////////////////////////////////

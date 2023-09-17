@@ -70,11 +70,75 @@ local function OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 end
 
 
+-- 自动对齐区域(x, y, w, h)
+-- -1: 将需要自动对齐父窗口的宽高
+local function AutoRect(parent_path, x, y, w, h)
+	local auto_x, auto_y, auto_w, auto_h = x, y, w, h
+	
+	-- do. 1. 不需要处理
+	if 0 <= auto_x and 0 <= auto_y and 0 <= auto_w and 0 <= auto_h then
+		return auto_x, auto_y, auto_w, auto_h
+	end
+	
+	-- 屏幕宽/高
+	local sceen_w, sceen_h = kgui.wh()
+	
+	-- 父窗口宽/高
+	local parent_rect = {}
+	if parent_path then
+		parent_rect = kgui.wndpos(parent_path, false)
+	end
+	
+	local parent_w = parent_rect['w'] or sceen_w
+	local parent_h = parent_rect['h'] or sceen_h
+	
+	-- do. 2 自动宽
+	if 0 <= x and auto_w < 0 then
+		auto_w = parent_w - x
+		
+		if auto_w < 0 then
+			auto_w = 0
+		end
+	end
+	
+	-- do. 3. 自动高
+	if 0 <= y and auto_h < 0 then
+		auto_h = parent_h - y
+		
+		if auto_h < 0 then
+			auto_h = 0
+		end
+	end
+	
+	-- do. 4. 自动x, 向右对齐
+	if x < 0 and auto_w >= 0 then
+		auto_x = parent_w - auto_w
+		
+		if auto_x < 0 then
+			auto_x = 0
+		end
+	end
+	
+	-- do. 5. 自动y, 向下对齐
+	if y < 0 and auto_h >= 0 then
+		auto_y = parent_h - auto_h
+		
+		if auto_y < 0 then
+			auto_y = 0
+		end
+	end
+	
+	return auto_x, auto_y, auto_w, auto_h
+end
+
+
 -- 3位字符串, 最大范围为 63^3 = 250047
 -- 4位字符串, 最大范围为 63^4 = 15752961
 local CONST_rand_max = 4
 
-local function ParseWnd(wnd, commands, css, root_path, first)
+
+-- 解析窗口
+local function ParseWnd(wnd, commands, css, parent_path, first)
 	if 'table' ~= type(wnd) then
 		return
 	end
@@ -94,7 +158,10 @@ local function ParseWnd(wnd, commands, css, root_path, first)
 		if first then
 			-- 首次运行, 是顶层对话框, 先尝试使用原始提供路径
 			-- 若原始路径已被占用, 则随机分配一个路径地址, 直到无重复为止
-			path = root_path
+			path = parent_path
+			
+			-- 简易自动(x,y,w,h)
+			x, y, w, h = AutoRect(nil, x, y, w, h)
 			
 			local try_count = 0
 			while true do
@@ -116,10 +183,14 @@ local function ParseWnd(wnd, commands, css, root_path, first)
 		else
 			-- 非首次运行, 则不是顶层对话框
 			-- 随机分配一个路径地址, 直到无重复为止
+			
+			-- 简易自动(x,y,w,h)
+			x, y, w, h = AutoRect(parent_path, x, y, w, h)
+			
 			local try_count = 0
 			while true do
-				--path = root_path .. '/' .. krand.rand_string(CONST_rand_max)
-				path = table.concat({root_path, '/', krand.rand_string(CONST_rand_max)})
+				--path = parent_path .. '/' .. krand.rand_string(CONST_rand_max)
+				path = table.concat({parent_path, '/', krand.rand_string(CONST_rand_max)})
 				
 				if 0 == kgui.append(t, path, x, y, w, h) then
 					break -- 添加成功

@@ -204,6 +204,20 @@ const char* klbwnd_btnex_get_type_str(klb_wnd_t* p_wnd)
     return "normal";
 }
 
+void klbwnd_btnex_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_btnex_t* p_btn = (klbwnd_btnex_t*)p_wnd->ctrl;
+
+    p_btn->index = index;
+}
+
+int klbwnd_btnex_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_btnex_t* p_btn = (klbwnd_btnex_t*)p_wnd->ctrl;
+
+    return p_btn->index;
+}
+
 void klbwnd_btnex_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_btnex_t* p_btn = (klbwnd_btnex_t*)p_wnd->ctrl;
@@ -287,11 +301,12 @@ static void klbwnd_btnex_init_attribute(klbwnd_btnex_t* p_btn)
     p_btn->title = sdsempty();
     p_btn->value = sdsempty();
 
-    p_btn->type = KLBWND_BTNEX_normal;
+    p_btn->index = 0;
+    p_btn->type = KLBWND_BTNEX_normal; // eg. KLBWND_BTNEX_rectangle
     p_btn->i_value = 0;
     p_btn->b_value = false;
 
-    p_btn->p_map = NULL;    ///< 需要使用再初始化
+    p_btn->p_map = NULL;    // 需要使用再初始化
 }
 
 static void klbwnd_btnex_quit_attribute(klbwnd_btnex_t* p_btn)
@@ -322,6 +337,16 @@ void klbwnd_btnex_css_quit(klbwnd_btnex_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->normal);
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
+}
+
+void klbwnd_btnex_css_copy(klbwnd_btnex_css_t* p_dst, klbwnd_btnex_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
 }
 
 //////////////////////////////////////////////////////////////////////////
