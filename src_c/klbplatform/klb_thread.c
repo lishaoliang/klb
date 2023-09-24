@@ -3,6 +3,7 @@
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
 #include "klbplatform/klb_time.h"
+#include "klbthird/sds.h"
 #include <stdlib.h>
 #include <assert.h>
 
@@ -21,7 +22,7 @@ typedef struct klb_thread_t_
     void*           p_obj;          ///< 传递的对象参数
 
     int             cpu_idx;        ///< 需要设置CPU序号
-    char*           p_name;         ///< 需要设置的线程名称
+    sds             name;           ///< 需要设置的线程名称
 
     bool            wait;           ///< 需创建者等待
 }klb_thread_t;
@@ -65,7 +66,7 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     {
         KLB_LOG_S("sys error!klb thread create!");
 
-        KLB_FREE(p_thread->p_name);
+        KLB_FREE_BY(p_thread->name, sdsfree);
         KLB_FREE(p_thread);
         return NULL;
     }
@@ -82,7 +83,7 @@ void klb_thread_destroy(klb_thread_t* p_thread)
     WaitForSingleObject(p_thread->hnd, INFINITE);
     CloseHandle(p_thread->hnd);
 
-    KLB_FREE(p_thread->p_name);
+    KLB_FREE_BY(p_thread->name, sdsfree);
     KLB_FREE(p_thread);
 }
 
@@ -143,7 +144,7 @@ typedef struct klb_thread_t_
     void*           p_obj;          ///< 传递的对象参数
 
     int             cpu_idx;        ///< 需要设置CPU序号
-    char*           p_name;         ///< 需要设置的线程名称
+    sds             name;           ///< 需要设置的线程名称
 
     bool            wait;           ///< 需创建者等待
 }klb_thread_t;
@@ -170,9 +171,9 @@ static void* cb_klb_thread(void* p_obj)
     }
 
     // 设置线程名称
-    if (NULL != p_thread->p_name)
+    if (NULL != p_thread->name && 0 < sdslen(p_thread->name))
     {
-        prctl(PR_SET_NAME, p_thread->p_name);
+        prctl(PR_SET_NAME, p_thread->name);
     }
 #endif
 
@@ -200,6 +201,7 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     p_thread->cb_thread = cb_thread;
     p_thread->p_obj = p_obj;
     p_thread->cpu_idx = cpu_idx;
+    p_thread->name = sdsnew(p_name);
 
     p_thread->run = true;
     p_thread->wait = true;
@@ -208,7 +210,7 @@ klb_thread_t* klb_thread_create(klb_thread_cb cb_thread, void* p_obj, int cpu_id
     {
         KLB_LOG_S("sys error!klb thread create!");
 
-        KLB_FREE(p_thread->p_name);
+        KLB_FREE_BY(p_thread->name, sdsfree);
         KLB_FREE(p_thread);
         return NULL;
     }
@@ -223,7 +225,7 @@ void klb_thread_destroy(klb_thread_t* p_thread)
     p_thread->run = false;
     pthread_join(p_thread->hnd, NULL);
 
-    KLB_FREE(p_thread->p_name);
+    KLB_FREE_BY(p_thread->name, sdsfree);
     KLB_FREE(p_thread);
 }
 

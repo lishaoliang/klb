@@ -49,6 +49,7 @@ KLB_API klb_wnd_t* klbwnd_ip_create(klb_gui_t* p_gui, int x, int y, int w, int h
 /// @brief css init/quit
 KLB_API void klbwnd_ip_css_init(klbwnd_ip_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_ip_css_quit(klbwnd_ip_css_t* p_css);
+KLB_API void klbwnd_ip_css_copy(klbwnd_ip_css_t* p_dst, klbwnd_ip_css_t* p_src);
 
 
 /// @brief set css

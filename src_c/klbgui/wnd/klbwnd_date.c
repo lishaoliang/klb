@@ -169,6 +169,20 @@ void klbwnd_date_set_css(klb_wnd_t* p_wnd, klbwnd_date_css_t* p_css)
     p_date->p_css = p_css;
 }
 
+void klbwnd_date_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_date_t* p_date = (klbwnd_date_t*)p_wnd->ctrl;
+
+    p_date->index = index;
+}
+
+int klbwnd_date_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_date_t* p_date = (klbwnd_date_t*)p_wnd->ctrl;
+
+    return p_date->index;
+}
+
 void klbwnd_date_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_date_t* p_date = (klbwnd_date_t*)p_wnd->ctrl;
@@ -237,6 +251,7 @@ void klbwnd_date_get_value(klb_wnd_t* p_wnd, int* p_year, int* p_month, int* p_d
 
 static void klbwnd_date_init_attribute(klb_wnd_t* p_wnd, klbwnd_date_t* p_date)
 {
+    p_date->index = 0;
     p_date->title = sdsempty();
     p_date->value = sdsempty();
 

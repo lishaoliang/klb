@@ -575,6 +575,11 @@ static void on_klbui_date_border_color_disable(klb_wnd_t* p_wnd, klbui_date_t* p
 //////////////////////////////////////
 // 自定义属性
 
+static void on_klbui_date_index(klb_wnd_t* p_wnd, klbui_date_t* p_date, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_date->date.index), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_date_value(klb_wnd_t* p_wnd, klbui_date_t* p_date, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     if (KLBUI_CSSEX_get == method)
@@ -600,15 +605,15 @@ static void on_klbui_date_value(klb_wnd_t* p_wnd, klbui_date_t* p_date, int meth
             int year = 0, month = 0, day = 0;
             if (0 < klb_map_array_size(p_in_ymd))
             {
-                year = klb_map_idx_to_int64(p_in_ymd, 0);
-                month = klb_map_idx_to_int64(p_in_ymd, 0);
-                day = klb_map_idx_to_int64(p_in_ymd, 0);
+                year = (int)klb_map_idx_to_int64(p_in_ymd, 0);
+                month = (int)klb_map_idx_to_int64(p_in_ymd, 0);
+                day = (int)klb_map_idx_to_int64(p_in_ymd, 0);
             }
             else
             {
-                year = klb_map_to_int64(p_in_ymd, "year");
-                month = klb_map_to_int64(p_in_ymd, "month");
-                day = klb_map_to_int64(p_in_ymd, "day");
+                year = (int)klb_map_to_int64(p_in_ymd, "year");
+                month = (int)klb_map_to_int64(p_in_ymd, "month");
+                day = (int)klb_map_to_int64(p_in_ymd, "day");
             }
 
             klbwnd_date_set_value(p_wnd, year, month, day);
@@ -694,6 +699,7 @@ static void klbui_date_init_func_map(klb_wnd_t* p_wnd, klbui_date_t* p_date, klb
     //////////////////////////////////////////////
     // 自定义方法
 
+    KLBUI_date_bind("index", on_klbui_date_index);
     KLBUI_date_bind("value", on_klbui_date_value);
 }
 

@@ -138,6 +138,19 @@ klbui.global_css = function (t, ...)
 end
 
 
+-- @brief 某个控件类型是否支持全局CSS
+-- @param [in]	t[string]			控件类型type: eg. 'kbutton'
+-- @param [in]	[任意]...			参数
+-- @return [bool]	是否支持
+klbui.has_global_css = function (t)
+	if 'string' == type(t) then
+		return kgui.has_global_css(t)
+	end
+	
+	return false
+end
+
+
 -- @brief 加载资源图片
 -- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径

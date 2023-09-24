@@ -579,6 +579,11 @@ static void on_klbui_combo_border_color_disable(klb_wnd_t* p_wnd, klbui_combo_t*
 //////////////////////////////////////
 // 自定义属性
 
+static void on_klbui_combo_index(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_combo->combo.index), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_combo_title(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_sds(&(p_combo->combo.title), p_wnd, method, p_in, p_out);
@@ -699,6 +704,7 @@ static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, 
     //////////////////////////////////////////////
     // 自定义方法
 
+    KLBUI_combo_bind("index", on_klbui_combo_index);
     KLBUI_combo_bind("title", on_klbui_combo_title);
     KLBUI_combo_bind("value", on_klbui_combo_value);
 

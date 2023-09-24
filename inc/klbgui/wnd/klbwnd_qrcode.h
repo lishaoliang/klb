@@ -54,6 +54,7 @@ KLB_API klb_wnd_t* klbwnd_qrcode_create(klb_gui_t* p_gui, int x, int y, int w, i
 /// @brief css init/quit
 KLB_API void klbwnd_qrcode_css_init(klbwnd_qrcode_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_qrcode_css_quit(klbwnd_qrcode_css_t* p_css);
+KLB_API void klbwnd_qrcode_css_copy(klbwnd_qrcode_css_t* p_dst, klbwnd_qrcode_css_t* p_src);
 
 
 /// @brief set css

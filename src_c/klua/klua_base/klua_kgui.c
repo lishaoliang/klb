@@ -419,6 +419,25 @@ static int klua_kgui_get_global_css(lua_State* L)
     return n;
 }
 
+// 是否支持某个类型的全局CSS
+static int klua_kgui_has_global_css(lua_State* L)
+{
+    const char* p_type = luaL_checkstring(L, 1);        ///< 类型
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    if (NULL != klb_gui_globalcss_get_ptr(p_gui, p_type))
+    {
+        lua_pushboolean(L, true); // 有全局CSS属性数据, 支持
+    }
+    else
+    {
+        lua_pushboolean(L, false); // 不支持
+    }
+
+    return 1;
+}
+
 static int klua_kgui_set_shwnd_css(lua_State* L)
 {
     const char* p_path = luaL_checkstring(L, 1);
@@ -807,6 +826,7 @@ int klua_open_kgui(lua_State* L)
 
         { "set_global_css",     klua_kgui_set_global_css },
         { "get_global_css",     klua_kgui_get_global_css },
+        { "has_global_css",     klua_kgui_has_global_css },
 
         { "set_shwnd_css",      klua_kgui_set_shwnd_css },
         { "get_shwnd_css",      klua_kgui_get_shwnd_css },

@@ -23,10 +23,10 @@ static void klbwnd_picture_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_picture_on_paint_status(klb_wnd_t* p_wnd, klbwnd_picture_t* p_pic, klbwnd_picture_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    if (0 < sdslen(p_attr->background.image))
+    // 图片
+    if (0 < sdslen(p_pic->image))
     {
-        // 图片背景
-        klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);
+        klb_wnd_draw_image(p_wnd, p_rect, p_pic->image, NULL);
     }
 
 	// 边框
@@ -136,12 +136,14 @@ static void klbwnd_picture_init_attribute(klbwnd_picture_t* p_pic)
 {
     p_pic->title = sdsempty();
     p_pic->value = sdsempty();
+    p_pic->image = sdsempty();
 }
 
 static void klbwnd_picture_quit_attribute(klbwnd_picture_t* p_pic)
 {
     KLB_FREE_BY(p_pic->title, sdsfree);
     KLB_FREE_BY(p_pic->value, sdsfree);
+    KLB_FREE_BY(p_pic->image, sdsfree);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,6 +182,16 @@ void klbwnd_picture_css_quit(klbwnd_picture_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->normal);
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
+}
+
+void klbwnd_picture_css_copy(klbwnd_picture_css_t* p_dst, klbwnd_picture_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
 }
 
 //////////////////////////////////////////////////////////////////////////

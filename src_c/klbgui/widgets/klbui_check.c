@@ -689,6 +689,11 @@ static void on_klbui_check_on_border_color_disable(klb_wnd_t* p_wnd, klbui_check
 //////////////////////////////////////
 // 自定义属性
 
+static void on_klbui_check_index(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_check->check.index), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_check_value(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     if (KLBUI_CSSEX_get == method)
@@ -795,6 +800,7 @@ static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, 
     //////////////////////////////////////////////
     // 自定义方法
 
+    KLBUI_check_bind("index", on_klbui_check_index);
     KLBUI_check_bind("value", on_klbui_check_value);
 }
 

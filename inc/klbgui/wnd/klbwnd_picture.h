@@ -36,6 +36,8 @@ typedef struct klbwnd_picture_t_
 
     sds                     title;          ///< 标题
     sds                     value;          ///< 值
+
+    sds                     image;          ///< 当前显示的图片
 }klbwnd_picture_t;
 
 
@@ -48,6 +50,7 @@ KLB_API klb_wnd_t* klbwnd_picture_create(klb_gui_t* p_gui, int x, int y, int w, 
 /// @brief css init/quit
 KLB_API void klbwnd_picture_css_init(klbwnd_picture_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_picture_css_quit(klbwnd_picture_css_t* p_css);
+KLB_API void klbwnd_picture_css_copy(klbwnd_picture_css_t* p_dst, klbwnd_picture_css_t* p_src);
 
 
 /// @brief set css
