@@ -313,7 +313,7 @@ void klbwnd_menu_2rd_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int 
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_TOP | KLB_WND_STYLE_NOFOCUS;
+    p_wnd->state.style = KLB_WND_STYLE_TOP | KLB_WND_STYLE_NOFOCUS | KLB_WND_STYLE_FOCUS_CONTINUE;
 
     // 初始化内部变量
     klbwnd_menu_2rd_init_attribute(p_wnd, p_menu);

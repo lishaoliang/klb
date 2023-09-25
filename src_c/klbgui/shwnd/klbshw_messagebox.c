@@ -412,3 +412,8 @@ void klbshw_messagebox_set_body_text(klb_wnd_t* p_wnd, const char* p_text)
 
     klbwnd_messagebox_set_body_text(p_wnd, p_text);
 }
+
+int klbshw_messagebox_get_value(klb_wnd_t* p_wnd)
+{
+    return klbwnd_messagebox_get_value(p_wnd);
+}

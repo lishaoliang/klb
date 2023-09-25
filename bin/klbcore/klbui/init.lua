@@ -206,9 +206,21 @@ klbui.messagebox_end = function ()
 	return kgui.messagebox_end()
 end
 
+
 -- @brief 弹出预定制的消息框
-klbui.messagebox_std = function (title, body_text)
-	return kgui.messagebox_std(title, body_text)
+-- @param [in] func[function]		结束之后的回调函数
+-- @param [in] title[string]		标题
+-- @param [in] body_text[string]	内容
+-- @return [number(int)] 	0.成功; 非0.失败
+-- @note func = function (msg)		-- msg = 'close', 'ok', 'cancel'
+--		    ...
+--		end
+klbui.messagebox_std = function (func, title, body_text)
+	return kgui.messagebox_std(function (msg)
+		
+		func(msg)
+		
+	end, title, body_text)
 end
 
 

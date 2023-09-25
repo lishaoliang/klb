@@ -651,19 +651,50 @@ static int klua_kgui_messagebox_end(lua_State* L)
     return 1;
 }
 
+// 标准msgbox的 响应
+static int on_command_messagebox_std_klua_kgui(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)p_wnd->p_udata;
+
+    if (KLBUI_onchange == msg)
+    {
+        int value = klbshw_messagebox_get_value(p_wnd);  // KLBSHW_messagebox_close
+        
+        char msg[64] = { 0 };
+        if (KLBSHW_messagebox_close == value) { strcpy(msg, "close"); }
+        else if (KLBSHW_messagebox_ok == value) { strcpy(msg, "ok"); }
+        else if (KLBSHW_messagebox_cancel == value) { strcpy(msg, "cancel"); }
+
+        // 调用 lua 响应函数
+        klua_ex_gui_call_command_msgbox_std(p_ex, msg);
+
+        // unbind 标准对话框响应
+        klua_ex_gui_unbind_command_msgbox_std(p_ex);
+    }
+
+    return 0;
+}
+
 static int klua_kgui_messagebox_std(lua_State* L)
 {
-    const char* p_title = luaL_checkstring(L, 1);           ///< @1. 标题
-    const char* p_body_text = luaL_checkstring(L, 2);       ///< @2. 提示内容
+    const char* p_title = luaL_checkstring(L, 2);           ///< @2. 标题
+    const char* p_body_text = luaL_checkstring(L, 3);       ///< @3. 提示内容
 
     // 获取共享的消息框
-    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
+    klb_gui_t* p_gui = klua_ex_gui_get(p_ex);
     klb_wnd_t* p_wnd = klbui_shwnd_get_messagebox(p_gui);
+
+    // 绑定Lua响应函数
+    klua_ex_gui_bind_command_msgbox_std(p_ex, 1);           ///< @1. 响应函数
 
     // 设置参数
     {
         klbshw_messagebox_set_title(p_wnd, p_title);
         klbshw_messagebox_set_body_text(p_wnd, p_body_text);
+
+        // C绑定响应
+        klb_wnd_bind_command(p_wnd, on_command_messagebox_std_klua_kgui, p_ex);
     }
 
     // 移动到屏幕中心

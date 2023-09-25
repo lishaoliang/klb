@@ -28,7 +28,11 @@ typedef struct klua_ex_gui_t_
 
     klb_hlist_t*    p_bind_hlist;       ///< klua_kgui_bind_t*
 
-    int             on_clear;           ///< 清理之后Lua调用函数
+    struct
+    {
+        int         on_msgbox_std;      ///< 标准消息框Lua调用函数
+        int         on_clear;           ///< 清理之后Lua调用函数
+    };
 }klua_ex_gui_t;
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,6 +95,19 @@ static int klua_ex_gui_quit(klua_ex_gui_t* p_ex)
     if (NULL != p_ex->p_gui)
     {
         klb_gui_clear(p_ex->p_gui);
+    }
+
+    if (0 < p_ex->on_msgbox_std)
+    {
+        luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_ex->on_msgbox_std);
+        p_ex->on_msgbox_std = 0;
+    }
+
+    // on_clear
+    if (0 < p_ex->on_clear)
+    {
+        luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_ex->on_clear);
+        p_ex->on_clear = 0;
     }
 
     klua_ex_gui_clear_bind(p_ex);
@@ -228,6 +245,58 @@ int klua_ex_gui_bind_command(klua_ex_gui_t* p_ex, const char* p_path_name, int i
     }
 
     return ret;
+}
+
+int klua_ex_gui_bind_command_msgbox_std(klua_ex_gui_t* p_ex, int idx)
+{
+    luaL_checktype(p_ex->L, idx, LUA_TFUNCTION);
+    lua_pushvalue(p_ex->L, idx);
+
+    int func = luaL_ref(p_ex->L, LUA_REGISTRYINDEX);
+    assert(0 < func);
+
+    if (0 < p_ex->on_msgbox_std)
+    {
+        luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_ex->on_msgbox_std);
+        p_ex->on_msgbox_std = 0;
+    }
+
+    p_ex->on_msgbox_std = func;
+
+    return 0;
+}
+
+int klua_ex_gui_unbind_command_msgbox_std(klua_ex_gui_t* p_ex)
+{
+    if (0 < p_ex->on_msgbox_std)
+    {
+        luaL_unref(p_ex->L, LUA_REGISTRYINDEX, p_ex->on_msgbox_std);
+        p_ex->on_msgbox_std = 0;
+    }
+
+    return 0;
+}
+
+int klua_ex_gui_call_command_msgbox_std(klua_ex_gui_t* p_ex, const char* p_msg)
+{
+    int on_msgbox_std = p_ex->on_msgbox_std;
+
+    if (on_msgbox_std <= 0)
+    {
+        return 0;
+    }
+
+    lua_State* L = p_ex->L;
+    KLUA_HELP_TOP_B(L);
+
+    lua_rawgeti(L, LUA_REGISTRYINDEX, on_msgbox_std);           // @0. 压入命令
+    lua_pushstring(L, p_msg);                                   // @1. "close", "ok", "cancel"
+
+    int status = lua_pcall(L, 1, 0, 0);
+    klua_env_report_by_L(L, status);
+
+    KLUA_HELP_TOP_E(L);
+    return 0;
 }
 
 static int call_on_clear_klua_ex_gui(klua_ex_gui_t* p_ex, int on_clear)

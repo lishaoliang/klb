@@ -48,6 +48,7 @@ typedef enum klb_wnd_style_e_
     KLB_WND_STYLE_NOFOCUS               = 0x0004,   ///< 无聚焦状态
     KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
     KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘
+    KLB_WND_STYLE_FOCUS_CONTINUE        = 0x0020,   ///< 继续寻找焦点窗口
 
     KLB_WND_STYLE_LAYER_TIP             = 0x8000,   ///< TIP 图层
 }klb_wnd_style_e;

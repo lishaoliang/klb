@@ -1146,7 +1146,8 @@ static klb_wnd_t* find_focus_klb_gui(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
     {
         for (int i = p_gui->popup_num - 1; 0 <= i; i--)
         {
-            klb_wnd_t* p_focus = klb_wnd_pt_in(p_gui->p_popup_wnd[i], x, y);
+            klb_wnd_t* p_wnd = p_gui->p_popup_wnd[i];
+            klb_wnd_t* p_focus = klb_wnd_pt_in(p_wnd, x, y);
 
             if (NULL != p_focus)
             {
@@ -1156,6 +1157,15 @@ static klb_wnd_t* find_focus_klb_gui(klb_gui_t* p_gui, int x, int y, klb_wnd_t**
                 }
 
                 return p_focus;
+            }
+
+            if (KLB_WND_STYLE_FOCUS_CONTINUE & p_wnd->state.style)
+            {
+                // none
+            }
+            else
+            {
+                return NULL; // 无此标记, 则退出
             }
         }
 

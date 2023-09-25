@@ -144,6 +144,13 @@ bool klb_gui_is_drop_msg_dispatch(klb_gui_t* p_gui);
 
 //////////////////////////////////////////////////////////////////////////
 
+/// @brief 向css 属性表中添加 标准处理函数
+/// @param [in] *p_css_map      css属性表
+/// @param [in] *ptr            组件
+/// @return 无
+void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr);
+
+
 #ifdef __cplusplus
 }
 #endif

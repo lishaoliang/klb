@@ -274,13 +274,6 @@ KLB_API klb_map_t* klb_gui_css_map(klb_gui_t* p_gui, const char* p_type);
 KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 
 
-/// @brief 向css 属性表中添加 标准处理函数
-/// @param [in] *p_css_map      css属性表
-/// @param [in] *ptr            组件
-/// @return 无
-KLB_API void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr);
-
-
 
 //////////////////////////////////////////////////////////////////////////
 // 同类型控件, 全局公共CSS属性 函数处理表

@@ -114,7 +114,7 @@ static int klbwnd_messagebox_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
         break;
 
     case KLBUI_outwindow:
-        //klb_gui_messagebox_end(p_wnd->p_gui);
+        // messagebox 必须 使用 关闭按钮等 退出对话框
         break;
 
     default:
@@ -134,7 +134,10 @@ static int on_btnex_close_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb
 
     if (KLBUI_click == msg || KLBUI_dblclick == msg)
     {
+        p_msgbox->value = KLBWND_MESSAGEBOX_close;
         klb_gui_messagebox_end(p_wnd->p_gui);
+
+        klb_wnd_on_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;
@@ -147,7 +150,10 @@ static int on_btn_ok_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_poin
 
     if (KLBUI_click == msg || KLBUI_dblclick == msg)
     {
+        p_msgbox->value = KLBWND_MESSAGEBOX_ok;
         klb_gui_messagebox_end(p_wnd->p_gui);
+
+        klb_wnd_on_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;
@@ -160,7 +166,10 @@ static int on_btn_cancel_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_
 
     if (KLBUI_click == msg || KLBUI_dblclick == msg)
     {
+        p_msgbox->value = KLBWND_MESSAGEBOX_cancel;
         klb_gui_messagebox_end(p_wnd->p_gui);
+
+        klb_wnd_on_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;
@@ -225,7 +234,7 @@ int klbwnd_messagebox_get_value(klb_wnd_t* p_wnd)
 static void klbwnd_messagebox_init_attribute(klb_wnd_t* p_wnd, klbwnd_messagebox_t* p_msgbox)
 {
     p_msgbox->title = sdsnew("Message Box");
-    p_msgbox->value = KLBWND_MESSAGEBOX_ok;
+    p_msgbox->value = KLBWND_MESSAGEBOX_close;
 }
 
 static void klbwnd_messagebox_quit_attribute(klbwnd_messagebox_t* p_msgbox)

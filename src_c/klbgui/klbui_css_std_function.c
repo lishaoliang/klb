@@ -2,6 +2,7 @@
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
 #include "klbgui/klb_gui.h"
+#include "klbgui/klb_gui_in.h"
 #include "klbmem/klb_mem.h"
 #include <string.h>
 #include <assert.h>
@@ -219,7 +220,7 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input)
     KLBGUI_cssmapstd_bind("check", on_klbguicssmapstd_check);           // 选中
     KLBGUI_cssmapstd_bind("disable", on_klbguicssmapstd_disable);       // 不使能
-    KLBGUI_cssmapstd_bind("topmost", on_klbguicssmapstd_topmost);       // 所有窗口中的最顶层
+    KLBGUI_cssmapstd_bind("topmost", on_klbguicssmapstd_topmost);       // 所有最顶层窗口中的视觉最上层的那个
 
     // tip
     KLBGUI_cssmapstd_bind("tip", on_klbguicssmapstd_tip);

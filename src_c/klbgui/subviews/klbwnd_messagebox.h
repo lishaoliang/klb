@@ -25,8 +25,9 @@ extern "C" {
 #endif
 
 
-#define KLBWND_MESSAGEBOX_ok            0
-#define KLBWND_MESSAGEBOX_cancel        1
+#define KLBWND_MESSAGEBOX_close         0x0001      ///< 关闭
+#define KLBWND_MESSAGEBOX_ok            0x0002      ///< 确认
+#define KLBWND_MESSAGEBOX_cancel        0x0004      ///< 取消
 
 
 typedef struct klbwnd_messagebox_css_t_

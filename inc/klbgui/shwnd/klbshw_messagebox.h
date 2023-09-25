@@ -37,6 +37,16 @@ KLB_API void klbshw_messagebox_set_title(klb_wnd_t* p_wnd, const char* p_title);
 KLB_API void klbshw_messagebox_set_body_text(klb_wnd_t* p_wnd, const char* p_text);
 
 
+/// @brief klbshw_messagebox_get_value 函数 返回值
+#define KLBSHW_messagebox_close         0x0001      ///< 关闭 : 注意 与 KLBWND_MESSAGEBOX_close 保持一致
+#define KLBSHW_messagebox_ok            0x0002      ///< 确认 : 注意 与 KLBWND_MESSAGEBOX_ok 保持一致
+#define KLBSHW_messagebox_cancel        0x0004      ///< 取消 : 注意 与 KLBWND_MESSAGEBOX_cancel 保持一致
+
+/// @brief 获取当前值
+KLB_API int klbshw_messagebox_get_value(klb_wnd_t* p_wnd);
+
+
+
 #if defined(__cplusplus)
 }
 #endif
