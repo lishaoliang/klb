@@ -1586,6 +1586,9 @@
     <ClInclude Include="..\..\inc\klbgui\klbui_timer.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_password.h">
+      <Filter>inc\klbgui\wnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2697,6 +2700,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klbui_css.c">
       <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_password.c">
+      <Filter>src_c\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_password.c">
+      <Filter>src_c\klbgui\wnd</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

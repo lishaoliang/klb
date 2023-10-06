@@ -37,22 +37,22 @@ static void klbwnd_progress_on_paint_status(klb_wnd_t* p_wnd, klbwnd_progress_t*
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
-	if (p_prog->value <= 0)
-	{
+    if (p_prog->value <= 0)
+    {
 
-	}
-	else if(100 <= p_prog->value)
-	{
-		klb_rect_t rect_prog = { p_rect->x + 2, p_rect->y + 2, p_rect->w - 4, p_rect->h - 4 };
-		klb_wnd_draw_fill_rect2(p_wnd, &rect_prog, p_attr->text.color);
-	}
-	else
-	{
-		int w_prog = (int64_t)(p_rect->w - 4) * p_prog->value / 100;
-		klb_rect_t rect_prog = { p_rect->x + 2, p_rect->y + 2, w_prog, p_rect->h - 4 };
+    }
+    else if(100 <= p_prog->value)
+    {
+        klb_rect_t rect_prog = { p_rect->x + 2, p_rect->y + 2, p_rect->w - 4, p_rect->h - 4 };
+        klb_wnd_draw_fill_rect2(p_wnd, &rect_prog, p_attr->text.color);
+    }
+    else
+    {
+        int w_prog = (int64_t)(p_rect->w - 4) * p_prog->value / 100;
+        klb_rect_t rect_prog = { p_rect->x + 2, p_rect->y + 2, w_prog, p_rect->h - 4 };
 
-		klb_wnd_draw_fill_rect2(p_wnd, &rect_prog, p_attr->text.color);
-	}
+        klb_wnd_draw_fill_rect2(p_wnd, &rect_prog, p_attr->text.color);
+    }
 
     // 标题文本
     //klbuicssex_draw_text(p_wnd, p_prog->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
@@ -191,6 +191,16 @@ void klbwnd_progress_css_quit(klbwnd_progress_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->normal);
     klbuicssex_attributes_quit(&p_css->focus);
     klbuicssex_attributes_quit(&p_css->disable);
+}
+
+void klbwnd_progress_css_copy(klbwnd_progress_css_t* p_dst, klbwnd_progress_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_init(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_init(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_init(&p_dst->disable, &p_src->disable);
 }
 
 //////////////////////////////////////////////////////////////////////////

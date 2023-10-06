@@ -519,6 +519,19 @@ void klbwnd_calendar_css_quit(klbwnd_calendar_css_t* p_css)
     klbwnd_static_css_quit(&p_css->css_sta);
 }
 
+void klbwnd_calendar_css_copy(klbwnd_calendar_css_t* p_dst, klbwnd_calendar_css_t* p_src)
+{
+    p_dst->margin = p_dst->margin;
+    p_dst->padding = p_dst->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+
+    klbwnd_calendar_btn_css_copy(&p_dst->css_btn, &p_src->css_btn);
+    klbwnd_static_css_copy(&p_dst->css_sta, &p_src->css_sta);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

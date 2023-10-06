@@ -65,6 +65,7 @@ KLB_API klb_wnd_t* klbwnd_vscrollbar_create(klb_gui_t* p_gui, int x, int y, int 
 /// @brief css init/quit
 KLB_API void klbwnd_vscrollbar_css_init(klbwnd_vscrollbar_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css);
+KLB_API void klbwnd_vscrollbar_css_copy(klbwnd_vscrollbar_css_t* p_dst, klbwnd_vscrollbar_css_t* p_src);
 
 
 /// @brief set css

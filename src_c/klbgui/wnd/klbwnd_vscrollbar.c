@@ -309,6 +309,18 @@ void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css)
     klbwnd_btnex_css_quit(&p_css->css_btnex);
 }
 
+void klbwnd_vscrollbar_css_copy(klbwnd_vscrollbar_css_t* p_dst, klbwnd_vscrollbar_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+
+    klbwnd_btnex_css_copy(&p_dst->css_btnex, &p_src->css_btnex);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

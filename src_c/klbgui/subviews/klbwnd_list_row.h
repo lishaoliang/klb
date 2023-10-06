@@ -49,6 +49,8 @@ klb_wnd_t* klbwnd_list_row_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 /// @brief css init/quit
 void klbwnd_list_row_css_init(klbwnd_list_row_css_t* p_css, klb_gui_t* p_gui);
 void klbwnd_list_row_css_quit(klbwnd_list_row_css_t* p_css);
+void klbwnd_list_row_css_copy(klbwnd_list_row_css_t* p_dst, klbwnd_list_row_css_t* p_src);
+
 
 /// @brief set css
 void klbwnd_list_row_set_css(klb_wnd_t* p_wnd, klbwnd_list_row_css_t* p_css);

@@ -124,6 +124,7 @@ KLB_API klb_wnd_t* klbwnd_listex_create(klb_gui_t* p_gui, int x, int y, int w, i
 /// @brief css init/quit
 KLB_API void klbwnd_listex_css_init(klbwnd_listex_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_listex_css_quit(klbwnd_listex_css_t* p_css);
+KLB_API void klbwnd_listex_css_copy(klbwnd_listex_css_t* p_dst, klbwnd_listex_css_t* p_src);
 
 
 /// @brief set css

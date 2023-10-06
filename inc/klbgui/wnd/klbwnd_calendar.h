@@ -102,6 +102,7 @@ KLB_API klb_wnd_t* klbwnd_calendar_create(klb_gui_t* p_gui, int x, int y, int w,
 /// @brief css init/quit
 KLB_API void klbwnd_calendar_css_init(klbwnd_calendar_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_calendar_css_quit(klbwnd_calendar_css_t* p_css);
+KLB_API void klbwnd_calendar_css_copy(klbwnd_calendar_css_t* p_dst, klbwnd_calendar_css_t* p_src);
 
 
 /// @brief set css

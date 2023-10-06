@@ -68,6 +68,8 @@ klb_wnd_t* klbwnd_listex_row_create(klb_gui_t* p_gui, int x, int y, int w, int h
 /// @brief css init/quit
 void klbwnd_listex_row_css_init(klbwnd_listex_row_css_t* p_css, klb_gui_t* p_gui);
 void klbwnd_listex_row_css_quit(klbwnd_listex_row_css_t* p_css);
+void klbwnd_listex_row_css_copy(klbwnd_listex_row_css_t* p_dst, klbwnd_listex_row_css_t* p_src);
+
 
 /// @brief set css
 void klbwnd_listex_row_set_css(klb_wnd_t* p_wnd, klbwnd_listex_row_css_t* p_row_css, klbwnd_listex_css_t* p_css);

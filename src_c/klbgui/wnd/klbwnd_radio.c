@@ -237,6 +237,20 @@ void klbwnd_radio_css_quit(klbwnd_radio_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->off_disable);
 }
 
+void klbwnd_radio_css_copy(klbwnd_radio_css_t* p_dst, klbwnd_radio_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->on_normal, &p_src->on_normal);
+    klbuicssex_attributes_copy(&p_dst->on_focus, &p_src->on_focus);
+    klbuicssex_attributes_copy(&p_dst->on_disable, &p_src->on_disable);
+
+    klbuicssex_attributes_copy(&p_dst->off_normal, &p_src->off_normal);
+    klbuicssex_attributes_copy(&p_dst->off_focus, &p_src->off_focus);
+    klbuicssex_attributes_copy(&p_dst->off_disable, &p_src->off_disable);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

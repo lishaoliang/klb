@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/wnd/klbwnd_vslider.h"
+#include "klbutil/klb_sds.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 
@@ -325,6 +326,17 @@ static void klbui_vslider_attributes_quit(klbui_vslider_attributes_t* p_attr)
     KLB_FREE_BY(p_attr->thumb_image, sdsfree);
 }
 
+static void klbui_vslider_attributes_copy(klbui_vslider_attributes_t* p_dst, klbui_vslider_attributes_t* p_src)
+{
+    p_dst->background_color = p_src->background_color;
+    p_dst->foreground_color = p_src->foreground_color;
+
+    p_dst->color = p_src->color;
+
+    p_dst->thumb_color = p_src->thumb_color;
+    p_dst->thumb_image = klb_sdscpy(p_dst->thumb_image, p_src->thumb_image);
+}
+
 void klbwnd_vslider_css_init(klbwnd_vslider_css_t* p_css, klb_gui_t* p_gui)
 {
     const klbui_default_t* p_default = klb_gui_get_std_default(p_gui);
@@ -350,6 +362,16 @@ void klbwnd_vslider_css_quit(klbwnd_vslider_css_t* p_css)
     klbui_vslider_attributes_quit(&p_css->normal);
     klbui_vslider_attributes_quit(&p_css->focus);
     klbui_vslider_attributes_quit(&p_css->disable);
+}
+
+void klbwnd_vslider_css_copy(klbwnd_vslider_css_t* p_dst, klbwnd_vslider_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbui_vslider_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbui_vslider_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbui_vslider_attributes_copy(&p_dst->disable, &p_src->disable);
 }
 
 //////////////////////////////////////////////////////////////////////////

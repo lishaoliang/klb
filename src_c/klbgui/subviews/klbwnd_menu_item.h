@@ -41,6 +41,7 @@ klb_wnd_t* klbwnd_menu_item_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 /// @brief css init/quit
 void klbwnd_menu_item_css_init(klbwnd_menu_item_css_t* p_css, klb_gui_t* p_gui);
 void klbwnd_menu_item_css_quit(klbwnd_menu_item_css_t* p_css);
+void klbwnd_menu_item_css_copy(klbwnd_menu_item_css_t* p_dst, klbwnd_menu_item_css_t* p_src);
 
 
 /// @brief set css

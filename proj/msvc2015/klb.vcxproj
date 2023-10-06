@@ -211,6 +211,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_listex.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_menu.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_num.h" />
+    <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_password.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_picture.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_progress.h" />
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_qrcode.h" />
@@ -705,6 +706,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_listex.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_menu.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_num.c" />
+    <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_password.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_progress.c" />
     <ClCompile Include="..\..\src_c\klbgui\widgets\klbui_qrcode.c" />
@@ -733,6 +735,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_listex.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_menu.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_num.c" />
+    <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_password.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_picture.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_progress.c" />
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_qrcode.c" />

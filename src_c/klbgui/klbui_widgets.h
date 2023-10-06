@@ -25,6 +25,7 @@ void klbui_static_init_globalcss(klb_gui_t* p_gui);
 void klbui_button_init_globalcss(klb_gui_t* p_gui);
 void klbui_btnex_init_globalcss(klb_gui_t* p_gui);
 void klbui_edit_init_globalcss(klb_gui_t* p_gui);
+void klbui_password_init_globalcss(klb_gui_t* p_gui);
 void klbui_num_init_globalcss(klb_gui_t* p_gui);
 void klbui_check_init_globalcss(klb_gui_t* p_gui);
 void klbui_combo_init_globalcss(klb_gui_t* p_gui);
@@ -32,14 +33,24 @@ void klbui_date_init_globalcss(klb_gui_t* p_gui);
 void klbui_time_init_globalcss(klb_gui_t* p_gui);
 void klbui_ip_init_globalcss(klb_gui_t* p_gui);
 void klbui_picture_init_globalcss(klb_gui_t* p_gui);
+void klbui_radio_init_globalcss(klb_gui_t* p_gui);
+void klbui_vslider_init_globalcss(klb_gui_t* p_gui);
+void klbui_group_init_globalcss(klb_gui_t* p_gui);
+void klbui_list_init_globalcss(klb_gui_t* p_gui);
+void klbui_listex_init_globalcss(klb_gui_t* p_gui);
+void klbui_progress_init_globalcss(klb_gui_t* p_gui);
 void klbui_view_init_globalcss(klb_gui_t* p_gui);
+void klbui_vscrollbar_init_globalcss(klb_gui_t* p_gui);
+void klbui_calendar_init_globalcss(klb_gui_t* p_gui);
 void klbui_qrcode_init_globalcss(klb_gui_t* p_gui);
+void klbui_menu_init_globalcss(klb_gui_t* p_gui);
 
 
 klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_btnex_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_edit_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+klb_wnd_t* klbui_password_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_num_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 klb_wnd_t* klbui_combo_create(klb_gui_t* p_gui, int x, int y, int w, int h);
@@ -70,6 +81,7 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 #define KLBUI_kbutton           "kbutton"
 #define KLBUI_kbtnex            "kbtnex"
 #define KLBUI_kedit             "kedit"
+#define KLBUI_kpassword         "kpassword"
 #define KLBUI_knum              "knum"
 #define KLBUI_kcheck            "kcheck"
 #define KLBUI_kcombo            "kcombo"
@@ -103,6 +115,7 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klb_gui_register((PTR_GUI_), KLBUI_kbutton,     klbui_button_create);       \
     klb_gui_register((PTR_GUI_), KLBUI_kbtnex,      klbui_btnex_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kedit,       klbui_edit_create);         \
+    klb_gui_register((PTR_GUI_), KLBUI_kpassword,   klbui_password_create);     \
     klb_gui_register((PTR_GUI_), KLBUI_knum,        klbui_num_create);          \
     klb_gui_register((PTR_GUI_), KLBUI_kcheck,      klbui_check_create);        \
     klb_gui_register((PTR_GUI_), KLBUI_kcombo,      klbui_combo_create);        \
@@ -131,6 +144,7 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klbui_button_init_globalcss((PTR_GUI_));    \
     klbui_btnex_init_globalcss((PTR_GUI_));     \
     klbui_edit_init_globalcss((PTR_GUI_));      \
+    klbui_password_init_globalcss((PTR_GUI_));  \
     klbui_num_init_globalcss((PTR_GUI_));       \
     klbui_check_init_globalcss((PTR_GUI_));     \
     klbui_combo_init_globalcss((PTR_GUI_));     \
@@ -138,8 +152,17 @@ klb_wnd_t* klbui_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h);
     klbui_time_init_globalcss((PTR_GUI_));      \
     klbui_ip_init_globalcss((PTR_GUI_));        \
     klbui_picture_init_globalcss((PTR_GUI_));   \
+    klbui_radio_init_globalcss((PTR_GUI_));     \
+    klbui_vslider_init_globalcss((PTR_GUI_));   \
+    klbui_group_init_globalcss((PTR_GUI_));     \
+    klbui_list_init_globalcss((PTR_GUI_));      \
+    klbui_listex_init_globalcss((PTR_GUI_));    \
+    klbui_progress_init_globalcss((PTR_GUI_));  \
     klbui_view_init_globalcss((PTR_GUI_));      \
+    klbui_vscrollbar_init_globalcss((PTR_GUI_));\
+    klbui_calendar_init_globalcss((PTR_GUI_));  \
     klbui_qrcode_init_globalcss((PTR_GUI_));    \
+    klbui_menu_init_globalcss((PTR_GUI_));      \
 }
 
 

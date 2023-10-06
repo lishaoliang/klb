@@ -53,6 +53,7 @@ KLB_API klb_wnd_t* klbwnd_radio_create(klb_gui_t* p_gui, int x, int y, int w, in
 /// @brief css init/quit
 KLB_API void klbwnd_radio_css_init(klbwnd_radio_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_radio_css_quit(klbwnd_radio_css_t* p_css);
+KLB_API void klbwnd_radio_css_copy(klbwnd_radio_css_t* p_dst, klbwnd_radio_css_t* p_src);
 
 
 /// @brief set css

@@ -665,6 +665,26 @@ void klbwnd_listex_css_quit(klbwnd_listex_css_t* p_css)
     klbwnd_vscrollbar_css_quit(&p_css->css_vscrollbar);
 }
 
+void klbwnd_listex_css_copy(klbwnd_listex_css_t* p_dst, klbwnd_listex_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+
+    // 行控件 CSS
+    klbwnd_listex_row_css_copy(&p_dst->css_listex_row, p_src);
+
+    // check
+    klbwnd_check_css_copy(&p_dst->css_check, p_src);
+
+    // 垂直滚动条
+    klbwnd_vscrollbar_css_copy(&p_dst->css_vscrollbar, p_src);
+
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 
