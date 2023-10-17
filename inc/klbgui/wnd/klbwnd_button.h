@@ -4,6 +4,7 @@
 /// @file    klbwnd_button.h
 /// @brief   klb window button
 /// @version 0.1
+///          参考: https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.controls.button?view=windowsdesktop-7.0
 /// @history 修改历史
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLBWND_BUTTON_H__

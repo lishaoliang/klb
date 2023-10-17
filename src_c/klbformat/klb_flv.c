@@ -199,7 +199,7 @@ int klb_flv_parser_tag_video(klb_flv_video_info_t* p_info, const char* p_data, i
                         ptr += 4;
                     }
 
-                    if (spare_len <= nalu_size)
+                    if (spare_len <= (int)nalu_size)
                     {
                         KLB_LOG("C flv parser tag video nalu error!NALU size");
                         return -1;

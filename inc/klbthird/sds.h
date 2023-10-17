@@ -31,7 +31,7 @@
 
 /*
  *  2020,李绍良
- *  修改通过Visual Studio 2019编译
+ *  修改通过Visual Studio 2019编译, 去除编译警告
  *  https://github.com/antirez/sds
  *  https://codeload.github.com/antirez/sds/zip/2.0.0
 */
@@ -111,15 +111,15 @@ static inline size_t sdslen(const sds s) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
         case SDS_TYPE_5:
-            return SDS_TYPE_5_LEN(flags);
+            return (size_t)(SDS_TYPE_5_LEN(flags));
         case SDS_TYPE_8:
-            return SDS_HDR(8,s)->len;
+            return (size_t)(SDS_HDR(8,s)->len);
         case SDS_TYPE_16:
-            return SDS_HDR(16,s)->len;
+            return (size_t)(SDS_HDR(16,s)->len);
         case SDS_TYPE_32:
-            return SDS_HDR(32,s)->len;
+            return (size_t)(SDS_HDR(32,s)->len);
         case SDS_TYPE_64:
-            return SDS_HDR(64,s)->len;
+            return (size_t)(SDS_HDR(64,s)->len);
     }
     return 0;
 }
@@ -132,19 +132,19 @@ static inline size_t sdsavail(const sds s) {
         }
         case SDS_TYPE_8: {
             SDS_HDR_VAR(8,s);
-            return sh->alloc - sh->len;
+            return (size_t)(sh->alloc - sh->len);
         }
         case SDS_TYPE_16: {
             SDS_HDR_VAR(16,s);
-            return sh->alloc - sh->len;
+            return (size_t)(sh->alloc - sh->len);
         }
         case SDS_TYPE_32: {
             SDS_HDR_VAR(32,s);
-            return sh->alloc - sh->len;
+            return (size_t)(sh->alloc - sh->len);
         }
         case SDS_TYPE_64: {
             SDS_HDR_VAR(64,s);
-            return sh->alloc - sh->len;
+            return (size_t)(sh->alloc - sh->len);
         }
     }
     return 0;
@@ -156,20 +156,20 @@ static inline void sdssetlen(sds s, size_t newlen) {
         case SDS_TYPE_5:
             {
                 unsigned char *fp = ((unsigned char*)s)-1;
-                *fp = SDS_TYPE_5 | (newlen << SDS_TYPE_BITS);
+                *fp = (unsigned char)(SDS_TYPE_5 | (newlen << SDS_TYPE_BITS));
             }
             break;
         case SDS_TYPE_8:
-            SDS_HDR(8,s)->len = newlen;
+            SDS_HDR(8,s)->len = (uint8_t)newlen;
             break;
         case SDS_TYPE_16:
-            SDS_HDR(16,s)->len = newlen;
+            SDS_HDR(16,s)->len = (uint16_t)newlen;
             break;
         case SDS_TYPE_32:
-            SDS_HDR(32,s)->len = newlen;
+            SDS_HDR(32,s)->len = (uint32_t)newlen;
             break;
         case SDS_TYPE_64:
-            SDS_HDR(64,s)->len = newlen;
+            SDS_HDR(64,s)->len = (uint64_t)newlen;
             break;
     }
 }
@@ -180,21 +180,21 @@ static inline void sdsinclen(sds s, size_t inc) {
         case SDS_TYPE_5:
             {
                 unsigned char *fp = ((unsigned char*)s)-1;
-                unsigned char newlen = SDS_TYPE_5_LEN(flags)+inc;
-                *fp = SDS_TYPE_5 | (newlen << SDS_TYPE_BITS);
+                unsigned char newlen = (unsigned char)(SDS_TYPE_5_LEN(flags)+inc);
+                *fp = (unsigned char)(SDS_TYPE_5 | (newlen << SDS_TYPE_BITS));
             }
             break;
         case SDS_TYPE_8:
-            SDS_HDR(8,s)->len += inc;
+            SDS_HDR(8,s)->len += (int8_t)inc;
             break;
         case SDS_TYPE_16:
-            SDS_HDR(16,s)->len += inc;
+            SDS_HDR(16,s)->len += (int16_t)inc;
             break;
         case SDS_TYPE_32:
-            SDS_HDR(32,s)->len += inc;
+            SDS_HDR(32,s)->len += (int32_t)inc;
             break;
         case SDS_TYPE_64:
-            SDS_HDR(64,s)->len += inc;
+            SDS_HDR(64,s)->len += (int64_t)inc;
             break;
     }
 }
@@ -204,15 +204,15 @@ static inline size_t sdsalloc(const sds s) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
         case SDS_TYPE_5:
-            return SDS_TYPE_5_LEN(flags);
+            return (size_t)(SDS_TYPE_5_LEN(flags));
         case SDS_TYPE_8:
-            return SDS_HDR(8,s)->alloc;
+            return (size_t)(SDS_HDR(8,s)->alloc);
         case SDS_TYPE_16:
-            return SDS_HDR(16,s)->alloc;
+            return (size_t)(SDS_HDR(16,s)->alloc);
         case SDS_TYPE_32:
-            return SDS_HDR(32,s)->alloc;
+            return (size_t)(SDS_HDR(32,s)->alloc);
         case SDS_TYPE_64:
-            return SDS_HDR(64,s)->alloc;
+            return (size_t)(SDS_HDR(64,s)->alloc);
     }
     return 0;
 }
@@ -224,16 +224,16 @@ static inline void sdssetalloc(sds s, size_t newlen) {
             /* Nothing to do, this type has no total allocation info. */
             break;
         case SDS_TYPE_8:
-            SDS_HDR(8,s)->alloc = newlen;
+            SDS_HDR(8,s)->alloc = (uint8_t)newlen;
             break;
         case SDS_TYPE_16:
-            SDS_HDR(16,s)->alloc = newlen;
+            SDS_HDR(16,s)->alloc = (uint16_t)newlen;
             break;
         case SDS_TYPE_32:
-            SDS_HDR(32,s)->alloc = newlen;
+            SDS_HDR(32,s)->alloc = (uint32_t)newlen;
             break;
         case SDS_TYPE_64:
-            SDS_HDR(64,s)->alloc = newlen;
+            SDS_HDR(64,s)->alloc = (uint64_t)newlen;
             break;
     }
 }

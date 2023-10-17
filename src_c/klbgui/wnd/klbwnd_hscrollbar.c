@@ -92,23 +92,23 @@ static int klbwnd_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
     case KLBUI_onpaint:
         return klbwnd_hscrollbar_on_paint(p_wnd);
 
-	case KLBUI_click:
-	case KLBUI_dblclick:
-		{
-			int w1 = p_hsc->p_left->pos.rect_in_parent.w;
-			int w2 = p_hsc->p_right->pos.rect_in_parent.w;
-			int w = p_wnd->pos.rect_in_parent.w;
+    case KLBUI_click:
+    case KLBUI_dblclick:
+        {
+            int w1 = p_hsc->p_left->pos.rect_in_parent.w;
+            int w2 = p_hsc->p_right->pos.rect_in_parent.w;
+            int w = p_wnd->pos.rect_in_parent.w;
 
-			int offx = p_pt1->x - p_wnd->pos.rect_in_canvas.x;
+            int offx = p_pt1->x - p_wnd->pos.rect_in_canvas.x;
 
-			if (w1 < offx && offx < w - w2)
-			{
-				int v = p_hsc->min + (offx - w1) * (p_hsc->max - p_hsc->min + 1) / (w - w1 - w2);
+            if (w1 < offx && offx < w - w2)
+            {
+                int v = p_hsc->min + (offx - w1) * (p_hsc->max - p_hsc->min + 1) / (w - w1 - w2);
 
-				klbwnd_hscrollbar_update_value(p_wnd, p_hsc, v);
-			}
-		}
-		break;
+                klbwnd_hscrollbar_update_value(p_wnd, p_hsc, v);
+            }
+        }
+        break;
     default:
         break;
     }
@@ -121,66 +121,66 @@ static int klbwnd_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 
 static void klbwnd_hscrollbar_update_value(klb_wnd_t* p_wnd_hsc, klbwnd_hscrollbar_t* p_hsc, int value)
 {
-	if (value < p_hsc->min) { value = p_hsc->min; }
-	if (p_hsc->max < value) { value = p_hsc->max; }
+    if (value < p_hsc->min) { value = p_hsc->min; }
+    if (p_hsc->max < value) { value = p_hsc->max; }
 
-	if (value != p_hsc->value)
-	{
-		p_hsc->value = value;
+    if (value != p_hsc->value)
+    {
+        p_hsc->value = value;
 
-		// on_command
-		if (p_wnd_hsc->vtable.on_command)
-		{
-			klb_point_t pt = { 0 };
-			p_wnd_hsc->vtable.on_command(p_wnd_hsc, KLBUI_onchange, &pt, &pt, 0, 0);
-		}
+        // on_command
+        if (p_wnd_hsc->vtable.on_command)
+        {
+            klb_point_t pt = { 0 };
+            p_wnd_hsc->vtable.on_command(p_wnd_hsc, KLBUI_onchange, &pt, &pt, 0, 0);
+        }
 
-		klbwnd_hscrollbar_relayout(p_wnd_hsc, p_hsc);
-		klb_wnd_update(p_wnd_hsc);
-	}
+        klbwnd_hscrollbar_relayout(p_wnd_hsc, p_hsc);
+        klb_wnd_update(p_wnd_hsc);
+    }
 }
 
 static void klbwnd_hscrollbar_relayout(klb_wnd_t* p_wnd_hsc, klbwnd_hscrollbar_t* p_hsc)
 {
-	int w = p_wnd_hsc->pos.rect_in_parent.w;
-	int h = p_wnd_hsc->pos.rect_in_parent.h;
+    int w = p_wnd_hsc->pos.rect_in_parent.w;
+    int h = p_wnd_hsc->pos.rect_in_parent.h;
 
-	int w_left = h - 2, h_left = h - 2;
+    int w_left = h - 2, h_left = h - 2;
 
-	klb_wnd_move(p_hsc->p_left, 1, 1);
-	klb_wnd_resize(p_hsc->p_left, w_left, h_left);
+    klb_wnd_move(p_hsc->p_left, 1, 1);
+    klb_wnd_resize(p_hsc->p_left, w_left, h_left);
 
-	int w_right = h - 2, h_right = h - 2;
+    int w_right = h - 2, h_right = h - 2;
 
-	klb_wnd_move(p_hsc->p_right, w - w_left - 1, 1);
-	klb_wnd_resize(p_hsc->p_right, w_right, h_right);
+    klb_wnd_move(p_hsc->p_right, w - w_left - 1, 1);
+    klb_wnd_resize(p_hsc->p_right, w_right, h_right);
 
-	klb_rect_t r = { 0, 0, w, h };
-	r.x += w_left + 2;
-	r.w -= (w_left + 2);
-	r.w -= (w_right + 2);
+    klb_rect_t r = { 0, 0, w, h };
+    r.x += w_left + 2;
+    r.w -= (w_left + 2);
+    r.w -= (w_right + 2);
 
-	int w_middle = 42, h_middle = h - 2;
-	int sx = r.x + 1;
+    int w_middle = 42, h_middle = h - 2;
+    int sx = r.x + 1;
 
-	if (p_hsc->value <= p_hsc->min)
-	{
-		sx = r.x + 1;
-	}
-	else if (p_hsc->max <= p_hsc->value)
-	{
-		sx = r.x + r.w - w_middle;
-	}
-	else
-	{
-		sx = r.x + (p_hsc->value - p_hsc->min + 1) * (r.w - w_middle + 1) / (p_hsc->max - p_hsc->min + 1);
-	}
+    if (p_hsc->value <= p_hsc->min)
+    {
+        sx = r.x + 1;
+    }
+    else if (p_hsc->max <= p_hsc->value)
+    {
+        sx = r.x + r.w - w_middle;
+    }
+    else
+    {
+        sx = r.x + (p_hsc->value - p_hsc->min + 1) * (r.w - w_middle + 1) / (p_hsc->max - p_hsc->min + 1);
+    }
 
-	klb_wnd_move(p_hsc->p_middle, sx, 1);
-	klb_wnd_resize(p_hsc->p_middle, w_middle, h_middle);
+    klb_wnd_move(p_hsc->p_middle, sx, 1);
+    klb_wnd_resize(p_hsc->p_middle, w_middle, h_middle);
 
-	// 需要更新屏幕坐标
-	klb_wnd_update_canvas_rect(p_wnd_hsc);
+    // 需要更新屏幕坐标
+    klb_wnd_update_canvas_rect(p_wnd_hsc);
 }
 
 // 向左按钮响应
@@ -191,7 +191,7 @@ static int on_command_bnt_left_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int e, const 
 
     if (KLBUI_click == e || KLBUI_dblclick == e)
     {
-		klbwnd_hscrollbar_update_value(p_wnd_vsc, p_hsc, p_hsc->value - p_hsc->step);
+        klbwnd_hscrollbar_update_value(p_wnd_vsc, p_hsc, p_hsc->value - p_hsc->step);
     }
 
     return 0;
@@ -205,7 +205,7 @@ static int on_command_bnt_right_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int e, const
 
     if (KLBUI_click == e || KLBUI_dblclick == e)
     {
-		klbwnd_hscrollbar_update_value(p_wnd_vsc, p_hsc, p_hsc->value + p_hsc->step);
+        klbwnd_hscrollbar_update_value(p_wnd_vsc, p_hsc, p_hsc->value + p_hsc->step);
     }
 
     return 0;
@@ -239,7 +239,7 @@ void klbwnd_hscrollbar_set_value(klb_wnd_t* p_wnd, int value)
 {
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
 
-	klbwnd_hscrollbar_update_value(p_wnd, p_hsc, value);
+    klbwnd_hscrollbar_update_value(p_wnd, p_hsc, value);
 }
 
 int klbwnd_hscrollbar_get_value(klb_wnd_t* p_wnd)
@@ -251,11 +251,11 @@ int klbwnd_hscrollbar_get_value(klb_wnd_t* p_wnd)
 
 void klbwnd_hscrollbar_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step)
 {
-	klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
+    klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
 
-	p_hsc->min = min;
-	p_hsc->max = max;
-	p_hsc->step = step;
+    p_hsc->min = min;
+    p_hsc->max = max;
+    p_hsc->step = step;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -263,10 +263,10 @@ void klbwnd_hscrollbar_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step)
 
 static void klbwnd_hscrollbar_init_attribute(klb_wnd_t* p_wnd, klbwnd_hscrollbar_t* p_hsc)
 {
-	p_hsc->min = 0;
-	p_hsc->max = 10;
-	p_hsc->step = 1;
-	p_hsc->value = 0;
+    p_hsc->min = 0;
+    p_hsc->max = 10;
+    p_hsc->step = 1;
+    p_hsc->value = 0;
 }
 
 static void klbwnd_hscrollbar_quit_attribute(klbwnd_hscrollbar_t* p_hsc)
@@ -298,6 +298,18 @@ void klbwnd_hscrollbar_css_quit(klbwnd_hscrollbar_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->disable);
 
     klbwnd_btnex_css_quit(&p_css->css_btnex);
+}
+
+void klbwnd_hscrollbar_css_copy(klbwnd_hscrollbar_css_t* p_dst, klbwnd_hscrollbar_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+
+    klbwnd_btnex_css_copy(&p_dst->css_btnex, &p_src->css_btnex);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -367,8 +379,8 @@ void klbwnd_hscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
     // 初始化子窗口
     klbwnd_hscrollbar_init_subwnds(p_wnd, p_hsc);
 
-	// 重新布局
-	klbwnd_hscrollbar_relayout(p_wnd, p_hsc);
+    // 重新布局
+    klbwnd_hscrollbar_relayout(p_wnd, p_hsc);
 }
 
 void klbwnd_hscrollbar_quit(klb_wnd_t* p_wnd)

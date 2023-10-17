@@ -715,21 +715,74 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
     if (KLBUI_CSSEX_get == method)
     {
         klb_map_set_idx_int64(p_out, 0, p_border->color.top);
+        klb_map_set_idx_int64(p_out, 1, p_border->color.right);
+        klb_map_set_idx_int64(p_out, 2, p_border->color.bottom);
+        klb_map_set_idx_int64(p_out, 3, p_border->color.left);
     }
     else if (KLBUI_CSSEX_set == method)
     {
         int start = 1;
-        uint32_t color = 0;
-        if (klb_gui_check_color(NULL, p_in, start, &color))
-        {
-            p_border->color.top = color;
-            p_border->color.right = color;
-            p_border->color.bottom = color;
-            p_border->color.left = color;
+        klb_map_t* p_param = klb_map_idx_to_map(p_in, start);
 
-            if (NULL != p_wnd)
+        bool is_fmt1 = false;
+
+        if (NULL != p_param && 0 < klb_map_array_size(p_param))
+        {
+            // 格式 1
+            // 格式 ['border-color'] = {{255,10,10,10}, {255,10,10,10}, {255,10,10,10}, {255,10,10,10}}
+            // 格式 ['border-color'] = { 0xFF45, 0xFF45, 0xFF45, 0xFF45 }
+            // 格式 ['border-color'] = {"0xFF45", "0xFF45", "0xFF45", "0xFF45"}
+            uint32_t top = 0, right = 0, bottom = 0, left = 0;
+
+            if (klb_gui_check_color(NULL, p_param, 0, &top))
             {
-                klb_wnd_update(p_wnd);
+                p_border->color.top = top;
+
+                is_fmt1 = true;
+            }
+
+            if (is_fmt1)
+            {
+                if (klb_gui_check_color(NULL, p_param, 1, &right))
+                {
+                    p_border->color.right = right;
+                }
+
+                if (klb_gui_check_color(NULL, p_param, 2, &bottom))
+                {
+                    p_border->color.bottom = bottom;
+                }
+
+                if (klb_gui_check_color(NULL, p_param, 3, &left))
+                {
+                    p_border->color.left = left;
+                }
+
+                if (NULL != p_wnd)
+                {
+                    klb_wnd_update(p_wnd);
+                }
+            }
+        }
+
+        if (!is_fmt1)
+        {
+            // 格式 2
+            // 格式 ['border-color'] = {255,10,10,10}
+            // 格式 ['border-color'] = 0xFF45
+            // 格式 ['border-color'] = "0xFF45"
+            uint32_t color = 0;
+            if (klb_gui_check_color(NULL, p_in, start, &color))
+            {
+                p_border->color.top = color;
+                p_border->color.right = color;
+                p_border->color.bottom = color;
+                p_border->color.left = color;
+
+                if (NULL != p_wnd)
+                {
+                    klb_wnd_update(p_wnd);
+                }
             }
         }
     }

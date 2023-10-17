@@ -285,6 +285,16 @@ void klbwnd_tab_btn_css_quit(klbwnd_tab_btn_css_t* p_css)
     klbuicssex_attributes_quit(&p_css->disable);
 }
 
+void klbwnd_tab_btn_css_copy(klbwnd_tab_btn_css_t* p_dst, klbwnd_tab_btn_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

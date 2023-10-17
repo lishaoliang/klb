@@ -1136,7 +1136,7 @@ static void check_klua_khttp_listen_param(lua_State* L, int from, klua_khttp_lis
         {
         case 0:
             {
-                int max_connect = luaL_checkinteger(L, ud);
+                int max_connect = (int)luaL_checkinteger(L, ud);
                 if (0 < max_connect)
                 {
                     p_param->max_connect = max_connect;
@@ -1151,7 +1151,7 @@ static void check_klua_khttp_listen_param(lua_State* L, int from, klua_khttp_lis
 
 static int klua_khttp_listen(lua_State* L)
 {
-    int port = luaL_checkinteger(L, 1);
+    int port = (int)luaL_checkinteger(L, 1);
 
     klua_khttp_listen_param_t param = { 0 };
     default_klua_khttp_listen_param(&param);

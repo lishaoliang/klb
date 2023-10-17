@@ -293,7 +293,7 @@ static void destroy_globalcss_klbwnd_vslider(void* ptr)
 
 #define KLBUI_GLOBAL_vslider_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_vslider_init_globalcss(klb_gui_t* p_gui)
+static void klbui_vslider_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kvslider);
     if (NULL != ptr)
@@ -667,9 +667,9 @@ static void klbui_vslider_init_func_map(klb_wnd_t* p_wnd, klbui_vslider_t* p_vsl
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_vslider_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_vslider_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_vslider_t));
@@ -687,8 +687,15 @@ klb_wnd_t* klbui_vslider_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_vslider_init_func_map(p_wnd, p_vslider, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_vslider->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kvslider);
+    p_vslider->p_globalcss = (klbwnd_vslider_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kvslider);
     klbwnd_vslider_set_css(p_wnd, p_vslider->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kvslider"
+int klbui_register_kvslider(klb_gui_t* p_gui)
+{
+    klbui_vslider_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kvslider, klbui_vslider_create);
 }

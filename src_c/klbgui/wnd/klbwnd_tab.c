@@ -314,6 +314,15 @@ void klbwnd_tab_css_quit(klbwnd_tab_css_t* p_css)
     klbwnd_tab_btn_css_quit(&p_css->btn_css);
 }
 
+void klbwnd_tab_css_copy(klbwnd_tab_css_t* p_dst, klbwnd_tab_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbwnd_tab_btn_css_copy(&p_dst->btn_css, &p_src->btn_css);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 

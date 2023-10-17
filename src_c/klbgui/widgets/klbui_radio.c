@@ -437,7 +437,7 @@ static void destroy_globalcss_klbwnd_radio(void* ptr)
 
 #define KLBUI_GLOBAL_radio_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_radio_init_globalcss(klb_gui_t* p_gui)
+static void klbui_radio_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kradio);
     if (NULL != ptr)
@@ -975,9 +975,9 @@ static void klbui_radio_init_func_map(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_radio_t));
@@ -995,8 +995,15 @@ klb_wnd_t* klbui_radio_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_radio_init_func_map(p_wnd, p_radio, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_radio->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kradio);
+    p_radio->p_globalcss = (klbwnd_radio_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kradio);
     klbwnd_radio_set_css(p_wnd, p_radio->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kradio"
+int klbui_register_kradio(klb_gui_t* p_gui)
+{
+    klbui_radio_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kradio, klbui_radio_create);
 }

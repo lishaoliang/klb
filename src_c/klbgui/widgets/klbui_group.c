@@ -311,7 +311,7 @@ static void destroy_globalcss_klbwnd_group(void* ptr)
 
 #define KLBUI_GLOBAL_group_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_group_init_globalcss(klb_gui_t* p_gui)
+static void klbui_group_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kgroup);
     if (NULL != ptr)
@@ -664,9 +664,9 @@ static void klbui_group_init_func_map(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_group_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_group_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_group_t));
@@ -684,8 +684,15 @@ klb_wnd_t* klbui_group_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_group_init_func_map(p_wnd, p_group, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_group->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kgroup);
+    p_group->p_globalcss = (klbwnd_group_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kgroup);
     klbwnd_group_set_css(p_wnd, p_group->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kgroup"
+int klbui_register_kgroup(klb_gui_t* p_gui)
+{
+    klbui_group_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kgroup, klbui_group_create);
 }

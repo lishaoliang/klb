@@ -312,7 +312,7 @@ static void destroy_globalcss_klbwnd_ip(void* ptr)
 
 #define KLBUI_GLOBAL_ip_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_ip_init_globalcss(klb_gui_t* p_gui)
+static void klbui_ip_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kip);
     if (NULL != ptr)
@@ -663,9 +663,9 @@ static void klbui_ip_init_func_map(klb_wnd_t* p_wnd, klbui_ip_t* p_ip, klb_gui_t
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_ip_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_ip_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_ip_t));
@@ -683,8 +683,15 @@ klb_wnd_t* klbui_ip_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_ip_init_func_map(p_wnd, p_ip, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_ip->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kip);
+    p_ip->p_globalcss = (klbwnd_ip_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kip);
     klbwnd_ip_set_css(p_wnd, p_ip->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kip"
+int klbui_register_kip(klb_gui_t* p_gui)
+{
+    klbui_ip_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kip, klbui_ip_create);
 }

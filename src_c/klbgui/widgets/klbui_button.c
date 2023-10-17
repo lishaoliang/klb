@@ -311,7 +311,7 @@ static void destroy_globalcss_klbwnd_button(void* ptr)
 
 #define KLBUI_GLOBAL_btn_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_button_init_globalcss(klb_gui_t* p_gui)
+static void klbui_button_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kbutton);
     if (NULL != ptr)
@@ -670,9 +670,9 @@ static void klbui_button_init_func_map(klb_wnd_t* p_wnd, klbui_button_t* p_btn, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_button_t));
@@ -690,8 +690,15 @@ klb_wnd_t* klbui_button_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_button_init_func_map(p_wnd, p_btn, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_btn->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kbutton);
+    p_btn->p_globalcss = (klbwnd_button_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kbutton);
     klbwnd_button_set_css(p_wnd, p_btn->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kbutton"
+int klbui_register_kbutton(klb_gui_t* p_gui)
+{
+    klbui_button_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kbutton, klbui_button_create);
 }

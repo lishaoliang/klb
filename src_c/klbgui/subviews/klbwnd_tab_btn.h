@@ -47,6 +47,7 @@ klb_wnd_t* klbwnd_tab_btn_create(klb_gui_t* p_gui, int x, int y, int w, int h);
 /// @brief css init/quit
 void klbwnd_tab_btn_css_init(klbwnd_tab_btn_css_t* p_css, klb_gui_t* p_gui);
 void klbwnd_tab_btn_css_quit(klbwnd_tab_btn_css_t* p_css);
+void klbwnd_tab_btn_css_copy(klbwnd_tab_btn_css_t* p_dst, klbwnd_tab_btn_css_t* p_src);
 
 /// @brief set css
 void klbwnd_tab_btn_set_css(klb_wnd_t* p_wnd, klbwnd_tab_btn_css_t* p_css);

@@ -180,7 +180,7 @@ static void klbshw_decimal_popup_end(klb_wnd_t* p_wnd, klbshw_decimal_t* p_dec, 
 // 追加
 static void klbshw_decimal_append(klb_wnd_t* p_wnd_dec, klbshw_decimal_t* p_dec, const char* p_str)
 {
-    if (sdslen(p_dec->value) < p_dec->max_len)
+    if ((int)sdslen(p_dec->value) < p_dec->max_len)
     {
         // 追加
         p_dec->value = sdscat(p_dec->value, p_str);

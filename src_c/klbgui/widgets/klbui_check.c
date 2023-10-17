@@ -366,7 +366,7 @@ static void destroy_globalcss_klbwnd_check(void* ptr)
 
 #define KLBUI_GLOBAL_check_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_check_init_globalcss(klb_gui_t* p_gui)
+static void klbui_check_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kcheck);
     if (NULL != ptr)
@@ -805,9 +805,9 @@ static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, 
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_check_t));
@@ -825,8 +825,15 @@ klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_check_init_func_map(p_wnd, p_check, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_check->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kcheck);
+    p_check->p_globalcss = (klbwnd_check_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kcheck);
     klbwnd_check_set_css(p_wnd, p_check->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kcheck"
+int klbui_register_kcheck(klb_gui_t* p_gui)
+{
+    klbui_check_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kcheck, klbui_check_create);
 }

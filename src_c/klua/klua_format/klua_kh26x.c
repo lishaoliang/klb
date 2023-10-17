@@ -287,7 +287,7 @@ static void copy_frame_klua_kh26x(klb_buf_t* p_dst, char* p_nal, int nal_len, ui
     bool first = true;
     while (0 < data_len)
     {
-        int cp_len = MIN(p_dst->buf_len - sizeof(klb_mnp_t), data_len);
+        int cp_len = MIN(p_dst->buf_len - (int)sizeof(klb_mnp_t), data_len);
         mnp.size = cp_len + sizeof(klb_mnp_t);
 
         if (first)

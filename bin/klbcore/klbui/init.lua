@@ -54,11 +54,10 @@ end
 
 -- @brief 更新对话框CSS
 -- @param [in]      dialog[table]			对话框描述table
--- @param [in]      default_css[nil,table]	[可选]全局默认CSS
 -- @param [in]      css[nil,table]			[可选]CSS描述table
 -- @return 无
-klbui.update_css = function (dialog, default_css, css)
-	return parser.update_css(dialog, default_css, css)
+klbui.update_css = function (dialog, css)
+	return parser.update_css(dialog, css)
 end
 
 
@@ -148,6 +147,33 @@ klbui.has_global_css = function (t)
 	end
 	
 	return false
+end
+
+
+-- @brief 设置/获取共享窗口属性; (share window css)
+-- @param [in]	path[string]		共享路径: eg. '/klbui/messagebox'
+-- @param [in]	[任意]...			参数
+-- @return [任意]...				值
+-- @note 
+--   eg. 获取 local text_color = klbui.shwnd_css('/klbui/messagebox', 'color')
+--   eg. 设置 klbui.shwnd_css('/klbui/messagebox', {['color']={255,220,220,220}})
+klbui.shwnd_css = function (path, ...)
+	local args = {...}
+	
+	if 1 < #args then
+		kgui.set_shwnd_css(path, ...)
+	elseif 1 == #args then
+		if 'table' == type(args[1]) then
+			for k1, v1 in pairs(args[1]) do
+				-- set
+				kgui.set_shwnd_css(path, k1, v1)
+			end
+		else
+			return kgui.get_shwnd_css(path, ...)
+		end
+	end
+	
+	return klbui
 end
 
 

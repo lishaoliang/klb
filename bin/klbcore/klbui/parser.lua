@@ -267,35 +267,31 @@ function parser.parse(dialog, commands, css)
 end
 
 
-local function UpdateWndCss(wnd, default_css, css)
+local function UpdateWndCss(wnd, css)
 	-- 参考
 	-- https://www.w3school.com.cn/html/html5_intro.asp
 	local path = wnd['path']
-	
-	-- 生效全局默认CSS
-	csser.css_default(wnd, path, default_css)
 	
 	-- 生效 自定义CSS
 	csser.css(wnd, path, css)
 
 	-- 子窗口: 第1种表达方式
 	for _, v in ipairs(wnd) do
-		UpdateWndCss(v, default_css, css)
+		UpdateWndCss(v, css)
 	end
 	
 	-- 子窗口: 第2种表达方式
 	local child = wnd['child'] or {}
 	for _, v in ipairs(child) do
-		UpdateWndCss(v, default_css, css)
+		UpdateWndCss(v, css)
 	end
 end
 
 
-function parser.update_css(dialog, default_css, css)
-	local param_default_css = default_css or {}
+function parser.update_css(dialog, css)
 	local param_css = css or {}
 	
-	UpdateWndCss(dialog, param_default_css, param_css)
+	UpdateWndCss(dialog, param_css)
 end
 
 

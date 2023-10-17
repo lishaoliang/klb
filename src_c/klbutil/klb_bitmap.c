@@ -137,7 +137,7 @@ int klb_bitmap_write(const char* p_filename, const klb_canvas_t* p_canvas)
     BITMAPFILEHEADER bfh = { 0 };
     BITMAPINFOHEADER bih = { 0 };
 
-    int stride = ((p_canvas->pitch + 3) >> 2) << 2;
+    int stride = (int)(((p_canvas->pitch + 3) >> 2) << 2);
 
     bih.biSize = sizeof(BITMAPINFOHEADER);
     bih.biWidth = p_canvas->rect.w;
@@ -154,12 +154,12 @@ int klb_bitmap_write(const char* p_filename, const klb_canvas_t* p_canvas)
     fwrite(&bih, sizeof(BITMAPINFOHEADER), 1, pf);
 
     int zero_b[4] = { 0 };
-    int zero_len = stride - p_canvas->pitch;
+    int zero_len = stride - (int)p_canvas->pitch;
 
     uint8_t* p_addr = p_canvas->p_addr + p_canvas->pitch * (bih.biHeight - 1);
     for (int i = 0; i < bih.biHeight; i++)
     {
-        fwrite(p_addr, p_canvas->pitch, 1, pf);
+        fwrite(p_addr, (size_t)p_canvas->pitch, 1, pf);
         if (0 < zero_len)
         {
             fwrite(zero_b, zero_len, 1, pf);
@@ -170,7 +170,4 @@ int klb_bitmap_write(const char* p_filename, const klb_canvas_t* p_canvas)
 
     fclose(pf);
     return 0;
-err_write:
-    fclose(pf);
-    return 1;
 }

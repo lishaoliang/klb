@@ -126,25 +126,25 @@ static void globalcss_klbui_static_margin(void* ptr, int method, const klb_map_t
 static void globalcss_klbui_static_margin_top(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->margin.top), NULL, method, p_in, p_out);
+    klbuicssex_margin_top(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_margin_right(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->margin.right), NULL, method, p_in, p_out);
+    klbuicssex_margin_right(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_margin_bottom(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->margin.bottom), NULL, method, p_in, p_out);
+    klbuicssex_margin_bottom(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_margin_left(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->margin.left), NULL, method, p_in, p_out);
+    klbuicssex_margin_left(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_padding(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -156,25 +156,25 @@ static void globalcss_klbui_static_padding(void* ptr, int method, const klb_map_
 static void globalcss_klbui_static_padding_top(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->padding.top), NULL, method, p_in, p_out);
+    klbuicssex_padding_top(&(p_css->padding), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_padding_right(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->padding.right), NULL, method, p_in, p_out);
+    klbuicssex_padding_right(&(p_css->padding), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_padding_bottom(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->padding.bottom), NULL, method, p_in, p_out);
+    klbuicssex_padding_bottom(&(p_css->padding), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_padding_left(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = (klbwnd_static_css_t*)ptr;
-    klbuicssex_attribute_int(&(p_css->padding.left), NULL, method, p_in, p_out);
+    klbuicssex_padding_left(&(p_css->padding), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_static_text_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -255,7 +255,7 @@ static void destroy_globalcss_klbwnd_static(void* ptr)
 
 #define KLBUI_GLOBAL_static_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_static_init_globalcss(klb_gui_t* p_gui)
+static void klbui_static_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kstatic);
     if (NULL != ptr)
@@ -323,25 +323,25 @@ static void on_klbui_static_margin(klb_wnd_t* p_wnd, klbui_static_t* p_static, i
 static void on_klbui_static_margin_top(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->margin.top), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_top(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_right(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->margin.right), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_right(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_bottom(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->margin.bottom), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_bottom(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_margin_left(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->margin.left), p_wnd, method, p_in, p_out);
+    klbuicssex_margin_left(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -353,25 +353,25 @@ static void on_klbui_static_padding(klb_wnd_t* p_wnd, klbui_static_t* p_static, 
 static void on_klbui_static_padding_top(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->padding.top), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_top(&(p_css->padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_right(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->padding.right), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_right(&(p_css->padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_bottom(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->padding.bottom), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_bottom(&(p_css->padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_padding_left(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_static_css_t* p_css = check_css_klbui_static(p_wnd, method);
-    klbuicssex_attribute_int(&(p_css->padding.left), p_wnd, method, p_in, p_out);
+    klbuicssex_padding_left(&(p_css->padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_static_text_color(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -520,9 +520,9 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_static_t));
@@ -540,8 +540,15 @@ klb_wnd_t* klbui_static_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_static_init_func_map(p_wnd, p_static, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_static->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kstatic);
+    p_static->p_globalcss = (klbwnd_static_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kstatic);
     klbwnd_static_set_css(p_wnd, p_static->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kstatic"
+int klbui_register_kstatic(klb_gui_t* p_gui)
+{
+    klbui_static_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kstatic, klbui_static_create);
 }

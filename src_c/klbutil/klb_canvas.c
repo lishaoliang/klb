@@ -46,7 +46,7 @@ klb_canvas_t* klb_canvas_create(int w, int h, int color_fmt)
         {
             p_canvas->pitch = (int64_t)w * 4;
             p_canvas->mem_len = p_canvas->pitch * h;
-            p_canvas->p_addr = KLB_MALLOC(uint8_t, p_canvas->mem_len, 0);
+            p_canvas->p_addr = KLB_MALLOC(uint8_t, (size_t)p_canvas->mem_len, 0);
         }
         break;
     default:

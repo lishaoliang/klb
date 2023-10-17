@@ -318,9 +318,9 @@ static void klbui_animation_init_func_map(klb_wnd_t* p_wnd, klbui_animation_t* p
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_animation_t));
     klbui_animation_t* p_ani = (klbui_animation_t*)p_wnd->ctrl;
@@ -341,4 +341,11 @@ klb_wnd_t* klbui_animation_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_animation_init_func_map(p_wnd, p_ani, p_gui);
 
     return p_wnd;
+}
+
+// 注册 "kanimation"
+int klbui_register_kanimation(klb_gui_t* p_gui)
+{
+    //klbui_animation_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kanimation, klbui_animation_create);
 }

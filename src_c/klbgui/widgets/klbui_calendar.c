@@ -312,7 +312,7 @@ static void destroy_globalcss_klbwnd_calendar(void* ptr)
 
 #define KLBUI_GLOBAL_calendar_bind(KEY_, FUNC_) { klb_map_set_ptr(ptr, (KEY_), (void*)(FUNC_), NULL); }
 
-void klbui_calendar_init_globalcss(klb_gui_t* p_gui)
+static void klbui_calendar_init_globalcss(klb_gui_t* p_gui)
 {
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBUI_kcalendar);
     if (NULL != ptr)
@@ -664,9 +664,9 @@ static void klbui_calendar_init_func_map(klb_wnd_t* p_wnd, klbui_calendar_t* p_c
 }
 
 //////////////////////////////////////////////////////////////////////////
-// create
+// create, register
 
-klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
     // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbui_calendar_t));
@@ -684,8 +684,15 @@ klb_wnd_t* klbui_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h)
     klbui_calendar_init_func_map(p_wnd, p_cal, p_gui);
 
     // step5. 默认使用公用全局CSS属性
-    p_cal->p_globalcss = klb_gui_globalcss_get_ptr(p_gui, KLBUI_kcalendar);
+    p_cal->p_globalcss = (klbwnd_calendar_css_t*)klb_gui_globalcss_get_ptr(p_gui, KLBUI_kcalendar);
     klbwnd_calendar_set_css(p_wnd, p_cal->p_globalcss);
 
     return p_wnd;
+}
+
+// 注册 "kcalendar"
+int klbui_register_kcalendar(klb_gui_t* p_gui)
+{
+    klbui_calendar_init_globalcss(p_gui);
+    return klb_gui_register(p_gui, KLBUI_kcalendar, klbui_calendar_create);
 }

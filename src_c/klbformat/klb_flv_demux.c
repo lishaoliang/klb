@@ -292,7 +292,7 @@ static int klb_flv_demux_on_avc_nalu(klb_flv_demux_t* p_flv_demux, klb_flv_video
                 ptr += 4;
             }
 
-            if (nalu_len <= nalu_size)
+            if (nalu_len <= (int)nalu_size)
             {
                 assert(false);
                 return -1;
@@ -374,7 +374,7 @@ static int klb_flv_demux_on_avc_nalu_h265(klb_flv_demux_t* p_flv_demux, klb_flv_
                 ptr += 4;
             }
 
-            if (nalu_len <= nalu_size)
+            if (nalu_len <= (int)nalu_size)
             {
                 assert(false);
                 return -1;

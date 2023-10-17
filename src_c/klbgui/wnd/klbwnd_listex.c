@@ -675,13 +675,13 @@ void klbwnd_listex_css_copy(klbwnd_listex_css_t* p_dst, klbwnd_listex_css_t* p_s
     klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
 
     // 行控件 CSS
-    klbwnd_listex_row_css_copy(&p_dst->css_listex_row, p_src);
+    klbwnd_listex_row_css_copy(&p_dst->css_listex_row, &p_src->css_listex_row);
 
     // check
-    klbwnd_check_css_copy(&p_dst->css_check, p_src);
+    klbwnd_check_css_copy(&p_dst->css_check, &p_src->css_check);
 
     // 垂直滚动条
-    klbwnd_vscrollbar_css_copy(&p_dst->css_vscrollbar, p_src);
+    klbwnd_vscrollbar_css_copy(&p_dst->css_vscrollbar, &p_src->css_vscrollbar);
 
 }
 

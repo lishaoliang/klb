@@ -50,7 +50,7 @@ static void klbuiex_util_clear_globalcss_attr_map(klbuiex_util_t* p_util)
     {
         klb_adt_t* p_adt = klb_map_data(p_iter);
 
-        void* ptr = NULL;
+        const void* ptr = NULL;
         void* p_css = (void*)klb_adt_to_ptr(p_adt, &ptr);
 
         klb_gui_globalcss_destroy_cb cb_destroy = (klb_gui_globalcss_destroy_cb)ptr;

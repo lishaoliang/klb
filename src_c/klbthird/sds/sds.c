@@ -95,34 +95,34 @@ sds sdsnewlen(const void *init, size_t initlen) {
     fp = ((unsigned char*)s)-1;
     switch(type) {
         case SDS_TYPE_5: {
-            *fp = type | (initlen << SDS_TYPE_BITS);
+            *fp = (unsigned char)(type | (initlen << SDS_TYPE_BITS));
             break;
         }
         case SDS_TYPE_8: {
             SDS_HDR_VAR(8,s);
-            sh->len = initlen;
-            sh->alloc = initlen;
+            sh->len = (uint8_t)initlen;
+            sh->alloc = (uint8_t)initlen;
             *fp = type;
             break;
         }
         case SDS_TYPE_16: {
             SDS_HDR_VAR(16,s);
-            sh->len = initlen;
-            sh->alloc = initlen;
+            sh->len = (uint16_t)initlen;
+            sh->alloc = (uint16_t)initlen;
             *fp = type;
             break;
         }
         case SDS_TYPE_32: {
             SDS_HDR_VAR(32,s);
-            sh->len = initlen;
-            sh->alloc = initlen;
+            sh->len = (uint32_t)initlen;
+            sh->alloc = (uint32_t)initlen;
             *fp = type;
             break;
         }
         case SDS_TYPE_64: {
             SDS_HDR_VAR(64,s);
-            sh->len = initlen;
-            sh->alloc = initlen;
+            sh->len = (uint64_t)initlen;
+            sh->alloc = (uint64_t)initlen;
             *fp = type;
             break;
         }
@@ -341,7 +341,7 @@ void sdsIncrLen(sds s, int incr) {
         case SDS_TYPE_64: {
             SDS_HDR_VAR(64,s);
             assert((incr >= 0 && sh->alloc-sh->len >= (uint64_t)incr) || (incr < 0 && sh->len >= (uint64_t)(-incr)));
-            len = (sh->len += incr);
+            len = (size_t)(sh->len += incr);
             break;
         }
         default: len = 0; /* Just to avoid compilation warnings. */

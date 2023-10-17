@@ -41,14 +41,14 @@ typedef struct klbwnd_hscrollbar_t_
     klb_wnd_t*                  p_right;        ///< 向右 : klbwnd_btnex_create
     klb_wnd_t*                  p_middle;       ///< 中间滑块 : klbwnd_btnex_create
 
-	// 值/范围
-	struct
-	{
-		int                     min;
-		int                     max;
-		int						step;
-		int                     value;
-	};
+    // 值/范围
+    struct
+    {
+        int                     min;
+        int                     max;
+        int                     step;
+        int                     value;
+    };
 }klbwnd_hscrollbar_t;
 
 
@@ -61,6 +61,7 @@ KLB_API klb_wnd_t* klbwnd_hscrollbar_create(klb_gui_t* p_gui, int x, int y, int 
 /// @brief css init/quit
 KLB_API void klbwnd_hscrollbar_css_init(klbwnd_hscrollbar_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_hscrollbar_css_quit(klbwnd_hscrollbar_css_t* p_css);
+KLB_API void klbwnd_hscrollbar_css_copy(klbwnd_hscrollbar_css_t* p_dst, klbwnd_hscrollbar_css_t* p_src);
 
 
 /// @brief set css

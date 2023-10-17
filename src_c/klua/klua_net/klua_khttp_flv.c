@@ -1029,10 +1029,10 @@ static void check_param_klua_khttp_flv(lua_State* L, int from, klua_khttp_flv_pa
         switch (idx)
         {
         case 0:
-            p_param->rbuf_max = luaL_checkinteger(L, ud);
+            p_param->rbuf_max = (int)luaL_checkinteger(L, ud);
             break;
         case 1:
-            p_param->read_max = luaL_checkinteger(L, ud);
+            p_param->read_max = (int)luaL_checkinteger(L, ud);
             break;
         case 2:
             p_param->tls = luaL_checkboolean(L, ud);

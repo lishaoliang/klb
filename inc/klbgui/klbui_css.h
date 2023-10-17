@@ -30,8 +30,8 @@ typedef struct klb_wnd_t_ klb_wnd_t;
 
 /// @brief 边框模型
 ///  参考: https://www.w3school.com.cn/css/css_boxmodel.asp
-///  元素(wnd)实际宽 = 外边距(margin) + 边框(border) + 内边距(padding) + 元素宽(width)
-///  元素(wnd)实际高 = 外边距(margin) + 边框(border) + 内边距(padding) + 元素宽(height)
+///  element(元素/window)实际宽 = 外边距(margin) + 边框(border) + 内边距(padding) + 元素宽(width)
+///  element(元素/window)实际高 = 外边距(margin) + 边框(border) + 内边距(padding) + 元素宽(height)
 ///  参考模型图:
 ///  *---------------- margin(外边距) ------------------*
 ///  |  *------------- border(边框) -----------------*  |
@@ -47,13 +47,9 @@ typedef struct klb_wnd_t_ klb_wnd_t;
 ///  
 ///  klb_wnd_t.pos.rect_in_parent = 基于父窗口的 实际区域
 ///  klb_wnd_t.pos.rect_in_canvas = 基于画布的 实际区域
-///  背景应用于由内容(元素wnd)和内边距、边框组成的区域
-
-/// @brief 基础参数
-
-/// 宽高
-/// element(元素/wnd) 高                   ///< ["width"] = 120 元素宽度
-/// element(元素/wnd) 宽                   ///< ["height"] = 120 元素高度
+///
+///  注意: 控件窗口需要负责绘制包含 margin/border/padding/element 在内的全部
+///  一般情况下的控件, 会将 margin = 0
 
 
 /// 显示/隐藏

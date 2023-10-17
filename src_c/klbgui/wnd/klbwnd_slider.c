@@ -2,6 +2,7 @@
 #include "klbgui/wnd/klbwnd_slider.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
+#include "klbutil/klb_sds.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -239,6 +240,17 @@ static void klbui_slider_attributes_quit(klbui_slider_attributes_t* p_attr)
     KLB_FREE_BY(p_attr->pos_image, sdsfree);
 }
 
+static void klbui_slider_attributes_copy(klbui_slider_attributes_t* p_dst, klbui_slider_attributes_t* p_src)
+{
+    p_dst->text = p_src->text;
+
+    p_dst->background_color = p_src->background_color;
+    p_dst->foreground_color = p_src->foreground_color;
+
+    p_dst->pos_image = klb_sdscpy(p_dst->pos_image, p_src->pos_image);
+    p_dst->pos_color = p_src->pos_color;
+}
+
 void klbwnd_slider_css_init(klbwnd_slider_css_t* p_css, klb_gui_t* p_gui)
 {
     const klbui_default_t* p_default = klb_gui_get_std_default(p_gui);
@@ -260,6 +272,16 @@ void klbwnd_slider_css_quit(klbwnd_slider_css_t* p_css)
     klbui_slider_attributes_quit(&p_css->normal);
     klbui_slider_attributes_quit(&p_css->focus);
     klbui_slider_attributes_quit(&p_css->disable);
+}
+
+void klbwnd_slider_css_copy(klbwnd_slider_css_t* p_dst, klbwnd_slider_css_t* p_src)
+{
+    p_dst->margin = p_src->margin;
+    p_dst->padding = p_src->padding;
+
+    klbui_slider_attributes_copy(&p_dst->normal, &p_src->normal);
+    klbui_slider_attributes_copy(&p_dst->focus, &p_src->focus);
+    klbui_slider_attributes_copy(&p_dst->disable, &p_src->disable);
 }
 
 //////////////////////////////////////////////////////////////////////////

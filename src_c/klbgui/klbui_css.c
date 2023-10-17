@@ -111,7 +111,7 @@ void klb_gui_globalcss_set_ptr(klb_gui_t* p_gui, const char* p_type, void* p_css
 {
     // 若存在, 则销毁
     {
-        void* ptr = NULL;
+        const void* ptr = NULL;
         void* p_old_css = (void*)klb_map_to_ptr(&p_gui->p_util->globalcss_attr_map, p_type, &ptr);
 
         klb_gui_globalcss_destroy_cb destroy = (klb_gui_globalcss_destroy_cb)ptr;

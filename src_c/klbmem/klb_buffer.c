@@ -22,7 +22,7 @@ static int auto_suggest_len_klb_buffer(size_t data_len, int suggest_len)
     {
         for (int i = 0; i < sizeof(s_size) / sizeof(s_size[0]); i++)
         {
-            if (data_len + suggest_len < s_size[i])
+            if ((int)data_len + suggest_len < s_size[i])
             {
                 return s_size[i];
             }
@@ -227,7 +227,7 @@ klb_buf_t* klb_buffer_join_offset(klb_buffer_t* p_buffer, size_t offset_x, size_
     // 末尾补0
     p_buf->p_buf[p_buf->end] = 0;
 
-    assert(p_buf->end + offset_y < p_buf->buf_len);
-    assert(p_buf->end + offset_x == p_buffer->total_data_len);
+    assert(p_buf->end + (int)offset_y < p_buf->buf_len);
+    assert(p_buf->end + (int)offset_x == p_buffer->total_data_len);
     return p_buf;
 }

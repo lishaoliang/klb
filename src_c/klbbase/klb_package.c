@@ -157,7 +157,7 @@ void klb_package_w_close(klb_package_w_t* p_kpa)
     av_md5_init(p_kpa->p_avmd5);
     if (0 < p_kpa->head.idx_len)
     {
-        fseek(p_kpa->pf, p_kpa->offset + p_kpa->head.idx_pos, SEEK_SET);
+        fseek(p_kpa->pf, (long)(p_kpa->offset + p_kpa->head.idx_pos), SEEK_SET);
 
         while (0 < klb_hlist_size(p_kpa->p_idx_hlist))
         {
@@ -177,7 +177,7 @@ void klb_package_w_close(klb_package_w_t* p_kpa)
     klb_rand_string((char*)p_kpa->head.rand, KLB_PACKAGE_RAND_MAX, false);
     p_kpa->head.head_hash = klb_hash32((const char*)&(p_kpa->head), sizeof(klb_package_head_t) - sizeof(uint32_t));
 
-    fseek(p_kpa->pf, p_kpa->offset, SEEK_SET);
+    fseek(p_kpa->pf, (long)p_kpa->offset, SEEK_SET);
     fwrite(&p_kpa->head, sizeof(klb_package_head_t), 1, p_kpa->pf);
 
     //
@@ -200,7 +200,7 @@ static int klb_package_w_write_buf(klb_package_w_t* p_kpa, const char* p_key, in
     p_idx->value_len = data_len;
     av_md5_sum(p_idx->value_md5, (const uint8_t*)p_data, data_len);
 
-    fseek(p_kpa->pf, p_kpa->offset + offset, SEEK_SET);
+    fseek(p_kpa->pf, (long)(p_kpa->offset + offset), SEEK_SET);
     if (0 < key_len)
     {
         fwrite(p_key, key_len, 1, p_kpa->pf);
@@ -252,7 +252,7 @@ static int klb_package_w_write_file_dump(klb_package_w_t* p_kpa, const char* p_k
     p_idx->value_pos = offset + key_len;
     p_idx->value_len = file_len;
 
-    fseek(p_kpa->pf, p_kpa->offset + offset, SEEK_SET);
+    fseek(p_kpa->pf, (long)(p_kpa->offset + offset), SEEK_SET);
     if (0 < key_len)
     {
         fwrite(p_key, key_len, 1, p_kpa->pf);
@@ -274,12 +274,12 @@ static int klb_package_w_write_file_dump(klb_package_w_t* p_kpa, const char* p_k
         while (0 < data_len)
         {
             int64_t read_len = MIN(data_len, KLB_PACKAGE_BUF_MAX);
-            fread(buf, read_len, 1, pf);
+            fread(buf, (size_t)read_len, 1, pf);
 
-            fwrite(buf, read_len, 1, p_kpa->pf);
+            fwrite(buf, (size_t)read_len, 1, p_kpa->pf);
 
-            av_md5_update(p_kpa->p_avmd5, buf, read_len);
-            av_md5_update(p_avmd5, buf, read_len);
+            av_md5_update(p_kpa->p_avmd5, buf, (int)read_len);
+            av_md5_update(p_avmd5, buf, (int)read_len);
 
             data_len -= read_len;
         }
@@ -312,16 +312,16 @@ int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, int key_
     int ret = 0;
 
     fseek(pf, 0, SEEK_END);
-    int64_t filelen = ftell(pf);
+    long filelen = ftell(pf);
 
     if (filelen <= KLB_PACKAGE_BUF_MAX)
     {
         fseek(pf, 0, SEEK_SET);
 
         uint8_t buf[KLB_PACKAGE_BUF_MAX];
-        fread(buf, filelen, 1, pf);
+        fread(buf, (size_t)filelen, 1, pf);
 
-        ret = klb_package_w_write_buf(p_kpa, p_key, key_len, (const char*)buf, filelen);
+        ret = klb_package_w_write_buf(p_kpa, p_key, key_len, (const char*)buf, (int)filelen);
     }
     else
     {
@@ -354,9 +354,9 @@ typedef struct klb_package_r_t_
 static bool read_head_klb_package_r(FILE* pf, int64_t offset, klb_package_head_t* p_head)
 {
     fseek(pf, 0, SEEK_END);
-    int64_t filelen = ftell(pf);
+    long filelen = ftell(pf);
 
-    fseek(pf, offset, SEEK_SET);
+    fseek(pf, (long)offset, SEEK_SET);
     fread(p_head, sizeof(klb_package_head_t), 1, pf);
 
     return true;
@@ -371,8 +371,8 @@ static void read_idx_klb_package_r(klb_package_r_t* p_kpa)
 
     int64_t idx_len = p_kpa->idx_count * sizeof(klb_package_idx_t);
 
-    fseek(p_kpa->pf, p_kpa->offset + p_kpa->head.idx_pos, SEEK_SET);
-    fread(p_kpa->p_index, idx_len, 1, p_kpa->pf);
+    fseek(p_kpa->pf, (long)(p_kpa->offset + p_kpa->head.idx_pos), SEEK_SET);
+    fread(p_kpa->p_index, (size_t)idx_len, 1, p_kpa->pf);
 }
 
 klb_package_r_t* klb_package_r_open(const char* p_path)
@@ -399,7 +399,7 @@ klb_package_r_t* klb_package_r_open(const char* p_path)
     memcpy(&p_kpa->head, &head, sizeof(klb_package_head_t));
 
     p_kpa->idx_count = head.idx_len / sizeof(klb_package_idx_t);
-    p_kpa->p_index = KLB_MALLOC(klb_package_idx_t, p_kpa->idx_count, 4);
+    p_kpa->p_index = KLB_MALLOC(klb_package_idx_t, (size_t)p_kpa->idx_count, 4);
 
     read_idx_klb_package_r(p_kpa);
 
@@ -432,10 +432,10 @@ int klb_package_r_read(klb_package_r_t* p_kpa, int64_t idx, char** p_key, klb_bu
 
     if (0 < p_info->key_len)
     {
-        char* ptr = KLB_MALLOC(char, p_info->key_len, 4);
+        char* ptr = KLB_MALLOC(char, (size_t)p_info->key_len, 4);
 
-        fseek(p_kpa->pf, p_kpa->offset + p_info->key_pos, SEEK_SET);
-        fread(ptr, p_info->key_len, 1, p_kpa->pf);
+        fseek(p_kpa->pf, (long)(p_kpa->offset + p_info->key_pos), SEEK_SET);
+        fread(ptr, (size_t)p_info->key_len, 1, p_kpa->pf);
 
         ptr[p_info->key_len] = 0;
         *p_key = ptr;
@@ -447,12 +447,12 @@ int klb_package_r_read(klb_package_r_t* p_kpa, int64_t idx, char** p_key, klb_bu
 
     if (0 < p_info->value_len)
     {
-        klb_buf_t* p_tmp = klb_buf_malloc(p_info->value_len, false);
+        klb_buf_t* p_tmp = klb_buf_malloc((int)p_info->value_len, false);
 
-        fseek(p_kpa->pf, p_kpa->offset + p_info->value_pos, SEEK_SET);
-        fread(p_tmp->p_buf, p_info->value_len, 1, p_kpa->pf);
+        fseek(p_kpa->pf, (size_t)(p_kpa->offset + p_info->value_pos), SEEK_SET);
+        fread(p_tmp->p_buf, (size_t)p_info->value_len, 1, p_kpa->pf);
 
-        p_tmp->end = p_info->value_len;
+        p_tmp->end = (int)p_info->value_len;
 
         *p_value = p_tmp;
     }

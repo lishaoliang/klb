@@ -71,6 +71,7 @@ KLB_API klb_wnd_t* klbwnd_slider_create(klb_gui_t* p_gui, int x, int y, int w, i
 /// @brief css init/quit
 KLB_API void klbwnd_slider_css_init(klbwnd_slider_css_t* p_css, klb_gui_t* p_gui);
 KLB_API void klbwnd_slider_css_quit(klbwnd_slider_css_t* p_css);
+KLB_API void klbwnd_slider_css_copy(klbwnd_slider_css_t* p_dst, klbwnd_slider_css_t* p_src);
 
 
 /// @brief set css

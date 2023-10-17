@@ -363,7 +363,7 @@ static int klua_kudp_sendto(lua_State* L)
     klua_kudp_t* p_kudp = to_klua_kudp(L, 1);
 
     const char* p_ip = luaL_checkstring(L, 2);
-    int port = luaL_checkinteger(L, 3);
+    int port = (int)luaL_checkinteger(L, 3);
 
     size_t body_len = 0;
     const char* p_body = luaL_checklstring(L, 4, &body_len);
@@ -482,10 +482,10 @@ static void check_param_klua_kudp(lua_State* L, int from, klua_kudp_param_t* p_p
         switch (idx)
         {
         case 0:
-            p_param->rbuf_max = luaL_checkinteger(L, ud);
+            p_param->rbuf_max = (int)luaL_checkinteger(L, ud);
             break;
         case 1:
-            p_param->read_max = luaL_checkinteger(L, ud);
+            p_param->read_max = (int)luaL_checkinteger(L, ud);
             break;
         default:
             break;
@@ -502,7 +502,7 @@ static int lib_klua_kudp_new(lua_State* L)
     if (LUA_TSTRING == lua_type(L, 1) && LUA_TNUMBER == lua_type(L, 2))
     {
         const char* p_ip = luaL_checkstring(L, 1);
-        int port = luaL_checkinteger(L, 2);
+        int port = (int)luaL_checkinteger(L, 2);
 
         struct sockaddr_in addr = { 0 };
         addr.sin_family = AF_INET;
