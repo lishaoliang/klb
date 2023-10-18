@@ -709,6 +709,49 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
     }
 }
 
+//  裁剪color格式
+static bool klbuicssex_check_color(klb_gui_t* p_gui, const klb_map_t* p_map, int start, uint32_t* p_out_color)
+{
+    klb_map_t* p_in = (klb_map_t*)p_map;
+    int type = klb_map_array_type(p_in, start);
+    switch (type)
+    {
+    case KLB_ADT_map:
+        {
+            klb_map_t* ptr = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+            if (0 < klb_map_array_size(ptr))
+            {
+                uint8_t a = (uint8_t)klb_map_idx_to_int64(ptr, 0);
+                uint8_t r = (uint8_t)klb_map_idx_to_int64(ptr, 1);
+                uint8_t g = (uint8_t)klb_map_idx_to_int64(ptr, 2);
+                uint8_t b = (uint8_t)klb_map_idx_to_int64(ptr, 3);
+
+                if (NULL != p_out_color)
+                {
+                    *p_out_color = KLB_ARGB8888(a, r, g, b);
+                }
+
+                return true;
+            }
+        }
+        break;
+    case KLB_ADT_string:
+        {
+            char* p_str = (char*)klb_map_idx_to_string(p_in, start);
+            if (NULL != p_out_color)
+            {
+                *p_out_color = (uint32_t)strtoll(p_str, NULL, 16);
+            }
+            return true;
+        }
+        break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
 // 边框颜色 border-color
 void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -730,11 +773,11 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
         {
             // 格式 1
             // 格式 ['border-color'] = {{255,10,10,10}, {255,10,10,10}, {255,10,10,10}, {255,10,10,10}}
-            // 格式 ['border-color'] = { 0xFF45, 0xFF45, 0xFF45, 0xFF45 }
             // 格式 ['border-color'] = {"0xFF45", "0xFF45", "0xFF45", "0xFF45"}
+            // Bug. 格式 ['border-color'] = {255,10,10,10} 在 格式2 中 支持, 这里仅检查两种
             uint32_t top = 0, right = 0, bottom = 0, left = 0;
 
-            if (klb_gui_check_color(NULL, p_param, 0, &top))
+            if (klbuicssex_check_color(NULL, p_param, 0, &top))
             {
                 p_border->color.top = top;
 
@@ -743,17 +786,17 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
 
             if (is_fmt1)
             {
-                if (klb_gui_check_color(NULL, p_param, 1, &right))
+                if (klbuicssex_check_color(NULL, p_param, 1, &right))
                 {
                     p_border->color.right = right;
                 }
 
-                if (klb_gui_check_color(NULL, p_param, 2, &bottom))
+                if (klbuicssex_check_color(NULL, p_param, 2, &bottom))
                 {
                     p_border->color.bottom = bottom;
                 }
 
-                if (klb_gui_check_color(NULL, p_param, 3, &left))
+                if (klbuicssex_check_color(NULL, p_param, 3, &left))
                 {
                     p_border->color.left = left;
                 }
