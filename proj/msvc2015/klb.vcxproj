@@ -170,6 +170,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\klbapp\klb_app.h" />
+    <ClInclude Include="..\..\inc\klbapp\klb_app_extension.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_help.h" />
@@ -427,6 +429,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\compat\w32pthreads.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
+    <ClInclude Include="..\..\src_c\klbapp\klb_app_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.h" />
@@ -648,6 +651,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp" />
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
+    <ClCompile Include="..\..\src_c\klbapp\klb_app.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_mnp_help.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_package.c" />

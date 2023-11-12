@@ -75,9 +75,7 @@ static int klbwnd_menu_2rd_suggestw(klb_wnd_t* p_wnd, klbwnd_menu_2rd_t* p_menu)
     for (int i = 0; i < array_size; i++)
     {
         klb_map_t* p_item_map = klb_map_idx_to_map(p_menu->p_data_ref, i);
-        klb_map_iter_t* p_iter = klb_map_begin(p_item_map);
-
-        const char* p_title = klb_adt_to_string(klb_map_data(p_iter));
+        const char* p_title = klb_map_to_string(p_item_map, "title");
 
         int txt_w = 0;
         klb_wnd_text_size2(p_wnd, p_title, strlen(p_title), font_h, &txt_w, NULL);
@@ -271,12 +269,12 @@ static void klbwnd_menu_2rd_relayout(klb_wnd_t* p_wnd)
         if (y + item_h <= h && i < array_size)
         {
             klb_map_t* p_item_map = klb_map_idx_to_map(p_menu->p_data_ref, i);
-            klb_map_iter_t* p_iter = klb_map_begin(p_item_map);
 
-            const char* p_key = klb_map_key(p_iter);
+            const char* p_value = klb_map_to_string(p_item_map, "value");
+            const char* p_title = klb_map_to_string(p_item_map, "title");
 
-            klbwnd_menu_item_set_value(p_item, p_key);
-            klbwnd_menu_item_set_title(p_item, klb_adt_to_string(klb_map_data(p_iter)));
+            klbwnd_menu_item_set_value(p_item, p_value);
+            klbwnd_menu_item_set_title(p_item, p_title);
 
             klb_wnd_move(p_item, x, y);
             klb_wnd_resize(p_item, item_w, item_h);

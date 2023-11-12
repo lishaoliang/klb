@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 
-#define KLBWND_MENU_ITEM_max        16      ///< 菜单项最大数目
+#define KLBWND_MENU_ITEM_max        32      ///< 菜单项最大数目
 
 #define KLBWND_MENU_WIDTH_min       124     ///< 菜单宽度最小值
 #define KLBWND_MENU_WIDTH_max       512     ///< 菜单宽度最大值

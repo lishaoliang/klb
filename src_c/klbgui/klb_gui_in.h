@@ -138,6 +138,7 @@ int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip);
 //////////////////////////////////////////
 
 // 设置/获取 放弃消息"冒泡"
+// 在有些情况下, 可能需要终止消息分发
 void klb_gui_drop_msg_dispatch(klb_gui_t* p_gui, bool drop);
 bool klb_gui_is_drop_msg_dispatch(klb_gui_t* p_gui);
 

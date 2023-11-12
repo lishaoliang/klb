@@ -4,6 +4,7 @@
 #include "klbplatform/klb_thread.h"
 #include "klbplatform/klb_time.h"
 #include "klua/klua_multithread/klua_multithread.h"
+#include "klbapp/klb_app_in.h"
 #include <stdlib.h>
 #include <assert.h>
 
@@ -25,11 +26,17 @@ int klb_base_init(const char* p_cfg)
     // klua初始化
     klua_multithread_init();
 
+    // app
+    klb_app_init();
+
     return 0;
 }
 
 void klb_base_quit()
 {
+    // app
+    klb_app_quit();
+
     // klua退出
     klua_multithread_quit();
 

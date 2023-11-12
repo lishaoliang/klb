@@ -252,6 +252,12 @@
     <Filter Include="src_c\qrencode-4.1.1">
       <UniqueIdentifier>{65d4efbb-2414-45be-ab4d-78b5aca58aff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\klbapp">
+      <UniqueIdentifier>{aa004619-daa6-4854-a1c8-a63ad8882320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbapp">
+      <UniqueIdentifier>{5dfe523c-8a25-4363-994b-71aeaa709a88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1589,6 +1595,15 @@
     <ClInclude Include="..\..\inc\klbgui\wnd\klbwnd_password.h">
       <Filter>inc\klbgui\wnd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbapp\klb_app.h">
+      <Filter>inc\klbapp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbapp\klb_app_in.h">
+      <Filter>src_c\klbapp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbapp\klb_app_extension.h">
+      <Filter>inc\klbapp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2706,6 +2721,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\wnd\klbwnd_password.c">
       <Filter>src_c\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbapp\klb_app.c">
+      <Filter>src_c\klbapp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

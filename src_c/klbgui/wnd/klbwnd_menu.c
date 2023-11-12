@@ -76,9 +76,7 @@ static int klbwnd_menu_suggestw(klb_wnd_t* p_wnd, klbwnd_menu_t* p_menu)
     for (int i = 0; i < array_size; i++)
     {
         klb_map_t* p_item_map = klb_map_idx_to_map(&p_menu->data, i);
-        klb_map_iter_t* p_iter = klb_map_begin(p_item_map);
-
-        const char* p_title = klb_adt_to_string(klb_map_data(p_iter));
+        const char* p_title = klb_map_to_string(p_item_map, "title");
 
         int txt_w = 0;
         klb_wnd_text_size2(p_wnd, p_title, strlen(p_title), font_h, &txt_w, NULL);
@@ -392,6 +390,53 @@ static void klbwnd_menu_relayout(klb_wnd_t* p_wnd)
 
     int array_size = klb_map_array_size(&p_menu->data);
 
+#if 1
+    int idx = 0;
+    for (int i = 0; i < array_size; i++)
+    {
+        klb_map_t* p_item_map = klb_map_idx_to_map(&p_menu->data, i);
+
+        bool show = true; // 默认显示
+        if (KLB_ADT_bool == klb_map_type(p_item_map, "visibility"))
+        {
+            show = klb_map_to_bool(p_item_map, "visibility");
+        }
+
+        if (show && y + item_h <= h && idx < KLBWND_MENU_ITEM_max)
+        {
+            klb_wnd_t* p_item = p_menu->p_items[idx];
+
+            const char* p_value = klb_map_to_string(p_item_map, "value");
+            const char* p_title = klb_map_to_string(p_item_map, "title");
+
+            klbwnd_menu_item_set_value(p_item, p_value);
+            klbwnd_menu_item_set_title(p_item, p_title);
+
+            //是否拥有子菜单
+            if (NULL != klb_map_to_map(&p_menu->data_2rd, p_value))
+            {
+                klbwnd_menu_item_set_has_2rd(p_item, true);
+            }
+            else
+            {
+                klbwnd_menu_item_set_has_2rd(p_item, false);
+            }
+
+            klb_wnd_move(p_item, x, y);
+            klb_wnd_resize(p_item, item_w, item_h);
+            klb_wnd_hide(p_item, false);
+
+            idx += 1;
+            y += item_h;
+        }
+    }
+
+    for (int j = idx; j < KLBWND_MENU_ITEM_max; j++)
+    {
+        klb_wnd_t* p_item = p_menu->p_items[j];
+        klb_wnd_hide(p_item, true);
+    }
+#else
     for (int i = 0; i < KLBWND_MENU_ITEM_max; i++)
     {
         klb_wnd_t* p_item = p_menu->p_items[i];
@@ -399,15 +444,15 @@ static void klbwnd_menu_relayout(klb_wnd_t* p_wnd)
         if (y + item_h <= h && i < array_size)
         {
             klb_map_t* p_item_map = klb_map_idx_to_map(&p_menu->data, i);
-            klb_map_iter_t* p_iter = klb_map_begin(p_item_map);
 
-            const char* p_key = klb_map_key(p_iter);
+            const char* p_value = klb_map_to_string(p_item_map, "value");
+            const char* p_title = klb_map_to_string(p_item_map, "title");
 
-            klbwnd_menu_item_set_value(p_item, p_key);
-            klbwnd_menu_item_set_title(p_item, klb_adt_to_string(klb_map_data(p_iter)));
+            klbwnd_menu_item_set_value(p_item, p_value);
+            klbwnd_menu_item_set_title(p_item, p_title);
 
             //是否拥有子菜单
-            if (NULL != klb_map_to_map(&p_menu->data_2rd, p_key))
+            if (NULL != klb_map_to_map(&p_menu->data_2rd, p_value))
             {
                 klbwnd_menu_item_set_has_2rd(p_item, true);
             }
@@ -427,6 +472,7 @@ static void klbwnd_menu_relayout(klb_wnd_t* p_wnd)
             klb_wnd_hide(p_item, true);
         }
     }
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

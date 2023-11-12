@@ -14,6 +14,7 @@
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
 #include "klbgui/wnd/klbwnd_calendar.h"
+#include "klbthird/sds.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -27,7 +28,9 @@ typedef struct klbwnd_calendar_days_t_
 {
     klbwnd_calendar_css_t*      p_css;          ///< 样式
 
-    klb_wnd_t*                  p_statics[KLBWND_CAL_DAYS_column];
+    sds                         weeks[KLBWND_CAL_DAYS_column];      ///< 星期名称
+
+    klb_wnd_t*                  p_statics[KLBWND_CAL_DAYS_column];  ///< 星期静态框
     klb_wnd_t*                  p_btns[(KLBWND_CAL_DAYS_row - 1) * KLBWND_CAL_DAYS_column];
 }klbwnd_calendar_days_t;
 

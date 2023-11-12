@@ -578,6 +578,67 @@ static void on_klbui_menu_append_2rd(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int
     }
 }
 
+static void on_klbui_menu_item_update(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 更新 第一级菜单项目
+    if (KLBUI_CSSEX_set == method)
+    {
+        /* eg.
+        jq('menu1').append({
+            {['1'] = '项目1'},
+            {['2'] = '项目2'},
+            {['3'] = '项目3'},
+            {['4'] = '项目4'},
+        })
+
+        or, kgui.set('/xxx/.../combo1', 'append', {
+            {['1'] = '项目1'},
+            {['2'] = '项目2'},
+            {['3'] = '项目3'},
+            {['4'] = '项目4'},
+        })
+        */
+        int start = 1;
+        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_array)
+        {
+            klbwnd_menu_append(p_wnd, p_in_array);
+
+            klb_wnd_update(p_wnd);
+        }
+    }
+}
+
+static void on_klbui_menu_item_2rd_update(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 更新 第二级菜单项目
+    if (KLBUI_CSSEX_set == method)
+    {
+        /* eg.
+        jq('menu1').append({
+            ['1'] = {
+                {['1-1'] = '子项目1-1'},
+                {['1-2'] = '子项目1-2'},
+                {['1-3'] = '子项目1-3'},
+                {['1-4'] = '子项目1-4'},
+            },
+            ['2'] = {
+                {['2-1'] = '子项目2-1'},
+                {['2-2'] = '子项目2-2'},
+                {['2-3'] = '子项目2-3'},
+                {['2-4'] = '子项目2-4'},
+            },
+        })
+        */
+        int start = 1;
+        klb_map_t* p_in_2rd = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_2rd)
+        {
+            klbwnd_menu_append_2rd(p_wnd, p_in_2rd);
+        }
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // css func
 
@@ -662,6 +723,9 @@ static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb
 
     KLBUI_menu_bind("append", on_klbui_menu_append);
     KLBUI_menu_bind("append_2rd", on_klbui_menu_append_2rd);
+
+    KLBUI_menu_bind("item.update", on_klbui_menu_item_update);
+    KLBUI_menu_bind("item_2rd.update", on_klbui_menu_item_2rd_update);
 }
 
 //////////////////////////////////////////////////////////////////////////

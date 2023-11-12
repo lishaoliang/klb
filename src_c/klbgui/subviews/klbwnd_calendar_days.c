@@ -108,8 +108,6 @@ void klbwnd_calendar_days_relayout(klb_wnd_t* p_wnd)
     int sx = left_x;
     int sy = (h - (item_h * KLBWND_CAL_DAYS_row + offy * (KLBWND_CAL_DAYS_row - 1))) / 2;
 
-    char str[32] = { 0 };
-
     // 第一排 静态框
     for (int i = 0; i < KLBWND_CAL_DAYS_column; i++)
     {
@@ -120,8 +118,7 @@ void klbwnd_calendar_days_relayout(klb_wnd_t* p_wnd)
 
         sx += item_w + offx;
 
-        snprintf(str, sizeof(str) - 1, "%d", i + 1);
-        klbwnd_static_set_title(p_sta, str);
+        klbwnd_static_set_title(p_sta, p_days->weeks[i]);
     }
 
     // 第二排 ~ 第七排, 按钮
@@ -199,14 +196,30 @@ void klbwnd_calendar_days_set_date_page(klb_wnd_t* p_wnd, klbwnd_calendar_ymd_t*
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 
+static char s_klbwnd_calendar_days_weeks[][8] = {
+    "MO",       // 星期一, Monday,     Mon.    MON/MO
+    "TU",       // 星期二, Tuesday,    Tue.    TUE/TU
+    "WE",       // 星期三, Wednesday,  Wed.    WED/WE
+    "TH",       // 星期四, Thursday,   Thur.   THU/TH
+    "FR",       // 星期五, Friday,     Fri.    FRI/FR
+    "SA",       // 星期六, Saturday,   Sat.    SAT/SA
+    "SU",       // 星期日, Sunday,     Sun.    SUN/SU
+};
+
 static void klbwnd_calendar_days_init_attribute(klbwnd_calendar_days_t* p_days)
 {
-
+    for (int i = 0; i < KLBWND_CAL_DAYS_column; i++)
+    {
+        p_days->weeks[i] = sdsnew(s_klbwnd_calendar_days_weeks[i]);
+    }
 }
 
 static void klbwnd_calendar_days_quit_attribute(klbwnd_calendar_days_t* p_days)
 {
-
+    for (int i = 0; i < KLBWND_CAL_DAYS_column; i++)
+    {
+        KLB_FREE_BY(p_days->weeks[i], sdsfree);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////

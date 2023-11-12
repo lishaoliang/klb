@@ -1,13 +1,13 @@
 # 编译命令 : make
-# make MY_VERSION=release MY_TOOL_CHAIN=arm-himix200-linux- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
+# make MY_VERSION=release MY_TOOL_CHAIN=arm-linux-gnueabi- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
 # 裁剪参数 MY_CLIP="no-all no-lpeg no-sqlite no-packages"
 #
 
 SHELL = /bin/bash
 PWD = `pwd`
 
-# 编译工具, arm-linux-gnueabi-, arm-himix200-linux-
-#MY_TOOL_CHAIN ?= arm-himix200-linux-
+# 编译工具, arm-linux-gnueabi-
+#MY_TOOL_CHAIN ?= arm-linux-gnueabi-
 MY_TOOL_CHAIN ?= 
 MY_CFLAGS_EX ?= 
 MY_VERSION ?= debug
@@ -46,6 +46,10 @@ MY_DIRS += ./src_c/klua ./src_c/klua/extension ./src_c/klua/klua_platform ./src_
 MY_DIRS += ./src_c/klua/klua_multithread ./src_c/klua/klua_net ./src_c/klua/klua_format
 MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/LuaXML_130610 ./src_c/klua/luafilesystem-2.0/src
 
+# klbapp
+MY_DIRS += ./src_c/klbapp
+
+
 # libavutil
 MY_DIRS += ./src_c/compat ./src_c/libavutil
 
@@ -56,6 +60,8 @@ MY_DIRS += ./src_c/qrencode-4.1.1
 # cpp / src_cpp
 MY_DIRS += ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbnet
 MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klua 
+MY_DIRS += ./src_cpp/klbapp
+
 
 ################################################
 # 裁剪代码
