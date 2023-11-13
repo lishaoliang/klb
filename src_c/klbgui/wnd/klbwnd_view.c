@@ -169,7 +169,7 @@ void klbwnd_view_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, i
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_NOFOCUS;
+    p_wnd->state.style = KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
 
     // 初始化内部属性
     klbwnd_view_init_attribute(p_view);

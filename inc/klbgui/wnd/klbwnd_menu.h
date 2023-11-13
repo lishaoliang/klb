@@ -93,9 +93,15 @@ KLB_API const sds klbwnd_menu_get_value(klb_wnd_t* p_wnd);
 /// @brief 添加菜单项
 KLB_API void klbwnd_menu_append(klb_wnd_t* p_wnd, klb_map_t* p_array);
 
+/// @brief 更新菜单项属性
+KLB_API void klbwnd_menu_item_update(klb_wnd_t* p_wnd, klb_map_t* p_array);
+
 
 /// @brief 添加子菜单项
 KLB_API void klbwnd_menu_append_2rd(klb_wnd_t* p_wnd, klb_map_t* p_2rd);
+
+/// @brief 更新子菜单项属性
+KLB_API void klbwnd_menu_item_2rd_update(klb_wnd_t* p_wnd, klb_map_t* p_2rd);
 
 
 #if defined(__cplusplus)

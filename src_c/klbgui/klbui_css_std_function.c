@@ -98,6 +98,34 @@ static void on_klbguicssmapstd_suggesth(klb_wnd_t* p_wnd, void* ptr, int method,
     }
 }
 
+// 样式 : 主动获取子窗口消息
+static void on_klbguicssmapstd_style_peek_event(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        uint32_t style = klb_wnd_get_style(p_wnd);
+
+        klb_map_set_idx_bool(p_out, 0, (KLB_WND_STYLE_PEEK_EVENT & style) ? true : false);
+    }
+    else if(KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool peek_event = klb_map_idx_to_bool(p_in, start);
+
+        uint32_t style = klb_wnd_get_style(p_wnd);
+        if (peek_event)
+        {
+            style |= KLB_WND_STYLE_PEEK_EVENT;
+        }
+        else
+        {
+            style &= ~(uint32_t)(KLB_WND_STYLE_PEEK_EVENT);
+        }
+
+        klb_wnd_set_style(p_wnd, style);
+    }
+}
+
 // 显示隐藏
 static void on_klbguicssmapstd_show(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -214,8 +242,10 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     KLBGUI_cssmapstd_bind("suggestw", on_klbguicssmapstd_suggestw);
     KLBGUI_cssmapstd_bind("suggesth", on_klbguicssmapstd_suggesth);
 
+    // 样式 style
+    KLBGUI_cssmapstd_bind("style-peek-event", on_klbguicssmapstd_style_peek_event)
 
-    // 状态
+    // 状态 status
     KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show)
     KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input)
     KLBGUI_cssmapstd_bind("check", on_klbguicssmapstd_check);           // 选中

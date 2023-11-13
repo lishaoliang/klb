@@ -185,7 +185,7 @@ static int on_command_klua_ex_gui(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
         return -1;
     }
 
-    int ret = (int)luaL_checkinteger(L, -1);                    // #1. 0. 消息终止,不再"冒泡"; msg. 任然以msg"冒泡"; 非0. 转换为其他消息"冒泡"
+    int ret = (int)luaL_checkinteger(L, -1);                    // #1. -1. 消息终止,不再"冒泡"
     lua_pop(L, 1);
 
     KLUA_HELP_TOP_E(L);

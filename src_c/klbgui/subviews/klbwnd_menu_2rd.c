@@ -96,12 +96,34 @@ static int klbwnd_menu_2rd_suggestw(klb_wnd_t* p_wnd, klbwnd_menu_2rd_t* p_menu)
 
 static int klbwnd_menu_2rd_suggesth(klb_wnd_t* p_wnd, klbwnd_menu_2rd_t* p_menu)
 {
-    if (NULL != p_menu->p_data_ref)
+    if (NULL == p_menu->p_data_ref)
     {
-        int item_h = 32;
-        int array_size = klb_map_array_size(p_menu->p_data_ref);
+        return 0;
+    }
 
-        return item_h * array_size + 2;
+    int item_h = 32;
+
+    int array_size = klb_map_array_size(p_menu->p_data_ref);
+    int idx = 0;
+    for (int i = 0; i < array_size; i++)
+    {
+        klb_map_t* p_item_map = klb_map_idx_to_map(p_menu->p_data_ref, i);
+
+        bool show = true; // 默认显示
+        if (KLB_ADT_bool == klb_map_type(p_item_map, "visibility"))
+        {
+            show = klb_map_to_bool(p_item_map, "visibility");
+        }
+
+        if (show && idx < KLBWND_MENU_ITEM_max)
+        {
+            idx += 1;
+        }
+    }
+
+    if (0 < idx)
+    {
+        return item_h * idx + 2;
     }
 
     return 0;
@@ -262,13 +284,20 @@ static void klbwnd_menu_2rd_relayout(klb_wnd_t* p_wnd)
 
     int array_size = klb_map_array_size(p_menu->p_data_ref);
 
-    for (int i = 0; i < KLBWND_MENU_ITEM_max; i++)
+    int idx = 0;
+    for (int i = 0; i < array_size; i++)
     {
-        klb_wnd_t* p_item = p_menu->p_items[i];
+        klb_map_t* p_item_map = klb_map_idx_to_map(p_menu->p_data_ref, i);
 
-        if (y + item_h <= h && i < array_size)
+        bool show = true; // 默认显示
+        if (KLB_ADT_bool == klb_map_type(p_item_map, "visibility"))
         {
-            klb_map_t* p_item_map = klb_map_idx_to_map(p_menu->p_data_ref, i);
+            show = klb_map_to_bool(p_item_map, "visibility");
+        }
+
+        if (show && y + item_h <= h && idx < KLBWND_MENU_ITEM_max)
+        {
+            klb_wnd_t* p_item = p_menu->p_items[idx];
 
             const char* p_value = klb_map_to_string(p_item_map, "value");
             const char* p_title = klb_map_to_string(p_item_map, "title");
@@ -280,12 +309,15 @@ static void klbwnd_menu_2rd_relayout(klb_wnd_t* p_wnd)
             klb_wnd_resize(p_item, item_w, item_h);
             klb_wnd_hide(p_item, false);
 
+            idx += 1;
             y += item_h;
         }
-        else
-        {
-            klb_wnd_hide(p_item, true);
-        }
+    }
+
+    for (int j = idx; j < KLBWND_MENU_ITEM_max; j++)
+    {
+        klb_wnd_t* p_item = p_menu->p_items[j];
+        klb_wnd_hide(p_item, true);
     }
 }
 

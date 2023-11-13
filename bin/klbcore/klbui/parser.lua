@@ -55,15 +55,22 @@ local function OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 	local b3 = kgui.b3_event(msg)
 	local e = kgui.to_event(msg)	
 	
+	local ret = 0
+	
 	local event_str = event.transform(e)
 	if 'string' == type(event_str) then		
 		if 'function' == type(cmds1[event_str]) then
-			cmds1[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
+			ret = cmds1[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
 		elseif 'function' == type(cmds2[event_str]) then
-			cmds2[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
+			ret = cmds2[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
 		elseif 'function' == type(cmds3[event_str]) then
-			cmds3[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
+			ret = cmds3[event_str](x1, y1, x2, y2, lparam, wparam, b1, b2, b3)
 		end
+	end
+	
+	-- ret 可能被 返回 非数值
+	if 'number' == type(ret) then
+		return ret
 	end
 	
 	return 0

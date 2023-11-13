@@ -1313,18 +1313,26 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 
     if (NULL != p_wnd)
     {
+        int ret_command = 0;
+
         // 焦点窗口事件
-        klb_wnd_on_control_and_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        if (0 <= ret_command)
+        {
+            ret_command = klb_wnd_on_control_and_command(p_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+        }
         if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
 
         // 检查窗口链中 需要抓取 KLB_WND_STYLE_PEEK_EVENT 标记的窗口
         // 若有标记, 则响应消息
         klb_wnd_t* p_tmp = p_wnd->p_parent;
-        while (NULL != p_tmp && NULL != p_tmp->p_parent)
+        while (NULL != p_tmp && NULL != p_tmp->p_parent && 0 <= ret_command)
         {
             if (KLB_WND_STYLE_PEEK_EVENT & p_tmp->state.style)
             {
-                klb_wnd_on_control_and_command(p_tmp, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+                if (0 <= ret_command)
+                {
+                    ret_command = klb_wnd_on_control_and_command(p_tmp, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+                }
                 if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
             }
 
@@ -1335,11 +1343,13 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         klb_wnd_t* p_top_wnd = (NULL != p_tmp) ? p_tmp : p_wnd;
         if (p_wnd != p_top_wnd)
         {
-            klb_wnd_on_control_and_command(p_top_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            if (0 <= ret_command)
+            {
+                klb_wnd_on_control_and_command(p_top_wnd, p_msg->msg, &p_msg->pt1, &p_msg->pt2, p_msg->lparam, p_msg->wparam);
+            }
             if (klb_gui_is_drop_msg_dispatch(p_gui)) { return 0; };
         }
     }
-
 
     // step4. 若无焦点窗口, 则将消息 交给 messagebox/popup/modal 绘图次序中最后的 那个顶层窗口
     p_wnd = NULL;

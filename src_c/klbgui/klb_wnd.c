@@ -519,6 +519,8 @@ int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, cons
 
 int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
+    int ret = 0;
+
     if (NULL != p_wnd)
     {
         klb_point_t pt = { 0 };
@@ -528,17 +530,18 @@ int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t*
 
         if (NULL != p_wnd->vtable.on_control)
         {
-            p_wnd->vtable.on_control(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+            ret = p_wnd->vtable.on_control(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
         }
 
         if (NULL != p_wnd->vtable.on_command && 
-            !(KLB_WND_STATUS_DISABLE & p_wnd->state.status))
+            !(KLB_WND_STATUS_DISABLE & p_wnd->state.status) &&
+            0 <= ret)
         {
-            p_wnd->vtable.on_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+            ret = p_wnd->vtable.on_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
         }
     }
 
-    return 0;
+    return ret;
 }
 
 /// @brief 获取建议宽
