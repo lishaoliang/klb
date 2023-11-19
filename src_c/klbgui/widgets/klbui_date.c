@@ -627,7 +627,7 @@ static void on_klbui_date_value(klb_wnd_t* p_wnd, klbui_date_t* p_date, int meth
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_date_bind(KEY_, FUNC_) { klb_map_set_ptr(p_date->p_func_map, (KEY_), (void*)(FUNC_), p_date); }
+#define KLBUI_date_bind(KEY_, FUNC_) { klb_map_set_ptr(p_date->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_date_init_func_map(klb_wnd_t* p_wnd, klbui_date_t* p_date, klb_gui_t* p_gui)
 {

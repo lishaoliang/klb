@@ -591,7 +591,7 @@ static void on_klbui_slider_max(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_num_bind(KEY_, FUNC_) { klb_map_set_ptr(p_num->p_func_map, (KEY_), (void*)(FUNC_), p_num); }
+#define KLBUI_num_bind(KEY_, FUNC_) { klb_map_set_ptr(p_num->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_num_init_func_map(klb_wnd_t* p_wnd, klbui_num_t* p_num, klb_gui_t* p_gui)
 {

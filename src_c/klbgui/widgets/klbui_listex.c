@@ -734,7 +734,7 @@ static void on_klbui_listex_event_wnd(klb_wnd_t* p_wnd, klbui_listex_t* p_list, 
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_listex_bind(KEY_, FUNC_) { klb_map_set_ptr(p_list->p_func_map, (KEY_), (void*)(FUNC_), p_list); }
+#define KLBUI_listex_bind(KEY_, FUNC_) { klb_map_set_ptr(p_list->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list, klb_gui_t* p_gui)
 {

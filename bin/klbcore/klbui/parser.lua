@@ -230,28 +230,27 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 	
 	-- 将 cmds2 / cmds3 从bind_command绑定函数中独立提取出来, 只在解析时计算一次
 	-- cmds2, 独立填写的相应命令集合
+	-- 只对 有名称(name)的控件做消息绑定, 优化控件的消息响应数量
+	-- 而 编号(id) 用于 检索到控件后, 做CSS操作等
 	local name = wnd['name'] or ''
-	local id = wnd['id'] or ''
-		
-	local cmds2 = E		
-	if 'table' == type(commands[path]) then
-		cmds2 = commands[path]	-- 1. 依据路径判定
-	elseif '' ~= id and 'table' == type(commands[id]) then
-		cmds2 = commands[id]	-- 2. 依据id判定
-	elseif '' ~= name and 'table' == type(commands[name]) then
-		cmds2 = commands[name]	-- 3. 依据名称判定
-	end		
 	
-	-- cmds3, 内嵌在 dialog里面的
-	local cmds3 = ('table' == type(wnd['commands']) and wnd['commands']) or E	
-
-	-- 绑定命令函数
-	kgui.bind_command(path, function (obj, msg, x1, y1, x2, y2, lparam, wparam)
-		-- cmds1, 动态绑定表, 每次响应时动态计算
-		local cmds1 = ('table' == type(wnd['_commands']) and wnd['_commands']) or E
+	if '' ~= name then
+		local cmds2 = E		
+		if 'table' == type(commands[name]) then
+			cmds2 = commands[name]	-- 依据名称判定
+		end
 		
-		return OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
-	end)
+		-- cmds3, 内嵌在 dialog里面的
+		local cmds3 = ('table' == type(wnd['commands']) and wnd['commands']) or E	
+		
+		-- 绑定命令函数
+		kgui.bind_command(path, function (obj, msg, x1, y1, x2, y2, lparam, wparam)
+			-- cmds1, 动态绑定表, 每次响应时动态计算
+			local cmds1 = ('table' == type(wnd['_commands']) and wnd['_commands']) or E
+			
+			return OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, wparam)
+		end)
+	end
 	
 	-- 子窗口: 第1种表达方式
 	for _, v in ipairs(wnd) do
@@ -263,6 +262,9 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 	for _, v in ipairs(child) do
 		ParseWnd(v, commands, css, path, false)
 	end
+	
+	-- 窗口解析完成, 触发 'onparsewindow' 事件
+	kgui.on_control_and_command(path, event.onparsewindow)
 end
 
 function parser.parse(dialog, commands, css)
@@ -271,6 +273,9 @@ function parser.parse(dialog, commands, css)
 	local root_path = dialog['path'] or table.concat({'/', krand.rand_string(CONST_rand_max)}) -- 根路径
 	
 	ParseWnd(dialog, param_cmds, param_css, root_path, true)
+	
+	-- 对话框解析完成, 触发 'onparsedialog' 事件
+	kgui.on_control_and_command(root_path, event.onparsedialog)
 end
 
 

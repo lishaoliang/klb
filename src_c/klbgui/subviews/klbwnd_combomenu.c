@@ -275,6 +275,18 @@ void klbwnd_combomenu_css_init(klbwnd_combomenu_css_t* p_css, klb_gui_t* p_gui)
 
     klbwnd_combomenu_item_css_init(&p_css->css_item, p_gui);
     klbwnd_vscrollbar_css_init(&p_css->css_vscrollbar, p_gui);
+
+    p_css->css_vscrollbar.normal.border.width.top = 0;
+    p_css->css_vscrollbar.normal.border.width.right = 0;
+    p_css->css_vscrollbar.normal.border.width.bottom = 0;
+
+    p_css->css_vscrollbar.focus.border.width.top = 0;
+    p_css->css_vscrollbar.focus.border.width.right = 0;
+    p_css->css_vscrollbar.focus.border.width.bottom = 0;
+
+    p_css->css_vscrollbar.disable.border.width.top = 0;
+    p_css->css_vscrollbar.disable.border.width.right = 0;
+    p_css->css_vscrollbar.disable.border.width.bottom = 0;
 }
 
 void klbwnd_combomenu_css_quit(klbwnd_combomenu_css_t* p_css)

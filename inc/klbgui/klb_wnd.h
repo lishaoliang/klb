@@ -44,7 +44,7 @@ typedef struct klb_wnd_pos_t_
 typedef enum klb_wnd_style_e_
 {
     KLB_WND_STYLE_TOP                   = 0x0001,   ///< 顶层窗口
-    KLB_WND_STYLE_PEEK_EVENT            = 0x0002,   ///< 需要读取消息事件: 若需要响应部分子窗口事件, 可使用此标记
+    KLB_WND_STYLE_PEEK_EVENT            = 0x0002,   ///< (在消息冒泡中)读取消息事件: 若需要响应部分子窗口事件, 可使用此标记
     KLB_WND_STYLE_NOFOCUS               = 0x0004,   ///< 无聚焦状态
     KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
     KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘

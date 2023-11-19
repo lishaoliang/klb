@@ -82,6 +82,23 @@ static int klbwnd_vscrollbar_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+static int klbwnd_vscrollbar_on_click(klb_wnd_t* p_wnd, klbwnd_vscrollbar_t* p_vsc, const klb_point_t* p_pt1)
+{
+    int y1 = p_vsc->p_up->pos.rect_in_parent.h;
+    int y2 = p_vsc->p_down->pos.rect_in_parent.h;
+    int h = p_wnd->pos.rect_in_parent.h;
+
+    int offy = p_pt1->y - p_wnd->pos.rect_in_canvas.y;
+
+    if (y1 < offy && offy < h - y2)
+    {
+        int v = p_vsc->min + (offy - y1) * (p_vsc->max - p_vsc->min + 1) / (h - y1 - y2);
+
+        klbwnd_vscrollbar_update_value(p_wnd, p_vsc, v);
+    }
+
+    return 0;
+}
 
 static int klbwnd_vscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
@@ -91,28 +108,16 @@ static int klbwnd_vscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
     {
     case KLBUI_onpaint:
         return klbwnd_vscrollbar_on_paint(p_wnd);
+
 	case KLBUI_click:
 	case KLBUI_dblclick:
-		{
-			int y1 = p_vsc->p_up->pos.rect_in_parent.h;
-			int y2 = p_vsc->p_down->pos.rect_in_parent.h;
-			int h = p_wnd->pos.rect_in_parent.h;
-
-			int offy = p_pt1->y - p_wnd->pos.rect_in_canvas.y;
-
-			if (y1 < offy && offy < h - y2)
-			{
-				int v = p_vsc->min + (offy - y1) * (p_vsc->max - p_vsc->min + 1) / (h - y1 - y2);
-
-				klbwnd_vscrollbar_update_value(p_wnd, p_vsc, v);
-			}
-		}
+        return klbwnd_vscrollbar_on_click(p_wnd, p_vsc, p_pt1);
 		break;
+
     case KLBUI_onresize:
-        {
-            klbwnd_vscrollbar_relayout(p_wnd, p_vsc);
-        }
+        klbwnd_vscrollbar_relayout(p_wnd, p_vsc);
         break;
+
     default:
         break;
     }
@@ -298,6 +303,21 @@ void klbwnd_vscrollbar_css_init(klbwnd_vscrollbar_css_t* p_css, klb_gui_t* p_gui
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
 
     klbwnd_btnex_css_init(&p_css->css_btnex, p_gui);
+
+    p_css->css_btnex.normal.border.width.top = 0;
+    p_css->css_btnex.normal.border.width.right = 0;
+    p_css->css_btnex.normal.border.width.bottom = 0;
+    p_css->css_btnex.normal.border.width.left = 0;
+
+    p_css->css_btnex.focus.border.width.top = 0;
+    p_css->css_btnex.focus.border.width.right = 0;
+    p_css->css_btnex.focus.border.width.bottom = 0;
+    p_css->css_btnex.focus.border.width.left = 0;
+
+    p_css->css_btnex.disable.border.width.top = 0;
+    p_css->css_btnex.disable.border.width.right = 0;
+    p_css->css_btnex.disable.border.width.bottom = 0;
+    p_css->css_btnex.disable.border.width.left = 0;
 }
 
 void klbwnd_vscrollbar_css_quit(klbwnd_vscrollbar_css_t* p_css)

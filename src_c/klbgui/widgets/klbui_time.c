@@ -620,7 +620,7 @@ static void on_klbui_time_value(klb_wnd_t* p_wnd, klbui_time_t* p_time, int meth
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_time_bind(KEY_, FUNC_) { klb_map_set_ptr(p_time->p_func_map, (KEY_), (void*)(FUNC_), p_time); }
+#define KLBUI_time_bind(KEY_, FUNC_) { klb_map_set_ptr(p_time->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_time_init_func_map(klb_wnd_t* p_wnd, klbui_time_t* p_time, klb_gui_t* p_gui)
 {

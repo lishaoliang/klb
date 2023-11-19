@@ -601,7 +601,7 @@ static void on_klbui_progress_value(klb_wnd_t* p_wnd, klbui_progress_t* p_prog, 
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_progress_bind(KEY_, FUNC_) { klb_map_set_ptr(p_prog->p_func_map, (KEY_), (void*)(FUNC_), p_prog); }
+#define KLBUI_progress_bind(KEY_, FUNC_) { klb_map_set_ptr(p_prog->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_progress_init_func_map(klb_wnd_t* p_wnd, klbui_progress_t* p_prog, klb_gui_t* p_gui)
 {

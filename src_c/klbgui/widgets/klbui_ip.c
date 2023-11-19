@@ -586,7 +586,7 @@ static void on_klbui_ip_value(klb_wnd_t* p_wnd, klbui_ip_t* p_ip, int method, co
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_ip_bind(KEY_, FUNC_) { klb_map_set_ptr(p_ip->p_func_map, (KEY_), (void*)(FUNC_), p_ip); }
+#define KLBUI_ip_bind(KEY_, FUNC_) { klb_map_set_ptr(p_ip->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_ip_init_func_map(klb_wnd_t* p_wnd, klbui_ip_t* p_ip, klb_gui_t* p_gui)
 {

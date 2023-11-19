@@ -98,7 +98,7 @@ static void on_klbguicssmapstd_suggesth(klb_wnd_t* p_wnd, void* ptr, int method,
     }
 }
 
-// 样式 : 主动获取子窗口消息
+// 样式: (在消息冒泡中)读取消息事件: KLB_WND_STYLE_PEEK_EVENT
 static void on_klbguicssmapstd_style_peek_event(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     if (KLBUI_CSSEX_get == method)
@@ -120,6 +120,62 @@ static void on_klbguicssmapstd_style_peek_event(klb_wnd_t* p_wnd, void* ptr, int
         else
         {
             style &= ~(uint32_t)(KLB_WND_STYLE_PEEK_EVENT);
+        }
+
+        klb_wnd_set_style(p_wnd, style);
+    }
+}
+
+// 样式: 设置 无聚焦状态 样式: KLB_WND_STYLE_NOFOCUS
+static void on_klbguicssmapstd_style_nofocus(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        uint32_t style = klb_wnd_get_style(p_wnd);
+
+        klb_map_set_idx_bool(p_out, 0, (KLB_WND_STYLE_NOFOCUS & style) ? true : false);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool peek_event = klb_map_idx_to_bool(p_in, start);
+
+        uint32_t style = klb_wnd_get_style(p_wnd);
+        if (peek_event)
+        {
+            style |= KLB_WND_STYLE_NOFOCUS;
+        }
+        else
+        {
+            style &= ~(uint32_t)(KLB_WND_STYLE_NOFOCUS);
+        }
+
+        klb_wnd_set_style(p_wnd, style);
+    }
+}
+
+// 样式: 设置 聚焦时不重绘: KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW
+static void on_klbguicssmapstd_style_focus_without_redraw(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        uint32_t style = klb_wnd_get_style(p_wnd);
+
+        klb_map_set_idx_bool(p_out, 0, (KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW & style) ? true : false);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool peek_event = klb_map_idx_to_bool(p_in, start);
+
+        uint32_t style = klb_wnd_get_style(p_wnd);
+        if (peek_event)
+        {
+            style |= KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
+        }
+        else
+        {
+            style &= ~(uint32_t)(KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW);
         }
 
         klb_wnd_set_style(p_wnd, style);
@@ -231,31 +287,37 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 
 
     // 窗口移动
-    KLBGUI_cssmapstd_bind("move", on_klbguicssmapstd_move);
+    KLBGUI_cssmapstd_bind("move", on_klbguicssmapstd_move);             // 相对父窗口,移动(x,y)
 
 
     // 重设窗口大小
-    KLBGUI_cssmapstd_bind("resize", on_klbguicssmapstd_resize);
+    KLBGUI_cssmapstd_bind("resize", on_klbguicssmapstd_resize);         // 重设窗口大小(w,h)
 
 
     // 控件建议宽度/高度
-    KLBGUI_cssmapstd_bind("suggestw", on_klbguicssmapstd_suggestw);
-    KLBGUI_cssmapstd_bind("suggesth", on_klbguicssmapstd_suggesth);
+    KLBGUI_cssmapstd_bind("suggestw", on_klbguicssmapstd_suggestw);     // 控件建议宽度
+    KLBGUI_cssmapstd_bind("suggesth", on_klbguicssmapstd_suggesth);     // 控件建议高度
+
 
     // 样式 style
-    KLBGUI_cssmapstd_bind("style-peek-event", on_klbguicssmapstd_style_peek_event)
+    KLBGUI_cssmapstd_bind("style-peek-event", on_klbguicssmapstd_style_peek_event);                         // (在消息冒泡中)读取消息事件: KLB_WND_STYLE_PEEK_EVENT
+    KLBGUI_cssmapstd_bind("style-nofocus", on_klbguicssmapstd_style_nofocus);                               // 设置 无聚焦状态 样式: KLB_WND_STYLE_NOFOCUS
+    KLBGUI_cssmapstd_bind("style-focus-without-redraw", on_klbguicssmapstd_style_focus_without_redraw);     // 设置 聚焦时不重绘: KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW
+
 
     // 状态 status
-    KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show)
-    KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input)
+    KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show);             // 显示
+    KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input);
     KLBGUI_cssmapstd_bind("check", on_klbguicssmapstd_check);           // 选中
     KLBGUI_cssmapstd_bind("disable", on_klbguicssmapstd_disable);       // 不使能
     KLBGUI_cssmapstd_bind("topmost", on_klbguicssmapstd_topmost);       // 所有最顶层窗口中的视觉最上层的那个
 
+
     // tip
-    KLBGUI_cssmapstd_bind("tip", on_klbguicssmapstd_tip);
+    KLBGUI_cssmapstd_bind("tip", on_klbguicssmapstd_tip);               // 设置tip
+
 
     // 显示/隐藏
-    KLBGUI_cssmapstd_bind("visibility", on_klbguicssmapstd_visibility);
+    KLBGUI_cssmapstd_bind("visibility", on_klbguicssmapstd_visibility); // 显示/隐藏
 
 }

@@ -301,9 +301,11 @@ static void klbwnd_menu_2rd_relayout(klb_wnd_t* p_wnd)
 
             const char* p_value = klb_map_to_string(p_item_map, "value");
             const char* p_title = klb_map_to_string(p_item_map, "title");
+            bool disable = klb_map_to_bool(p_item_map, "disable");
 
             klbwnd_menu_item_set_value(p_item, p_value);
             klbwnd_menu_item_set_title(p_item, p_title);
+            klb_wnd_disable(p_item, disable);
 
             klb_wnd_move(p_item, x, y);
             klb_wnd_resize(p_item, item_w, item_h);

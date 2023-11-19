@@ -456,7 +456,7 @@ static void on_klbui_static_title(klb_wnd_t* p_wnd, klbui_static_t* p_static, in
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_static_bind(KEY_, FUNC_) { klb_map_set_ptr(p_static->p_func_map, (KEY_), (void*)(FUNC_), p_static); }
+#define KLBUI_static_bind(KEY_, FUNC_) { klb_map_set_ptr(p_static->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_static, klb_gui_t* p_gui)
 {

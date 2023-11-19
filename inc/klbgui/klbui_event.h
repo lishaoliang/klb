@@ -168,6 +168,25 @@ typedef enum klbui_mousedrag_lparam_e_
 #define KLBUI_onpaint           0x520           // onpaint
 
 
+///////////////////////////////////////
+// Lua解析事件定义
+
+
+/// @def   KLBUI_onparsewindow
+/// @brief on parse window: Lua解析窗口(控件), 完成后触发; 包含所有子窗口解析完成
+///   部分控件或窗口, 需要在所有 CSS 属性设置完成之后, 再做调整
+///   此时传统C/C流程是无此流程的, 这里特加入 KLBUI_onparsewindow/KLBUI_onparsedialog 事件来扩充
+#define KLBUI_onparsewindow     0x580           // onparsewindow
+
+
+/// @def   KLBUI_onparsedialog
+/// @brief on parse dialog: Lua解析对话框, 完成后触发
+#define KLBUI_onparsedialog     0x581           // onparsedialog
+
+
+///////////////////////////////////////
+// 控件系统事件定义
+
 /// @def   KLBUI_onload
 /// @brief 加载事件: 对话框/文档/资源 加载完成时触发
 #define KLBUI_onload            0x601           // onload

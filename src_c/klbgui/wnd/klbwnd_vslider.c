@@ -131,6 +131,11 @@ static void klbwnd_vslider_on_focus(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslide
 // 鼠标点击事件
 static void klbwnd_vslider_on_click(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslider, const klb_point_t* p_pt1)
 {
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return;
+    }
+
     // note. 鼠标点击的坐标值, 存在 "人为" 精度 问题
     // 一般情况下, 较难以命中两端位置(最小/最大值)
     // 这里采用 padding.top / padding.bottom 来消除这种操作精度
@@ -168,12 +173,20 @@ static void klbwnd_vslider_on_click(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslide
 // 鼠标拖拽事件
 static void klbwnd_vslider_on_mousedrag(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslider, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return;
+    }
 }
 
 // 鼠标滚轮事件
 static void klbwnd_vslider_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslider, const klb_point_t* p_pt1, int lparam)
 {
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return;
+    }
+
     if (KLBUI_MOUSEWHEEL_is_up(lparam))
     {
         int value = p_vslider->value + p_vslider->step;

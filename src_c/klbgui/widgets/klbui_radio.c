@@ -877,7 +877,7 @@ static void on_klbui_radio_value(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, int m
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_radio_bind(KEY_, FUNC_) { klb_map_set_ptr(p_radio->p_func_map, (KEY_), (void*)(FUNC_), p_radio); }
+#define KLBUI_radio_bind(KEY_, FUNC_) { klb_map_set_ptr(p_radio->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_radio_init_func_map(klb_wnd_t* p_wnd, klbui_radio_t* p_radio, klb_gui_t* p_gui)
 {

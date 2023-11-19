@@ -587,7 +587,7 @@ static void on_klbui_group_value(klb_wnd_t* p_wnd, klbui_group_t* p_group, int m
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_group_bind(KEY_, FUNC_) { klb_map_set_ptr(p_group->p_func_map, (KEY_), (void*)(FUNC_), p_group); }
+#define KLBUI_group_bind(KEY_, FUNC_) { klb_map_set_ptr(p_group->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_group_init_func_map(klb_wnd_t* p_wnd, klbui_group_t* p_group, klb_gui_t* p_gui)
 {

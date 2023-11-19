@@ -587,7 +587,7 @@ static void on_klbui_edit_value(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int meth
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_edit_bind(KEY_, FUNC_) { klb_map_set_ptr(p_edit->p_func_map, (KEY_), (void*)(FUNC_), p_edit); }
+#define KLBUI_edit_bind(KEY_, FUNC_) { klb_map_set_ptr(p_edit->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb_gui_t* p_gui)
 {

@@ -632,7 +632,7 @@ static void on_klbui_combo_clear(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, int m
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_combo_bind(KEY_, FUNC_) { klb_map_set_ptr(p_combo->p_func_map, (KEY_), (void*)(FUNC_), p_combo); }
+#define KLBUI_combo_bind(KEY_, FUNC_) { klb_map_set_ptr(p_combo->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_combo_init_func_map(klb_wnd_t* p_wnd, klbui_combo_t* p_combo, klb_gui_t* p_gui)
 {

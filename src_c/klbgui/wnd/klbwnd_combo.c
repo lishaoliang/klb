@@ -115,6 +115,39 @@ static int on_result_combomenu_klbui_combo(void* ptr, bool ok, const sds value, 
     return 0;
 }
 
+static int klbwnd_combo_on_click(klb_wnd_t* p_wnd, klbwnd_combo_t* p_combo, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    // 1. 设置初始值
+
+    // 2. 设置css
+
+    // 3. 绑定响应
+    int menu_w = 0, menu_h = 0;
+    klbshw_combomenu_bind(p_combo->p_menu, on_result_combomenu_klbui_combo, p_wnd, &p_combo->data, &menu_w, &menu_h);
+
+    // 4. 处理位置 
+    int screen_w = 0, screen_h = 0;
+    klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
+
+    klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+    int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
+    int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
+
+    klb_wnd_move(p_combo->p_menu, x, y);
+    klb_wnd_resize(p_combo->p_menu, menu_w, menu_h);
+
+    // 5. popup
+    klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
+
+    return 0;
+}
+
 static int klbwnd_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
@@ -127,30 +160,7 @@ static int klbwnd_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
 
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            // 1. 设置初始值
-
-            // 2. 设置css
-
-            // 3. 绑定响应
-            int menu_w = 0, menu_h = 0;
-            klbshw_combomenu_bind(p_combo->p_menu, on_result_combomenu_klbui_combo, p_wnd, &p_combo->data, &menu_w, &menu_h);
-
-            // 4. 处理位置 
-            int screen_w = 0, screen_h = 0;
-            klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
-
-            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-            int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
-            int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
-
-            klb_wnd_move(p_combo->p_menu, x, y);
-            klb_wnd_resize(p_combo->p_menu, menu_w, menu_h);
-
-            // 5. popup
-            klb_gui_popup_wnd(p_wnd->p_gui, p_combo->p_menu);
-        }
+        return klbwnd_combo_on_click(p_wnd, p_combo, p_pt1);
         break;
 
     default:

@@ -591,7 +591,7 @@ static void on_klbui_vslider_step(klb_wnd_t* p_wnd, klbui_vslider_t* p_vslider, 
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_vslider_bind(KEY_, FUNC_) { klb_map_set_ptr(p_vslider->p_func_map, (KEY_), (void*)(FUNC_), p_vslider); }
+#define KLBUI_vslider_bind(KEY_, FUNC_) { klb_map_set_ptr(p_vslider->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_vslider_init_func_map(klb_wnd_t* p_wnd, klbui_vslider_t* p_vslider, klb_gui_t* p_gui)
 {

@@ -587,7 +587,7 @@ static void on_klbui_calendar_value(klb_wnd_t* p_wnd, klbui_calendar_t* p_cal, i
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_calendar_bind(KEY_, FUNC_) { klb_map_set_ptr(p_cal->p_func_map, (KEY_), (void*)(FUNC_), p_cal); }
+#define KLBUI_calendar_bind(KEY_, FUNC_) { klb_map_set_ptr(p_cal->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_calendar_init_func_map(klb_wnd_t* p_wnd, klbui_calendar_t* p_cal, klb_gui_t* p_gui)
 {

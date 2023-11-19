@@ -96,6 +96,18 @@ event.onpredraw = 0x518		-- onpredraw
 event.onpaint = 0x520		-- onpaint
 
 
+-- @def   KLBUI_onparsewindow
+-- @brief on parse window: Lua解析窗口(控件), 完成后触发; 包含所有子窗口解析完成
+--   部分控件或窗口, 需要在所有 CSS 属性设置完成之后, 再做调整
+--   此时传统C/C流程是无此流程的, 这里特加入 KLBUI_onparsewindow/KLBUI_onparsedialog 事件来扩充
+event.onparsewindow = 0x580	-- onparsewindow
+
+
+-- @def   KLBUI_onparsedialog
+-- @brief on parse dialog: Lua解析对话框, 完成后触发
+event.onparsedialog = 0x581	-- onparsedialog
+
+
 -- @def   KLBUI_onload
 -- @brief 加载事件: 对话框/文档/资源 加载完成时触发
 event.onload = 0x601		-- onload
@@ -184,11 +196,17 @@ local transform_map = {
 	['onerror'] = event.onerror,		-- 窗口加载发生错误事件
 	[event.onerror] = 'onerror',		-- 窗口加载发生错误事件
 
-	['onpredraw'] = event.onpredraw,	--
-	[event.onpredraw] = 'onpredraw',	--
+	['onpredraw'] = event.onpredraw,	-- 预绘制事件: 在第一次窗口绘制之前(on pre-draw)
+	[event.onpredraw] = 'onpredraw',	-- 预绘制事件: 在第一次窗口绘制之前(on pre-draw)
 
 	['onpaint'] = event.onpaint,		-- 绘制事件
 	[event.onpaint] = 'onpaint',		-- 绘制事件
+	
+	['onparsewindow'] = event.onparsewindow,	-- Lua解析窗口(控件), 完成后触发
+	[event.onparsewindow] = 'onparsewindow',	-- Lua解析窗口(控件), 完成后触发
+	
+	['onparsedialog'] = event.onparsedialog,	-- Lua解析对话框, 完成后触发
+	[event.onparsedialog] = 'onparsedialog',	-- Lua解析对话框, 完成后触发
 	
 	['onload'] = event.onload,			-- 加载事件
 	[event.onload] = 'onload',			-- 加载事件
@@ -196,8 +214,8 @@ local transform_map = {
 	['onunload'] = event.onunload,		-- 卸载事件
 	[event.onunload] = 'onunload',		-- 卸载事件
 
-	['onresize'] = event.onresize,		--
-	[event.onresize] = 'onresize',		--
+	['onresize'] = event.onresize,		-- 窗口尺寸变化事件: 当窗口尺寸变化时触发
+	[event.onresize] = 'onresize',		-- 窗口尺寸变化事件: 当窗口尺寸变化时触发
 	
 	['onchange'] = event.onchange,		-- 内容变更事件
 	[event.onchange] = 'onchange',		-- 内容变更事件

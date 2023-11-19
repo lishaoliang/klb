@@ -98,6 +98,55 @@ static int on_decimal_klbwnd_num(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, int v
     return 0;
 }
 
+static int klbwnd_num_on_click(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    int max_len = 6;
+    {
+        char str[32] = { 0 };
+
+        snprintf(str, sizeof(str) - 1, "%d", p_num->max);
+        int len1 = strlen(str);
+
+        snprintf(str, sizeof(str) - 1, "%d", p_num->min);
+        int len2 = strlen(str);
+
+        max_len = MAX(len1, len2);
+    }
+
+    // 1. 设置初始值
+    klbshw_decimal_set_value(p_num->p_decimal, p_num->value);
+    klbshw_decimal_set_max_len(p_num->p_decimal, max_len);
+
+    // 2. 设置css
+
+
+    // 3. 绑定响应
+    klbshw_decimal_bind(p_num->p_decimal, on_decimal_klbwnd_num, p_wnd);
+
+    // 4. 处理位置 
+    int screen_w = 0, screen_h = 0;
+    klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
+
+    int menu_w = 0, menu_h = 0;
+    klbshw_decimal_wh(p_wnd->p_gui, &menu_w, &menu_h);
+
+    klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+    int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
+    int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
+
+    klb_wnd_move(p_num->p_decimal, x, y);
+
+    // 5. popup
+    klb_gui_popup_wnd(p_wnd->p_gui, p_num->p_decimal);
+
+    return 0;
+}
 
 static int klbwnd_num_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
@@ -108,53 +157,16 @@ static int klbwnd_num_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p
     case KLBUI_onpaint:
         return klbwnd_num_on_paint(p_wnd);
         break;
+
     case KLBUI_onpredraw:
         do_set_value_klbwnd_num(p_wnd, p_num, p_num->value);
         break;
+
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            int max_len = 6;
-            {
-                char str[32] = { 0 };
-                
-                snprintf(str, sizeof(str) - 1, "%d", p_num->max);
-                int len1 = strlen(str);
-
-                snprintf(str, sizeof(str) - 1, "%d", p_num->min);
-                int len2 = strlen(str);
-
-                max_len = MAX(len1, len2);
-            }
-
-            // 1. 设置初始值
-            klbshw_decimal_set_value(p_num->p_decimal, p_num->value);
-            klbshw_decimal_set_max_len(p_num->p_decimal, max_len);
-
-            // 2. 设置css
-
-
-            // 3. 绑定响应
-            klbshw_decimal_bind(p_num->p_decimal, on_decimal_klbwnd_num, p_wnd);
-
-            // 4. 处理位置 
-            int screen_w = 0, screen_h = 0;
-            klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
-
-            int menu_w = 0, menu_h = 0;
-            klbshw_decimal_wh(p_wnd->p_gui, &menu_w, &menu_h);
-
-            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-            int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
-            int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
-
-            klb_wnd_move(p_num->p_decimal, x, y);
-
-            // 5. popup
-            klb_gui_popup_wnd(p_wnd->p_gui, p_num->p_decimal);
-        }
+        return klbwnd_num_on_click(p_wnd, p_num, p_pt1);
         break;
+
     default:
         break;
     }

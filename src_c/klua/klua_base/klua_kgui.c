@@ -535,6 +535,27 @@ static int klua_kgui_bind_command(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_on_control_and_command(lua_State* L)
+{
+    const char* p_path_name = luaL_checkstring(L, 1);                   ///< @1. 路径名: eg. "/home/btn1"
+    int msg = (int)luaL_checkinteger(L, 2);                             ///< @2. msg,事件: eg. KLBUI_onparsewindow/KLBUI_onparsedialog
+
+    klb_point_t pt1 = { 0 }, pt2 = { 0 };
+    pt1.x = (int)klua_check_option_integer(L, 3, 0);                    ///< @3. x1
+    pt1.y = (int)klua_check_option_integer(L, 4, 0);                    ///< @4. y1
+    pt2.x = (int)klua_check_option_integer(L, 5, 0);                    ///< @5. x2
+    pt2.y = (int)klua_check_option_integer(L, 6, 0);                    ///< @6. y2
+
+    int lparam = (int)klua_check_option_integer(L, 7, 0);               ///< @7. lparam
+    int wparam = (int)klua_check_option_integer(L, 8, 0);               ///< @8. wparam
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    int ret = klb_gui_on_control_and_command(p_gui, p_path_name, msg, &pt1, &pt2, lparam, wparam);
+
+    lua_pushinteger(L, ret);                                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
 static int klua_kgui_set(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
@@ -870,6 +891,8 @@ int klua_open_kgui(lua_State* L)
         { "remove",             klua_kgui_remove },
         { "clear",              klua_kgui_clear },
         { "bind_command",       klua_kgui_bind_command },
+
+        { "on_control_and_command",     klua_kgui_on_control_and_command },
 
         // get/set param
         { "set",                klua_kgui_set },

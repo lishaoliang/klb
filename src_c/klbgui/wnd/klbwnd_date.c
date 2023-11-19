@@ -104,6 +104,42 @@ static int on_popup_end_klbwnd_date(void* ptr, klb_wnd_t* p_wnd_cal, bool ok, in
     return 0;
 }
 
+static int klbwnd_date_on_click(klb_wnd_t* p_wnd, klbwnd_date_t* p_date, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    // 1. 设置初始值
+    klbshw_calendar_set_date(p_date->p_calendar, p_date->year, p_date->month, p_date->day);
+
+    // 2. 设置css
+
+
+    // 3. 绑定响应
+    klbshw_calendar_bind(p_date->p_calendar, on_popup_end_klbwnd_date, p_wnd);
+
+    // 4. 处理位置 
+    int screen_w = 0, screen_h = 0;
+    klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
+
+    int menu_w = 0, menu_h = 0;
+    klbshw_calendar_wh(p_wnd->p_gui, &menu_w, &menu_h);
+
+    klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+    int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
+    int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
+
+    klb_wnd_move(p_date->p_calendar, x, y);
+
+    // 5. popup
+    klb_gui_popup_wnd(p_wnd->p_gui, p_date->p_calendar);
+
+    return 0;
+}
+
 static int klbwnd_date_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_date_t* p_date = (klbwnd_date_t*)p_wnd->ctrl;
@@ -112,36 +148,12 @@ static int klbwnd_date_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
     {
     case KLBUI_onpaint:
         return klbwnd_date_on_paint(p_wnd);
+
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            // 1. 设置初始值
-            klbshw_calendar_set_date(p_date->p_calendar, p_date->year, p_date->month, p_date->day);
-
-            // 2. 设置css
-
-
-            // 3. 绑定响应
-            klbshw_calendar_bind(p_date->p_calendar, on_popup_end_klbwnd_date, p_wnd);
-
-            // 4. 处理位置 
-            int screen_w = 0, screen_h = 0;
-            klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
-
-            int menu_w = 0, menu_h = 0;
-            klbshw_calendar_wh(p_wnd->p_gui, &menu_w, &menu_h);
-
-            klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-            int x = (rect.x + menu_w <= screen_w) ? rect.x : screen_w - menu_w;
-            int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
-
-            klb_wnd_move(p_date->p_calendar, x, y);
-
-            // 5. popup
-            klb_gui_popup_wnd(p_wnd->p_gui, p_date->p_calendar);
-        }
+        return klbwnd_date_on_click(p_wnd, p_date, p_pt1);
         break;
+
     default:
         break;
     }

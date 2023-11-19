@@ -723,7 +723,7 @@ static void on_klbui_check_value(klb_wnd_t* p_wnd, klbui_check_t* p_check, int m
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_check_bind(KEY_, FUNC_) { klb_map_set_ptr(p_check->p_func_map, (KEY_), (void*)(FUNC_), p_check); }
+#define KLBUI_check_bind(KEY_, FUNC_) { klb_map_set_ptr(p_check->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, klb_gui_t* p_gui)
 {

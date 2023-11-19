@@ -358,7 +358,7 @@ static void on_klbui_view_title(klb_wnd_t* p_wnd, klbui_view_t* p_view, int meth
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_view_bind(KEY_, FUNC_) { klb_map_set_ptr(p_view->p_func_map, (KEY_), (void*)(FUNC_), p_view); }
+#define KLBUI_view_bind(KEY_, FUNC_) { klb_map_set_ptr(p_view->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_view_init_func_map(klb_wnd_t* p_wnd, klbui_view_t* p_view, klb_gui_t* p_gui)
 {

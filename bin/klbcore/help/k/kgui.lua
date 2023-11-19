@@ -75,21 +75,35 @@ end
 -- @note 
 --  @brief 窗口(控件)处理函数
 --  @param [in] obj[lightuserdata]	klb_wnd_t*指针
---  @param [in] msg[number(int)]	GUI消息
+--  @param [in] msg[number(int)]	消息/事件
 --  @param [in] x1[number(int)]		点1的x坐标
 --  @param [in] y1[number(int)]		点1的y坐标
 --  @param [in] x2[number(int)]		点2的x坐标
 --  @param [in] y2[number(int)]		点2的y坐标
 --  @param [in] lparam[number(int)]	参数1
 --  @param [in] wparam[number(int)]	参数2
---  @return 0. 消息终止,不再"冒泡"
---  		msg. 任然以msg"冒泡"
---  		非0. 转换为其他消息"冒泡"
+--  @return 0. 继续执行
+--  		-1. 消息终止
 --  local func = function (obj, msg, x1, y1, x2, y2, lparam, wparam)
 --		...
 --		return 0
 --  end
 kgui.bind_command = function (path, func)
+	return 0
+end
+
+
+-- @brief 触发控件(窗口)某个事件
+-- @param [in] path[string]			窗口路径名: eg. "/home/btn1"
+--  @param [in] msg[number(int)]	消息/事件
+--  @param [in] x1[number(int)]		[可选]点1的x1坐标
+--  @param [in] y1[number(int)]		[可选]点1的y1坐标
+--  @param [in] x2[number(int)]		[可选]点2的x2坐标
+--  @param [in] y2[number(int)]		[可选]点2的y2坐标
+--  @param [in] lparam[number(int)]	[可选]参数1
+--  @param [in] wparam[number(int)]	[可选]参数2
+-- @return [number(int)] 	0.成功; -1.失败
+kgui.on_control_and_command = function (path, msg, x1, x2, y1, y2, lparam, wparam)
 	return 0
 end
 

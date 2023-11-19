@@ -230,6 +230,12 @@ static void globalcss_klbui_menu_item_text_color_focus(void* ptr, int method, co
     klbuicssex_text_color(&(p_css->css_item.focus.text), NULL, method, p_in, p_out);
 }
 
+static void globalcss_klbui_menu_item_text_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_item.disable.text), NULL, method, p_in, p_out);
+}
+
 static void globalcss_klbui_menu_item_text_align(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
@@ -240,6 +246,12 @@ static void globalcss_klbui_menu_item_text_align_focus(void* ptr, int method, co
 {
     klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
     klbuicssex_text_align(&(p_css->css_item.focus.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_menu_item_text_align_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
+    klbuicssex_text_align(&(p_css->css_item.disable.text), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_menu_item_font_size(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -254,6 +266,12 @@ static void globalcss_klbui_menu_item_font_size_focus(void* ptr, int method, con
     klbuicssex_font_size(&(p_css->css_item.focus.font), NULL, method, p_in, p_out);
 }
 
+static void globalcss_klbui_menu_item_font_size_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
+    klbuicssex_font_size(&(p_css->css_item.disable.font), NULL, method, p_in, p_out);
+}
+
 static void globalcss_klbui_menu_item_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
@@ -264,6 +282,12 @@ static void globalcss_klbui_menu_item_background_color_focus(void* ptr, int meth
 {
     klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
     klbuicssex_background_color(&(p_css->css_item.focus.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_menu_item_background_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = (klbwnd_menu_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_item.disable.background), NULL, method, p_in, p_out);
 }
 
 //////////////////////////////////////
@@ -339,19 +363,22 @@ static void klbui_menu_init_globalcss(klb_gui_t* p_gui)
     // 子项.文本颜色 color
     KLBUI_GLOBAL_menu_bind("item.color", globalcss_klbui_menu_item_text_color);
     KLBUI_GLOBAL_menu_bind("item.color:focus", globalcss_klbui_menu_item_text_color_focus);
+    KLBUI_GLOBAL_menu_bind("item.color:disable", globalcss_klbui_menu_item_text_color_disable);
 
     // 子项.文本对齐 text-align
     KLBUI_GLOBAL_menu_bind("item.text-align", globalcss_klbui_menu_item_text_align);
     KLBUI_GLOBAL_menu_bind("item.text-align:focus", globalcss_klbui_menu_item_text_align_focus);
+    KLBUI_GLOBAL_menu_bind("item.text-align:disable", globalcss_klbui_menu_item_text_align_disable);
 
     // 子项.字体大小 font-size
     KLBUI_GLOBAL_menu_bind("item.font-size", globalcss_klbui_menu_item_font_size);
     KLBUI_GLOBAL_menu_bind("item.font-size:focus", globalcss_klbui_menu_item_font_size_focus);
+    KLBUI_GLOBAL_menu_bind("item.font-size:disable", globalcss_klbui_menu_item_font_size_disable);
 
     // 子项.背景色 background-color
     KLBUI_GLOBAL_menu_bind("item.background-color", globalcss_klbui_menu_item_background_color);
     KLBUI_GLOBAL_menu_bind("item.background-color:focus", globalcss_klbui_menu_item_background_color_focus);
-
+    KLBUI_GLOBAL_menu_bind("item.background-color:disable", globalcss_klbui_menu_item_background_color_disable);
 }
 
 
@@ -475,6 +502,12 @@ static void on_klbui_menu_item_text_color_focus(klb_wnd_t* p_wnd, klbui_menu_t* 
     klbuicssex_text_color(&(p_css->css_item.focus.text), p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_menu_item_text_color_disable(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_item.disable.text), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_menu_item_text_align(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
@@ -485,6 +518,12 @@ static void on_klbui_menu_item_text_align_focus(klb_wnd_t* p_wnd, klbui_menu_t* 
 {
     klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
     klbuicssex_text_align(&(p_css->css_item.focus.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_menu_item_text_align_disable(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
+    klbuicssex_text_align(&(p_css->css_item.disable.text), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_menu_item_font_size(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -499,6 +538,12 @@ static void on_klbui_menu_item_font_size_focus(klb_wnd_t* p_wnd, klbui_menu_t* p
     klbuicssex_font_size(&(p_css->css_item.focus.font), p_wnd, method, p_in, p_out);
 }
 
+static void on_klbui_menu_item_font_size_disable(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
+    klbuicssex_font_size(&(p_css->css_item.disable.font), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_menu_item_background_color(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
@@ -509,6 +554,12 @@ static void on_klbui_menu_item_background_color_focus(klb_wnd_t* p_wnd, klbui_me
 {
     klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
     klbuicssex_background_color(&(p_css->css_item.focus.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_menu_item_background_color_disable(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_menu_css_t* p_css = check_css_klbui_menu(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_item.disable.background), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////
@@ -642,7 +693,7 @@ static void on_klbui_menu_item_2rd_update(klb_wnd_t* p_wnd, klbui_menu_t* p_menu
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_menu_bind(KEY_, FUNC_) { klb_map_set_ptr(p_menu->p_func_map, (KEY_), (void*)(FUNC_), p_menu); }
+#define KLBUI_menu_bind(KEY_, FUNC_) { klb_map_set_ptr(p_menu->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb_gui_t* p_gui)
 {
@@ -703,18 +754,22 @@ static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb
     // 子项.文本颜色 color
     KLBUI_menu_bind("item.color", on_klbui_menu_item_text_color);
     KLBUI_menu_bind("item.color:focus", on_klbui_menu_item_text_color_focus);
+    KLBUI_menu_bind("item.color:disable", on_klbui_menu_item_text_color_disable);
 
     // 子项.文本对齐 text-align
     KLBUI_menu_bind("item.text-align", on_klbui_menu_item_text_align);
     KLBUI_menu_bind("item.text-align:focus", on_klbui_menu_item_text_align_focus);
+    KLBUI_menu_bind("item.text-align:disable", on_klbui_menu_item_text_align_disable);
 
     // 子项.字体大小 font-size
     KLBUI_menu_bind("item.font-size", on_klbui_menu_item_font_size);
     KLBUI_menu_bind("item.font-size:focus", on_klbui_menu_item_font_size_focus);
+    KLBUI_menu_bind("item.font-size:disable", on_klbui_menu_item_font_size_disable);
 
     // 子项.背景色 background-color
     KLBUI_menu_bind("item.background-color", on_klbui_menu_item_background_color);
     KLBUI_menu_bind("item.background-color:focus", on_klbui_menu_item_background_color_focus);
+    KLBUI_menu_bind("item.background-color:disable", on_klbui_menu_item_background_color_disable);
 
     //////////////////////////////////////////////
     // 自定义方法

@@ -640,7 +640,7 @@ static void on_klbui_vscrollbar_ranges(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_v
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_vscrollbar_bind(KEY_, FUNC_) { klb_map_set_ptr(p_vsc->p_func_map, (KEY_), (void*)(FUNC_), p_vsc); }
+#define KLBUI_vscrollbar_bind(KEY_, FUNC_) { klb_map_set_ptr(p_vsc->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_vscrollbar_init_func_map(klb_wnd_t* p_wnd, klbui_vscrollbar_t* p_vsc, klb_gui_t* p_gui)
 {

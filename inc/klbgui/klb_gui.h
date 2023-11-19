@@ -242,6 +242,14 @@ KLB_API int klb_gui_messagebox_end(klb_gui_t* p_gui);
 KLB_API int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_command_cb on_command, void* p_obj);
 
 
+/// @brief 外部触发控件(窗口)某个事件
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_path_name    窗口路径(类unix文件路径): eg."/home/btn1"
+/// @param [in] msg             事件
+/// @return int 0.成功; -1.终止
+KLB_API int klb_gui_on_control_and_command(klb_gui_t* p_gui, const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
 /// @brief 向控件(窗口)设置数据: 样式\显示\状态等等
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"

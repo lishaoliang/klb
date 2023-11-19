@@ -592,7 +592,7 @@ static void on_klbui_picture_image(klb_wnd_t* p_wnd, klbui_picture_t* p_pic, int
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_picture_bind(KEY_, FUNC_) { klb_map_set_ptr(p_pic->p_func_map, (KEY_), (void*)(FUNC_), p_pic); }
+#define KLBUI_picture_bind(KEY_, FUNC_) { klb_map_set_ptr(p_pic->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_picture_init_func_map(klb_wnd_t* p_wnd, klbui_picture_t* p_pic, klb_gui_t* p_gui)
 {

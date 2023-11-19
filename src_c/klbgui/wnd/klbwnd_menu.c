@@ -389,6 +389,12 @@ static int update_map_item_klbwnd_menu(klb_map_t* p_dst, klb_map_t* p_array)
         {
             klb_map_set_bool(p_src, "visibility", klb_map_to_bool(p_item, "visibility"));
         }
+
+        // 使能
+        if (KLB_ADT_bool == klb_map_type(p_item, "disable"))
+        {
+            klb_map_set_bool(p_src, "disable", klb_map_to_bool(p_item, "disable"));
+        }
     }
 
     return 0;
@@ -516,9 +522,11 @@ static void klbwnd_menu_relayout(klb_wnd_t* p_wnd)
 
             const char* p_value = klb_map_to_string(p_item_map, "value");
             const char* p_title = klb_map_to_string(p_item_map, "title");
+            bool disable = klb_map_to_bool(p_item_map, "disable");
 
             klbwnd_menu_item_set_value(p_item, p_value);
             klbwnd_menu_item_set_title(p_item, p_title);
+            klb_wnd_disable(p_item, disable);
 
             //是否拥有子菜单
             if (NULL != klb_map_to_map(&p_menu->data_2rd, p_value))

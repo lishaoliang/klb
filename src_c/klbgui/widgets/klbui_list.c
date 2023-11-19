@@ -699,7 +699,7 @@ static void on_klbui_list_value(klb_wnd_t* p_wnd, klbui_list_t* p_list, int meth
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_list_bind(KEY_, FUNC_) { klb_map_set_ptr(p_list->p_func_map, (KEY_), (void*)(FUNC_), p_list); }
+#define KLBUI_list_bind(KEY_, FUNC_) { klb_map_set_ptr(p_list->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb_gui_t* p_gui)
 {

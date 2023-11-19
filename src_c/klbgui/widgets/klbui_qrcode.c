@@ -601,7 +601,7 @@ static void on_klbui_qrcode_value(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qrcode, in
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_qrcode_bind(KEY_, FUNC_) { klb_map_set_ptr(p_qrcode->p_func_map, (KEY_), (void*)(FUNC_), p_qrcode); }
+#define KLBUI_qrcode_bind(KEY_, FUNC_) { klb_map_set_ptr(p_qrcode->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_qrcode_init_func_map(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qrcode, klb_gui_t* p_gui)
 {

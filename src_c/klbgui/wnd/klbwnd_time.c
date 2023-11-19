@@ -129,6 +129,73 @@ static int on_popup_end_klbwnd_time(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, in
     return 0;
 }
 
+static int klbwnd_time_on_click(klb_wnd_t* p_wnd, klbwnd_time_t* p_time, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    // 点中哪个区域
+    klb_rect_t rect_pt = { 0 };
+    int sel = -1;
+    for (int i = 0; i < 3; i++)
+    {
+        if (klb_pt_in_rect(&p_time->hms[i].rect, p_pt1->x, p_pt1->y))
+        {
+            sel = i;
+            rect_pt = p_time->hms[i].rect;
+            break;
+        }
+    }
+
+    // 若点中
+    if (0 <= sel)
+    {
+        // 0.
+        p_time->sel_idx = sel;
+
+        int value = p_time->second;
+        if (KLBWND_TIME_idx_hour == sel)
+        {
+            value = p_time->hour;
+        }
+        else if (KLBWND_TIME_idx_minute == sel)
+        {
+            value = p_time->minute;
+        }
+
+
+        // 1. 设置初始值
+        klbshw_decimal_set_value(p_time->p_decimal, value);
+        klbshw_decimal_set_max_len(p_time->p_decimal, 2);
+
+        // 2. 设置css
+
+        // 3. 绑定响应
+        klbshw_decimal_bind(p_time->p_decimal, on_popup_end_klbwnd_time, p_wnd);
+
+        // 4. 处理位置 
+        int screen_w = 0, screen_h = 0;
+        klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
+
+        int menu_w = 0, menu_h = 0;
+        klbshw_decimal_wh(p_wnd->p_gui, &menu_w, &menu_h);
+
+        klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+        int x = (rect_pt.x + menu_w <= screen_w) ? rect_pt.x : screen_w - menu_w;
+        int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
+
+        klb_wnd_move(p_time->p_decimal, x, y);
+
+        // 5. popup
+        klb_gui_popup_wnd(p_wnd->p_gui, p_time->p_decimal);
+    }
+
+    return 0;
+}
+
 static int klbwnd_time_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_time_t* p_time = (klbwnd_time_t*)p_wnd->ctrl;
@@ -137,67 +204,12 @@ static int klbwnd_time_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
     {
     case KLBUI_onpaint:
         return klbwnd_time_on_paint(p_wnd);
+
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            // 点中哪个区域
-            klb_rect_t rect_pt = { 0 };
-            int sel = -1;
-            for (int i = 0; i < 3; i++)
-            {
-                if (klb_pt_in_rect(&p_time->hms[i].rect, p_pt1->x, p_pt1->y))
-                {
-                    sel = i;
-                    rect_pt = p_time->hms[i].rect;
-                    break;
-                }
-            }
-
-            // 若点中
-            if (0 <= sel)
-            {
-                // 0.
-                p_time->sel_idx = sel;
-
-                int value = p_time->second;
-                if (KLBWND_TIME_idx_hour == sel)
-                {
-                    value = p_time->hour;
-                }
-                else if(KLBWND_TIME_idx_minute == sel)
-                {
-                    value = p_time->minute;
-                }
-
-
-                // 1. 设置初始值
-                klbshw_decimal_set_value(p_time->p_decimal, value);
-                klbshw_decimal_set_max_len(p_time->p_decimal, 2);
-
-                // 2. 设置css
-
-                // 3. 绑定响应
-                klbshw_decimal_bind(p_time->p_decimal, on_popup_end_klbwnd_time, p_wnd);
-
-                // 4. 处理位置 
-                int screen_w = 0, screen_h = 0;
-                klb_gui_get_wh(p_wnd->p_gui, &screen_w, &screen_h);
-
-                int menu_w = 0, menu_h = 0;
-                klbshw_decimal_wh(p_wnd->p_gui, &menu_w, &menu_h);
-
-                klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-                int x = (rect_pt.x + menu_w <= screen_w) ? rect_pt.x : screen_w - menu_w;
-                int y = (rect.y + rect.h + menu_h <= screen_h) ? (rect.y + rect.h) : rect.y - menu_h;
-
-                klb_wnd_move(p_time->p_decimal, x, y);
-
-                // 5. popup
-                klb_gui_popup_wnd(p_wnd->p_gui, p_time->p_decimal);
-            }
-        }
+        klbwnd_time_on_click(p_wnd, p_time, p_pt1);
         break;
+
     default:
         break;
     }

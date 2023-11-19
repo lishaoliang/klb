@@ -729,6 +729,17 @@ int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_c
     return klb_wnd_bind_command(p_wnd, on_command, p_obj);
 }
 
+int klb_gui_on_control_and_command(klb_gui_t* p_gui, const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+    if (NULL == p_wnd)
+    {
+        return -1; // 未找到
+    }
+
+    return klb_wnd_on_control_and_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+}
+
 int klb_gui_set(klb_gui_t* p_gui, const char* p_path_name, const klb_map_t* p_map)
 {
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);

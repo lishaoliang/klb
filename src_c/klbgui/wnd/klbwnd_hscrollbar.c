@@ -82,6 +82,28 @@ static int klbwnd_hscrollbar_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+static int klbwnd_hscrollbar_on_click(klb_wnd_t* p_wnd, klbwnd_hscrollbar_t* p_hsc, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    int w1 = p_hsc->p_left->pos.rect_in_parent.w;
+    int w2 = p_hsc->p_right->pos.rect_in_parent.w;
+    int w = p_wnd->pos.rect_in_parent.w;
+
+    int offx = p_pt1->x - p_wnd->pos.rect_in_canvas.x;
+
+    if (w1 < offx && offx < w - w2)
+    {
+        int v = p_hsc->min + (offx - w1) * (p_hsc->max - p_hsc->min + 1) / (w - w1 - w2);
+
+        klbwnd_hscrollbar_update_value(p_wnd, p_hsc, v);
+    }
+
+    return 0;
+}
 
 static int klbwnd_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
@@ -94,21 +116,9 @@ static int klbwnd_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            int w1 = p_hsc->p_left->pos.rect_in_parent.w;
-            int w2 = p_hsc->p_right->pos.rect_in_parent.w;
-            int w = p_wnd->pos.rect_in_parent.w;
-
-            int offx = p_pt1->x - p_wnd->pos.rect_in_canvas.x;
-
-            if (w1 < offx && offx < w - w2)
-            {
-                int v = p_hsc->min + (offx - w1) * (p_hsc->max - p_hsc->min + 1) / (w - w1 - w2);
-
-                klbwnd_hscrollbar_update_value(p_wnd, p_hsc, v);
-            }
-        }
+        return klbwnd_hscrollbar_on_click(p_wnd, p_hsc, p_pt1);
         break;
+
     default:
         break;
     }

@@ -129,11 +129,51 @@ static int klbwnd_slider_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+static int klbwnd_slider_on_click(klb_wnd_t* p_wnd, klbwnd_slider_t* p_slider, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    klbwnd_slider_css_t* p_css = p_slider->p_css;
+    
+    if (NULL == p_css)
+    {
+        return 0;
+    }
+
+    klb_rect_t* p_rect = &p_wnd->pos.rect_in_canvas;
+
+    // 绘图区域
+    klb_rect_t paint_rect = *p_rect;
+
+    // 移除外边距
+    paint_rect.x += p_css->margin.left;
+    paint_rect.y += p_css->margin.top;
+    paint_rect.w -= (p_css->margin.left + p_css->margin.right);
+    paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
+
+    int value = p_slider->min + (p_slider->max - p_slider->min + 1) * (p_pt1->x - paint_rect.x + 1) / (paint_rect.w);
+    value = klbui_slider_fix(value, p_slider->min, p_slider->max);
+
+    bool change = (value == p_slider->value) ? false : true;
+    p_slider->value = value;
+
+    if (change)
+    {
+        // 内容变更事件 KLBUI_onchange
+        klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+    }
+
+    klb_wnd_update(p_wnd);
+
+    return 0;
+}
 
 static int klbwnd_slider_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_slider_t* p_slider = (klbwnd_slider_t*)p_wnd->ctrl;
-    klbwnd_slider_css_t* p_css = p_slider->p_css;
 
     switch (msg)
     {
@@ -142,35 +182,7 @@ static int klbwnd_slider_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
 
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            if (NULL != p_css)
-            {
-                klb_rect_t* p_rect = &p_wnd->pos.rect_in_canvas;
-
-                // 绘图区域
-                klb_rect_t paint_rect = *p_rect;
-
-                // 移除外边距
-                paint_rect.x += p_css->margin.left;
-                paint_rect.y += p_css->margin.top;
-                paint_rect.w -= (p_css->margin.left + p_css->margin.right);
-                paint_rect.h -= (p_css->margin.top + p_css->margin.bottom);
-
-                int value = p_slider->min + (p_slider->max - p_slider->min + 1) * (p_pt1->x - paint_rect.x + 1) / (paint_rect.w);
-                value = klbui_slider_fix(value, p_slider->min, p_slider->max);
-
-                bool change = (value == p_slider->value) ? false : true;
-                p_slider->value = value;
-
-                if (change)
-                {
-                    // 内容变更事件 KLBUI_onchange
-                    klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
-                }
-
-                klb_wnd_update(p_wnd);
-            }
-        }
+        return klbwnd_slider_on_click(p_wnd, p_slider, p_pt1);
         break;
 
     default:

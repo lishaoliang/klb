@@ -110,6 +110,19 @@ static int klbwnd_check_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+static int klbwnd_check_on_click(klb_wnd_t* p_wnd, klbwnd_check_t* p_check, const klb_point_t* p_pt1)
+{
+    if (klb_wnd_is_disable(p_wnd))
+    {
+        return 0;
+    }
+
+    klb_wnd_check(p_wnd, !klb_wnd_is_check(p_wnd));
+    klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+    klb_wnd_update(p_wnd);
+
+    return 0;
+}
 
 static int klbwnd_check_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
@@ -123,11 +136,7 @@ static int klbwnd_check_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t*
 
     case KLBUI_click:
     case KLBUI_dblclick:
-        {
-            klb_wnd_check(p_wnd, !klb_wnd_is_check(p_wnd));
-            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
-            klb_wnd_update(p_wnd);
-        }
+        return klbwnd_check_on_click(p_wnd, p_check, p_pt1);
         break;
 
     default:

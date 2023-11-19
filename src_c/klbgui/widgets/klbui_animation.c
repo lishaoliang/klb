@@ -241,7 +241,7 @@ static void on_klbui_animation_value(klb_wnd_t* p_wnd, klbui_animation_t* p_ani,
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_animation_bind(KEY_, FUNC_) { klb_map_set_ptr(p_ani->p_func_map, (KEY_), (void*)(FUNC_), p_ani); }
+#define KLBUI_animation_bind(KEY_, FUNC_) { klb_map_set_ptr(p_ani->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbui_animation_init_func_map(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, klb_gui_t* p_gui)
 {
