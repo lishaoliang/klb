@@ -272,6 +272,57 @@ void klbwnd_vscrollbar_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step)
 	p_vsc->step = step;
 }
 
+int klbwnd_vscrollbar_enable_mousewheel(klb_wnd_t* p_wnd, bool b)
+{
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
+
+    return 0;
+}
+
+int klbwnd_vscrollbar_up(klb_wnd_t* p_wnd, int v)
+{
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
+
+    if (v <= 0)
+    {
+        return 1;
+    }
+
+    int value = p_vsc->value - v;
+    if (value < p_vsc->min) { value = p_vsc->min; }
+
+    if (value == p_vsc->value)
+    {
+        return 1;
+    }
+
+    klbwnd_vscrollbar_set_value(p_wnd, value);
+
+    return 0;
+}
+
+int klbwnd_vscrollbar_down(klb_wnd_t* p_wnd, int v)
+{
+    klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
+
+    if (v <= 0)
+    {
+        return 1;
+    }
+
+    int value = p_vsc->value + v;
+    if (p_vsc->max < value) { value = p_vsc->max; }
+
+    if (value == p_vsc->value)
+    {
+        return 1;
+    }
+
+    klbwnd_vscrollbar_set_value(p_wnd, value);
+
+    return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // init / quit attribute
 

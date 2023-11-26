@@ -6,12 +6,22 @@
 
 sds klb_sdscpy(sds s, const char* p_str)
 {
+    if (NULL == p_str)
+    {
+        return s; // !注意 若 s = NULL, p_str = NULL, 依然 返回 NULL
+    }
+
     sds dst = (NULL != s) ? s : sdsempty();
     return sdscpy(dst, p_str);
 }
 
 sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
 {
+    if (NULL == p_adt)
+    {
+        return s; // !注意 若 s = NULL, p_adt = NULL, 依然 返回 NULL
+    }
+
     sds dst = (NULL != s) ? s : sdsempty();
     klb_adt_t* p_src = (klb_adt_t*)p_adt;
 

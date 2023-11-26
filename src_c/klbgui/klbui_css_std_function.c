@@ -269,6 +269,11 @@ static void on_klbguicssmapstd_visibility(klb_wnd_t* p_wnd, void* ptr, int metho
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
+static void on_klbguicssmapstd_refresh(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klb_wnd_update(p_wnd);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // 控件通用 css 属性方法
 
@@ -320,4 +325,7 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     // 显示/隐藏
     KLBGUI_cssmapstd_bind("visibility", on_klbguicssmapstd_visibility); // 显示/隐藏
 
+
+    // 刷新/重绘
+    KLBGUI_cssmapstd_bind("refresh", on_klbguicssmapstd_refresh);       // 刷新/重绘
 }

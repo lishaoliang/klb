@@ -55,6 +55,12 @@ typedef struct klbwnd_list_row_css_t_
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+
+    uint32_t    normal_background_color2;   ///< normal 第二行背景颜色
+    uint32_t    focus_background_color2;    ///< focus 第二行背景颜色
+    uint32_t    disable_background_color2;  ///< disable 第二行背景颜色
+
+    uint32_t    check_background_color;     ///< 选中的背景色
 }klbwnd_list_row_css_t;
 
 
@@ -66,6 +72,9 @@ typedef struct klbwnd_list_css_t_
     klbuicssex_attributes_t normal;         ///< normal 常规状态参数
     klbuicssex_attributes_t focus;          ///< focus 聚焦状态参数
     klbuicssex_attributes_t disable;        ///< disable 不使能状态参数
+
+    uint32_t    title_background_color;     ///< 标题背景颜色
+    uint32_t    title_line_color;           ///< 标题线条颜色
 
     klbwnd_list_row_css_t   css_list_row;   ///< 行控件CSS
     klbwnd_vscrollbar_css_t css_vscrollbar; ///< 垂直滚动条CSS

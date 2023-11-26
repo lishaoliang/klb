@@ -2,12 +2,14 @@
 #include "klbgui/subviews/klbwnd_combomenu.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
+#include "klbutil/klb_rect.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 // 前置定义
 static void klbwnd_combomenu_quit_attribute(klbwnd_combomenu_t* p_menu);
 static void klbwnd_combomenu_relayout(klb_wnd_t* p_wnd);
+static void update_items_value_title_klbwnd_combomenu(klb_wnd_t* p_wnd_menu, klbwnd_combomenu_t* p_menu, int pos);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,6 +64,56 @@ static int klbwnd_combomenu_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+// 鼠标点击对话框外部
+static int klbwnd_combomenu_on_outwindow(klb_wnd_t* p_wnd, klbwnd_combomenu_t* p_menu, const klb_point_t* p_pt1)
+{
+    if (NULL != p_menu->cb_result)
+    {
+        p_menu->cb_result(p_menu->ptr, false, NULL, NULL);
+    }
+
+    klb_gui_popup_end(p_wnd->p_gui, false);
+
+    return 0;
+}
+
+// 鼠标滚轮事件
+static int klbwnd_combomenu_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_combomenu_t* p_menu, const klb_point_t* p_pt1, int lparam)
+{
+    int v = KLBUI_MOUSEWHEEL_value(lparam);
+
+    if (v <= 0 || !klb_wnd_is_show(p_menu->p_vscrollbar))
+    {
+        return 0;
+    }
+
+    if (NULL != p_pt1 && !klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_pt1->x, p_pt1->y))
+    {
+        return 0; // 窗口之外
+    }
+
+    if (KLBUI_MOUSEWHEEL_is_up(lparam))
+    {
+        if (0 == klbwnd_vscrollbar_up(p_menu->p_vscrollbar, v))
+        {
+            int pos = klbwnd_vscrollbar_get_value(p_menu->p_vscrollbar);
+            update_items_value_title_klbwnd_combomenu(p_wnd, p_menu, pos);
+            klb_wnd_update(p_wnd);
+        }
+    }
+    else if (KLBUI_MOUSEWHEEL_is_down(lparam))
+    {
+        if (0 == klbwnd_vscrollbar_down(p_menu->p_vscrollbar, v))
+        {
+            int pos = klbwnd_vscrollbar_get_value(p_menu->p_vscrollbar);
+            update_items_value_title_klbwnd_combomenu(p_wnd, p_menu, pos);
+            klb_wnd_update(p_wnd);
+        }
+    }
+
+    return 0;
+}
+
 // 统计控件消耗的内存
 static int klbwnd_combomenu_on_meminfo(klb_wnd_t* p_wnd, klbwnd_combomenu_t* p_menu)
 {
@@ -94,14 +146,7 @@ static int klbwnd_combomenu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
         break;
 
     case KLBUI_outwindow: // 在窗口之外点击, 结束 popup
-        {
-            if (NULL != p_menu->cb_result)
-            {
-                p_menu->cb_result(p_menu->ptr, false, NULL, NULL);
-            }
-
-            klb_gui_popup_end(p_wnd->p_gui, false);
-        }
+        return klbwnd_combomenu_on_outwindow(p_wnd, p_menu, p_pt1);
         break;
 
     case KLBUI_onresize: // 控件尺寸变化, 重新布局
@@ -110,9 +155,14 @@ static int klbwnd_combomenu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
         }
         break;
 
+    case KLBUI_mousewheel:
+        return klbwnd_combomenu_on_mousewheel(p_wnd, p_menu, p_pt1, lparam);
+        break;
+
     case KLBUI_meminfo: // 统计控件消耗的内存
         return klbwnd_combomenu_on_meminfo(p_wnd, p_menu);
         break;
+
     default:
         break;
     }
@@ -336,6 +386,8 @@ static void klbwnd_combomenu_init_subwnds(klb_wnd_t* p_wnd)
         klb_wnd_push_child(p_wnd, p_menu->p_vscrollbar);
         klb_wnd_hide(p_menu->p_vscrollbar, true);
         klb_wnd_bind_command(p_menu->p_vscrollbar, on_command_vscrollbar_klbwnd_combomenu, p_wnd);
+
+        klbwnd_vscrollbar_enable_mousewheel(p_menu->p_vscrollbar, false);
     }
 
     p_menu->item_count = 0;
@@ -428,7 +480,7 @@ void klbwnd_combomenu_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_TOP | KLB_WND_STYLE_NOFOCUS;
+    p_wnd->state.style = KLB_WND_STYLE_TOP | KLB_WND_STYLE_PEEK_EVENT | KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
 
     // 初始化内部变量
     klbwnd_combomenu_init_attribute(p_wnd, p_menu);

@@ -61,7 +61,7 @@ static void get_column_title_klbwnd_listex_row(sds* p_dst, klb_map_t* p_row_map,
     }
 }
 
-static void klbwnd_listex_row_on_paint_status(klb_wnd_t* p_wnd, klbwnd_listex_row_t* p_row, klbwnd_listex_row_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+static void klbwnd_listex_row_on_paint_status(klb_wnd_t* p_wnd, klbwnd_listex_row_t* p_row, klbwnd_listex_row_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect, uint32_t background_color2)
 {
     if (p_row->b_select)
     {
@@ -73,7 +73,7 @@ static void klbwnd_listex_row_on_paint_status(klb_wnd_t* p_wnd, klbwnd_listex_ro
         // 纯色背景
         if (0 != p_row->idx % 2)
         {
-            klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 32, 32, 32));
+            klb_wnd_draw_fill_rect2(p_wnd, p_rect, background_color2);
         }
         else
         {
@@ -140,15 +140,15 @@ static int klbwnd_listex_row_on_paint(klb_wnd_t* p_wnd)
 
     if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
-        klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->disable, &paint_rect);
+        klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->disable, &paint_rect, p_css->disable_background_color2);
     }
     else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
     {
-        klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->focus, &paint_rect);
+        klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->focus, &paint_rect, p_css->focus_background_color2);
     }
     else
     {
-        klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->normal, &paint_rect);
+        klbwnd_listex_row_on_paint_status(p_wnd, p_row, p_css, &p_css->normal, &paint_rect, p_css->normal_background_color2);
     }
 
     return 0;
@@ -412,6 +412,10 @@ void klbwnd_listex_row_css_init(klbwnd_listex_row_css_t* p_css, klb_gui_t* p_gui
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    p_css->normal_background_color2 = KLB_ARGB8888(255, 32, 32, 32);
+    p_css->focus_background_color2 = KLB_ARGB8888(255, 32, 32, 32);
+    p_css->disable_background_color2 = KLB_ARGB8888(255, 32, 32, 32);
 }
 
 void klbwnd_listex_row_css_quit(klbwnd_listex_row_css_t* p_css)
@@ -429,6 +433,10 @@ void klbwnd_listex_row_css_copy(klbwnd_listex_row_css_t* p_dst, klbwnd_listex_ro
     klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
     klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
     klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+
+    p_dst->normal_background_color2 = p_src->normal_background_color2;
+    p_dst->focus_background_color2 = p_src->focus_background_color2;
+    p_dst->disable_background_color2 = p_src->disable_background_color2;
 }
 
 //////////////////////////////////////////////////////////////////////////

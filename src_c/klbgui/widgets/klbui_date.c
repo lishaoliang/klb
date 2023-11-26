@@ -606,8 +606,8 @@ static void on_klbui_date_value(klb_wnd_t* p_wnd, klbui_date_t* p_date, int meth
             if (0 < klb_map_array_size(p_in_ymd))
             {
                 year = (int)klb_map_idx_to_int64(p_in_ymd, 0);
-                month = (int)klb_map_idx_to_int64(p_in_ymd, 0);
-                day = (int)klb_map_idx_to_int64(p_in_ymd, 0);
+                month = (int)klb_map_idx_to_int64(p_in_ymd, 1);
+                day = (int)klb_map_idx_to_int64(p_in_ymd, 2);
             }
             else
             {

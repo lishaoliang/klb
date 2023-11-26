@@ -81,6 +81,15 @@ KLB_API int klbwnd_vscrollbar_get_value(klb_wnd_t* p_wnd);
 KLB_API void klbwnd_vscrollbar_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step);
 
 
+/// @brief 使能滚轮
+KLB_API int klbwnd_vscrollbar_enable_mousewheel(klb_wnd_t* p_wnd, bool b);
+
+
+/// @brief 向上/向下 value
+KLB_API int klbwnd_vscrollbar_up(klb_wnd_t* p_wnd, int v);
+KLB_API int klbwnd_vscrollbar_down(klb_wnd_t* p_wnd, int v);
+
+
 #if defined(__cplusplus)
 }
 #endif

@@ -28,7 +28,7 @@ static void klbwnd_listex_destroy(klb_wnd_t* p_wnd)
 static void klbwnd_listex_on_paint_status_head(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list, klbwnd_listex_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
     // 绘制题头
-    klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 41, 41, 41));
+    klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_css->title_background_color);
 
     // 处理每一列
     int offx = p_rect->x + p_list->w0;
@@ -43,7 +43,7 @@ static void klbwnd_listex_on_paint_status_head(klb_wnd_t* p_wnd, klbwnd_listex_t
 
         // 中间竖线
         klb_wnd_draw_line2(p_wnd, rect_column.x + rect_column.w, rect_column.y,
-                        rect_column.x + rect_column.w, rect_column.y + rect_column.h - 1, KLB_ARGB8888(255, 61, 61, 61));
+                        rect_column.x + rect_column.w, rect_column.y + rect_column.h - 1, p_css->title_line_color);
 
         // 缩小一点文本区域范围, 避开线条
         rect_column.x += 2;
@@ -170,10 +170,10 @@ static int klbwnd_listex_on_paint(klb_wnd_t* p_wnd)
     {
         klbwnd_listex_on_paint_status(p_wnd, p_list, p_css, &p_css->disable, &paint_rect);
     }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbwnd_listex_on_paint_status(p_wnd, p_list, p_css, &p_css->focus, &paint_rect);
-    }
+    //else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+    //{
+    //    klbwnd_listex_on_paint_status(p_wnd, p_list, p_css, &p_css->focus, &paint_rect);
+    //}
     else
     {
         klbwnd_listex_on_paint_status(p_wnd, p_list, p_css, &p_css->normal, &paint_rect);
@@ -298,18 +298,54 @@ static int klbwnd_listex_on_predraw(klb_wnd_t* p_wnd)
     return 0;
 }
 
+// 鼠标滚轮
+static int klbwnd_listex_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list, const klb_point_t* p_pt1, int lparam)
+{
+    int v = KLBUI_MOUSEWHEEL_value(lparam);
+
+    if (v <= 0 || !klb_wnd_is_show(p_list->p_vscrollbar))
+    {
+        return 0;
+    }
+
+    if (KLBUI_MOUSEWHEEL_is_up(lparam))
+    {
+        if (0 == klbwnd_vscrollbar_up(p_list->p_vscrollbar, v))
+        {
+            p_list->vsc_value = klbwnd_vscrollbar_get_value(p_list->p_vscrollbar);
+            klb_wnd_update(p_wnd);
+        }
+    }
+    else if (KLBUI_MOUSEWHEEL_is_down(lparam))
+    {
+        if (0 == klbwnd_vscrollbar_down(p_list->p_vscrollbar, v))
+        {
+            p_list->vsc_value = klbwnd_vscrollbar_get_value(p_list->p_vscrollbar);
+            klb_wnd_update(p_wnd);
+        }
+    }
+
+    return 0;
+}
+
 static int klbwnd_listex_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_listex_t* p_list = (klbwnd_listex_t*)p_wnd->ctrl;
 
     switch (msg)
     {
-    case KLBUI_onpredraw:
-        return klbwnd_listex_on_predraw(p_wnd);
-        break;
     case KLBUI_onpaint:
         return klbwnd_listex_on_paint(p_wnd);
         break;
+
+    case KLBUI_onpredraw:
+        return klbwnd_listex_on_predraw(p_wnd);
+        break;
+
+    case KLBUI_mousewheel:
+        return klbwnd_listex_on_mousewheel(p_wnd, p_list, p_pt1, lparam);
+        break;
+
     default:
         break;
     }
@@ -659,6 +695,9 @@ void klbwnd_listex_css_init(klbwnd_listex_css_t* p_css, klb_gui_t* p_gui)
     p_css->css_vscrollbar.disable.border.width.top = 0;
     p_css->css_vscrollbar.disable.border.width.right = 0;
     p_css->css_vscrollbar.disable.border.width.bottom = 0;
+
+    p_css->title_background_color = KLB_ARGB8888(255, 41, 41, 41);
+    p_css->title_line_color = KLB_ARGB8888(255, 61, 61, 61);
 }
 
 void klbwnd_listex_css_quit(klbwnd_listex_css_t* p_css)
@@ -695,6 +734,8 @@ void klbwnd_listex_css_copy(klbwnd_listex_css_t* p_dst, klbwnd_listex_css_t* p_s
     // 垂直滚动条
     klbwnd_vscrollbar_css_copy(&p_dst->css_vscrollbar, &p_src->css_vscrollbar);
 
+    p_dst->title_background_color = p_src->title_background_color;
+    p_dst->title_line_color = p_src->title_line_color;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -724,6 +765,7 @@ static void klbwnd_listex_init_subwnds(klb_wnd_t* p_wnd, klbwnd_listex_t* p_list
     p_list->p_vscrollbar = klbwnd_vscrollbar_create(p_wnd->p_gui, 0, head_h, 20, p_rect->h - head_h);
     klb_wnd_push_child(p_wnd, p_list->p_vscrollbar);
     klb_wnd_show(p_list->p_vscrollbar, false);
+    klbwnd_vscrollbar_enable_mousewheel(p_list->p_vscrollbar, false);
 
     klb_wnd_bind_command(p_list->p_vscrollbar, on_command_vscrollbar_klbwnd_listex, p_wnd);
 
@@ -751,7 +793,7 @@ void klbwnd_listex_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w,
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_NOFOCUS;
+    p_wnd->state.style = KLB_WND_STYLE_PEEK_EVENT | KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
 
     // 初始化属性
     klbwnd_listex_init_attribute(p_wnd, p_list);

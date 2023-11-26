@@ -59,19 +59,19 @@ static void get_column_title_klbwnd_list_row(sds* p_dst, klb_map_t* p_row_map, i
     }
 }
 
-static void klbwnd_list_row_on_paint_status(klb_wnd_t* p_wnd, klbwnd_list_row_t* p_list_row, klbwnd_list_row_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
+static void klbwnd_list_row_on_paint_status(klb_wnd_t* p_wnd, klbwnd_list_row_t* p_list_row, klbwnd_list_row_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect, uint32_t background_color2)
 {
     if (p_list_row->check)
     {
         // 选中状态
-        klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 32, 32, 61));
+        klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_css->check_background_color);
     }
     else
     {
         // 纯色背景
         if (0 != p_list_row->idx % 2)
         {
-            klb_wnd_draw_fill_rect2(p_wnd, p_rect, KLB_ARGB8888(255, 32, 32, 32));
+            klb_wnd_draw_fill_rect2(p_wnd, p_rect, background_color2);
         }
         else
         {
@@ -138,15 +138,15 @@ static int klbwnd_list_row_on_paint(klb_wnd_t* p_wnd)
 
     if (KLB_WND_STATUS_DISABLE & p_wnd->state.status)
     {
-        klbwnd_list_row_on_paint_status(p_wnd, p_list_row, p_css, &p_css->disable, &paint_rect);
+        klbwnd_list_row_on_paint_status(p_wnd, p_list_row, p_css, &p_css->disable, &paint_rect, p_css->disable_background_color2);
     }
     else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
     {
-        klbwnd_list_row_on_paint_status(p_wnd, p_list_row, p_css, &p_css->focus, &paint_rect);
+        klbwnd_list_row_on_paint_status(p_wnd, p_list_row, p_css, &p_css->focus, &paint_rect, p_css->focus_background_color2);
     }
     else
     {
-        klbwnd_list_row_on_paint_status(p_wnd, p_list_row, p_css, &p_css->normal, &paint_rect);
+        klbwnd_list_row_on_paint_status(p_wnd, p_list_row, p_css, &p_css->normal, &paint_rect, p_css->normal_background_color2);
     }
 
     return 0;
@@ -161,6 +161,7 @@ static int klbwnd_list_row_on_control(klb_wnd_t* p_wnd, int msg, const klb_point
     {
     case KLBUI_onpaint:
         return klbwnd_list_row_on_paint(p_wnd);
+
     default:
         break;
     }
@@ -233,6 +234,12 @@ void klbwnd_list_row_css_init(klbwnd_list_row_css_t* p_css, klb_gui_t* p_gui)
     klbuicssex_attributes_init(&p_css->normal, &p_default->normal);
     klbuicssex_attributes_init(&p_css->focus, &p_default->focus);
     klbuicssex_attributes_init(&p_css->disable, &p_default->disable);
+
+    p_css->normal_background_color2 = KLB_ARGB8888(255, 32, 32, 32);
+    p_css->focus_background_color2 = KLB_ARGB8888(255, 32, 32, 32);
+    p_css->disable_background_color2 = KLB_ARGB8888(255, 32, 32, 32);
+
+    p_css->check_background_color = KLB_ARGB8888(255, 32, 32, 61);
 }
 
 void klbwnd_list_row_css_quit(klbwnd_list_row_css_t* p_css)
@@ -250,6 +257,12 @@ void klbwnd_list_row_css_copy(klbwnd_list_row_css_t* p_dst, klbwnd_list_row_css_
     klbuicssex_attributes_copy(&p_dst->normal, &p_src->normal);
     klbuicssex_attributes_copy(&p_dst->focus, &p_src->focus);
     klbuicssex_attributes_copy(&p_dst->disable, &p_src->disable);
+
+    p_dst->normal_background_color2 = p_src->normal_background_color2;
+    p_dst->focus_background_color2 = p_src->focus_background_color2;
+    p_dst->disable_background_color2 = p_src->disable_background_color2;
+
+    p_dst->check_background_color = p_src->check_background_color;
 }
 
 //////////////////////////////////////////////////////////////////////////

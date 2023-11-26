@@ -299,6 +299,189 @@ static void globalcss_klbui_listex_border_color_disable(void* ptr, int method, c
     klbuicssex_border_color(&(p_css->disable.border), NULL, method, p_in, p_out);
 }
 
+static void globalcss_klbui_listex_title_line_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_attribute_color(&(p_css->title_line_color), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_title_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_attribute_color(&(p_css->title_background_color), NULL, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////
+// 子控件(row): klbwnd_listex_row_t
+
+static void globalcss_klbui_listex_row_text_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_listex_row.normal.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_text_color_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_listex_row.focus.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_text_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_listex_row.disable.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_text_align(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_align(&(p_css->css_listex_row.normal.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_text_align_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_align(&(p_css->css_listex_row.focus.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_text_align_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_align(&(p_css->css_listex_row.disable.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_font_size(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_font_size(&(p_css->css_listex_row.normal.font), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_font_size_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_font_size(&(p_css->css_listex_row.focus.font), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row_font_size_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_font_size(&(p_css->css_listex_row.disable.font), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row1_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_listex_row.normal.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row1_background_color_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_listex_row.focus.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row1_background_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_listex_row.disable.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row2_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_attribute_color(&(p_css->css_listex_row.normal_background_color2), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row2_background_color_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_attribute_color(&(p_css->css_listex_row.focus_background_color2), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_row2_background_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_attribute_color(&(p_css->css_listex_row.disable_background_color2), NULL, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////
+// 子控件(v scrollbar): klbwnd_vscrollbar_t
+
+static void globalcss_klbui_listex_vscrollbar_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_vscrollbar.normal.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_background_color_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_vscrollbar.focus.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_background_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_background_color(&(p_css->css_vscrollbar.disable.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_border_width(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_border_width(&(p_css->css_vscrollbar.normal.border), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_border_width_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_border_width(&(p_css->css_vscrollbar.focus.border), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_border_width_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_border_width(&(p_css->css_vscrollbar.disable.border), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_border_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_border_color(&(p_css->css_vscrollbar.normal.border), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_border_color_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_border_color(&(p_css->css_vscrollbar.focus.border), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_border_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_border_color(&(p_css->css_vscrollbar.disable.border), NULL, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////
+// 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
+
+static void globalcss_klbui_listex_vscrollbar_btnex_text_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_vscrollbar.css_btnex.normal.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_btnex_text_color_focus(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_vscrollbar.css_btnex.focus.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_listex_vscrollbar_btnex_text_color_disable(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = (klbwnd_listex_css_t*)ptr;
+    klbuicssex_text_color(&(p_css->css_vscrollbar.css_btnex.disable.text), NULL, method, p_in, p_out);
+}
+
 //////////////////////////////////////
 
 /// @brief 销毁 全局公共CSS属性
@@ -379,6 +562,66 @@ static void klbui_listex_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_listex_bind("border-color", globalcss_klbui_listex_border_color);
     KLBUI_GLOBAL_listex_bind("border-color:focus", globalcss_klbui_listex_border_color_focus);
     KLBUI_GLOBAL_listex_bind("border-color:disable", globalcss_klbui_listex_border_color_disable);
+
+    // 标题栏-线条颜色 color
+    KLBUI_GLOBAL_listex_bind("title.line-color", globalcss_klbui_listex_title_line_color);
+
+    // 标题栏-背景色 background-color
+    KLBUI_GLOBAL_listex_bind("title.background-color", globalcss_klbui_listex_title_background_color);
+
+    //////////////////////////////////////////////
+    // 子控件(row): klbwnd_listex_row_t
+
+    // 子控件(row): 文本颜色 color
+    KLBUI_GLOBAL_listex_bind("row.color", globalcss_klbui_listex_row_text_color);
+    KLBUI_GLOBAL_listex_bind("row.color:focus", globalcss_klbui_listex_row_text_color_focus);
+    KLBUI_GLOBAL_listex_bind("row.color:disable", globalcss_klbui_listex_row_text_color_disable);
+
+    // 子控件(row): 文本对齐 text-align
+    KLBUI_GLOBAL_listex_bind("row.text-align", globalcss_klbui_listex_row_text_align);
+    KLBUI_GLOBAL_listex_bind("row.text-align:focus", globalcss_klbui_listex_row_text_align_focus);
+    KLBUI_GLOBAL_listex_bind("row.text-align:disable", globalcss_klbui_listex_row_text_align_disable);
+
+    // 子控件(row): 字体大小 font-size
+    KLBUI_GLOBAL_listex_bind("row.font-size", globalcss_klbui_listex_row_font_size);
+    KLBUI_GLOBAL_listex_bind("row.font-size:focus", globalcss_klbui_listex_row_font_size_focus);
+    KLBUI_GLOBAL_listex_bind("row.font-size:disable", globalcss_klbui_listex_row_font_size_disable);
+
+    // 子控件(row)(第一行): 背景色 background-color
+    KLBUI_GLOBAL_listex_bind("row1.background-color", globalcss_klbui_listex_row1_background_color);
+    KLBUI_GLOBAL_listex_bind("row1.background-color:focus", globalcss_klbui_listex_row1_background_color_focus);
+    KLBUI_GLOBAL_listex_bind("row1.background-color:disable", globalcss_klbui_listex_row1_background_color_disable);
+    
+    // 子控件(row)(第二行): 背景色 background-color
+    KLBUI_GLOBAL_listex_bind("row2.background-color", globalcss_klbui_listex_row2_background_color);
+    KLBUI_GLOBAL_listex_bind("row2.background-color:focus", globalcss_klbui_listex_row2_background_color_focus);
+    KLBUI_GLOBAL_listex_bind("row2.background-color:disable", globalcss_klbui_listex_row2_background_color_disable);
+
+    //////////////////////////////////////////////
+    // 子控件(v scrollbar): klbwnd_vscrollbar_t
+
+    // 子控件(v scrollbar): 背景色 background-color
+    KLBUI_GLOBAL_listex_bind("vscrollbar.background-color", globalcss_klbui_listex_vscrollbar_background_color);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.background-color:focus", globalcss_klbui_listex_vscrollbar_background_color_focus);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.background-color:disable", globalcss_klbui_listex_vscrollbar_background_color_disable);
+
+    // 子控件(v scrollbar): 边框的宽度 border-width
+    KLBUI_GLOBAL_listex_bind("vscrollbar.border-width", globalcss_klbui_listex_vscrollbar_border_width);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.border-width:focus", globalcss_klbui_listex_vscrollbar_border_width_focus);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.border-width:disable", globalcss_klbui_listex_vscrollbar_border_width_disable);
+
+    // 子控件(v scrollbar): 边框的颜色 border-color
+    KLBUI_GLOBAL_listex_bind("vscrollbar.border-color", globalcss_klbui_listex_vscrollbar_border_color);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.border-color:focus", globalcss_klbui_listex_vscrollbar_border_color_focus);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.border-color:disable", globalcss_klbui_listex_vscrollbar_border_color_disable);
+
+    //////////////////////////////////////////////
+    // 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
+
+    // 子控件(v scrollbar)-(klbwnd_btnex_t) : 文本颜色 color
+    KLBUI_GLOBAL_listex_bind("vscrollbar.btnex.color", globalcss_klbui_listex_vscrollbar_btnex_text_color);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.btnex.color:focus", globalcss_klbui_listex_vscrollbar_btnex_text_color_focus);
+    KLBUI_GLOBAL_listex_bind("vscrollbar.btnex.color:disable", globalcss_klbui_listex_vscrollbar_btnex_text_color_disable);
 
 }
 
@@ -570,6 +813,189 @@ static void on_klbui_listex_border_color_disable(klb_wnd_t* p_wnd, klbui_listex_
 {
     klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
     klbuicssex_border_color(&(p_css->disable.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_title_line_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_attribute_color(&(p_css->title_line_color), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_title_background_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_attribute_color(&(p_css->title_background_color), p_wnd, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////
+// 子控件(row): klbwnd_listex_row_t
+
+static void on_klbui_listex_row_text_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_listex_row.normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_text_color_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_listex_row.focus.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_text_color_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_listex_row.disable.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_text_align(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_align(&(p_css->css_listex_row.normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_text_align_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_align(&(p_css->css_listex_row.focus.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_text_align_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_align(&(p_css->css_listex_row.disable.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_font_size(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_font_size(&(p_css->css_listex_row.normal.font), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_font_size_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_font_size(&(p_css->css_listex_row.focus.font), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row_font_size_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_font_size(&(p_css->css_listex_row.disable.font), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row1_background_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_listex_row.normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row1_background_color_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_listex_row.focus.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row1_background_color_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_listex_row.disable.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row2_background_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_attribute_color(&(p_css->css_listex_row.normal_background_color2), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row2_background_color_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_attribute_color(&(p_css->css_listex_row.focus_background_color2), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_row2_background_color_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_attribute_color(&(p_css->css_listex_row.disable_background_color2), p_wnd, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////
+// 子控件(v scrollbar): klbwnd_vscrollbar_t
+
+static void on_klbui_listex_vscrollbar_background_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_vscrollbar.normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_background_color_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_vscrollbar.focus.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_background_color_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_background_color(&(p_css->css_vscrollbar.disable.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_border_width(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_border_width(&(p_css->css_vscrollbar.normal.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_border_width_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_border_width(&(p_css->css_vscrollbar.focus.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_border_width_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_border_width(&(p_css->css_vscrollbar.disable.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_border_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_border_color(&(p_css->css_vscrollbar.normal.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_border_color_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_border_color(&(p_css->css_vscrollbar.focus.border), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_border_color_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_border_color(&(p_css->css_vscrollbar.disable.border), p_wnd, method, p_in, p_out);
+}
+
+//////////////////////////////////////////////
+// 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
+
+static void on_klbui_listex_vscrollbar_btnex_text_color(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_vscrollbar.css_btnex.normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_btnex_text_color_focus(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_vscrollbar.css_btnex.focus.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_listex_vscrollbar_btnex_text_color_disable(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_listex_css_t* p_css = check_css_klbui_listex(p_wnd, method);
+    klbuicssex_text_color(&(p_css->css_vscrollbar.css_btnex.disable.text), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////
@@ -802,6 +1228,66 @@ static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list,
     KLBUI_listex_bind("border-color", on_klbui_listex_border_color);
     KLBUI_listex_bind("border-color:focus", on_klbui_listex_border_color_focus);
     KLBUI_listex_bind("border-color:disable", on_klbui_listex_border_color_disable);
+
+    // 标题栏-线条颜色 color
+    KLBUI_listex_bind("title.line-color", on_klbui_listex_title_line_color);
+
+    // 标题栏-背景色 background-color
+    KLBUI_listex_bind("title.background-color", on_klbui_listex_title_background_color);
+
+    //////////////////////////////////////////////
+    // 子控件(row): klbwnd_listex_row_t
+
+    // 子控件(row): 文本颜色 color
+    KLBUI_listex_bind("row.color", on_klbui_listex_row_text_color);
+    KLBUI_listex_bind("row.color:focus", on_klbui_listex_row_text_color_focus);
+    KLBUI_listex_bind("row.color:disable", on_klbui_listex_row_text_color_disable);
+
+    // 子控件(row): 文本对齐 text-align
+    KLBUI_listex_bind("row.text-align", on_klbui_listex_row_text_align);
+    KLBUI_listex_bind("row.text-align:focus", on_klbui_listex_row_text_align_focus);
+    KLBUI_listex_bind("row.text-align:disable", on_klbui_listex_row_text_align_disable);
+
+    // 子控件(row): 字体大小 font-size
+    KLBUI_listex_bind("row.font-size", on_klbui_listex_row_font_size);
+    KLBUI_listex_bind("row.font-size:focus", on_klbui_listex_row_font_size_focus);
+    KLBUI_listex_bind("row.font-size:disable", on_klbui_listex_row_font_size_disable);
+
+    // 子控件(row)(第一行): 背景色 background-color
+    KLBUI_listex_bind("row1.background-color", on_klbui_listex_row1_background_color);
+    KLBUI_listex_bind("row1.background-color:focus", on_klbui_listex_row1_background_color_focus);
+    KLBUI_listex_bind("row1.background-color:disable", on_klbui_listex_row1_background_color_disable);
+
+    // 子控件(row)(第二行): 背景色 background-color
+    KLBUI_listex_bind("row2.background-color", on_klbui_listex_row2_background_color);
+    KLBUI_listex_bind("row2.background-color:focus", on_klbui_listex_row2_background_color_focus);
+    KLBUI_listex_bind("row2.background-color:disable", on_klbui_listex_row2_background_color_disable);
+
+    //////////////////////////////////////////////
+    // 子控件(v scrollbar): klbwnd_vscrollbar_t
+
+    // 子控件(v scrollbar): 背景色 background-color
+    KLBUI_listex_bind("vscrollbar.background-color", on_klbui_listex_vscrollbar_background_color);
+    KLBUI_listex_bind("vscrollbar.background-color:focus", on_klbui_listex_vscrollbar_background_color_focus);
+    KLBUI_listex_bind("vscrollbar.background-color:disable", on_klbui_listex_vscrollbar_background_color_disable);
+
+    // 子控件(v scrollbar): 边框的宽度 border-width
+    KLBUI_listex_bind("vscrollbar.border-width", on_klbui_listex_vscrollbar_border_width);
+    KLBUI_listex_bind("vscrollbar.border-width:focus", on_klbui_listex_vscrollbar_border_width_focus);
+    KLBUI_listex_bind("vscrollbar.border-width:disable", on_klbui_listex_vscrollbar_border_width_disable);
+
+    // 子控件(v scrollbar): 边框的颜色 border-color
+    KLBUI_listex_bind("vscrollbar.border-color", on_klbui_listex_vscrollbar_border_color);
+    KLBUI_listex_bind("vscrollbar.border-color:focus", on_klbui_listex_vscrollbar_border_color_focus);
+    KLBUI_listex_bind("vscrollbar.border-color:disable", on_klbui_listex_vscrollbar_border_color_disable);
+
+    //////////////////////////////////////////////
+    // 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
+
+    // 子控件(v scrollbar)-(klbwnd_btnex_t) : 文本颜色 color
+    KLBUI_listex_bind("vscrollbar.btnex.color", on_klbui_listex_vscrollbar_btnex_text_color);
+    KLBUI_listex_bind("vscrollbar.btnex.color:focus", on_klbui_listex_vscrollbar_btnex_text_color_focus);
+    KLBUI_listex_bind("vscrollbar.btnex.color:disable", on_klbui_listex_vscrollbar_btnex_text_color_disable);
 
     //////////////////////////////////////////////
     // 自定义方法

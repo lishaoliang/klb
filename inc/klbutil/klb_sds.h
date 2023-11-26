@@ -19,15 +19,15 @@ extern "C" {
 #endif
 
 
-/// @brief 拷贝sds; 若源s为NULL, 则新建立一个
+/// @brief 拷贝sds; 目标s为NULL, 且来源(p_str)不为空, 则新建立一个
 /// @param [in]  s      目标sds
-/// @return sds     s
+/// @return sds  s  返回NULL 或 非NULL的 sds, 可能与原s地址不一致
 KLB_API sds klb_sdscpy(sds s, const char* p_str);
 
 
-/// @brief 拷贝sds; 若源s为NULL, 则新建立一个
+/// @brief 拷贝sds; 目标s为NULL, 且来源(p_adt)不为空, 则新建立一个
 /// @param [in]  s      目标sds
-/// @return sds     s
+/// @return sds  s  返回NULL 或 非NULL的 sds, 可能与原s地址不一致
 KLB_API sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt);
 
 
