@@ -274,7 +274,7 @@ int klbwnd_vslider_get_value(klb_wnd_t* p_wnd)
     return p_vslider->value;
 }
 
-void klbwnd_vslider_set_range(klb_wnd_t* p_wnd, int min, int max, int step)
+void klbwnd_vslider_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step)
 {
     klbwnd_vslider_t* p_vslider = (klbwnd_vslider_t*)p_wnd->ctrl;
 

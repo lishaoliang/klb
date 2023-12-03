@@ -129,6 +129,9 @@ KLB_API void klbwnd_list_set_css(klb_wnd_t* p_wnd, klbwnd_list_css_t* p_css);
 /// @brief 添加列
 KLB_API int klbwnd_list_append_column(klb_wnd_t* p_wnd, int w_column, const char* p_title);
 
+/// @brief 更新列
+KLB_API int klbwnd_list_update_column(klb_wnd_t* p_wnd, int idx, int w_column, const char* p_title);
+
 /// @brief 数据列表
 KLB_API klb_map_t* klbwnd_list_get_data_map(klb_wnd_t* p_wnd);
 

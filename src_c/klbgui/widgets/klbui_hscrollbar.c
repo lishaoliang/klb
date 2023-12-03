@@ -608,26 +608,36 @@ static void on_klbui_hscrollbar_value(klb_wnd_t* p_wnd, klbui_hscrollbar_t* p_hs
 
 static void on_klbui_hscrollbar_ranges(klb_wnd_t* p_wnd, klbui_hscrollbar_t* p_hsc, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    if (KLBUI_CSSEX_set == method)
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_t* p_ranges = klb_map_create();
+
+        klb_map_set_int64(p_ranges, "min", p_hsc->hscrollbar.min);
+        klb_map_set_int64(p_ranges, "max", p_hsc->hscrollbar.max);
+        klb_map_set_int64(p_ranges, "step", p_hsc->hscrollbar.step);
+
+        klb_map_set_idx_map(p_out, 0, p_ranges);
+    }
+    else if (KLBUI_CSSEX_set == method)
     {
         int start = 1;
         int t = klb_map_array_type(p_in, start);
         if (KLB_ADT_map == t)
         {
-            klb_map_t* p_in_hms = klb_map_idx_to_map(p_in, start);
+            klb_map_t* p_in_ranges = klb_map_idx_to_map(p_in, start);
 
             int min = 0, max = 0, step = 0;
-            if (0 < klb_map_array_size(p_in_hms))
+            if (0 < klb_map_array_size(p_in_ranges))
             {
-                min = (int)klb_map_idx_to_int64(p_in_hms, 0);
-                max = (int)klb_map_idx_to_int64(p_in_hms, 0);
-                step = (int)klb_map_idx_to_int64(p_in_hms, 0);
+                min = (int)klb_map_idx_to_int64(p_in_ranges, 0);
+                max = (int)klb_map_idx_to_int64(p_in_ranges, 1);
+                step = (int)klb_map_idx_to_int64(p_in_ranges, 2);
             }
             else
             {
-                min = (int)klb_map_to_int64(p_in_hms, "min");
-                max = (int)klb_map_to_int64(p_in_hms, "max");
-                step = (int)klb_map_to_int64(p_in_hms, "step");
+                min = (int)klb_map_to_int64(p_in_ranges, "min");
+                max = (int)klb_map_to_int64(p_in_ranges, "max");
+                step = (int)klb_map_to_int64(p_in_ranges, "step");
             }
 
             klbwnd_hscrollbar_set_ranges(p_wnd, min, max, step);

@@ -1017,13 +1017,14 @@ static void on_klbui_list_vscrollbar_btnex_text_color_disable(klb_wnd_t* p_wnd, 
 //////////////////////////////////////
 // 自定义属性
 
+// 追加题头列
 static void on_klbui_list_append_column(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    // 添加列
+    // 追加题头列
     if (KLBUI_CSSEX_set == method)
     {
         /* eg.
-        jq('list1')['append-column']({
+        jq('list1')['append_column']({
                 {['width']=128,['title']='列1'},
                 {['width']=128,['title']='列2'},
                 {['width']=128,['title']='列3'},
@@ -1039,12 +1040,7 @@ static void on_klbui_list_append_column(klb_wnd_t* p_wnd, klbui_list_t* p_list, 
                 klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
                 if (NULL != p_item_map)
                 {
-                    int width = 0;
-                    width = (int)klb_map_to_int64(p_item_map, "width");
-                    if (width <= 0)
-                    {
-                        width = (int)klb_map_to_uint64(p_item_map, "width");
-                    }
+                    int width = (int)klb_map_to_int64(p_item_map, "width");
 
                     // 宽度必须大于0, 才认可有效列
                     if (0 < width)
@@ -1053,6 +1049,58 @@ static void on_klbui_list_append_column(klb_wnd_t* p_wnd, klbui_list_t* p_list, 
                     }
                 }
             }
+
+            klb_wnd_update(p_wnd);
+        }
+    }
+}
+
+// 更新题头列
+static void on_klbui_list_update_column(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 更新题头列
+    if (KLBUI_CSSEX_set == method)
+    {
+        /* eg.
+        jq('list1')['update_column']({
+            {['index']=1,['width']=128,['title']='列1'},
+            {['index']=2,['width']=128,['title']='列2'},
+            {['index']=3,['width']=128,['title']='列3'},
+        })
+        */
+        int start = 1;
+        klb_map_t* p_in_array = (klb_map_t*)klb_map_idx_to_map(p_in, start);
+        if (NULL != p_in_array)
+        {
+            int count = klb_map_array_size(p_in_array);
+            for (int i = 0; i < count; i++)
+            {
+                klb_map_t* p_item_map = klb_map_idx_to_map(p_in_array, i);
+                if (NULL != p_item_map  && KLB_ADT_int64 == klb_map_type(p_item_map, "index"))
+                {
+                    // 编号
+                    int index = (int)klb_map_to_int64(p_item_map, "index");
+                    index -= 1; // Lua 从1 开始
+
+                    // 宽度
+                    int width = -1;
+                    if (KLB_ADT_int64 == klb_map_type(p_item_map, "width"))
+                    {
+                        width = (int)klb_map_to_int64(p_item_map, "width");
+                    }
+
+                    // 标题
+                    const char* p_title = NULL;
+                    if (KLB_ADT_string == klb_map_type(p_item_map, "title"))
+                    {
+                        p_title = klb_map_to_string(p_item_map, "title");
+                    }
+
+                    klbwnd_list_update_column(p_wnd, index, width, p_title);
+                }
+            }
+
+            klb_wnd_update(p_wnd);
         }
     }
 }
@@ -1281,12 +1329,13 @@ static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb
     //////////////////////////////////////////////
     // 自定义方法
 
-    KLBUI_list_bind("append_column", on_klbui_list_append_column);
-    KLBUI_list_bind("append", on_klbui_list_append);
-    KLBUI_list_bind("clear", on_klbui_list_clear);
-    KLBUI_list_bind("clear_data", on_klbui_list_clear_data);
+    KLBUI_list_bind("append_column", on_klbui_list_append_column);  // 追加题头列
+    KLBUI_list_bind("update_column", on_klbui_list_update_column);  // 更新题头列
+    KLBUI_list_bind("append", on_klbui_list_append);                // 追加数据
+    KLBUI_list_bind("clear", on_klbui_list_clear);                  // 清空题头和数据
+    KLBUI_list_bind("clear_data", on_klbui_list_clear_data);        // 清空数据
 
-    KLBUI_list_bind("value", on_klbui_list_value);
+    KLBUI_list_bind("value", on_klbui_list_value);                  // 当前选中值
 }
 
 //////////////////////////////////////////////////////////////////////////

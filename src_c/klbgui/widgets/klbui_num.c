@@ -578,14 +578,50 @@ static void on_klbui_num_value(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method,
     klbuicssex_attribute_int(&(p_num->num.value), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_min(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_num_min(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_num->num.min), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_slider_max(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method, const klb_map_t* p_in, klb_map_t* p_out)
+static void on_klbui_num_max(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_num->num.max), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_num_ranges(klb_wnd_t* p_wnd, klbui_num_t* p_num, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_t* p_ranges = klb_map_create();
+
+        klb_map_set_int64(p_ranges, "min", p_num->num.min);
+        klb_map_set_int64(p_ranges, "max", p_num->num.max);
+
+        klb_map_set_idx_map(p_out, 0, p_ranges);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        int t = klb_map_array_type(p_in, start);
+        if (KLB_ADT_map == t)
+        {
+            klb_map_t* p_in_ranges = klb_map_idx_to_map(p_in, start);
+
+            int min = 0, max = 0, step = 0;
+            if (0 < klb_map_array_size(p_in_ranges))
+            {
+                min = (int)klb_map_idx_to_int64(p_in_ranges, 0);
+                max = (int)klb_map_idx_to_int64(p_in_ranges, 1);
+            }
+            else
+            {
+                min = (int)klb_map_to_int64(p_in_ranges, "min");
+                max = (int)klb_map_to_int64(p_in_ranges, "max");
+            }
+
+            klbwnd_num_set_ranges(p_wnd, min, max);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -664,8 +700,9 @@ static void klbui_num_init_func_map(klb_wnd_t* p_wnd, klbui_num_t* p_num, klb_gu
     // 自定义方法
 
     KLBUI_num_bind("value", on_klbui_num_value);
-    KLBUI_num_bind("min", on_klbui_slider_min);
-    KLBUI_num_bind("max", on_klbui_slider_max);
+    KLBUI_num_bind("min", on_klbui_num_min);
+    KLBUI_num_bind("max", on_klbui_num_max);
+    KLBUI_num_bind("ranges", on_klbui_num_ranges);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -88,10 +88,10 @@ static int klbwnd_progress_on_paint(klb_wnd_t* p_wnd)
     {
         klbwnd_progress_on_paint_status(p_wnd, p_prog, p_css, &p_css->disable, &paint_rect);
     }
-    else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
-    {
-        klbwnd_progress_on_paint_status(p_wnd, p_prog, p_css, &p_css->focus, &paint_rect);
-    }
+    //else if (KLB_WND_STATUS_FOCUS & p_wnd->state.status)
+    //{
+    //    klbwnd_progress_on_paint_status(p_wnd, p_prog, p_css, &p_css->focus, &paint_rect);
+    //}
     else
     {
         klbwnd_progress_on_paint_status(p_wnd, p_prog, p_css, &p_css->normal, &paint_rect);
@@ -224,7 +224,7 @@ void klbwnd_progress_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int 
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = 0x0;
+    p_wnd->state.style = KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
 
     // 
     klbwnd_progress_init_attribute(p_prog);

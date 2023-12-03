@@ -279,8 +279,8 @@ static int on_command_list_row_klbwnd_list(klb_wnd_t* p_wnd, int msg, const klb_
     return 0;
 }
 
-// 预绘制事件
-static int klbwnd_list_on_predraw(klb_wnd_t* p_wnd)
+// (自身)控件解析完成
+static int klbwnd_list_on_parsewindow(klb_wnd_t* p_wnd)
 {
     klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
     klb_rect_t* p_rect = &p_wnd->pos.rect_in_parent;
@@ -338,11 +338,14 @@ static int klbwnd_list_on_predraw(klb_wnd_t* p_wnd)
     return 0;
 }
 
+// (自身)鼠标滚轮事件
 static int klbwnd_list_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_list_t* p_list, const klb_point_t* p_pt1, int lparam)
 {
     int v = KLBUI_MOUSEWHEEL_value(lparam);
 
-    if (v <= 0 || !klb_wnd_is_show(p_list->p_vscrollbar))
+    if (v <= 0 || 
+        klb_wnd_is_hide(p_list->p_vscrollbar) ||
+        klb_wnd_is_disable(p_wnd))
     {
         return 0;
     }
@@ -367,18 +370,19 @@ static int klbwnd_list_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_list_t* p_list, co
     return 0;
 }
 
+// (自身)控件消息事件分派
 static int klbwnd_list_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
 
     switch (msg)
     {
-    case KLBUI_onpredraw:
-        return klbwnd_list_on_predraw(p_wnd);
-        break;
-
     case KLBUI_onpaint:
         return klbwnd_list_on_paint(p_wnd);
+        break;
+
+    case KLBUI_onparsewindow:
+        return klbwnd_list_on_parsewindow(p_wnd);
         break;
 
     case KLBUI_mousewheel:
@@ -443,6 +447,28 @@ int klbwnd_list_append_column(klb_wnd_t* p_wnd, int w_column, const char* p_titl
     p_list->head.column[idx].title = klb_sdscpy(p_list->head.column[idx].title, p_title);
 
     p_list->head.column_count++;
+
+    return 0;
+}
+
+int klbwnd_list_update_column(klb_wnd_t* p_wnd, int idx, int w_column, const char* p_title)
+{
+    klbwnd_list_t* p_list = (klbwnd_list_t*)p_wnd->ctrl;
+
+    if (idx <= 0 || p_list->head.column_count <= idx)
+    {
+        return 1;
+    }
+
+    if (0 <= w_column)
+    {
+        p_list->head.column[idx].width = w_column;
+    }
+
+    if (NULL != p_title)
+    {
+        p_list->head.column[idx].title = klb_sdscpy(p_list->head.column[idx].title, p_title);
+    }
 
     return 0;
 }

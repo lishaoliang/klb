@@ -22,6 +22,7 @@ static void klbwnd_num_destroy(klb_wnd_t* p_wnd)
     KLB_FREE(p_wnd);
 }
 
+// 依状态绘图
 static void klbwnd_num_on_paint_status(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, klbwnd_num_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
     if (0 < sdslen(p_attr->background.image))
@@ -38,10 +39,14 @@ static void klbwnd_num_on_paint_status(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, kl
         klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
     }
 
-    // 标题文本
-    klbuicssex_draw_text(p_wnd, p_num->title, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
+    // 标题文本, 2 ^ 64 = 18,446,744,073,709,551,616, 最长 20位
+    char tilte[32] = { 0 };
+    snprintf(tilte, sizeof(tilte) - 1, "%d", p_num->value);
+
+    klbuicssex_draw_text2(p_wnd, tilte, p_rect, &p_attr->border, &p_css->padding, &p_attr->text, &p_attr->font);
 }
 
+// 绘图
 static int klbwnd_num_on_paint(klb_wnd_t* p_wnd)
 {
     klbwnd_num_t* p_num = (klbwnd_num_t*)p_wnd->ctrl;
@@ -84,6 +89,7 @@ static int klbwnd_num_on_paint(klb_wnd_t* p_wnd)
     return 0;
 }
 
+// 弹出面板, 结束后的处理
 static int on_decimal_klbwnd_num(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, int value)
 {
     klb_wnd_t* p_wnd_num = (klb_wnd_t*)ptr;
@@ -92,15 +98,17 @@ static int on_decimal_klbwnd_num(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, int v
     if (ok)
     {
         do_set_value_klbwnd_num(p_wnd_num, p_num, value);
+        klb_wnd_on_command(p_wnd_num, KLBUI_onchange, NULL, NULL, 0, 0);
         klb_wnd_update(p_wnd_num);
     }
 
     return 0;
 }
 
+// (自身)鼠标点击
 static int klbwnd_num_on_click(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, const klb_point_t* p_pt1)
 {
-    if (klb_wnd_is_disable(p_wnd))
+    if (klb_wnd_is_disable(p_wnd) || klb_wnd_is_hide(p_wnd))
     {
         return 0;
     }
@@ -148,6 +156,40 @@ static int klbwnd_num_on_click(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, const klb_
     return 0;
 }
 
+// (自身)鼠标点击
+static int klbwnd_num_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, const klb_point_t* p_pt1, int lparam)
+{
+    int v = KLBUI_MOUSEWHEEL_value(lparam);
+    if (v <= 0 || klb_wnd_is_disable(p_wnd) || klb_wnd_is_hide(p_wnd))
+    {
+        return 0;
+    }
+
+    if (KLBUI_MOUSEWHEEL_is_up(lparam))
+    {
+        int v = p_num->value - 1;
+        if (p_num->min <= v)
+        {
+            do_set_value_klbwnd_num(p_wnd, p_num, v);
+            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_update(p_wnd);
+        }
+    }
+    else if (KLBUI_MOUSEWHEEL_is_down(lparam))
+    {
+        int v = p_num->value + 1;
+        if (v <= p_num->max)
+        {
+            do_set_value_klbwnd_num(p_wnd, p_num, v);
+            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_update(p_wnd);
+        }
+    }
+
+    return 0;
+}
+
+// (自身)控件消息事件分派
 static int klbwnd_num_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klbwnd_num_t* p_num = (klbwnd_num_t*)p_wnd->ctrl;
@@ -158,13 +200,17 @@ static int klbwnd_num_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p
         return klbwnd_num_on_paint(p_wnd);
         break;
 
-    case KLBUI_onpredraw:
+    case KLBUI_onparsewindow:
         do_set_value_klbwnd_num(p_wnd, p_num, p_num->value);
         break;
 
     case KLBUI_click:
     case KLBUI_dblclick:
         return klbwnd_num_on_click(p_wnd, p_num, p_pt1);
+        break;
+
+    case KLBUI_mousewheel:
+        return klbwnd_num_on_mousewheel(p_wnd, p_num, p_pt1, lparam);
         break;
 
     default:
@@ -177,15 +223,13 @@ static int klbwnd_num_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p
 //////////////////////////////////////////////////////////////////////////
 // 私有函数
 
+// 对值做校验
 static void do_set_value_klbwnd_num(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, int value)
 {
     if (value < p_num->min) { value = p_num->min; }
     if (p_num->max < value) { value = p_num->max; }
 
     p_num->value = value;
-
-    sdsclear(p_num->title);
-    p_num->title = sdscatfmt(p_num->title, "%i", p_num->value);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -240,7 +284,6 @@ void klbwnd_num_set_ranges(klb_wnd_t* p_wnd, int min, int max)
 static void klbwnd_num_init_attribute(klb_wnd_t* p_wnd, klbwnd_num_t* p_num)
 {
     p_num->index = 0;
-    p_num->title = sdsempty();
 
     p_num->value = 0;
     p_num->min = 0;
@@ -249,7 +292,7 @@ static void klbwnd_num_init_attribute(klb_wnd_t* p_wnd, klbwnd_num_t* p_num)
 
 static void klbwnd_num_quit_attribute(klbwnd_num_t* p_num)
 {
-    KLB_FREE_BY(p_num->title, sdsfree);
+
 }
 
 //////////////////////////////////////////////////////////////////////////

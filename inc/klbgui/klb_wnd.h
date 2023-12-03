@@ -281,6 +281,9 @@ KLB_API bool klb_wnd_is_show(klb_wnd_t* p_wnd);
 ///        这里使用 hide / show 函数来区分
 KLB_API void klb_wnd_hide(klb_wnd_t* p_wnd, bool hide);
 
+/// @brief 获取是否隐藏
+KLB_API bool klb_wnd_is_hide(klb_wnd_t* p_wnd);
+
 /// @brief 设置输入状态
 KLB_API void klb_wnd_input(klb_wnd_t* p_wnd, bool input);
 
@@ -298,6 +301,12 @@ KLB_API void klb_wnd_disable(klb_wnd_t* p_wnd, bool disable);
 
 /// @brief 获取是否是 不使能
 KLB_API bool klb_wnd_is_disable(klb_wnd_t* p_wnd);
+
+/// @brief 设置使能状态
+KLB_API void klb_wnd_enable(klb_wnd_t* p_wnd, bool enable);
+
+/// @brief 获取是否是 使能
+KLB_API bool klb_wnd_is_enable(klb_wnd_t* p_wnd);
 
 /// @brief 获取是否是 所有激活窗口中的最顶层
 /// @note  此状态的设置函数, 只能由框架内部决定

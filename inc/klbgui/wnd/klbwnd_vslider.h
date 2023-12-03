@@ -84,7 +84,7 @@ KLB_API int klbwnd_vslider_get_value(klb_wnd_t* p_wnd);
 
 
 /// @brief 设置范围
-KLB_API void klbwnd_vslider_set_range(klb_wnd_t* p_wnd, int min, int max, int step);
+KLB_API void klbwnd_vslider_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step);
 KLB_API void klbwnd_vslider_set_min(klb_wnd_t* p_wnd, int min);
 KLB_API void klbwnd_vslider_set_max(klb_wnd_t* p_wnd, int max);
 KLB_API void klbwnd_vslider_set_step(klb_wnd_t* p_wnd, int step);

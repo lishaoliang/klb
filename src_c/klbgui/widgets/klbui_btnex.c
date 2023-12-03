@@ -700,9 +700,9 @@ static void klbui_btnex_init_func_map(klb_wnd_t* p_wnd, klbui_btnex_t* p_btnex, 
     KLBUI_btnex_bind("index", on_klbui_btnex_index);
     KLBUI_btnex_bind("title", on_klbui_btnex_title);
     KLBUI_btnex_bind("value", on_klbui_btnex_value_str);
-    KLBUI_btnex_bind("value-str", on_klbui_btnex_value_str);
-    KLBUI_btnex_bind("value-int", on_klbui_btnex_value_int);
-    KLBUI_btnex_bind("value-bool", on_klbui_btnex_value_bool);
+    KLBUI_btnex_bind("value_str", on_klbui_btnex_value_str);
+    KLBUI_btnex_bind("value_int", on_klbui_btnex_value_int);
+    KLBUI_btnex_bind("value_bool", on_klbui_btnex_value_bool);
 
     KLBUI_btnex_bind("graph", on_klbui_btnex_graph)
 }

@@ -182,7 +182,7 @@ static void on_klbguicssmapstd_style_focus_without_redraw(klb_wnd_t* p_wnd, void
     }
 }
 
-// 显示隐藏
+// 显示
 static void on_klbguicssmapstd_show(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     if (KLBUI_CSSEX_get == method)
@@ -195,6 +195,23 @@ static void on_klbguicssmapstd_show(klb_wnd_t* p_wnd, void* ptr, int method, con
         bool show = klb_map_idx_to_bool(p_in, start);
 
         klb_wnd_show(p_wnd, show);
+    }
+}
+
+// 隐藏
+static void on_klbguicssmapstd_hide(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_hide(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool hide = klb_map_idx_to_bool(p_in, start);
+
+        klb_wnd_hide(p_wnd, hide);
+        klb_wnd_update(p_wnd);
     }
 }
 
@@ -249,6 +266,23 @@ static void on_klbguicssmapstd_disable(klb_wnd_t* p_wnd, void* ptr, int method, 
     }
 }
 
+// 使能
+static void on_klbguicssmapstd_enable(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_bool(p_out, 0, klb_wnd_is_enable(p_wnd));
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        bool enable = klb_map_idx_to_bool(p_in, start);
+
+        klb_wnd_enable(p_wnd, enable);
+        klb_wnd_update(p_wnd);
+    }
+}
+
 // 所有窗口中的最顶层
 static void on_klbguicssmapstd_topmost(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -282,7 +316,7 @@ static void on_klbguicssmapstd_refresh(klb_wnd_t* p_wnd, void* ptr, int method, 
 void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 {
     // 注意: 所有子控件的响应函数定义类似如下:
-    // void on_xxx(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+    // static void on_xxx(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
     // 其中 void* ptr 为具体控件指针, 公共方法中无法处理此指针
     // 公共方法, 可以处理 所有与 klb_wnd_t* 相关的部分
 
@@ -292,11 +326,11 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 
 
     // 窗口移动
-    KLBGUI_cssmapstd_bind("move", on_klbguicssmapstd_move);             // 相对父窗口,移动(x,y)
+    KLBGUI_cssmapstd_bind("move", on_klbguicssmapstd_move);             // 相对父窗口,移动(x,y); eg. jq('aaa').move({x=10,y=10})
 
 
     // 重设窗口大小
-    KLBGUI_cssmapstd_bind("resize", on_klbguicssmapstd_resize);         // 重设窗口大小(w,h)
+    KLBGUI_cssmapstd_bind("resize", on_klbguicssmapstd_resize);         // 重设窗口大小(w,h); eg. jq('aaa').resize({w=120,h=32})
 
 
     // 控件建议宽度/高度
@@ -311,10 +345,12 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 
 
     // 状态 status
-    KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show);             // 显示
-    KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input);
-    KLBGUI_cssmapstd_bind("check", on_klbguicssmapstd_check);           // 选中
-    KLBGUI_cssmapstd_bind("disable", on_klbguicssmapstd_disable);       // 不使能
+    KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show);             // 显示(true/false)
+    KLBGUI_cssmapstd_bind("hide", on_klbguicssmapstd_hide);             // 隐藏(true/false)
+    KLBGUI_cssmapstd_bind("input", on_klbguicssmapstd_input);           // 输入(true/false)
+    KLBGUI_cssmapstd_bind("check", on_klbguicssmapstd_check);           // 选中(true/false)
+    KLBGUI_cssmapstd_bind("disable", on_klbguicssmapstd_disable);       // 不使能(true/false)
+    KLBGUI_cssmapstd_bind("enable", on_klbguicssmapstd_enable);         // 使能(true/false)
     KLBGUI_cssmapstd_bind("topmost", on_klbguicssmapstd_topmost);       // 所有最顶层窗口中的视觉最上层的那个
 
 

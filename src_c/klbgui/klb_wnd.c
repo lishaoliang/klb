@@ -140,6 +140,12 @@ void klb_wnd_hide(klb_wnd_t* p_wnd, bool hide)
     }
 }
 
+bool klb_wnd_is_hide(klb_wnd_t* p_wnd)
+{
+    assert(NULL != p_wnd);
+    return (KLB_WND_STATUS_HIDE & p_wnd->state.status) ? true : false;
+}
+
 /// @brief 设置输入状态
 void klb_wnd_input(klb_wnd_t* p_wnd, bool input)
 {
@@ -198,6 +204,26 @@ void klb_wnd_disable(klb_wnd_t* p_wnd, bool disable)
 bool klb_wnd_is_disable(klb_wnd_t* p_wnd)
 {
     return (KLB_WND_STATUS_DISABLE & p_wnd->state.status) ? true : false;
+}
+
+/// @brief 设置使能状态
+void klb_wnd_enable(klb_wnd_t* p_wnd, bool enable)
+{
+    assert(NULL != p_wnd);
+    if (enable)
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_DISABLE);
+    }
+    else
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_DISABLE;
+    }
+}
+
+/// @brief 获取是否是 使能
+bool klb_wnd_is_enable(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_DISABLE & p_wnd->state.status) ? false : true;
 }
 
 /// @brief 设置 所有激活窗口中的最顶层

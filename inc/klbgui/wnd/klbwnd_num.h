@@ -37,7 +37,6 @@ typedef struct klbwnd_num_t_
     klbwnd_num_css_t*       p_css;          ///< 样式
 
     int                     index;          ///< 序号
-    sds                     title;          ///< 标题
 
     int                     value;          ///< 值
     int                     min;
