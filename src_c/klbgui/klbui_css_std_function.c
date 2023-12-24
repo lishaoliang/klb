@@ -298,11 +298,44 @@ static void on_klbguicssmapstd_tip(klb_wnd_t* p_wnd, void* ptr, int method, cons
     klbuicssex_tip(p_wnd, method, p_in, p_out);
 }
 
+// 显示/隐藏
 static void on_klbguicssmapstd_visibility(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
+static void do_first_control_event_klbguicssmapstd(klb_wnd_t* p_wnd, int e, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    if (NULL == p_wnd)
+    {
+        return;
+    }
+
+    // on control
+    klb_wnd_on_control(p_wnd, e, p_pt1, p_pt2, lparam, wparam);
+
+    // 
+    klb_wnd_t* p_next = p_wnd->p_child;
+    while (NULL != p_next)
+    {
+        do_first_control_event_klbguicssmapstd(p_next, e, p_pt1, p_pt2, lparam, wparam);
+
+        p_next = p_next->p_next;
+    }
+}
+
+// 重新布局
+static void on_klbguicssmapstd_layout(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 先调用自身的 KLBUI_layout
+    // 再依次调用 子窗口的 KLBUI_layout
+
+    do_first_control_event_klbguicssmapstd(p_wnd, KLBUI_layout, NULL, NULL, 0, 0);
+
+    klb_wnd_update(p_wnd);
+}
+
+// 刷新
 static void on_klbguicssmapstd_refresh(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klb_wnd_update(p_wnd);
@@ -360,6 +393,10 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
 
     // 显示/隐藏
     KLBGUI_cssmapstd_bind("visibility", on_klbguicssmapstd_visibility); // 显示/隐藏
+
+
+    // 重新布局
+    KLBGUI_cssmapstd_bind("layout", on_klbguicssmapstd_layout);         // 重新布局
 
 
     // 刷新/重绘

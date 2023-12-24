@@ -233,6 +233,16 @@ typedef enum klbui_mousedrag_lparam_e_
 #define KLBUI_blur              0x703           // blur
 
 
+///////////////////////////////////////
+// 
+
+/// @def   KLBUI_layout
+/// @brief (控件)重新布局事件
+/// @note  组合复杂控件时, 高概率需要对控件内部做重新布局操作
+///        这里加入 "layout" 事件 和 标准方法, 来处理此类情况
+#define KLBUI_layout            0x861           // layout
+
+
 //////////////////////////////////////////////////////////////////////////
 // 其他 
 

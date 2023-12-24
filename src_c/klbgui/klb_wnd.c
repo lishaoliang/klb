@@ -458,9 +458,10 @@ int klb_wnd_draw(klb_wnd_t* p_wnd)
 
 klb_wnd_t* klb_wnd_pt_in(klb_wnd_t* p_wnd, int x, int y)
 {
-    if (p_wnd->state.status & KLB_WND_STATUS_HIDE)
+    if (p_wnd->state.status & KLB_WND_STATUS_HIDE ||
+        p_wnd->state.status & KLB_WND_STATUS_DISABLE)
     {
-        return NULL; // 窗口处于隐藏, 则不再寻找
+        return NULL; // 窗口处于隐藏/不使能状态, 则不再寻找
     }
 
     klb_wnd_t* p_next = p_wnd->p_child;
@@ -508,11 +509,49 @@ int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint)
     return 0;
 }
 
+// 依据窗口状态, 是否在on_control中分发消息
+static bool is_control_dispatch_message_klb_wnd(klb_wnd_t* p_wnd, int msg)
+{
+    if ((KLB_WND_STATUS_DISABLE & p_wnd->state.status) || 
+        (KLB_WND_STATUS_HIDE & p_wnd->state.status))
+    {
+        // 隐藏, 不使能 时; 屏蔽部分消息
+        switch (msg)
+        {
+        case KLBUI_outwindow:
+        case KLBUI_onabort:
+        case KLBUI_onerror:
+        case KLBUI_onpredraw:
+        case KLBUI_onpaint:
+        case KLBUI_onparsewindow:
+        case KLBUI_onparsedialog:
+        case KLBUI_onload:
+        case KLBUI_onunload:
+        case KLBUI_onresize:
+        case KLBUI_layout:
+        case KLBUI_suggestw:
+        case KLBUI_suggesth:
+        case KLBUI_meminfo:
+            {
+                // 这些事件, 不受窗口状态影响
+                return true;
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        return false;
+    }
+
+    return true;
+}
 
 /// @brief 调用on_control函数
 int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    if (NULL != p_wnd && p_wnd->vtable.on_control)
+    if (NULL != p_wnd && p_wnd->vtable.on_control && is_control_dispatch_message_klb_wnd(p_wnd, msg))
     {
         klb_point_t pt = { 0 };
 
@@ -530,7 +569,8 @@ int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, cons
 {
     if (NULL != p_wnd && 
         NULL != p_wnd->vtable.on_command && 
-        !(KLB_WND_STATUS_DISABLE & p_wnd->state.status))
+        !(KLB_WND_STATUS_DISABLE & p_wnd->state.status) &&
+        !(KLB_WND_STATUS_HIDE & p_wnd->state.status))
     {
         klb_point_t pt = { 0 };
 
@@ -554,13 +594,14 @@ int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t*
         if (NULL == p_pt1) { p_pt1 = &pt; };
         if (NULL == p_pt2) { p_pt2 = &pt; };
 
-        if (NULL != p_wnd->vtable.on_control)
+        if (NULL != p_wnd->vtable.on_control && is_control_dispatch_message_klb_wnd(p_wnd, msg))
         {
             ret = p_wnd->vtable.on_control(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
         }
 
         if (NULL != p_wnd->vtable.on_command && 
             !(KLB_WND_STATUS_DISABLE & p_wnd->state.status) &&
+            !(KLB_WND_STATUS_HIDE & p_wnd->state.status) &&
             0 <= ret)
         {
             ret = p_wnd->vtable.on_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
