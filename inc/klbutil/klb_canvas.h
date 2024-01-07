@@ -180,6 +180,21 @@ typedef struct klb_canvas_vtable_t_
     /// @param [in] *p_canvas   画布对象
     /// @return 无 
     void(*free)(klb_canvas_t* p_canvas);
+
+
+    /// @brief 用户自定义绘图函数
+    /// @param [in] *p_canvas       画布对象
+    /// @param [in] opt             绘制功能参数: 可自行定义
+    /// @param [in] ptr1            绘制参数1
+    /// @return int 0.成功; 非0.失败
+    /// @note 基础绘图函数, 若无法满足私有控件绘图要求, 可以扩展此函数
+    ///     这里为尽可能满足要求, 定义多种参数方式, 实际使用时 选用其中部分即可
+    int(*draw_opt1)(klb_canvas_t* p_canvas, int opt, const void* ptr1);
+    int(*draw_opt2)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2);
+    int(*draw_opt3)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3);
+    int(*draw_opt4)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
+    int(*draw_opt5)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
+    int(*draw_opt6)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
 }klb_canvas_vtable_t;
 
 
@@ -292,6 +307,20 @@ KLB_API int klb_canvas_refresh(klb_canvas_t* p_canvas,                          
 
 /// @brief 申请新画布
 KLB_API klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int layer_type);
+
+
+/// @brief 用户自定义绘图函数
+/// @param [in] *p_canvas       画布对象
+/// @param [in] opt             绘制功能参数: 可自行定义
+/// @param [in] ptr1            绘制参数1
+/// @return int 0.成功; 非0.失败
+/// @note 基础绘图函数, 若无法满足私有控件绘图要求, 可以扩展此函数
+KLB_API int klb_canvas_draw_opt1(klb_canvas_t* p_canvas, int opt, const void* ptr1);
+KLB_API int klb_canvas_draw_opt2(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2);
+KLB_API int klb_canvas_draw_opt3(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3);
+KLB_API int klb_canvas_draw_opt4(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
+KLB_API int klb_canvas_draw_opt5(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
+KLB_API int klb_canvas_draw_opt6(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
 
 
 #ifdef __cplusplus

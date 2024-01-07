@@ -428,6 +428,96 @@ klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int layer_
     return 0;
 }
 
+int klb_canvas_draw_opt1(klb_canvas_t* p_canvas, int opt, const void* ptr1)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.draw_opt1)
+    {
+        return p_canvas->vtable.draw_opt1(p_canvas, opt, ptr1);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_opt2(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.draw_opt2)
+    {
+        return p_canvas->vtable.draw_opt2(p_canvas, opt, ptr1, ptr2);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_opt3(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.draw_opt3)
+    {
+        return p_canvas->vtable.draw_opt3(p_canvas, opt, ptr1, ptr2, ptr3);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_opt4(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.draw_opt4)
+    {
+        return p_canvas->vtable.draw_opt4(p_canvas, opt, ptr1, ptr2, ptr3, ptr4);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_opt5(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.draw_opt5)
+    {
+        return p_canvas->vtable.draw_opt5(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5);
+    }
+
+    return 0;
+}
+
+int klb_canvas_draw_opt6(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.draw_opt6)
+    {
+        return p_canvas->vtable.draw_opt6(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6);
+    }
+
+    return 0;
+}
+
 //
 //int klb_canvas_draw_fill(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color)
 //{

@@ -6,7 +6,8 @@
 /// @version 0.1
 /// @history 修改历史
 ///   \n [2023-4] 提供 klb_wnd_push_child 函数, 许可在扩展控件开发中 自行构建窗口树
-///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发替换绘图函数
+///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发者替换绘图函数
+///   \n [2024-1] 添加 klb_wnd_draw_opt* 系列函数, 许可控件开发者 扩展基础绘图函数
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
 #define __KLB_WND_H__
@@ -405,7 +406,7 @@ KLB_API klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 //////////////////////////////////////////////////////////////////////////
 // 绘图
 
-/// @brief 绘图接口
+/// @brief 基础绘图接口
 KLB_API int klb_wnd_set_draw_color(klb_wnd_t* p_wnd, uint32_t color);
 KLB_API uint32_t klb_wnd_get_draw_color(klb_wnd_t* p_wnd);
 KLB_API int klb_wnd_set_font_height(klb_wnd_t* p_wnd, int h);
@@ -436,6 +437,15 @@ KLB_API int klb_wnd_draw_fill_rect2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, 
 KLB_API int klb_wnd_draw_fill_rects2(klb_wnd_t* p_wnd, const klb_rect_t* p_rects, int count, uint32_t color);
 KLB_API int klb_wnd_text_size2(klb_wnd_t* p_wnd, const char* p_utf8, int utf8_len, int font_h, int* p_out_w, int* p_out_h);
 KLB_API int klb_wnd_draw_text2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
+
+
+/// @brief 可扩展绘图接口
+KLB_API int klb_wnd_draw_opt1(klb_wnd_t* p_wnd, int opt, const void* ptr1);
+KLB_API int klb_wnd_draw_opt2(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2);
+KLB_API int klb_wnd_draw_opt3(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3);
+KLB_API int klb_wnd_draw_opt4(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
+KLB_API int klb_wnd_draw_opt5(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
+KLB_API int klb_wnd_draw_opt6(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
 
 
 #ifdef __cplusplus
