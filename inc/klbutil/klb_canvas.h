@@ -195,6 +195,8 @@ typedef struct klb_canvas_vtable_t_
     int(*draw_opt4)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
     int(*draw_opt5)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
     int(*draw_opt6)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
+    int(*draw_opt7)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7);
+    int(*draw_opt8)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8);
 }klb_canvas_vtable_t;
 
 
@@ -321,6 +323,8 @@ KLB_API int klb_canvas_draw_opt3(klb_canvas_t* p_canvas, int opt, const void* pt
 KLB_API int klb_canvas_draw_opt4(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
 KLB_API int klb_canvas_draw_opt5(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
 KLB_API int klb_canvas_draw_opt6(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
+KLB_API int klb_canvas_draw_opt7(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7);
+KLB_API int klb_canvas_draw_opt8(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8);
 
 
 #ifdef __cplusplus

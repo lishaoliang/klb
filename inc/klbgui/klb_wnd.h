@@ -446,6 +446,8 @@ KLB_API int klb_wnd_draw_opt3(klb_wnd_t* p_wnd, int opt, const void* ptr1, const
 KLB_API int klb_wnd_draw_opt4(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
 KLB_API int klb_wnd_draw_opt5(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
 KLB_API int klb_wnd_draw_opt6(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
+KLB_API int klb_wnd_draw_opt7(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7);
+KLB_API int klb_wnd_draw_opt8(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8);
 
 
 #ifdef __cplusplus

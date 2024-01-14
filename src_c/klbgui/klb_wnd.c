@@ -968,3 +968,15 @@ int klb_wnd_draw_opt6(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* p
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
     return klb_canvas_draw_opt6(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6);
 }
+
+int klb_wnd_draw_opt7(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+    return klb_canvas_draw_opt7(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, ptr7);
+}
+
+int klb_wnd_draw_opt8(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8)
+{
+    klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
+    return klb_canvas_draw_opt8(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, ptr7, ptr8);
+}
