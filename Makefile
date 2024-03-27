@@ -60,6 +60,7 @@ MY_DIRS += ./src_c/qrencode-4.1.1
 # cpp / src_cpp
 MY_DIRS += ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbnet
 MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klua 
+MY_DIRS += ./src_cpp/klbgui ./src_cpp/klbgui/wnd
 MY_DIRS += ./src_cpp/klbapp
 
 
@@ -126,7 +127,7 @@ MY_INCLUDES += -I ./src_c/klua/lua-5.4.6/src
 MY_INCLUDES += -I ./src_c/qrencode-4.1.1
 
 # cpp
-MY_INCLUDES += -I ./inc_hpp
+MY_INCLUDES += -I ./src_cpp -I ./inc_hpp
 
 # src_packages
 MY_INCLUDES += -I ./src_packages
@@ -148,6 +149,9 @@ MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 ifneq ($(MY_VERSION),release)
 	MY_CFLAGS += -g
 endif
+
+# 防止返回值格式错误, 警告变错误
+MY_CFLAGS += -Werror=return-type
 
 # 防止未定义函数
 MY_CFLAGS += -Wl,--no-undefined

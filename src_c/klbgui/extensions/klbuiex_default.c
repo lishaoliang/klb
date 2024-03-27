@@ -148,13 +148,13 @@ static void klbuiex_default_init(klbuiex_default_t* p_default)
     p_default->def.margin.top = 0;
     p_default->def.margin.right = 0;
     p_default->def.margin.bottom = 0;
-    p_default->def.margin.right = 0;
+    p_default->def.margin.left = 0;
 
     // padding
     p_default->def.padding.top = 1;
     p_default->def.padding.right = 1;
     p_default->def.padding.bottom = 1;
-    p_default->def.padding.right = 1;
+    p_default->def.padding.left = 1;
 
     // init
     klbuiex_default_init_normal(&p_default->def.normal);

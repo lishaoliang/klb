@@ -121,13 +121,21 @@ klbui.global_css = function (t, ...)
 	local args = {...}
 	
 	if 1 < #args then
-		kgui.set_global_css(t, ...)
+		if 0 ~= kgui.set_global_css(t, ...) then
+			return args -- 未找到设置函数, 返回参数
+		end	
 	elseif 1 == #args then
 		if 'table' == type(args[1]) then
+			local r = {}
+			
 			for k1, v1 in pairs(args[1]) do
 				-- set
-				kgui.set_global_css(t, k1, v1)
+				if 0 ~= kgui.set_global_css(t, k1, v1) then
+					r[k1] = v1
+				end
 			end
+			
+			return r -- 将未找到设置函数的属性,返回给调用者
 		else
 			return kgui.get_global_css(t, ...)
 		end

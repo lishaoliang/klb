@@ -548,6 +548,21 @@ int klb_canvas_draw_opt8(klb_canvas_t* p_canvas, int opt, const void* ptr1, cons
     return 0;
 }
 
+int klb_canvas_ioctrl_opt8(klb_canvas_t* p_canvas, int opt, void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, void* ptr6, void* ptr7, void* ptr8)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.ioctrl_opt8)
+    {
+        return p_canvas->vtable.ioctrl_opt8(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, ptr7, ptr8);
+    }
+
+    return 0;
+}
+
 //
 //int klb_canvas_draw_fill(klb_canvas_t* p_canvas, int x, int y, int w, int h, uint32_t color)
 //{

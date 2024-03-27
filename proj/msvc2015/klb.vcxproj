@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -134,7 +134,7 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;PCRE2_STATIC;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
     </ClCompile>
@@ -401,7 +401,16 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klua\klua_object.h" />
     <ClInclude Include="..\..\inc\klua\klua_seri.h" />
     <ClInclude Include="..\..\inc\klua\klua_thread.h" />
+    <ClInclude Include="..\..\inc\lauxlib.h" />
+    <ClInclude Include="..\..\inc\lua.h" />
+    <ClInclude Include="..\..\inc\lua.hpp" />
+    <ClInclude Include="..\..\inc\luaconf.h" />
+    <ClInclude Include="..\..\inc\lualib.h" />
     <ClInclude Include="..\..\inc_hpp\klbbase\CPackage.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\CCss.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\CGui.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\CWnd.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CButton.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbmem\CBuf.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbnet\CListen.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbnet\CMultiplex.hpp" />
@@ -423,6 +432,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc_hpp\klbutil\CVector.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKlua.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp" />
+    <ClInclude Include="..\..\src_cpp\klbgui\CUiWidgets.hpp" />
     <ClInclude Include="..\..\src_c\compat\os2threads.h" />
     <ClInclude Include="..\..\src_c\compat\va_copy.h" />
     <ClInclude Include="..\..\src_c\compat\w32dlfcn.h" />
@@ -628,6 +638,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\CCss.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\CGui.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\CWnd.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\widgets\CUiButton.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\wnd\CButton.cpp" />
     <ClCompile Include="..\..\src_cpp\klbmem\CBuf.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp" />

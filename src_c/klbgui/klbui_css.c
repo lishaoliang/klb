@@ -136,6 +136,8 @@ int klb_gui_globalcss_set(klb_gui_t* p_gui, const char* p_type, const klb_map_t*
     klb_map_t* p_func_map = klb_gui_globalcss_map(p_gui, p_type);
     void* p_css = klb_gui_globalcss_get_ptr(p_gui, p_type);
 
+    int ret = 1; // 未找到设置函数
+
     if (NULL != p_func_map && NULL != p_css)
     {
         const char* p_key = klb_map_idx_to_string(p_map, 0);
@@ -144,10 +146,11 @@ int klb_gui_globalcss_set(klb_gui_t* p_gui, const char* p_type, const klb_map_t*
         if (NULL != func)
         {
             func(p_css, KLBUI_CSSEX_set, p_map, NULL);
+            ret = 0; // 找到了设置函数
         }
     }
 
-    return 0;
+    return ret;
 }
 
 klb_map_t* klb_gui_globalcss_get(klb_gui_t* p_gui, const char* p_type, const klb_map_t* p_map)

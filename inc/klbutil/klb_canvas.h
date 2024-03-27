@@ -197,6 +197,12 @@ typedef struct klb_canvas_vtable_t_
     int(*draw_opt6)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
     int(*draw_opt7)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7);
     int(*draw_opt8)(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8);
+
+
+    /// @brief 用户自定义 直接操控画布设备函数
+    /// @return int 0.成功; 非0.失败
+    /// @note 若有需要与画布设备 通信, 扩展此函数
+    int(*ioctrl_opt8)(klb_canvas_t* p_canvas, int opt, void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, void* ptr6, void* ptr7, void* ptr8);
 }klb_canvas_vtable_t;
 
 
@@ -325,6 +331,12 @@ KLB_API int klb_canvas_draw_opt5(klb_canvas_t* p_canvas, int opt, const void* pt
 KLB_API int klb_canvas_draw_opt6(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
 KLB_API int klb_canvas_draw_opt7(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7);
 KLB_API int klb_canvas_draw_opt8(klb_canvas_t* p_canvas, int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8);
+
+
+/// @brief 用户自定义 直接操控画布设备函数
+/// @return int 0.成功; 非0.失败
+/// @note 若有需要与画布设备 通信, 扩展此函数
+KLB_API int klb_canvas_ioctrl_opt8(klb_canvas_t* p_canvas, int opt, void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, void* ptr6, void* ptr7, void* ptr8);
 
 
 #ifdef __cplusplus

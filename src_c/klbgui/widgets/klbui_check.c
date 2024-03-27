@@ -834,6 +834,6 @@ static klb_wnd_t* klbui_check_create(klb_gui_t* p_gui, int x, int y, int w, int 
 // 注册 "kcheck"
 int klbui_register_kcheck(klb_gui_t* p_gui)
 {
-    klbui_check_init_globalcss(p_gui);
+    klbui_check_init_globalcss(p_gui); // 初始化全局CSS, 需要注册时初始化, 否则全局属性无法生效
     return klb_gui_register(p_gui, KLBUI_kcheck, klbui_check_create);
 }

@@ -202,6 +202,16 @@ klb_map_t* klb_gui_default_css_get(klb_gui_t* p_gui, const klb_map_t* p_map)
     return klbuiex_default_css_get(klbuiex_get_default(p_gui), p_map);
 }
 
+void klb_gui_attach_cppgui(klb_gui_t* p_gui, void* p_cgui)
+{
+    p_gui->p_cppgui = p_cgui;
+}
+
+void* klb_gui_get_cppgui(klb_gui_t* p_gui)
+{
+    return p_gui->p_cppgui;
+}
+
 /// @brief 附加到 klua_env_t*
 int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env)
 {
@@ -223,6 +233,13 @@ void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas)
     p_gui->p_canvas = p_canvas;
 
     klbuiex_tip_attach_canvas(p_gui->p_tip, p_canvas); // tip 画布
+}
+
+klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui)
+{
+    assert(NULL != p_gui);
+
+    return p_gui->p_canvas;
 }
 
 void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
@@ -258,6 +275,19 @@ klb_wnd_create_cb klb_gui_get_creater(klb_gui_t* p_gui, const char* p_type)
     assert(NULL != p_type);
 
     return klbuiex_wndhash_get_creater(p_gui->p_wndhash, p_type);
+}
+
+klb_wnd_t* klb_gui_create_wnd(klb_gui_t* p_gui, const char* p_type, int x, int y, int w, int h)
+{
+    klb_wnd_t* ptr = NULL;
+    klb_wnd_create_cb cb_create = klb_gui_get_creater(p_gui, p_type);
+
+    if (cb_create)
+    {
+        ptr = cb_create(p_gui, x, y, w, h);
+    }
+
+    return ptr;
 }
 
 int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
@@ -893,6 +923,21 @@ int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
 
     return 0;
 }
+
+/// @brief 获取 当前聚焦窗口
+klb_wnd_t* klb_gui_get_focus(klb_gui_t* p_gui)
+{
+    return p_gui->p_focus;
+}
+
+
+/// @brief 获取 当前聚焦窗口 的顶层窗口
+klb_wnd_t* klb_gui_get_focus_top(klb_gui_t* p_gui)
+{
+    return p_gui->p_focus_top;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 {

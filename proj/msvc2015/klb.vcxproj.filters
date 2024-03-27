@@ -258,6 +258,21 @@
     <Filter Include="src_c\klbapp">
       <UniqueIdentifier>{5dfe523c-8a25-4363-994b-71aeaa709a88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc_hpp\klbgui">
+      <UniqueIdentifier>{41549e55-aa12-472f-9ff5-495ef2e156b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_cpp\klbgui">
+      <UniqueIdentifier>{b84f1e8d-3efc-4479-b5e3-01b577d68508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc_hpp\klbgui\wnd">
+      <UniqueIdentifier>{bd7a0688-8656-4e27-98b5-a9146f8edc71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_cpp\klbgui\wnd">
+      <UniqueIdentifier>{75fc0239-7840-4e72-912c-ae20f385235e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_cpp\klbgui\widgets">
+      <UniqueIdentifier>{f57a45e7-2445-4fac-a7c1-cf4577a4bd5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1604,6 +1619,36 @@
     <ClInclude Include="..\..\inc\klbapp\klb_app_extension.h">
       <Filter>inc\klbapp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\lauxlib.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\lua.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\lua.hpp">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\luaconf.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\lualib.h">
+      <Filter>inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbgui\CGui.hpp">
+      <Filter>inc_hpp\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbgui\CWnd.hpp">
+      <Filter>inc_hpp\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbgui\CCss.hpp">
+      <Filter>inc_hpp\klbgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CButton.hpp">
+      <Filter>inc_hpp\klbgui\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_cpp\klbgui\CUiWidgets.hpp">
+      <Filter>src_cpp\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2724,6 +2769,21 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbapp\klb_app.c">
       <Filter>src_c\klbapp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbgui\CGui.cpp">
+      <Filter>src_cpp\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbgui\CWnd.cpp">
+      <Filter>src_cpp\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbgui\CCss.cpp">
+      <Filter>src_cpp\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbgui\wnd\CButton.cpp">
+      <Filter>src_cpp\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbgui\widgets\CUiButton.cpp">
+      <Filter>src_cpp\klbgui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

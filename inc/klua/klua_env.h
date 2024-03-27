@@ -147,13 +147,13 @@ KLB_API void klua_msg_free(klua_msg_t* p_msg);
 KLB_API int klua_env_loop_once(klua_env_t* p_env);
 
 
-/// @brief 是否退出
+/// @brief 是否退出状态
 /// @param [in] *p_env              lua环境
 /// @return bool true.退出; false.不退出
 KLB_API bool klua_env_is_exit(klua_env_t* p_env);
 
 
-/// @brief 退出
+/// @brief 设置退出状态
 /// @param [in] *p_env              lua环境
 /// @return 无
 KLB_API void klua_env_exit(klua_env_t* p_env);

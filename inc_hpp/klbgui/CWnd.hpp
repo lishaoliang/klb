@@ -1,0 +1,343 @@
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2024, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    CWnd.hpp
+/// @brief   klb_wnd_t 的 cpp 封装
+/// @version 0.1
+/// @history 修改历史
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLB_CWND_HPP__
+#define __KLB_CWND_HPP__
+
+#include "klb_type.h"
+#include "klbgui/klb_wnd.h"
+#include "klbgui/klb_gui.h"
+#include "klbgui/CCss.hpp"
+#include <string>
+
+namespace klbui {
+
+
+class CGui;
+class CWnd;
+
+
+/// @brief 属性函数格式
+/// @return void
+typedef void(*klb_cwnd_cb)(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
+KLB_EXTERN class KLB_API_CPP CWnd
+{
+public:
+    //////////////////////////////////////////////////////////////////////////
+    // 构造/析构
+    CWnd();
+    CWnd(CGui* p_gui, int x, int y, int w, int h);
+    virtual ~CWnd();
+
+public:
+    //////////////////////////////////////////////////////////////////////////
+    // cpp 额外函数
+
+    klb_wnd_t* GetWnd();
+
+    void Init(CGui* p_gui, int x, int y, int w, int h);
+
+    void SetType(const std::string& type);
+    const std::string& GetType();
+
+    void SetTID(int tid);
+    int GetTID();
+
+    /// @brief CSS
+    void SetCss(CCss* p_css);
+    CCss* GetCss();
+
+public:
+    //////////////////////////////////////////////////////////////////////////
+    // 定义于 "klbgui/klb_wnd.h" 的导出函数
+
+
+    ////////////////////////////////////
+    // 通用
+
+    /// @brief 获取gui
+    klb_gui_t* GetGui();
+    bool GetGui(CGui** p_gui);
+
+    /// @brief 获取画布
+    /// @return klb_canvas_t* 画布指针
+    /// @note 不要缓存窗口画布指针; 需要使用时, 临时获取
+    ///       框架可能会依据当前状态情况, 变更窗口画布
+    klb_canvas_t* GetCanvas();
+
+    ////////////////////////////////////
+    // 样式
+
+    /// @brief 获取样式
+    /// @return uint32_t 样式
+    uint32_t GetStyle();
+
+
+    /// @brief 设置样式
+    /// @param [in] style       样式
+    /// @return 无
+    void SetStyle(uint32_t style);
+
+    ////////////////////////////////////
+    // 状态
+
+    /// @brief 设置是否显示: 附带标记更新 窗口
+    void Show(bool show);
+
+    /// @brief 获取是否显示
+    bool IsShow();
+
+    /// @brief 设置是否隐藏: 只设置状态
+    /// @note  多数时候, 可能只是需要设置显隐标记, 并不需要触发更新标记
+    ///        这里使用 hide / show 函数来区分
+    void Hide(bool hide);
+
+    /// @brief 获取是否隐藏
+    bool IsHide();
+
+    /// @brief 设置输入状态
+    void Input(bool input);
+
+    /// @brief 获取是否是输入状态
+    bool IsInput();
+
+    /// @brief 设置选中状态
+    void Check(bool check);
+
+    /// @brief 获取是否是选中状态
+    bool IsCheck();
+
+    /// @brief 设置不使能状态
+    void Disable(bool disable);
+
+    /// @brief 获取是否是 不使能
+    bool IsDisable();
+
+    /// @brief 设置使能状态
+    void Enable(bool enable);
+
+    /// @brief 获取是否是 使能
+    bool IsEnable();
+
+    /// @brief 获取是否是 所有激活窗口中的最顶层
+    /// @note  此状态的设置函数, 只能由框架内部决定
+    bool IsTopMost();
+
+
+    ////////////////////////////////////
+    // tip
+
+    /// @brief 设置,获取 tip
+    void SetTip(const char* p_tip);
+    void SetTip(const std::string& tip);
+    void GetTip(std::string& tip);
+
+    /// @brief 标记刷新 tip
+    /// @note 仅标记, 由框架决定合适的刷新时机
+    ///       仅 设置了tip 且处于显示的情况下 生效
+    void TipUpdate();
+
+
+    ////////////////////////////////////
+    // 窗口位置/大小
+
+    /// @brief 基于父窗口移动到指定的相对坐标
+    void Move(int x, int y);
+
+
+    /// @brief 重新设置控件大小
+    void Resize(int w, int h);
+
+    ////////////////////////////////////
+    // 刷新
+
+    /// @brief 标记窗口需要刷新
+    /// @note 仅标记, 由框架决定合适的刷新时机
+    void Update();
+
+
+    /// @brief 标记窗口需要更新 基于画布的坐标(屏幕/顶层窗口)
+    /// @note 仅标记, 由框架决定合适的更新时机
+    void UpdateCanvasRect();
+
+
+    ////////////////////////////////////
+    // 绑定外部回调函数
+
+
+    /// @brief 绑定响应函数
+    int BindCommand(klb_wnd_on_command_cb on_command, void* p_obj);
+
+
+    ////////////////////////////////////
+    // 调用函数
+
+
+    /// @brief 调用on_control函数
+    int CallControl(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+    /// @brief 调用on_command函数
+    int CallCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+    /// @brief 1.调用on_control函数; 2.调用on_command函数
+    int CallControlAndCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+    ////////////////////////////////////
+    // 控件建议宽/高
+
+    /// @brief 获取建议宽
+    int SuggestW();
+
+
+    /// @brief 获取建议高
+    int SuggestH();
+
+
+    ////////////////////////////////////
+    // 窗口关系 
+
+    int PushChild(CWnd* p_child);
+
+
+    ////////////////////////////////////
+    // 设置 / 获取
+
+    /// @brief 参数设置 / 获取
+    int Set(const klb_map_t* p_map);
+    klb_map_t* Get(const klb_map_t* p_map);
+
+
+    ////////////////////////////////////
+    // 绘图
+
+    /// @brief 基础绘图接口
+    int SetDrawColor(uint32_t color);
+    uint32_t GetDrawColor();
+    int SetFontHeight(int h);
+    int GetFontHeight();
+
+    int DrawClear(uint32_t* p_color);
+    int DrawPoint(int x, int y, uint32_t* p_color);
+    int DrawPoints(const klb_point_t* p_points, int count, uint32_t* p_color);
+    int DrawLine(int x1, int y1, int x2, int y2, uint32_t* p_color);
+    int DrawLines(const klb_point_t* p_points, int count, uint32_t* p_color);
+    int DrawRect(const klb_rect_t* p_rect, uint32_t* p_color);
+    int DrawRects(const klb_rect_t* p_rects, int count, uint32_t* p_color);
+    int DrawFillRect(const klb_rect_t* p_rect, uint32_t* p_color);
+    int DrawFillRects(const klb_rect_t* p_rects, int count, uint32_t* p_color);
+    int DrawText(const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t* p_color, int* p_font_h);
+    int DrawText(const klb_rect_t* p_rect, const std::string& utf8, uint32_t* p_color, int* p_font_h);
+    int TextSize(const char* p_utf8, int utf8_len, int* p_font_h, int* p_out_w, int* p_out_h);
+    int TextSize(const std::string& utf8, int* p_font_h, int* p_out_w, int* p_out_h);
+    int DrawImage(const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect);
+    int DrawImage(const klb_rect_t* p_dst_rect, const std::string& path, const klb_rect_t* p_src_rect);
+    int ImageSize(const char* p_path, int* p_out_w, int* p_out_h);
+    int ImageSize(const std::string& path, int* p_out_w, int* p_out_h);
+
+    int DrawClear2(uint32_t color);
+    int DrawPoint2(int x, int y, uint32_t color);
+    int DrawPoints2(const klb_point_t* p_points, int count, uint32_t color);
+    int DrawLine2(int x1, int y1, int x2, int y2, uint32_t color);
+    int DrawLines2(const klb_point_t* p_points, int count, uint32_t color);
+    int DrawRect2(const klb_rect_t* p_rect, uint32_t color);
+    int DrawRects2(const klb_rect_t* p_rects, int count, uint32_t color);
+    int DrawFillRect2(const klb_rect_t* p_rect, uint32_t color);
+    int DrawFillRects2(const klb_rect_t* p_rects, int count, uint32_t color);
+    int TextSize2(const char* p_utf8, int utf8_len, int font_h, int* p_out_w, int* p_out_h);
+    int TextSize2(const std::string& utf8, int font_h, int* p_out_w, int* p_out_h);
+    int DrawText2(const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
+    int DrawText2(const klb_rect_t* p_rect, const std::string& utf8, uint32_t color, int font_h);
+
+
+    /// @brief 可扩展绘图接口
+    int DrawOpt1(int opt, const void* ptr1);
+    int DrawOpt2(int opt, const void* ptr1, const void* ptr2);
+    int DrawOpt3(int opt, const void* ptr1, const void* ptr2, const void* ptr3);
+    int DrawOpt4(int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4);
+    int DrawOpt5(int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5);
+    int DrawOpt6(int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6);
+    int DrawOpt7(int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7);
+    int DrawOpt8(int opt, const void* ptr1, const void* ptr2, const void* ptr3, const void* ptr4, const void* ptr5, const void* ptr6, const void* ptr7, const void* ptr8);
+
+
+public:
+    //////////////////////////////////////////////////////////////////////////
+    // 
+
+    /// @brief 销毁内存
+    virtual void OnDelete();
+
+
+    /// @brief 窗口绘制函数
+    /// @return int
+    virtual int OnPaint();
+
+
+    /// @brief 消息控制函数
+    /// @param [in] msg         消息命令
+    /// @param [in] *p_p1       点1
+    /// @param [in] *p_p2       点2
+    /// @return int 0
+    virtual int OnControl(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+    /// @brief 消息响应函数
+    /// @param [in] msg         消息命令
+    /// @param [in] *p_p1       点1
+    /// @param [in] *p_p2       点2
+    /// @return int
+    virtual int OnCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+public:
+    
+    /// @brief 向控件设置数据: 样式\显示\状态等等
+    /// @param [in] *p_map      map数据集合
+    /// @return int 0.成功; 非0.失败(错误码)
+    /// @note map 具体数据格式由控件定义
+    int OnSet(const klb_map_t* p_map);
+
+
+    /// @brief 向控件获取数据: 样式\显示\状态等等
+    /// @param [in] *p_map      map数据集合
+    /// @return klb_map_t* map数据集合
+    /// @note map 具体数据格式由控件定义
+    klb_map_t* OnGet(const klb_map_t* p_map);
+
+public:
+    //////////////////////////////////////////////////////////////////////////
+    // 
+
+    /// @brief 绑定响应函数
+    /// @return void
+    void BindFunction(const std::string& str, klb_cwnd_cb cb_func);
+
+private:
+    klb_map_t* GetFuncMap();
+
+private:
+    std::string         m_type;             ///< 当前控件类型 名称
+    int                 m_tid;              ///< 类型ID
+    CCss*               m_css;              ///< CSS
+
+private:
+    CGui*               m_gui;              ///< gui 指针
+    klb_wnd_t*          m_wnd;              ///< wnd 窗口指针
+
+    klb_map_t*          m_func_map;         ///< 属性函数表
+};
+
+} // namespace klbui 
+
+#endif // __KLB_CWND_HPP__

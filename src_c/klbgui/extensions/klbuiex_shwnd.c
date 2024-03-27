@@ -128,7 +128,7 @@ int klbuiex_shwnd_css_set(klbuiex_shwnd_t* p_shwnd, const char* p_path, const kl
         return klb_wnd_set(p_wnd, p_map);
     }
 
-    return 0;
+    return 1; // 未找到
 }
 
 /// @brief 获取共享窗口的CSS值

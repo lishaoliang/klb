@@ -51,6 +51,14 @@ KLB_API klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas);
 KLB_API void klb_gui_destroy(klb_gui_t* p_gui);
 
 
+/// @brief 附加到 klbui::CGui*, 提供cpp支持
+KLB_API void klb_gui_attach_cppgui(klb_gui_t* p_gui, void* p_cgui);
+
+
+/// @brief 获取附加的 klbui::CGui*
+KLB_API void* klb_gui_get_cppgui(klb_gui_t* p_gui);
+
+
 /// @brief 附加到 klua_env_t*
 KLB_API int klb_gui_attach_klua_env(klb_gui_t* p_gui, klua_env_t* p_env);
 
@@ -73,6 +81,12 @@ KLB_API int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc);
 /// @param [in] *p_canvas       画布
 /// @return 无
 KLB_API void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas);
+
+
+/// @brief 获取附加到的显存画布指针
+/// @param [in] *p_gui          GUI对象
+/// @return klb_canvas_t* 
+KLB_API klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui);
 
 
 /// @brief 向GUI中放入消息
@@ -105,6 +119,13 @@ KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_creat
 /// @param [in] *p_type         窗口类型名
 /// @return klb_wnd_create_cb 创建函数; 或 NULL
 KLB_API klb_wnd_create_cb klb_gui_get_creater(klb_gui_t* p_gui, const char* p_type);
+
+
+/// @brief 按类型 创建一个窗口; 注意.仅创建, 并未加入到窗口树中
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_type         窗口类型名
+/// @return klb_wnd_t* 窗口指针; 或 NULL
+KLB_API klb_wnd_t* klb_gui_create_wnd(klb_gui_t* p_gui, const char* p_type, int x, int y, int w, int h);
 
 
 /// @brief 加载图片资源
@@ -320,6 +341,19 @@ KLB_API int klb_gui_suggesth(klb_gui_t* p_gui, const char* p_path_name, int* p_o
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_get_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h);
 
+
+/// @brief 获取 当前聚焦窗口
+/// @param [in]  *p_gui         GUI对象
+/// @return klb_wnd_t* 聚焦窗口指针
+/// @note 可能为 NULL
+KLB_API klb_wnd_t* klb_gui_get_focus(klb_gui_t* p_gui);
+
+
+/// @brief 获取 当前聚焦窗口 的顶层窗口
+/// @param [in]  *p_gui         GUI对象
+/// @return klb_wnd_t* 聚焦窗口的 顶层窗口指针
+/// @note 可能为 NULL
+KLB_API klb_wnd_t* klb_gui_get_focus_top(klb_gui_t* p_gui);
 
 
 #ifdef __cplusplus
