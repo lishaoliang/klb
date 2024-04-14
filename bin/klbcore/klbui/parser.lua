@@ -264,7 +264,7 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 	end
 	
 	-- 窗口解析完成, 触发 'onparsewindow' 事件
-	kgui.on_control_and_command(path, event.onparsewindow)
+	kgui.call_control_and_command(path, event.onparsewindow)
 end
 
 function parser.parse(dialog, commands, css)
@@ -275,7 +275,7 @@ function parser.parse(dialog, commands, css)
 	ParseWnd(dialog, param_cmds, param_css, root_path, true)
 	
 	-- 对话框解析完成, 触发 'onparsedialog' 事件
-	kgui.on_control_and_command(root_path, event.onparsedialog)
+	kgui.call_control_and_command(root_path, event.onparsedialog)
 end
 
 

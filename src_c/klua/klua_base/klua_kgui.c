@@ -535,7 +535,7 @@ static int klua_kgui_bind_command(lua_State* L)
     return 1;
 }
 
-static int klua_kgui_on_control_and_command(lua_State* L)
+static int klua_kgui_call_control_and_command(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);                   ///< @1. 路径名: eg. "/home/btn1"
     int msg = (int)luaL_checkinteger(L, 2);                             ///< @2. msg,事件: eg. KLBUI_onparsewindow/KLBUI_onparsedialog
@@ -550,7 +550,7 @@ static int klua_kgui_on_control_and_command(lua_State* L)
     int wparam = (int)klua_check_option_integer(L, 8, 0);               ///< @8. wparam
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
-    int ret = klb_gui_on_control_and_command(p_gui, p_path_name, msg, &pt1, &pt2, lparam, wparam);
+    int ret = klb_gui_call_control_and_command(p_gui, p_path_name, msg, &pt1, &pt2, lparam, wparam);
 
     lua_pushinteger(L, ret);                                            ///< #1. 0.成功; 非0.失败(错误码)
     return 1;
@@ -824,6 +824,21 @@ static int klua_kgui_suggesth(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_focusdelay(lua_State* L)
+{
+    lua_Integer timeout = luaL_checkinteger(L, 1);
+
+    klb_gui_set_focusdelay(klua_gui_get_by_L(L), timeout);
+
+    return 0;
+}
+
+static int klua_kgui_refresh(lua_State* L)
+{
+    klb_gui_update(klua_gui_get_by_L(L));
+    return 0;
+}
+
 static int klua_kgui_get_wh(lua_State* L)
 {
     int w = 0, h = 0;
@@ -892,7 +907,7 @@ int klua_open_kgui(lua_State* L)
         { "clear",              klua_kgui_clear },
         { "bind_command",       klua_kgui_bind_command },
 
-        { "on_control_and_command",     klua_kgui_on_control_and_command },
+        { "call_control_and_command",     klua_kgui_call_control_and_command },
 
         // get/set param
         { "set",                klua_kgui_set },
@@ -918,6 +933,12 @@ int klua_open_kgui(lua_State* L)
 
         { "suggestw",           klua_kgui_suggestw },           // 窗口建议宽度
         { "suggesth",           klua_kgui_suggesth },           // 窗口建议高度
+
+        // 聚焦延时
+        { "focusdelay",         klua_kgui_focusdelay },          // 设置聚焦延时时间(单位毫秒)
+
+        // 刷新
+        { "refresh",            klua_kgui_refresh },           // 刷新所有窗口
 
         // gui get (w,h)
         { "wh",                 klua_kgui_get_wh },             // 获取主画布宽高(即屏幕宽高)

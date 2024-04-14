@@ -7,6 +7,13 @@
 #include "klbgui/klb_wnd_in.h"
 #include "klbgui/klbui_widgets.h"
 #include "klbgui/extensions/klbuiex_extensions.h"
+#include "klbgui/shwnd/klbshw_calendar.h"
+#include "klbgui/shwnd/klbshw_combomenu.h"
+#include "klbgui/shwnd/klbshw_decimal.h"
+#include "klbgui/shwnd/klbshw_hexadecimal.h"
+#include "klbgui/shwnd/klbshw_keyboard_en.h"
+#include "klbgui/shwnd/klbshw_messagebox.h"
+#include "klbgui/shwnd/klbshw_tip.h"
 #include <assert.h>
 
 
@@ -34,6 +41,12 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
         p_gui->p_msg_list = klb_nlist_create();
         p_gui->p_msg_mutex = klb_mutex_create();
 
+        p_gui->focus_tc = 0;
+        p_gui->focusdelay_tc = 600; // 单位毫秒(ms)
+        p_gui->focusdelay = false;
+
+        p_gui->loop_tc = 0;
+
         p_gui->is_drop_msg_dispatch = false;
         p_gui->is_need_clear = false;
     }
@@ -59,7 +72,17 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     }
 
     // 注册标准窗口类型
-    KLB_GUI_REGISTER_STD(p_gui);
+    {
+        // 注册标准窗口类型
+        KLB_GUI_REGISTER_STD(p_gui);
+
+        // 激活共享窗口
+        klbui_shwnd_get_calendar(p_gui);
+        klbui_shwnd_get_combomenu(p_gui);
+        klbui_shwnd_get_decimal(p_gui);
+        klbui_shwnd_get_messagebox(p_gui);
+        klbui_shwnd_get_tip(p_gui);
+    }
 
     return p_gui;
 }
@@ -330,8 +353,11 @@ int klb_gui_clear(klb_gui_t* p_gui)
     p_gui->modal_num = 0;
     p_gui->popup_num = 0;
     p_gui->p_msg_box = NULL;
+
     p_gui->p_focus_top = NULL;
     p_gui->p_focus = NULL;
+    p_gui->focus_tc = 0;
+    p_gui->focusdelay = false;
 
     // 所有激活的扩展清理
     klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
@@ -411,6 +437,8 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 
             p_gui->p_focus_top = NULL;
             p_gui->p_focus = NULL;
+            p_gui->focus_tc = 0;
+            p_gui->focusdelay = false;
         }
     }
 
@@ -463,6 +491,8 @@ static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 
             p_gui->p_focus_top = NULL;
             p_gui->p_focus = NULL;
+            p_gui->focus_tc = 0;
+            p_gui->focusdelay = false;
         }
     }
 
@@ -759,7 +789,7 @@ int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_wnd_on_c
     return klb_wnd_bind_command(p_wnd, on_command, p_obj);
 }
 
-int klb_gui_on_control_and_command(klb_gui_t* p_gui, const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+int klb_gui_call_control_and_command(klb_gui_t* p_gui, const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
     if (NULL == p_wnd)
@@ -935,6 +965,22 @@ klb_wnd_t* klb_gui_get_focus(klb_gui_t* p_gui)
 klb_wnd_t* klb_gui_get_focus_top(klb_gui_t* p_gui)
 {
     return p_gui->p_focus_top;
+}
+
+
+/// @brief 设置聚焦延时时间
+void klb_gui_set_focusdelay(klb_gui_t* p_gui, int64_t timeout)
+{
+    timeout = (0 <= timeout) ? timeout : 0;
+    p_gui->focusdelay_tc = timeout;
+}
+
+
+/// @brief 标记所有窗口需要刷新
+void klb_gui_update(klb_gui_t* p_gui)
+{
+    // 标记重回所有窗口
+    klbuiex_redraw_all(p_gui->p_redraw);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1260,6 +1306,9 @@ static void focus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd, int x, int
     // 得到焦点事件
     klb_wnd_on_control_and_command(p_wnd, KLBUI_focus, NULL, NULL, 0, 0);
 
+#if 0
+    // Tip 的显示 转移到 聚焦延时 处理流程中
+    // 这里暂保留备份, 待删除
     // 显示tip
     const sds tip = klb_wnd_get_tip(p_wnd);
     if (NULL != tip && 0 < sdslen(tip))
@@ -1280,6 +1329,7 @@ static void focus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd, int x, int
 
         klbuiex_tip_show(p_gui->p_tip, true, x, sy);
     }
+#endif
 }
 
 // 取消聚焦流程
@@ -1333,6 +1383,12 @@ static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
 
     p_gui->p_focus_top = p_focus_top;
     p_gui->p_focus = p_focus;
+
+    if (NULL != p_focus)
+    {
+        p_gui->focus_tc = p_gui->loop_tc;
+        p_gui->focusdelay = true;
+    }
 }
 
 static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
@@ -1517,7 +1573,11 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 {
     int ret = 0;
 
-    // step1. 消息处理
+    // step 1. 更新 gui tc
+    p_gui->loop_tc = tc;
+
+
+    // step 2. 消息处理
     while (true)
     {
         if (0 != klb_gui_process_message_once(p_gui))
@@ -1526,7 +1586,45 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         }
     }
 
-    // step2. 依次处理, 激活的扩展
+    // step 3. 检查处理 是否需要处理 KLBUI_focusdelay 消息等
+    if (p_gui->focusdelay && p_gui->focusdelay_tc <= (ABS_SUB(tc, p_gui->focus_tc)))
+    {
+        klb_wnd_t* p_wnd = p_gui->p_focus;
+        if (NULL != p_wnd)
+        {
+            // KLBUI_focusdelay 消息
+            if (KLB_WND_STYLE_FOCUS_DELAY & p_wnd->state.style)
+            {
+                klb_wnd_on_control_and_command(p_wnd, KLBUI_focusdelay, NULL, NULL, 0, 0);
+            }
+
+            // 显示tip
+            const sds tip = klb_wnd_get_tip(p_wnd);
+            if (NULL != tip && 0 < sdslen(tip))
+            {
+                klb_rect_t rect = p_wnd->pos.rect_in_canvas;
+
+                int w = 0, h = 0;
+                klbuiex_tip_set_tilte(p_gui->p_tip, tip, &w, &h);
+
+                int screen_w = 0, screen_h = 0;
+                klb_gui_get_wh(p_gui, &screen_w, &screen_h);
+
+                int sx = p_gui->p_util->mouse_pt.x;
+                //int sx = rect.x + rect.w / 2;
+                int sy = rect.y + rect.h + 1;
+
+                if (screen_w < sx + w) { sx = screen_w - w; };
+                if (screen_h < sy + h) { sy = screen_h - h - 1; };
+
+                klbuiex_tip_show(p_gui->p_tip, true, sx, sy);
+            }
+        }
+
+        p_gui->focusdelay = false;
+    }
+
+    // step 4. 依次处理, 激活的扩展
     if (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
     {
         klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
@@ -1542,7 +1640,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         }
     }
 
-    // step3. 是否需要清理
+    // step 5. 是否需要清理
     // 这里控件等事件处理完毕, 在这里执行清理动作
     if (p_gui->is_need_clear)
     {
@@ -1557,7 +1655,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         p_gui->is_need_clear = false;
     }
 
-    // step 4. 检查重绘, 刷新
+    // step 6. 检查重绘, 刷新
     klb_gui_redraw_and_refresh(p_gui);
 
     return ret;

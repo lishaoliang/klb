@@ -9,7 +9,7 @@ local kgui = {}
 
 
 
--- @brief 设置默认全局CSS参数
+-- @brief 设置默认CSS参数
 -- @param [in] [任意]...			设置参数
 -- @return [number(int)] 	0.成功; 非0.失败
 -- @note 注意必须在控件创建之前, 才能在初始化控件时生效;
@@ -18,10 +18,54 @@ kgui.set_default_css = function (...)
 end
 
 
--- @brief 获取默认全局CSS参数
+-- @brief 获取默认CSS参数
 -- @param [in] [任意]...			获取参数
 -- @return [任意]...				值
 kgui.get_default_css = function (...)
+	return ...
+end
+
+
+-- @brief 设置控件全局CSS参数
+-- @param [in] t[string]			窗口/控件类型: eg. "kbutton"
+-- @param [in] [任意]...			设置参数
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.set_global_css = function (t, ...)
+	return 0
+end
+
+
+-- @brief 获取控件全局CSS参数
+-- @param [in] t[string]			窗口/控件类型: eg. "kbutton"
+-- @param [in] [任意]...			获取参数
+-- @return [任意]...				值
+kgui.get_global_css = function (t, ...)
+	return ...
+end
+
+
+-- @brief 获取控件全局CSS参数
+-- @param [in] t[string]			窗口/控件类型: eg. "kbutton"
+-- @return [boolean] 	true.有全局CSS; false.无全局CSS
+kgui.has_global_css = function (t)
+	return true
+end
+
+
+-- @brief 设置共享窗口CSS
+-- @param [in] path[string]			共享窗口路径: eg. "/klbui/combomenu"
+-- @param [in] [任意]...			设置参数
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.set_shwnd_css = function (path, ...)
+	return 0
+end
+
+
+-- @brief 获取共享窗口CSS
+-- @param [in] path[string]			共享窗口路径: eg. "/klbui/combomenu"
+-- @param [in] [任意]...			获取参数
+-- @return [任意]...				值
+kgui.get_shwnd_css = function (path, ...)
 	return ...
 end
 
@@ -93,7 +137,7 @@ kgui.bind_command = function (path, func)
 end
 
 
--- @brief 触发控件(窗口)某个事件
+-- @brief 调用(触发)控件(窗口)某个事件
 -- @param [in] path[string]			窗口路径名: eg. "/home/btn1"
 --  @param [in] msg[number(int)]	消息/事件
 --  @param [in] x1[number(int)]		[可选]点1的x1坐标
@@ -103,7 +147,7 @@ end
 --  @param [in] lparam[number(int)]	[可选]参数1
 --  @param [in] wparam[number(int)]	[可选]参数2
 -- @return [number(int)] 	0.成功; -1.失败
-kgui.on_control_and_command = function (path, msg, x1, x2, y1, y2, lparam, wparam)
+kgui.call_control_and_command = function (path, msg, x1, x2, y1, y2, lparam, wparam)
 	return 0
 end
 
@@ -203,11 +247,86 @@ kgui.resize = function (path, w, h)
 end
 
 
+-- @brief 获取窗口位置
+-- @param [in] path[string]				窗口路径(类unix): eg."/home/btn1"
+-- @param [in] is_in_canvas[boolean		[可选]相对于画布; 默认true. 相对于画布; false.相对于父窗口
+-- @return [table] 	窗口位置
+kgui.wndpos = function (path, is_in_canvas)
+	return {
+		x = 0,
+		y = 0,
+		w = 32,
+		h = 32,
+	}
+end
+
+
+-- @brief 获取窗口(控件)建议宽度
+-- @param [in] path[string]				窗口路径(类unix): eg."/home/btn1"
+-- @return [number(int)] 	窗口(控件)建议宽度
+kgui.suggestw = function (path)
+	return 100
+end
+
+
+-- @brief 获取窗口(控件)建议高度
+-- @param [in] path[string]				窗口路径(类unix): eg."/home/btn1"
+-- @return [number(int)] 	窗口(控件)建议高度
+kgui.suggesth = function (path)
+	return 100
+end
+
+
+-- @brief 窗口刷新(仅标记, UI框架决定刷新时机)
+-- @return 无
+kgui.refresh = function ()
+	return
+end
+
+
 -- @brief 获取主窗口(画布)的宽高
 -- @return [number(int)] 	宽
 --			[number(int)] 	高
 kgui.wh = function ()
 	return 1280, 720
+end
+
+
+-- @brief 获取不含特殊标记的事件类型
+-- @param [in] e[number(int)]			含有特殊标记的事件类型, eg. 0x40000406
+-- @return [number(int)] 	事件类型
+kgui.to_event = function (e)
+	-- eg. mousemove
+	-- 带标记可能为: 0x40000406
+	-- 转换后为: 0x406
+	return 0x406
+end
+
+
+-- @brief 获取是否含有 b1 比特位标记
+-- @param [in] e[number(int)]			含有特殊标记的事件类型, eg. 0x40000406
+-- @return [boolean 	事件类型
+kgui.b1_event = function (e)
+	-- 事件是否含有: KLBUI_event_bit1(0x40000000) 比特位标记
+	return false
+end
+
+
+-- @brief 获取是否含有 b2 比特位标记
+-- @param [in] e[number(int)]			含有特殊标记的事件类型, eg. 0x20000406
+-- @return [boolean 	事件类型
+kgui.b2_event = function (e)
+	-- 事件是否含有: KLBUI_event_bit2(0x20000000) 比特位标记
+	return false
+end
+
+
+-- @brief 获取是否含有 b3 比特位标记
+-- @param [in] e[number(int)]			含有特殊标记的事件类型, eg. 0x10000406
+-- @return [boolean 	事件类型
+kgui.b3_event = function (e)
+	-- 事件是否含有: KLBUI_event_bit3(0x10000000) 比特位标记
+	return false
 end
 
 

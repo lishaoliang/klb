@@ -266,12 +266,12 @@ int CGui::BindCommand(const std::string& path_name, klb_wnd_on_command_cb on_com
 
 int CGui::CallControlAndCommand(const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    return klb_gui_on_control_and_command(m_gui, p_path_name, msg, p_pt1, p_pt2, lparam, wparam);
+    return klb_gui_call_control_and_command(m_gui, p_path_name, msg, p_pt1, p_pt2, lparam, wparam);
 }
 
 int CGui::CallControlAndCommand(const std::string& path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    return klb_gui_on_control_and_command(m_gui, path_name.c_str(), msg, p_pt1, p_pt2, lparam, wparam);
+    return klb_gui_call_control_and_command(m_gui, path_name.c_str(), msg, p_pt1, p_pt2, lparam, wparam);
 }
 
 int CGui::Set(const char* p_path_name, const klb_map_t* p_map)

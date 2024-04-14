@@ -91,13 +91,18 @@ typedef struct klb_gui_t_
     // 聚焦等
     struct
     {
-        klb_wnd_t*      p_focus_top;
-        klb_wnd_t*      p_focus;
+        klb_wnd_t*      p_focus_top;    ///< 顶层聚焦窗口
+        klb_wnd_t*      p_focus;        ///< 当前聚焦窗口
+
+        int64_t         focus_tc;       ///< 聚焦时的时间点(单位毫秒, 系统滴答数)
+        int64_t         focusdelay_tc;  ///< 聚焦延时 触发的时间间隔(单位毫秒, 默认600)
+        bool            focusdelay;     ///< true. 可能需要触发 KLBUI_focusdelay 事件
     };
 
     // 消息处理流程
     struct
     {
+        int64_t         loop_tc;                    ///< 当前时间
         bool            is_drop_msg_dispatch;       ///< 是否放弃消息"冒泡"
     };
 

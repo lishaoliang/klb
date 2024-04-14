@@ -8,6 +8,7 @@
 ///   \n [2023-4] 提供 klb_wnd_push_child 函数, 许可在扩展控件开发中 自行构建窗口树
 ///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发者替换绘图函数
 ///   \n [2024-1] 添加 klb_wnd_draw_opt* 系列函数, 许可控件开发者 扩展基础绘图函数
+///   \n [2024-4] 添加 KLB_WND_STYLE_FOCUS_DELAY 聚焦延时样式
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
 #define __KLB_WND_H__
@@ -50,6 +51,7 @@ typedef enum klb_wnd_style_e_
     KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
     KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘
     KLB_WND_STYLE_FOCUS_CONTINUE        = 0x0020,   ///< 继续寻找焦点窗口
+    KLB_WND_STYLE_FOCUS_DELAY           = 0x0040,   ///< 支持聚焦之后, 延时消息
 
     KLB_WND_STYLE_LAYER_TIP             = 0x8000,   ///< TIP 图层
 }klb_wnd_style_e;

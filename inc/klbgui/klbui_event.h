@@ -233,6 +233,12 @@ typedef enum klbui_mousedrag_lparam_e_
 #define KLBUI_blur              0x703           // blur
 
 
+/// @def   KLBUI_focusdelay
+/// @brief 聚焦延时触发事件: 窗口组件获得焦点, 且延时一段时间后触发
+/// @note eg. 聚焦一段时间后, 再弹出二级菜单
+#define KLBUI_focusdelay        0x710           // focusdelay
+
+
 ///////////////////////////////////////
 // 
 

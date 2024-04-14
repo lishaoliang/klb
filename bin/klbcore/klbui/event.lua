@@ -143,6 +143,12 @@ event.focusout = 0x702		-- focusout
 event.blur = 0x703			-- blur
 
 
+-- @def   KLBUI_focusdelay
+-- @brief 聚焦延时触发事件: 窗口组件获得焦点, 且延时一段时间后触发
+-- @note eg. 聚焦一段时间后, 再弹出二级菜单
+event.focusdelay = 0x710	-- focusdelay
+
+
 --------------------------------
 -- @def   KLBUI_event_ctrl
 -- @brief 控件自定义事件起始
@@ -232,6 +238,8 @@ local transform_map = {
 	['blur'] = event.blur,				-- 失去聚焦事件: 窗口组件失去焦点时触发
 	[event.blur] = 'blur',
 	
+	['focusdelay'] = event.focusdelay,	-- 聚焦延时触发事件: 窗口组件获得焦点, 且延时一段时间后触发
+	[event.focusdelay] = 'focusdelay',	-- 聚焦延时触发事件: 窗口组件获得焦点, 且延时一段时间后触发
 	
 	--------------------------------
 	-- 控件自定义事件起始

@@ -312,6 +312,13 @@ klbui.suggesth = function (path)
 end
 
 
+-- @brief 标记所有窗口需要刷新
+-- @return 无
+klbui.refresh = function ()
+	kgui.refresh()
+end
+
+
 ------------------------------------------------
 -- W, H
 

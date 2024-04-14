@@ -79,7 +79,7 @@ static int klbuiex_shwnd_control(void* ptr, klb_gui_t* p_gui, int msg, uint8_t* 
         break;
 
     case KLBUI_EX_MSG_clear:
-        klbuiex_shwnd_clear(p_shwnd);
+        //klbuiex_shwnd_clear(p_shwnd);
         break;
 
     default:
@@ -157,6 +157,7 @@ int klbuiex_register_shwnd(klb_gui_t* p_gui)
 
     ex.cb_create = klbuiex_shwnd_create;
     ex.cb_destroy = klbuiex_shwnd_destroy;
+    ex.cb_control = klbuiex_shwnd_control;
     ex.cb_loop_once = NULL;
 
     klb_gui_register_extension(p_gui, KLBUIEX_SHWND, &ex);

@@ -268,7 +268,7 @@ KLB_API int klb_gui_bind_command(klb_gui_t* p_gui, const char* p_path_name, klb_
 /// @param [in] *p_path_name    窗口路径(类unix文件路径): eg."/home/btn1"
 /// @param [in] msg             事件
 /// @return int 0.成功; -1.终止
-KLB_API int klb_gui_on_control_and_command(klb_gui_t* p_gui, const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+KLB_API int klb_gui_call_control_and_command(klb_gui_t* p_gui, const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 向控件(窗口)设置数据: 样式\显示\状态等等
@@ -354,6 +354,21 @@ KLB_API klb_wnd_t* klb_gui_get_focus(klb_gui_t* p_gui);
 /// @return klb_wnd_t* 聚焦窗口的 顶层窗口指针
 /// @note 可能为 NULL
 KLB_API klb_wnd_t* klb_gui_get_focus_top(klb_gui_t* p_gui);
+
+
+/// @brief 设置聚焦延时时间
+/// @param [in]  *p_gui         GUI对象
+/// @param [in]  timeout        延时时间(单位毫秒ms, 默认600); 范围[0, ~]
+/// @return 无
+/// @note 可能为 NULL
+KLB_API void klb_gui_set_focusdelay(klb_gui_t* p_gui, int64_t timeout);
+
+
+/// @brief 标记所有窗口需要刷新
+/// @param [in]  *p_gui         GUI对象
+/// @note 仅标记, 由框架决定合适的刷新时机
+///     "update"在这里表示页面需要刷新
+KLB_API void klb_gui_update(klb_gui_t* p_gui);
 
 
 #ifdef __cplusplus

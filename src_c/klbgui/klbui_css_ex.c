@@ -915,7 +915,9 @@ static void klbuicssex_draw_text_internal(klb_wnd_t* p_wnd, const char* p_txt, i
 
         if (need_w < text_rect.w)
         {
-            text_rect.x += (text_rect.w - need_w) / 2;
+            int offset = (text_rect.w - need_w) / 2;
+            text_rect.x += offset;
+            text_rect.w -= offset;
         }
     }
     else if (KLBUICSS_text1_right == p_css_text->align)
@@ -926,7 +928,9 @@ static void klbuicssex_draw_text_internal(klb_wnd_t* p_wnd, const char* p_txt, i
 
         if (need_w < text_rect.w)
         {
-            text_rect.x += (text_rect.w - need_w);
+            int offset = (text_rect.w - need_w);
+            text_rect.x += offset;
+            text_rect.w -= offset;
         }
     }
     else
