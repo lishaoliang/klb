@@ -935,7 +935,7 @@ int klua_open_kgui(lua_State* L)
         { "suggesth",           klua_kgui_suggesth },           // 窗口建议高度
 
         // 聚焦延时
-        { "focusdelay",         klua_kgui_focusdelay },          // 设置聚焦延时时间(单位毫秒)
+        { "focusdelay",         klua_kgui_focusdelay },          // 设置聚焦延时消息时间(单位毫秒)
 
         // 刷新
         { "refresh",            klua_kgui_refresh },           // 刷新所有窗口

@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  printex.lua
--- @brief print extented
+-- @file   printex.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  print extented
 --]]
 local cjson = require("cjson.safe")
 

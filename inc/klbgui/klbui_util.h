@@ -2,6 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_util.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   其他和UI有相关性的定义或函数
 /// @version 0.1
 /// @history 修改历史

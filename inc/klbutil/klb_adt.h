@@ -58,7 +58,7 @@ typedef struct klb_adt_t_
 }klb_adt_t;
 
 
-KLB_API void klb_adt_int(klb_adt_t* p_adt);
+KLB_API void klb_adt_init(klb_adt_t* p_adt);
 KLB_API void klb_adt_quit(klb_adt_t* p_adt);
 
 KLB_API klb_adt_t* klb_adt_create();

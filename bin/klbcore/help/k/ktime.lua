@@ -2,6 +2,7 @@
 -- Copyright(c) 2021, LGPL v3 All Rights Reserved
 --
 -- @file    ktime.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  	C ktime
 --   \n require("ktime")
 --   \n C导出文件: ./klb/src_c/klua/klua_platform/klua_ktime.c

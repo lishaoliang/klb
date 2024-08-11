@@ -2,6 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_event.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   klb ui event 事件
 ///        1. UI消息/事件只是名称上的叫法, 在UI里面描述的是同一个
 ///        2. 事件名称定义参考 H5

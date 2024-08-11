@@ -174,7 +174,7 @@ static void klbshw_decimal_popup_end(klb_wnd_t* p_wnd, klbshw_decimal_t* p_dec, 
     }
 
     // 结束弹出
-    klb_gui_popup_end(p_wnd->p_gui, true);
+    klb_gui_popup_end(p_wnd->p_gui, false);
 }
 
 // 追加

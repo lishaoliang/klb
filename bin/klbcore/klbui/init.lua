@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  init.lua
--- @brief klbui init.lua
+-- @file   init.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  klbui init.lua
 -- @note 参考 html5 标准: https://www.w3school.com.cn/html/html5_intro.asp
 --     参考: https://www.runoob.com/html/html5-form-input-types.html
 --     参考: https://www.w3school.com.cn/jquery/index.asp
@@ -309,6 +310,15 @@ end
 -- @return [number(int)] 	高度
 klbui.suggesth = function (path)
 	return kgui.suggesth(path)
+end
+
+
+-- @brief 设置 聚焦延时消息 的时间(单位毫秒ms, 默认600, 范围[0, ~])
+-- @return 无
+-- @note 指鼠标聚焦一段时间后, 配合控件样式(KLB_WND_STYLE_FOCUS_DELAY), 会产生一个 focusdelay(KLBUI_focusdelay = 0x710)事件
+-- 		同时影响 tip 弹出的时间
+klbui.focusdelay = function (tc)
+	kgui.focusdelay(tc)
 end
 
 

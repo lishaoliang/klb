@@ -4,7 +4,7 @@
 #include <assert.h>
 
 
-void klb_adt_int(klb_adt_t* p_adt)
+void klb_adt_init(klb_adt_t* p_adt)
 {
     KLB_MEMSET(p_adt, 0, sizeof(klb_adt_t));
     p_adt->type = KLB_ADT_null;
@@ -43,7 +43,7 @@ void klb_adt_quit(klb_adt_t* p_adt)
 klb_adt_t* klb_adt_create()
 {
     klb_adt_t* p_adt = KLB_MALLOC(klb_adt_t, 1, 0);
-    klb_adt_int(p_adt);
+    klb_adt_init(p_adt);
 
     return p_adt;
 }

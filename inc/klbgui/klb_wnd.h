@@ -2,6 +2,7 @@
 //  Copyright(c) 2020, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_wnd.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   窗口定义
 /// @version 0.1
 /// @history 修改历史
@@ -367,16 +368,30 @@ KLB_API int klb_wnd_bind_paint(klb_wnd_t* p_wnd, klb_wnd_on_paint_cb on_paint);
 //////////////////////////////////////////////////////////////////////////
 // 调用函数
 
+/// @brief 调用on_control函数
+KLB_API int klb_wnd_call_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+/// @brief 调用on_command函数
+KLB_API int klb_wnd_call_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
+
+/// @brief 1.调用on_control函数; 2.调用on_command函数
+KLB_API int klb_wnd_call_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+
 
 /// @brief 调用on_control函数
+/// @note 替代函数: klb_wnd_call_control
 KLB_API int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 调用on_command函数
+/// @note 替代函数: klb_wnd_call_command
 KLB_API int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 1.调用on_control函数; 2.调用on_command函数
+/// @note 替代函数: klb_wnd_call_control_and_command
 KLB_API int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 

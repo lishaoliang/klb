@@ -2,6 +2,7 @@
 //  Copyright(c) 2020, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_gui.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   GUI接口定义
 ///   默认配色采用 visual studio 深色系风格
 ///   图标来源于1: http://iconpark.oceanengine.com/official
@@ -10,6 +11,7 @@
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 ///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
+///   \n [2024-4] 添加 klb_gui_canvas_ioctrl_opt8 接口, 许可 开发者 在上层透过GUI框架, 直接对主画布进行交互操作
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
@@ -89,6 +91,16 @@ KLB_API void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas);
 KLB_API klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui);
 
 
+/// @brief 扩展交互函数; GUI框架仅做透明调用
+/// @param [in] *p_gui          GUI对象
+/// @param [in] opt             操作代码
+/// @param [in, out] *ptrN      参数1 ~ 参数8
+/// @return int 错误码; (-1.未设置主画布)
+/// @note 本函数 许可 开发者 在上层透过GUI框架, 直接对主画布进行交互操作
+///       具体消息, 参数格式等 由 开发者 自行定义, 最多8个参数
+KLB_API int klb_gui_canvas_ioctrl_opt8(klb_gui_t* p_gui, int opt, void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, void* ptr6, void* ptr7, void* ptr8);
+
+
 /// @brief 向GUI中放入消息
 /// @param [in] *p_gui          GUI对象
 /// @param [in] msg             消息/事件: eg. KLBUI_click
@@ -147,6 +159,11 @@ KLB_API int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w
 /// @return int 0.成功; 非0.失败(错误码)
 /// @note 前父窗口必须存在; eg. "/home/btn1" 则需要 "/home" 必须存在, 才能添加
 KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
+
+
+/// @brief 依路径查找窗口
+/// @return klb_wnd_t* 窗口指针
+KLB_API klb_wnd_t* klb_gui_find_wnd(klb_gui_t* p_gui, const char* p_path_name);
 
 
 /// @brief 移除窗口

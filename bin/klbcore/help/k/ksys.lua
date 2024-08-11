@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   ksys.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C ksys
 --   \n require("ksys")
 --   \n C导出文件: ./klb/src_c/klua/klua_util/klua_ksys.c

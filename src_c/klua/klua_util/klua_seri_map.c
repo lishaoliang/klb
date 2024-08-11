@@ -138,6 +138,11 @@ static klb_adt_t* luaseri_map_pack_one_object(lua_State* L, int idx, int depth)
         }
         break;
     case LUA_TLIGHTUSERDATA:
+        {
+            const void* ptr = lua_topointer(L, idx);
+            klb_adt_set_ptr(p_adt, ptr, NULL);
+        }
+        break;
     case LUA_TUSERDATA:
     case LUA_TFUNCTION:
     case LUA_TTHREAD:
@@ -245,7 +250,7 @@ static void luaseri_map_unpack_one(lua_State *L, klb_adt_t* p_adt)
         }
         break;
     case KLB_ADT_ptr:
-        lua_pushnil(L);
+        lua_pushlightuserdata(L, klb_adt_to_ptr(p_adt, NULL));
         break;
     default:
         lua_pushnil(L);

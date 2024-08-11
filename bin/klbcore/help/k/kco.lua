@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   kco.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C kco
 --   \n require("kco")
 --   \n C导出文件: ./klb/src_c/klua/klua_base/klua_kcoro.c

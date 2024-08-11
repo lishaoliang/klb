@@ -2,6 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_css_ex.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   UI组件 CSS属性操作帮助函数
 ///   参考 CSS3 : https://www.w3school.com.cn/css/index.asp
 /// @version 0.1

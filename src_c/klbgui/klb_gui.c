@@ -265,6 +265,18 @@ klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui)
     return p_gui->p_canvas;
 }
 
+int klb_gui_canvas_ioctrl_opt8(klb_gui_t* p_gui, int opt, void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, void* ptr6, void* ptr7, void* ptr8)
+{
+    assert(NULL != p_gui);
+
+    if (p_gui && p_gui->p_canvas && p_gui->p_canvas->vtable.ioctrl_opt8)
+    {
+        return p_gui->p_canvas->vtable.ioctrl_opt8(p_gui->p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, ptr7, ptr8);
+    }
+
+    return -1;
+}
+
 void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
 {
     klb_msg_t* p_msg = KLB_MALLOC(klb_msg_t, 1, 0);
@@ -336,6 +348,11 @@ int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w, int* p
 int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style)
 {
     return klbuiex_wndhash_append(p_gui->p_wndhash, p_type, p_path_name, x, y, w, h, style);
+}
+
+klb_wnd_t* klb_gui_find_wnd(klb_gui_t* p_gui, const char* p_path_name)
+{
+    return klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 }
 
 int klb_gui_remove(klb_gui_t* p_gui, const char* p_path_name)

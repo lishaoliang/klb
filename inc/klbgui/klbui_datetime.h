@@ -2,6 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_datetime.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   日期时间等相关定义
 /// @version 0.1
 /// @history 修改历史

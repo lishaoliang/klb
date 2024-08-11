@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
--- @brief   GUI接口
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  GUI接口
 -- @version 0.1
 --]]
 

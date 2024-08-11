@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  parser.lua
--- @brief 解析器
+-- @file   parser.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  解析器
 --   按一定规则将lua table解析成对话框
 --   [2023-4] parse解析时, 加入随机唯一路径机制, 使用者可以省略['path']参数
 -- @note 关键字等含义 参考 html5 标准: https://www.w3school.com.cn/html/html5_intro.asp

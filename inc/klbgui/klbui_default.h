@@ -2,6 +2,7 @@
 //  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_default.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   gui部分的默认值
 /// @version 0.1
 /// @history 修改历史

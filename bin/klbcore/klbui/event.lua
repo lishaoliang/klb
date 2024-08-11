@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  event.lua
--- @brief klb gui event定义
+-- @file   event.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  klb gui event定义
 --   \n C定义文件: ./klb/inc/klbgui/klbui_event.h
 -- @note 
 --]]

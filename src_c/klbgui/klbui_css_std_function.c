@@ -98,88 +98,68 @@ static void on_klbguicssmapstd_suggesth(klb_wnd_t* p_wnd, void* ptr, int method,
     }
 }
 
-// 样式: (在消息冒泡中)读取消息事件: KLB_WND_STYLE_PEEK_EVENT
-static void on_klbguicssmapstd_style_peek_event(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+// 样式: 单个样式, eg. KLB_WND_STYLE_PEEK_EVENT
+static void on_klbguicssmapstd_style_std(uint32_t dst_style, klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     if (KLBUI_CSSEX_get == method)
     {
         uint32_t style = klb_wnd_get_style(p_wnd);
 
-        klb_map_set_idx_bool(p_out, 0, (KLB_WND_STYLE_PEEK_EVENT & style) ? true : false);
+        klb_map_set_idx_bool(p_out, 0, (dst_style & style) ? true : false);
     }
-    else if(KLBUI_CSSEX_set == method)
+    else if (KLBUI_CSSEX_set == method)
     {
         int start = 1;
-        bool peek_event = klb_map_idx_to_bool(p_in, start);
+        bool has = klb_map_idx_to_bool(p_in, start);
 
         uint32_t style = klb_wnd_get_style(p_wnd);
-        if (peek_event)
+        if (has)
         {
-            style |= KLB_WND_STYLE_PEEK_EVENT;
+            style |= dst_style;
         }
         else
         {
-            style &= ~(uint32_t)(KLB_WND_STYLE_PEEK_EVENT);
+            style &= ~(uint32_t)(dst_style);
         }
 
         klb_wnd_set_style(p_wnd, style);
     }
+}
+
+// 样式: (在消息冒泡中)读取消息事件: KLB_WND_STYLE_PEEK_EVENT
+static void on_klbguicssmapstd_style_peek_event(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    on_klbguicssmapstd_style_std(KLB_WND_STYLE_PEEK_EVENT, p_wnd, ptr, method, p_in, p_out);
 }
 
 // 样式: 设置 无聚焦状态 样式: KLB_WND_STYLE_NOFOCUS
 static void on_klbguicssmapstd_style_nofocus(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    if (KLBUI_CSSEX_get == method)
-    {
-        uint32_t style = klb_wnd_get_style(p_wnd);
+    on_klbguicssmapstd_style_std(KLB_WND_STYLE_NOFOCUS, p_wnd, ptr, method, p_in, p_out);
+}
 
-        klb_map_set_idx_bool(p_out, 0, (KLB_WND_STYLE_NOFOCUS & style) ? true : false);
-    }
-    else if (KLBUI_CSSEX_set == method)
-    {
-        int start = 1;
-        bool peek_event = klb_map_idx_to_bool(p_in, start);
-
-        uint32_t style = klb_wnd_get_style(p_wnd);
-        if (peek_event)
-        {
-            style |= KLB_WND_STYLE_NOFOCUS;
-        }
-        else
-        {
-            style &= ~(uint32_t)(KLB_WND_STYLE_NOFOCUS);
-        }
-
-        klb_wnd_set_style(p_wnd, style);
-    }
+// 样式: 设置 无on_command命令响应样式: KLB_WND_STYLE_NOCOMMAND
+static void on_klbguicssmapstd_style_nocommand(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    on_klbguicssmapstd_style_std(KLB_WND_STYLE_NOCOMMAND, p_wnd, ptr, method, p_in, p_out);
 }
 
 // 样式: 设置 聚焦时不重绘: KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW
 static void on_klbguicssmapstd_style_focus_without_redraw(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    if (KLBUI_CSSEX_get == method)
-    {
-        uint32_t style = klb_wnd_get_style(p_wnd);
+    on_klbguicssmapstd_style_std(KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW, p_wnd, ptr, method, p_in, p_out);
+}
 
-        klb_map_set_idx_bool(p_out, 0, (KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW & style) ? true : false);
-    }
-    else if (KLBUI_CSSEX_set == method)
-    {
-        int start = 1;
-        bool peek_event = klb_map_idx_to_bool(p_in, start);
+// 样式: 设置 继续寻找焦点窗口 样式 : KLB_WND_STYLE_FOCUS_CONTINUE
+static void on_klbguicssmapstd_style_focus_continue(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    on_klbguicssmapstd_style_std(KLB_WND_STYLE_FOCUS_CONTINUE, p_wnd, ptr, method, p_in, p_out);
+}
 
-        uint32_t style = klb_wnd_get_style(p_wnd);
-        if (peek_event)
-        {
-            style |= KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW;
-        }
-        else
-        {
-            style &= ~(uint32_t)(KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW);
-        }
-
-        klb_wnd_set_style(p_wnd, style);
-    }
+// 样式: 设置 支持聚焦之后, 延时消息 样式: KLB_WND_STYLE_FOCUS_DELAY
+static void on_klbguicssmapstd_style_focus_delay(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    on_klbguicssmapstd_style_std(KLB_WND_STYLE_FOCUS_DELAY, p_wnd, ptr, method, p_in, p_out);
 }
 
 // 显示
@@ -374,7 +354,10 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     // 样式 style
     KLBGUI_cssmapstd_bind("style-peek-event", on_klbguicssmapstd_style_peek_event);                         // (在消息冒泡中)读取消息事件: KLB_WND_STYLE_PEEK_EVENT
     KLBGUI_cssmapstd_bind("style-nofocus", on_klbguicssmapstd_style_nofocus);                               // 设置 无聚焦状态 样式: KLB_WND_STYLE_NOFOCUS
+    KLBGUI_cssmapstd_bind("style-nocommand", on_klbguicssmapstd_style_nocommand);                           // 设置 无on_command命令响应样式: KLB_WND_STYLE_NOCOMMAND
     KLBGUI_cssmapstd_bind("style-focus-without-redraw", on_klbguicssmapstd_style_focus_without_redraw);     // 设置 聚焦时不重绘: KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW
+    KLBGUI_cssmapstd_bind("style-focus-continue", on_klbguicssmapstd_style_focus_continue);                 // 设置 继续寻找焦点窗口 样式: KLB_WND_STYLE_FOCUS_CONTINUE
+    KLBGUI_cssmapstd_bind("style-focus-delay", on_klbguicssmapstd_style_focus_delay);                       // 设置 支持聚焦之后, 延时消息 样式: KLB_WND_STYLE_FOCUS_DELAY
 
 
     // 状态 status

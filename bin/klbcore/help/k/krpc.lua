@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   krpc.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C krpc, Remote Procedure Call Protocol
 --   \n require("klpc")
 --   \n C导出文件: ./klb/src_c/klua/klua_net/klua_krpc.c

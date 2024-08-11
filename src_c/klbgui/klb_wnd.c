@@ -549,7 +549,7 @@ static bool is_control_dispatch_message_klb_wnd(klb_wnd_t* p_wnd, int msg)
 }
 
 /// @brief 调用on_control函数
-int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+int klb_wnd_call_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     if (NULL != p_wnd && p_wnd->vtable.on_control && is_control_dispatch_message_klb_wnd(p_wnd, msg))
     {
@@ -565,7 +565,7 @@ int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, cons
 }
 
 /// @brief 调用on_command函数
-int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+int klb_wnd_call_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     if (NULL != p_wnd && 
         NULL != p_wnd->vtable.on_command && 
@@ -583,7 +583,7 @@ int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, cons
     return 0;
 }
 
-int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+int klb_wnd_call_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
     int ret = 0;
 
@@ -609,6 +609,24 @@ int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t*
     }
 
     return ret;
+}
+
+/// @brief 调用on_control函数
+int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    return klb_wnd_call_control(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+}
+
+/// @brief 调用on_command函数
+int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    return klb_wnd_call_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+}
+
+/// @brief 1.调用on_control函数; 2.调用on_command函数
+int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    return klb_wnd_call_control_and_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
 }
 
 /// @brief 获取建议宽

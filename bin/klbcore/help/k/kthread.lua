@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   kthread.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C kthread
 --   \n require("kthread")
 --   \n C导出文件: ./klb/src_c/klua/klua_multithread/klua_kthread.c

@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file  klpcex.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief klpc extented
 --]]
 local klpc = require("klpc")

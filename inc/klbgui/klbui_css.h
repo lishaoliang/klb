@@ -2,6 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_css.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   GUI CSS相关定义
 ///   参考 CSS3 : https://www.w3school.com.cn/css/index.asp
 ///   命名规则,含义,用法等尽可能参考 CSS3

@@ -644,7 +644,7 @@ CMap::CMap(klb_map_t* p_map, bool share)
 
     m_map.p_hlist = p_map->p_hlist;
     m_map.p_nvector = p_map->p_nvector;
-    klb_adt_int(&m_none_adt);
+    klb_adt_init(&m_none_adt);
 }
 
 CMap::CMap(klb_map_t* p_map)
@@ -661,7 +661,7 @@ CMap::CMap(klb_map_t* p_map)
         m_map.p_hlist = p_map->p_hlist;
         m_map.p_nvector = p_map->p_nvector;
 
-        klb_adt_int(&m_none_adt);
+        klb_adt_init(&m_none_adt);
 
         KLB_FREE(p_map);
     }
@@ -688,7 +688,7 @@ void CMap::InitKlbMap()
 {
     memset(&m_map, 0, sizeof(m_map));
     klb_map_init(&m_map);
-    klb_adt_int(&m_none_adt);
+    klb_adt_init(&m_none_adt);
 }
 
 void CMap::QuitKlbMap()
@@ -723,7 +723,7 @@ void CMap::Attach(klb_map_t* p_map)
         m_map.p_hlist = p_map->p_hlist;
         m_map.p_nvector = p_map->p_nvector;
 
-        klb_adt_int(&m_none_adt);
+        klb_adt_init(&m_none_adt);
 
         KLB_FREE(p_map);
     }

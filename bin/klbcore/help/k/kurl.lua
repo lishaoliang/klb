@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, LGPL All Rights Reserved
 -- @file   kurl.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C kurl
 --   \n require("kurl")
 --   \n C导出文件: ./klb/src_c/klua/klua_net/klua_kurl.c

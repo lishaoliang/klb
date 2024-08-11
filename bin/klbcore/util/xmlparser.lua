@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  xmlparser.lua
--- @brief xml parser
+-- @file   xmlparser.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  xml parser
 --   受限转换
 --   转换规则参考: http://web.chacuo.net/charsetjson2xml
 --   规则:

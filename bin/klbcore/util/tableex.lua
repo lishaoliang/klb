@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  tableex.lua
--- @brief table extented
+-- @file   tableex.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  table extented
 --]]
 local string = require("string")
 

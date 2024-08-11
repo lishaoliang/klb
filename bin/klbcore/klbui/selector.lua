@@ -1,7 +1,8 @@
 ﻿--[[
 -- Copyright (c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file  selector.lua
--- @brief 选择器
+-- @file   selector.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  选择器
 -- @note 参考 jQuery-选择器
 ---   https://www.w3school.com.cn/jquery/jquery_ref_selectors.asp
 --]]

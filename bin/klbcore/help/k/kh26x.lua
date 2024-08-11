@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file   kh26x.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C kh26x, 读取h26x文件: h264/h265
 --   \n require("kh26x")
 --   \n C导出文件: ./klb/src_c/klua/klua_format/klua_kh26x.c

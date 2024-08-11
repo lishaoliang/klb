@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file   kmcache.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C kmcache, memory cache
 --   \n require("kmcache")
 --   \n C导出文件: ./klb/src_c/klua/klua_multithread/klua_kmcache.c

@@ -1,6 +1,7 @@
 ﻿--[[
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @file   kos.lua
+-- @author 随风(https://gitee.com/klua/klb)
 -- @brief  C kos
 --   \n require("kos")
 --   \n C导出文件: ./klb/src_c/klua/klua_platform/klua_kos.c
