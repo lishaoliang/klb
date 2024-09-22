@@ -1518,8 +1518,9 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             p_wnd = p_gui->p_msg_box;
 
+            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"mousedown"来判定
             // 判定是否在messagebox窗口之外点击
-            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mousedown == p_msg->msg)
+            if (KLBUI_mousedown == p_msg->msg)
             {
                 if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
                 {
@@ -1531,8 +1532,9 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             p_wnd = p_gui->p_popup_wnd[p_gui->popup_num - 1];
 
+            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"mousedown"来判定
             // 判定是否在popup窗口之外点击
-            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg || KLBUI_mousedown == p_msg->msg)
+            if (KLBUI_mousedown == p_msg->msg)
             {
                 if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
                 {

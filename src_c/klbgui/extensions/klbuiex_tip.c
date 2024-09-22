@@ -148,8 +148,9 @@ void klbuiex_tip_set_tilte(klbuiex_tip_t* p_ex, const char* p_title, int* p_out_
     // 设置标题
     klbshw_tip_set_title(p_wnd, p_title);
 
+    // Bug. 尽可能使用 tip 画布提供的 宽高
     // 重新布局
-    klbshw_tip_layout(p_wnd, KLBUIEX_TIP_WIDTH_max, KLBUIEX_TIP_HEIGHT_max, p_out_w, p_out_h);
+    klbshw_tip_layout(p_wnd, p_ex->p_canvas->rect.w, p_ex->p_canvas->rect.h, p_out_w, p_out_h);
 }
 
 void klbuiex_tip_show(klbuiex_tip_t* p_ex, bool show, int x, int y)
