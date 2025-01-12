@@ -77,9 +77,10 @@ static klb_map_t* klb_cwnd_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
 ///////////////////////////////////////////
 // init / quit
 
-static void klb_cwnd_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h)
+static void klb_cwnd_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h, CWnd* p_cwnd)
 {
-    klb_cwnd_t* p_cwnd = (klb_cwnd_t*)p_wnd->ctrl;
+    klb_cwnd_t* ptr = (klb_cwnd_t*)p_wnd->ctrl;
+    ptr->p_cwnd = p_cwnd;
 
     p_wnd->pos.rect_in_parent.x = x;
     p_wnd->pos.rect_in_parent.y = y;
@@ -104,16 +105,18 @@ static void klb_cwnd_quit(klb_wnd_t* p_wnd)
     klb_cwnd_t* p_cwnd = (klb_cwnd_t*)p_wnd->ctrl;
 
     p_cwnd->p_cwnd->OnDelete();
+
+    //delete p_cwnd->p_cwnd;
 }
 
 //////////////////////////////////////
 // create
 
-static klb_wnd_t* klb_cwnd_create(klb_gui_t* p_gui, int x, int y, int w, int h)
+static klb_wnd_t* klb_cwnd_create(klb_gui_t* p_gui, int x, int y, int w, int h, CWnd* p_cwnd)
 {
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klb_cwnd_t));
 
-    klb_cwnd_init(p_wnd, p_gui, x, y, w, h);
+    klb_cwnd_init(p_wnd, p_gui, x, y, w, h, p_cwnd);
 
     return p_wnd;
 }
@@ -125,18 +128,18 @@ CWnd::CWnd()
 {
     m_tid = 0;
     m_gui = NULL;
-    m_func_map = NULL;
+    m_css_func_map = NULL;
 
-    m_wnd = klb_cwnd_create(NULL, 0, 0, 0, 0);
+    m_wnd = klb_cwnd_create(NULL, 0, 0, 0, 0, this);
 }
 
 CWnd::CWnd(CGui* p_gui, int x, int y, int w, int h)
 {
     m_tid = 0;
     m_gui = NULL;
-    m_func_map = NULL;
+    m_css_func_map = NULL;
 
-    m_wnd = klb_cwnd_create(NULL, 0, 0, 0, 0);
+    m_wnd = klb_cwnd_create(NULL, 0, 0, 0, 0, this);
 
     Init(p_gui, x, y, w, h);
 }
@@ -147,7 +150,7 @@ CWnd::~CWnd()
     m_tid = 0;
 
     m_gui = NULL;
-    m_func_map = NULL;
+    m_css_func_map = NULL;
 
     m_wnd = NULL;
 }
@@ -167,7 +170,7 @@ void CWnd::Init(CGui* p_gui, int x, int y, int w, int h)
 
     m_gui = p_gui;
 
-    klb_cwnd_init(m_wnd, p_gui->GetGui(), x, y, w, h);
+    klb_cwnd_init(m_wnd, p_gui->GetGui(), x, y, w, h, this);
 }
 
 void CWnd::SetType(const std::string& type)
@@ -175,7 +178,7 @@ void CWnd::SetType(const std::string& type)
     m_type = type;
 }
 
-const std::string& CWnd::GetType()
+const klb::CString& CWnd::GetType()
 {
     return m_type;
 }
@@ -201,6 +204,26 @@ CCss* CWnd::GetCss()
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+CWnd* CWnd::ToCWnd(klb_wnd_t* p_wnd)
+{
+    klb_cwnd_t* p_cwnd = (klb_cwnd_t*)p_wnd;
+
+    return p_cwnd->p_cwnd;
+}
+
+void* CWnd::GetUserData(klb_wnd_t* p_wnd)
+{
+    return p_wnd->p_udata;
+}
+
+CWnd* CWnd::GetUserDataCWnd(klb_wnd_t* p_wnd)
+{
+    klb_cwnd_t* p_cwnd = (klb_cwnd_t*)p_wnd->p_udata;
+    return p_cwnd->p_cwnd;
+}
+
+//////////////////////////////////////////////////////////////////////////
 // 定义于 "klbgui/klb_wnd.h" 的导出函数
 
 
@@ -212,10 +235,14 @@ klb_gui_t* CWnd::GetGui()
     return m_gui->GetGui();
 }
 
-bool CWnd::GetGui(CGui** p_gui)
+void CWnd::GetGui(CGui** p_gui)
 {
     *p_gui = m_gui;
-    return true;
+}
+
+CGui* CWnd::GetCGui()
+{
+    return m_gui;
 }
 
 klb_canvas_t* CWnd::GetCanvas()
@@ -371,6 +398,12 @@ int CWnd::BindCommand(klb_wnd_on_command_cb on_command, void* p_obj)
     return klb_wnd_bind_command(m_wnd, on_command, p_obj);
 }
 
+int CWnd::BindCommand(klb_cwnd_on_command_cb on_command, void* p_obj)
+{
+    m_cb_on_command = on_command;
+
+    return klb_wnd_bind_command(m_wnd, CWnd::on_command_klb_cwnd, p_obj);
+}
 
 ////////////////////////////////////
 // 调用函数
@@ -435,6 +468,18 @@ klb_map_t* CWnd::Get(const klb_map_t* p_map)
 
 ////////////////////////////////////
 // 绘图
+
+// 获取画布区域
+klb_rect_t* CWnd::GetCanvasRect()
+{
+    return &m_wnd->pos.rect_in_canvas;
+}
+
+// 获取父窗口区域
+klb_rect_t* CWnd::GetParentRect()
+{
+    return &m_wnd->pos.rect_in_parent;
+}
 
 /// @brief 基础绘图接口
 int CWnd::SetDrawColor(uint32_t color)
@@ -654,7 +699,7 @@ int CWnd::DrawOpt8(int opt, const void* ptr1, const void* ptr2, const void* ptr3
 
 void CWnd::OnDelete()
 {
-    delete this;
+
 }
 
 int CWnd::OnPaint()
@@ -674,14 +719,16 @@ int CWnd::OnCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2,
 
 
 int CWnd::OnSet(const klb_map_t* p_map)
-{
+{   
     const char* p_key = klb_map_idx_to_string(p_map, 0);
 
-    klb_cwnd_cb func = (NULL != m_func_map) ? (klb_cwnd_cb)klb_map_to_ptr(m_func_map, p_key, NULL) : NULL;
+    klb_cwnd_css_cb func = (NULL != m_css_func_map) ? (klb_cwnd_css_cb)klb_map_to_ptr(m_css_func_map, p_key, NULL) : NULL;
 
     if (func)
     {
-        func(this, KLBUI_CSSEX_set, p_map, NULL);
+        klb::CMap in((klb_map_t*)p_map, true);
+
+        func(this, KLBUI_CSSEX_set, &in, NULL);
     }
 
     return 0;
@@ -690,13 +737,15 @@ int CWnd::OnSet(const klb_map_t* p_map)
 klb_map_t* CWnd::OnGet(const klb_map_t* p_map)
 {
     klb_map_t* p_out = klb_map_create();
-
     const char* p_key = klb_map_idx_to_string(p_map, 0);
-    klb_cwnd_cb func = (NULL != m_func_map) ? (klb_cwnd_cb)klb_map_to_ptr(m_func_map, p_key, NULL) : NULL;
+    klb_cwnd_css_cb func = (NULL != m_css_func_map) ? (klb_cwnd_css_cb)klb_map_to_ptr(m_css_func_map, p_key, NULL) : NULL;
 
     if (NULL != func)
     {
-        func(this, KLBUI_CSSEX_get, p_map, p_out);
+        klb::CMap in((klb_map_t*)p_map, true);
+        klb::CMap out(p_out, true);
+
+        func(this, KLBUI_CSSEX_get, &in, &out);
     }
 
     return p_out;
@@ -705,44 +754,79 @@ klb_map_t* CWnd::OnGet(const klb_map_t* p_map)
 //////////////////////////////////////////////////////////////////////////
 // 
 
-void CWnd::BindFunction(const std::string& str, klb_cwnd_cb cb_func)
+void CWnd::OnCssColor(CWnd* p_cwnd, int method, const klb::CMap* p_in, klb::CMap* p_out)
 {
-    klb_map_t* p_func_map = GetFuncMap();
-    if (p_func_map)
+    CCss* p_css = p_cwnd->GetCss();
+
+    CGui* p_gui = NULL;
+    p_cwnd->GetGui(&p_gui);
+
+    if (KLBUI_CSSEX_get == method)
     {
-        klb_map_set_ptr(p_func_map, str.c_str(), (void*)(cb_func), NULL);
+        (*p_out)[0] = (int64_t)p_css->GetColor();
     }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        uint32_t color = 0;
+
+        if (p_gui->CheckColor(p_in, start, &color))
+        {
+            p_css->SetColor(color);
+            p_cwnd->Update();
+        }
+    }
+}
+
+void CWnd::BindCssFunction(const std::string& str, klb_cwnd_css_cb cb_func)
+{
+    klb_map_t* p_css_func_map = GetCssFunctionMap();
+    if (p_css_func_map)
+    {
+        klb_map_set_ptr(p_css_func_map, str.c_str(), (void*)(cb_func), NULL);
+    }
+}
+
+bool CWnd::InitCssFunctionMap(const std::string& type)
+{
+    klb_map_t* ptr = m_gui->CssMap(type);
+    if (NULL != ptr)
+    {
+        m_css_func_map = ptr;
+        return false; // 有解析 map, 则直接使用; 不是第一次
+    }
+
+    // 未找到, 则新添加 解析map, 及处理函数
+    ptr = m_gui->NewCssMap(type);
+    m_css_func_map = ptr;
+
+
+    // 标准 CSS 方法
+    BindCssFunction("color", CWnd::OnCssColor);
+
+    return true; // 是第一次
 }
 
 //////////////////////////////////////////////////////////////////////////
 // 私有函数
 
-klb_map_t* CWnd::GetFuncMap()
+klb_map_t* CWnd::GetCssFunctionMap()
 {
-    if (NULL != m_func_map)
+    return m_css_func_map;
+}
+
+int CWnd::on_command_klb_cwnd(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
+{
+    CWnd* p_this = CWnd::ToCWnd(p_wnd);
+
+    klb_cwnd_on_command_cb cb = p_this->m_cb_on_command;
+
+    if (NULL != cb)
     {
-        return m_func_map;
+        return cb(p_this, msg, p_pt1, p_pt2, lparam, wparam);
     }
 
-    if (m_type.length() <= 0)
-    {
-        return NULL;
-    }
-
-    klb_gui_t* p_gui = GetGui();
-
-    klb_map_t* ptr = klb_gui_css_map(p_gui, m_type.c_str());
-    if (NULL != ptr)
-    {
-        m_func_map = ptr;
-        return m_func_map;
-    }
-
-    // 未找到, 则新添加 解析map, 及处理函数
-    ptr = klb_gui_new_css_map(p_gui, m_type.c_str());
-    m_func_map = ptr;
-
-    return m_func_map;
+    return 0;
 }
 
 } // namespace klbui

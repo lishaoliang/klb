@@ -110,8 +110,11 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     p_env->L = luaL_newstate(); // Lua运行环境
     p_env->L->udata = p_env;
 
-    // 注册标准扩展
+    // 注册标准扩展 C
     klua_register_extension_std(p_env);
+
+    // 注册标准扩展 CPP
+    klua_register_extension_std_cpp(p_env);
 
     // lua环境初始化
     klua_env_init(p_env, cb_pre_load);

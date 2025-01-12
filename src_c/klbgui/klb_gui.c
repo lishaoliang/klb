@@ -295,6 +295,19 @@ void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2,
     klb_mutex_unlock(p_gui->p_msg_mutex);
 }
 
+void klb_gui_clear_msg(klb_gui_t* p_gui)
+{
+    klb_mutex_lock(p_gui->p_msg_mutex);
+
+    while (0 < klb_nlist_size(p_gui->p_msg_list))
+    {
+        klb_msg_t* p_msg = klb_nlist_pop_head(p_gui->p_msg_list);
+        KLB_FREE(p_msg);
+    }
+
+    klb_mutex_unlock(p_gui->p_msg_mutex);
+}
+
 int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_create)
 {
     assert(NULL != p_gui);
@@ -522,6 +535,11 @@ static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
         do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onunload, NULL, NULL, 0, 0);
     }
 
+    // 重新查找焦点窗口
+    {
+        refind_focus_klb_gui(p_gui, p_gui->p_util->mouse_pt.x, p_gui->p_util->mouse_pt.y);
+    }
+
     // 标记重绘所有
     klbuiex_redraw_all(p_gui->p_redraw);
 }
@@ -533,6 +551,10 @@ int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name)
     {
         return 1; // 超过最大弹出数目
     }
+
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
 
     int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
@@ -567,6 +589,10 @@ int klb_gui_model_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
     {
         return 1; // 超过最大弹出数目
     }
+
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
 
     klb_wnd_t* p_wnd = p_top;
 
@@ -614,6 +640,10 @@ static void klb_gui_model_end_last(klb_gui_t* p_gui)
 
 int klb_gui_model_end(klb_gui_t* p_gui, bool all, const char* p_path_name)
 {
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
+
     if (all)
     {
         // 移除所有
@@ -638,6 +668,10 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
     {
         return 1; // 超过最大弹出数目
     }
+
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
 
     int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
@@ -670,6 +704,10 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
     {
         return 1; // 超过最大弹出数目
     }
+
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
 
     klb_wnd_t* p_wnd = p_top;
 
@@ -717,6 +755,10 @@ static void klb_gui_popup_end_last(klb_gui_t* p_gui)
 
 int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
 {
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
+
     if (all)
     {
         while (0 < p_gui->popup_num)
@@ -739,6 +781,10 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
     {
         return 1; // 已经弹出
     }
+
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
 
     int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
@@ -764,6 +810,10 @@ int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         return 1; // 已经弹出
     }
 
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
+
     klb_wnd_t* p_wnd = p_top;
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
@@ -784,6 +834,10 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
     {
         return 1;
     }
+
+    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // 清空 消息事件 队列
+    klb_gui_clear_msg(p_gui);
 
     klb_wnd_t* p_wnd = p_gui->p_msg_box;
 
@@ -1518,9 +1572,9 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             p_wnd = p_gui->p_msg_box;
 
-            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"mousedown"来判定
+            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"click"来判定
             // 判定是否在messagebox窗口之外点击
-            if (KLBUI_mousedown == p_msg->msg)
+            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg)
             {
                 if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
                 {
@@ -1532,9 +1586,9 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             p_wnd = p_gui->p_popup_wnd[p_gui->popup_num - 1];
 
-            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"mousedown"来判定
+            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"click"来判定
             // 判定是否在popup窗口之外点击
-            if (KLBUI_mousedown == p_msg->msg)
+            if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg)
             {
                 if (!klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_msg->pt1.x, p_msg->pt1.y))
                 {

@@ -18,7 +18,7 @@
 
 namespace klbui {
 
-class CButtonCss : public CCss
+KLB_EXTERN class KLB_API_CPP CButtonCss : public CCss
 {
 public:
     CButtonCss();
@@ -30,9 +30,6 @@ KLB_EXTERN class KLB_API_CPP CButton : public CWnd
 public:
     CButton();
     virtual ~CButton();
-
-public:
-
 
 public:
     CButtonCss* ToButtonCss();
@@ -55,6 +52,13 @@ public:
     /// @return int 0
     virtual int OnControl(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
+private:
+    static void OnColor(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+    virtual bool InitCssFunctionMap(const std::string& type);
+
+public:
+    static klb_wnd_t* CreateCButton(klb_gui_t* p_gui, int x, int y, int w, int h);
 
 }; // CButton
 

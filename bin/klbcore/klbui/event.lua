@@ -72,6 +72,13 @@ event.mouseup = 0x409		-- mouseup
 event.mousedrag = 0x410		-- mousedrag
 
 
+-- @def   KLBUI_mousewheel
+-- @brief 鼠标滚轮事件
+--		pt1     参数表示当前鼠标位置
+--		lparam  参数表示滚轮滚动情况, 负数/正数均有效
+event.mousewheel = 0x411	-- mousewheel
+
+
 -- @def   KLBUI_outwindow
 -- @brief 在popup窗口外点击事件
 event.outwindow = 0x450		-- outwindow
@@ -194,6 +201,9 @@ local transform_map = {
 	['mousedrag'] = event.mousedrag,	-- 鼠标拖拽事件
 	[event.mousedrag] = 'mousedrag',
 	
+	['mousewheel'] = event.mousewheel,	-- 鼠标滚轮事件
+	[event.mousewheel] = 'mousewheel',
+	
 	['outwindow'] = event.outwindow,	-- 在popup窗口外点击事件
 	[event.outwindow] = 'outwindow',	-- 在popup窗口外点击事件
 	
@@ -271,6 +281,26 @@ local transform_map = {
 	['ctrl+9'] = event.ctrl + 9,
 	[event.ctrl + 9] = 'ctrl+9',
 	
+	['ctrl+10'] = event.ctrl + 10,
+	[event.ctrl + 10] = 'ctrl+10',
+	
+	['ctrl+11'] = event.ctrl + 11,
+	[event.ctrl + 11] = 'ctrl+11',
+	
+	['ctrl+12'] = event.ctrl + 12,
+	[event.ctrl + 12] = 'ctrl+12',
+	
+	['ctrl+13'] = event.ctrl + 13,
+	[event.ctrl + 13] = 'ctrl+13',
+
+	['ctrl+14'] = event.ctrl + 14,
+	[event.ctrl + 14] = 'ctrl+14',
+	
+	['ctrl+15'] = event.ctrl + 15,
+	[event.ctrl + 15] = 'ctrl+15',
+	
+	['ctrl+16'] = event.ctrl + 16,
+	[event.ctrl + 16] = 'ctrl+16',
 	
 	--------------------------------
 	-- 用户自定事件起始
@@ -300,6 +330,27 @@ local transform_map = {
 	
 	['user+9'] = event.user + 9,
 	[event.user + 9] = 'user+9',
+	
+	['user+10'] = event.user + 10,
+	[event.user + 10] = 'user+10',
+	
+	['user+11'] = event.user + 11,
+	[event.user + 11] = 'user+11',
+	
+	['user+12'] = event.user + 12,
+	[event.user + 12] = 'user+12',
+	
+	['user+13'] = event.user + 13,
+	[event.user + 13] = 'user+13',
+	
+	['user+14'] = event.user + 14,
+	[event.user + 14] = 'user+14',
+	
+	['user+15'] = event.user + 15,
+	[event.user + 15] = 'user+15',
+	
+	['user+16'] = event.user + 16,
+	[event.user + 16] = 'user+16',
 }
 
 

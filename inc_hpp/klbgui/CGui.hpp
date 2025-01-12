@@ -33,6 +33,8 @@ public:
     CGui(klb_gui_t* p_gui);             // 托管 *p_gui 指针, *p_gui 由 CGui释放
     ~CGui();
 
+private:
+    void Init();
 
 public:
     //////////////////////////////////////////////////////////////////////////
@@ -301,7 +303,7 @@ public:
 
     /// @brief 检查参数是否为颜色
     bool CheckColor(const klb_map_t* p_map, int start, uint32_t* p_out_color);
-
+    bool CheckColor(const klb::CMap* p_map, int start, uint32_t* p_out_color);
 
     ////////////////////////////////////
     // 同类型控件, 私有CSS属性 函数处理表
@@ -346,8 +348,8 @@ public:
     /// @brief 新建 全局公共CSS处理表
     /// @param [in] *p_type         组件类型名
     /// @return klb_map_t* 函数处理表
-    klb_map_t* NewGlobalcssMap(const char* p_type);
-    klb_map_t* NewGlobalcssMap(const std::string& type);
+    klb_map_t* NewGlobalCssMap(const char* p_type);
+    klb_map_t* NewGlobalCssMap(const std::string& type);
 
 
     /// @brief 设置 全局公共CSS属性 指针
@@ -357,28 +359,28 @@ public:
     /// @return 无
     /// @note 若重复设置, 以最后设置的为准;
     ///       注意: 不要轻易覆盖, 可能造成 缓存的指针失效!
-    void GlobalcssSetPtr(const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
-    void GlobalcssSetPtr(const std::string& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
+    void GlobalCssSetPtr(const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
+    void GlobalCssSetPtr(const std::string& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
 
 
     /// @brief 获取 全局公共CSS属性 指针
     /// @param [in] *p_type         组件类型名
     /// @return void* 全局公共CSS属性 指针
     /// @note 控件自定义其CSS属性 结构体
-    void* GlobalcssGetPtr(const char* p_type);
-    void* GlobalcssGetPtr(const std::string& type);
+    void* GlobalCssGetPtr(const char* p_type);
+    void* GlobalCssGetPtr(const std::string& type);
 
 
     /// @brief 设置 全局公共CSS属性
     /// @note 参考 klb_wnd_set
-    int GlobalcssSet(const char* p_type, const klb_map_t* p_map);
-    int GlobalcssSet(const std::string& type, const klb_map_t* p_map);
+    int GlobalCssSet(const char* p_type, const klb_map_t* p_map);
+    int GlobalCssSet(const std::string& type, const klb_map_t* p_map);
 
 
     /// @brief 获取 全局公共CSS属性
     /// @note 参考 klb_wnd_get
-    klb_map_t* GlobalcssGet(const char* p_type, const klb_map_t* p_map);
-    klb_map_t* GlobalcssGet(const std::string& type, const klb_map_t* p_map);
+    klb_map_t* GlobalCssGet(const char* p_type, const klb_map_t* p_map);
+    klb_map_t* GlobalCssGet(const std::string& type, const klb_map_t* p_map);
 
 
     //////////////////////////////////////////////////////////////////////////

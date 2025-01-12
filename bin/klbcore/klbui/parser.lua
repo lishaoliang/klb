@@ -140,6 +140,38 @@ local function AutoRect(parent_path, x, y, w, h)
 end
 
 
+-- 去除前后空白
+local function TrimString(s)
+	return (string.gsub(s, '^%s*(.-)%s*$', '%1'))
+end
+
+
+-- 解析 key 字段中, 多个事件响应
+-- eg. 'click, dblclick'
+local function ParseCmdsEvents(cmds)
+	if 'table' ~= type(cmds) then
+		return
+	end
+	
+	-- 将所有 key 字段中, 含有多个事件的条目分割出来
+	local t = {}	
+	for k, v in pairs(cmds) do
+		if 'string' == type(k) then
+			-- 以 ',' 分割, eg. 'click, dblclick'
+			for s in string.gmatch(k, '[^,]+') do
+				local k1 = TrimString(s)
+				t[k1] = v
+			end
+		end
+	end
+	
+	-- 重新添加(更新调整)单个事件对应 响应
+	for k, v in pairs(t) do
+		cmds[k] = v
+	end
+end
+
+
 -- 3位字符串, 最大范围为 63^3 = 250047
 -- 4位字符串, 最大范围为 63^4 = 15752961
 local CONST_rand_max = 4
@@ -243,6 +275,10 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 		
 		-- cmds3, 内嵌在 dialog里面的
 		local cmds3 = ('table' == type(wnd['commands']) and wnd['commands']) or E	
+		
+		-- 将 cmds2, cmds3 中, 含有多个事件的响应解析出来
+		ParseCmdsEvents(cmds2)
+		ParseCmdsEvents(cmds3)
 		
 		-- 绑定命令函数
 		kgui.bind_command(path, function (obj, msg, x1, y1, x2, y2, lparam, wparam)

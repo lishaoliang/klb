@@ -195,6 +195,12 @@ klbui.load_image = function (key, path)
 end
 
 
+-- @brief 清空消息事件
+klbui.clear_msg = function ()
+	kgui.clear_msg()
+end
+
+
 -- @brief 模态显示窗口
 -- @param [in] path[string]			窗口虚拟路径; eg. '/home'
 -- @return [number(int)] 	0.成功; 非0.失败

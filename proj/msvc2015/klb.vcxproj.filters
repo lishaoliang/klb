@@ -273,6 +273,9 @@
     <Filter Include="src_cpp\klbgui\widgets">
       <UniqueIdentifier>{f57a45e7-2445-4fac-a7c1-cf4577a4bd5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_cpp\klua\extension">
+      <UniqueIdentifier>{f8bc148c-dd8c-431c-8561-4ba8616742cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1649,6 +1652,12 @@
     <ClInclude Include="..\..\src_cpp\klbgui\CUiWidgets.hpp">
       <Filter>src_cpp\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc_hpp\klbutil\CString.hpp">
+      <Filter>inc_hpp\klbutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_cpp\klua\extension\CKluaExGui.hpp">
+      <Filter>src_cpp\klua\extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2784,6 +2793,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src_cpp\klbgui\widgets\CUiButton.cpp">
       <Filter>src_cpp\klbgui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klbutil\CString.cpp">
+      <Filter>src_cpp\klbutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExtension.cpp">
+      <Filter>src_cpp\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExGui.cpp">
+      <Filter>src_cpp\klua\extension</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

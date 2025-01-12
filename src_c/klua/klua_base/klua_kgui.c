@@ -9,6 +9,7 @@
 #include "klua/klua_help.h"
 #include "klbutil/klb_hlist.h"
 #include "klua/extension/klua_ex_gui.h"
+#include "klua/extension/klua_extension.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_seri.h"
 #include "klua/klua_gui.h"
@@ -355,6 +356,13 @@ int klua_open_kwnd(lua_State* L)
 //    return 1;
 //}
 
+static int klua_kgui_using_cpp(lua_State* L)
+{
+    klua_using_cpp_gui(klua_env_get_by_L(L));
+
+    return 0;
+}
+
 static int klua_kgui_set_default_css(lua_State* L)
 {
     klb_map_t* p_in = klua_seri_map_pack(L, 0);         ///< @1 ~ @N 参数
@@ -481,6 +489,15 @@ static int klua_kgui_load_image(lua_State* L)
 
     lua_pushinteger(L, ret);
     return 1;
+}
+
+static int klua_kgui_clear_msg(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    klb_gui_clear_msg(p_gui);
+
+    return 0;
 }
 
 static int klua_kgui_append(lua_State* L)
@@ -887,6 +904,9 @@ int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
     {
+        // cpp
+        { "using_cpp",          klua_kgui_using_cpp },
+
         // css
         { "set_default_css",    klua_kgui_set_default_css },
         { "get_default_css",    klua_kgui_get_default_css },
@@ -900,6 +920,9 @@ int klua_open_kgui(lua_State* L)
 
         // image
         { "load_image",         klua_kgui_load_image },
+
+        // 消息事件 队列
+        { "clear_msg",          klua_kgui_clear_msg },      // 清空 消息事件队列
 
         // wnd
         { "append",             klua_kgui_append },

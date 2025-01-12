@@ -429,10 +429,12 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc_hpp\klbutil\CnList.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CnMap.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CnVector.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbutil\CString.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbutil\CVector.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKlua.hpp" />
     <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp" />
     <ClInclude Include="..\..\src_cpp\klbgui\CUiWidgets.hpp" />
+    <ClInclude Include="..\..\src_cpp\klua\extension\CKluaExGui.hpp" />
     <ClInclude Include="..\..\src_c\compat\os2threads.h" />
     <ClInclude Include="..\..\src_c\compat\va_copy.h" />
     <ClInclude Include="..\..\src_c\compat\w32dlfcn.h" />
@@ -661,9 +663,12 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_cpp\klbutil\CnList.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CnMap.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CnVector.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbutil\CString.cpp" />
     <ClCompile Include="..\..\src_cpp\klbutil\CVector.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\CKlua.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp" />
+    <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExGui.cpp" />
+    <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExtension.cpp" />
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
     <ClCompile Include="..\..\src_c\klbapp\klb_app.c" />

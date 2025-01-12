@@ -108,6 +108,13 @@ KLB_API int klb_gui_canvas_ioctrl_opt8(klb_gui_t* p_gui, int opt, void* ptr1, vo
 KLB_API void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam);
 
 
+/// @brief 清空消息事件
+/// @param [in] *p_gui          GUI对象
+/// @param [in] msg             消息/事件: eg. KLBUI_click
+/// @return 无
+KLB_API void klb_gui_clear_msg(klb_gui_t* p_gui);
+
+
 /// @brief 创建窗口
 /// @param [in] x               相对父窗口X坐标
 /// @param [in] y               相对父窗口Y坐标
@@ -123,6 +130,8 @@ typedef klb_wnd_t* (*klb_wnd_create_cb)(klb_gui_t* p_gui, int x, int y, int w, i
 /// @param [in] cb_create       创建窗口
 /// @return int 0.成功; 非0.失败(错误码)
 ///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
+///  \n 若不存在 类型, 则新注册 创建函数
+///  \n 若已存在 类型, 则替换 创建函数
 KLB_API int klb_gui_register(klb_gui_t* p_gui, const char* p_type, klb_wnd_create_cb cb_create);
 
 

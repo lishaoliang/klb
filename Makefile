@@ -58,9 +58,10 @@ MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
 MY_DIRS += ./src_c/qrencode-4.1.1
 
 # cpp / src_cpp
-MY_DIRS += ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbnet
-MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klua 
-MY_DIRS += ./src_cpp/klbgui ./src_cpp/klbgui/wnd
+MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbbase
+MY_DIRS += ./src_cpp/klbnet
+MY_DIRS += ./src_cpp/klbgui ./src_cpp/klbgui/wnd ./src_cpp/klbgui/widgets
+MY_DIRS += ./src_cpp/klua ./src_cpp/klua/extension
 MY_DIRS += ./src_cpp/klbapp
 
 

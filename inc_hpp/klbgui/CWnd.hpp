@@ -14,7 +14,8 @@
 #include "klbgui/klb_wnd.h"
 #include "klbgui/klb_gui.h"
 #include "klbgui/CCss.hpp"
-#include <string>
+#include "klbutil/CString.hpp"
+#include "klbutil/CMap.hpp"
 
 namespace klbui {
 
@@ -25,7 +26,10 @@ class CWnd;
 
 /// @brief 属性函数格式
 /// @return void
-typedef void(*klb_cwnd_cb)(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+typedef void(*klb_cwnd_css_cb)(CWnd* p_cwnd, int method, const klb::CMap* p_in, klb::CMap* p_out);
+
+/// @brief 消息响应函数
+typedef int(*klb_cwnd_on_command_cb)(CWnd* p_cwnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 KLB_EXTERN class KLB_API_CPP CWnd
@@ -39,21 +43,33 @@ public:
 
 public:
     //////////////////////////////////////////////////////////////////////////
-    // cpp 额外函数
+    // 
 
-    klb_wnd_t* GetWnd();
-
+    /// @brief 初始化
     void Init(CGui* p_gui, int x, int y, int w, int h);
 
-    void SetType(const std::string& type);
-    const std::string& GetType();
+    /// @brief 获取原始 C 指针
+    klb_wnd_t* GetWnd();
 
+    /// @brief 设置/获取 注册类型(字符串)
+    void SetType(const std::string& type);
+    const klb::CString& GetType();
+
+    /// @brief 设置/获取 类型(整型); type id
     void SetTID(int tid);
     int GetTID();
 
     /// @brief CSS
     void SetCss(CCss* p_css);
     CCss* GetCss();
+
+public:
+    // to cwnd
+    static CWnd* ToCWnd(klb_wnd_t* p_wnd);
+
+    // udata
+    static void* GetUserData(klb_wnd_t* p_wnd);
+    static CWnd* GetUserDataCWnd(klb_wnd_t* p_wnd);
 
 public:
     //////////////////////////////////////////////////////////////////////////
@@ -63,9 +79,10 @@ public:
     ////////////////////////////////////
     // 通用
 
-    /// @brief 获取gui
+    /// @brief 获取gui/CGui
     klb_gui_t* GetGui();
-    bool GetGui(CGui** p_gui);
+    void GetGui(CGui** p_gui);
+    CGui* GetCGui();
 
     /// @brief 获取画布
     /// @return klb_canvas_t* 画布指针
@@ -175,7 +192,7 @@ public:
 
     /// @brief 绑定响应函数
     int BindCommand(klb_wnd_on_command_cb on_command, void* p_obj);
-
+    int BindCommand(klb_cwnd_on_command_cb on_command, void* p_obj);
 
     ////////////////////////////////////
     // 调用函数
@@ -220,6 +237,12 @@ public:
 
     ////////////////////////////////////
     // 绘图
+
+    // 获取画布区域
+    klb_rect_t* GetCanvasRect();
+
+    // 获取父窗口区域
+    klb_rect_t* GetParentRect();
 
     /// @brief 基础绘图接口
     int SetDrawColor(uint32_t color);
@@ -315,27 +338,37 @@ public:
     /// @note map 具体数据格式由控件定义
     klb_map_t* OnGet(const klb_map_t* p_map);
 
+
+
 public:
     //////////////////////////////////////////////////////////////////////////
     // 
 
     /// @brief 绑定响应函数
     /// @return void
-    void BindFunction(const std::string& str, klb_cwnd_cb cb_func);
+    void BindCssFunction(const std::string& str, klb_cwnd_css_cb cb_func);
+
+    static void OnCssColor(CWnd* p_cwnd, int method, const klb::CMap* p_in, klb::CMap* p_out);
+
+    virtual bool InitCssFunctionMap(const std::string& type);
 
 private:
-    klb_map_t* GetFuncMap();
+    klb_map_t* GetCssFunctionMap();
+
+    static int on_command_klb_cwnd(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 private:
-    std::string         m_type;             ///< 当前控件类型 名称
-    int                 m_tid;              ///< 类型ID
-    CCss*               m_css;              ///< CSS
+    klb::CString            m_type;             ///< 当前控件类型 名称
+    int                     m_tid;              ///< 类型ID
+    CCss*                   m_css;              ///< CSS值
+
+    klb_cwnd_on_command_cb  m_cb_on_command;    ///< 绑定响应函数(中转函数)
 
 private:
-    CGui*               m_gui;              ///< gui 指针
-    klb_wnd_t*          m_wnd;              ///< wnd 窗口指针
+    CGui*                   m_gui;              ///< gui 指针
+    klb_wnd_t*              m_wnd;              ///< wnd 窗口指针
 
-    klb_map_t*          m_func_map;         ///< 属性函数表
+    klb_map_t*              m_css_func_map;     ///< CSS 属性函数表
 };
 
 } // namespace klbui 

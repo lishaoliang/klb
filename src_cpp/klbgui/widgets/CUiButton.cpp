@@ -15,6 +15,7 @@ public:
     CUiButton();
     virtual ~CUiButton();
 
+    static void OnTitle(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
     static void OnColor(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
     static void OnTextAlign(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
@@ -39,10 +40,38 @@ CUiButton::~CUiButton()
 
 }
 
+void CUiButton::OnTitle(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    CCss* p_css = p_cwnd->GetCss();
+    if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        const char* p_title = klb_map_idx_to_string(p_in, start);
+
+        if (NULL != p_title)
+        {
+
+        }
+    }
+}
+
 void CUiButton::OnColor(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attributes_t* p_attr = p_cwnd->GetCss()->Normal();
-    klbuicssex_text_color(&p_attr->text, p_cwnd->GetWnd(), method, p_in, p_out);
+    //klbuicssex_attributes_t* p_attr = p_cwnd->GetCss()->Normal();
+    //klbuicssex_text_color(&p_attr->text, p_cwnd->GetWnd(), method, p_in, p_out);
+
+    CCss* p_css = p_cwnd->GetCss();
+    if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        uint32_t color = 0;
+        if (klb_gui_check_color(NULL, p_in, start, &color))
+        {
+            p_css->SetColor(color);
+
+            p_cwnd->Update();
+        }
+    }
 }
 
 void CUiButton::OnTextAlign(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -53,8 +82,7 @@ void CUiButton::OnTextAlign(CWnd* p_cwnd, int method, const klb_map_t* p_in, klb
 
 void CUiButton::InitFuncMap()
 {
-    BindFunction("color", CUiButton::OnColor);
-    BindFunction("text-align", CUiButton::OnTextAlign);
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,11 +109,6 @@ static klb_wnd_t* klbui_cbutton_create(klb_gui_t* p_gui, int x, int y, int w, in
     p_button->SetCss(p_globalcss);
 
     return p_button->GetWnd();
-}
-
-int klbui_register_cbutton(klb_gui_t* p_gui)
-{
-    return klb_gui_register(p_gui, KLBUI_cbutton, klbui_cbutton_create);
 }
 
 } // klbui

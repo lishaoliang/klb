@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbgui/CGui.hpp"
+#include "klbgui/CUiWidgets.hpp"
 #include <assert.h>
 
 
@@ -15,6 +16,9 @@ CGui::CGui()
 {
     m_is_share_gui = false;
     m_gui = klb_gui_create(NULL);
+
+    // 初始化 cpp 额外部分
+    Init();
 }
 
 // 共享 *p_gui 指针, *p_gui 的生命周期由创建者维护
@@ -25,6 +29,9 @@ CGui::CGui(klb_gui_t* p_gui, bool share)
 
     m_is_share_gui = true;
     m_gui = p_gui;
+
+    // 初始化 cpp 额外部分
+    Init();
 }
 
 // 托管 *p_gui 指针, *p_gui 由 CGui释放
@@ -34,11 +41,14 @@ CGui::CGui(klb_gui_t* p_gui)
 
     m_is_share_gui = false;
     m_gui = p_gui;
+
+    // 初始化 cpp 额外部分
+    Init();
 }
 
 CGui::~CGui()
 {
-    if (m_is_share_gui)
+    if (!m_is_share_gui)
     {
         KLB_FREE_BY(m_gui, klb_gui_destroy);
     }
@@ -47,6 +57,17 @@ CGui::~CGui()
     m_gui = NULL;
 }
 
+void CGui::Init()
+{
+    // 
+    klb_gui_attach_cppgui(m_gui, this);
+
+    // 注册标准cpp窗口类型
+    {
+        // 注册标准窗口类型
+        KLB_GUI_REGISTER_STD_CPP(m_gui);
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////
 // cpp 额外函数
@@ -389,6 +410,12 @@ bool CGui::CheckColor(const klb_map_t* p_map, int start, uint32_t* p_out_color)
     return klb_gui_check_color(m_gui, p_map, start, p_out_color);
 }
 
+bool CGui::CheckColor(const klb::CMap* p_map, int start, uint32_t* p_out_color)
+{
+    klb::CMap* p_cmap = (klb::CMap*)p_map;
+    return klb_gui_check_color(m_gui, p_cmap->GetMap(), start, p_out_color);
+}
+
 klb_map_t* CGui::CssMap(const char* p_type)
 {
     return klb_gui_css_map(m_gui, p_type);
@@ -419,52 +446,52 @@ klb_map_t* CGui::GlobalCssMap(const std::string& type)
     return klb_gui_globalcss_map(m_gui, type.c_str());
 }
 
-klb_map_t* CGui::NewGlobalcssMap(const char* p_type)
+klb_map_t* CGui::NewGlobalCssMap(const char* p_type)
 {
     return klb_gui_new_globalcss_map(m_gui, p_type);
 }
 
-klb_map_t* CGui::NewGlobalcssMap(const std::string& type)
+klb_map_t* CGui::NewGlobalCssMap(const std::string& type)
 {
     return klb_gui_new_globalcss_map(m_gui, type.c_str());
 }
 
-void CGui::GlobalcssSetPtr(const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy)
+void CGui::GlobalCssSetPtr(const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy)
 {
     klb_gui_globalcss_set_ptr(m_gui, p_type, p_css, cb_destroy);
 }
 
-void CGui::GlobalcssSetPtr(const std::string& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy)
+void CGui::GlobalCssSetPtr(const std::string& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy)
 {
     klb_gui_globalcss_set_ptr(m_gui, type.c_str(), p_css, cb_destroy);
 }
 
-void* CGui::GlobalcssGetPtr(const char* p_type)
+void* CGui::GlobalCssGetPtr(const char* p_type)
 {
     return klb_gui_globalcss_get_ptr(m_gui, p_type);
 }
 
-void* CGui::GlobalcssGetPtr(const std::string& type)
+void* CGui::GlobalCssGetPtr(const std::string& type)
 {
     return klb_gui_globalcss_get_ptr(m_gui, type.c_str());
 }
 
-int CGui::GlobalcssSet(const char* p_type, const klb_map_t* p_map)
+int CGui::GlobalCssSet(const char* p_type, const klb_map_t* p_map)
 {
     return klb_gui_globalcss_set(m_gui, p_type, p_map);
 }
 
-int CGui::GlobalcssSet(const std::string& type, const klb_map_t* p_map)
+int CGui::GlobalCssSet(const std::string& type, const klb_map_t* p_map)
 {
     return klb_gui_globalcss_set(m_gui, type.c_str(), p_map);
 }
 
-klb_map_t* CGui::GlobalcssGet(const char* p_type, const klb_map_t* p_map)
+klb_map_t* CGui::GlobalCssGet(const char* p_type, const klb_map_t* p_map)
 {
     return klb_gui_globalcss_get(m_gui, p_type, p_map);
 }
 
-klb_map_t* CGui::GlobalcssGet(const std::string& type, const klb_map_t* p_map)
+klb_map_t* CGui::GlobalCssGet(const std::string& type, const klb_map_t* p_map)
 {
     return klb_gui_globalcss_get(m_gui, type.c_str(), p_map);
 }
