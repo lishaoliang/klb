@@ -98,7 +98,7 @@ static int on_decimal_klbwnd_num(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, int v
     if (ok)
     {
         do_set_value_klbwnd_num(p_wnd_num, p_num, value);
-        klb_wnd_on_command(p_wnd_num, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd_num, KLBUI_onchange, NULL, NULL, 0, 0);
         klb_wnd_update(p_wnd_num);
     }
 
@@ -171,7 +171,7 @@ static int klbwnd_num_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, const
         if (p_num->min <= v)
         {
             do_set_value_klbwnd_num(p_wnd, p_num, v);
-            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_call_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
             klb_wnd_update(p_wnd);
         }
     }
@@ -181,7 +181,7 @@ static int klbwnd_num_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_num_t* p_num, const
         if (v <= p_num->max)
         {
             do_set_value_klbwnd_num(p_wnd, p_num, v);
-            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_call_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
             klb_wnd_update(p_wnd);
         }
     }

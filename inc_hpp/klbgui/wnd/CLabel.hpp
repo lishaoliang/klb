@@ -1,30 +1,26 @@
 ﻿///////////////////////////////////////////////////////////////////////////
-//  Copyright(c) 2024, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
-/// @file    CButton.hpp
-/// @brief   CButton控件
+/// @file    CLabel.hpp
+/// @brief   CLabel控件, 静态文本框
+///   参考: https://learn.microsoft.com/zh-cn/dotnet/api/system.windows.controls.label?view=windowsdesktop-7.0
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __KLBUI_CBUTTON_HPP__
-#define __KLBUI_CBUTTON_HPP__
+#ifndef __KLBUI_CLABEL_H__
+#define __KLBUI_CLABEL_H__
 
 #include "klb_type.h"
 #include "klbgui/CGui.hpp"
-#include "klbgui/CWnd.hpp"
-#include "klbgui/CCss.hpp"
-#include "klbutil/CString.hpp"
-#include <string>
 
 namespace klbui {
 
-
-KLB_EXTERN class KLB_API_CPP CButtonCss : public CCss
+KLB_EXTERN class KLB_API_CPP CLabelCss : public CCss
 {
 public:
-    CButtonCss(CGui* p_gui);
-    virtual ~CButtonCss();
+    CLabelCss(CGui* p_gui);
+    virtual ~CLabelCss();
 
 public:
     ////////////////////////////////////////
@@ -33,54 +29,37 @@ public:
 };
 
 
-KLB_EXTERN class KLB_API_CPP CButton : public CWnd
+KLB_EXTERN class KLB_API_CPP CLabel : public CWnd
 {
 public:
-    CButton(CGui* p_gui, int x, int y, int w, int h);
-    virtual ~CButton();
+    CLabel(CGui* p_gui, int x, int y, int w, int h);
+    virtual ~CLabel();
 
 private:
     ////////////////////////////////////////
     // 禁止拷贝
-    CButton& operator=(const CButton& ths);
+    CLabel& operator=(const CLabel& ths);
 
 public:
     ////////////////////////////////////////
     // 对外提供的接口
 
     // 获取CSS
-    CButtonCss* ToButtonCss();
+    CLabelCss* ToLabelCss();
 
-    /// @brief 获取标题
+    // 标题
     klb::CString& GetTitle();
-    void GetTitle(std::string& title);
-    void GetTitle(klb::CString& title);
 
-    /// @brief 设置标题
-    void SetTitle(const std::string& title);
-    void SetTitle(const char* p_title);
     void SetTitle(const klb::CString& title);
-
-    /// @brief 获取值
-    klb::CString& GetValue();
-
-    /// @brief 设置值
-    void SetValue(const std::string& value);
-    void SetValue(const char* p_value);
-    void SetValue(const klb::CString& value);
+    void SetTitle(const std::string& title);
 
 private:
     ////////////////////////////////////////
     // 内部事件响应等函数
 
-    // 常规状态绘图
-    void OnPaintNormal(CButtonCss* p_css, klb_rect_t* p_rect);
+    void OnPaintNormal(CLabelCss* p_css, klb_rect_t* p_rect); // 常规状态绘图
 
-    // 聚焦状态绘图
-    void OnPaintFocus(CButtonCss* p_css, klb_rect_t* p_rect);
-
-    // 不使能状态绘图
-    void OnPaintDisable(CButtonCss* p_css, klb_rect_t* p_rect);
+    void OnFocusDelay(CLabelCss* p_css, klb_rect_t* p_rect);
 
 public:
     ////////////////////////////////////////
@@ -104,7 +83,6 @@ public:
     ////////////////////////////////////////
     // CSS 函数
     static void OnCssTitle(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
-    static void OnCssValue(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
 
     // 初始化 CSS 函数表
     virtual bool InitCssFunctionMap(const std::string& type);
@@ -113,13 +91,11 @@ public:
 private:
     ////////////////////////////////////////
     // 内部变量
-    klb::CString            m_title;    // 标题
-    klb::CString            m_value;    // 内部值
+    klb::CString        m_title;    // 标题
 
-}; // CButton
-
+}; // CLabel
 
 } // namespace klbui
 
-#endif // __KLBUI_CBUTTON_HPP__
+#endif // __KLBUI_CLABEL_H__
 //end

@@ -6,6 +6,9 @@
 -- @note 参考 html5 标准: https://www.w3school.com.cn/html/html5_intro.asp
 --     参考: https://www.runoob.com/html/html5-form-input-types.html
 --     参考: https://www.w3school.com.cn/jquery/index.asp
+-- @history 修改历史
+--		[2025-1] 添加设置控件定时器时间间隔
+--		[2025-2] 添加 并默认 启用 C++ 扩展控件; 试验阶段, 勿使用
 --]]
 local kco = require("kco")
 local kgui = require("kgui")
@@ -16,6 +19,20 @@ local selector = require("klbcore.klbui.selector")
 local klbui = {}
 
 
+------------------------------------------------
+-- C++ 支持
+
+
+-- @brief 启用 C++ 扩展控件
+-- @return 无
+-- @note 启用后, 支持使用 C++ 编写控件
+klbui.using_cpp = function ()
+	kgui.using_cpp()
+end
+
+
+------------------------------------------------
+-- 窗口等
 
 -- @brief 解析对话框/命令, 并完成gui窗口树初始创建
 -- @param [in]      dialog[table]		对话框描述table
@@ -204,18 +221,40 @@ end
 -- @brief 模态显示窗口
 -- @param [in] path[string]			窗口虚拟路径; eg. '/home'
 -- @return [number(int)] 	0.成功; 非0.失败
+--   废弃(拼写错误)
 klbui.model = function (path)
-	return kgui.model(path)
+	return kgui.modal(path)
 end
-
-
 
 -- @brief 结束一个model方式的对话框
 -- @param [in] all[boolean]			是否关闭全部popup: 默认true
 -- @param [in] path[string]			窗口路径(类unix): 默认nil
 -- @return [number(int)] 	0.成功; 非0.失败
+--   废弃(拼写错误)
 klbui.model_end = function (all, path)
-	return kgui.model_end(all, path)
+	return kgui.modal_end(all, path)
+end
+
+
+-- @brief 模态显示窗口
+-- @param [in] path[string]			窗口虚拟路径; eg. '/home'
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.modal = function (path)
+	return kgui.modal(path)
+end
+
+-- @brief 结束一个modal方式的对话框
+-- @param [in] all[boolean]			是否关闭全部modal: 默认true
+-- @param [in] path[string]			窗口路径(类unix): 默认nil
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.modal_end = function (all, path)
+	return kgui.modal_end(all, path)
+end
+
+-- @brief 获取 modal 窗口数
+-- @return [number(int)] 	modal 窗口数
+klbui.modal_num = function ()
+	return kgui.modal_num()
 end
 
 -- @brief 弹出窗口
@@ -233,6 +272,11 @@ klbui.popup_end = function (all)
 	return kgui.popup_end(all)
 end
 
+-- @brief 获取 popup 窗口数
+-- @return [number(int)] 	popup 窗口数
+klbui.popup_num = function ()
+	return kgui.popup_num()
+end
 
 -- @brief 消息框
 -- @param [in] path[string]			窗口虚拟路径; eg. '/messagebox'
@@ -245,6 +289,12 @@ end
 -- @brief 关闭消息框
 klbui.messagebox_end = function ()
 	return kgui.messagebox_end()
+end
+
+-- @brief 获取 messagebox 窗口数
+-- @return [number(int)] 	messagebox 窗口数
+klbui.messagebox_num = function ()
+	return kgui.messagebox_num()
 end
 
 
@@ -319,6 +369,16 @@ klbui.suggesth = function (path)
 end
 
 
+-- @brief 标记所有窗口需要刷新
+-- @return 无
+klbui.refresh = function ()
+	kgui.refresh()
+end
+
+
+------------------------------------------------
+-- 时间等
+
 -- @brief 设置 聚焦延时消息 的时间(单位毫秒ms, 默认600, 范围[0, ~])
 -- @return 无
 -- @note 指鼠标聚焦一段时间后, 配合控件样式(KLB_WND_STYLE_FOCUS_DELAY), 会产生一个 focusdelay(KLBUI_focusdelay = 0x710)事件
@@ -328,10 +388,19 @@ klbui.focusdelay = function (tc)
 end
 
 
--- @brief 标记所有窗口需要刷新
+-- @brief 获取系统当前 系统滴答数
+-- @return [number(int)] 	系统滴答数
+klbui.tick_count = function ()
+	return kgui.tick_count()
+end
+
+
+-- @brief 设置 内部控件定时器运行间隔 (单位毫秒ms, 默认500, 范围[10, ~])
 -- @return 无
-klbui.refresh = function ()
-	kgui.refresh()
+-- 		调小,精度略微提高, 降低框架性能
+--		调大,精度略微降低, 提高框架性能
+klbui.ticker_interval = function (interval)
+	kgui.ticker_interval(interval)
 end
 
 
@@ -414,5 +483,20 @@ klbui.co_sync = function (func)
 		end, ...)
 	end
 end
+
+
+
+------------------------------------------------
+-- startup 启动设置
+
+
+-- step1. 开启支持 C++ 扩展
+-- 注意: 调用一次后, 即开启了, 后续无法关闭
+--   若不需要支持 C++ 扩展, 注释掉本行
+klbui.using_cpp()
+
+
+
+
 
 return klbui

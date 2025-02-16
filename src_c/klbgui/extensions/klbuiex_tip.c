@@ -102,8 +102,16 @@ void klbuiex_tip_update(klbuiex_tip_t* p_ex, const char* p_tilte)
         int x = p_ex->rect_dst.x;
         int y = p_ex->rect_dst.y;
 
-        klbuiex_tip_set_tilte(p_ex, p_tilte, NULL, NULL);
-        klbuiex_tip_show(p_ex, true, x, y);
+        if (NULL != p_tilte && 0 < strlen(p_tilte))
+        {
+            klbuiex_tip_set_tilte(p_ex, p_tilte, NULL, NULL);
+            klbuiex_tip_show(p_ex, true, x, y);
+        }
+        else
+        {
+            klbuiex_tip_set_tilte(p_ex, "", NULL, NULL);
+            klbuiex_tip_show(p_ex, false, x, y);
+        }
 
         p_ex->is_redraw = true;
     }

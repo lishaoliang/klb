@@ -104,9 +104,9 @@ static void klb_cwnd_quit(klb_wnd_t* p_wnd)
 {
     klb_cwnd_t* p_cwnd = (klb_cwnd_t*)p_wnd->ctrl;
 
+    // 窗口的创建可以能处于其他 动态库,
+    // 这里 不能直接 delete, 需要使用 对象 提供专门的释放内存接口
     p_cwnd->p_cwnd->OnDelete();
-
-    //delete p_cwnd->p_cwnd;
 }
 
 //////////////////////////////////////
@@ -124,35 +124,37 @@ static klb_wnd_t* klb_cwnd_create(klb_gui_t* p_gui, int x, int y, int w, int h, 
 
 //////////////////////////////////////////////////////////////////////////
 // 构造/析构
-CWnd::CWnd()
-{
-    m_tid = 0;
-    m_gui = NULL;
-    m_css_func_map = NULL;
-
-    m_wnd = klb_cwnd_create(NULL, 0, 0, 0, 0, this);
-}
 
 CWnd::CWnd(CGui* p_gui, int x, int y, int w, int h)
 {
+    // 
+    m_type = "";
+
     m_tid = 0;
+    m_css = NULL;
+    m_cb_on_command = NULL;
+
     m_gui = NULL;
+    m_wnd = NULL;
     m_css_func_map = NULL;
 
-    m_wnd = klb_cwnd_create(NULL, 0, 0, 0, 0, this);
+    // 初始化
+    m_gui = p_gui;
 
-    Init(p_gui, x, y, w, h);
+    m_wnd = klb_cwnd_create(p_gui->GetGui(), x, y, w, h, this);
 }
 
 CWnd::~CWnd()
 {
     m_type = "";
+
     m_tid = 0;
+    m_css = NULL;
+    m_cb_on_command = NULL;
 
     m_gui = NULL;
-    m_css_func_map = NULL;
-
     m_wnd = NULL;
+    m_css_func_map = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -161,16 +163,6 @@ CWnd::~CWnd()
 klb_wnd_t* CWnd::GetWnd()
 {
     return m_wnd;
-}
-
-void CWnd::Init(CGui* p_gui, int x, int y, int w, int h)
-{
-    assert(NULL != p_gui);
-    assert(NULL != m_wnd);
-
-    m_gui = p_gui;
-
-    klb_cwnd_init(m_wnd, p_gui->GetGui(), x, y, w, h, this);
 }
 
 void CWnd::SetType(const std::string& type)
@@ -266,6 +258,15 @@ void CWnd::SetStyle(uint32_t style)
 ////////////////////////////////////
 // 状态
 
+uint32_t CWnd::GetStatus()
+{
+    return m_wnd->state.status;
+}
+
+bool CWnd::IsFocus()
+{
+    return (KLB_WND_STATUS_FOCUS & m_wnd->state.status) ? false : true;
+}
 
 void CWnd::Show(bool show)
 {
@@ -333,6 +334,16 @@ bool CWnd::IsTopMost()
     return klb_wnd_is_topmost(m_wnd);
 }
 
+void CWnd::DynTip(bool update)
+{
+    klb_wnd_dyntip(m_wnd, update);
+}
+
+bool CWnd::IsDynTip()
+{
+    return klb_wnd_is_dyntip(m_wnd);
+}
+
 ////////////////////////////////////
 // tip
 
@@ -347,11 +358,48 @@ void CWnd::SetTip(const std::string& tip)
     klb_wnd_set_tip(m_wnd, tip.c_str());
 }
 
+void CWnd::SetTip(const klb::CString& tip)
+{
+    klb_wnd_set_tip(m_wnd, tip.c_str());
+}
+
 void CWnd::GetTip(std::string& tip)
 {
     const sds str = klb_wnd_get_tip(m_wnd);
 
     tip = (NULL != str) ? str : "";
+}
+
+void CWnd::GetTip(klb::CString& tip)
+{
+    tip = klb_wnd_get_tip(m_wnd);
+}
+
+void CWnd::SetTipDynamic(const char* p_tip)
+{
+    klb_wnd_set_tip_dynamic(m_wnd, p_tip);
+}
+
+void CWnd::SetTipDynamic(const std::string& tip)
+{
+    klb_wnd_set_tip_dynamic(m_wnd, tip.c_str());
+}
+
+void CWnd::SetTipDynamic(const klb::CString& tip)
+{
+    klb_wnd_set_tip_dynamic(m_wnd, tip.c_str());
+}
+
+void CWnd::GetTipDynamic(std::string& tip)
+{
+    const sds str = klb_wnd_get_tip_dynamic(m_wnd);
+
+    tip = (NULL != str) ? str : "";
+}
+
+void CWnd::GetTipDynamic(klb::CString& tip)
+{
+    tip = klb_wnd_get_tip_dynamic(m_wnd);
 }
 
 void CWnd::TipUpdate()
@@ -411,19 +459,19 @@ int CWnd::BindCommand(klb_cwnd_on_command_cb on_command, void* p_obj)
 
 int CWnd::CallControl(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    return klb_wnd_on_control(m_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+    return klb_wnd_call_control(m_wnd, msg, p_pt1, p_pt2, lparam, wparam);
 }
 
 
 int CWnd::CallCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    return klb_wnd_on_command(m_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+    return klb_wnd_call_command(m_wnd, msg, p_pt1, p_pt2, lparam, wparam);
 }
 
 
 int CWnd::CallControlAndCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    return klb_wnd_on_control_and_command(m_wnd, msg, p_pt1, p_pt2, lparam, wparam);
+    return klb_wnd_call_control_and_command(m_wnd, msg, p_pt1, p_pt2, lparam, wparam);
 }
 
 ////////////////////////////////////
@@ -465,6 +513,14 @@ klb_map_t* CWnd::Get(const klb_map_t* p_map)
     return klb_wnd_get(m_wnd, p_map);
 }
 
+////////////////////////////////////
+// 时间
+
+/// @brief 获取当前UI滴答数
+int64_t CWnd::GetTickCount()
+{
+    return klb_wnd_get_tick_count(m_wnd);
+}
 
 ////////////////////////////////////
 // 绘图
@@ -557,6 +613,11 @@ int CWnd::DrawText(const klb_rect_t* p_rect, const std::string& utf8, uint32_t* 
     return klb_wnd_draw_text(m_wnd, p_rect, utf8.c_str(), utf8.length(), p_color, p_font_h);
 }
 
+int CWnd::DrawText(const klb_rect_t* p_rect, const klb::CString& str, uint32_t* p_color, int* p_font_h)
+{
+    return klb_wnd_draw_text(m_wnd, p_rect, str.c_str(), (int)(str.Length()), p_color, p_font_h);
+}
+
 int CWnd::TextSize(const char* p_utf8, int utf8_len, int* p_font_h, int* p_out_w, int* p_out_h)
 {
     return klb_wnd_text_size(m_wnd, p_utf8, utf8_len, p_font_h, p_out_w, p_out_h);
@@ -565,6 +626,11 @@ int CWnd::TextSize(const char* p_utf8, int utf8_len, int* p_font_h, int* p_out_w
 int CWnd::TextSize(const std::string& utf8, int* p_font_h, int* p_out_w, int* p_out_h)
 {
     return klb_wnd_text_size(m_wnd, utf8.c_str(), utf8.length(), p_font_h, p_out_w, p_out_h);
+}
+
+int CWnd::TextSize(const klb::CString& str, int* p_font_h, int* p_out_w, int* p_out_h)
+{
+    return klb_wnd_text_size(m_wnd, str.c_str(), str.Length(), p_font_h, p_out_w, p_out_h);
 }
 
 int CWnd::DrawImage(const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect)
@@ -577,12 +643,22 @@ int CWnd::DrawImage(const klb_rect_t* p_dst_rect, const std::string& path, const
     return klb_wnd_draw_image(m_wnd, p_dst_rect, path.c_str(), p_src_rect);
 }
 
+int CWnd::DrawImage(const klb_rect_t* p_dst_rect, const klb::CString& path, const klb_rect_t* p_src_rect)
+{
+    return klb_wnd_draw_image(m_wnd, p_dst_rect, path.c_str(), p_src_rect);
+}
+
 int CWnd::ImageSize(const char* p_path, int* p_out_w, int* p_out_h)
 {
     return klb_wnd_image_size(m_wnd, p_path, p_out_w, p_out_h);
 }
 
 int CWnd::ImageSize(const std::string& path, int* p_out_w, int* p_out_h)
+{
+    return klb_wnd_image_size(m_wnd, path.c_str(), p_out_w, p_out_h);
+}
+
+int CWnd::ImageSize(const klb::CString& path, int* p_out_w, int* p_out_h)
 {
     return klb_wnd_image_size(m_wnd, path.c_str(), p_out_w, p_out_h);
 }
@@ -642,6 +718,11 @@ int CWnd::TextSize2(const std::string& utf8, int font_h, int* p_out_w, int* p_ou
     return klb_wnd_text_size2(m_wnd, utf8.c_str(), utf8.length(), font_h, p_out_w, p_out_h);
 }
 
+int CWnd::TextSize2(const klb::CString& str, int font_h, int* p_out_w, int* p_out_h)
+{
+    return klb_wnd_text_size2(m_wnd, str.c_str(), str.Length(), font_h, p_out_w, p_out_h);
+}
+
 int CWnd::DrawText2(const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h)
 {
     return klb_wnd_draw_text2(m_wnd, p_rect, p_utf8, utf8_len, color, font_h);
@@ -650,6 +731,11 @@ int CWnd::DrawText2(const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, 
 int CWnd::DrawText2(const klb_rect_t* p_rect, const std::string& utf8, uint32_t color, int font_h)
 {
     return klb_wnd_draw_text2(m_wnd, p_rect, utf8.c_str(), utf8.length(), color, font_h);
+}
+
+int CWnd::DrawText2(const klb_rect_t* p_rect, const klb::CString& str, uint32_t color, int font_h)
+{
+    return klb_wnd_draw_text2(m_wnd, p_rect, str.c_str(), str.Length(), color, font_h);
 }
 
 /// @brief 可扩展绘图接口
@@ -718,17 +804,29 @@ int CWnd::OnCommand(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2,
 }
 
 
+/// @brief C标准 CSS处理函数
+typedef void(*klb_cwnd_std_function_cb)(klb_wnd_t* p_wnd, void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out);
+
+
 int CWnd::OnSet(const klb_map_t* p_map)
 {   
     const char* p_key = klb_map_idx_to_string(p_map, 0);
 
-    klb_cwnd_css_cb func = (NULL != m_css_func_map) ? (klb_cwnd_css_cb)klb_map_to_ptr(m_css_func_map, p_key, NULL) : NULL;
+    // 注意 C 指针绑定在 第一个位置, CPP指针绑定在第二个指针
+    klb_cwnd_css_cb cb_cpp = NULL;
+    klb_cwnd_std_function_cb cb_std = (NULL != m_css_func_map) ? (klb_cwnd_std_function_cb)klb_map_to_ptr(m_css_func_map, p_key, (const void**)&cb_cpp) : NULL;
 
-    if (func)
+    if (cb_cpp)
     {
+        // 优先处理 CPP 绑定的CSS函数
         klb::CMap in((klb_map_t*)p_map, true);
 
-        func(this, KLBUI_CSSEX_set, &in, NULL);
+        cb_cpp(this, KLBUI_CSSEX_set, &in, NULL);
+    }
+    else if(cb_std)
+    {
+        // C 标准 绑定的CSS函数
+        cb_std(m_wnd, NULL, KLBUI_CSSEX_set, p_map, NULL);
     }
 
     return 0;
@@ -738,81 +836,26 @@ klb_map_t* CWnd::OnGet(const klb_map_t* p_map)
 {
     klb_map_t* p_out = klb_map_create();
     const char* p_key = klb_map_idx_to_string(p_map, 0);
-    klb_cwnd_css_cb func = (NULL != m_css_func_map) ? (klb_cwnd_css_cb)klb_map_to_ptr(m_css_func_map, p_key, NULL) : NULL;
 
-    if (NULL != func)
+    // 注意 C 指针绑定在 第一个位置, CPP指针绑定在第二个指针
+    klb_cwnd_css_cb cb_cpp = NULL;
+    klb_cwnd_std_function_cb cb_std = (NULL != m_css_func_map) ? (klb_cwnd_std_function_cb)klb_map_to_ptr(m_css_func_map, p_key, (const void**)&cb_cpp) : NULL;
+
+    if (cb_cpp)
     {
+        // 优先处理 CPP 绑定的CSS函数
         klb::CMap in((klb_map_t*)p_map, true);
         klb::CMap out(p_out, true);
 
-        func(this, KLBUI_CSSEX_get, &in, &out);
+        cb_cpp(this, KLBUI_CSSEX_get, &in, &out);
+    }
+    else if (cb_std)
+    {
+        // C 标准 绑定的CSS函数
+        cb_std(m_wnd, NULL, KLBUI_CSSEX_get, p_map, p_out);
     }
 
     return p_out;
-}
-
-//////////////////////////////////////////////////////////////////////////
-// 
-
-void CWnd::OnCssColor(CWnd* p_cwnd, int method, const klb::CMap* p_in, klb::CMap* p_out)
-{
-    CCss* p_css = p_cwnd->GetCss();
-
-    CGui* p_gui = NULL;
-    p_cwnd->GetGui(&p_gui);
-
-    if (KLBUI_CSSEX_get == method)
-    {
-        (*p_out)[0] = (int64_t)p_css->GetColor();
-    }
-    else if (KLBUI_CSSEX_set == method)
-    {
-        int start = 1;
-        uint32_t color = 0;
-
-        if (p_gui->CheckColor(p_in, start, &color))
-        {
-            p_css->SetColor(color);
-            p_cwnd->Update();
-        }
-    }
-}
-
-void CWnd::BindCssFunction(const std::string& str, klb_cwnd_css_cb cb_func)
-{
-    klb_map_t* p_css_func_map = GetCssFunctionMap();
-    if (p_css_func_map)
-    {
-        klb_map_set_ptr(p_css_func_map, str.c_str(), (void*)(cb_func), NULL);
-    }
-}
-
-bool CWnd::InitCssFunctionMap(const std::string& type)
-{
-    klb_map_t* ptr = m_gui->CssMap(type);
-    if (NULL != ptr)
-    {
-        m_css_func_map = ptr;
-        return false; // 有解析 map, 则直接使用; 不是第一次
-    }
-
-    // 未找到, 则新添加 解析map, 及处理函数
-    ptr = m_gui->NewCssMap(type);
-    m_css_func_map = ptr;
-
-
-    // 标准 CSS 方法
-    BindCssFunction("color", CWnd::OnCssColor);
-
-    return true; // 是第一次
-}
-
-//////////////////////////////////////////////////////////////////////////
-// 私有函数
-
-klb_map_t* CWnd::GetCssFunctionMap()
-{
-    return m_css_func_map;
 }
 
 int CWnd::on_command_klb_cwnd(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
@@ -829,4 +872,6 @@ int CWnd::on_command_klb_cwnd(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt
     return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
 } // namespace klbui
+//end

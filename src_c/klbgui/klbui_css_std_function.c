@@ -292,7 +292,7 @@ static void do_first_control_event_klbguicssmapstd(klb_wnd_t* p_wnd, int e, cons
     }
 
     // on control
-    klb_wnd_on_control(p_wnd, e, p_pt1, p_pt2, lparam, wparam);
+    klb_wnd_call_control(p_wnd, e, p_pt1, p_pt2, lparam, wparam);
 
     // 
     klb_wnd_t* p_next = p_wnd->p_child;
@@ -337,6 +337,8 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     KLBGUI_cssmapstd_bind("wndpos-canvas", on_klbguicssmapstd_wndpos_canvas); // 基于窗口画布坐标
     KLBGUI_cssmapstd_bind("wndpos-parent", on_klbguicssmapstd_wndpos_parent); // 基于父窗口坐标
 
+    KLBGUI_cssmapstd_bind("wndpos_canvas", on_klbguicssmapstd_wndpos_canvas); // 基于窗口画布坐标
+    KLBGUI_cssmapstd_bind("wndpos_parent", on_klbguicssmapstd_wndpos_parent); // 基于父窗口坐标
 
     // 窗口移动
     KLBGUI_cssmapstd_bind("move", on_klbguicssmapstd_move);             // 相对父窗口,移动(x,y); eg. jq('aaa').move({x=10,y=10})
@@ -359,6 +361,12 @@ void klb_gui_css_map_append_std_function(klb_map_t* p_css_map, void* ptr)
     KLBGUI_cssmapstd_bind("style-focus-continue", on_klbguicssmapstd_style_focus_continue);                 // 设置 继续寻找焦点窗口 样式: KLB_WND_STYLE_FOCUS_CONTINUE
     KLBGUI_cssmapstd_bind("style-focus-delay", on_klbguicssmapstd_style_focus_delay);                       // 设置 支持聚焦之后, 延时消息 样式: KLB_WND_STYLE_FOCUS_DELAY
 
+    KLBGUI_cssmapstd_bind("style_peek_event", on_klbguicssmapstd_style_peek_event);                         // (在消息冒泡中)读取消息事件: KLB_WND_STYLE_PEEK_EVENT
+    KLBGUI_cssmapstd_bind("style_nofocus", on_klbguicssmapstd_style_nofocus);                               // 设置 无聚焦状态 样式: KLB_WND_STYLE_NOFOCUS
+    KLBGUI_cssmapstd_bind("style_nocommand", on_klbguicssmapstd_style_nocommand);                           // 设置 无on_command命令响应样式: KLB_WND_STYLE_NOCOMMAND
+    KLBGUI_cssmapstd_bind("style_focus_without_redraw", on_klbguicssmapstd_style_focus_without_redraw);     // 设置 聚焦时不重绘: KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW
+    KLBGUI_cssmapstd_bind("style_focus_continue", on_klbguicssmapstd_style_focus_continue);                 // 设置 继续寻找焦点窗口 样式: KLB_WND_STYLE_FOCUS_CONTINUE
+    KLBGUI_cssmapstd_bind("style_focus_delay", on_klbguicssmapstd_style_focus_delay);                       // 设置 支持聚焦之后, 延时消息 样式: KLB_WND_STYLE_FOCUS_DELAY
 
     // 状态 status
     KLBGUI_cssmapstd_bind("show", on_klbguicssmapstd_show);             // 显示(true/false)

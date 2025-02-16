@@ -11,7 +11,8 @@
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 ///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
-///   \n [2024-4] 添加 klb_gui_canvas_ioctrl_opt8 接口, 许可 开发者 在上层透过GUI框架, 直接对主画布进行交互操作
+///   \n [2024-4] 添加 klb_gui_canvas_ioctrl_opt8 接口, 许可 开发者 在上层透过GUI框架, 直接对画布进行交互操作
+///   \n [2025-1] 添加定时器相关功能
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
@@ -225,21 +226,27 @@ KLB_API int klb_gui_clear_async(klb_gui_t* p_gui, klb_gui_clear_result_cb cb_cle
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_model(klb_gui_t* p_gui, const char* p_path_name);
+KLB_API int klb_gui_modal(klb_gui_t* p_gui, const char* p_path_name);
 
 
 /// @brief 模态显示窗口
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_top          外部自定义窗口: 由外部管理生命周期
 /// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_model_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
+KLB_API int klb_gui_modal_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
 
 
 /// @brief 关闭显示窗口
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
 /// @return int 0.成功; 非0.失败(错误码)
-KLB_API int klb_gui_model_end(klb_gui_t* p_gui, bool all, const char* p_path_name);
+KLB_API int klb_gui_modal_end(klb_gui_t* p_gui, bool all, const char* p_path_name);
+
+
+/// @brief 获取 当前modal窗口数目
+/// @param [in] *p_gui          GUI对象
+/// @return int  modal 窗口数
+KLB_API int klb_gui_modal_num(klb_gui_t* p_gui);
 
 
 /// @brief 弹出菜单/对话框等页面
@@ -260,6 +267,12 @@ KLB_API int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
 KLB_API int klb_gui_popup_end(klb_gui_t* p_gui, bool all);
 
 
+/// @brief 获取 当前popup窗口数目
+/// @param [in] *p_gui          GUI对象
+/// @return int  popup 窗口数
+KLB_API int klb_gui_popup_num(klb_gui_t* p_gui);
+
+
 /// @brief 消息框: 弹出消息框
 /// @param [in] *p_gui          GUI对象
 /// @param [in] *p_path_name    窗口路径(类unix): eg."/messagebox1"
@@ -278,6 +291,12 @@ KLB_API int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
 /// @param [in] *p_gui          GUI对象
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_messagebox_end(klb_gui_t* p_gui);
+
+
+/// @brief 获取 当前messagebox窗口数目
+/// @param [in] *p_gui          GUI对象
+/// @return int  messagebox 窗口数
+KLB_API int klb_gui_messagebox_num(klb_gui_t* p_gui);
 
 
 /// @brief 向控件(窗口)绑定事件响应函数
@@ -386,7 +405,6 @@ KLB_API klb_wnd_t* klb_gui_get_focus_top(klb_gui_t* p_gui);
 /// @param [in]  *p_gui         GUI对象
 /// @param [in]  timeout        延时时间(单位毫秒ms, 默认600); 范围[0, ~]
 /// @return 无
-/// @note 可能为 NULL
 KLB_API void klb_gui_set_focusdelay(klb_gui_t* p_gui, int64_t timeout);
 
 
@@ -395,6 +413,24 @@ KLB_API void klb_gui_set_focusdelay(klb_gui_t* p_gui, int64_t timeout);
 /// @note 仅标记, 由框架决定合适的刷新时机
 ///     "update"在这里表示页面需要刷新
 KLB_API void klb_gui_update(klb_gui_t* p_gui);
+
+
+/// @brief 获取GUI的当前 系统滴答数(单位毫秒ms)
+/// @param [in]  *p_gui         GUI对象
+/// @return int64_t 系统滴答数
+KLB_API int64_t klb_gui_get_tick_count(klb_gui_t* p_gui);
+
+
+/// @brief 获取GUI的 内部控件定时器运行间隔 (单位毫秒ms, 默认 500ms)
+/// @param [in]  *p_gui         GUI对象
+/// @return int64_t 时间间隔(单位毫秒ms)
+KLB_API int64_t klb_gui_get_ticker_interval(klb_gui_t* p_gui);
+
+
+/// @brief 设置GUI的 内部控件定时器运行间隔 (单位毫秒ms)
+/// @param [in]  *p_gui         GUI对象
+/// @return 无
+KLB_API void klb_gui_set_ticker_interval(klb_gui_t* p_gui, int64_t interval);
 
 
 #ifdef __cplusplus

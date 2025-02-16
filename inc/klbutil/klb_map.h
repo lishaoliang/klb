@@ -133,6 +133,10 @@ KLB_API bool klb_map_idx_remove(klb_map_t* p_map, int idx);
 KLB_API bool klb_map_idx_remove_tail(klb_map_t* p_map);
 
 
+typedef int(*klb_map_array_sort_cb)(const klb_adt_t* p_adt1, const klb_adt_t* p_adt2, void* ptr1);
+
+KLB_API int klb_map_array_sort(klb_map_t* p_map, klb_map_array_sort_cb cb_sort, void* ptr1);
+
 /////////////////////////////////////
 
 KLB_API int klb_map_size(const klb_map_t* p_map);

@@ -10,6 +10,11 @@
 ///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发者替换绘图函数
 ///   \n [2024-1] 添加 klb_wnd_draw_opt* 系列函数, 许可控件开发者 扩展基础绘图函数
 ///   \n [2024-4] 添加 KLB_WND_STYLE_FOCUS_DELAY 聚焦延时样式
+///   \n [2025-1] 添加 KLB_WND_STYLE_TICKER_* 控件定时器 样式, 许可控件 支持定时器 功能
+///   \n     控件定时器 的 思路: 窗口 若含有 KLB_WND_STYLE_TICKER 标记, 则在加载之后, 放入 需要处理的 顶层窗口定时器 列表中
+///   \n     当整个 窗口树 处于激活(显示) 时, 会周期性 触发 控件 KLBUI_onticker 事件
+///   \n [2025-1] 添加 KLB_WND_STYLE_LAYER_POPUP, KLB_WND_STYLE_LAYER_MSGBOX 图层定义
+///   \n [2025-2] 添加 KLB_WND_STATUS_TIP_DYNAMIC 动态TIP机制
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
 #define __KLB_WND_H__
@@ -50,10 +55,16 @@ typedef enum klb_wnd_style_e_
     KLB_WND_STYLE_PEEK_EVENT            = 0x0002,   ///< (在消息冒泡中)读取消息事件: 若需要响应部分子窗口事件, 可使用此标记
     KLB_WND_STYLE_NOFOCUS               = 0x0004,   ///< 无聚焦状态
     KLB_WND_STYLE_NOCOMMAND             = 0x0008,   ///< 无on_command命令响应: klb_wnd_bind_command 函数不生效
+    
     KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW  = 0x0010,   ///< 有聚焦行为, 但聚焦时不会触发控件重绘
     KLB_WND_STYLE_FOCUS_CONTINUE        = 0x0020,   ///< 继续寻找焦点窗口
     KLB_WND_STYLE_FOCUS_DELAY           = 0x0040,   ///< 支持聚焦之后, 延时消息
 
+    KLB_WND_STYLE_TICKER                = 0x0400,   ///< 支持控件定时器(只要处于激活的顶层窗口, 即生效)
+    KLB_WND_STYLE_TICKER_TOPMOST        = 0x0800,   ///< 支持控件定时器(必须处于激活的最顶层窗口, 即生效)
+
+    KLB_WND_STYLE_LAYER_POPUP           = 0x2000,   ///< popup 图层
+    KLB_WND_STYLE_LAYER_MSGBOX          = 0x4000,   ///< messagebox 图层
     KLB_WND_STYLE_LAYER_TIP             = 0x8000,   ///< TIP 图层
 }klb_wnd_style_e;
 
@@ -66,8 +77,11 @@ typedef enum klb_wnd_status_e_
     KLB_WND_STATUS_INPUT                = 0x0002,   ///< 输入状态
     KLB_WND_STATUS_CHECK                = 0x0004,   ///< 选中状态
     KLB_WND_STATUS_DISABLE              = 0x0008,   ///< 不使能
+
     KLB_WND_STATUS_TOPMOST              = 0x0100,   ///< 激活中的最顶层窗口: 所有 "modal"/"popup"/"messagebox"中处于最顶层
+    
     KLB_WND_STATUS_FOCUS                = 0x1000,   ///< 鼠标聚焦
+    KLB_WND_STATUS_TIP_DYNAMIC          = 0x2000,   ///< 需要重新计算动态TIP
     KLB_WND_STATUS_RESIZE               = 0x4000,   ///< 重置了窗口大小, 需要控件处理布局问题
     KLB_WND_STATUS_CANVAS_RECT          = 0x8000,   ///< 需要重新计算窗口基于屏幕的位置
 }klb_wnd_status_e;
@@ -80,6 +94,16 @@ typedef struct klb_wnd_state_t_
     uint32_t    style;                      ///< 典型窗口样式: klb_wnd_style_e
     uint32_t    status;                     ///< 窗口状态: klb_wnd_status_e
 }klb_wnd_state_t;
+
+
+/// @struct klb_wnd_tip_t
+/// @brief  TIP提示
+///  暂不同 提供 对 tip 设置显示位置
+typedef struct klb_wnd_tip_t_
+{
+    sds         title;                      ///< 静态TIP; 设置后一值存在
+    sds         dynamic;                    ///< 动态TIP: 依据运行状态变更
+}klb_wnd_tip_t;
 
 
 /// @brief 销毁
@@ -207,7 +231,7 @@ typedef struct klb_wnd_t_
     klb_wnd_state_t     state;      ///< 窗口状态的参数
 
     // tip
-    sds                 tip;        ///< 聚焦之后的tip数据
+    klb_wnd_tip_t       tip;        ///< 聚焦之后的tip数据
 
     // 用户数据
     void*               p_udata;    ///< public user data, [绑定响应函数的附加指针]
@@ -232,7 +256,8 @@ typedef struct klb_wnd_t_
 #define KLB_FREE_WND(WND_) { \
     if(NULL!=(WND_)){ \
         klb_wnd_destroy_cb destroy=(WND_)->vtable.destroy; \
-        KLB_FREE_BY(((WND_)->tip), sdsfree); \
+        KLB_FREE_BY(((WND_)->tip.title), sdsfree); \
+        KLB_FREE_BY(((WND_)->tip.dynamic), sdsfree); \
         if(destroy) { destroy(WND_); } \
         (WND_)=NULL; \
     } \
@@ -316,13 +341,26 @@ KLB_API bool klb_wnd_is_enable(klb_wnd_t* p_wnd);
 /// @note  此状态的设置函数, 只能由框架内部决定
 KLB_API bool klb_wnd_is_topmost(klb_wnd_t* p_wnd);
 
+/// @brief 设置动态 是否需要更新
+///  dynamic tip 
+KLB_API void klb_wnd_dyntip(klb_wnd_t* p_wnd, bool update);
+
+/// @brief 获取动态tip 是否需要更新
+///  dynamic tip 
+KLB_API bool klb_wnd_is_dyntip(klb_wnd_t* p_wnd);
+
 
 //////////////////////////////////////////////////////////////////////////
 // tip
 
-/// @brief 设置,获取 tip
+/// @brief 设置,获取 静态tip
 KLB_API void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip);
 KLB_API const sds klb_wnd_get_tip(klb_wnd_t* p_wnd);
+
+/// @brief 设置,获取 动态 tip
+///  控件需要 配合 klb_wnd_is_dyntip / klb_wnd_dyntip 动态tip 状态, 来完成动态tip流程 
+KLB_API void klb_wnd_set_tip_dynamic(klb_wnd_t* p_wnd, const char* p_tip);
+KLB_API const sds klb_wnd_get_tip_dynamic(klb_wnd_t* p_wnd);
 
 /// @brief 标记刷新 tip
 /// @note 仅标记, 由框架决定合适的刷新时机
@@ -381,17 +419,17 @@ KLB_API int klb_wnd_call_control_and_command(klb_wnd_t* p_wnd, int msg, const kl
 
 
 /// @brief 调用on_control函数
-/// @note 替代函数: klb_wnd_call_control
+/// @note [废弃] 替代函数: klb_wnd_call_control
 KLB_API int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 调用on_command函数
-/// @note 替代函数: klb_wnd_call_command
+/// @note [废弃] 替代函数: klb_wnd_call_command
 KLB_API int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 1.调用on_control函数; 2.调用on_command函数
-/// @note 替代函数: klb_wnd_call_control_and_command
+/// @note [废弃] 替代函数: klb_wnd_call_control_and_command
 KLB_API int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
@@ -418,6 +456,16 @@ KLB_API int klb_wnd_push_child(klb_wnd_t* p_parent, klb_wnd_t* p_wnd);
 /// @brief 参数设置 / 获取
 KLB_API int klb_wnd_set(klb_wnd_t* p_wnd, const klb_map_t* p_map);
 KLB_API klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map);
+
+
+//////////////////////////////////////////////////////////////////////////
+// 时间
+
+
+/// @brief 获取GUI的当前 系统滴答数(单位毫秒ms)
+/// @param [in]  *p_wnd         窗口
+/// @return int64_t 系统滴答数
+KLB_API int64_t klb_wnd_get_tick_count(klb_wnd_t* p_wnd);
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -137,7 +137,7 @@ static int on_btnex_close_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb
         p_msgbox->value = KLBWND_MESSAGEBOX_close;
         klb_gui_messagebox_end(p_wnd->p_gui);
 
-        klb_wnd_on_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;
@@ -153,7 +153,7 @@ static int on_btn_ok_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_poin
         p_msgbox->value = KLBWND_MESSAGEBOX_ok;
         klb_gui_messagebox_end(p_wnd->p_gui);
 
-        klb_wnd_on_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;
@@ -169,7 +169,7 @@ static int on_btn_cancel_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_
         p_msgbox->value = KLBWND_MESSAGEBOX_cancel;
         klb_gui_messagebox_end(p_wnd->p_gui);
 
-        klb_wnd_on_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd_msgbox, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;

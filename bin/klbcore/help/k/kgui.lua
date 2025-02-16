@@ -8,6 +8,11 @@
 local kgui = {}
 
 
+-- @brief 启用 C++ 扩展控件: 即 支持使用 CPP 相关的GUI接口
+kgui.using_cpp = function ()
+	return
+end
+
 
 
 -- @brief 设置默认CSS参数
@@ -171,20 +176,20 @@ kgui.get = function (path, ...)
 end
 
 
--- @brief 以model方式的显示一个对话框
--- @param [in] all[boolean]			是否关闭全部popup: 默认true
+-- @brief 以modal方式的显示一个对话框
+-- @param [in] all[boolean]			是否关闭全部modal: 默认true
 -- @param [in] path[string]			窗口路径(类unix): 默认nil
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.model = function (path)
+kgui.modal = function (path)
 	return 0
 end
 
 
--- @brief 结束一个model方式的对话框
--- @param [in] all[boolean]			是否关闭全部popup: 默认true
+-- @brief 结束一个modal方式的对话框
+-- @param [in] all[boolean]			是否关闭全部modal: 默认true
 -- @param [in] path[string]			窗口路径(类unix): 默认nil
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.model_end = function (all, path)
+kgui.modal_end = function (all, path)
 	return 0
 end
 
@@ -328,6 +333,32 @@ end
 kgui.b3_event = function (e)
 	-- 事件是否含有: KLBUI_event_bit3(0x10000000) 比特位标记
 	return false
+end
+
+
+
+-- @brief 设置 聚焦延时消息 的时间(单位毫秒ms, 默认600, 范围[0, ~])
+-- @return 无
+-- @note 指鼠标聚焦一段时间后, 配合控件样式(KLB_WND_STYLE_FOCUS_DELAY), 会产生一个 focusdelay(KLBUI_focusdelay = 0x710)事件
+-- 		同时影响 tip 弹出的时间
+kgui.focusdelay = function (tc)
+	return
+end
+
+
+-- @brief 获取系统当前 系统滴答数
+-- @return [number(int)] 	系统滴答数
+kgui.tick_count = function ()
+	return 1000
+end
+
+
+-- @brief 设置 内部控件定时器运行间隔 (单位毫秒ms, 默认500, 范围[10, ~])
+-- @return 无
+-- 		调小,精度略微提高, 降低框架性能
+--		调大,精度略微降低, 提高框架性能
+kgui.ticker_interval = function (interval)
+	return 
 end
 
 

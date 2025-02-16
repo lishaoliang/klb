@@ -106,7 +106,7 @@ static int on_result_combomenu_klbui_combo(void* ptr, bool ok, const sds value, 
         if (change)
         {
             // 内容变更事件 KLBUI_onchange
-            klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_call_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
         }
 
         klb_wnd_update(p_wnd);

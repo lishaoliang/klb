@@ -68,10 +68,11 @@ typedef struct klb_gui_t_
     // 常用的扩展
     struct
     {
-        klbuiex_wndhash_t*  p_wndhash;                  ///< 窗口创建,查找等
-        klbuiex_redraw_t*   p_redraw;                   ///< 重绘记录
-        klbuiex_tip_t*      p_tip;                      ///< tip
-        klbuiex_util_t*     p_util;                     ///< util
+        klbuiex_wndhash_t*      p_wndhash;              ///< 窗口创建,查找等
+        klbuiex_wndticker_t*    p_wndticker;            ///< 窗口定时器
+        klbuiex_redraw_t*       p_redraw;               ///< 重绘记录
+        klbuiex_tip_t*          p_tip;                  ///< tip
+        klbuiex_util_t*         p_util;                 ///< util
     };
 
     // 当前绘制窗口, 窗口显示次序

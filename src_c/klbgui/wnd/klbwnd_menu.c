@@ -246,7 +246,7 @@ static int on_command_item_klbwnd_menu(klb_wnd_t* p_wnd, int msg, const klb_poin
             klb_gui_popup_end(p_wnd_menu->p_gui, true);
 
             // 响应
-            klb_wnd_on_command(p_wnd_menu, KLBUI_onchange, NULL, NULL, 0, 0);
+            klb_wnd_call_command(p_wnd_menu, KLBUI_onchange, NULL, NULL, 0, 0);
         }
     }
     else if(KLBUI_focus == msg)
@@ -282,7 +282,7 @@ static int on_command_2rd_klbwnd_menu(klb_wnd_t* p_wnd, int msg, const klb_point
         klb_gui_popup_end(p_wnd_menu->p_gui, true);
 
         // 响应
-        klb_wnd_on_command(p_wnd_menu, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd_menu, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;

@@ -408,9 +408,14 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\lualib.h" />
     <ClInclude Include="..\..\inc_hpp\klbbase\CPackage.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbgui\CCss.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\CDrawDC.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbgui\CGui.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbgui\CWnd.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CButton.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CDemo.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CLabel.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CTicker.hpp" />
+    <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CTimer.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbmem\CBuf.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbnet\CListen.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbnet\CMultiplex.hpp" />
@@ -450,6 +455,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_util.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.h" />
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
@@ -641,10 +647,15 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
   <ItemGroup>
     <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp" />
     <ClCompile Include="..\..\src_cpp\klbgui\CCss.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\CDrawDC.cpp" />
     <ClCompile Include="..\..\src_cpp\klbgui\CGui.cpp" />
     <ClCompile Include="..\..\src_cpp\klbgui\CWnd.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbgui\widgets\CUiButton.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\CWndCssFunction.cpp" />
     <ClCompile Include="..\..\src_cpp\klbgui\wnd\CButton.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\wnd\CDemo.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\wnd\CLabel.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\wnd\CTicker.cpp" />
+    <ClCompile Include="..\..\src_cpp\klbgui\wnd\CTimer.cpp" />
     <ClCompile Include="..\..\src_cpp\klbmem\CBuf.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp" />
     <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp" />
@@ -687,6 +698,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_util.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_std_function.c" />

@@ -19,6 +19,7 @@
 #include "klbutil/klb_adt.h"
 #include "klbmem/klb_buf.h"
 #include "klbutil/klb_map.h"
+#include "klbutil/CString.hpp"
 #include <string>
 
 namespace klb {
@@ -41,6 +42,7 @@ public:
     CMapItem& operator=(const double d);
     CMapItem& operator=(const std::string& str);
     CMapItem& operator=(const char* p_str);
+    CMapItem& operator=(const CString& str);
     CMapItem& operator=(const CMap& m);
 
     bool operator==(const bool b);
@@ -48,6 +50,7 @@ public:
     bool operator==(const uint64_t u64);
     bool operator==(const std::string& str);
     bool operator==(const char* p_str);
+    bool operator==(const CString& str);
 
     CMapItem& Set(const bool b);
     CMapItem& Set(const int64_t i64);
@@ -56,6 +59,7 @@ public:
     CMapItem& Set(const std::string& str);
     CMapItem& Set(const char* p_str);
     CMapItem& Set(const char* p_str, int str_len);
+    CMapItem& Set(const CString& str);
     CMapItem& Set(const void* ptr1, const void* ptr2);
     CMapItem& Set(const CMap& m);
 
@@ -67,6 +71,7 @@ public:
     CMapItem& Get(double& d);
     CMapItem& Get(std::string& str);
     CMapItem& Get(const char** p_out_str, int* p_out_len);
+    CMapItem& Get(CString& str);
     CMapItem& Get(const void** p_out_ptr1, const void** p_out_ptr2);
     CMapItem& Get(CMap& m);
 
@@ -82,6 +87,7 @@ public:
 
 protected:
     void SetMapAdt(CMap* p_map, const std::string& key, klb_adt_t* p_adt);
+    void SetMapAdt(CMap* p_map, const CString& key, klb_adt_t* p_adt);
     void SetMapAdt(CMap* p_map, int idx, klb_adt_t* p_adt);
     void SetMapAdt(klb_adt_t* p_adt);
 
@@ -155,6 +161,7 @@ public:
 
     CMapItem& operator[](const std::string& key);
     CMapItem& operator[](const char* p_key);
+    CMapItem& operator[](const CString& key);
     CMapItem& operator[](int idx);
 
     /////////////////////////////////////
@@ -168,6 +175,7 @@ public:
     CMap& Set(const std::string& key, const std::string& str);
     CMap& Set(const std::string& key, const char* p_str);
     CMap& Set(const std::string& key, const char* p_str, int str_len);
+    CMap& Set(const std::string& key, const CString& str);
     CMap& Set(const std::string& key, const void* ptr1, const void* ptr2);
     CMap& Set(const std::string& key, const CMap& m);
 
@@ -179,6 +187,7 @@ public:
     CMap& Set(const char* p_key, const std::string& str);
     CMap& Set(const char* p_key, const char* p_str);
     CMap& Set(const char* p_key, const char* p_str, int str_len);
+    CMap& Set(const char* p_key, const CString& str);
     CMap& Set(const char* p_key, const void* ptr1, const void* ptr2);
     CMap& Set(const char* p_key, const CMap& m);
 
@@ -191,6 +200,7 @@ public:
     CMap& Get(const std::string& key, double& d);
     CMap& Get(const std::string& key, std::string& str);
     CMap& Get(const std::string& key, const char** p_out_str, int* p_out_len);
+    CMap& Get(const std::string& key, CString& str);
     CMap& Get(const std::string& key, const void** p_out_ptr1, const void** p_out_ptr2);
     CMap& Get(const std::string& key, CMap& m);
 
@@ -200,15 +210,18 @@ public:
     CMap& Get(const char* p_key, double& d);
     CMap& Get(const char* p_key, std::string& str);
     CMap& Get(const char* p_key, const char** p_out_str, int* p_out_len);
+    CMap& Get(const char* p_key, CString& str);
     CMap& Get(const char* p_key, const void** p_out_ptr1, const void** p_out_ptr2);
     CMap& Get(const char* p_key, CMap& m);
  
     klb_adt_type_e Type(const std::string& key);
     klb_adt_type_e Type(const char* p_key);
+    klb_adt_type_e Type(const CString& key);
 
     int  KeyValueSize();
     bool Remove(const std::string& key);
     bool Remove(const char* p_key);
+    bool Remove(const CString& key);
     bool Remove(const CMapIter& iter);
 
     CMapIter Begin();
@@ -225,6 +238,7 @@ public:
     CMap& Append(const std::string& str);
     CMap& Append(const char* p_str);
     CMap& Append(const char* p_str, int str_len);
+    CMap& Append(const CString& str);
     CMap& Append(const void* ptr1, const void* ptr2);
     CMap& Append(const CMap& m);
 
@@ -236,6 +250,7 @@ public:
     CMap& Set(const int idx, const std::string& str);
     CMap& Set(const int idx, const char* p_str);
     CMap& Set(const int idx, const char* p_str, int str_len);
+    CMap& Set(const int idx, const CString& str);
     CMap& Set(const int idx, const void* ptr1, const void* ptr2);
     CMap& Set(const int idx, const CMap& m);  
 
@@ -248,6 +263,7 @@ public:
     CMap& Get(const int idx, double& d);
     CMap& Get(const int idx, std::string& str);
     CMap& Get(const int idx, const char** p_out_str, int* p_out_len);
+    CMap& Get(const int idx, CString& str);
     CMap& Get(const int idx, const void** p_out_ptr1, const void** p_out_ptr2);
     CMap& Get(const int idx, CMap& m);
 
@@ -257,6 +273,11 @@ public:
     bool Remove(int idx);
     bool RemoveTail();
 
+    typedef int(*cmap_sort_cb)(CMapItem& data1, CMapItem& data2);
+
+    int Sort(cmap_sort_cb cb_sort);
+    int Sort(klb_map_array_sort_cb cb_sort, void* ptr1);
+
     /////////////////////////////////////
     // serialize 二进制
     klb_buf_t* Pack();
@@ -265,6 +286,9 @@ public:
     /////////////////////////////////////
     // json
     std::string PrintJson();
+
+private:
+    static int CbSortMapArray(const klb_adt_t* p_adt1, const klb_adt_t* p_adt2, void* ptr1);
 
 protected:
     klb_adt_t* GetNoneAdt();

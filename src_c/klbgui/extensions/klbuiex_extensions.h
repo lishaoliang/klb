@@ -16,6 +16,7 @@
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
 #include "klbgui/extensions/klbuiex_wndhash.h"
+#include "klbgui/extensions/klbuiex_wndticker.h"
 #include "klbgui/extensions/klbuiex_default.h"
 #include "klbgui/extensions/klbuiex_time.h"
 #include "klbgui/extensions/klbuiex_shwnd.h"
@@ -35,6 +36,7 @@ extern "C" {
 { \
     klbuiex_register_util((GUI_));      \
     klbuiex_register_wndhash((GUI_));   \
+    klbuiex_register_wndticker((GUI_)); \
     klbuiex_register_default((GUI_));   \
     klbuiex_register_time((GUI_));      \
     klbuiex_register_shwnd((GUI_));     \

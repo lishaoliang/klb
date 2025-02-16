@@ -163,7 +163,7 @@ static int klbwnd_slider_on_click(klb_wnd_t* p_wnd, klbwnd_slider_t* p_slider, c
     if (change)
     {
         // 内容变更事件 KLBUI_onchange
-        klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     klb_wnd_update(p_wnd);

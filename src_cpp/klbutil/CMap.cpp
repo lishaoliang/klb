@@ -63,6 +63,11 @@ CMapItem& CMapItem::operator=(const char* p_str)
     return Set(p_str);
 }
 
+CMapItem& CMapItem::operator=(const CString& str)
+{
+    return Set(str);
+}
+
 CMapItem& CMapItem::operator=(const CMap& m)
 {
     return Set(m);
@@ -114,6 +119,16 @@ bool CMapItem::operator==(const char* p_str)
     {
         const char* ptr = klb_adt_to_string(m_ref_adt);
         return (0 == strcmp(ptr, p_str)) ? true : false;
+    }
+    return false;
+}
+
+bool CMapItem::operator==(const CString& str)
+{
+    if (KLB_ADT_string == klb_adt_type(m_ref_adt))
+    {
+        const char* ptr = klb_adt_to_string(m_ref_adt);
+        return (0 == strcmp(ptr, str.c_str())) ? true : false;
     }
     return false;
 }
@@ -265,6 +280,13 @@ CMapItem& CMapItem::Set(const char* p_str, int str_len)
     return *this;
 }
 
+CMapItem& CMapItem::Set(const CString& str)
+{
+    const sds s = str.c_sds();
+
+    return Set(s, sdslen(s));
+}
+
 CMapItem& CMapItem::Set(const void* ptr1, const void* ptr2)
 {
     if (NULL != m_ref_map)
@@ -351,6 +373,12 @@ CMapItem& CMapItem::Get(const char** p_out_str, int* p_out_len)
         *p_out_str = p_str;
     }
 
+    return *this;
+}
+
+CMapItem& CMapItem::Get(CString& str)
+{
+    str = klb_adt_to_string(m_ref_adt);
     return *this;
 }
 
@@ -479,6 +507,20 @@ void CMapItem::SetMapAdt(CMap* p_map, const std::string& key, klb_adt_t* p_adt)
 
     m_type = KLB_CMAP_ITEM_keyvalue;
     
+    KLB_FREE_BY(m_key, sdsfree);
+    m_key = sdsnew(key.c_str());
+}
+
+void CMapItem::SetMapAdt(CMap* p_map, const CString& key, klb_adt_t* p_adt)
+{
+    assert(NULL != p_map);
+    assert(NULL != p_adt);
+
+    m_ref_map = p_map;
+    m_ref_adt = p_adt;
+
+    m_type = KLB_CMAP_ITEM_keyvalue;
+
     KLB_FREE_BY(m_key, sdsfree);
     m_key = sdsnew(key.c_str());
 }
@@ -775,6 +817,15 @@ CMapItem& CMap::operator[](const char* p_key)
     return m_none_item;
 }
 
+CMapItem& CMap::operator[](const CString& key)
+{
+    const klb_adt_t* p_adt = klb_map_to_adt(&m_map, key.c_str());
+    klb_adt_t* p_dst = (NULL != p_adt) ? (klb_adt_t*)p_adt : GetNoneAdt();
+
+    m_none_item.SetMapAdt(this, key, p_dst);
+    return m_none_item;
+}
+
 CMapItem& CMap::operator[](int idx)
 {
     const klb_adt_t* p_adt = klb_map_idx_to_adt(&m_map, idx);
@@ -831,6 +882,12 @@ CMap& CMap::Set(const std::string& key, const char* p_str)
 CMap& CMap::Set(const std::string& key, const char* p_str, int str_len)
 {
     klb_map_set_lstring(&m_map, key.c_str(), p_str, str_len);
+    return *this;
+}
+
+CMap& CMap::Set(const std::string& key, const CString& str)
+{
+    klb_map_set_string(&m_map, key.c_str(), str.c_str());
     return *this;
 }
 
@@ -894,6 +951,12 @@ CMap& CMap::Set(const char* p_key, const char* p_str, int str_len)
     return Set(key, p_str, str_len);
 }
 
+CMap& CMap::Set(const char* p_key, const CString& str)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Set(key, str);
+}
+
 CMap& CMap::Set(const char* p_key, const void* ptr1, const void* ptr2)
 {
     std::string key = (NULL != p_key) ? p_key : "";
@@ -946,6 +1009,12 @@ CMap& CMap::Get(const std::string& key, const char** p_out_str, int* p_out_len)
         *p_out_str = p_str;
     }
 
+    return *this;
+}
+
+CMap& CMap::Get(const std::string& key, CString& str)
+{
+    str = klb_map_to_string(&m_map, key.c_str());
     return *this;
 }
 
@@ -1004,6 +1073,12 @@ CMap& CMap::Get(const char* p_key, const char** p_out_str, int* p_out_len)
     return Get(key, p_out_str, p_out_len);
 }
 
+CMap& CMap::Get(const char* p_key, CString& str)
+{
+    std::string key = (NULL != p_key) ? p_key : "";
+    return Get(key, str);
+}
+
 CMap& CMap::Get(const char* p_key, const void** p_out_ptr1, const void** p_out_ptr2)
 {
     std::string key = (NULL != p_key) ? p_key : "";
@@ -1027,6 +1102,11 @@ klb_adt_type_e CMap::Type(const char* p_key)
     return Type(key);
 }
 
+klb_adt_type_e CMap::Type(const CString& key)
+{
+    return (klb_adt_type_e)klb_map_type(&m_map, key.c_str());
+}
+
 int CMap::KeyValueSize()
 {
     return klb_map_key_value_size(&m_map);
@@ -1041,6 +1121,11 @@ bool CMap::Remove(const char* p_key)
 {
     std::string key = (NULL != p_key) ? p_key : "";
     return Remove(key);
+}
+
+bool CMap::Remove(const CString& key)
+{
+    return klb_map_remove_by_key(&m_map, key.c_str());
 }
 
 bool CMap::Remove(const CMapIter& iter)
@@ -1109,6 +1194,12 @@ CMap& CMap::Append(const char* p_str, int str_len)
     return *this;
 }
 
+CMap& CMap::Append(const CString& str)
+{
+    klb_map_append_string(&m_map, str.c_str());
+    return *this;
+}
+
 CMap& CMap::Append(const void* ptr1, const void* ptr2)
 {
     klb_map_append_ptr(&m_map, ptr1, ptr2);
@@ -1169,6 +1260,12 @@ CMap& CMap::Set(const int idx, const char* p_str, int str_len)
     return *this;
 }
 
+CMap& CMap::Set(const int idx, const CString& str)
+{
+    klb_map_set_idx_string(&m_map, idx, str.c_str());
+    return *this;
+}
+
 CMap& CMap::Set(const int idx, const void* ptr1, const void* ptr2)
 {
     klb_map_set_idx_ptr(&m_map, idx, ptr1, ptr2);
@@ -1223,6 +1320,12 @@ CMap& CMap::Get(const int idx, const char** p_out_str, int* p_out_len)
     return *this;
 }
 
+CMap& CMap::Get(const int idx, CString& str)
+{
+    str = klb_map_idx_to_string(&m_map, idx);
+    return *this;
+}
+
 CMap& CMap::Get(const int idx, const void** p_out_ptr1, const void** p_out_ptr2)
 {
     const void* ptr1 = klb_map_idx_to_ptr(&m_map, idx, p_out_ptr2);
@@ -1261,6 +1364,34 @@ bool CMap::Remove(int idx)
 bool CMap::RemoveTail()
 {
     return klb_map_idx_remove_tail(&m_map);
+}
+
+int CMap::CbSortMapArray(const klb_adt_t* p_adt1, const klb_adt_t* p_adt2, void* ptr1)
+{
+    CMap::cmap_sort_cb cb_sort = (CMap::cmap_sort_cb)ptr1;
+
+    CMapItem data1, data2;
+    data1.SetMapAdt((klb_adt_t*)p_adt1);
+    data2.SetMapAdt((klb_adt_t*)p_adt2);
+
+    return cb_sort(data1, data2);
+}
+
+int CMap::Sort(cmap_sort_cb cb_sort)
+{
+    if (NULL != cb_sort)
+    {
+        return klb_map_array_sort(&m_map, CMap::CbSortMapArray, cb_sort);
+    }
+    else
+    {
+        return klb_map_array_sort(&m_map, NULL, NULL);
+    }
+}
+
+int CMap::Sort(klb_map_array_sort_cb cb_sort, void* ptr1)
+{
+    return klb_map_array_sort(&m_map, cb_sort, ptr1);
 }
 
 klb_adt_t* CMap::GetNoneAdt()
@@ -1390,6 +1521,11 @@ int CMap::Test()
     c[2] = "c2";
     c[3] = "c3";
     c[4] = a;
+    c[5] = "a0";
+
+    c.Sort(NULL);
+
+    std::string sc = c.PrintJson();
 
     a["c"] = c;
 
@@ -1409,3 +1545,4 @@ int CMap::Test()
 }
 
 }; // namespace klb
+//end

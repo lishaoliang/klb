@@ -28,12 +28,12 @@ CKluaEnv::~CKluaEnv()
 
 /////////////////////////////////////
 
-void CKluaEnv::SetUdata(void* p_udata)
+void CKluaEnv::SetUserdata(void* p_udata)
 {
     klua_env_set_udata(m_env, p_udata);
 }
 
-void* CKluaEnv::GetUdata()
+void* CKluaEnv::GetUserdata()
 {
     return klua_env_get_udata(m_env);
 }

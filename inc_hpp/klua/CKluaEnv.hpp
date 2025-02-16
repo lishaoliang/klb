@@ -32,11 +32,11 @@ public:
     /// @brief 设置用户数据指针(user data)
     /// @param [in] *p_udata           用户数据指针(user data)
     /// @return 无
-    void SetUdata(void* p_udata);
+    void SetUserdata(void* p_udata);
 
     /// @brief 获取用户数据指针(user data)
     /// @return void* 用户数据指针
-    void* GetUdata();
+    void* GetUserdata();
 
     /// @brief 获取当前lua环境滴答数
     /// @return int64_t tc

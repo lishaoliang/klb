@@ -104,6 +104,11 @@ event.onpredraw = 0x518		-- onpredraw
 event.onpaint = 0x520		-- onpaint
 
 
+-- @def   KLBUI_onticker
+-- @brief 长期性定时器: 定时事件
+event.onticker = 0x571		-- onticker
+
+
 -- @def   KLBUI_onparsewindow
 -- @brief on parse window: Lua解析窗口(控件), 完成后触发; 包含所有子窗口解析完成
 --   部分控件或窗口, 需要在所有 CSS 属性设置完成之后, 再做调整
@@ -218,6 +223,9 @@ local transform_map = {
 
 	['onpaint'] = event.onpaint,		-- 绘制事件
 	[event.onpaint] = 'onpaint',		-- 绘制事件
+	
+	['onticker'] = event.onticker,		-- 长期定时器事件
+	[event.onticker] = 'onticker',		-- 长期定时器事件
 	
 	['onparsewindow'] = event.onparsewindow,	-- Lua解析窗口(控件), 完成后触发
 	[event.onparsewindow] = 'onparsewindow',	-- Lua解析窗口(控件), 完成后触发

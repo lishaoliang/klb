@@ -118,7 +118,7 @@ static int klbwnd_check_on_click(klb_wnd_t* p_wnd, klbwnd_check_t* p_check, cons
     }
 
     klb_wnd_check(p_wnd, !klb_wnd_is_check(p_wnd));
-    klb_wnd_on_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
+    klb_wnd_call_command(p_wnd, KLBUI_onchange, NULL, NULL, 0, 0);
     klb_wnd_update(p_wnd);
 
     return 0;

@@ -144,18 +144,58 @@ CString& CString::operator=(const std::string* p_str)
     return *this;
 }
 
+bool CString::operator==(const CString& str)
+{
+    if (0 == sdscmp(m_sds, str.m_sds))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool CString::operator==(const CString* p_str)
+{
+    if (NULL != p_str && 0 == sdscmp(m_sds, p_str->m_sds))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool CString::operator==(const std::string& str)
+{
+    if (0 == strcmp(m_sds, str.c_str()))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool CString::operator==(const char* p_str)
+{
+    if (NULL != p_str && 0 == strcmp(m_sds, p_str))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // 导出函数
 
 /////////////////////////////////////////
 // 获取长度
 
-size_t CString::Len()
+size_t CString::Len() const
 {
     return sdslen(m_sds);
 }
 
-size_t CString::Length()
+size_t CString::Length() const
 {
     return sdslen(m_sds);
 }
@@ -383,12 +423,17 @@ CString& CString::Clear()
 
 /////////////////////////////////////////
 
-const sds CString::c_sds()
+size_t CString::length() const
+{
+    return sdslen(m_sds);
+}
+
+const sds CString::c_sds() const
 {
     return m_sds;
 }
 
-const char* CString::c_str()
+const char* CString::c_str() const
 {
     return m_sds;
 }

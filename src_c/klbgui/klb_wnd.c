@@ -246,26 +246,69 @@ bool klb_wnd_is_topmost(klb_wnd_t* p_wnd)
     return (KLB_WND_STATUS_TOPMOST & p_wnd->state.status) ? true : false;
 }
 
+void klb_wnd_dyntip(klb_wnd_t* p_wnd, bool update)
+{
+    if (update)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_TIP_DYNAMIC;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_TIP_DYNAMIC);
+    }
+}
+
+bool klb_wnd_is_dyntip(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_TIP_DYNAMIC & p_wnd->state.status) ? true : false;
+}
+
 void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip)
 {
-    if (NULL == p_wnd->tip)
+    if (NULL == p_wnd->tip.title)
     {
-        p_wnd->tip = sdsempty(); // 首次设置
+        p_wnd->tip.title = sdsempty(); // 首次设置
     }
 
-    p_wnd->tip = sdscpy(p_wnd->tip, p_tip);
+    p_wnd->tip.title = sdscpy(p_wnd->tip.title, p_tip);
 }
 
 const sds klb_wnd_get_tip(klb_wnd_t* p_wnd)
 {
-    return p_wnd->tip; // 可能为 NULL
+    return p_wnd->tip.title; // 可能为 NULL
+}
+
+void klb_wnd_set_tip_dynamic(klb_wnd_t* p_wnd, const char* p_tip)
+{
+    if (NULL == p_wnd->tip.dynamic)
+    {
+        p_wnd->tip.dynamic = sdsempty(); // 首次设置
+    }
+
+    p_wnd->tip.dynamic = sdscpy(p_wnd->tip.dynamic, p_tip);
+}
+
+const sds klb_wnd_get_tip_dynamic(klb_wnd_t* p_wnd)
+{
+    return p_wnd->tip.dynamic; // 可能为 NULL
 }
 
 void klb_wnd_tip_update(klb_wnd_t* p_wnd)
 {
-    if (NULL != p_wnd->p_gui && NULL != p_wnd->tip && 0 < sdslen(p_wnd->tip))
+    if (NULL != p_wnd->p_gui)
     {
-        klb_gui_update_tip(p_wnd->p_gui, p_wnd->tip);
+        if (NULL != p_wnd->tip.dynamic)
+        {
+            klb_gui_update_tip(p_wnd->p_gui, p_wnd->tip.dynamic);
+        }
+        else if(NULL != p_wnd->tip.title)
+        {
+            klb_gui_update_tip(p_wnd->p_gui, p_wnd->tip.title);
+        }
+        else
+        {
+            klb_gui_update_tip(p_wnd->p_gui, NULL);
+        }
     }
 }
 
@@ -373,8 +416,8 @@ void klb_wnd_calculate_canvas_rect(klb_wnd_t* p_wnd, int offset_x, int offset_y)
     // onresize 流程放在这里处理
     if (p_wnd->state.status & KLB_WND_STATUS_RESIZE)
     {
-        klb_wnd_on_control(p_wnd, KLBUI_onresize, NULL, NULL, 0, 0);
-        klb_wnd_on_command(p_wnd, KLBUI_onresize, NULL, NULL, 0, 0);
+        klb_wnd_call_control(p_wnd, KLBUI_onresize, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd, KLBUI_onresize, NULL, NULL, 0, 0);
 
         p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_RESIZE);
     }
@@ -523,6 +566,8 @@ static bool is_control_dispatch_message_klb_wnd(klb_wnd_t* p_wnd, int msg)
         case KLBUI_onerror:
         case KLBUI_onpredraw:
         case KLBUI_onpaint:
+        case KLBUI_ontimer:
+        case KLBUI_onticker:
         case KLBUI_onparsewindow:
         case KLBUI_onparsedialog:
         case KLBUI_onload:
@@ -534,6 +579,33 @@ static bool is_control_dispatch_message_klb_wnd(klb_wnd_t* p_wnd, int msg)
         case KLBUI_meminfo:
             {
                 // 这些事件, 不受窗口状态影响
+                return true;
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+// 依据窗口状态, 是否在 command 中分发消息
+static bool is_command_dispatch_message_klb_wnd(klb_wnd_t* p_wnd, int msg)
+{
+    // 隐藏 / 不使能时 时; 屏蔽部分消息
+    if ((KLB_WND_STATUS_DISABLE & p_wnd->state.status) ||
+        (KLB_WND_STATUS_HIDE & p_wnd->state.status))
+    {
+        switch (msg)
+        {
+        case KLBUI_ontimer:
+        case KLBUI_onticker:
+            {
+                // 这些事件, 不受 隐藏 状态影响
                 return true;
             }
             break;
@@ -569,8 +641,7 @@ int klb_wnd_call_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, co
 {
     if (NULL != p_wnd && 
         NULL != p_wnd->vtable.on_command && 
-        !(KLB_WND_STATUS_DISABLE & p_wnd->state.status) &&
-        !(KLB_WND_STATUS_HIDE & p_wnd->state.status))
+        is_command_dispatch_message_klb_wnd(p_wnd, msg))
     {
         klb_point_t pt = { 0 };
 
@@ -600,8 +671,7 @@ int klb_wnd_call_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_
         }
 
         if (NULL != p_wnd->vtable.on_command && 
-            !(KLB_WND_STATUS_DISABLE & p_wnd->state.status) &&
-            !(KLB_WND_STATUS_HIDE & p_wnd->state.status) &&
+            is_command_dispatch_message_klb_wnd(p_wnd, msg) &&
             0 <= ret)
         {
             ret = p_wnd->vtable.on_command(p_wnd, msg, p_pt1, p_pt2, lparam, wparam);
@@ -632,13 +702,13 @@ int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t*
 /// @brief 获取建议宽
 int klb_wnd_suggestw(klb_wnd_t* p_wnd)
 {
-    return klb_wnd_on_control(p_wnd, KLBUI_suggestw, NULL, NULL, 0, 0);
+    return klb_wnd_call_control(p_wnd, KLBUI_suggestw, NULL, NULL, 0, 0);
 }
 
 /// @brief 获取建议高
 int klb_wnd_suggesth(klb_wnd_t* p_wnd)
 {
-    return klb_wnd_on_control(p_wnd, KLBUI_suggesth, NULL, NULL, 0, 0);
+    return klb_wnd_call_control(p_wnd, KLBUI_suggesth, NULL, NULL, 0, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -662,6 +732,19 @@ klb_map_t* klb_wnd_get(klb_wnd_t* p_wnd, const klb_map_t* p_map)
     }
 
     return NULL;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// 时间
+
+int64_t klb_wnd_get_tick_count(klb_wnd_t* p_wnd)
+{
+    if (NULL != p_wnd && NULL != p_wnd->p_gui)
+    {
+        return klb_gui_get_tick_count(p_wnd->p_gui);
+    }
+
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -998,3 +1081,5 @@ int klb_wnd_draw_opt8(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* p
     klb_canvas_t* p_canvas = klb_wnd_get_canvas(p_wnd);
     return klb_canvas_draw_opt8(p_canvas, opt, ptr1, ptr2, ptr3, ptr4, ptr5, ptr6, ptr7, ptr8);
 }
+
+//end

@@ -8,11 +8,12 @@
 #include "klbmem/klb_mem.h"
 #include "klua/klua_help.h"
 #include "klbutil/klb_hlist.h"
-#include "klua/extension/klua_ex_gui.h"
 #include "klua/extension/klua_extension.h"
+#include "klua/extension/klua_ex_gui.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_seri.h"
 #include "klua/klua_gui.h"
+#include "klbgui/extensions/klbuiex_time.h"
 #include <assert.h>
 
 
@@ -606,19 +607,19 @@ static int klua_kgui_get(lua_State* L)
     return n;
 }
 
-static int klua_kgui_model(lua_State* L)
+static int klua_kgui_modal(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
 
-    int ret = klb_gui_model(p_gui, p_path_name);
+    int ret = klb_gui_modal(p_gui, p_path_name);
 
     lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
     return 1;
 }
 
-static int klua_kgui_model_end(lua_State* L)
+static int klua_kgui_modal_end(lua_State* L)
 {
     bool all = true;
     if (LUA_TBOOLEAN == lua_type(L, 1))
@@ -633,9 +634,19 @@ static int klua_kgui_model_end(lua_State* L)
     }
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
-    int ret = klb_gui_model_end(p_gui, all, p_path_name);
+    int ret = klb_gui_modal_end(p_gui, all, p_path_name);
 
     lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
+static int klua_kgui_modal_num(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int num = klb_gui_modal_num(p_gui);
+
+    lua_pushinteger(L, num);                            ///< #1. 获取 modal 窗口数
     return 1;
 }
 
@@ -667,6 +678,16 @@ static int klua_kgui_popup_end(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_popup_num(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int num = klb_gui_popup_num(p_gui);
+
+    lua_pushinteger(L, num);                            ///< #1. 获取 popup 窗口数
+    return 1;
+}
+
 static int klua_kgui_messagebox(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/messagebox1"
@@ -686,6 +707,16 @@ static int klua_kgui_messagebox_end(lua_State* L)
     int ret = klb_gui_messagebox_end(p_gui);
 
     lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+    return 1;
+}
+
+static int klua_kgui_messagebox_num(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int num = klb_gui_messagebox_num(p_gui);
+
+    lua_pushinteger(L, num);                                ///< #1. 获取 messagebox 窗口数
     return 1;
 }
 
@@ -900,11 +931,35 @@ static int klua_kgui_b3_event(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_tick_count(lua_State* L)
+{
+    // 注意: GUI内部的 系统滴答值, 可能和真实 系统滴答值 存在 不完全一致的情况
+    // GUI 会在内部 主循环 开始时 和系统滴答值 保持同步
+    // 上层使用时, 一定要注意: 要么使用 GUI的伪系统滴答值, 要么使用真实的 系统滴答值, 不要混用
+
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    int64_t tc = klb_gui_get_tick_count(p_gui);
+
+    lua_pushinteger(L, tc);
+    return 1;
+}
+
+static int klua_kgui_ticker_interval(lua_State* L)
+{
+    int64_t interval = luaL_checkinteger(L, 1);
+
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+    klb_gui_set_ticker_interval(p_gui, interval);
+
+    return 0;
+}
+
 int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
     {
-        // cpp
+        // cpp 启用 内部CPP扩展 : 即 支持使用 CPP 相关的GUI接口
         { "using_cpp",          klua_kgui_using_cpp },
 
         // css
@@ -937,14 +992,17 @@ int klua_open_kgui(lua_State* L)
         { "get",                klua_kgui_get },
 
         // dialog
-        { "model",              klua_kgui_model },
-        { "model_end",          klua_kgui_model_end },
+        { "modal",              klua_kgui_modal },
+        { "modal_end",          klua_kgui_modal_end },
+        { "modal_num",          klua_kgui_modal_num },
 
         { "popup",              klua_kgui_popup },
         { "popup_end",          klua_kgui_popup_end },
+        { "popup_num",          klua_kgui_popup_num },
 
         { "messagebox",         klua_kgui_messagebox },
         { "messagebox_end",     klua_kgui_messagebox_end },
+        { "messagebox_num",     klua_kgui_messagebox_num },     // 
 
         { "messagebox_std",     klua_kgui_messagebox_std },     // 弹出内置的共享消息框
 
@@ -958,19 +1016,25 @@ int klua_open_kgui(lua_State* L)
         { "suggesth",           klua_kgui_suggesth },           // 窗口建议高度
 
         // 聚焦延时
-        { "focusdelay",         klua_kgui_focusdelay },          // 设置聚焦延时消息时间(单位毫秒)
+        { "focusdelay",         klua_kgui_focusdelay },         // 设置聚焦延时消息时间(单位毫秒)
 
         // 刷新
-        { "refresh",            klua_kgui_refresh },           // 刷新所有窗口
+        { "refresh",            klua_kgui_refresh },            // 刷新所有窗口
 
         // gui get (w,h)
         { "wh",                 klua_kgui_get_wh },             // 获取主画布宽高(即屏幕宽高)
 
         // 事件辅助函数
-        { "to_event",           klua_kgui_to_event },
-        { "b1_event",           klua_kgui_b1_event },
-        { "b2_event",           klua_kgui_b2_event },
-        { "b3_event",           klua_kgui_b3_event },
+        { "to_event",           klua_kgui_to_event },           // 去除event值 的特殊标记
+        { "b1_event",           klua_kgui_b1_event },           // event值 是否有 b1 特殊标记
+        { "b2_event",           klua_kgui_b2_event },           // event值 是否有 b2 特殊标记
+        { "b3_event",           klua_kgui_b3_event },           // event值 是否有 b3 特殊标记
+
+        // GUI系统滴答数(伪)
+        { "tick_count",         klua_kgui_tick_count },         // 获取GUI系统滴答数(伪); (单位毫秒)
+
+        // 内部控件定时器运行间隔
+        { "ticker_interval",    klua_kgui_ticker_interval },    // 设置 内部控件定时器运行间隔; (单位毫秒)
 
         { NULL,                 NULL }
     };
@@ -980,3 +1044,5 @@ int klua_open_kgui(lua_State* L)
 
     return 1;
 }
+
+// end

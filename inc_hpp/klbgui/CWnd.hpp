@@ -7,8 +7,8 @@
 /// @history 修改历史
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __KLB_CWND_HPP__
-#define __KLB_CWND_HPP__
+#ifndef __KLBUI_CWND_HPP__
+#define __KLBUI_CWND_HPP__
 
 #include "klb_type.h"
 #include "klbgui/klb_wnd.h"
@@ -26,27 +26,25 @@ class CWnd;
 
 /// @brief 属性函数格式
 /// @return void
-typedef void(*klb_cwnd_css_cb)(CWnd* p_cwnd, int method, const klb::CMap* p_in, klb::CMap* p_out);
+typedef void(*klb_cwnd_css_cb)(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
 
 /// @brief 消息响应函数
 typedef int(*klb_cwnd_on_command_cb)(CWnd* p_cwnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
+/// @class CWnd
+/// @brief 窗口基类
 KLB_EXTERN class KLB_API_CPP CWnd
 {
 public:
     //////////////////////////////////////////////////////////////////////////
     // 构造/析构
-    CWnd();
     CWnd(CGui* p_gui, int x, int y, int w, int h);
     virtual ~CWnd();
 
 public:
     //////////////////////////////////////////////////////////////////////////
     // 
-
-    /// @brief 初始化
-    void Init(CGui* p_gui, int x, int y, int w, int h);
 
     /// @brief 获取原始 C 指针
     klb_wnd_t* GetWnd();
@@ -106,6 +104,12 @@ public:
     ////////////////////////////////////
     // 状态
 
+    /// @brief 获取当前状态值
+    uint32_t GetStatus();
+
+    /// @brief 获取是否聚焦
+    bool IsFocus();
+
     /// @brief 设置是否显示: 附带标记更新 窗口
     void Show(bool show);
 
@@ -148,14 +152,33 @@ public:
     /// @note  此状态的设置函数, 只能由框架内部决定
     bool IsTopMost();
 
+    /// @brief 设置动态 是否需要更新
+    ///  dynamic tip 
+    void DynTip(bool update);
+
+    /// @brief 获取动态tip 是否需要更新
+    ///  dynamic tip 
+    bool IsDynTip();
+
 
     ////////////////////////////////////
     // tip
 
-    /// @brief 设置,获取 tip
+    /// @brief 设置,获取 静态tip
     void SetTip(const char* p_tip);
     void SetTip(const std::string& tip);
+    void SetTip(const klb::CString& tip);
+
     void GetTip(std::string& tip);
+    void GetTip(klb::CString& tip);
+
+    /// @brief 设置,获取 动态tip
+    void SetTipDynamic(const char* p_tip);
+    void SetTipDynamic(const std::string& tip);
+    void SetTipDynamic(const klb::CString& tip);
+
+    void GetTipDynamic(std::string& tip);
+    void GetTipDynamic(klb::CString& tip);
 
     /// @brief 标记刷新 tip
     /// @note 仅标记, 由框架决定合适的刷新时机
@@ -170,7 +193,7 @@ public:
     void Move(int x, int y);
 
 
-    /// @brief 重新设置控件大小
+    /// @brief 重新设置窗口大小
     void Resize(int w, int h);
 
     ////////////////////////////////////
@@ -234,6 +257,11 @@ public:
     int Set(const klb_map_t* p_map);
     klb_map_t* Get(const klb_map_t* p_map);
 
+    ////////////////////////////////////
+    // 时间
+
+    /// @brief 获取当前UI滴答数
+    int64_t GetTickCount();
 
     ////////////////////////////////////
     // 绘图
@@ -261,12 +289,16 @@ public:
     int DrawFillRects(const klb_rect_t* p_rects, int count, uint32_t* p_color);
     int DrawText(const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t* p_color, int* p_font_h);
     int DrawText(const klb_rect_t* p_rect, const std::string& utf8, uint32_t* p_color, int* p_font_h);
+    int DrawText(const klb_rect_t* p_rect, const klb::CString& str, uint32_t* p_color, int* p_font_h);
     int TextSize(const char* p_utf8, int utf8_len, int* p_font_h, int* p_out_w, int* p_out_h);
     int TextSize(const std::string& utf8, int* p_font_h, int* p_out_w, int* p_out_h);
+    int TextSize(const klb::CString& str, int* p_font_h, int* p_out_w, int* p_out_h);
     int DrawImage(const klb_rect_t* p_dst_rect, const char* p_path, const klb_rect_t* p_src_rect);
     int DrawImage(const klb_rect_t* p_dst_rect, const std::string& path, const klb_rect_t* p_src_rect);
+    int DrawImage(const klb_rect_t* p_dst_rect, const klb::CString& path, const klb_rect_t* p_src_rect);
     int ImageSize(const char* p_path, int* p_out_w, int* p_out_h);
     int ImageSize(const std::string& path, int* p_out_w, int* p_out_h);
+    int ImageSize(const klb::CString& path, int* p_out_w, int* p_out_h);
 
     int DrawClear2(uint32_t color);
     int DrawPoint2(int x, int y, uint32_t color);
@@ -279,9 +311,10 @@ public:
     int DrawFillRects2(const klb_rect_t* p_rects, int count, uint32_t color);
     int TextSize2(const char* p_utf8, int utf8_len, int font_h, int* p_out_w, int* p_out_h);
     int TextSize2(const std::string& utf8, int font_h, int* p_out_w, int* p_out_h);
+    int TextSize2(const klb::CString& str, int font_h, int* p_out_w, int* p_out_h);
     int DrawText2(const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
     int DrawText2(const klb_rect_t* p_rect, const std::string& utf8, uint32_t color, int font_h);
-
+    int DrawText2(const klb_rect_t* p_rect, const klb::CString& str, uint32_t color, int font_h);
 
     /// @brief 可扩展绘图接口
     int DrawOpt1(int opt, const void* ptr1);
@@ -298,16 +331,16 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // 
 
-    /// @brief 销毁内存
+    /// @brief (继承重写)销毁内存
     virtual void OnDelete();
 
 
-    /// @brief 窗口绘制函数
+    /// @brief (继承重写)窗口绘制函数
     /// @return int
     virtual int OnPaint();
 
 
-    /// @brief 消息控制函数
+    /// @brief (继承重写)消息控制函数
     /// @param [in] msg         消息命令
     /// @param [in] *p_p1       点1
     /// @param [in] *p_p2       点2
@@ -315,7 +348,7 @@ public:
     virtual int OnControl(int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
-    /// @brief 消息响应函数
+    /// @brief (继承重写)消息响应函数
     /// @param [in] msg         消息命令
     /// @param [in] *p_p1       点1
     /// @param [in] *p_p2       点2
@@ -338,24 +371,89 @@ public:
     /// @note map 具体数据格式由控件定义
     klb_map_t* OnGet(const klb_map_t* p_map);
 
+private:
+    // 绑定响应函数(中转函数)
+    static int on_command_klb_cwnd(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 public:
     //////////////////////////////////////////////////////////////////////////
-    // 
+    // CSS 相关
+    bool CheckCssBool(klb::CMap* p_map, int start, bool* p_out_bool);
+    bool CheckCssInteger(klb::CMap* p_map, int start, int* p_out_int);
+    bool CheckCssInteger(klb::CMap* p_map, int start, int64_t* p_out_int);
+    bool CheckCssString(klb::CMap* p_map, int start, klb::CString& out_str);
+    bool CheckCssColor(klb::CMap* p_map, int start, uint32_t* p_out_color);
 
+private:
+    //////////////////////////////////////////////////////////////////////////
+    // CSS 方法
+    //   CSS方法 使用的是扩展含义; 即除了标准边距/颜色/字体等, 还包含其他调用者需要和控件交换接口
+    //   使用标准C, 一直没有想到更好的办法处理标准的CSS方法, 需要为每类控件定制编写
+    //   CPP这里 可以通过"继承"特性, 处理通用的CSS方法
+
+    // 外边距 margin
+    static void OnCssMargin(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssMarginTop(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssMarginRight(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssMarginBottom(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssMarginLeft(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 内边距 padding
+    static void OnCssPadding(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssPaddingTop(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssPaddingRight(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssPaddingBottom(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssPaddingLeft(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 文本颜色 color
+    static void OnCssColor(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssColorFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssColorDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 文本对齐 text-align
+    static void OnCssTextAlign(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssTextAlignFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssTextAlignDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 字体大小 font-size
+    static void OnCssFontSize(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssFontSizeFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssFontSizeDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 背景色 background-color
+    static void OnCssBackgroundColor(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBackgroundColorFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBackgroundColorDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 背景图片 background-image
+    static void OnCssBackgroundImage(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBackgroundImageFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBackgroundImageDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 边框的宽度 border-width
+    static void OnCssBorderWidth(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBorderWidthFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBorderWidthDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+    // 边框的颜色 border-color
+    static void OnCssBorderColor(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBorderColorFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+    static void OnCssBorderColorDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_out);
+
+
+private:
+    /// @brief 获取CSS处理函数表
+    klb_map_t* GetCssFunctionMap();
+
+public:
     /// @brief 绑定响应函数
     /// @return void
     void BindCssFunction(const std::string& str, klb_cwnd_css_cb cb_func);
 
-    static void OnCssColor(CWnd* p_cwnd, int method, const klb::CMap* p_in, klb::CMap* p_out);
-
+    /// @brief (继承重写)初始化CSS方法
     virtual bool InitCssFunctionMap(const std::string& type);
 
-private:
-    klb_map_t* GetCssFunctionMap();
-
-    static int on_command_klb_cwnd(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 private:
     klb::CString            m_type;             ///< 当前控件类型 名称
@@ -369,8 +467,9 @@ private:
     klb_wnd_t*              m_wnd;              ///< wnd 窗口指针
 
     klb_map_t*              m_css_func_map;     ///< CSS 属性函数表
-};
+}; // class CWnd
 
 } // namespace klbui 
 
-#endif // __KLB_CWND_HPP__
+#endif // __KLBUI_CWND_HPP__
+//end

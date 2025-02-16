@@ -7,22 +7,25 @@
 /// @history 修改历史
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __KLB_CGUI_HPP__
-#define __KLB_CGUI_HPP__
+#ifndef __KLBUI_CGUI_HPP__
+#define __KLBUI_CGUI_HPP__
 
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
 #include "klua/CKluaEnv.hpp"
 #include "klbgui/CWnd.hpp"
 #include "klbgui/CCss.hpp"
+#include "klbutil/CString.hpp"
 #include <string>
 
 namespace klbui {
 
 
-#define KLB_CGUI_PTR(PTR_)       ((CGui*)(klb_gui_get_cppgui((PTR_))))
+#define KLB_CPPGUI_PTR(PTR_)       ((CGui*)(klb_gui_get_cppgui((PTR_))))
 
 
+/// @class CGui
+/// @brief GUI框架
 KLB_EXTERN class KLB_API_CPP CGui
 {
 public:
@@ -70,27 +73,31 @@ public:
     ///  \n 标准控件类型名命名规则为 "k*", eg."kbutton", "kdialog"
     int Register(const char* p_type, klb_wnd_create_cb cb_create);
     int Register(const std::string& type, klb_wnd_create_cb cb_create);
+    int Register(const klb::CString& type, klb_wnd_create_cb cb_create);
 
     /// @brief 获取注册的窗口类型的 创建函数
     /// @param [in] *p_type         窗口类型名
     /// @return klb_wnd_create_cb 创建函数; 或 NULL
     klb_wnd_create_cb GetCreater(const char* p_type);
     klb_wnd_create_cb GetCreater(const std::string& type);
+    klb_wnd_create_cb GetCreater(const klb::CString& type);
 
     /// @brief 按类型 创建一个窗口; 注意.仅创建, 并未加入到窗口树中
     /// @param [in] *p_type         窗口类型名
     /// @return klb_wnd_t* 窗口指针; 或 NULL
     klb_wnd_t* CreateWnd(const char* p_type, int x, int y, int w, int h);
     klb_wnd_t* CreateWnd(const std::string& type, int x, int y, int w, int h);
+    klb_wnd_t* CreateWnd(const klb::CString& type, int x, int y, int w, int h);
 
     /// @brief 加载图片资源
     int LoadImage(const char* p_key, const char* p_img_path);
     int LoadImage(const std::string& key, const std::string& img_path);
+    int LoadImage(const klb::CString& key, const std::string& img_path);
 
     /// @brief 获取图片资源大小
     int ImageSize(const char* p_key, int* p_out_w, int* p_out_h);
     int ImageSize(const std::string& key, int* p_out_w, int* p_out_h);
-
+    int ImageSize(const klb::CString& key, int* p_out_w, int* p_out_h);
 
     /// @brief 添加窗口
     /// @param [in] *p_type         窗口类型名
@@ -103,13 +110,14 @@ public:
     /// @note 前父窗口必须存在; eg. "/home/btn1" 则需要 "/home" 必须存在, 才能添加
     int Append(const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
     int Append(const std::string& type, const std::string& path_name, int x, int y, int w, int h, uint32_t style);
-
+    int Append(const klb::CString& type, const klb::CString& path_name, int x, int y, int w, int h, uint32_t style);
 
     /// @brief 移除窗口
     /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
     /// @return int 0.成功; 非0.失败(错误码)
     int Remove(const char* p_path_name);
     int Remove(const std::string& path_name);
+    int Remove(const klb::CString& path_name);
 
     /// @brief 清理所有窗口
     /// @param [in] *p_gui          GUI对象
@@ -144,21 +152,29 @@ public:
     /// @brief 模态显示窗口
     /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
     /// @return int 0.成功; 非0.失败(错误码)
-    int Model(const char* p_path_name);
-    int Model(const std::string& path_name);
+    int Modal(const char* p_path_name);
+    int Modal(const std::string& path_name);
+    int Modal(const klb::CString& path_name);
 
     /// @brief 模态显示窗口
     /// @param [in] *p_top          外部自定义窗口: 由外部管理生命周期
     /// @return int 0.成功; 非0.失败(错误码)
-    int ModelWnd(klb_wnd_t* p_top);
-    int ModelWnd(CWnd* p_top);
+    int ModalWnd(klb_wnd_t* p_top);
+    int ModalWnd(CWnd* p_top);
 
 
     /// @brief 关闭显示窗口
     /// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
     /// @return int 0.成功; 非0.失败(错误码)
-    int ModelEnd(bool all, const char* p_path_name);
-    int ModelEnd(bool all, const std::string& path_name);
+    int ModalEnd(bool all);
+    int ModalEnd(bool all, const char* p_path_name);
+    int ModalEnd(bool all, const std::string& path_name);
+    int ModalEnd(bool all, const klb::CString& path_name);
+
+
+    /// @brief 获取 当前modal窗口数目
+    /// @return int  modal 窗口数
+    int ModalNum();
 
 
     /// @brief 弹出菜单/对话框等页面
@@ -166,6 +182,7 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int Popup(const char* p_path_name);
     int Popup(const std::string& path_name);
+    int Popup(const klb::CString& path_name);
 
     /// @brief 弹出菜单/对话框等页面
     /// @param [in] *p_top          外部自定义窗口: 由外部管理生命周期
@@ -176,23 +193,32 @@ public:
     /// @brief 关闭弹出的页面
     int PopupEnd(bool all);
 
+    /// @brief 获取 当前popup窗口数目
+    /// @return int  popup 窗口数
+    int PopupNum();
+
+
     /// @brief 消息框: 弹出消息框
     /// @param [in] *p_path_name    窗口路径(类unix): eg."/messagebox1"
     /// @return int 0.成功; 非0.失败(错误码)
-    int Messagebox(const char* p_path_name);
-    int Messagebox(const std::string& path_name);
-
+    int MessageBox(const char* p_path_name);
+    int MessageBox(const std::string& path_name);
+    int MessageBox(const klb::CString& path_name);
 
     /// @brief 消息框: 弹出消息框
     /// @param [in] *p_top          外部自定义窗口: 由外部管理生命周期
     /// @return int 0.成功; 非0.失败(错误码)
-    int MessageboxWnd(klb_wnd_t* p_top);
-    int MessageboxWnd(CWnd* p_top);
+    int MessageBoxWnd(klb_wnd_t* p_top);
+    int MessageBoxWnd(CWnd* p_top);
 
 
     /// @brief 关闭消息框
     /// @return int 0.成功; 非0.失败(错误码)
-    int MessageboxEnd();
+    int MessageBoxEnd();
+
+    /// @brief 获取 当前messagebox窗口数目
+    /// @return int  messagebox 窗口数
+    int MessageBoxNum();
 
 
     /// @brief 向控件(窗口)绑定事件响应函数
@@ -202,6 +228,7 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int BindCommand(const char* p_path_name, klb_wnd_on_command_cb on_command, void* p_obj);
     int BindCommand(const std::string& path_name, klb_wnd_on_command_cb on_command, void* p_obj);
+    int BindCommand(const klb::CString& path_name, klb_wnd_on_command_cb on_command, void* p_obj);
 
 
     /// @brief 外部触发控件(窗口)某个事件
@@ -210,6 +237,7 @@ public:
     /// @return int 0.成功; -1.终止
     int CallControlAndCommand(const char* p_path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
     int CallControlAndCommand(const std::string& path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
+    int CallControlAndCommand(const klb::CString& path_name, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
     /// @brief 向控件(窗口)设置数据: 样式\显示\状态等等
@@ -219,6 +247,7 @@ public:
     /// @note map 具体数据格式由控件定义
     int Set(const char* p_path_name, const klb_map_t* p_map);
     int Set(const std::string& path_name, const klb_map_t* p_map);
+    int Set(const klb::CString& path_name, const klb_map_t* p_map);
 
 
     /// @brief 向控件(窗口)获取数据: 样式\显示\状态等等
@@ -228,6 +257,7 @@ public:
     /// @note map 具体数据格式由控件定义
     klb_map_t* Get(const char* p_path_name, const klb_map_t* p_map);
     klb_map_t* Get(const std::string& path_name, const klb_map_t* p_map);
+    klb_map_t* Get(const klb::CString& path_name, const klb_map_t* p_map);
 
 
     /// @brief 设置控件(窗口)的显示状态
@@ -236,6 +266,7 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int Show(const char* p_path_name, bool show);
     int Show(const std::string& path_name, bool show);
+    int Show(const klb::CString& path_name, bool show);
 
 
     /// @brief 基于父窗口移动(相对坐标)
@@ -243,6 +274,7 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int Move(const char* p_path_name, int x, int y);
     int Move(const std::string& path_name, int x, int y);
+    int Move(const klb::CString& path_name, int x, int y);
 
 
     /// @brief 重新设置控件大小
@@ -250,16 +282,19 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int Resize(const char* p_path_name, int w, int h);
     int Resize(const std::string& path_name, int w, int h);
+    int Resize(const klb::CString& path_name, int w, int h);
 
 
     /// @brief 获取基于画布的窗口区域
     int WndposInCanvas(const char* p_path_name, klb_rect_t* p_out_rect);
     int WndposInCanvas(const std::string& path_name, klb_rect_t* p_out_rect);
+    int WndposInCanvas(const klb::CString& path_name, klb_rect_t* p_out_rect);
 
 
     /// @brief 获取基于父窗口的区域
     int WndposInParent(const char* p_path_name, klb_rect_t* p_out_rect);
     int WndposInParent(const std::string& path_name, klb_rect_t* p_out_rect);
+    int WndposInParent(const klb::CString& path_name, klb_rect_t* p_out_rect);
 
 
     /// @brief 控件建议宽
@@ -267,6 +302,7 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int SuggestW(const char* p_path_name, int* p_out_w);
     int SuggestW(const std::string& path_name, int* p_out_w);
+    int SuggestW(const klb::CString& path_name, int* p_out_w);
 
 
     /// @brief 控件建议高
@@ -274,6 +310,7 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     int SuggestH(const char* p_path_name, int* p_out_h);
     int SuggestH(const std::string& path_name, int* p_out_h);
+    int SuggestH(const klb::CString& path_name, int* p_out_h);
 
 
     /// @brief 获取主画布(主屏幕)的分辨率
@@ -295,6 +332,32 @@ public:
     klb_wnd_t* GetFocusTop();
 
 
+    /// @brief 设置聚焦延时时间
+    /// @param [in]  timeout        延时时间(单位毫秒ms, 默认600); 范围[0, ~]
+    /// @return 无
+    void SetFocusdelay(int64_t timeout);
+
+
+    /// @brief 标记所有窗口需要刷新
+    /// @note 仅标记, 由框架决定合适的刷新时机
+    ///     "update"在这里表示页面需要刷新
+    void Update();
+
+
+    /// @brief 获取GUI的当前 系统滴答数(单位毫秒ms)
+    /// @return int64_t 系统滴答数
+    int64_t GetTickCount();
+
+
+    /// @brief 获取GUI的 内部控件定时器运行间隔 (单位毫秒ms, 默认 500ms)
+    /// @return int64_t 时间间隔(单位毫秒ms)
+    int64_t GetTickerInterval();
+
+
+    /// @brief 设置GUI的 内部控件定时器运行间隔 (单位毫秒ms)
+    /// @return 无
+    void SetTickerInterval(int64_t interval);
+
 
     //////////////////////////////////////////////////////////////////////////
     // 定义于 "klbgui/klbui_css.h" 的导出函数
@@ -302,8 +365,9 @@ public:
 
 
     /// @brief 检查参数是否为颜色
-    bool CheckColor(const klb_map_t* p_map, int start, uint32_t* p_out_color);
-    bool CheckColor(const klb::CMap* p_map, int start, uint32_t* p_out_color);
+    bool CheckCssColor(const klb_map_t* p_map, int start, uint32_t* p_out_color);
+    bool CheckCssColor(klb::CMap* p_map, int start, uint32_t* p_out_color);
+
 
     ////////////////////////////////////
     // 同类型控件, 私有CSS属性 函数处理表
@@ -315,6 +379,7 @@ public:
     ///  \n 相同组件, 使用同一套函数处理表, 目的是为了 精简组件体积
     klb_map_t* CssMap(const char* p_type);
     klb_map_t* CssMap(const std::string& type);
+    klb_map_t* CssMap(const klb::CString& type);
 
 
     /// @brief 新建 css 属性函数处理 map
@@ -322,6 +387,7 @@ public:
     /// @return klb_map_t* 函数处理表
     klb_map_t* NewCssMap(const char* p_type);
     klb_map_t* NewCssMap(const std::string& type);
+    klb_map_t* NewCssMap(const klb::CString& type);
 
 
     ////////////////////////////////////
@@ -343,6 +409,7 @@ public:
     /// @return klb_map_t* 函数处理表
     klb_map_t* GlobalCssMap(const char* p_type);
     klb_map_t* GlobalCssMap(const std::string& type);
+    klb_map_t* GlobalCssMap(const klb::CString& type);
 
 
     /// @brief 新建 全局公共CSS处理表
@@ -350,6 +417,7 @@ public:
     /// @return klb_map_t* 函数处理表
     klb_map_t* NewGlobalCssMap(const char* p_type);
     klb_map_t* NewGlobalCssMap(const std::string& type);
+    klb_map_t* NewGlobalCssMap(const klb::CString& type);
 
 
     /// @brief 设置 全局公共CSS属性 指针
@@ -359,28 +427,32 @@ public:
     /// @return 无
     /// @note 若重复设置, 以最后设置的为准;
     ///       注意: 不要轻易覆盖, 可能造成 缓存的指针失效!
-    void GlobalCssSetPtr(const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
-    void GlobalCssSetPtr(const std::string& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
+    void SetGlobalCssPtr(const char* p_type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
+    void SetGlobalCssPtr(const std::string& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
+    void SetGlobalCssPtr(const klb::CString& type, void* p_css, klb_gui_globalcss_destroy_cb cb_destroy);
 
 
     /// @brief 获取 全局公共CSS属性 指针
     /// @param [in] *p_type         组件类型名
     /// @return void* 全局公共CSS属性 指针
     /// @note 控件自定义其CSS属性 结构体
-    void* GlobalCssGetPtr(const char* p_type);
-    void* GlobalCssGetPtr(const std::string& type);
+    void* GetGlobalCssPtr(const char* p_type);
+    void* GetGlobalCssPtr(const std::string& type);
+    void* GetGlobalCssPtr(const klb::CString& type);
 
 
     /// @brief 设置 全局公共CSS属性
     /// @note 参考 klb_wnd_set
-    int GlobalCssSet(const char* p_type, const klb_map_t* p_map);
-    int GlobalCssSet(const std::string& type, const klb_map_t* p_map);
+    int SetGlobalCss(const char* p_type, const klb_map_t* p_map);
+    int SetGlobalCss(const std::string& type, const klb_map_t* p_map);
+    int SetGlobalCss(const klb::CString& type, const klb_map_t* p_map);
 
 
     /// @brief 获取 全局公共CSS属性
     /// @note 参考 klb_wnd_get
-    klb_map_t* GlobalCssGet(const char* p_type, const klb_map_t* p_map);
-    klb_map_t* GlobalCssGet(const std::string& type, const klb_map_t* p_map);
+    klb_map_t* GetGlobalCss(const char* p_type, const klb_map_t* p_map);
+    klb_map_t* GetGlobalCss(const std::string& type, const klb_map_t* p_map);
+    klb_map_t* GetGlobalCss(const klb::CString& type, const klb_map_t* p_map);
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -402,10 +474,10 @@ public:
     const klbui_default_t* GetStdDefault();
 
     /// @brief 设置CSS默认值(全局值)
-    int DefaultCssSet(const klb_map_t* p_map);
+    int SetDefaultCss(const klb_map_t* p_map);
 
     /// @brief 获取CSS默认值(全局值)
-    klb_map_t* DefaultCssGet(const klb_map_t* p_map);
+    klb_map_t* GetDefaultCss(const klb_map_t* p_map);
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -418,6 +490,7 @@ public:
     /// @return int 0
     int RegisterExtension(const char* p_name, const klb_gui_extension_t* p_extension);
     int RegisterExtension(const std::string& name, const klb_gui_extension_t* p_extension);
+    int RegisterExtension(const klb::CString& name, const klb_gui_extension_t* p_extension);
 
 
     /// @brief 获取gui扩展
@@ -425,6 +498,7 @@ public:
     /// @return void* 扩展的指针
     void* GetExtension(const char* p_name);
     void* GetExtension(const std::string& name);
+    void* GetExtension(const klb::CString& name);
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -441,6 +515,7 @@ public:
     ///       4. "/klbui"路径, 由ui框架保留使用
     int PushShWnd(const char* p_path, klb_wnd_t* p_top_wnd);
     int PushShWnd(const std::string& path, klb_wnd_t* p_top_wnd);
+    int PushShWnd(const klb::CString& path, klb_wnd_t* p_top_wnd);
 
 
     /// @brief 获取共享使用界面
@@ -448,16 +523,19 @@ public:
     /// @return int 0.成功; 非0.失败(错误码)
     klb_wnd_t* GetShWnd(const char* p_path);
     klb_wnd_t* GetShWnd(const std::string& path);
+    klb_wnd_t* GetShWnd(const klb::CString& path);
 
 
     /// @brief 设置共享窗口的CSS值
-    int ShWndCssSet(const char* p_path, const klb_map_t* p_map);
-    int ShWndCssSet(const std::string& path, const klb_map_t* p_map);
+    int SetShWndCss(const char* p_path, const klb_map_t* p_map);
+    int SetShWndCss(const std::string& path, const klb_map_t* p_map);
+    int SetShWndCss(const klb::CString& path, const klb_map_t* p_map);
 
 
     /// @brief 获取共享窗口的CSS值
-    klb_map_t* ShWndCssGet(const char* p_path, const klb_map_t* p_map);
-    klb_map_t* ShWndCssGet(const std::string& path, const klb_map_t* p_map);
+    klb_map_t* GetShWndCss(const char* p_path, const klb_map_t* p_map);
+    klb_map_t* GetShWndCss(const std::string& path, const klb_map_t* p_map);
+    klb_map_t* GetShWndCss(const klb::CString& path, const klb_map_t* p_map);
 
 
     //////////////////////////////////////////////////////////////////////////
@@ -467,8 +545,9 @@ public:
 private:
     bool            m_is_share_gui;     ///< 是否共享控制
     klb_gui_t*      m_gui;              ///< gui指针
-};
+}; // class CGui
 
 } // namespace klbui 
 
-#endif // __KLB_CGUI_HPP__
+#endif // __KLBUI_CGUI_HPP__
+//end

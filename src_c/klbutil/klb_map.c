@@ -810,6 +810,113 @@ bool klb_map_idx_remove_tail(klb_map_t* p_map)
     return false;
 }
 
+static int cb_stdcmp_klb_map_array(const klb_adt_t* p_d1, const klb_adt_t* p_d2, void* ptr1)
+{
+    klb_adt_t* p_adt1 = (klb_adt_t*)p_d1;
+    klb_adt_t* p_adt2 = (klb_adt_t*)p_d2;
+
+    klb_adt_type_e t1 = klb_adt_type(p_adt1);
+    klb_adt_type_e t2 = klb_adt_type(p_adt2);
+
+    if (t1 == t2)
+    {
+        if (KLB_ADT_bool == t1)
+        {
+            bool b1 = klb_adt_to_bool(p_adt1);
+            bool b2 = klb_adt_to_bool(p_adt2);
+
+            if (b1 == b2)
+            {
+                return 0;
+            }
+            else if(b1 < b2)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else if (KLB_ADT_string == t1)
+        {
+            const char* p_str1 = klb_adt_to_string(p_adt1);
+            const char* p_str2 = klb_adt_to_string(p_adt2);
+
+            return strcmp(p_str1, p_str2);
+        }
+        else if(KLB_ADT_double == t1)
+        {
+            double v1 = klb_adt_to_double(p_adt1);
+            double v2 = klb_adt_to_double(p_adt2);
+
+            if (v1 < v2)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else if (KLB_ADT_int64 == t1)
+        {
+            int64_t v1 = klb_adt_to_int64(p_adt1);
+            int64_t v2 = klb_adt_to_int64(p_adt2);
+
+            if (v1 == v2)
+            {
+                return 0;
+            }
+            else if(v1 < v2)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else if(KLB_ADT_uint64 == t1)
+        {
+            uint64_t v1 = klb_adt_to_uint64(p_adt1);
+            uint64_t v2 = klb_adt_to_uint64(p_adt2);
+
+            if (v1 == v2)
+            {
+                return 0;
+            }
+            else if (v1 < v2)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static int cb_sort_klb_map_array(const void* p_data1, const void* p_data2, void* ptr1, void* ptr2)
+{
+    klb_map_array_sort_cb cb_sort = (klb_map_array_sort_cb)ptr2;
+
+    klb_adt_t* p_adt1 = (klb_adt_t*)p_data1;
+    klb_adt_t* p_adt2 = (klb_adt_t*)p_data2;
+
+    return cb_sort(p_adt1, p_adt2, ptr1);
+}
+
+int klb_map_array_sort(klb_map_t* p_map, klb_map_array_sort_cb cb_sort, void* ptr1)
+{
+    klb_map_array_sort_cb cb_real = (NULL != cb_sort) ? cb_sort : cb_stdcmp_klb_map_array;
+
+    return klb_nvector_sort(p_map->p_nvector, cb_sort_klb_map_array, ptr1, cb_real);
+}
+
 ////////////////////////////////////////
 
 static void copy_klb_map(klb_map_t* p_dst, const klb_map_t* p_src)
@@ -891,6 +998,9 @@ int klb_map_test()
     klb_map_set_idx_double(p_a, 4, 3.1415926);
     klb_map_set_idx_string(p_a, 5, "55555");
     klb_map_set_idx_ptr(p_a, 6, (const void*)klb_map_test, NULL);
+    klb_map_append_int64(p_a, 85);
+    klb_map_append_uint64(p_a, 200);
+    klb_map_append_string(p_a, "33333");
 
     klb_map_set_map_clone(p_a, "9", p_a);
     klb_map_set_idx_map_clone(p_a, 9, p_a);
@@ -917,6 +1027,10 @@ int klb_map_test()
     klb_map_remove_by_key(p_b, "9");
     klb_map_idx_remove(p_b, 5);
 
+    klb_map_array_sort(p_b, NULL, NULL);
+
     klb_map_destroy(p_b);
     return 0;
 }
+
+//end

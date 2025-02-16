@@ -251,3 +251,30 @@ int klb_nvector_size(klb_nvector_t* p_vector)
 {
     return (int)p_vector->size;
 }
+
+int klb_nvector_sort(klb_nvector_t* p_vector, klb_nvector_sort_cb cb_sort, void* ptr1, void* ptr2)
+{
+    assert(NULL != cb_sort);
+
+    uint32_t size = p_vector->size;
+
+    for (uint32_t i = 0; i < size; i++)
+    {
+        for (uint32_t j = i + 1; j < size; j++)
+        {
+            void* p_data1 = p_vector->p_idx[i];
+            void* p_data2 = p_vector->p_idx[j];
+
+            // 比较交换, d1 > d2 则交换
+            if (0 < cb_sort(p_data1, p_data2, ptr1, ptr2))
+            {
+                p_vector->p_idx[i] = p_data2;
+                p_vector->p_idx[j] = p_data1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+//end

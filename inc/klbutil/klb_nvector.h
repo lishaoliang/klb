@@ -116,6 +116,12 @@ KLB_API void* klb_nvector_remove(klb_nvector_t* p_vector, int index);
 KLB_API int klb_nvector_size(klb_nvector_t* p_vector);
 
 
+typedef int(*klb_nvector_sort_cb)(const void* p_data1, const void* p_data2, void* ptr1, void* ptr2);
+
+/// @brief 排序
+KLB_API int klb_nvector_sort(klb_nvector_t* p_vector, klb_nvector_sort_cb cb_sort, void* ptr1, void* ptr2);
+
+
 #ifdef __cplusplus
 }
 #endif

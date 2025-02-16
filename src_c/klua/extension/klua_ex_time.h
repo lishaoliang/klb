@@ -25,9 +25,10 @@ int klua_ex_register_time(klua_env_t* p_env);
 
 klua_ex_time_t* klua_ex_get_time(klua_env_t* p_env);
 
-
+// 一次性 定时器, 只执行一次
 int klua_ex_time_new_timer_once(klua_ex_time_t* p_time, lua_State* L, lua_Integer wait, int index);
 
+// 定期执行的定时器, 直到主动销毁
 int klua_ex_time_new_ticker(klua_ex_time_t* p_time, lua_State* L, const char* p_name, size_t name_len, lua_Integer interval, int index);
 int klua_ex_time_stop_ticker(klua_ex_time_t* p_time, const char* p_name, size_t name_len);
 

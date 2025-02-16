@@ -190,7 +190,7 @@ static int on_command_check_klbwnd_listex_row(klb_wnd_t* p_wnd, int e, const klb
         }
 
         // check 内容变更
-        klb_wnd_on_command(p_wnd_row, KLBUI_onchange, NULL, NULL, lparam, wparam);
+        klb_wnd_call_command(p_wnd_row, KLBUI_onchange, NULL, NULL, lparam, wparam);
     }
 
     return 0;

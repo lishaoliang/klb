@@ -185,7 +185,7 @@ static int on_command_item_klbwnd_menu_2rd(klb_wnd_t* p_wnd, int msg, const klb_
         p_menu->value = sdscpy(p_menu->value, klbwnd_menu_item_get_value(p_wnd));
 
         // 响应
-        klb_wnd_on_command(p_wnd_menu, KLBUI_onchange, NULL, NULL, 0, 0);
+        klb_wnd_call_command(p_wnd_menu, KLBUI_onchange, NULL, NULL, 0, 0);
     }
 
     return 0;

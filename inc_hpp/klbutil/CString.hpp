@@ -44,11 +44,15 @@ public:
     CString& operator=(const std::string& s);
     CString& operator=(const std::string* p_str);
 
+    bool operator==(const CString& str);
+    bool operator==(const CString* p_str);
+    bool operator==(const std::string& str);
+    bool operator==(const char* p_str);
 
     /////////////////////////////////////////////////
     // 获取长度
-    size_t Len();
-    size_t Length();
+    size_t Len() const;
+    size_t Length() const;
 
 
     /////////////////////////////////////////////////
@@ -96,8 +100,9 @@ public:
     /////////////////////////////////////////////////
     // 获取字符串
 
-    const sds   c_sds();
-    const char* c_str();
+    size_t      length() const;
+    const sds   c_sds() const;
+    const char* c_str() const;
 
 
 protected:

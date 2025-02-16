@@ -122,11 +122,11 @@ static int klbwnd_combomenu_on_meminfo(klb_wnd_t* p_wnd, klbwnd_combomenu_t* p_m
     // 子项目
     for (int i = 0; i < KLBWND_COMBOMENU_item_max; i++)
     {
-        mems += klb_wnd_on_control(p_menu->p_items[i], KLBUI_meminfo, NULL, NULL, 0, 0);
+        mems += klb_wnd_call_control(p_menu->p_items[i], KLBUI_meminfo, NULL, NULL, 0, 0);
     }
 
     // 滚动条
-    mems += klb_wnd_on_control(p_menu->p_vscrollbar, KLBUI_meminfo, NULL, NULL, 0, 0);
+    mems += klb_wnd_call_control(p_menu->p_vscrollbar, KLBUI_meminfo, NULL, NULL, 0, 0);
 
     // 自身
     mems += sizeof(klb_wnd_t);

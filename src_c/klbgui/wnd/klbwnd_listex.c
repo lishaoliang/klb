@@ -414,7 +414,7 @@ static int on_command_child_klbwnd_listex(klb_wnd_t* p_wnd, int e, const klb_poi
     e |= KLBUI_event_bit2;
 
     // 转换为 listex 的事件
-    klb_wnd_on_command(p_wnd_listex, e, p_pt1, p_pt2, lparam, wparam);
+    klb_wnd_call_command(p_wnd_listex, e, p_pt1, p_pt2, lparam, wparam);
 
     return 0;
 }
@@ -450,7 +450,7 @@ static int on_command_listex_row_klbwnd_listex(klb_wnd_t* p_wnd, int msg, const 
                     klbwnd_listex_row_set_select(p_wnd, true);
                     klb_wnd_update(p_wnd);
 
-                    klb_wnd_on_command(p_wnd_listex, KLBUI_onchange, NULL, NULL, 0, 0);
+                    klb_wnd_call_command(p_wnd_listex, KLBUI_onchange, NULL, NULL, 0, 0);
                 }
             }
         }

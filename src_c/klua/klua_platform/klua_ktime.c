@@ -117,12 +117,12 @@ int klua_open_ktime(lua_State* L)
         { "sleep",          klua_ktime_sleep },
         { "sleep_ns",       klua_ktime_sleep_ns },
 
-        { "tick_count",     klua_ktime_tick_count },
+        { "tick_count",     klua_ktime_tick_count },    // 系统滴答数(从开机起的毫秒ms)
 
-        { "timer",          klua_ktime_timer },
+        { "timer",          klua_ktime_timer },         // 一次性, 定时器(timer)
 
-        { "ticker",         klua_ktime_ticker },
-        { "stop_ticker",    klua_ktime_stop_ticker},
+        { "ticker",         klua_ktime_ticker },        // 定期执行的定时器(ticker), 直到主动关闭
+        { "stop_ticker",    klua_ktime_stop_ticker},    // 关闭(ticker)定时器
 
         { NULL,             NULL }
     };

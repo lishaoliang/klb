@@ -250,7 +250,7 @@ static void luaseri_map_unpack_one(lua_State *L, klb_adt_t* p_adt)
         }
         break;
     case KLB_ADT_ptr:
-        lua_pushlightuserdata(L, klb_adt_to_ptr(p_adt, NULL));
+        lua_pushlightuserdata(L, (void*)klb_adt_to_ptr(p_adt, NULL));
         break;
     default:
         lua_pushnil(L);
