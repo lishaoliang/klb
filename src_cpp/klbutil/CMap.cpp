@@ -1381,7 +1381,7 @@ int CMap::Sort(cmap_sort_cb cb_sort)
 {
     if (NULL != cb_sort)
     {
-        return klb_map_array_sort(&m_map, CMap::CbSortMapArray, cb_sort);
+        return klb_map_array_sort(&m_map, CMap::CbSortMapArray, (void*)cb_sort);
     }
     else
     {
