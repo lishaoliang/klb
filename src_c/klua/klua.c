@@ -224,6 +224,7 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_kco, "kco");
         klua_loadlib(L, klua_open_kos, "kos");
         klua_loadlib(L, klua_open_ksys, "ksys");
+        klua_loadlib(L, klua_open_kenv, "kenv");
         klua_loadlib(L, klua_open_krand, "krand");
         klua_loadlib(L, klua_open_ktime, "ktime");
         klua_loadlib(L, klua_open_kmcache, "kmcache");

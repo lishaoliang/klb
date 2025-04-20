@@ -489,6 +489,7 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 
     // "onpredraw" 事件
     {
+        // 在 计算 画布 绝对坐标之前, 是因为: 部分控件 需要 在KLBUI_onpredraw事件中 重新调整 子控件的位置
         // on_control 递归调用所有的控件
         do_control_event_recursive_klb_wnd(p_wnd, KLBUI_onpredraw, NULL, NULL, 0, 0);
     }
@@ -1166,6 +1167,11 @@ bool klb_gui_is_drop_msg_dispatch(klb_gui_t* p_gui)
 // 重绘所有
 static void klb_gui_redraw_all(klb_gui_t* p_gui, klb_rect_t* p_rect)
 {
+    if (NULL == p_gui->p_canvas)
+    {
+        return;
+    }
+
     klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
     klb_canvas_draw_clear(p_gui->p_canvas);
 
@@ -1282,7 +1288,7 @@ static int klb_gui_redraw_and_refresh(klb_gui_t* p_gui)
         klbuiex_redraw_clear(p_gui->p_redraw);
 
         // 与主画布做交集, 并检查是否需要刷新主画布
-        if (klb_rect_intersect(&rect_main, &rect, &p_gui->p_canvas->rect) && 0 < rect_main.w && 0 < rect_main.h)
+        if (NULL != p_gui->p_canvas && klb_rect_intersect(&rect_main, &rect, &p_gui->p_canvas->rect) && 0 < rect_main.w && 0 < rect_main.h)
         {
             is_refresh_main = true;
         }
@@ -1367,7 +1373,7 @@ static int klb_gui_redraw_and_refresh(klb_gui_t* p_gui)
     }
 
     // step4. 汇总刷新
-    if (0 < layer_count)
+    if (0 < layer_count && NULL != p_gui->p_canvas)
     {
         // 刷新画布到"显存"; 注意: 刷到"显存"必须使用主画布
         klb_canvas_refresh(p_gui->p_canvas, dst, p_tmp_canvas, src, layer_count);

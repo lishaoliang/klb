@@ -23,7 +23,12 @@
 #define KLUA_ENV_PTR            "_KLUA_ENV_PTR_"
 #endif
 
+// Lua GC 运行的时间(单位毫秒)
 #define KLUA_ENV_GC_TIME_OUT    30000   ///< 30 * 1000 = 30秒
+
+
+// Lua loop 函数流程 休眠的最大时间(单位毫秒)
+#define KLUA_ENV_LOOP_SLEEP     10
 
 
 /// @struct klua_env_extension_activate_t
@@ -40,6 +45,7 @@ typedef struct klua_env_extension_activate_t_
 /// @brief  Lua环境
 typedef struct klua_env_t_
 {
+    // LPC 消息事件
     struct
     {
         klb_atomic_t volatile   is_get_lpc_msg; ///< 是否 取 LPC 消息
@@ -49,20 +55,25 @@ typedef struct klua_env_t_
         klb_nlist_t*     p_msg_list;     ///< 待处理消息列表
     };
 
+    // Lua环境
     struct
     {
         lua_State*      L;              ///< Lua环境
+
+        lua_CFunction   cb_pre_load;    ///< 需要加载的所有预加载库
 
         int             G;              ///< "G"
         int             kexit;          ///< "kexit"
     };
 
+    // 扩展
     struct
     {
-        klb_hlist_t* p_extension_hlist;             ///< 注册的扩展; klua_env_extension_t*
-        klb_hlist_t* p_extension_activate_hlist;    ///< 激活的扩展; klua_env_extension_activate_t*
+        klb_hlist_t*    p_extension_hlist;             ///< 注册的扩展; klua_env_extension_t*
+        klb_hlist_t*    p_extension_activate_hlist;    ///< 激活的扩展; klua_env_extension_activate_t*
     };
 
+    // 内部参数
     struct
     {
         klb_buf_t*      p_arg;          ///< 全局参数(启动参数)
@@ -74,8 +85,11 @@ typedef struct klua_env_t_
 
         int64_t         gc_tc;          ///< 上次gc时间
         int64_t         gc_interval;    ///< gc间隔
+
+        int             loop_sleep;     ///< loop函数休眠最大时间
     };
 
+    // 外部指针等
     struct
     {
         void*           p_udata;        ///< user data
@@ -107,7 +121,10 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     p_env->gc_interval = KLUA_ENV_GC_TIME_OUT;
     p_env->gc_tc = p_env->tc;
 
+    p_env->loop_sleep = KLUA_ENV_LOOP_SLEEP;
+
     p_env->L = luaL_newstate(); // Lua运行环境
+    p_env->cb_pre_load = cb_pre_load;
     p_env->L->udata = p_env;
 
     // 注册标准扩展 C
@@ -116,8 +133,8 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     // 注册标准扩展 CPP
     klua_register_extension_std_cpp(p_env);
 
-    // lua环境初始化
-    klua_env_init(p_env, cb_pre_load);
+    // Note. 移除 lua环境初始化 klua_env_init, 在 klua_env_create 中调用
+    // 调整成 由调用者 在 klua_env_create 之后 调用 klua_env_doinit 完成
 
     return p_env;
 }
@@ -154,6 +171,12 @@ void klua_env_destroy(klua_env_t* p_env)
     KLB_FREE_BY(p_env->p_extension_activate_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_env->p_extension_hlist, klb_hlist_destroy);
     KLB_FREE(p_env);
+}
+
+void klua_env_set_preload(klua_env_t* p_env, lua_CFunction cb_pre_load)
+{
+    assert(NULL != p_env);
+    p_env->cb_pre_load = cb_pre_load;
 }
 
 void klua_env_set_udata(klua_env_t* p_env, void* p_udata)
@@ -217,6 +240,14 @@ static int klua_pdolibrary(lua_State *L)
     }
 
     return 1;
+}
+
+int klua_env_doinit(klua_env_t* p_env)
+{
+    // 从 klua_env_create 中独立出来, 由调用者在适当时机调用
+
+    // lua环境初始化
+    return klua_env_init(p_env, p_env->cb_pre_load);
 }
 
 int klua_env_dofile(klua_env_t* p_env, const char* p_loader)
@@ -623,7 +654,8 @@ int klua_env_loop_once(klua_env_t* p_env)
     // 处理消息
     klua_env_loop_msg(p_env, now);
 
-    int n = 0;
+    // 消耗的休眠计时
+    int sleep = 0;
 
     // loop once extension
     klb_hlist_iter_t* p_iter = klb_hlist_begin(p_env->p_extension_activate_hlist);
@@ -633,7 +665,7 @@ int klua_env_loop_once(klua_env_t* p_env)
 
         if (NULL != p_activate->ex.cb_loop_once)
         {
-            n += p_activate->ex.cb_loop_once(p_activate->ptr, p_env, p_env->tc, now);
+            sleep += p_activate->ex.cb_loop_once(p_activate->ptr, p_env, p_env->tc, now);
         }
 
         p_iter = klb_hlist_next(p_iter);
@@ -651,7 +683,20 @@ int klua_env_loop_once(klua_env_t* p_env)
         //KLB_LOG("klua_env_loop_once gc:[%dKB]\n", pre_used_kb - after_used_kb);
     }
 
-    return 5 - n;
+    // 注意: 线程的休眠 和使用线程场景 有关系
+    //    1. UI线程 休眠[10, 20+]毫秒, 对体验没有太大的影响
+    //    2. 网络线程 因需要快速接收网络数据, 外部不应该休眠过长的时间
+    return p_env->loop_sleep - sleep;
+}
+
+void klua_env_set_loop_sleep(klua_env_t* p_env, int sleep_max)
+{
+    p_env->loop_sleep = sleep_max;
+}
+
+int klua_env_get_loop_sleep(klua_env_t* p_env)
+{
+    return p_env->loop_sleep;
 }
 
 bool klua_env_is_exit(klua_env_t* p_env)

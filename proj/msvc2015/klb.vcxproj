@@ -170,6 +170,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\klbapp\klbappex_klua.h" />
+    <ClInclude Include="..\..\inc\klbapp\klbappex_plugins.h" />
     <ClInclude Include="..\..\inc\klbapp\klb_app.h" />
     <ClInclude Include="..\..\inc\klbapp\klb_app_extension.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
@@ -446,6 +448,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\compat\w32pthreads.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
+    <ClInclude Include="..\..\src_c\klbapp\klbappex_klua_in.h" />
+    <ClInclude Include="..\..\src_c\klbapp\klbappex_plugins_in.h" />
     <ClInclude Include="..\..\src_c\klbapp\klb_app_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
@@ -682,6 +686,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExtension.cpp" />
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
+    <ClCompile Include="..\..\src_c\klbapp\klbappex_klua.c" />
+    <ClCompile Include="..\..\src_c\klbapp\klbappex_plugins.c" />
     <ClCompile Include="..\..\src_c\klbapp\klb_app.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_mnp_help.c" />
@@ -893,6 +899,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_kenv.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_kobject.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_ksys.c" />

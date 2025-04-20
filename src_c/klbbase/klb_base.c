@@ -43,3 +43,15 @@ void klb_base_quit()
     // socket退出
     klb_socket_quit();
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+const char* klb_version()
+{
+    return KLB_VERSION;
+}
+
+int klb_version2()
+{
+    return KLB_VERSION_INT;
+}

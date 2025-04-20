@@ -6,6 +6,15 @@
 /// @version 0.1
 /// @history 修改历史
 ///  \n 2019 0.1 创建文件
+///  \n 2025 0.2 注意: 在klua_env_create函数, 不再初始化 lua 环境
+///              调整为: 使用者自行调用 klua_env_doinit 函数 来完成 lua 环境初始化
+///  \n 当前调用次序
+///      1. klua_env_create
+///      2. klua_env_doinit
+///      3. klua_env_dofile / klua_env_dolibrary
+///      4. klua_env_loop_once, ...
+///      5. klua_env_exit
+///      6. klua_env_doend
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLUA_ENV_H__
@@ -40,6 +49,12 @@ KLB_API klua_env_t* klua_env_create(lua_CFunction cb_pre_load);
 KLB_API void klua_env_destroy(klua_env_t* p_env);
 
 
+/// @brief 设置 所有预加载库 函数
+///   1. cb_pre_load 函数中 可以 通过 klua_loadlib 函数预加载 lua 库
+///   2. 需要在 klua_env_doinit 之前完成
+KLB_API void klua_env_set_preload(klua_env_t* p_env, lua_CFunction cb_pre_load);
+
+
 /// @brief 设置用户数据指针(user data)
 /// @param [in] *p_env             lua环境
 /// @param [in] *p_udata           用户数据指针(user data)
@@ -63,6 +78,12 @@ KLB_API int64_t klua_env_get_tick_count(klua_env_t* p_env);
 /// @param [in] *p_env             lua环境 
 /// @return 无
 KLB_API void klua_env_update_tick_count(klua_env_t* p_env);
+
+
+/// @brief 在 加载脚本文件 之前 初始化 lua 环境
+/// @param [in] *p_env             lua环境
+/// @return int 0.成功; 非0.失败
+KLB_API int klua_env_doinit(klua_env_t* p_env);
 
 
 /// @brief 按路径方式加载一个脚本文件
@@ -145,6 +166,19 @@ KLB_API void klua_msg_free(klua_msg_t* p_msg);
 /// @param [in] *p_env              lua环境
 /// @return int 0
 KLB_API int klua_env_loop_once(klua_env_t* p_env);
+
+
+/// @brief 设置 loop 函数流程 休眠的最大时间(单位毫秒)
+/// @param [in] *p_env              lua环境
+/// @param [in] sleep_max           单次循环 sleep 休眠最大时间(单位毫秒)
+/// @return void
+KLB_API void klua_env_set_loop_sleep(klua_env_t* p_env, int sleep_max);
+
+
+/// @brief 获取 loop 函数流程 休眠的最大时间(单位毫秒)
+/// @param [in] *p_env              lua环境
+/// @return int 休眠时间
+KLB_API int klua_env_get_loop_sleep(klua_env_t* p_env);
 
 
 /// @brief 是否退出状态

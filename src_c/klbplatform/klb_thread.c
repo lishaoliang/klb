@@ -254,12 +254,32 @@ int klb_thread_tid()
     return tid;
 }
 
+
+/// @brief 通过 select 函数休眠
+static void klb_sleep_by_select(uint32_t ms)
+{
+    if (0 == ms) { ms = 1; } // 最小1毫秒
+
+    fd_set rfds;
+    FD_ZERO(&rfds);
+    FD_SET(0, &rfds);
+
+    struct timeval tv;
+    tv.tv_sec = ms / 1000;
+    tv.tv_usec = (ms % 1000) * 1000;
+
+    select(0, &rfds, NULL, NULL, &tv);
+}
+
 void klb_sleep(uint32_t ms)
 {
     if (ms <= 10)
     {
-        // [0毫秒, 10毫秒]采用纳秒级休眠
-        klb_sleep_ns(ms * 1000000);
+        // Bug. 部分嵌入式平台, clock_nanosleep 函数无效
+        // 这里替换成 select 休眠
+
+        // (0毫秒, 10毫秒]休眠
+        klb_sleep_by_select(ms);
     }
     else if (ms <= 60000)
     {
@@ -295,6 +315,8 @@ void klb_sleep_ns(uint32_t ns)
     struct timespec wait;
     wait.tv_sec = 0;
     wait.tv_nsec = ns;
+
+    // !注意: 部分嵌入式平台, clock_nanosleep 函数无效
 
 #ifndef __APPLE__
     clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &wait, NULL);

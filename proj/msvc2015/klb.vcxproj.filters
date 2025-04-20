@@ -1673,6 +1673,18 @@
     <ClInclude Include="..\..\inc_hpp\klbgui\wnd\CLabel.hpp">
       <Filter>inc_hpp\klbgui\wnd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbapp\klbappex_klua.h">
+      <Filter>inc\klbapp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbapp\klbappex_klua_in.h">
+      <Filter>src_c\klbapp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbapp\klbappex_plugins.h">
+      <Filter>inc\klbapp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbapp\klbappex_plugins_in.h">
+      <Filter>src_c\klbapp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2835,6 +2847,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src_cpp\klbgui\wnd\CLabel.cpp">
       <Filter>src_cpp\klbgui\wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbapp\klbappex_klua.c">
+      <Filter>src_c\klbapp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_util\klua_kenv.c">
+      <Filter>src_c\klua\klua_util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbapp\klbappex_plugins.c">
+      <Filter>src_c\klbapp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

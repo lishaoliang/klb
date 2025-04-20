@@ -112,6 +112,10 @@ static int cb_thread_klua_kthread(void* p_obj, volatile int* p_run)
     klua_kthread_item_t* p_item = (klua_kthread_item_t*)p_obj;
     klua_env_t* p_env = p_item->p_env;
 
+    // 初始化 lua 环境
+    klua_env_doinit(p_env);
+
+    // 加载 lua 入口文件
     if (0 != klua_env_dolibrary(p_env, p_item->entry_path))
     {
         p_item->wait = false;
@@ -129,6 +133,10 @@ static int cb_thread_klua_kthread(void* p_obj, volatile int* p_run)
         if (0 < sleep)
         {
             klb_sleep(sleep);
+        }
+        else
+        {
+            klb_sleep(1);
         }
     }
 

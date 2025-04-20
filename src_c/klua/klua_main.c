@@ -43,6 +43,8 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
     // env
     klua_env_t* p_env = klua_env_create(cb);    // env
     klua_main_set_args(p_env, argc, argv);      // args
+    klua_env_doinit(p_env);
+
     klua_thread_register("main", p_env);        // main
 
     if (0 != klua_env_dofile(p_env, argv[1]))
@@ -63,6 +65,10 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
             else if(0 < sleep)
             {
                 klb_sleep(sleep);
+            }
+            else
+            {
+                klb_sleep(1);
             }
         }
     }

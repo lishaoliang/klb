@@ -5,8 +5,20 @@
 #include "klua/klua_util/klua_seri_map.h"
 #include "klua/klua_util/klua_seri_json.h"
 #include "klbthird/cJSON.h"
+#include "klbbase/klb_base.h"
 #include <stdlib.h>
 #include <assert.h>
+
+
+// KLB库版本
+static int klua_ksys_version(lua_State* L)
+{
+    int ver = klb_version2();
+
+    lua_pushstring(L, klb_version());
+    lua_pushinteger(L, ver);
+    return 2;
+}
 
 
 static int klua_ksys_exit(lua_State* L)
@@ -87,6 +99,8 @@ int klua_open_ksys(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
+        { "version",        klua_ksys_version },
+
         { "exit",           klua_ksys_exit },
         { "is_exit",        klua_ksys_is_exit },
 

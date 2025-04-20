@@ -145,6 +145,12 @@ KLB_API int klua_open_kos(lua_State* L);
 KLB_API int klua_open_ksys(lua_State* L);
 
 
+/// @brief 扩展库"kenv"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kenv(lua_State* L);
+
+
 /// @brief 扩展库"krand"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
