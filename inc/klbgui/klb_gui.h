@@ -7,12 +7,14 @@
 ///   默认配色采用 visual studio 深色系风格
 ///   图标来源于1: http://iconpark.oceanengine.com/official
 ///   图标来源于2: https://remixicon.com/
-/// @version 0.2
+/// @version 0.5
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 ///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
 ///   \n [2024-4] 添加 klb_gui_canvas_ioctrl_opt8 接口, 许可 开发者 在上层透过GUI框架, 直接对画布进行交互操作
 ///   \n [2025-1] 添加定时器相关功能
+///   \n [2025-6] 调整UI图形渲染功能到专门的内部渲染扩展模块中
+///   \n [2025-6] 添加支持多画布图层绘图模式(指 modal/popup/msgbox 分别使用不同的 画布)
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
@@ -90,6 +92,15 @@ KLB_API void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas);
 /// @param [in] *p_gui          GUI对象
 /// @return klb_canvas_t* 
 KLB_API klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui);
+
+
+/// @brief 获取是否为 多图层画布模式
+/// @param [in] *p_gui          GUI对象
+/// @return bool
+/// @note
+///    true. 指 modal/popup/msgbox 分别使用不同的 画布
+///    false. 指 modal/popup/msgbox 共享使用 主画布
+KLB_API bool klb_gui_is_multi_canvas_layer(klb_gui_t* p_gui);
 
 
 /// @brief 扩展交互函数; GUI框架仅做透明调用

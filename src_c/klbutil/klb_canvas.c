@@ -413,19 +413,66 @@ int klb_canvas_refresh(klb_canvas_t* p_canvas,                                  
     return 0;
 }
 
-klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int w, int h, int layer_type)
+int klb_canvas_refresh_layer(klb_canvas_t* p_canvas, int refresh_opt, klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int layer_count)
 {
     if (NULL == p_canvas)
     {
         return 0;
     }
 
-    if (p_canvas->vtable.malloc)
+    if (p_canvas->vtable.refresh_layer)
     {
-        return p_canvas->vtable.malloc(p_canvas, w, h, layer_type);
+        return p_canvas->vtable.refresh_layer(p_canvas, refresh_opt, layers, layer_count);
     }
 
     return 0;
+}
+
+/// @brief 移动画布位置
+int klb_canvas_move(klb_canvas_t* p_canvas, int x, int y)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.move)
+    {
+        return p_canvas->vtable.move(p_canvas, x, y);
+    }
+
+    return 0;
+}
+
+/// @brief 重新设置画布宽高
+int klb_canvas_resize(klb_canvas_t* p_canvas, int w, int h)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (p_canvas->vtable.resize)
+    {
+        return p_canvas->vtable.resize(p_canvas, w, h);
+    }
+
+    return 0;
+}
+
+klb_canvas_t* klb_canvas_malloc(klb_canvas_t* p_canvas, int idx, int rsv, int layer_type)
+{
+    if (NULL == p_canvas)
+    {
+        return NULL;
+    }
+
+    if (p_canvas->vtable.malloc)
+    {
+        return p_canvas->vtable.malloc(p_canvas, idx, rsv, layer_type);
+    }
+
+    return NULL;
 }
 
 int klb_canvas_draw_opt1(klb_canvas_t* p_canvas, int opt, const void* ptr1)

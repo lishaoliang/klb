@@ -13,7 +13,10 @@
 #include "klb_type.h"
 #include "klbgui/CGui.hpp"
 
+
 namespace klbui {
+//////////////////////////////////////////////////////////////////////////
+
 
 KLB_EXTERN class KLB_API_CPP CDemoCss : public CCss
 {
@@ -95,6 +98,8 @@ private:
 
 }; // CDemo
 
+
+//////////////////////////////////////////////////////////////////////////
 } // namespace klbui
 
 #endif // __KLBUI_CDEMO_H__

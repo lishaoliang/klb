@@ -480,6 +480,16 @@ static int klua_kgui_get_shwnd_css(lua_State* L)
     return n;
 }
 
+static int klua_kgui_is_multi_canvas_layer(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    bool is_multi = klb_gui_is_multi_canvas_layer(p_gui);
+
+    lua_pushboolean(L, is_multi);
+    return 1;
+}
+
 static int klua_kgui_load_image(lua_State* L)
 {
     const char* p_key = luaL_checkstring(L, 1);
@@ -972,6 +982,9 @@ int klua_open_kgui(lua_State* L)
 
         { "set_shwnd_css",      klua_kgui_set_shwnd_css },
         { "get_shwnd_css",      klua_kgui_get_shwnd_css },
+
+        // 画布
+        { "is_multi_canvas_layer",      klua_kgui_is_multi_canvas_layer }, // 获取时候支持多画布图层模式
 
         // image
         { "load_image",         klua_kgui_load_image },

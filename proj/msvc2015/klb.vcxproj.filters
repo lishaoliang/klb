@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="源文件">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="资源文件">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="inc">
       <UniqueIdentifier>{b3c4d844-3c0d-4ad7-929c-bc9a2414e179}</UniqueIdentifier>
     </Filter>
@@ -117,14 +109,8 @@
     <Filter Include="src_c\klua\luafilesystem-2.0">
       <UniqueIdentifier>{1acf136b-8ffa-4738-a531-41c883a05339}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klua\luazip-1.2.7">
-      <UniqueIdentifier>{7ef202fe-f4b1-4e25-82cb-ccd8ecc10dcc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klua\luafilesystem-2.0\src">
       <UniqueIdentifier>{9a0eccee-3998-4b14-ade5-3783b4717d63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klua\luazip-1.2.7\src">
-      <UniqueIdentifier>{af0c7196-7ee4-4187-aac7-51816161ec92}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc_hpp">
       <UniqueIdentifier>{24383a6c-f4c2-4331-8a06-407046877a31}</UniqueIdentifier>
@@ -272,6 +258,9 @@
     </Filter>
     <Filter Include="src_cpp\klua\extension">
       <UniqueIdentifier>{f8bc148c-dd8c-431c-8561-4ba8616742cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klua\lua-zlib-1.3">
+      <UniqueIdentifier>{7ef202fe-f4b1-4e25-82cb-ccd8ecc10dcc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -791,9 +780,6 @@
     <ClInclude Include="..\..\src_c\klua\klua_help.h">
       <Filter>src_c\klua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\adler32.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\aes.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
@@ -896,12 +882,6 @@
     <ClInclude Include="..\..\src_c\libavutil\hmac.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\imgutils.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\imgutils_internal.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\integer.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
@@ -956,9 +936,6 @@
     <ClInclude Include="..\..\src_c\libavutil\pca.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\pixdesc.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\pixelutils.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
@@ -981,9 +958,6 @@
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\reverse.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\ripemd.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\samplefmt.h">
@@ -1685,6 +1659,72 @@
     <ClInclude Include="..\..\src_c\klbapp\klbappex_plugins_in.h">
       <Filter>src_c\klbapp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_getenv.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbplatform\klb_sysfilesystem.h">
+      <Filter>inc\klbplatform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\crc32.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\deflate.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\gzguts.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inffast.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inffixed.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inflate.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\inftrees.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\trees.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\zconf.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\zlib.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\av_adler32.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_intmodedep.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_neon_inc.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_simd_inc.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_ucp.h">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\libavutil\ripemd.h">
+      <Filter>src_c\libavutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_render.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -1700,6 +1740,9 @@
     <None Include="..\..\build\linux\Makefile">
       <Filter>build\linux</Filter>
     </None>
+    <None Include="..\..\install.mk" />
+    <None Include="..\..\clip.mk" />
+    <None Include="..\..\path.mk" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\compat\getopt.c">
@@ -1855,9 +1898,6 @@
     <ClCompile Include="..\..\src_c\klua\lua.c">
       <Filter>src_c\klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\adler32.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\aes.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
@@ -1933,9 +1973,6 @@
     <ClCompile Include="..\..\src_c\libavutil\hmac.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\imgutils.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\integer.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
@@ -1972,9 +2009,6 @@
     <ClCompile Include="..\..\src_c\libavutil\pca.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\pixdesc.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\pixelutils.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
@@ -1988,9 +2022,6 @@
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\reverse.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\ripemd.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\samplefmt.c">
@@ -2856,6 +2887,162 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbapp\klbappex_plugins.c">
       <Filter>src_c\klbapp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_getenv.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbplatform\klb_sysfilesystem.c">
+      <Filter>src_c\klbplatform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\adler32.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\compress.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\crc32.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\deflate.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzclose.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzlib.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzread.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\gzwrite.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\infback.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\inffast.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\inflate.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\inftrees.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\trees.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\uncompr.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c">
+      <Filter>src_c\zlib-1.2.11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\av_adler32.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\lua-zlib-1.3\lua_zlib.c">
+      <Filter>src_c\klua\lua-zlib-1.3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_auto_possess.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_chartables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_compile.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_context.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_convert.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_dfa_match.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_dftables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_error.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_extuni.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_find_bracket.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_fuzzsupport.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_compile.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_maketables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_match.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_match_data.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_newline.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_ord2utf.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_pattern_info.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_script_run.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_serialize.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_string_utils.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_study.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_substitute.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_substring.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_tables.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_ucd.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_valid_utf.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_xclass.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2grep.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2posix.c">
+      <Filter>src_c\klbthird\pcre2\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\libavutil\ripemd.c">
+      <Filter>src_c\libavutil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_render.c">
+      <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

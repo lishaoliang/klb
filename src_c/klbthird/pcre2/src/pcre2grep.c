@@ -3788,7 +3788,7 @@ return TRUE;
 /* Returns 0 if something matched, 1 if nothing matched, 2 after an error. */
 
 int
-main(int argc, char **argv)
+pcre2_grep_main(int argc, char **argv)
 {
 int i, j;
 int rc = 1;

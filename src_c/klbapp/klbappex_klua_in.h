@@ -6,6 +6,8 @@
 #include "klbapp/klbappex_klua.h"
 #include "klua/klua_env.h"
 #include "klua/klua.h"
+#include "klbutil/klb_nlist.h"
+#include "klbplatform/klb_rwlock.h"
 
 
 #if defined(__cplusplus)
@@ -19,11 +21,19 @@ extern "C" {
 typedef struct klbappex_klua_t_
 {
     klua_env_t*             p_env;              ///< klua 环境
-
     bool                    is_load_entry;      ///< 是否成功 加载了 入口脚本
 
-    klua_openlibs_cb        cb_pre_load;        ///< Lua 需要初始 预加载的 所有非标准库
+    struct
+    {
+        klb_rwlock_t*       p_preload_rwlock;   ///< p_preload_nlist 的锁
+        klb_nlist_t*        p_preload_nlist;    ///< 所有 lua 环境需要 预加载的函数列表
+    };
 }klbappex_klua_t;
+
+
+/// @brief 注册 klua 扩展
+/// @return int 0.成功; 非0.失败
+int klbappex_register_klua(klb_app_t* p_app);
 
 
 // lua 环境 在 loop 之前的 准备流程

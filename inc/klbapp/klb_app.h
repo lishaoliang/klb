@@ -26,8 +26,12 @@ extern "C" {
 typedef struct klb_app_t_ klb_app_t;
 
 
-/// @brief app main
+/// @brief app main 流程
+/// @param [in]  argc           参数个数
+/// @param [in]  **argv         参数字符串数组
+/// @param [in]  cb_pre_load    所有 Lua 环境 的预加载库
 /// @return int 0
+///   调用次序: klb_base_init() => klb_app_main() => klb_base_quit()
 KLB_API int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load);
 
 

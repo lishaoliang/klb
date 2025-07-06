@@ -1,7 +1,8 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <string.h>
 #include "klua/klua.h"
 #include "klbbase/klb_base.h"
+#include "klbapp/klb_app.h"
 
 
 // vld - debug
@@ -10,6 +11,7 @@
 #endif // 
 
 
+// 所有 lua环境 预加载 库
 static int klua_openlibs(lua_State* L)
 {
     klua_loadlib_all(L);
@@ -21,7 +23,7 @@ int main(int argc, char** argv)
 {
     klb_base_init(NULL);
 
-    int ret = klua_main(argc, argv, klua_openlibs);
+    int ret = klb_app_main(argc, argv, klua_openlibs);
 
     klb_base_quit();
     return ret;

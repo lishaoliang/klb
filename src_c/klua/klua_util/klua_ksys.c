@@ -13,7 +13,7 @@
 // KLB库版本
 static int klua_ksys_version(lua_State* L)
 {
-    int ver = klb_version2();
+    int ver = klb_version_number();
 
     lua_pushstring(L, klb_version());
     lua_pushinteger(L, ver);

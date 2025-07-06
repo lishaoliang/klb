@@ -11,6 +11,7 @@
 #define __KLB_APP_EXTENSION_H__
 
 #include "klb_type.h"
+#include "klua/klua.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -31,7 +32,6 @@ typedef struct klb_app_extension_t_ klb_app_extension_t;
 #define KLBAPPEX_DLSYM_init_extension       "klbapp_init_extension"
 #define KLBAPPEX_DLSYM_quit_extension       "klbapp_quit_extension"
 
-
 /// @def   KLBAPPEX_DLSYM_extension_count
 /// @brief 函数名: 动态库插件 支持的扩展数目
 #define KLBAPPEX_DLSYM_extension_count      "klbapp_extension_count"
@@ -40,17 +40,24 @@ typedef struct klb_app_extension_t_ klb_app_extension_t;
 /// @brief 函数名: 打开 扩展
 #define KLBAPPEX_DLSYM_open_extension       "klbapp_open_extension"
 
+/// @def   KLBAPPEX_DLSYM_kluaprelib_count
+/// @brief 函数名: 动态库插件 支持klua预加载函数的数目
+#define KLBAPPEX_DLSYM_kluaprelib_count     "klbapp_kluaprelib_count"
+
+/// @def   KLBAPPEX_DLSYM_open_kluaprelib
+/// @brief 函数名: 打开(获取) klua预加载函数
+///   打开的预加载函数, 会被直接放入全局 预加载函数 列表中
+#define KLBAPPEX_DLSYM_open_kluaprelib      "klbapp_open_kluaprelib"
+
 
 /// @brief 动态库插件 初始化/退出
 /// @return int 0.成功; 非0.失败
 typedef int(*klbapp_init_extension_cb)();
 typedef void(*klbapp_quit_extension_cb)();
 
-
 /// @brief 获取 插件支持的 扩展数目
 /// @return int 动态库插件支持的 扩展数目
 typedef int(*klbapp_extension_count_cb)();
-
 
 /// @brief 打开 第idx个 插件扩展
 /// @param [in]     idx             第idx个扩展
@@ -59,6 +66,16 @@ typedef int(*klbapp_extension_count_cb)();
 /// @param [in]     name_max        名称的缓存 最大长度
 /// @return int 0.成功; 非0.失败
 typedef int(*klbapp_open_extension_cb)(int idx, klb_app_extension_t* p_extension, char* p_name, int name_max);
+
+/// @brief 获取 插件支持的 扩展数目
+/// @return int 动态库插件支持的 扩展数目
+typedef int(*klbapp_kluaprelib_count_cb)();
+
+/// @brief 打开 第idx个 插件扩展
+/// @param [in]     idx             第idx个扩展
+/// @param [out]    *p_out_preload  [输出]函数地址
+/// @return int 0.成功; 非0.失败
+typedef int(*klbapp_open_kluaprelib_cb)(int idx, lua_CFunction* p_out_preload);
 
 
 /// @struct klbappex_ioctrl_t
@@ -86,14 +103,11 @@ typedef struct klbappex_ioctrl_t_
 
 /// @enum  klb_app_extension_msg_e
 /// @brief app扩展 的 消息事件 定义
-///   启动/退出 流程: init => setup => start ... => stop => quit
+///   启动/退出 流程: init => quit
 typedef enum klb_app_extension_msg_e_
 {
     ///< 启动/退出 流程
     KLBAPPEX_MSG_init  = 1,            ///< 初始化
-    KLBAPPEX_MSG_setup,                ///< 初始配置
-    KLBAPPEX_MSG_start,                ///< 开启线程等
-    KLBAPPEX_MSG_stop,                 ///< 关闭线程等
     KLBAPPEX_MSG_quit,                 ///< 退出
 }klb_app_extension_msg_e;
 

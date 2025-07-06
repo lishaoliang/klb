@@ -16,11 +16,12 @@
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
 #include "klbgui/extensions/klbuiex_wndhash.h"
+#include "klbgui/extensions/klbuiex_render.h"
 #include "klbgui/extensions/klbuiex_wndticker.h"
+#include "klbgui/extensions/klbuiex_redraw.h"
 #include "klbgui/extensions/klbuiex_default.h"
 #include "klbgui/extensions/klbuiex_time.h"
 #include "klbgui/extensions/klbuiex_shwnd.h"
-#include "klbgui/extensions/klbuiex_redraw.h"
 #include "klbgui/extensions/klbuiex_tip.h"
 #include "klbgui/extensions/klbuiex_util.h"
 
@@ -34,14 +35,15 @@ extern "C" {
     /// @brief 注册内部标准扩展
 #define KLBUIEX_register_extensions_std(GUI_) \
 { \
-    klbuiex_register_util((GUI_));      \
     klbuiex_register_wndhash((GUI_));   \
+    klbuiex_register_render((GUI_));    \
+    klbuiex_register_redraw((GUI_));    \
     klbuiex_register_wndticker((GUI_)); \
     klbuiex_register_default((GUI_));   \
     klbuiex_register_time((GUI_));      \
     klbuiex_register_shwnd((GUI_));     \
-    klbuiex_register_redraw((GUI_));    \
     klbuiex_register_tip((GUI_));       \
+    klbuiex_register_util((GUI_));      \
 }
 
 

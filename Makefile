@@ -1,11 +1,13 @@
+# Doc-Encode UTF8, Unix(LF)
 # 编译命令 : make
 # make MY_VERSION=release MY_TOOL_CHAIN=arm-linux-gnueabi- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
-# 裁剪参数 MY_CLIP="no-all no-lpeg no-sqlite no-packages"
-#
+# 裁剪参数 MY_CLIP="no-pcre2 no-lpeg no-sqlite no-zlib no-packages"
+# 裁剪参数 MY_CLIP="no-all"
 
 SHELL = /bin/bash
 PWD = `pwd`
 
+###########################################################
 # 编译工具, arm-linux-gnueabi-
 #MY_TOOL_CHAIN ?= arm-linux-gnueabi-
 MY_TOOL_CHAIN ?= 
@@ -28,6 +30,9 @@ CP_F	:= -cp -f
 CP_RF	:= -cp -rf
 
 
+###########################################################
+# 基础C/C++文件
+
 # 从目录检索需要编译的c文件
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
@@ -49,7 +54,6 @@ MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/
 # klbapp
 MY_DIRS += ./src_c/klbapp
 
-
 # libavutil
 MY_DIRS += ./src_c/compat ./src_c/libavutil
 
@@ -65,62 +69,12 @@ MY_DIRS += ./src_cpp/klua ./src_cpp/klua/extension
 MY_DIRS += ./src_cpp/klbapp
 
 
-################################################
-# 裁剪代码
-MY_CLIP_TAG := $(MY_CLIP)
-MY_CLIP_FLAGS :=
-
-# 默认所有可裁剪参数 MY_CLIP = no-all
-ifeq ($(filter no-all, $(MY_CLIP_TAG)), )
-	MY_CLIP_TAG += 
-else
-	MY_CLIP_TAG += no-lpeg no-sqlite no-packages
-endif
-
-# 可裁剪参数: MY_CLIP = no-lpeg
-ifeq ($(filter no-lpeg, $(MY_CLIP_TAG)), )
-	MY_DIRS += ./src_c/klua/lpeg-1.0.2
-else
-	MY_CLIP_FLAGS += -D__KLB_NO_LPEG__
-endif
-
-# 可裁剪参数: MY_CLIP = no-sqlite
-ifeq ($(filter no-sqlite, $(MY_CLIP_TAG)), )
-	MY_DIRS += ./src_c/klua/lsqlite3
-else
-	MY_CLIP_FLAGS += -D__KLB_NO_SQLITE__
-endif
-
-# 可裁剪参数: MY_CLIP = no-packages
-ifeq ($(filter no-packages, $(MY_CLIP_TAG)), )
-	MY_DIRS += ./src_packages/kpa_flv
-	MY_DIRS += ./src_packages/kpa_http
-	MY_DIRS += ./src_packages/kpa_mgui
-	MY_DIRS += ./src_packages/kpa_mnp
-	MY_DIRS += ./src_packages/kpa_rtsp
-	MY_DIRS += ./src_packages/kpa_sip
-	MY_DIRS += ./src_packages/kpa_ws
-else
-	MY_CLIP_FLAGS += -D__KLB_NO_PACKAGES__
-endif
-
 ###########################################################
-
-# 编译选项 -D__XXX_XXX__
-MY_CFLAGS := $(MY_CLIP_FLAGS) $(MY_CFLAGS_EX) -D_GNU_SOURCE 
-
-# lua的宏
-MY_CFLAGS += -DLUA_USE_LINUX
-
-# pcre2的宏
-MY_CFLAGS += -DHAVE_CONFIG_H
-
+# 头文件目录
 
 # 引用头文件
 MY_INCLUDES := -I ./src_c -I ./inc -I ./src_c/compat
-MY_INCLUDES += -I ./src_c/klua/lsqlite3
 MY_INCLUDES += -I ./src_c/klbthird/sds
-MY_INCLUDES += -I ./src_c/klbthird/pcre2/src
 MY_INCLUDES += -I ./inc/klbthird
 
 # 第三方库头文件
@@ -130,8 +84,36 @@ MY_INCLUDES += -I ./src_c/qrencode-4.1.1
 # cpp
 MY_INCLUDES += -I ./src_cpp -I ./inc_hpp
 
-# src_packages
-MY_INCLUDES += -I ./src_packages
+
+###########################################################
+# 裁剪代码
+
+# 裁剪步骤1. 入参
+# @param [in]	$(MY_CLIP)	裁剪参数: eg. "no-all"
+export MY_CLIP
+
+# 裁剪步骤2. 引入裁剪
+include ./clip.mk
+
+# 裁剪步骤3. 引入裁剪
+# @param [out]		$(MY_CLIP_FLAGS)	处理裁剪参数之后的 宏定义等
+# @param [out]		$(MY_CLIP_DIRS)		处理裁剪之后, 需要加入编译的目录
+# @param [out]		$(MY_CLIP_INC)		处理裁剪之后, 需要引用的头文件目录
+MY_CFLAGS := $(MY_CLIP_FLAGS)
+MY_DIRS += $(MY_CLIP_DIRS)
+MY_INCLUDES += $(MY_CLIP_INC)
+
+
+###########################################################
+
+# 编译选项 -D__XXX_XXX__
+MY_CFLAGS += $(MY_CFLAGS_EX) -D_GNU_SOURCE 
+
+# lua的宏
+MY_CFLAGS += -DLUA_USE_LINUX
+
+# pcre2的宏
+MY_CFLAGS += -DHAVE_CONFIG_H
 
 
 # 引用的静态库
@@ -148,7 +130,7 @@ MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 
 # debug/release
 ifneq ($(MY_VERSION),release)
-	MY_CFLAGS += -g
+	MY_CFLAGS += -g -fno-omit-frame-pointer -rdynamic
 endif
 
 # 防止返回值格式错误, 警告变错误
@@ -159,11 +141,6 @@ MY_CFLAGS += -Wl,--no-undefined
 
 # 优化
 MY_CFLAGS += -Os
-
-# 编译目标名称
-MY_TARGET_NAME := klb
-MY_TARGET_A := ./lib/lib$(MY_TARGET_NAME).a
-MY_TARGET_SO := ./lib/lib$(MY_TARGET_NAME).so
 
 
 # 所有编译文件 C/C++
@@ -186,7 +163,27 @@ MY_LINK_MINI = -Wl,--gc-sections
 MY_SO_PARAMS := -fPIC
 MY_STD_C99 := -std=c99
 
-.PHONY: all clean
+
+# 传递给子makefile的参数
+MK_PARAMS := OS=$(OS) ARCH=$(ARCH) MY_TOOL_CHAIN=$(MY_TOOL_CHAIN)
+
+
+# 编译目标名称
+MY_TARGET_NAME := klb
+MY_TARGET_A := ./lib/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := ./lib/lib$(MY_TARGET_NAME).so
+
+###########################################################
+# install
+
+# install 相关
+include ./install.mk
+
+
+###########################################################
+# .PHONY
+
+.PHONY: all clean strip klua install
 
 all: lib so
 
@@ -207,10 +204,6 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(my_tip)
 	$(CXX) -shared -fPIC $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI) -o $@
 
-strip:
-#	$(CSTRIP) $(MY_TARGET_A)
-	$(CSTRIP) $(MY_TARGET_SO)
-
 clean:
 	@echo "++++++ make clean ++++++"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
@@ -219,6 +212,27 @@ clean:
 	$(RM_F) $(MY_TARGET_A)
 	$(RM_F) $(MY_TARGET_SO)
 	@echo "+++++++++++++++++++++++++"
+
+	if [ -f ./klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./klua/ clean; fi
+
+strip:
+	#$(CSTRIP) $(MY_TARGET_A)
+	$(CSTRIP) $(MY_TARGET_SO)
+
+klua: all
+	if [ -f ./klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./klua/; fi
+
+install: klua
+	#$(CSTRIP) $(MY_TARGET_A)
+	$(CSTRIP) $(MY_TARGET_SO)
+
+	$(call DO_install_by_path, /usr/local)
+
+local:
+	#$(CSTRIP) $(MY_TARGET_A)
+	$(CSTRIP) $(MY_TARGET_SO)
+
+	$(call DO_install_by_path, ./install)
 
 info:
 	$(my_tip)

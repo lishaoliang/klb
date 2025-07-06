@@ -31,7 +31,7 @@
  */
 
 #include "config.h"
-#include "adler32.h"
+#include "av_adler32.h"
 #include "common.h"
 #include "intreadwrite.h"
 

@@ -85,6 +85,13 @@ KLB_API void* klb_mallocz(size_t size);
 #define KLB_FREE_ALIGNED(PTR_)              {if(NULL!=(PTR_)){_aligned_free(PTR_);(PTR_)=NULL;}}
 
 
+/// @def   KLB_DELETE
+/// @brief 删除指针, 并置空
+#if defined(__cplusplus)
+#define KLB_DELETE(PTR_)                    {if(NULL!=(PTR_)){ delete (PTR_);(PTR_)=NULL;}}
+#endif
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include "hash.h"
 
-#include "adler32.h"
+#include "av_adler32.h"
 #include "crc.h"
 #include "md5.h"
 #include "murmur3.h"

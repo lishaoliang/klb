@@ -18,6 +18,8 @@
 #include "klbthird/sds.h"
 #include "klbapp/klbappex_klua_in.h"
 #include "klbapp/klbappex_plugins_in.h"
+#include "klbplatform/klb_rwlock.h"
+#include "klbplatform/klb_mutex.h"
 
 
 #if defined(__cplusplus)
@@ -45,14 +47,23 @@ typedef struct klb_app_t_
     // 内部临时存储数据
     struct
     {
-        klb_nlist_t*    p_nlist_preload;                ///< 预加载函数列表; klb_app_preload_cb
+        klb_mutex_t*    p_preload_mutex;                ///< 锁: p_preload_nlist
+        klb_nlist_t*    p_preload_nlist;                ///< 预加载函数列表; klb_app_preload_cb
     };
 
     // 扩展
     struct
     {
+        // 注册的扩展 与 已激活的扩展
+        klb_rwlock_t*   p_extension_rwlock;             ///< 锁: p_extension_hlist/p_extension_activated_hlist
+
         klb_hlist_t*    p_extension_hlist;              ///< 注册的扩展; klb_app_extension_t*
         klb_hlist_t*    p_extension_activated_hlist;    ///< 激活的扩展; klb_app_extension_activated_t*
+
+        // 需要处理loop的 已激活扩展
+        // 将需要 loop 的扩展独立出来 处理
+        klb_rwlock_t*   p_loop_rwlock;                  ///< 锁: p_loop_nlist
+        klb_nlist_t*    p_loop_nlist;                   ///< 需要调用loop函数的扩展列表
     };
 
     // 常用扩展 指针

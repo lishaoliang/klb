@@ -69,6 +69,7 @@ typedef struct klb_gui_t_
     struct
     {
         klbuiex_wndhash_t*      p_wndhash;              ///< 窗口创建,查找等
+        klbuiex_render_t*       p_render;               ///< 图形渲染模块
         klbuiex_wndticker_t*    p_wndticker;            ///< 窗口定时器
         klbuiex_redraw_t*       p_redraw;               ///< 重绘记录
         klbuiex_tip_t*          p_tip;                  ///< tip

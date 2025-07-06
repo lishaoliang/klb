@@ -4,8 +4,36 @@
 #include "klbmem/klb_mem.h"
 #include "klua/klua_env.h"
 #include "klua/klua_util/klua_seri_map.h"
+#include "klbplatform/klb_sysfilesystem.h"
 #include <stdlib.h>
 #include <assert.h>
+
+
+// 应用的路径
+static int klua_kenv_base_path(lua_State* L)
+{
+    sds path = klb_get_base_path();
+
+    lua_pushstring(L, path);
+
+    KLB_FREE_BY(path, sdsfree);
+    return 1;
+}
+
+
+// 默认配置路径
+static int klua_kenv_pref_path(lua_State* L)
+{
+    const char* p_org = luaL_checkstring(L, 1);
+    const char* p_app = luaL_checkstring(L, 2);
+
+    sds pref_path = klb_get_pref_path(p_org, p_app);
+
+    lua_pushstring(L, pref_path);
+
+    KLB_FREE_BY(pref_path, sdsfree);
+    return 1;
+}
 
 
 /// @brief 获取全局参数: 数据格式参考 luaseri_pack/luaseri_pack_from
@@ -112,6 +140,9 @@ int klua_open_kenv(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
+        { "base_path",              klua_kenv_base_path },          // 应用的路径
+        { "pref_path",              klua_kenv_pref_path },          // 默认配置路径
+
         { "get_args",               klua_kenv_get_args },           // 获取入口参数 args; 同 ksys.get_args
         { "get_name",               klua_kenv_get_name },           // 获取 lua 环境名称
 

@@ -83,6 +83,14 @@ klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd)
         // tip 图层画布
         return p_top->p_gui->p_tip->p_canvas;
     }
+    else if(KLB_WND_STYLE_LAYER_POPUP & p_top->state.style)
+    {
+        return klbuiex_render_get_popup_canvas(p_top->p_gui->p_render, p_top);
+    }
+    else if(KLB_WND_STYLE_LAYER_MSGBOX & p_top->state.style)
+    {
+        return klbuiex_render_get_msgbox_canvas(p_top->p_gui->p_render);
+    }
 
     // 主图层画布
     return p_top->p_gui->p_canvas;

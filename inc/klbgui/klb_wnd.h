@@ -42,7 +42,7 @@ typedef struct klb_wnd_t_ klb_wnd_t;
 ///   采用坐标系: 左上角点为原点
 typedef struct klb_wnd_pos_t_
 {
-    klb_rect_t  rect_in_canvas;             ///< 基于画布的坐标(屏幕/顶层窗口)
+    klb_rect_t  rect_in_canvas;             ///< 基于画布的坐标(屏幕)
     klb_rect_t  rect_in_parent;             ///< 基于父窗口的坐标
 }klb_wnd_pos_t;
 
@@ -98,7 +98,7 @@ typedef struct klb_wnd_state_t_
 
 /// @struct klb_wnd_tip_t
 /// @brief  TIP提示
-///  暂不同 提供 对 tip 设置显示位置
+///  暂不 提供 对 tip 设置显示位置
 typedef struct klb_wnd_tip_t_
 {
     sds         title;                      ///< 静态TIP; 设置后一值存在

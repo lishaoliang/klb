@@ -21,7 +21,7 @@
 namespace klbui {
 
 
-#define KLB_CPPGUI_PTR(PTR_)       ((CGui*)(klb_gui_get_cppgui((PTR_))))
+#define KLB_CPPGUI_PTR(PTR_)       ((klbui::CGui*)(klb_gui_get_cppgui((PTR_))))
 
 
 /// @class CGui

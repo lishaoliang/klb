@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 
+// TIP的参考 宽/高
 #define KLBUIEX_TIP_WIDTH_max   540
 #define KLBUIEX_TIP_HEIGHT_max  64
 
@@ -44,11 +45,18 @@ typedef struct klbuiex_tip_t_
 }klbuiex_tip_t;
 
 
+/// @brief TIP扩展 模块
 int klbuiex_register_tip(klb_gui_t* p_gui);
 klbuiex_tip_t* klbuiex_get_tip(klb_gui_t* p_gui);
 
 
-void klbuiex_tip_attach_canvas(klbuiex_tip_t* p_ex, klb_canvas_t* p_canvas);
+/// @brief 尝试 申请 并 附加 TIP画布
+///  流程中 尝试 调用主画布的 klb_canvas_malloc(..., KLB_CANVAS_LAYER_tip) 函数申请TIP画布
+void klbuiex_tip_try_attach_canvas(klbuiex_tip_t* p_ex, const klb_canvas_t* p_main_canvas);
+
+
+/// @brief 是否有TIP画布
+bool klbuiex_tip_has_canvas(klbuiex_tip_t* p_ex);
 
 
 /// @brief 是否需要重绘

@@ -66,9 +66,12 @@ static void* klbappex_plugins_create(klb_app_t* p_app)
 {
     klbappex_plugins_t* p_appex = KLB_MALLOCZ(klbappex_plugins_t, 1, 0);
 
-    p_appex->p_app = p_app;
     p_appex->enable = false;    // 默认: 不启用 加载动态库插件
 
+    p_appex->p_app = p_app;
+    p_appex->p_kluaex = NULL;
+
+    p_appex->p_path_mutex = klb_mutex_create();
     p_appex->p_path_nlist = klb_nlist_create();
 
     p_appex->p_dl_nlist = klb_nlist_create();
@@ -108,6 +111,9 @@ static void klbappex_plugins_destroy(void* ptr, klb_app_t* p_app)
 
     KLB_FREE_BY(p_appex->p_dl_nlist, klb_nlist_destroy);
     KLB_FREE_BY(p_appex->p_path_nlist, klb_nlist_destroy);
+
+    KLB_FREE_BY(p_appex->p_path_mutex, klb_mutex_destroy);
+
     KLB_FREE(p_appex);
 }
 
@@ -121,6 +127,11 @@ static int klbappex_plugins_control(void* ptr, klb_app_t* p_app, int msg, uint8_
 
 //////////////////////////////////////////////////////////////////////////
 // 内部
+
+void klbappex_plugins_set_kluaex(klbappex_plugins_t* p_appex, klbappex_klua_t* p_kluaex)
+{
+    p_appex->p_kluaex = p_kluaex;
+}
 
 /// @brief 设置是否启用 (动态库)插件plugins
 ///   默认: 未启用
@@ -139,7 +150,10 @@ void klbappex_plugins_push_path(klbappex_plugins_t* p_appex, const char* p_path_
 
     // 放入链表
     sds path = sdsnew(p_path_plugins);
+
+    klb_mutex_lock(p_appex->p_path_mutex);
     klb_nlist_push_tail(p_appex->p_path_nlist, path);
+    klb_mutex_unlock(p_appex->p_path_mutex);
 }
 
 // 尝试 打开插件
@@ -150,7 +164,10 @@ static bool try_open_klbappex_plugins(klbappex_plugins_t* p_appex, sds filepath,
     klbapp_quit_extension_cb quit_extension = (klbapp_quit_extension_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_quit_extension);
     klbapp_extension_count_cb extension_count = (klbapp_extension_count_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_extension_count);
     klbapp_open_extension_cb open_extension = (klbapp_open_extension_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_open_extension);
+    klbapp_kluaprelib_count_cb kluaprelib_count = (klbapp_kluaprelib_count_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_kluaprelib_count);
+    klbapp_open_kluaprelib_cb open_kluaprelib = (klbapp_open_kluaprelib_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_open_kluaprelib);
 
+    // 打开 APP 扩展
     int open_count = 0;
 
     // 要求: 
@@ -180,9 +197,29 @@ static bool try_open_klbappex_plugins(klbappex_plugins_t* p_appex, sds filepath,
         }
     }
 
-    if (0 < open_count)
+    // 打开 klua 预加载库
+    int prelib_count = 0;
+
+    if (NULL != kluaprelib_count && NULL != open_kluaprelib)
     {
-        // 至少 打开一个扩展
+        int num = kluaprelib_count();
+
+        for (int k = 0; k < num; k++)
+        {
+            lua_CFunction cb_prelib = NULL;
+            if (0 == open_kluaprelib(k, &cb_prelib) && NULL != cb_prelib)
+            {
+                // 打开 klua 扩展之后, 直接放入预加载列表中 
+                klbappex_klua_push_preload(p_appex->p_kluaex, cb_prelib);
+
+                prelib_count += 1; // 获取成功
+            }
+        }
+    }
+
+    if (0 < open_count || 0 < prelib_count)
+    {
+        // 至少 打开一个扩展 或 一个 lua预加载库
 
         // 放入链表
         klbappex_plugins_dl_t* p_plugins = KLB_MALLOCZ(klbappex_plugins_dl_t, 1, 0);
@@ -190,11 +227,14 @@ static bool try_open_klbappex_plugins(klbappex_plugins_t* p_appex, sds filepath,
         p_plugins->p_dl = p_dl;
         p_plugins->path = sdsnew(filepath);
         p_plugins->open_count = open_count;
+        p_plugins->prelib_count = prelib_count;
 
         p_plugins->cb_init = init_extension;
         p_plugins->cb_quit = quit_extension;
         p_plugins->cb_count = extension_count;
         p_plugins->cb_open = open_extension;
+        p_plugins->cb_prelib_count = kluaprelib_count;
+        p_plugins->cb_open_prelib = open_kluaprelib;
 
         klb_nlist_push_tail(p_appex->p_dl_nlist, p_plugins);
 
@@ -374,14 +414,24 @@ void klbappex_plugins_preload(klbappex_plugins_t* p_appex)
         return; // 未启用
     }
 
-    // 依次加载 链表中 所有路径 中的动态库
-    klb_nlist_iter_t* p_iter = klb_nlist_begin(p_appex->p_path_nlist);
-    while (NULL != p_iter)
+    // 从路径列表中依次加载 动态库
+    while (true)
     {
-        sds dir = (sds)klb_nlist_data(p_iter);
-        load_by_path_klbappex_plugins(p_appex, dir);
+        klb_mutex_lock(p_appex->p_path_mutex);
+        sds dir = klb_nlist_pop_head(p_appex->p_path_nlist);
+        klb_mutex_unlock(p_appex->p_path_mutex);
 
-        p_iter = klb_nlist_next(p_iter);
+        if (NULL != dir)
+        {
+            // 有目录, 则加载目录所有 动态库
+            load_by_path_klbappex_plugins(p_appex, dir);
+
+            KLB_FREE_BY(dir, sdsfree);
+        }
+        else
+        {
+            break; // 结束了
+        }
     }
 }
 

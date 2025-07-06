@@ -178,6 +178,17 @@ int klua_open_lfs(lua_State *L)
     return luaopen_lfs(L);
 }
 
+
+#if !defined(__KLB_NO_ZLIB__)
+// from ./klb/src_c/klua/lua-zlib-1.2/lua_zlib.c
+extern int luaopen_zlib(lua_State * const L);
+
+int klua_open_zlib(lua_State *L)
+{
+    return luaopen_zlib(L);
+}
+#endif
+
 #if !defined(__KLB_NO_SQLITE__)
 // from ./klb/src_c/klua/lsqlite3/src/lsqlite3.c
 extern int luaopen_lsqlite3(lua_State *L);
@@ -214,6 +225,10 @@ int klua_loadlib_all(lua_State* L)
 #endif
 
         klua_loadlib(L, klua_open_lfs, "lfs");
+
+#if !defined(__KLB_NO_ZLIB__)
+        klua_loadlib(L, klua_open_zlib, "zlib");
+#endif
 
 #if !defined(__KLB_NO_SQLITE__)
         klua_loadlib(L, klua_open_lsqlite3, "lsqlite3");

@@ -156,7 +156,7 @@ void CDemo::OnCssTitle(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap* p_o
     {
         (*p_out)[0] = p_this->GetTitle();
     }
-    else
+    else if(KLBUI_CSSEX_set == method)
     {
         int start = 1;
 

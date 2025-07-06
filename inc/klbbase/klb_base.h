@@ -20,13 +20,13 @@ extern "C" {
 
 
 /// @brief KLB库版本字符串
-#define KLB_VERSION             "V1.0.2"
+#define KLB_VERSION             "1.0.2"
 
 /// @brief KLB库版本 数值
 ///    主版本(3位): 001
-///    子版本(2位): 00
-///    三版本(2位): 02
-#define KLB_VERSION_INT         10002
+///    子版本(3位): 000
+///    三版本(3位): 002
+#define KLB_VERSION_NUMBER      1000002
 
 
 /// @brief KLB库初始化
@@ -45,7 +45,7 @@ KLB_API const char* klb_version();
 
 
 /// @brief KLB库版本 数值
-KLB_API int klb_version2();
+KLB_API int klb_version_number();
 
 
 #ifdef __cplusplus

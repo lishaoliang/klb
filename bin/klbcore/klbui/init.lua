@@ -203,6 +203,17 @@ klbui.shwnd_css = function (path, ...)
 end
 
 
+-- @brief 获取是否为 多图层画布模式
+-- @return [bool]
+-- @note
+--	true. 指 modal/popup/msgbox 分别使用不同的 画布
+--	false. 指 modal/popup/msgbox 共享使用 主画布
+klbui.is_multi_canvas_layer = function ()
+	return kgui.is_multi_canvas_layer()
+end
+
+
+
 -- @brief 加载资源图片
 -- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径

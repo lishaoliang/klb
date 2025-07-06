@@ -51,7 +51,7 @@ const char* klb_version()
     return KLB_VERSION;
 }
 
-int klb_version2()
+int klb_version_number()
 {
-    return KLB_VERSION_INT;
+    return KLB_VERSION_NUMBER;
 }

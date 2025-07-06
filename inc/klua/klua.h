@@ -114,6 +114,14 @@ KLB_API int klua_open_lpeg(lua_State *L);
 KLB_API int klua_open_lfs(lua_State *L);
 
 
+#if !defined(__KLB_NO_ZLIB__)
+/// @brief 扩展库"zlib"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_zlib(lua_State *L);
+#endif
+
+
 #if !defined(__KLB_NO_SQLITE__)
 /// @brief 扩展库"lsqlite3"
 /// @param [in] *L          Lua状态

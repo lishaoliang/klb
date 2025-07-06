@@ -25,11 +25,6 @@ extern "C" {
 typedef struct klbappex_plugins_t_ klbappex_plugins_t;
 
 
-/// @brief 注册 klua 扩展
-/// @return int 0.成功; 非0.失败
-KLB_API int klbappex_register_plugins(klb_app_t* p_app);
-
-
 /// @brief 获取 plugins 扩展
 /// @return klbappex_plugins_t* 扩展的指针
 KLB_API klbappex_plugins_t* klbappex_get_plugins(klb_app_t* p_app);

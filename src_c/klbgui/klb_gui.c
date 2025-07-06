@@ -61,11 +61,14 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
         // 取得window hash指针
         p_gui->p_wndhash = klbuiex_get_wndhash(p_gui);
 
-        // 取得 窗口定时器
-        p_gui->p_wndticker = klbuiex_get_wndticker(p_gui);
+        // 取得 图形渲染模块 指针
+        p_gui->p_render = klbuiex_get_render(p_gui);
 
         // 取得重绘记录指针
         p_gui->p_redraw = klbuiex_get_redraw(p_gui);
+
+        // 取得 窗口定时器
+        p_gui->p_wndticker = klbuiex_get_wndticker(p_gui);
 
         // 取得tip
         p_gui->p_tip = klbuiex_get_tip(p_gui);
@@ -256,9 +259,14 @@ void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas)
 {
     assert(NULL != p_gui);
 
+    // 主画布
     p_gui->p_canvas = p_canvas;
 
-    klbuiex_tip_attach_canvas(p_gui->p_tip, p_canvas); // tip 画布
+    // popup / msgbox 画布
+    klbuiex_render_try_attach_canvas(p_gui->p_render, p_canvas);
+
+    // tip 画布
+    klbuiex_tip_try_attach_canvas(p_gui->p_tip, p_canvas);
 }
 
 klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui)
@@ -266,6 +274,11 @@ klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui)
     assert(NULL != p_gui);
 
     return p_gui->p_canvas;
+}
+
+bool klb_gui_is_multi_canvas_layer(klb_gui_t* p_gui)
+{
+    return klbuiex_render_is_multi_layer(p_gui->p_render);
 }
 
 int klb_gui_canvas_ioctrl_opt8(klb_gui_t* p_gui, int opt, void* ptr1, void* ptr2, void* ptr3, void* ptr4, void* ptr5, void* ptr6, void* ptr7, void* ptr8)
@@ -548,6 +561,33 @@ static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
     klbuiex_redraw_all(p_gui->p_redraw);
 }
 
+// 设置 窗口 图层类型
+static void set_wnd_layer_klb_gui(klb_wnd_t* p_wnd, int layer_type)
+{
+    // 图层类型, 决定后续窗口 画布选择
+    uint32_t style = klb_wnd_get_style(p_wnd);
+
+    // 清理图层样式标记
+    style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_POPUP);
+    style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_MSGBOX);
+
+    // 依据使用图层类型, 重新赋值 图层样式
+    if (KLB_CANVAS_LAYER_popup == layer_type)
+    {
+        style |= KLB_WND_STYLE_LAYER_POPUP;
+    }
+    else if (KLB_CANVAS_LAYER_msgbox == layer_type)
+    {
+        style |= KLB_WND_STYLE_LAYER_MSGBOX;
+    }
+    else
+    {
+        assert(KLB_CANVAS_LAYER_main == layer_type);
+    }
+
+    // 更新样式
+    klb_wnd_set_style(p_wnd, style);
+}
 
 int klb_gui_modal(klb_gui_t* p_gui, const char* p_path_name)
 {
@@ -578,6 +618,9 @@ int klb_gui_modal(klb_gui_t* p_gui, const char* p_path_name)
         // 记录 modal 窗口
         p_gui->p_modal_wnd[index] = p_wnd;
         p_gui->modal_num += 1;
+
+        // 设置 窗口 图层类型
+        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_main);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -622,6 +665,9 @@ int klb_gui_modal_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         // 记录 modal 窗口
         p_gui->p_modal_wnd[index] = p_wnd;
         p_gui->modal_num += 1;
+
+        // 设置 窗口 图层类型
+        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_main);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -719,8 +765,14 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_popup_wnd[index] = p_wnd;
         p_gui->popup_num += 1;
 
+        // 设置 窗口 图层类型
+        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_popup);
+
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
+
+        // 同步画布位置信息
+        klbuiex_render_popup_wnd(p_gui->p_render, index, p_wnd);
 
         // 处理 有定时器 样式的流程
         klbuiex_wndticker_popup(p_gui->p_wndticker, index, p_wnd);
@@ -761,8 +813,14 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         p_gui->p_popup_wnd[index] = p_wnd;
         p_gui->popup_num += 1;
 
+        // 设置 窗口 图层类型
+        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_popup);
+
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
+
+        // 同步画布位置信息
+        klbuiex_render_popup_wnd(p_gui->p_render, index, p_wnd);
 
         // 处理 有定时器 样式的流程
         klbuiex_wndticker_popup(p_gui->p_wndticker, index, p_wnd);
@@ -843,8 +901,14 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
     {
         p_gui->p_msg_box = p_wnd;
 
+        // 设置 窗口 图层类型
+        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_msgbox);
+
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
+
+        // 同步画布位置信息
+        klbuiex_render_msgbox_wnd(p_gui->p_render, p_wnd);
 
         // 处理 有定时器 样式的流程
         klbuiex_wndticker_msgbox(p_gui->p_wndticker, p_wnd);
@@ -875,6 +939,9 @@ int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
+
+        // 同步画布位置信息
+        klbuiex_render_msgbox_wnd(p_gui->p_render, p_wnd);
 
         // 处理 有定时器 样式的流程
         klbuiex_wndticker_msgbox(p_gui->p_wndticker, p_wnd);
@@ -1160,226 +1227,6 @@ void klb_gui_drop_msg_dispatch(klb_gui_t* p_gui, bool drop)
 bool klb_gui_is_drop_msg_dispatch(klb_gui_t* p_gui)
 {
     return p_gui->is_drop_msg_dispatch;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-// 重绘所有
-static void klb_gui_redraw_all(klb_gui_t* p_gui, klb_rect_t* p_rect)
-{
-    if (NULL == p_gui->p_canvas)
-    {
-        return;
-    }
-
-    klb_canvas_set_draw_color(p_gui->p_canvas, KLB_ARGB8888(0, 0, 0, 0));
-    klb_canvas_draw_clear(p_gui->p_canvas);
-
-    for (int i = 0; i < p_gui->modal_num; i++)
-    {
-        klb_wnd_draw(p_gui->p_modal_wnd[i]);
-    }
-
-    for (int i = 0; i < p_gui->popup_num; i++)
-    {
-        klb_wnd_draw(p_gui->p_popup_wnd[i]);
-    }
-
-    if (NULL != p_gui->p_msg_box)
-    {
-        klb_wnd_draw(p_gui->p_msg_box);
-    }
-
-    //全部区域
-    *p_rect = p_gui->p_canvas->rect;
-}
-
-// 检查窗口 是否在 model/popup/messagebox 中
-static bool is_in_model_popup_msgbox_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
-{
-    // 判定其顶层窗口即可
-    // 若不在其中, 则不需要绘制
-    klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
-
-    // messagebox
-    if (p_top == p_gui->p_msg_box)
-    {
-        return true;
-    }
-
-    // popup
-    for (int m = p_gui->popup_num - 1; 0 <= m; m--)
-    {
-        if (p_top == p_gui->p_popup_wnd[m])
-        {
-            return true;
-        }
-    }
-
-    // modal
-    for (int n = p_gui->modal_num - 1; 0 <= n; n--)
-    {
-        if (p_top == p_gui->p_modal_wnd[n])
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// 按列表重绘
-static void klb_gui_redraw_wnd_hlist(klb_gui_t* p_gui, klb_hlist_t* p_hlist, klb_rect_t* p_rect)
-{
-    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_hlist);
-
-    bool first = true;
-
-    // 依次绘制所有窗口
-    while (NULL != p_iter)
-    {
-        klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_data(p_iter);
-
-        // Bug. 这里还有一种情况: 放入刷新列表的窗口, 根本不在 所有需要绘制的窗口链中
-        // 在这里排除: 检查其顶层窗口, 是否在 model/popup/messagebox 中
-        if (is_in_model_popup_msgbox_klb_gui(p_gui, p_wnd))
-        {
-            klb_wnd_draw(p_wnd);
-
-            if (first)
-            {
-                *p_rect = p_wnd->pos.rect_in_canvas;
-                first = false;
-            }
-            else
-            {
-                klb_rect_t rect1 = *p_rect;
-                klb_rect_union(p_rect, &rect1, &p_wnd->pos.rect_in_canvas); // 需要刷新区域, 取并集
-            }
-        }
-
-        p_iter = klb_hlist_next(p_iter);
-    }
-}
-
-// 重绘,刷新
-static int klb_gui_redraw_and_refresh(klb_gui_t* p_gui)
-{
-    // step1. 处理主画布绘制
-    bool is_refresh_main = false;
-    klb_rect_t rect_main = { 0 };
-
-    // 检查主画布的刷新
-    bool is_redraw_all = false;
-    if (klbuiex_redraw_need_repaint(p_gui->p_redraw, &is_redraw_all))
-    {
-        klb_rect_t rect = { 0 };
-
-        if (is_redraw_all)
-        {
-            klb_gui_redraw_all(p_gui, &rect);
-        }
-        else
-        {
-            klb_gui_redraw_wnd_hlist(p_gui, klbuiex_redraw_get_hlist(p_gui->p_redraw), &rect);
-        }
-
-        // 绘制完成, 清空 redraw 标记
-        klbuiex_redraw_clear(p_gui->p_redraw);
-
-        // 与主画布做交集, 并检查是否需要刷新主画布
-        if (NULL != p_gui->p_canvas && klb_rect_intersect(&rect_main, &rect, &p_gui->p_canvas->rect) && 0 < rect_main.w && 0 < rect_main.h)
-        {
-            is_refresh_main = true;
-        }
-    }
-
-    // step2. 处理tip图层绘制
-    bool is_redraw_tip = false;
-    if (klbuiex_tip_need_repaint(p_gui->p_tip))
-    {
-        // 重新绘制 tip
-        klbuiex_tip_redraw(p_gui->p_tip);
-
-        is_redraw_tip = true;
-    }
-
-    bool is_refresh_tip = false;
-    klb_rect_t rect_tip_dst = { 0 };
-    klb_rect_t rect_tip_src = { 0 };
-    klb_canvas_t* p_tip_canvas = NULL;
-
-    bool is_show_tip = false;
-    p_tip_canvas = klbuiex_tip_get_refresh(p_gui->p_tip, &is_show_tip, &rect_tip_dst, &rect_tip_src);
-
-    if (is_show_tip &&
-        (NULL != p_tip_canvas) &&
-        (is_redraw_tip || is_refresh_main))
-    {
-        is_refresh_tip = true;
-    }
-
-    // step3. 恢复上次的tip区域
-    bool is_refresh_old = false;
-    klb_rect_t rect_old = { 0 };
-
-    if (klbuiex_tip_get_old(p_gui->p_tip, &rect_old))
-    {
-        if (is_refresh_main || is_redraw_tip || is_refresh_tip)
-        {
-            is_refresh_old = true;
-            klbuiex_tip_set_old_refresh(p_gui->p_tip, false);
-        }
-    }
-
-    // step4. 最终汇总刷新参数
-    int layer_count = 0, idx = 0;
-    klb_rect_t dst[KLB_CANVAS_LAYER_max];
-    klb_rect_t src[KLB_CANVAS_LAYER_max];
-    klb_canvas_t* p_tmp_canvas[KLB_CANVAS_LAYER_max];
-
-    {
-        if (is_refresh_main)
-        {
-            dst[idx] = rect_main;
-            src[idx] = rect_main;
-            p_tmp_canvas[idx] = p_gui->p_canvas;
-
-            idx += 1;
-        }
-
-        if (is_refresh_old)
-        {
-            dst[idx] = rect_old;
-            src[idx] = rect_old;
-            p_tmp_canvas[idx] = p_gui->p_canvas;
-
-            idx += 1;
-        }
-
-        if (is_refresh_tip)
-        {
-            dst[idx] = rect_tip_dst;
-            src[idx] = rect_tip_src;
-            p_tmp_canvas[idx] = p_tip_canvas;
-
-            klbuiex_tip_set_old(p_gui->p_tip, &rect_tip_dst);
-            klbuiex_tip_set_old_refresh(p_gui->p_tip, true);
-
-            idx += 1;
-        }
-
-        layer_count = idx;
-    }
-
-    // step4. 汇总刷新
-    if (0 < layer_count && NULL != p_gui->p_canvas)
-    {
-        // 刷新画布到"显存"; 注意: 刷到"显存"必须使用主画布
-        klb_canvas_refresh(p_gui->p_canvas, dst, p_tmp_canvas, src, layer_count);
-    }
-
-    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1820,8 +1667,8 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
         p_gui->is_need_clear = false;
     }
 
-    // step 6. 检查重绘, 刷新
-    klb_gui_redraw_and_refresh(p_gui);
+    // step 6. 重绘 / 刷新
+    klbuiex_render_redraw_and_refresh(p_gui->p_render);
 
     return ret;
 }

@@ -30,7 +30,7 @@ int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load)
 
     // step2. 初始化 klua 预加载库
     {
-        klbappex_klua_set_preload(p_appex_klua, cb_pre_load);
+        klbappex_klua_push_preload(p_appex_klua, cb_pre_load);
     }
 
     // step3. 初始化
@@ -106,13 +106,18 @@ klb_app_t* klb_app_create()
 
     // 预加载函数
     {
-        p_app->p_nlist_preload = klb_nlist_create();
+        p_app->p_preload_mutex = klb_mutex_create();
+        p_app->p_preload_nlist = klb_nlist_create();
     }
  
     // 扩展 支持
     {
+        p_app->p_extension_rwlock = klb_rwlock_create();
         p_app->p_extension_hlist = klb_hlist_create(0);
         p_app->p_extension_activated_hlist = klb_hlist_create(0);
+
+        p_app->p_loop_rwlock = klb_rwlock_create();
+        p_app->p_loop_nlist = klb_nlist_create();
     }
 
     // 注册标准扩展
@@ -125,6 +130,10 @@ klb_app_t* klb_app_create()
     {
         p_app->p_plugins = klbappex_get_plugins(p_app);
         p_app->p_klua = klbappex_get_klua(p_app);
+
+
+        // 初始化
+        klbappex_plugins_set_kluaex(p_app->p_plugins, p_app->p_klua);
     }
 
     return p_app;
@@ -134,6 +143,9 @@ klb_app_t* klb_app_create()
 /// @return 无
 void klb_app_destroy(klb_app_t* p_app)
 {
+    // 清空 loop 模块
+    klb_nlist_clear(p_app->p_loop_nlist, NULL, NULL);
+
     // 清空 已激活的扩展模块
     while (0 < klb_hlist_size(p_app->p_extension_activated_hlist))
     {
@@ -154,16 +166,20 @@ void klb_app_destroy(klb_app_t* p_app)
     }
 
     // 清空 预加载函数列表
-    while (0 < klb_nlist_size(p_app->p_nlist_preload))
+    while (0 < klb_nlist_size(p_app->p_preload_nlist))
     {
-        klb_nlist_pop_head(p_app->p_nlist_preload);
+        klb_nlist_pop_head(p_app->p_preload_nlist);
     }
 
     // 释放列表
     KLB_FREE_BY(p_app->p_extension_activated_hlist, klb_hlist_destroy);
     KLB_FREE_BY(p_app->p_extension_hlist, klb_hlist_destroy);
+    KLB_FREE_BY(p_app->p_loop_nlist, klb_nlist_destroy);
+    KLB_FREE_BY(p_app->p_preload_nlist, klb_nlist_destroy);
 
-    KLB_FREE_BY(p_app->p_nlist_preload, klb_nlist_destroy);
+    KLB_FREE_BY(p_app->p_preload_mutex, klb_mutex_destroy);
+    KLB_FREE_BY(p_app->p_extension_rwlock, klb_rwlock_destroy);
+    KLB_FREE_BY(p_app->p_loop_rwlock, klb_rwlock_destroy);
 
     KLB_FREE(p_app);
 }
@@ -171,13 +187,21 @@ void klb_app_destroy(klb_app_t* p_app)
 // 预加载流程
 static void on_preload_klb_app(klb_app_t* p_app)
 {
-    while (0 < klb_nlist_size(p_app->p_nlist_preload))
+    // 依次 加载
+    while (true)
     {
-        klb_app_preload_cb cb_preload = (klb_app_preload_cb)klb_nlist_pop_head(p_app->p_nlist_preload);
+        klb_mutex_lock(p_app->p_preload_mutex);
+        klb_app_preload_cb cb_preload = (klb_app_preload_cb)klb_nlist_pop_head(p_app->p_preload_nlist);
+        klb_mutex_unlock(p_app->p_preload_mutex);
 
-        // 调用 预加载函数
-        // 预先加载流程, 一般 先注册 各个扩展模块
-        cb_preload(p_app);
+        if (NULL != cb_preload)
+        {
+            cb_preload(p_app);
+        }
+        else
+        {
+            break;
+        }
     }
 }
 
@@ -197,15 +221,19 @@ int klb_app_register_extension(klb_app_t* p_app, const char* p_name, const klb_a
     klb_app_extension_t* p_tmp = KLB_MALLOCZ(klb_app_extension_t, 1, 0);
     memcpy(p_tmp, p_extension, sizeof(klb_app_extension_t));
 
+    klb_rwlock_wrlock(p_app->p_extension_rwlock);
     klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_app->p_extension_hlist, p_name, name_len, p_tmp);
     if (NULL == p_iter)
     {
+        klb_rwlock_wrunlock(p_app->p_extension_rwlock);
+
         KLB_FREE(p_tmp);
 
         KLB_LOG_E("register app extension error!name:[%s]\n", p_name);
         return 1; // 放入失败, 名称重复
     }
 
+    klb_rwlock_wrunlock(p_app->p_extension_rwlock);
     return 0;
 }
 
@@ -217,7 +245,11 @@ static void* get_extension_klb_app(klb_app_t* p_app, const char* p_name, klb_app
 
     // 先从激活的里面找
     size_t name_len = strlen(p_name);
+
+    klb_rwlock_rdlock(p_app->p_extension_rwlock);
     klb_app_extension_activated_t* p_activated = (klb_app_extension_activated_t*)klb_hlist_find(p_app->p_extension_activated_hlist, p_name, name_len);
+    klb_rwlock_rdunlock(p_app->p_extension_rwlock);
+
     if (NULL != p_activated)
     {
         if (NULL != p_out_ex) { *p_out_ex = p_activated; };
@@ -226,33 +258,53 @@ static void* get_extension_klb_app(klb_app_t* p_app, const char* p_name, klb_app
     }
 
     // 未找到, 则激活
+    klb_rwlock_rdlock(p_app->p_extension_rwlock);
     klb_app_extension_t* p_extension = (klb_app_extension_t*)klb_hlist_find(p_app->p_extension_hlist, p_name, name_len);
+    klb_rwlock_rdunlock(p_app->p_extension_rwlock);
+
     if (NULL != p_extension)
     {
         klb_app_extension_activated_t* p_tmp = KLB_MALLOCZ(klb_app_extension_activated_t, 1, 0);
 
-        // 扩展名称
-        memcpy(&p_tmp->ex, p_extension, sizeof(klb_app_extension_t));
-        p_tmp->name = sdsnewlen(p_name, name_len);
-
-        // 创建
-        p_tmp->ptr = p_tmp->ex.cb_create(p_app);
-        assert(NULL != p_tmp->ptr);
-
-        // ioctrl 接口
+        // 初始化等
         {
-            // 若存在 ioctrl 接口, 则获取
-            if (NULL != p_tmp->ex.cb_get_ioctrl)
-            {
-                p_tmp->ex.cb_get_ioctrl(p_tmp->ptr, &p_tmp->ioctrl);
-            }
+            // 扩展名称
+            memcpy(&p_tmp->ex, p_extension, sizeof(klb_app_extension_t));
+            p_tmp->name = sdsnewlen(p_name, name_len);
 
-            p_tmp->ioctrl.ptr = p_tmp->ptr;
+            // 创建
+            p_tmp->ptr = p_tmp->ex.cb_create(p_app);
+            assert(NULL != p_tmp->ptr);
+
+            // ioctrl 接口
+            {
+                // 若存在 ioctrl 接口, 则获取
+                if (NULL != p_tmp->ex.cb_get_ioctrl)
+                {
+                    p_tmp->ex.cb_get_ioctrl(p_tmp->ptr, &p_tmp->ioctrl);
+                }
+
+                p_tmp->ioctrl.ptr = p_tmp->ptr;
+            }
         }
 
-        // 放入链表
-        klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_app->p_extension_activated_hlist, p_name, name_len, p_tmp);
-        assert(NULL != p_iter);
+        // 放入已激活 链表
+        {
+            klb_rwlock_wrlock(p_app->p_extension_rwlock);
+            klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_app->p_extension_activated_hlist, p_name, name_len, p_tmp);
+            assert(NULL != p_iter);
+            klb_rwlock_wrunlock(p_app->p_extension_rwlock);
+        }
+
+        // 若存在loop, 则放入 loop 链表
+        {
+            if (NULL != p_tmp->ex.cb_loop_once)
+            {
+                klb_rwlock_wrlock(p_app->p_loop_rwlock);
+                klb_nlist_push_tail(p_app->p_loop_nlist, p_tmp);
+                klb_rwlock_wrunlock(p_app->p_loop_rwlock);
+            }
+        }
 
         if (NULL != p_out_ex) { *p_out_ex = p_tmp; };
         return p_tmp->ptr;
@@ -381,7 +433,9 @@ void klb_app_push_preload(klb_app_preload_cb cb_preload)
 {
     klb_app_t* p_app = klb_app_instance();
 
-    klb_nlist_push_tail(p_app->p_nlist_preload, cb_preload);
+    klb_mutex_lock(p_app->p_preload_mutex);
+    klb_nlist_push_tail(p_app->p_preload_nlist, cb_preload);
+    klb_mutex_unlock(p_app->p_preload_mutex);
 }
 
 void klb_app_enable_plugins(bool enable)
@@ -401,20 +455,27 @@ int klb_app_loop_once()
     klb_app_t* p_app = klb_app_instance();
     int64_t tc = klb_tick_counti64();
 
+    int sleep_max = klua_env_get_loop_sleep(klbappex_klua_get_klua_env(p_app->p_klua));
     int sleep = 0;
 
-    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_app->p_extension_activated_hlist);
+    klb_rwlock_rdlock(p_app->p_loop_rwlock);
+
+    klb_nlist_iter_t* p_iter = klb_nlist_begin(p_app->p_loop_nlist);
     while (NULL != p_iter)
     {
-        klb_app_extension_activated_t* p_extension = (klb_app_extension_activated_t*)klb_hlist_data(p_iter);
+        klb_app_extension_activated_t* p_extension = (klb_app_extension_activated_t*)klb_nlist_data(p_iter);
 
         if (p_extension && p_extension->ex.cb_loop_once)
         {
             sleep += p_extension->ex.cb_loop_once(p_extension->ptr, p_app, tc);
         }
 
-        p_iter = klb_hlist_next(p_iter);
+        p_iter = klb_nlist_next(p_iter);
     }
 
-    return 10 - sleep;
+    klb_rwlock_rdunlock(p_app->p_loop_rwlock);
+
+    return sleep_max - sleep;
 }
+
+//end
