@@ -114,7 +114,14 @@ void klbwnd_tip_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_tip_t* p_tip = (klbwnd_tip_t*)p_wnd->ctrl;
 
-    p_tip->title = sdscpy(p_tip->title, p_title);
+    if (NULL != p_title)
+    {
+        p_tip->title = sdscpy(p_tip->title, p_title);
+    }
+    else
+    {
+        sdsclear(p_tip->title);
+    }
 }
 
 const sds klbwnd_tip_get_title(klb_wnd_t* p_wnd)
@@ -228,7 +235,7 @@ void klbwnd_tip_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, in
     p_wnd->p_gui = p_gui;
 
     // 样式 style
-    p_wnd->state.style = KLB_WND_STYLE_TOP | KLB_WND_STYLE_LAYER_TIP;
+    p_wnd->state.style = KLB_WND_STYLE_TOP | KLB_WND_STYLE_NOFOCUS | KLB_WND_STYLE_FOCUS_WITHOUT_REDRAW | KLB_WND_STYLE_LAYER_TIP;
 
     // 初始化内部变量
     klbwnd_tip_init_attribute(p_wnd, p_tip);

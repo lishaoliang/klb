@@ -2,7 +2,7 @@
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbwnd_tip.h
-/// @brief   klb window button
+/// @brief   klb window tip TIP窗口
 /// @version 0.1
 /// @history 修改历史
 ///////////////////////////////////////////////////////////////////////////
@@ -65,6 +65,7 @@ void klbwnd_tip_set_value(klb_wnd_t* p_wnd, const char* p_value);
 const sds klbwnd_tip_get_value(klb_wnd_t* p_wnd);
 
 
+/// @brief 对TIP窗口进行 重新布局
 void klbwnd_tip_layout(klb_wnd_t* p_wnd, int max_w, int max_h, int* p_out_w, int* p_out_h);
 
 

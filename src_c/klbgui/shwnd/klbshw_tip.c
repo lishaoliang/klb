@@ -360,8 +360,7 @@ klb_wnd_t* klbui_shwnd_get_tip(klb_gui_t* p_gui)
 
     if (NULL == p_wnd)
     {
-        int w = KLBUIEX_TIP_WIDTH_max, h = KLBUIEX_TIP_HEIGHT_max;
-
+        int w = 540, h = 64;
         p_wnd = klbshw_tip_create(p_gui, 0, 0, w, h);
 
         int ret = klb_gui_push_shwnd(p_gui, KLBSHW_tip, p_wnd);
@@ -376,7 +375,14 @@ void klbshw_tip_set_title(klb_wnd_t* p_wnd, const char* p_title)
     klbwnd_tip_set_title(p_wnd, p_title);
 }
 
+const sds klbshw_tip_get_title(klb_wnd_t* p_wnd)
+{
+    return klbwnd_tip_get_title(p_wnd);
+}
+
 void klbshw_tip_layout(klb_wnd_t* p_wnd, int max_w, int max_h, int* p_out_w, int* p_out_h)
 {
     klbwnd_tip_layout(p_wnd, max_w, max_h, p_out_w, p_out_h);
 }
+
+// end

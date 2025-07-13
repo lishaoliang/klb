@@ -8,6 +8,27 @@
 #define KLBUIEX_TIP   "KLBUIEX-tip"
 
 
+/// @struct klbuiex_tip_t
+/// @brief  tip扩展
+typedef struct klbuiex_tip_t_
+{
+    klb_gui_t*      p_gui;              ///< gui
+
+    klb_canvas_t*   p_canvas;           ///< tip 图层画布
+    klb_wnd_t*      p_tip_wnd;          ///< tip 窗口; klbui_shwnd_get_tip()
+
+    bool            is_show;            ///< 是否显示TIP
+    bool            is_redraw;          ///< 是否需要重绘
+
+    // 历史绘制信息
+    struct
+    {
+        klb_rect_t  dirty_rect;         ///< 标记脏矩形区域
+        bool        is_dirty;           ///< 是否有脏矩形区域
+    };
+}klbuiex_tip_t;
+
+
 //////////////////////////////////////////////////////////////////////////
 // 前置定义
 
@@ -24,10 +45,10 @@ static void* klbuiex_tip_create(klb_gui_t* p_gui)
     p_ex->p_canvas = NULL;
     p_ex->p_tip_wnd = NULL;
 
-    p_ex->is_redraw = false;
     p_ex->is_show = false;
+    p_ex->is_redraw = false;
 
-    p_ex->is_old_refresh = false;
+    p_ex->is_dirty = false;
 
     return p_ex;
 }
@@ -47,9 +68,6 @@ static klb_wnd_t* get_wnd_klbuiex_tip(klbuiex_tip_t* p_ex)
     if (NULL == p_ex->p_tip_wnd)
     {
         p_ex->p_tip_wnd = klbui_shwnd_get_tip(p_ex->p_gui);
-
-        klb_wnd_move(p_ex->p_tip_wnd, 0, 0);
-        klb_wnd_resize(p_ex->p_tip_wnd, 320, 32);
     }
 
     return p_ex->p_tip_wnd;
@@ -67,9 +85,6 @@ void klbuiex_tip_try_attach_canvas(klbuiex_tip_t* p_ex, const klb_canvas_t* p_ma
         // 申请tip图层 使用的画布
         // 注意: 图形适配层 不一定会有TIP图层 p_ex->p_canvas = NULL 是可能的
         p_ex->p_canvas = klb_canvas_malloc((klb_canvas_t*)p_main_canvas, 0, 0, KLB_CANVAS_LAYER_tip);
-
-        p_ex->rect_dst.w = 320;
-        p_ex->rect_dst.h = 32;
     }
     else
     {
@@ -79,9 +94,10 @@ void klbuiex_tip_try_attach_canvas(klbuiex_tip_t* p_ex, const klb_canvas_t* p_ma
         p_ex->p_tip_wnd = NULL;
     }
 
-    p_ex->is_redraw = false;
     p_ex->is_show = false;
-    p_ex->is_old_refresh = false;
+    p_ex->is_redraw = false;
+
+    p_ex->is_dirty = false;
 }
 
 bool klbuiex_tip_has_canvas(klbuiex_tip_t* p_ex)
@@ -89,134 +105,120 @@ bool klbuiex_tip_has_canvas(klbuiex_tip_t* p_ex)
     return (NULL != p_ex->p_canvas) ? true : false;
 }
 
-bool klbuiex_tip_need_repaint(klbuiex_tip_t* p_ex)
+klb_canvas_t* klbuiex_tip_get_canvas(klbuiex_tip_t* p_ex)
 {
-    return p_ex->is_redraw;
-}
-
-void klbuiex_tip_update(klbuiex_tip_t* p_ex, const char* p_tilte)
-{
-    if (p_ex->is_show)
-    {
-        // note. 更新 tip标题 之后, 可能导致 需求的区域变更
-        // 需要重新计算位置
-
-        int x = p_ex->rect_dst.x;
-        int y = p_ex->rect_dst.y;
-
-        if (NULL != p_tilte && 0 < strlen(p_tilte))
-        {
-            klbuiex_tip_set_tilte(p_ex, p_tilte, NULL, NULL);
-            klbuiex_tip_show(p_ex, true, x, y);
-        }
-        else
-        {
-            klbuiex_tip_set_tilte(p_ex, "", NULL, NULL);
-            klbuiex_tip_show(p_ex, false, x, y);
-        }
-
-        p_ex->is_redraw = true;
-    }
-}
-
-void klbuiex_tip_redraw(klbuiex_tip_t* p_ex)
-{
-    if (NULL != p_ex->p_tip_wnd && p_ex->is_show)
-    {
-        klb_wnd_draw(p_ex->p_tip_wnd);
-    }
-
-    p_ex->is_redraw = false;
-}
-
-klb_canvas_t* klbuiex_tip_get_refresh(klbuiex_tip_t* p_ex, bool* p_is_show, klb_rect_t* p_dst, klb_rect_t* p_src)
-{
-    if (NULL != p_is_show)
-    {
-        *p_is_show = p_ex->is_show;
-    }
-
-    if (NULL != p_dst)
-    {
-        *p_dst = p_ex->rect_dst;
-    }
-
-    if (NULL != p_src)
-    {
-        klb_wnd_t* p_wnd = get_wnd_klbuiex_tip(p_ex);
-
-        *p_src = p_wnd->pos.rect_in_canvas;
-    }
-
     return p_ex->p_canvas;
 }
 
-void klbuiex_tip_set_tilte(klbuiex_tip_t* p_ex, const char* p_title, int* p_out_w, int* p_out_h)
+bool klbuiex_tip_is_show(klbuiex_tip_t* p_ex)
 {
-    klb_wnd_t* p_wnd = get_wnd_klbuiex_tip(p_ex);
-
-    // 设置标题
-    klbshw_tip_set_title(p_wnd, p_title);
-
-    // Bug. 尽可能使用 tip 画布提供的 宽高
-    // 重新布局
-    if (klbuiex_tip_has_canvas(p_ex))
+    // 1. 需要有画布
+    if (NULL == p_ex->p_canvas)
     {
-        klbshw_tip_layout(p_wnd, p_ex->p_canvas->rect.w, p_ex->p_canvas->rect.h, p_out_w, p_out_h);
+        return false;
     }
+
+    klb_wnd_t* p_tip_wnd = get_wnd_klbuiex_tip(p_ex);
+    sds title = klbshw_tip_get_title(p_tip_wnd);
+
+    // 2. 需要 设置了 title 且 不为空
+    if (NULL == title || sdslen(title) <= 0)
+    {
+        return false;
+    }
+
+    // 3. is_show 标记
+    return p_ex->is_show;
 }
 
-void klbuiex_tip_show(klbuiex_tip_t* p_ex, bool show, int x, int y)
+void klbuiex_tip_show(klbuiex_tip_t* p_ex, bool show)
 {
-    if (show != p_ex->is_show)
-    {
-        p_ex->is_redraw = true;
-    }
-
     p_ex->is_show = show;
+}
 
-    if (p_ex->is_show)
+void klbuiex_tip_set_title(klbuiex_tip_t* p_ex, const char* p_title)
+{
+    klb_wnd_t* p_tip_wnd = get_wnd_klbuiex_tip(p_ex);
+    klbshw_tip_set_title(p_tip_wnd, p_title);
+
+    int screen_w = 0;
+    klb_gui_get_wh(p_ex->p_gui, &screen_w, NULL);
+
+    int w = 0, h = 0;
+    klbshw_tip_layout(p_tip_wnd, screen_w, 128, &w, &h);
+
+    // 重设画布大小
+    klb_canvas_resize(p_ex->p_canvas, w, h);
+
+    // 变更显示内容了, 需要重绘
+    p_ex->is_redraw = true;
+}
+
+void klbuiex_tip_move(klbuiex_tip_t* p_ex, int x, int y)
+{
+    klb_wnd_t* p_tip_wnd = get_wnd_klbuiex_tip(p_ex);
+
+    // 限制 移动范围, 防止超过屏幕范围
+    int sx = x, sy = y;
+
     {
-        klb_wnd_t* p_wnd = get_wnd_klbuiex_tip(p_ex);
+        int w = p_tip_wnd->pos.rect_in_parent.w, h = p_tip_wnd->pos.rect_in_parent.h;
 
         int screen_w = 0, screen_h = 0;
         klb_gui_get_wh(p_ex->p_gui, &screen_w, &screen_h);
 
-        klb_rect_t rect = p_wnd->pos.rect_in_parent;
+        if (screen_w < sx + w) { sx = screen_w - w; };
+        if (screen_h < sy + h) { sy = screen_h - h - 1; };
 
-        if (x < 0) { x = 0; };
-        if (screen_w < x + rect.w) { x = screen_w - rect.w; };
-
-        if (y < 0) { y = 0; };
-        if (screen_h < y + rect.h) { y = screen_h - rect.h; };
-
-        p_ex->rect_dst.x = x;
-        p_ex->rect_dst.y = y;
-        p_ex->rect_dst.w = rect.w;
-        p_ex->rect_dst.h = rect.h;
-
-        // 移动窗口
-        klb_wnd_move(p_wnd, p_ex->rect_dst.x, p_ex->rect_dst.y);
-
-        // 移动画布
-        klb_canvas_move(p_ex->p_canvas, p_ex->rect_dst.x, p_ex->rect_dst.y);
+        if (sx <= 0) { sx = 0; };
+        if (sy <= 0) { sy = 0; };
     }
+
+    // 移动窗口
+    klb_wnd_move(p_tip_wnd, sx, sy);
+
+    // 移动画布
+    klb_canvas_move(p_ex->p_canvas, sx, sy);
 }
 
-void klbuiex_tip_set_old(klbuiex_tip_t* p_ex, klb_rect_t* p_rect_old)
+bool klbuiex_tip_redraw(klbuiex_tip_t* p_ex)
 {
-    p_ex->rect_old = *p_rect_old;
+    bool redraw = false;
+
+    // 若需要重绘, 则重绘
+    if (p_ex->is_redraw)
+    {
+        if (NULL != p_ex->p_canvas)
+        {
+            klb_wnd_t* p_tip_wnd = get_wnd_klbuiex_tip(p_ex);
+            klb_wnd_draw(p_tip_wnd);
+
+            redraw = true;
+        }
+
+        p_ex->is_redraw = false; // 下次 , 不需要重绘了
+
+        redraw = true;
+    }
+
+    return redraw;
 }
 
-bool klbuiex_tip_get_old(klbuiex_tip_t* p_ex, klb_rect_t* p_rect_old)
+void klbuiex_tip_set_dirty(klbuiex_tip_t* p_ex, bool dirty, const klb_rect_t* p_diry_rect)
 {
-    *p_rect_old = p_ex->rect_old;
-    return p_ex->is_old_refresh;
+    if (dirty) { p_ex->dirty_rect = *p_diry_rect; }
+
+    p_ex->is_dirty = dirty;
 }
 
-void klbuiex_tip_set_old_refresh(klbuiex_tip_t* p_ex, bool refresh)
+bool klbuiex_tip_get_dirty(klbuiex_tip_t* p_ex, klb_rect_t* p_out_diry_rect)
 {
-    p_ex->is_old_refresh = refresh;
+    if (p_ex->is_dirty && NULL != p_out_diry_rect)
+    {
+        *p_out_diry_rect = p_ex->dirty_rect;
+    }
+
+    return p_ex->is_dirty;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -240,3 +242,5 @@ int klbuiex_register_tip(klb_gui_t* p_gui)
 
     return 0;
 }
+
+// end

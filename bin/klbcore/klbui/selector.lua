@@ -135,6 +135,11 @@ selector.select = function (dlg, multi)
 			['_wnds'] = wnds
 		}
 		
+		-- 获取 第一个 窗口的路径
+		t.path = function ()
+			return WndsFirstPath()
+		end
+		
 		-- 标准 get / set 控件属性方法
 		t.get = function (...)
 			return kgui.get(WndsFirstPath(), ...)

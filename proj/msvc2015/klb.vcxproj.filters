@@ -1725,6 +1725,15 @@
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_render.h">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_udatalayer.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klbui_layer.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -3042,6 +3051,12 @@
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_render.c">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_udatalayer.c">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
   </ItemGroup>

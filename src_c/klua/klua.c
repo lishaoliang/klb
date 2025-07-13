@@ -248,7 +248,6 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_kkpa, "kkpa");
         klua_loadlib(L, klua_open_klpc, "klpc");
         klua_loadlib(L, klua_open_kgui, "kgui");
-        klua_loadlib(L, klua_open_kwnd, "kwnd");
         klua_loadlib(L, klua_open_kurl, "kurl");
         klua_loadlib(L, klua_open_ktcp, "ktcp");
         klua_loadlib(L, klua_open_kudp, "kudp");

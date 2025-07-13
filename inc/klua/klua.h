@@ -207,12 +207,6 @@ KLB_API int klua_open_klpc(lua_State* L);
 KLB_API int klua_open_kgui(lua_State* L);
 
 
-/// @brief 扩展库"kwnd"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_kwnd(lua_State* L);
-
-
 /// @brief 扩展库"kurl"
 /// @param [in] *L          Lua状态
 /// @return int 返回1

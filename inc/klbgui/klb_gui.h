@@ -7,7 +7,7 @@
 ///   默认配色采用 visual studio 深色系风格
 ///   图标来源于1: http://iconpark.oceanengine.com/official
 ///   图标来源于2: https://remixicon.com/
-/// @version 0.5
+/// @version 0.6
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 ///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
@@ -35,6 +35,7 @@
 #include "klbgui/klbui_shwnd.h"
 #include "klbgui/klbui_util.h"
 #include "klbgui/klbui_datetime.h"
+#include "klbgui/klbui_layer.h"
 
 #if defined(__cplusplus)
 extern "C" {

@@ -72,7 +72,9 @@ typedef struct klb_gui_t_
         klbuiex_render_t*       p_render;               ///< 图形渲染模块
         klbuiex_wndticker_t*    p_wndticker;            ///< 窗口定时器
         klbuiex_redraw_t*       p_redraw;               ///< 重绘记录
-        klbuiex_tip_t*          p_tip;                  ///< tip
+        klbuiex_udatalayer_t*   p_udatalayer;           ///< udata layer 用户自定义图层 扩展
+        klbuiex_waitlayer_t*    p_waitlayer;            ///< wait layer 等待图层 扩展
+        klbuiex_tip_t*          p_tip;                  ///< tip 图层扩展
         klbuiex_util_t*         p_util;                 ///< util
     };
 
@@ -148,6 +150,11 @@ int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd);
 
 // 更新tip
 int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip);
+
+
+/// @brief 设置 窗口 图层类型
+/// @param [in] layer_type      图层类型 klb_canvas_layer_type_e; eg. KLB_CANVAS_LAYER_popup
+void klb_gui_set_wnd_layer_type(klb_wnd_t* p_wnd, int layer_type);
 
 
 //////////////////////////////////////////

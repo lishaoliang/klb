@@ -190,6 +190,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klbui_default.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_event.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_extension.h" />
+    <ClInclude Include="..\..\inc\klbgui\klbui_layer.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_shwnd.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_timer.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_util.h" />
@@ -459,7 +460,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_render.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_tip.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_udatalayer.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_util.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.h" />
@@ -722,7 +725,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_render.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_tip.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_udatalayer.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_util.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.c" />

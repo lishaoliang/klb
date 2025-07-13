@@ -50,7 +50,7 @@ typedef enum klb_canvas_layer_type_e_
     KLB_CANVAS_LAYER_main   = 0,        ///< 主画布层[最多1](必须)
     KLB_CANVAS_LAYER_popup  = 1,        ///< popup画布层[最多4](可选)
     KLB_CANVAS_LAYER_msgbox = 2,        ///< msgbox画布层[最多1][(可选)
-    KLB_CANVAS_LAYER_udata  = 3,        ///< 用户自定义图层[最多4](可选)
+    KLB_CANVAS_LAYER_udata  = 3,        ///< 用户自定义图层[最多1](可选)
 
     KLB_CANVAS_LAYER_wait   = 8,        ///< 等待圈圈图层[最多1](可选)
     KLB_CANVAS_LAYER_tip    = 9,        ///< TIP画布图层[最多1](可选): (GUI)用户显示 tip

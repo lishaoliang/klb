@@ -25,10 +25,13 @@ extern "C" {
 klb_wnd_t* klbui_shwnd_get_tip(klb_gui_t* p_gui);
 
 
-/// @brief 设置标题
+/// @brief 设置/获取 标题
 void klbshw_tip_set_title(klb_wnd_t* p_wnd, const char* p_title);
+const sds klbshw_tip_get_title(klb_wnd_t* p_wnd);
 
 
+/// @brief 对TIP窗口进行 重新布局
+/// @note 重新布局会调整 tip 窗大小
 void klbshw_tip_layout(klb_wnd_t* p_wnd, int max_w, int max_h, int* p_out_w, int* p_out_h);
 
 

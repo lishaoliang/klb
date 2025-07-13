@@ -70,6 +70,12 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
         // 取得 窗口定时器
         p_gui->p_wndticker = klbuiex_get_wndticker(p_gui);
 
+        // 取得 用户自定义图层 模块
+        p_gui->p_udatalayer = klbuiex_get_udatalayer(p_gui);
+
+        // 取得 等待图层 模块
+        p_gui->p_waitlayer = klbuiex_get_waitlayer(p_gui);
+
         // 取得tip
         p_gui->p_tip = klbuiex_get_tip(p_gui);
 
@@ -267,6 +273,12 @@ void klb_gui_attach_canvas(klb_gui_t* p_gui, klb_canvas_t* p_canvas)
 
     // tip 画布
     klbuiex_tip_try_attach_canvas(p_gui->p_tip, p_canvas);
+
+    // udata layer 用户自定义 画布
+    klbuiex_udatalayer_try_attach_canvas(p_gui->p_udatalayer, p_canvas);
+
+    // wait layer 等待 画布
+    klbuiex_waitlayer_try_attach_canvas(p_gui->p_waitlayer, p_canvas);
 }
 
 klb_canvas_t* klb_gui_get_canvas(klb_gui_t* p_gui)
@@ -420,9 +432,6 @@ int klb_gui_clear(klb_gui_t* p_gui)
         p_iter = klb_hlist_next(p_iter);
     }
 
-    // 若申请了其他画布, 需释放其他画布
-
-
     // 卸载图片资源
     if (p_gui->p_canvas && p_gui->p_canvas->vtable.clear_image)
     {
@@ -562,7 +571,7 @@ static void do_pop_statck_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 }
 
 // 设置 窗口 图层类型
-static void set_wnd_layer_klb_gui(klb_wnd_t* p_wnd, int layer_type)
+void klb_gui_set_wnd_layer_type(klb_wnd_t* p_wnd, int layer_type)
 {
     // 图层类型, 决定后续窗口 画布选择
     uint32_t style = klb_wnd_get_style(p_wnd);
@@ -570,20 +579,17 @@ static void set_wnd_layer_klb_gui(klb_wnd_t* p_wnd, int layer_type)
     // 清理图层样式标记
     style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_POPUP);
     style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_MSGBOX);
+    style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_UDATA);
+    style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_WAIT);
+    style &= ~(uint32_t)(KLB_WND_STYLE_LAYER_TIP);
 
     // 依据使用图层类型, 重新赋值 图层样式
-    if (KLB_CANVAS_LAYER_popup == layer_type)
-    {
-        style |= KLB_WND_STYLE_LAYER_POPUP;
-    }
-    else if (KLB_CANVAS_LAYER_msgbox == layer_type)
-    {
-        style |= KLB_WND_STYLE_LAYER_MSGBOX;
-    }
-    else
-    {
-        assert(KLB_CANVAS_LAYER_main == layer_type);
-    }
+    if (KLB_CANVAS_LAYER_popup == layer_type) { style |= KLB_WND_STYLE_LAYER_POPUP; }
+    else if (KLB_CANVAS_LAYER_msgbox == layer_type) { style |= KLB_WND_STYLE_LAYER_MSGBOX; }
+    else if (KLB_CANVAS_LAYER_udata == layer_type) { style |= KLB_WND_STYLE_LAYER_UDATA; }
+    else if (KLB_CANVAS_LAYER_wait == layer_type) { style |= KLB_WND_STYLE_LAYER_WAIT; }
+    else if (KLB_CANVAS_LAYER_tip == layer_type) { style |= KLB_WND_STYLE_LAYER_TIP; }
+    else { assert(KLB_CANVAS_LAYER_main == layer_type); }
 
     // 更新样式
     klb_wnd_set_style(p_wnd, style);
@@ -620,7 +626,7 @@ int klb_gui_modal(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->modal_num += 1;
 
         // 设置 窗口 图层类型
-        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_main);
+        klb_gui_set_wnd_layer_type(p_wnd, KLB_CANVAS_LAYER_main);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -667,7 +673,7 @@ int klb_gui_modal_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         p_gui->modal_num += 1;
 
         // 设置 窗口 图层类型
-        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_main);
+        klb_gui_set_wnd_layer_type(p_wnd, KLB_CANVAS_LAYER_main);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -766,7 +772,7 @@ int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->popup_num += 1;
 
         // 设置 窗口 图层类型
-        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_popup);
+        klb_gui_set_wnd_layer_type(p_wnd, KLB_CANVAS_LAYER_popup);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -814,7 +820,7 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         p_gui->popup_num += 1;
 
         // 设置 窗口 图层类型
-        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_popup);
+        klb_gui_set_wnd_layer_type(p_wnd, KLB_CANVAS_LAYER_popup);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -902,7 +908,7 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
         p_gui->p_msg_box = p_wnd;
 
         // 设置 窗口 图层类型
-        set_wnd_layer_klb_gui(p_wnd, KLB_CANVAS_LAYER_msgbox);
+        klb_gui_set_wnd_layer_type(p_wnd, KLB_CANVAS_LAYER_msgbox);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -1204,6 +1210,93 @@ void klb_gui_set_ticker_interval(klb_gui_t* p_gui, int64_t interval)
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 图层相关接口
+
+/// @brief 给用户图层 绑定窗口
+int klb_gui_udatalayer_bind(klb_gui_t* p_gui, const char* p_path_name)
+{
+    int path_len = strlen(p_path_name);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+
+    if (NULL != p_wnd && NULL == p_wnd->p_parent)
+    {
+        klbuiex_udatalayer_bind_wnd(p_gui->p_udatalayer, p_wnd);
+    }
+    else
+    {
+        klbuiex_udatalayer_bind_wnd(p_gui->p_udatalayer, NULL);
+    }
+
+    return 0;
+}
+
+/// @brief 给用户图层 绑定窗口
+int klb_gui_udatalayer_bind_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
+{
+    if (NULL != p_top && NULL == p_top)
+    {
+        klbuiex_udatalayer_bind_wnd(p_gui->p_udatalayer, p_top);
+    }
+    else
+    {
+        klbuiex_udatalayer_bind_wnd(p_gui->p_udatalayer, NULL);
+    }
+
+    return 0;
+}
+
+/// @brief 是否显示 用户图层 
+void klb_gui_udatalayer_show(klb_gui_t* p_gui, bool show)
+{
+    klbuiex_udatalayer_show(p_gui->p_udatalayer, show);
+}
+
+/// @brief 移动 用户图层
+void klb_gui_udatalayer_move(klb_gui_t* p_gui, int x, int y)
+{
+    klbuiex_udatalayer_move(p_gui->p_udatalayer, x, y);
+}
+
+/// @brief 给用户图层 绑定窗口
+int klb_gui_waitlayer_bind(klb_gui_t* p_gui, const char* p_path_name)
+{
+    int path_len = strlen(p_path_name);
+    klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
+
+    if (NULL != p_wnd && NULL == p_wnd->p_parent)
+    {
+        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, p_wnd);
+    }
+    else
+    {
+        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, NULL);
+    }
+
+    return 0;
+}
+
+/// @brief 给用户图层 绑定窗口
+int klb_gui_waitlayer_bind_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
+{
+    if (NULL != p_top && NULL == p_top->p_parent)
+    {
+        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, p_top);
+    }
+    else
+    {
+        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, NULL);
+    }
+
+    return 0;
+}
+
+/// @brief GUI 等待
+void klb_gui_wait(klb_gui_t* p_gui, bool wait)
+{
+
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 {
@@ -1214,7 +1307,7 @@ int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 
 int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip)
 {
-    klbuiex_tip_update(p_gui->p_tip, p_tip);
+    klbuiex_tip_set_title(p_gui->p_tip, p_tip);
 
     return 0;
 }
@@ -1310,31 +1403,6 @@ static void focus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd, int x, int
 
     // 得到焦点事件
     klb_wnd_call_control_and_command(p_wnd, KLBUI_focus, NULL, NULL, 0, 0);
-
-#if 0
-    // Tip 的显示 转移到 聚焦延时 处理流程中
-    // 这里暂保留备份, 待删除
-    // 显示tip
-    const sds tip = klb_wnd_get_tip(p_wnd);
-    if (NULL != tip && 0 < sdslen(tip))
-    {
-        klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-        int w = 0, h = 0;
-        klbuiex_tip_set_tilte(p_gui->p_tip, tip, &w, &h);
-
-        int screen_w = 0, screen_h = 0;
-        klb_gui_get_wh(p_gui, &screen_w, &screen_h);
-
-        //int sx = rect.x + rect.w / 2;
-        int sy = rect.y + rect.h + 1;
-
-        //if (screen_w < sx + w) { sx = screen_w - w; };
-        if (screen_h < sy + h) { sy = screen_h - h - 1; };
-
-        klbuiex_tip_show(p_gui->p_tip, true, x, sy);
-    }
-#endif
 }
 
 // 取消聚焦流程
@@ -1349,8 +1417,8 @@ static void unfocus_windows_klb_gui(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
     // 失去焦点事件
     klb_wnd_call_control_and_command(p_wnd, KLBUI_blur, NULL, NULL, 0, 0);
 
-    // 隐藏tip
-    klbuiex_tip_show(p_gui->p_tip, false, 0, 0);
+    // 取消TIP 显示
+    klbuiex_tip_show(p_gui->p_tip, false);
 }
 
 // 重新寻找鼠标焦点
@@ -1576,6 +1644,7 @@ static int klb_gui_process_message_once(klb_gui_t* p_gui)
     return 1;
 }
 
+// 处理消息(事件)流程
 int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 {
     int ret = 0;
@@ -1614,22 +1683,16 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 
             if (NULL != tip && 0 < sdslen(tip))
             {
+                klbuiex_tip_set_title(p_gui->p_tip, tip);
+
                 klb_rect_t rect = p_wnd->pos.rect_in_canvas;
-
-                int w = 0, h = 0;
-                klbuiex_tip_set_tilte(p_gui->p_tip, tip, &w, &h);
-
-                int screen_w = 0, screen_h = 0;
-                klb_gui_get_wh(p_gui, &screen_w, &screen_h);
-
                 int sx = p_gui->p_util->mouse_pt.x;
-                //int sx = rect.x + rect.w / 2;
                 int sy = rect.y + rect.h + 1;
 
-                if (screen_w < sx + w) { sx = screen_w - w; };
-                if (screen_h < sy + h) { sy = screen_h - h - 1; };
+                klbuiex_tip_move(p_gui->p_tip, sx, sy);
 
-                klbuiex_tip_show(p_gui->p_tip, true, sx, sy);
+                // 标记显示
+                klbuiex_tip_show(p_gui->p_tip, true);
             }
         }
 
@@ -1672,3 +1735,5 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
 
     return ret;
 }
+
+// end

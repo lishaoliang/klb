@@ -78,18 +78,25 @@ klb_canvas_t* klb_wnd_get_canvas(klb_wnd_t* p_wnd)
     assert(NULL != p_wnd);
     klb_wnd_t* p_top = klb_wnd_get_top(p_wnd);
 
-    if (KLB_WND_STYLE_LAYER_TIP & p_top->state.style)
+    if(KLB_WND_STYLE_LAYER_POPUP & p_top->state.style)
     {
-        // tip 图层画布
-        return p_top->p_gui->p_tip->p_canvas;
-    }
-    else if(KLB_WND_STYLE_LAYER_POPUP & p_top->state.style)
-    {
-        return klbuiex_render_get_popup_canvas(p_top->p_gui->p_render, p_top);
+        return klbuiex_render_get_popup_canvas(p_top->p_gui->p_render, p_top); // popup 图层
     }
     else if(KLB_WND_STYLE_LAYER_MSGBOX & p_top->state.style)
     {
-        return klbuiex_render_get_msgbox_canvas(p_top->p_gui->p_render);
+        return klbuiex_render_get_msgbox_canvas(p_top->p_gui->p_render); // msgbox 图层
+    }
+    else if (KLB_WND_STYLE_LAYER_TIP & p_top->state.style)
+    {
+        return klbuiex_tip_get_canvas(p_top->p_gui->p_tip); // tip 图层画布
+    }
+    else if(KLB_WND_STYLE_LAYER_UDATA & p_top->state.style)
+    {
+        return klbuiex_udatalayer_get_canvas(p_top->p_gui->p_udatalayer); // 用户自定义 图层
+    }
+    else if(KLB_WND_STYLE_LAYER_WAIT & p_top->state.style)
+    {
+        return klbuiex_waitlayer_get_canvas(p_top->p_gui->p_waitlayer); // 等待 图层
     }
 
     // 主图层画布

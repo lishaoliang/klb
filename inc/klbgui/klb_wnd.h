@@ -4,7 +4,7 @@
 /// @file    klb_wnd.h
 /// @author  随风(https://gitee.com/klua/klb)
 /// @brief   窗口定义
-/// @version 0.1
+/// @version 0.8
 /// @history 修改历史
 ///   \n [2023-4] 提供 klb_wnd_push_child 函数, 许可在扩展控件开发中 自行构建窗口树
 ///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发者替换绘图函数
@@ -15,6 +15,7 @@
 ///   \n     当整个 窗口树 处于激活(显示) 时, 会周期性 触发 控件 KLBUI_onticker 事件
 ///   \n [2025-1] 添加 KLB_WND_STYLE_LAYER_POPUP, KLB_WND_STYLE_LAYER_MSGBOX 图层定义
 ///   \n [2025-2] 添加 KLB_WND_STATUS_TIP_DYNAMIC 动态TIP机制
+///   \n [2025-7] 添加 KLB_WND_STYLE_LAYER_UDATA, KLB_WND_STYLE_LAYER_WAIT 图层定义
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
 #define __KLB_WND_H__
@@ -63,9 +64,11 @@ typedef enum klb_wnd_style_e_
     KLB_WND_STYLE_TICKER                = 0x0400,   ///< 支持控件定时器(只要处于激活的顶层窗口, 即生效)
     KLB_WND_STYLE_TICKER_TOPMOST        = 0x0800,   ///< 支持控件定时器(必须处于激活的最顶层窗口, 即生效)
 
-    KLB_WND_STYLE_LAYER_POPUP           = 0x2000,   ///< popup 图层
-    KLB_WND_STYLE_LAYER_MSGBOX          = 0x4000,   ///< messagebox 图层
-    KLB_WND_STYLE_LAYER_TIP             = 0x8000,   ///< TIP 图层
+    KLB_WND_STYLE_LAYER_POPUP           = 0x0010000,///< popup 图层
+    KLB_WND_STYLE_LAYER_MSGBOX          = 0x0020000,///< messagebox 图层
+    KLB_WND_STYLE_LAYER_UDATA           = 0x0040000,///< [2025/07+]user data layer 用户自定义 图层
+    KLB_WND_STYLE_LAYER_WAIT            = 0x0080000,///< [2025/07+]wait layer 等待 图层
+    KLB_WND_STYLE_LAYER_TIP             = 0x0100000,///< TIP 图层
 }klb_wnd_style_e;
 
 
@@ -153,7 +156,7 @@ typedef int(*klb_wnd_on_paint_cb)(klb_wnd_t* p_wnd);
 
 
 /// @struct klb_wnd_vtable_t
-/// @brief  ui窗口虚表
+/// @brief  UI窗口 抽象函数表
 typedef struct klb_wnd_vtable_t_
 {
     /// @brief 销毁
@@ -419,17 +422,17 @@ KLB_API int klb_wnd_call_control_and_command(klb_wnd_t* p_wnd, int msg, const kl
 
 
 /// @brief 调用on_control函数
-/// @note [废弃] 替代函数: klb_wnd_call_control
+/// @note 替代函数: klb_wnd_call_control
 KLB_API int klb_wnd_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 调用on_command函数
-/// @note [废弃] 替代函数: klb_wnd_call_command
+/// @note 替代函数: klb_wnd_call_command
 KLB_API int klb_wnd_on_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 
 /// @brief 1.调用on_control函数; 2.调用on_command函数
-/// @note [废弃] 替代函数: klb_wnd_call_control_and_command
+/// @note 替代函数: klb_wnd_call_control_and_command
 KLB_API int klb_wnd_on_control_and_command(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam);
 
 

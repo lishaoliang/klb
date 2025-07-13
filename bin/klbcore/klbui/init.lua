@@ -8,12 +8,14 @@
 --     参考: https://www.w3school.com.cn/jquery/index.asp
 -- @history 修改历史
 --		[2025-1] 添加设置控件定时器时间间隔
---		[2025-2] 添加 并默认 启用 C++ 扩展控件; 试验阶段, 勿使用
+--		[2025-2] 添加 并默认 启用 C++ 扩展控件
+--		[2025-7] 添加 操作单个窗口 接口 wnder.new()
 --]]
 local kco = require("kco")
 local kgui = require("kgui")
 local parser = require("klbcore.klbui.parser")
 local selector = require("klbcore.klbui.selector")
+local wnder = require("klbcore.klbui.wnder")
 
 
 local klbui = {}
@@ -226,6 +228,17 @@ end
 -- @brief 清空消息事件
 klbui.clear_msg = function ()
 	kgui.clear_msg()
+end
+
+
+-- @brief 获取 窗口 的 操作 接口
+-- @param [in] path[string]			窗口虚拟路径; eg. '/home'
+klbui.get_wnd = function (path)
+	-- 获取C提供的原始接口
+	local kwnd = kgui.get_kwnd(path)
+	
+	-- 这里使用 wnder.new 对原始接口进行封装
+	return wnder.new(kwnd)
 end
 
 
