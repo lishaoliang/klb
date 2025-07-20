@@ -181,6 +181,11 @@ void klbuiex_tip_move(klbuiex_tip_t* p_ex, int x, int y)
     klb_canvas_move(p_ex->p_canvas, sx, sy);
 }
 
+void klbuiex_tip_set_redraw(klbuiex_tip_t* p_ex)
+{
+    p_ex->is_redraw = true;
+}
+
 bool klbuiex_tip_redraw(klbuiex_tip_t* p_ex)
 {
     bool redraw = false;

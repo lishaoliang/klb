@@ -8,11 +8,39 @@
 local wnder = {}
 local E = {}
 
-local wnd = {}
+local window = {}
+
+
+-- 设置/获取 样式
+function window:style(n)
+	if self._kwnd then
+		return self._kwnd:style(n)
+	end
+	
+	return 0
+end
+
+
+-- 设置/获取 显示状态
+function window:show(is_show)
+	if self._kwnd then
+		return self._kwnd:show(is_show)
+	end
+	
+	return false
+end
+
+
+-- 设置/获取 隐藏状态
+function window:hide(is_hide)
+	if self._kwnd then
+		return self._kwnd:hide(is_hide)
+	end
+end
 
 
 -- 设置/获取 静态TIP
-function wnd:tip(s)
+function window:tip(s)
 	if self._kwnd then
 		return self._kwnd:tip(s)
 	end
@@ -21,7 +49,7 @@ function wnd:tip(s)
 end
 
 -- 设置/获取 动态TIP
-function wnd:tip_dynamic(s)
+function window:tip_dynamic(s)
 	if self._kwnd then
 		return self._kwnd:tip_dynamic(s)
 	end
@@ -30,10 +58,59 @@ function wnd:tip_dynamic(s)
 end
 
 -- 更新TIP
-function wnd:tip_update()
+function window:tip_update()
 	if self._kwnd then
 		self._kwnd:tip_update()
 	end
+end
+
+
+-- 基于父窗口移动到指定的相对坐标
+function window:move(x, y)
+	if self._kwnd then
+		self._kwnd:move(x, y)
+	end
+end
+
+-- 重新设置大小
+function window:resize(w, h)
+	if self._kwnd then
+		self._kwnd:resize(w, h)
+	end
+end
+
+-- 刷新
+function window:refresh()
+	if self._kwnd then
+		self._kwnd:refresh()
+	end
+end
+
+-- 设置参数
+function window:set(...)
+	if self._kwnd then
+		return self._kwnd:set(...)
+	end
+	
+	return 0
+end
+
+-- 获取参数
+function window:get(...)
+	if self._kwnd then
+		return self._kwnd:get(...)
+	end
+	
+	return {}
+end
+
+-- 获取GUI的当前 系统滴答数(单位毫秒ms)
+function window:tick_count()
+	if self._kwnd then
+		return self._kwnd:tick_count()
+	end
+	
+	return 0
 end
 
 
@@ -44,7 +121,7 @@ wnder.new = function (kwnd)
 	}
 
 	setmetatable(obj, {
-		__index = wnd,
+		__index = window,
 		__tostring = function(self)
 			return self._kwnd
         end

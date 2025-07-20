@@ -14,10 +14,12 @@
 static int klua_ksys_version(lua_State* L)
 {
     int ver = klb_version_number();
+    int date = klb_version_date();
 
     lua_pushstring(L, klb_version());
     lua_pushinteger(L, ver);
-    return 2;
+    lua_pushinteger(L, date);
+    return 3;
 }
 
 
@@ -120,3 +122,5 @@ int klua_open_ksys(lua_State* L)
 
     return 1;
 }
+
+//end

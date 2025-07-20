@@ -429,6 +429,70 @@ end
 
 
 ------------------------------------------------
+-- 用户图层(udata layer)
+
+
+-- @brief 给用户图层 绑定/解绑 窗口
+-- @param [in] path[string, nil]	窗口路径(类unix): eg."/home/btn1"
+-- @return [number(int)] 	0.成功; 非0.失败
+-- @note 仅支持 'onload','onunload','onticker' 这几种 事件
+klbui.bind_udatalayer = function (path)
+	return kgui.bind_udatalayer(path)
+end
+
+
+-- @brief 移动 用户图层 窗口; 移动画布 和 窗口
+-- @param [in] x[number(int)]		X坐标
+-- @param [in] y[number(int)]		Y坐标
+-- @return 无
+klbui.move_udatalayer = function (x, y)
+	kgui.move_udatalayer(x, y)
+end
+
+
+-- @brief 显示/隐藏 用户图层窗口
+-- @param [in] show[boolean]		是否显示: eg. true
+-- @return 无
+klbui.show_udatalayer = function (show)
+	kgui.show_udatalayer(show)
+end
+
+
+------------------------------------------------
+-- 等待图层(wait layer)
+
+
+-- @brief 给等待图层 绑定/解绑 窗口
+-- @param [in] path[string, nil]	窗口路径(类unix): eg."/home/btn1"
+-- @return [number(int)] 	0.成功; 非0.失败
+-- @note 仅支持 'onload','onunload','onticker' 这几种 事件
+klbui.bind_waitlayer = function (path)
+	return kgui.bind_waitlayer(path)
+end
+
+
+-- @brief 移动 等待图层 窗口; 移动画布 和 窗口
+-- @param [in] x[number(int)]		X坐标
+-- @param [in] y[number(int)]		Y坐标
+-- @return 无
+klbui.move_waitlayer = function (x, y)
+	kgui.move_waitlayer(x, y)
+end
+
+
+-- @brief 开启/关闭 UI等待
+-- @param [in] is_wait[boolean]		是否等待: eg. true
+-- @return 无
+-- @note 注意:
+--		1. 若绑定了 等待图层 窗口, 则显示等窗口
+--		2. 启用等待后 UI框架 丢弃所有外设事件
+--		3. 定时器事件 不受影响
+klbui.wait = function (is_wait)
+	kgui.wait(is_wait)
+end
+
+
+------------------------------------------------
 -- W, H
 
 local width = 0		-- 主显示宽

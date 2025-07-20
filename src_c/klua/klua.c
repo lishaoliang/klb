@@ -78,6 +78,78 @@ lua_Number klua_check_option_number(lua_State* L, int idx, lua_Number v_default)
 
 //////////////////////////////////////////////////////////////////////////
 
+bool klua_is_boolean(lua_State* L, int idx)
+{
+    if (LUA_TBOOLEAN == lua_type(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool klua_is_lightuserdata(lua_State* L, int idx)
+{
+    if (LUA_TLIGHTUSERDATA == lua_type(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool klua_is_integer(lua_State* L, int idx)
+{
+    if (LUA_TNUMBER == lua_type(L, idx) && lua_isinteger(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool klua_is_number(lua_State* L, int idx)
+{
+    if (LUA_TNUMBER == lua_type(L, idx) && !lua_isinteger(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool klua_is_string(lua_State* L, int idx)
+{
+    if (LUA_TSTRING == lua_type(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool klua_is_table(lua_State* L, int idx)
+{
+    if (LUA_TTABLE == lua_type(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool klua_is_function(lua_State* L, int idx)
+{
+    if (LUA_TFUNCTION == lua_type(L, idx))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void klua_setfield_boolean(lua_State* L, const char* p_key, bool b)
 {
     assert(NULL != p_key);

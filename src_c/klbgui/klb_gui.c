@@ -42,12 +42,13 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
         p_gui->p_msg_mutex = klb_mutex_create();
 
         p_gui->focus_tc = 0;
-        p_gui->focusdelay_tc = 600; // 单位毫秒(ms)
+        p_gui->focusdelay_tc = 300; // 单位毫秒(ms)
         p_gui->focusdelay = false;
 
+        p_gui->is_wait = false;
         p_gui->loop_tc = 0;
-
         p_gui->is_drop_msg_dispatch = false;
+
         p_gui->is_need_clear = false;
     }
 
@@ -101,8 +102,9 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
 static void klb_gui_quit_extensions(klb_gui_t* p_gui)
 {
+    // Bug. [2025/07]需要 反序 退出
     // 激活扩展的 退出消息
-    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
+    klb_hlist_iter_t* p_iter = klb_hlist_end(p_gui->p_extension_activated_hlist);
     while (NULL != p_iter)
     {
         klb_gui_extension_activated_t* p_activated = (klb_gui_extension_activated_t*)klb_hlist_data(p_iter);
@@ -112,7 +114,7 @@ static void klb_gui_quit_extensions(klb_gui_t* p_gui)
             p_activated->ex.cb_control(p_activated->ptr, p_gui, KLBUI_EX_MSG_quit, NULL, 0);
         }
 
-        p_iter = klb_hlist_next(p_iter);
+        p_iter = klb_hlist_prev(p_iter);
     }
 
     // 退出已经激活的扩展
@@ -417,8 +419,9 @@ int klb_gui_clear(klb_gui_t* p_gui)
     p_gui->focus_tc = 0;
     p_gui->focusdelay = false;
 
+    // Bug. [2025/07] 需要 反序 清理
     // 所有激活的扩展清理
-    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);
+    klb_hlist_iter_t* p_iter = klb_hlist_end(p_gui->p_extension_activated_hlist);
 
     while (NULL != p_iter)
     {
@@ -429,7 +432,7 @@ int klb_gui_clear(klb_gui_t* p_gui)
             p_activated->ex.cb_control(p_activated->ptr, p_gui, KLBUI_EX_MSG_clear, NULL, 0);
         }
 
-        p_iter = klb_hlist_next(p_iter);
+        p_iter = klb_hlist_prev(p_iter);
     }
 
     // 卸载图片资源
@@ -1207,6 +1210,8 @@ int64_t klb_gui_get_ticker_interval(klb_gui_t* p_gui)
 void klb_gui_set_ticker_interval(klb_gui_t* p_gui, int64_t interval)
 {
     klbuiex_wndticker_set_interval(p_gui->p_wndticker, interval);
+    klbuiex_udatalayer_set_interval(p_gui->p_udatalayer, interval);
+    klbuiex_waitlayer_set_interval(p_gui->p_waitlayer, interval);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1265,11 +1270,11 @@ int klb_gui_waitlayer_bind(klb_gui_t* p_gui, const char* p_path_name)
 
     if (NULL != p_wnd && NULL == p_wnd->p_parent)
     {
-        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, p_wnd);
+        klbuiex_waitlayer_bind_wnd(p_gui->p_waitlayer, p_wnd);
     }
     else
     {
-        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, NULL);
+        klbuiex_waitlayer_bind_wnd(p_gui->p_waitlayer, NULL);
     }
 
     return 0;
@@ -1280,20 +1285,48 @@ int klb_gui_waitlayer_bind_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
 {
     if (NULL != p_top && NULL == p_top->p_parent)
     {
-        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, p_top);
+        klbuiex_waitlayer_bind_wnd(p_gui->p_waitlayer, p_top);
     }
     else
     {
-        klbuiex_waitlayer_bind_wnd(p_gui->p_udatalayer, NULL);
+        klbuiex_waitlayer_bind_wnd(p_gui->p_waitlayer, NULL);
     }
 
     return 0;
 }
 
+/// @brief 移动 等待图层 及窗口
+void klb_gui_waitlayer_move(klb_gui_t* p_gui, int x, int y)
+{
+    klbuiex_waitlayer_move(p_gui->p_waitlayer, x, y);
+}
+
 /// @brief GUI 等待
 void klb_gui_wait(klb_gui_t* p_gui, bool wait)
 {
+    if (wait)
+    {
+        // 清除焦点
+        if (NULL != p_gui->p_focus)
+        {
+            // 失去焦点流程
+            unfocus_windows_klb_gui(p_gui, p_gui->p_focus);
 
+            klb_wnd_update(p_gui->p_focus); // 刷新
+
+            p_gui->p_focus_top = NULL;
+            p_gui->p_focus = NULL;
+            p_gui->focus_tc = 0;
+            p_gui->focusdelay = false;
+        }
+    }
+
+    // 等待图层
+    klbuiex_waitlayer_show(p_gui->p_waitlayer, wait);
+
+    // 更新等待状态, 若为等待状态:
+    //  1. 不再处理外设消息
+    p_gui->is_wait = wait;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1631,10 +1664,18 @@ static int klb_gui_process_message_once(klb_gui_t* p_gui)
     klb_msg_t* p_msg = NULL;
     if (!p_gui->is_need_clear && 0 == klb_gui_pop_message(p_gui, &p_msg))
     {
-        if (p_gui->p_canvas)
+        if (p_gui->p_canvas && !p_gui->is_wait)
         {
-            // 设置了画布, 才处理消息
+            // 设置了画布, 且不为等待状态 才处理消息
             klb_gui_dispatch_message(p_gui, p_msg);
+        }
+        else
+        {
+            if (KLBUI_mousemove == p_msg->msg)
+            {
+                // 更新记录鼠标位置
+                p_gui->p_util->mouse_pt = p_msg->pt1;
+            }
         }
 
         KLB_FREE(p_msg);
@@ -1663,7 +1704,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
     }
 
     // step 3. 检查处理 是否需要处理 KLBUI_focusdelay 消息等
-    if (p_gui->focusdelay && p_gui->focusdelay_tc <= (ABS_SUB(tc, p_gui->focus_tc)))
+    if (!p_gui->is_wait && p_gui->focusdelay && p_gui->focusdelay_tc <= (ABS_SUB(tc, p_gui->focus_tc)))
     {
         klb_wnd_t* p_wnd = p_gui->p_focus;
         if (NULL != p_wnd)
@@ -1700,6 +1741,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
     }
 
     // step 4. 依次处理, 激活的扩展
+    // 扩展的 loop 不受 wait 状态影响
     if (0 < klb_hlist_size(p_gui->p_extension_activated_hlist))
     {
         klb_hlist_iter_t* p_iter = klb_hlist_begin(p_gui->p_extension_activated_hlist);

@@ -16,7 +16,7 @@
 ///  1. UI窗口图形绘制
 typedef struct klbuiex_render_t_
 {
-    klb_gui_t*      p_gui;
+    klb_gui_t*      p_gui;                                  ///< GUI模块
 
     bool            is_multi_layer;                         ///< 是否 使用多图层
 
@@ -195,7 +195,7 @@ static int redraw_and_refresh_klbuiex_render(klb_gui_t* p_gui)
 static void add_canvas_layer_klbuiex_render(klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int* p_layer_count, int layer_type, bool use, bool redraw, klb_rect_t* p_rect, klb_canvas_t* p_canvas)
 {
     int idx = *p_layer_count;
-    if (idx + 1 <= KLB_CANVAS_LAYER_max)
+    if (NULL != p_canvas && idx + 1 <= KLB_CANVAS_LAYER_max)
     {
         klb_rect_t rect_zero = { 0 };
 
@@ -231,6 +231,22 @@ static void init_canvas_layer_klbuiex_render(klbuiex_render_t* p_render, klb_can
 
     // KLB_CANVAS_LAYER_msgbox 图层
     add_canvas_layer_klbuiex_render(layers, p_layer_count, KLB_CANVAS_LAYER_msgbox, (NULL != p_gui->p_msg_box) ? true : false , false, NULL, p_render->p_msgbox_canvas);
+
+    // KLB_CANVAS_LAYER_udata 图层
+    {
+        klb_canvas_t* p_udata_canvas = klbuiex_udatalayer_get_canvas(p_gui->p_udatalayer);
+        bool is_show_udata = klbuiex_udatalayer_is_show(p_gui->p_udatalayer);
+
+        add_canvas_layer_klbuiex_render(layers, p_layer_count, KLB_CANVAS_LAYER_udata, is_show_udata, false, NULL, p_udata_canvas);
+    }
+
+    // KLB_CANVAS_LAYER_wait 图层
+    {
+        klb_canvas_t* p_wait_canvas = klbuiex_waitlayer_get_canvas(p_gui->p_waitlayer);
+        bool is_show_wait = klbuiex_waitlayer_is_show(p_gui->p_waitlayer);
+
+        add_canvas_layer_klbuiex_render(layers, p_layer_count, KLB_CANVAS_LAYER_wait, is_show_wait, false, NULL, p_wait_canvas);
+    }
 
     // KLB_CANVAS_LAYER_tip 图层
     {
@@ -375,6 +391,16 @@ static bool multi_redraw_wnd_hlist_klbuiex_render(klbuiex_render_t* p_render, kl
 
             is_real_refresh = true;
         }
+        else if(klbuiex_udatalayer_wnd_in_bind(p_gui->p_udatalayer, p_wnd))
+        {
+            // 在用户自定义图层 中; 标记 需要重绘
+            klbuiex_udatalayer_set_redraw(p_gui->p_udatalayer);
+        }
+        else if(klbuiex_waitlayer_wnd_in_bind(p_gui->p_waitlayer, p_wnd))
+        {
+            // 在 等待图层 中; 标记 需要重绘
+            klbuiex_waitlayer_set_redraw(p_gui->p_waitlayer);
+        }
 
         p_iter = klb_hlist_next(p_iter);
     }
@@ -383,7 +409,7 @@ static bool multi_redraw_wnd_hlist_klbuiex_render(klbuiex_render_t* p_render, kl
 }
 
 // 重绘所有窗口
-static bool multi_redraw_all_klbuiex_render(klbuiex_render_t* p_render, klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int layer_count)
+static bool multi_redraw_wnd_all_klbuiex_render(klbuiex_render_t* p_render, klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int layer_count)
 {
     klb_gui_t* p_gui = p_render->p_gui;
 
@@ -450,6 +476,162 @@ static bool multi_redraw_all_klbuiex_render(klbuiex_render_t* p_render, klb_canv
     return true;
 }
 
+// 处理 udata 图层
+static bool muti_redraw_udata_klbuiex_render(klbuiex_render_t* p_render, klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int layer_count, bool is_redraw_all)
+{
+    klb_gui_t* p_gui = p_render->p_gui;
+    klb_canvas_t* p_udata_canvas = klbuiex_udatalayer_get_canvas(p_gui->p_udatalayer);
+
+    bool is_need_refresh = false;
+
+    if (is_redraw_all)
+    {
+        // 完整更新模式
+        if (klbuiex_udatalayer_is_show(p_gui->p_udatalayer))
+        {
+            // 设置重绘
+            klbuiex_udatalayer_set_redraw(p_gui->p_udatalayer);
+
+            // 重绘
+            klbuiex_udatalayer_redraw(p_gui->p_udatalayer);
+
+            // 标记 需要刷新画布            
+            push_canvas_layer_klbuiex_render(layers, layer_count, KLB_CANVAS_LAYER_udata, true, &p_udata_canvas->rect, p_udata_canvas);
+
+            // 设置 udata的 "脏矩形" 区域
+            klbuiex_udatalayer_set_dirty(p_gui->p_udatalayer, true, &p_udata_canvas->rect);
+
+            is_need_refresh = true;
+        }
+    }
+    else
+    {
+        // 区域更新模式
+
+        // step1. 检查是否, 需要处理上次 TIP的 "脏矩形" 区域
+        {
+            klb_rect_t dirty_rect = { 0 };
+            if (klbuiex_udatalayer_get_dirty(p_gui->p_udatalayer, &dirty_rect))
+            {
+                bool refresh_dirty = true;
+
+                // 若 处于 显示, 且 显示区域和 "脏矩形" 一致, 则暂不需要刷新 "脏矩形"
+                klb_rect_t rect = p_udata_canvas->rect;
+                if (klbuiex_udatalayer_is_show(p_gui->p_udatalayer) &&
+                    rect.x == dirty_rect.x && rect.y == dirty_rect.y &&
+                    rect.w == dirty_rect.w && rect.h == dirty_rect.h)
+                {
+                    refresh_dirty = false;
+                }
+
+                if (refresh_dirty)
+                {
+                    // 标记 需要刷新画布
+                    push_canvas_layer_klbuiex_render(layers, layer_count, KLB_CANVAS_LAYER_main, true, &dirty_rect, p_gui->p_canvas);
+
+                    // 已经处理了 "脏矩形"
+                    klbuiex_udatalayer_set_dirty(p_gui->p_udatalayer, false, NULL);
+
+                    is_need_refresh = true;
+                }
+            }
+        }
+
+        // step2. 检查是否需要处理 当前显示的TIP
+        {
+            if (klbuiex_udatalayer_is_show(p_gui->p_udatalayer) && klbuiex_udatalayer_redraw(p_gui->p_udatalayer))
+            {
+                // 标记 需要刷新画布
+                push_canvas_layer_klbuiex_render(layers, layer_count, KLB_CANVAS_LAYER_udata, true, &p_udata_canvas->rect, p_udata_canvas);
+
+                // 设置 udata 的 "脏矩形" 区域
+                klbuiex_udatalayer_set_dirty(p_gui->p_udatalayer, true, &p_udata_canvas->rect);
+
+                is_need_refresh = true;
+            }
+        }
+    }
+
+    return is_need_refresh;
+}
+
+// 处理 wait 图层
+static bool muti_redraw_wait_klbuiex_render(klbuiex_render_t* p_render, klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int layer_count, bool is_redraw_all)
+{
+    klb_gui_t* p_gui = p_render->p_gui;
+    klb_canvas_t* p_wait_canvas = klbuiex_waitlayer_get_canvas(p_gui->p_waitlayer);
+
+    bool is_need_refresh = false;
+
+    if (is_redraw_all)
+    {
+        // 完整更新模式
+        if (klbuiex_waitlayer_is_show(p_gui->p_waitlayer))
+        {
+            // 重绘
+            klbuiex_waitlayer_redraw(p_gui->p_waitlayer);
+
+            // 标记 需要刷新画布            
+            push_canvas_layer_klbuiex_render(layers, layer_count, KLB_CANVAS_LAYER_wait, true, &p_wait_canvas->rect, p_wait_canvas);
+
+            // 设置 wait 的 "脏矩形" 区域
+            klbuiex_waitlayer_set_dirty(p_gui->p_waitlayer, true, &p_wait_canvas->rect);
+
+            is_need_refresh = true;
+        }
+    }
+    else
+    {
+        // 区域更新模式
+
+        // step1. 检查是否, 需要处理上次 TIP的 "脏矩形" 区域
+        {
+            klb_rect_t dirty_rect = { 0 };
+            if (klbuiex_waitlayer_get_dirty(p_gui->p_waitlayer, &dirty_rect))
+            {
+                bool refresh_dirty = true;
+
+                // 若 wait 图层 处于 显示, 且 显示区域和 "脏矩形" 一致, 则暂不需要刷新 "脏矩形"
+                klb_rect_t rect = p_wait_canvas->rect;
+                if (klbuiex_waitlayer_is_show(p_gui->p_waitlayer) &&
+                    rect.x == dirty_rect.x && rect.y == dirty_rect.y &&
+                    rect.w == dirty_rect.w && rect.h == dirty_rect.h)
+                {
+                    refresh_dirty = false;
+                }
+
+                if (refresh_dirty)
+                {
+                    // 标记 需要刷新画布
+                    push_canvas_layer_klbuiex_render(layers, layer_count, KLB_CANVAS_LAYER_main, true, &dirty_rect, p_gui->p_canvas);
+
+                    // 已经处理了 "脏矩形"
+                    klbuiex_waitlayer_set_dirty(p_gui->p_waitlayer, false, NULL);
+
+                    is_need_refresh = true;
+                }
+            }
+        }
+
+        // step2. 检查是否需要处理 当前显示的TIP
+        {
+            if (klbuiex_waitlayer_is_show(p_gui->p_waitlayer) && klbuiex_waitlayer_redraw(p_gui->p_waitlayer))
+            {
+                // 标记 需要刷新画布
+                push_canvas_layer_klbuiex_render(layers, layer_count, KLB_CANVAS_LAYER_wait, true, &p_wait_canvas->rect, p_wait_canvas);
+
+                // 设置 wait 图层 的 "脏矩形" 区域
+                klbuiex_waitlayer_set_dirty(p_gui->p_waitlayer, true, &p_wait_canvas->rect);
+
+                is_need_refresh = true;
+            }
+        }
+    }
+
+    return is_need_refresh;
+}
+
+// 处理TIP图层
 static bool muti_redraw_tip_klbuiex_render(klbuiex_render_t* p_render, klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max], int layer_count, bool is_redraw_all)
 {
     klb_gui_t* p_gui = p_render->p_gui;
@@ -462,6 +644,9 @@ static bool muti_redraw_tip_klbuiex_render(klbuiex_render_t* p_render, klb_canva
         // 完整更新模式
         if (klbuiex_tip_is_show(p_gui->p_tip))
         {
+            // 设置重绘
+            klbuiex_tip_set_redraw(p_gui->p_tip);
+
             // 重绘
             klbuiex_tip_redraw(p_gui->p_tip);
 
@@ -489,7 +674,7 @@ static bool muti_redraw_tip_klbuiex_render(klbuiex_render_t* p_render, klb_canva
                 klb_rect_t rect = p_tip_canvas->rect;
                 if (klbuiex_tip_is_show(p_gui->p_tip) && 
                     rect.x == dirty_rect.x && rect.y == dirty_rect.y && 
-                    rect.w == dirty_rect.w && rect.h == rect.h)
+                    rect.w == dirty_rect.w && rect.h == dirty_rect.h)
                 {
                     refresh_dirty = false;
                 }
@@ -520,7 +705,6 @@ static bool muti_redraw_tip_klbuiex_render(klbuiex_render_t* p_render, klb_canva
                 is_need_refresh = true;
             }
         }
-
     }
 
     return is_need_refresh;
@@ -531,15 +715,13 @@ static int multi_redraw_and_refresh_klbuiex_render(klbuiex_render_t* p_render)
 {
     klb_gui_t* p_gui = p_render->p_gui;
 
-    // 是否 需要刷新图层标记
-    bool is_real_refresh_wnd = false, is_real_refresh_tip = false;
-
     // step1. 初始化 所有 有效 图层
     klb_canvas_layer_t layers[KLB_CANVAS_LAYER_max] = { 0 };
     int layer_count = 0;
     init_canvas_layer_klbuiex_render(p_render, layers, &layer_count);
 
     // step2. 检查主窗口的刷新
+    bool is_real_refresh_wnd = false;
     bool is_redraw_all = false; // 是否完整更新
     bool is_refresh_wnd = klbuiex_redraw_need_repaint(p_gui->p_redraw, &is_redraw_all);
     if (is_refresh_wnd)
@@ -547,23 +729,33 @@ static int multi_redraw_and_refresh_klbuiex_render(klbuiex_render_t* p_render)
         if (is_redraw_all)
         {
             // 完整更新模式; 需要完全重绘
-            is_real_refresh_wnd = multi_redraw_all_klbuiex_render(p_render, layers, layer_count);
+            is_real_refresh_wnd = multi_redraw_wnd_all_klbuiex_render(p_render, layers, layer_count);
         }
         else
         {
             // 区域更新模式; 局部重绘, 按需要刷新的窗口列表重绘
             is_real_refresh_wnd = multi_redraw_wnd_hlist_klbuiex_render(p_render, klbuiex_redraw_get_hlist(p_gui->p_redraw), layers, layer_count);
-        }   
+        }
 
         // 绘制完成, 清空 redraw 标记
         klbuiex_redraw_clear(p_gui->p_redraw);
     }
 
-    // step3. 处理TIP图层
-    is_real_refresh_tip = muti_redraw_tip_klbuiex_render(p_render, layers, layer_count, is_redraw_all);
+    // step4. 处理 udata 图层
+    bool is_real_refresh_udata = muti_redraw_udata_klbuiex_render(p_render, layers, layer_count, is_redraw_all);
+
+    // step5. 处理 wait 图层
+    bool is_real_refresh_wait = muti_redraw_wait_klbuiex_render(p_render, layers, layer_count, is_redraw_all);
+
+    // step6. 处理TIP图层
+    bool is_real_refresh_tip = muti_redraw_tip_klbuiex_render(p_render, layers, layer_count, is_redraw_all);
 
     // stepN. 依据刷新标记, 刷新图层
-    if (NULL != p_gui->p_canvas && (is_real_refresh_wnd || is_real_refresh_tip))
+    if (NULL != p_gui->p_canvas && (
+        is_real_refresh_wnd ||      // 窗口层是否需要刷新
+        is_real_refresh_udata ||    // udata图层 是否需要刷新
+        is_real_refresh_wait ||     // wait 图层 是否需要刷新
+        is_real_refresh_tip))       // tip 图层 是否需要刷新
     {
         int refresh_opt = is_redraw_all ? KLB_CANVAS_REFRESH_copy : KLB_CANVAS_REFRESH_copy_bubble;
         klb_canvas_refresh_layer(p_gui->p_canvas, refresh_opt, layers, layer_count);

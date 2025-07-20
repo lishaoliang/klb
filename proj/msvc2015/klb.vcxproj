@@ -96,6 +96,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
+      <TreatSpecificWarningsAsErrors>4133</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -137,6 +138,7 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
+      <TreatSpecificWarningsAsErrors>4133</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

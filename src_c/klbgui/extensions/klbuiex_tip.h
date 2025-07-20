@@ -55,6 +55,9 @@ void klbuiex_tip_set_title(klbuiex_tip_t* p_ex, const char* p_title);
 /// @brief 移动tip位置
 void klbuiex_tip_move(klbuiex_tip_t* p_ex, int x, int y);
 
+/// @brief 设置重绘
+void klbuiex_tip_set_redraw(klbuiex_tip_t* p_ex);
+
 /// @brief 重新绘制
 bool klbuiex_tip_redraw(klbuiex_tip_t* p_ex);
 

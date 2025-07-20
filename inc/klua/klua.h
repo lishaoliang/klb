@@ -56,11 +56,22 @@ KLB_API bool luaL_checkboolean(lua_State* L, int arg);
 /// @return void*
 KLB_API void* luaL_checklightuserdata(lua_State* L, int arg);
 
-KLB_API bool klua_check_coroutine(lua_State* L, const char* p_tip_msg);
 
+/// @brief check 并赋予值
+KLB_API bool klua_check_coroutine(lua_State* L, const char* p_tip_msg);
 KLB_API bool klua_check_option_boolean(lua_State* L, int idx, bool v_default);
 KLB_API lua_Integer klua_check_option_integer(lua_State* L, int idx, lua_Integer v_default);
 KLB_API lua_Number  klua_check_option_number(lua_State* L, int idx, lua_Number v_default);
+
+
+/// @brief is_* 探测类型
+KLB_API bool klua_is_boolean(lua_State* L, int idx);
+KLB_API bool klua_is_lightuserdata(lua_State* L, int idx);
+KLB_API bool klua_is_integer(lua_State* L, int idx);
+KLB_API bool klua_is_number(lua_State* L, int idx);
+KLB_API bool klua_is_string(lua_State* L, int idx);
+KLB_API bool klua_is_table(lua_State* L, int idx);
+KLB_API bool klua_is_function(lua_State* L, int idx);
 
 
 /// @brief setfield
@@ -70,6 +81,7 @@ KLB_API void klua_setfield_integer(lua_State* L, const char* p_key, lua_Integer 
 KLB_API void klua_setfield_number(lua_State* L, const char* p_key, lua_Number num);
 KLB_API void klua_setfield_string(lua_State* L, const char* p_key, const char* p_value);
 KLB_API void klua_setfield_lstring(lua_State* L, const char* p_key, const char* p_value, size_t v_len);
+
 
 /// @brief 在LUA_REGISTRYINDEX上引用
 /// @param [in] *L          Lua状态

@@ -106,6 +106,8 @@ typedef struct klb_gui_t_
     // 消息处理流程
     struct
     {
+        bool            is_wait;                    ///< [2025/07+]是否为等待状态: 等待状态, 不处理UI键鼠等外设消息
+
         int64_t         loop_tc;                    ///< 当前时间
         bool            is_drop_msg_dispatch;       ///< 是否放弃消息"冒泡"
     };
@@ -113,20 +115,20 @@ typedef struct klb_gui_t_
     // 消息
     struct
     {
-        klb_nlist_t*    p_msg_list;
-        klb_mutex_t*    p_msg_mutex;
+        klb_nlist_t*    p_msg_list;     ///< 键鼠等外设 消息(事件) 列表
+        klb_mutex_t*    p_msg_mutex;    ///< 消息列表 锁
     };
 
     // lua env
     struct
     {
-        klua_env_t*     p_klua_env;
+        klua_env_t*     p_klua_env;     ///< 对应的 lua 环境
     };
 
     // cpp的 指针支持
     struct
     {
-        void*           p_cppgui;     ///< klbui::CGui*
+        void*           p_cppgui;       ///< klbui::CGui*
     };
 
     // Bug. 在Lua里面直接使用 klb_gui_clear函数, 会导致在自身的GUI流程中, 销毁GUI框架本身

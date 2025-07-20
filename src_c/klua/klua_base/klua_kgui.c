@@ -71,12 +71,88 @@ static int klua_kwnd_tostring(lua_State* L)
 
 ///////////////////////////////////
 
+// 设置/获取 样式
+static int klua_kwnd_style(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    uint32_t style = 0;
+    int idx = 2;
+
+    if (klua_is_integer(L, idx))
+    {
+        // 设置
+        style = (uint32_t)lua_tointeger(L, idx);
+
+        klb_wnd_set_style(p_kwnd->p_wnd, style);
+    }
+    else
+    {
+        // 获取
+        style = klb_wnd_get_style(p_kwnd->p_wnd);
+    }
+
+    lua_pushinteger(L, style);
+    return 1;
+}
+
+// 设置/获取 显示状态
+static int klua_kwnd_show(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    bool show = false;
+    int idx = 2;
+
+    if (klua_is_boolean(L, idx))
+    {
+        // 设置
+        show = luaL_checkboolean(L, idx);
+
+        klb_wnd_show(p_kwnd->p_wnd, show);
+    }
+    else
+    {
+        // 获取
+        show = klb_wnd_is_show(p_kwnd->p_wnd);
+    }
+
+    lua_pushboolean(L, show);
+    return 1;
+}
+
+// 设置/获取 隐藏状态
+static int klua_kwnd_hide(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    bool hide = false;
+    int idx = 2;
+
+    if (klua_is_boolean(L, idx))
+    {
+        // 设置
+        hide = luaL_checkboolean(L, idx);
+
+        klb_wnd_hide(p_kwnd->p_wnd, hide);
+    }
+    else
+    {
+        // 获取
+        hide = klb_wnd_is_hide(p_kwnd->p_wnd);
+    }
+
+    lua_pushboolean(L, hide);
+    return 1;
+}
+
+// 设置/获取 静态TIP
 static int klua_kwnd_tip(lua_State* L)
 {
-    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
 
     int idx = 2;
-    if (LUA_TSTRING == lua_type(L, idx))
+    if (klua_is_string(L, idx))
     {
         // 设置静态TIP
         const char* p_tip = lua_tostring(L, idx);
@@ -95,12 +171,13 @@ static int klua_kwnd_tip(lua_State* L)
     return 1;
 }
 
+// 设置/获取 动态TIP
 static int klua_kwnd_tip_dynamic(lua_State* L)
 {
-    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
 
     int idx = 2;
-    if (LUA_TSTRING == lua_type(L, idx))
+    if (klua_is_string(L, idx))
     {
         // 设置动态TIP
         const char* p_tip = lua_tostring(L, idx);
@@ -119,13 +196,92 @@ static int klua_kwnd_tip_dynamic(lua_State* L)
     return 1;
 }
 
+// 更新TIP
 static int klua_kwnd_tip_update(lua_State* L)
 {
-    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    klb_wnd_tip_update(p_kwnd->p_wnd);
+
+    return 0;
+}
+
+// 基于父窗口移动到指定的相对坐标
+static int klua_kwnd_move(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+    int x = (int)klua_check_option_integer(L, 2, 0);
+    int y = (int)klua_check_option_integer(L, 3, 0);
+
+    klb_wnd_move(p_kwnd->p_wnd, x, y);
+
+    return 0;
+}
+
+// 重新设置控件大小
+static int klua_kwnd_resize(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+    int w = (int)luaL_checkinteger(L, 2);
+    int h = (int)luaL_checkinteger(L, 3);
+
+    klb_wnd_resize(p_kwnd->p_wnd, w, h);
+
+    return 0;
+}
+
+// 刷新
+static int klua_kwnd_refresh(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
 
     klb_wnd_update(p_kwnd->p_wnd);
 
     return 0;
+}
+
+// 设置
+static int klua_kwnd_set(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
+
+    int ret = klb_wnd_set(p_kwnd->p_wnd, p_in);
+
+    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    return 1;
+}
+
+// 获取
+static int klua_kwnd_get(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+    klb_map_t* p_in = klua_seri_map_pack(L, 1);         ///< @2 ~ @N 参数
+
+    klb_map_t* p_out = klb_wnd_get(p_kwnd->p_wnd, p_in);
+
+    int n = 0;
+    if (NULL != p_out)
+    {
+        n = klua_seri_map_unpack(L, 1, p_out);
+    }
+
+    KLB_FREE_BY(p_in, klb_map_destroy);
+    KLB_FREE_BY(p_out, klb_map_destroy);
+    return n;
+}
+
+// 获取GUI的当前 系统滴答数(单位毫秒ms)
+static int klua_kwnd_tick_count(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    int64_t tc = klb_wnd_get_tick_count(p_kwnd->p_wnd);
+
+    lua_pushinteger(L, tc);
+    return 1;
 }
 
 ///////////////////////////////////
@@ -135,11 +291,33 @@ static void klua_kwnd_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
 
-        { "tip",             klua_kwnd_tip },           // 静态TIP
-        { "tip_dynamic",     klua_kwnd_tip_dynamic },   // 动态TIP
+        // 样式
+        { "style",           klua_kwnd_style },         // 设置/获取 样式
+
+        // 状态
+        { "show",            klua_kwnd_show },          // 设置/获取 显示状态
+        { "hide",            klua_kwnd_hide },          // 设置/获取 隐藏状态
+
+        // tip
+        { "tip",             klua_kwnd_tip },           // 设置/获取 静态TIP
+        { "tip_dynamic",     klua_kwnd_tip_dynamic },   // 设置/获取 动态TIP
         { "tip_update",      klua_kwnd_tip_update },    // 更新TIP
 
-        { NULL,             NULL }
+        // 窗口位置/大小
+        { "move",            klua_kwnd_move },           // 基于父窗口移动到指定的相对坐标
+        { "resize",          klua_kwnd_resize },         // 重新设置控件大小
+
+        // 刷新
+        { "refresh",         klua_kwnd_refresh },        // 刷新
+
+        // 设置 / 获取
+        { "set",             klua_kwnd_set },            // 设置
+        { "get",             klua_kwnd_get },            // 获取
+
+        // 系统滴答
+        { "tick_count",      klua_kwnd_tick_count },     // 获取GUI的当前 系统滴答数(单位毫秒ms)
+
+        { NULL,              NULL }
     };
 
     static const luaL_Reg metameth[] = {
@@ -790,6 +968,104 @@ static int klua_kgui_ticker_interval(lua_State* L)
     return 0;
 }
 
+// 绑定/解绑 用户图层对应的 窗口
+static int klua_kgui_bind_udatalayer(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    int ret = 0;
+
+    int idx = 1;
+    if (LUA_TSTRING == lua_type(L, idx))
+    {
+        // 绑定窗口
+        const char* p_path = lua_tostring(L, idx);
+        ret = klb_gui_udatalayer_bind(p_gui, p_path);
+    }
+    else
+    {
+        ret = klb_gui_udatalayer_bind_wnd(p_gui, NULL);
+    }
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
+// 移动用户图层
+static int klua_kgui_move_udatalayer(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    int x = (int)klua_check_option_integer(L, 1, 0);
+    int y = (int)klua_check_option_integer(L, 2, 0);
+
+    klb_gui_udatalayer_move(p_gui, x, y);
+
+    return 0;
+}
+
+// 显示/隐藏 用户图层
+static int klua_kgui_show_udatalayer(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    bool show = klua_check_option_boolean(L, 1, false);
+
+    klb_gui_udatalayer_show(p_gui, show);
+
+    return 0;
+}
+
+// 绑定/解绑 等待图层对应的 窗口
+static int klua_kgui_bind_waitlayer(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    int ret = 0;
+
+    int idx = 1;
+    if (LUA_TSTRING == lua_type(L, idx))
+    {
+        // 绑定窗口
+        const char* p_path = lua_tostring(L, idx);
+        ret = klb_gui_waitlayer_bind(p_gui, p_path);
+    }
+    else
+    {
+        ret = klb_gui_waitlayer_bind_wnd(p_gui, NULL);
+    }
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
+// 移动 等待图层
+static int klua_kgui_move_waitlayer(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    int x = (int)klua_check_option_integer(L, 1, 0);
+    int y = (int)klua_check_option_integer(L, 2, 0);
+
+    klb_gui_waitlayer_move(p_gui, x, y);
+
+    return 0;
+}
+
+// 开启/关闭 等待
+static int klua_kgui_wait(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    bool wait = klua_check_option_boolean(L, 1, false);
+
+    klb_gui_wait(p_gui, wait);
+
+    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
@@ -812,7 +1088,7 @@ int klua_open_kgui(lua_State* L)
         { "is_multi_canvas_layer",      klua_kgui_is_multi_canvas_layer }, // 获取时候支持多画布图层模式
 
         // image
-        { "load_image",         klua_kgui_load_image },
+        { "load_image",         klua_kgui_load_image },     // 加载图片资源
 
         // 消息事件 队列
         { "clear_msg",          klua_kgui_clear_msg },      // 清空 消息事件队列
@@ -848,9 +1124,9 @@ int klua_open_kgui(lua_State* L)
         { "messagebox_std",     klua_kgui_messagebox_std },     // 弹出内置的共享消息框
 
         // wnd
-        { "show",               klua_kgui_show },
-        { "move",               klua_kgui_move },
-        { "resize",             klua_kgui_resize },
+        { "show",               klua_kgui_show },               // 显隐窗口
+        { "move",               klua_kgui_move },               // 移动窗口位置(相对父窗口)
+        { "resize",             klua_kgui_resize },             // 重置窗口大小
         { "wndpos",             klua_kgui_wndpos },             // 获取窗口位置
 
         { "suggestw",           klua_kgui_suggestw },           // 窗口建议宽度
@@ -876,6 +1152,19 @@ int klua_open_kgui(lua_State* L)
 
         // 内部控件定时器运行间隔
         { "ticker_interval",    klua_kgui_ticker_interval },    // 设置 内部控件定时器运行间隔; (单位毫秒)
+
+
+        // 用户图层(udata layer)操作
+        { "bind_udatalayer",    klua_kgui_bind_udatalayer },    // 绑定/解绑 用户图层对应的 窗口
+        { "move_udatalayer",    klua_kgui_move_udatalayer },    // 移动 用户图层
+        { "show_udatalayer",    klua_kgui_show_udatalayer },    // 显示/隐藏 用户图层
+
+
+        // 等待图层(wait layer)操作
+        { "bind_waitlayer",     klua_kgui_bind_waitlayer },     // 绑定/解绑 等待图层对应的 窗口
+        { "move_waitlayer",     klua_kgui_move_waitlayer },     // 移动 等待图层
+        { "wait",               klua_kgui_wait },               // 开启/关闭 等待
+
 
         { NULL,                 NULL }
     };

@@ -5,6 +5,7 @@
 /// @brief   user data layer canvas 用户自定义图层
 ///           1. 类似TIP图层, 在窗口图层之上, TIP层之下
 ///           2. 许可用户 自行设计 此图层
+///           3. 图层的 窗口事件(支持部分) 由本模块处理
 /// @version 0.1
 /// @history 修改历史
 /// @warning 没有警告
@@ -45,6 +46,11 @@ bool klbuiex_udatalayer_has_canvas(klbuiex_udatalayer_t* p_ex);
 klb_canvas_t* klbuiex_udatalayer_get_canvas(klbuiex_udatalayer_t* p_ex);
 
 
+/// @brief 设置/获取 计时 时间间隔, 毫秒ms
+void klbuiex_udatalayer_set_interval(klbuiex_udatalayer_t* p_ex, int64_t interval);
+int64_t klbuiex_udatalayer_get_interval(klbuiex_udatalayer_t* p_ex);
+
+
 /// @brief 绑定 用户自定义窗口
 void klbuiex_udatalayer_bind_wnd(klbuiex_udatalayer_t* p_ex, klb_wnd_t* p_top);
 klb_wnd_t* klbuiex_udatalayer_get_wnd(klbuiex_udatalayer_t* p_ex);
@@ -56,9 +62,15 @@ bool klbuiex_udatalayer_is_show(klbuiex_udatalayer_t* p_ex);
 /// @brief 设置 是否显示
 void klbuiex_udatalayer_show(klbuiex_udatalayer_t* p_ex, bool show);
 
-
 /// @brief 移动位置
 void klbuiex_udatalayer_move(klbuiex_udatalayer_t* p_ex, int x, int y);
+
+/// @brief 设置需要重新绘制
+void klbuiex_udatalayer_set_redraw(klbuiex_udatalayer_t* p_ex);
+
+/// @brief 窗口是否 属于绑定的窗口
+bool klbuiex_udatalayer_wnd_in_bind(klbuiex_udatalayer_t* p_ex, klb_wnd_t* p_wnd);
+
 
 /// @brief 重新绘制
 bool klbuiex_udatalayer_redraw(klbuiex_udatalayer_t* p_ex);

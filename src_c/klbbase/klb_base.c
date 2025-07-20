@@ -55,3 +55,10 @@ int klb_version_number()
 {
     return KLB_VERSION_NUMBER;
 }
+
+int klb_version_date()
+{
+    return KLB_VERSION_DATE;
+}
+
+//end
