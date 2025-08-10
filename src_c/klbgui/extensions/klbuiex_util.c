@@ -25,6 +25,9 @@ static void* klbuiex_util_create(klb_gui_t* p_gui)
         p_util->timefmt = KLBUI_TIME_24H;
     }
 
+    // 完全绘制
+    p_util->is_redraw_full = true;
+
     // 当前鼠标位置
     {
         p_util->mouse_pt.x = 0;

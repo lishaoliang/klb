@@ -322,23 +322,6 @@ klbui.messagebox_num = function ()
 end
 
 
--- @brief 弹出预定制的消息框
--- @param [in] func[function]		结束之后的回调函数
--- @param [in] title[string]		标题
--- @param [in] body_text[string]	内容
--- @return [number(int)] 	0.成功; 非0.失败
--- @note func = function (msg)		-- msg = 'close', 'ok', 'cancel'
---		    ...
---		end
-klbui.messagebox_std = function (func, title, body_text)
-	return kgui.messagebox_std(function (msg)
-		
-		func(msg)
-		
-	end, title, body_text)
-end
-
-
 -- @brief 显示或隐藏窗口
 -- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
 -- @param [in] show[boolean]		true.显示; false.隐藏
@@ -489,6 +472,16 @@ end
 --		3. 定时器事件 不受影响
 klbui.wait = function (is_wait)
 	kgui.wait(is_wait)
+end
+
+
+-- @brief 设置/获取 是否完整绘制 事件流程
+-- @param [in] is_full[boolean]		是否完整绘制: 默认(true)
+-- @return bool
+-- @note is_full = true,  eg. 每个鼠标移动过程, 将会被绘制出来
+--		 is_full = false, eg. 若有一串移动过程, 则只有最终状态被绘制出来
+klbui.redraw_full_event = function (is_full)
+	return kgui.redraw_full_event(is_full)
 end
 
 

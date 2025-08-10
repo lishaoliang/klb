@@ -7,12 +7,6 @@
 #include "klbgui/klb_wnd_in.h"
 #include "klbgui/klbui_widgets.h"
 #include "klbgui/extensions/klbuiex_extensions.h"
-#include "klbgui/shwnd/klbshw_calendar.h"
-#include "klbgui/shwnd/klbshw_combomenu.h"
-#include "klbgui/shwnd/klbshw_decimal.h"
-#include "klbgui/shwnd/klbshw_hexadecimal.h"
-#include "klbgui/shwnd/klbshw_keyboard_en.h"
-#include "klbgui/shwnd/klbshw_messagebox.h"
 #include "klbgui/shwnd/klbshw_tip.h"
 #include <assert.h>
 
@@ -87,13 +81,13 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
     // 注册标准窗口类型
     {
         // 注册标准窗口类型
-        KLB_GUI_REGISTER_STD(p_gui);
+        //KLB_GUI_REGISTER_STD(p_gui);
 
         // 激活共享窗口
-        klbui_shwnd_get_calendar(p_gui);
-        klbui_shwnd_get_combomenu(p_gui);
-        klbui_shwnd_get_decimal(p_gui);
-        klbui_shwnd_get_messagebox(p_gui);
+        //klbui_shwnd_get_calendar(p_gui);
+        //klbui_shwnd_get_combomenu(p_gui);
+        //klbui_shwnd_get_decimal(p_gui);
+        //klbui_shwnd_get_messagebox(p_gui);
         klbui_shwnd_get_tip(p_gui);
     }
 
@@ -1214,6 +1208,16 @@ void klb_gui_set_ticker_interval(klb_gui_t* p_gui, int64_t interval)
     klbuiex_waitlayer_set_interval(p_gui->p_waitlayer, interval);
 }
 
+void klb_gui_set_redraw_full_event(klb_gui_t* p_gui, bool is_full)
+{
+    p_gui->p_util->is_redraw_full = is_full;
+}
+
+bool klb_gui_get_redraw_full_event(klb_gui_t* p_gui)
+{
+    return p_gui->p_util->is_redraw_full;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // 图层相关接口
 
@@ -1668,6 +1672,13 @@ static int klb_gui_process_message_once(klb_gui_t* p_gui)
         {
             // 设置了画布, 且不为等待状态 才处理消息
             klb_gui_dispatch_message(p_gui, p_msg);
+
+            // 若为完全 绘制样式
+            // 则会将 所有事件过程 都绘制出来
+            if (p_gui->p_util->is_redraw_full && klbuiex_redraw_need_repaint(p_gui->p_redraw, NULL))
+            {
+                klbuiex_render_redraw_and_refresh(p_gui->p_render);
+            }
         }
         else
         {

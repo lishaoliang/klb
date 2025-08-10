@@ -4,7 +4,6 @@
 #include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"
 #include "klbgui/klb_wnd.h"
-#include "klbgui/shwnd/klbshw_messagebox.h"
 #include "klbutil/klb_obj.h"
 #include "klbmem/klb_mem.h"
 #include "klua/klua_help.h"
@@ -733,72 +732,6 @@ static int klua_kgui_messagebox_num(lua_State* L)
     return 1;
 }
 
-// 标准msgbox的 响应
-static int on_command_messagebox_std_klua_kgui(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
-{
-    klua_ex_gui_t* p_ex = (klua_ex_gui_t*)p_wnd->p_udata;
-
-    if (KLBUI_onchange == msg)
-    {
-        int value = klbshw_messagebox_get_value(p_wnd);  // KLBSHW_messagebox_close
-        
-        char msg[64] = { 0 };
-        if (KLBSHW_messagebox_close == value) { strcpy(msg, "close"); }
-        else if (KLBSHW_messagebox_ok == value) { strcpy(msg, "ok"); }
-        else if (KLBSHW_messagebox_cancel == value) { strcpy(msg, "cancel"); }
-
-        // 调用 lua 响应函数
-        klua_ex_gui_call_command_msgbox_std(p_ex, msg);
-
-        // unbind 标准对话框响应
-        klua_ex_gui_unbind_command_msgbox_std(p_ex);
-    }
-
-    return 0;
-}
-
-static int klua_kgui_messagebox_std(lua_State* L)
-{
-    const char* p_title = luaL_checkstring(L, 2);           ///< @2. 标题
-    const char* p_body_text = luaL_checkstring(L, 3);       ///< @3. 提示内容
-
-    // 获取共享的消息框
-    klua_ex_gui_t* p_ex = klua_ex_get_gui_by_L(L);
-    klb_gui_t* p_gui = klua_ex_gui_get(p_ex);
-    klb_wnd_t* p_wnd = klbui_shwnd_get_messagebox(p_gui);
-
-    // 绑定Lua响应函数
-    klua_ex_gui_bind_command_msgbox_std(p_ex, 1);           ///< @1. 响应函数
-
-    // 设置参数
-    {
-        klbshw_messagebox_set_title(p_wnd, p_title);
-        klbshw_messagebox_set_body_text(p_wnd, p_body_text);
-
-        // C绑定响应
-        klb_wnd_bind_command(p_wnd, on_command_messagebox_std_klua_kgui, p_ex);
-    }
-
-    // 移动到屏幕中心
-    {
-        int w = 0, h = 0;
-        klbshw_messagebox_wh(p_gui, &w, &h);
-
-        int screen_w = 0, screen_h = 0;
-        klb_gui_get_wh(p_gui, &screen_w, &screen_h);
-
-        int x = (screen_w - w) / 2;
-        int y = (screen_h - h) / 2;
-        klb_wnd_move(p_wnd, x, y);
-    }
-
-    // 弹出消息框
-    int ret = klb_gui_messagebox_wnd(p_gui, p_wnd);
-
-    lua_pushinteger(L, ret);                            ///< #1. 0.成功; 非0.失败(错误码)
-    return 1;
-}
-
 static int klua_kgui_show(lua_State* L)
 {
     const char* p_path_name = luaL_checkstring(L, 1);   ///< @1. 路径名: eg. "/home/btn1"
@@ -1064,6 +997,31 @@ static int klua_kgui_wait(lua_State* L)
     return 0;
 }
 
+// 设置/获取 是否完整绘制
+static int klua_kgui_redraw_full_event(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_gui_get_by_L(L);
+
+    bool is_full = true;
+    int idx = 1;
+
+    if (klua_is_boolean(L, idx))
+    {
+        // 设置
+        is_full = luaL_checkboolean(L, idx);
+
+        klb_gui_set_redraw_full_event(p_gui, is_full);
+    }
+    else
+    {
+        // 获取
+        is_full = klb_gui_get_redraw_full_event(p_gui);
+    }
+
+    lua_pushboolean(L, is_full);
+    return 1;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 int klua_open_kgui(lua_State* L)
@@ -1121,8 +1079,6 @@ int klua_open_kgui(lua_State* L)
         { "messagebox_end",     klua_kgui_messagebox_end },
         { "messagebox_num",     klua_kgui_messagebox_num },     // 
 
-        { "messagebox_std",     klua_kgui_messagebox_std },     // 弹出内置的共享消息框
-
         // wnd
         { "show",               klua_kgui_show },               // 显隐窗口
         { "move",               klua_kgui_move },               // 移动窗口位置(相对父窗口)
@@ -1151,7 +1107,7 @@ int klua_open_kgui(lua_State* L)
         { "tick_count",         klua_kgui_tick_count },         // 获取GUI系统滴答数(伪); (单位毫秒)
 
         // 内部控件定时器运行间隔
-        { "ticker_interval",    klua_kgui_ticker_interval },    // 设置 内部控件定时器运行间隔; (单位毫秒)
+        { "ticker_interval",    klua_kgui_ticker_interval },    // 设置/获取 内部控件定时器运行间隔; (单位毫秒)
 
 
         // 用户图层(udata layer)操作
@@ -1165,6 +1121,8 @@ int klua_open_kgui(lua_State* L)
         { "move_waitlayer",     klua_kgui_move_waitlayer },     // 移动 等待图层
         { "wait",               klua_kgui_wait },               // 开启/关闭 等待
 
+
+        { "redraw_full_event",  klua_kgui_redraw_full_event },  // 设置/获取 是否完整绘制
 
         { NULL,                 NULL }
     };

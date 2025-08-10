@@ -170,7 +170,7 @@ bool klbuiex_redraw_need_repaint(klbuiex_redraw_t* p_re, bool* p_redraw_all)
         }
     } 
 
-    *p_redraw_all = p_re->redraw_all;
+    if (NULL != p_redraw_all) { *p_redraw_all = p_re->redraw_all; }
 
     return ret;
 }

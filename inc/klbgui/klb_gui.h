@@ -7,7 +7,7 @@
 ///   默认配色采用 visual studio 深色系风格
 ///   图标来源于1: http://iconpark.oceanengine.com/official
 ///   图标来源于2: https://remixicon.com/
-/// @version 0.6
+/// @version 0.7
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 ///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
@@ -15,6 +15,7 @@
 ///   \n [2025-1] 添加定时器相关功能
 ///   \n [2025-6] 调整UI图形渲染功能到专门的内部渲染扩展模块中
 ///   \n [2025-6] 添加支持多画布图层绘图模式(指 modal/popup/msgbox 分别使用不同的 画布)
+///   \n [2025-8] 剔除UI框架中的所有控件(仅保留tip, 降低核心库大小), 改由可选扩展包支持
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
@@ -443,6 +444,16 @@ KLB_API int64_t klb_gui_get_ticker_interval(klb_gui_t* p_gui);
 /// @param [in]  *p_gui         GUI对象
 /// @return 无
 KLB_API void klb_gui_set_ticker_interval(klb_gui_t* p_gui, int64_t interval);
+
+
+/// @brief 设置/获取 是否完整绘制 事件过程
+/// @param [in]  *p_gui         GUI对象
+/// @param [in]  is_full        是否完成绘制: 默认(true)
+/// @return 无
+/// @note is_full = true,  eg. 每个鼠标移动过程, 将会被绘制出来
+///       is_full = false, eg. 若有一串移动过程, 则只有最终状态被绘制出来
+KLB_API void klb_gui_set_redraw_full_event(klb_gui_t* p_gui, bool is_full);
+KLB_API bool klb_gui_get_redraw_full_event(klb_gui_t* p_gui);
 
 
 #ifdef __cplusplus

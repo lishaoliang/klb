@@ -213,6 +213,7 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 				
 				try_count = try_count + 1
 				if 99999 <= try_count then
+					print('[klbui]ParseWnd kgui.append error! type =', t)
 					assert(false) -- 有错误, 类型不正确等
 					path = ''
 					break
@@ -238,6 +239,7 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 				
 				try_count = try_count + 1
 				if 99999 <= try_count then
+					print('[klbui]ParseWnd kgui.append error! type =', t)
 					assert(false)	-- 有错误, 类型不正确等
 					path = ''
 					break

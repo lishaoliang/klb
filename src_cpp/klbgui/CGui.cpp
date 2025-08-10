@@ -65,7 +65,7 @@ void CGui::Init()
     // 注册标准cpp窗口类型
     {
         // 注册标准窗口类型
-        KLB_GUI_REGISTER_STD_CPP(m_gui);
+        //KLB_GUI_REGISTER_STD_CPP(m_gui);
     }
 }
 

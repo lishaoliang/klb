@@ -20,6 +20,7 @@
 extern "C" {
 #endif
 
+#if 0
 
 #define KLBUI_kstatic           "kstatic"
 #define KLBUI_kbutton           "kbutton"
@@ -117,6 +118,7 @@ int klbui_register_kmenu(klb_gui_t* p_gui);
     klbui_register_kmenu((PTR_GUI_));           \
 }
 
+#endif
 
 #ifdef __cplusplus
 }

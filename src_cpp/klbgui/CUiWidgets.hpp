@@ -5,6 +5,7 @@
 
 namespace klbui {
 
+#if 0
 
 //////////////////////////////////////////////////////////////////////////
 // 控件名称/TID
@@ -53,6 +54,8 @@ int klbui_register_ctimer(klb_gui_t* p_gui);
     klbui_register_cticker((PTR_GUI_));         \
     klbui_register_ctimer((PTR_GUI_));          \
 }
+
+#endif
 
 } // namespace klbui
 

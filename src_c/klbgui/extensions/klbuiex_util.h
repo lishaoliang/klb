@@ -27,9 +27,11 @@ typedef struct klbuiex_util_t_
     // 日期时间格式
     struct
     {
-        int         datefmt;    ///< 时间格式: KLBUI_DATE_YMD1
-        int         timefmt;    ///< 日期格式: KLBUI_TIME_24H
+        int         datefmt;            ///< 时间格式: KLBUI_DATE_YMD1
+        int         timefmt;            ///< 日期格式: KLBUI_TIME_24H
     };
+
+    bool            is_redraw_full;     ///< 是否为 完全绘制: 例如: 鼠标移动过程均被绘制
 
     // 当前鼠标位置
     // 用于重新获取当前焦点等
