@@ -833,6 +833,19 @@ static int klua_kgui_refresh(lua_State* L)
     return 0;
 }
 
+static int klua_kgui_update_tip(lua_State* L)
+{
+    const char* p_tip = "";
+    if (klua_is_string(L, 1))
+    {
+        p_tip = lua_tostring(L, 1);
+    }
+
+    klb_gui_update_tip(klua_gui_get_by_L(L), p_tip);
+
+    return 0;
+}
+
 static int klua_kgui_get_wh(lua_State* L)
 {
     int w = 0, h = 0;
@@ -1093,6 +1106,9 @@ int klua_open_kgui(lua_State* L)
 
         // 刷新
         { "refresh",            klua_kgui_refresh },            // 刷新所有窗口
+        
+        // 更新tip
+        { "update_tip",         klua_kgui_update_tip },         // 更新tip
 
         // gui get (w,h)
         { "wh",                 klua_kgui_get_wh },             // 获取主画布宽高(即屏幕宽高)

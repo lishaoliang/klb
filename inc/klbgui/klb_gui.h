@@ -428,6 +428,12 @@ KLB_API void klb_gui_set_focusdelay(klb_gui_t* p_gui, int64_t timeout);
 KLB_API void klb_gui_update(klb_gui_t* p_gui);
 
 
+/// @brief 更新tip
+/// @param [in]  *p_tip         tip字符串
+/// @return int 0
+KLB_API int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip);
+
+
 /// @brief 获取GUI的当前 系统滴答数(单位毫秒ms)
 /// @param [in]  *p_gui         GUI对象
 /// @return int64_t 系统滴答数

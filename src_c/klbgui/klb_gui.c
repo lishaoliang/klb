@@ -1501,6 +1501,36 @@ static void refind_focus_klb_gui(klb_gui_t* p_gui, int x, int y)
     }
 }
 
+// 窗口是否处于显示, 需要检测其父窗口
+static bool klb_gui_wnd_is_show(klb_wnd_t* p_wnd)
+{
+    if (NULL == p_wnd)
+    {
+        return false;
+    }
+
+    klb_wnd_t* p_cur = p_wnd;
+
+    // 当前窗口
+    if (!klb_wnd_is_show(p_cur))
+    {
+        return false;
+    }
+
+    // 窗口链 中的窗口是否隐藏
+    while (NULL != p_cur->p_parent)
+    {
+        p_cur = p_cur->p_parent;
+
+        if (!klb_wnd_is_show(p_cur))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
 {
     // Note. 消息事件处理流程
@@ -1717,6 +1747,19 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
     // step 3. 检查处理 是否需要处理 KLBUI_focusdelay 消息等
     if (!p_gui->is_wait && p_gui->focusdelay && p_gui->focusdelay_tc <= (ABS_SUB(tc, p_gui->focus_tc)))
     {
+        // Bug. 若在 focusdelay 之前,窗口被隐藏, 此时应取消焦点
+        if (NULL != p_gui->p_focus && !klb_gui_wnd_is_show(p_gui->p_focus))
+        {
+            // 失去焦点流程
+            unfocus_windows_klb_gui(p_gui, p_gui->p_focus);
+
+            p_gui->p_focus_top = NULL;
+            p_gui->p_focus = NULL;
+            p_gui->focus_tc = 0;
+            p_gui->focusdelay = false;
+        }
+
+        // 正常 focusdelay - tip 流程
         klb_wnd_t* p_wnd = p_gui->p_focus;
         if (NULL != p_wnd)
         {

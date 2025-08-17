@@ -383,6 +383,13 @@ klbui.refresh = function ()
 end
 
 
+-- @brief 更新tip
+-- @param [in] s[string]		tip字符串; 为''时, 表示清空
+-- @return 无
+klbui.update_tip = function (s)
+	kgui.update_tip(s)
+end
+
 ------------------------------------------------
 -- 时间等
 

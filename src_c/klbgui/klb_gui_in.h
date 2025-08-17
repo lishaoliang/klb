@@ -150,9 +150,6 @@ typedef struct klb_gui_t_
 // 更新窗口
 int klb_gui_update_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd);
 
-// 更新tip
-int klb_gui_update_tip(klb_gui_t* p_gui, const char* p_tip);
-
 
 /// @brief 设置 窗口 图层类型
 /// @param [in] layer_type      图层类型 klb_canvas_layer_type_e; eg. KLB_CANVAS_LAYER_popup
