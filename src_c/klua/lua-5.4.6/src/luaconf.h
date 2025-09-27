@@ -10,6 +10,7 @@
 
 #include <limits.h>
 #include <stddef.h>
+#include "klb_type.h"
 
 
 /*
@@ -274,19 +275,21 @@
 ** the libraries, you may want to use the following definition (define
 ** LUA_BUILD_AS_DLL to get it).
 */
-#if defined(LUA_BUILD_AS_DLL)	/* { */
-
-#if defined(LUA_CORE) || defined(LUA_LIB)	/* { */
-#define LUA_API __declspec(dllexport)
-#else						/* }{ */
-#define LUA_API __declspec(dllimport)
-#endif						/* } */
-
-#else				/* }{ */
-
-#define LUA_API		extern
-
-#endif				/* } */
+//#if defined(LUA_BUILD_AS_DLL)	/* { */
+//
+//#if defined(LUA_CORE) || defined(LUA_LIB)	/* { */
+//#define LUA_API __declspec(dllexport)
+//#else						/* }{ */
+//#define LUA_API __declspec(dllimport)
+//#endif						/* } */
+//
+//#else				/* }{ */
+//
+//#define LUA_API		extern
+//
+//#endif				/* } */
+// add for export
+#define LUA_API     KLB_API
 
 
 /*

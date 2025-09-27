@@ -915,7 +915,7 @@ int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
 
         // 处理 有定时器 样式的流程
         klbuiex_wndticker_msgbox(p_gui->p_wndticker, p_wnd);
-        klbuiex_wndticker_set_modal_num(p_gui->p_wndticker, 1);
+        klbuiex_wndticker_set_msgbox_num(p_gui->p_wndticker, 1);
 
         return 0;
     }
@@ -948,7 +948,7 @@ int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
 
         // 处理 有定时器 样式的流程
         klbuiex_wndticker_msgbox(p_gui->p_wndticker, p_wnd);
-        klbuiex_wndticker_set_modal_num(p_gui->p_wndticker, 1);
+        klbuiex_wndticker_set_msgbox_num(p_gui->p_wndticker, 1);
 
         return 0;
     }
@@ -976,7 +976,7 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
 
     // 处理 有定时器 样式的结束流程
     klbuiex_wndticker_msgbox_end(p_gui->p_wndticker);
-    klbuiex_wndticker_set_modal_num(p_gui->p_wndticker, 0);
+    klbuiex_wndticker_set_msgbox_num(p_gui->p_wndticker, 0);
 
     return 0;
 }

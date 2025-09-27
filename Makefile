@@ -142,6 +142,9 @@ MY_CFLAGS += -Wl,--no-undefined
 # 优化
 MY_CFLAGS += -Os
 
+# 默认隐藏 所有符号; 防止符号污染(仅动态库生效)
+MY_CFLAGS += -D__KLB_SYMBOL_HIDING__ -fvisibility=hidden
+
 
 # 所有编译文件 C/C++
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)

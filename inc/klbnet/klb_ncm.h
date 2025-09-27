@@ -34,9 +34,9 @@ typedef enum klb_protocol_e_
     KLB_PROTOCOL_RTSP           = 3,    ///< rtsp 协议
 
     KLB_PROTOCOL_HTTP_MNP       = 4,    ///< http mnp 协议
-    KLB_PROTOCOL_HTTP_FLV       = 5,   ///< http flv 协议
-    KLB_PROTOCOL_WS_MNP         = 6,   ///< websocket mnp 协议
-    KLB_PROTOCOL_WS_FLV         = 7,   ///< websocket flv 协议
+    KLB_PROTOCOL_HTTP_FLV       = 5,    ///< http flv 协议
+    KLB_PROTOCOL_WS_MNP         = 6,    ///< websocket mnp 协议
+    KLB_PROTOCOL_WS_FLV         = 7,    ///< websocket flv 协议
 
     KLB_PROTOCOL_HTTP           = 8,    ///< http 协议
     KLB_PROTOCOL_WS             = 9,    ///< websocket 协议
@@ -58,6 +58,8 @@ typedef enum klb_protocol_preload_e_
 {
     KLB_PROTOCOL_LOAD_STD       = 0x0001,
     KLB_PROTOCOL_LOAD_RPC       = 0x0002,
+
+    KLB_PROTOCOL_LOAD_ALL       = 0xFFFF,
 }klb_protocol_preload_e;
 
 

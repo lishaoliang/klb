@@ -17,7 +17,7 @@ typedef struct klb_ncm_item_t_
     klb_socket_t*       p_socket;           ///< socket
     int                 id;                 ///< ID号
 
-    void*               ptr;                ///< 扩展的指针
+    void*               ptr;                ///< 扩展的指针 = ops.cb_create()
     klb_ncm_ops_t       ops;                ///< 解析接口函数
 }klb_ncm_item_t;
 

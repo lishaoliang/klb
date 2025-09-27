@@ -86,10 +86,10 @@ typedef enum klb_socket_status_rw_e_
 }klb_socket_status_rw_e;
 
 /// @struct klb_socket_t
-/// @brief  socket基础定义
+/// @brief  socket 基础定义
 typedef struct klb_socket_t_
 {
-    klb_socket_vtable_t vtable;         ///< 虚表
+    klb_socket_vtable_t vtable;         ///< 函数表
 
     klb_socket_fd       fd;             ///< socket fd
 

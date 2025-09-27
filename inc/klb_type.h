@@ -88,14 +88,26 @@
         #define KLB_API_CPP 
     #endif
 #else
-    #ifdef __cplusplus
-        #define KLB_API extern "C"
-        #define KLB_EXTERN
-        #define KLB_API_CPP 
+    #if defined(__KLB_SYMBOL_HIDING__)
+        #ifdef __cplusplus
+            #define KLB_API extern "C" __attribute__((visibility("default")))
+            #define KLB_EXTERN
+            #define KLB_API_CPP __attribute__((visibility("default")))
+        #else
+            #define KLB_API extern __attribute__((visibility("default")))
+            #define KLB_EXTERN extern 
+            #define KLB_API_CPP __attribute__((visibility("default")))
+        #endif
     #else
-        #define KLB_API extern
-        #define KLB_EXTERN extern
-        #define KLB_API_CPP 
+        #ifdef __cplusplus
+            #define KLB_API extern "C"
+            #define KLB_EXTERN
+            #define KLB_API_CPP
+        #else
+            #define KLB_API extern
+            #define KLB_EXTERN extern
+            #define KLB_API_CPP
+        #endif
     #endif
 #endif
 
