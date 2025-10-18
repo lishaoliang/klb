@@ -1,13 +1,13 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klua/klua.h"
 #include "klbmem/klb_mem.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klua/klua_netmulti.h"
 #include "klua/klua_coroutine.h"
+#include "klbutil/klb_nlist.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klbrtsp/klb_rtspclient_conn.h"
-#include "klbutil/klb_nlist.h"
+#include "klua/klua_net/klua_krtsp_serve.h"
 #include <assert.h>
 
 
@@ -222,6 +222,7 @@ static void klua_krtsp_client_createmeta(lua_State* L)
 
 
 ////////////////////////////////////////
+// rtsp client
 
 static int klua_krtsp_client_connect(lua_State* L)
 {
@@ -262,14 +263,14 @@ static int klua_krtsp_client_connect(lua_State* L)
 
 //////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////
-
 // rtsp
 int klua_open_krtsp(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
-        { "connect",            klua_krtsp_client_connect },
+        { "connect",            klua_krtsp_client_connect },        ///< 客户端 发起连接
+
+        { "listen",             klua_krtsp_serve_listen },          ///< 服务端 监听
 
         { NULL,                 NULL }
     };
@@ -279,6 +280,12 @@ int klua_open_krtsp(lua_State* L)
 
     // k rtsp client
     klua_krtsp_client_createmeta(L);
+
+    // k rtsp serve
+    klua_krtspserve_createmeta(L);
+    
+    // k rtsp serve listen
+    klua_krtspserve_listen_createmeta(L);
 
     return 1;
 }

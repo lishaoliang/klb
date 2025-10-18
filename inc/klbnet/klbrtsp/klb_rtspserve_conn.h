@@ -1,16 +1,17 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
-/// @file    klb_rtspclient_conn.h
+/// @file    klb_rtspserve_conn.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   RTSP客户端连接(klb rtsp client connect)
+/// @brief   RTSP服务连接(klb rtsp serve connect)
 /// @version 0.1
 /// @history 修改历史
-///  \n [2025-09] 创建文件
+///  \n [2025-10] 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __KLB_RTSPCLIENT_CONN_H__
-#define __KLB_RTSPCLIENT_CONN_H__
+#ifndef __KLB_RTSPSERVE_CONN_H__
+#define __KLB_RTSPSERVE_CONN_H__
+
 
 #include "klb_type.h"
 #include "klbnet/klb_socket.h"
@@ -24,11 +25,11 @@ extern "C" {
 
 /// @brief 创建rtsp连接
 /// @return klb_netconn_t*
-KLB_API klb_netconn_t* klb_rtspclient_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
+KLB_API klb_netconn_t* klb_rtspserve_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
 
 
 /// @brief 连接目标
-KLB_API klb_netconn_t* klb_rtspclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port);
+KLB_API klb_netconn_t* klb_rtspserve_conn_create2(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
 
 
 
@@ -37,5 +38,5 @@ KLB_API klb_netconn_t* klb_rtspclient_connect(klb_netmulti_t* p_netmulti, const 
 #endif
 
 
-#endif // __KLB_RTSPCLIENT_CONN_H__
+#endif // __KLB_RTSPSERVE_CONN_H__
 //end

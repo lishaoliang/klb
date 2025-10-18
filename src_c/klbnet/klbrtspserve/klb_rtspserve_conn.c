@@ -1,5 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klbnet/klbrtsp/klb_rtspclient_conn.h"
+#include "klbnet/klbrtsp/klb_rtspserve_conn.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_rbuf.h"
@@ -8,18 +8,18 @@
 #include "klbnet/klbrtsp/klb_rtspparser.h"
 
 
-/// @def   KLB_RTSPCLIENT_rbuf_min
+/// @def   KLB_RTSPSERVE_rbuf_min
 /// @brief 临时接收数据最小长度
-#define KLB_RTSPCLIENT_rbuf_min    (4096)
+#define KLB_RTSPSERVE_rbuf_min    (4096)
 
-/// @def   KLB_RTSPCLIENT_rbuf_max
+/// @def   KLB_RTSPSERVE_rbuf_max
 /// @brief 临时接收数据最大长度
-#define KLB_RTSPCLIENT_rbuf_max    (65536)
+#define KLB_RTSPSERVE_rbuf_max    (65536)
 
 
-/// @struct klb_rtspclient_conn_t
+/// @struct klb_rtspserve_conn_t
 /// @brief  RTSP客户端连接
-typedef struct klb_rtspclient_conn_t_
+typedef struct klb_rtspserve_conn_t_
 {
     klb_netmulti_t*                 p_netmulti;         ///< 复用
 
@@ -34,20 +34,20 @@ typedef struct klb_rtspclient_conn_t_
     {
         klb_rbuf_t*                 p_read_rbuf;        ///< 临时读取缓存
     };
-}klb_rtspclient_conn_t;
+}klb_rtspserve_conn_t;
 
 
 
 //////////////////////////////////////////////////////////////////////////
 // 前置定义
-static void klb_rtspclient_conn_quit(klb_netconn_t* p_conn);
+static void klb_rtspserve_conn_quit(klb_netconn_t* p_conn);
 
 
 //////////////////////////////////////////////////////////////////////////
 
-static void push_data_klb_rtspclient_conn(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data)
+static void push_data_klb_rtspserve_conn(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     if (KLB_SOCKET_OK != code && KLB_SOCKET_CONNECT != code)
     {
@@ -71,9 +71,9 @@ static void push_data_klb_rtspclient_conn(klb_netconn_t* p_conn, int code, int p
 
 
 // 解析从网络上接收到的数据
-static void parse_recv_data_klb_rtspclient_conn(klb_netconn_t* p_conn)
+static void parse_recv_data_klb_rtspserve_conn(klb_netconn_t* p_conn)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
     klb_rbuf_t* p_read_rbuf = p_rtsp->p_read_rbuf;
 
     while (true)
@@ -102,18 +102,15 @@ static void parse_recv_data_klb_rtspclient_conn(klb_netconn_t* p_conn)
                 klb_buf_t* p_buf = klb_buf_malloc(pack_len, false);
                 klb_buf_write(p_buf, ptr, pack_len);
 
-                push_data_klb_rtspclient_conn(p_conn, 0, KLB_MNP_TEXT, p_buf);
+                push_data_klb_rtspserve_conn(p_conn, 0, KLB_MNP_TEXT, p_buf);
             }
             else if(KLB_RTSPTYPE_rtp == parser.rtsptype)
             {
                 // rtp 包
-                int a = 0;
-
             }
             else if(KLB_RTSPTYPE_rtcp == parser.rtsptype)
             {
                 // rtcp 包
-
             }
 
             klb_rbuf_use(p_read_rbuf, parser.pack_len);
@@ -136,19 +133,19 @@ static void parse_recv_data_klb_rtspclient_conn(klb_netconn_t* p_conn)
 // msg
 
 // 握手 连接超时
-static void on_msg_connect_timeout_klb_rtspclient_conn(klb_netconn_t* p_conn)
+static void on_msg_connect_timeout_klb_rtspserve_conn(klb_netconn_t* p_conn)
 {
-    push_data_klb_rtspclient_conn(p_conn, KLB_SOCKET_TIMEOUT, 0, NULL);
+    push_data_klb_rtspserve_conn(p_conn, KLB_SOCKET_TIMEOUT, 0, NULL);
 }
 
 // 握手完成
-static void on_msg_connected_klb_rtspclient_conn(klb_netconn_t* p_conn)
+static void on_msg_connected_klb_rtspserve_conn(klb_netconn_t* p_conn)
 {
-    push_data_klb_rtspclient_conn(p_conn, KLB_SOCKET_CONNECT, 0, NULL);
+    push_data_klb_rtspserve_conn(p_conn, KLB_SOCKET_CONNECT, 0, NULL);
 }
 
 // 定时器消息
-static void on_msg_ticker_klb_rtspclient_conn(klb_netconn_t* p_conn)
+static void on_msg_ticker_klb_rtspserve_conn(klb_netconn_t* p_conn)
 {
 
 }
@@ -157,9 +154,9 @@ static void on_msg_ticker_klb_rtspclient_conn(klb_netconn_t* p_conn)
 // 继承重写方法
 
 /// @brief 销毁
-static void klb_rtspclient_conn_destroy(klb_netconn_t* p_conn)
+static void klb_rtspserve_conn_destroy(klb_netconn_t* p_conn)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     if (NULL != p_rtsp->p_netmulti)
     {
@@ -169,25 +166,25 @@ static void klb_rtspclient_conn_destroy(klb_netconn_t* p_conn)
 
     KLB_FREE_BY(p_conn->p_socket, klb_socket_destroy);
 
-    klb_rtspclient_conn_quit(p_conn);
+    klb_rtspserve_conn_quit(p_conn);
 
     KLB_FREE(p_conn);
 }
 
 /// @brief 对连接进行控制操作: get/set,etc.
 /// @return int 0.成功; 非0.失败
-static int klb_rtspclient_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out)
+static int klb_rtspserve_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     return 0;
 }
 
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
-static int klb_rtspclient_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+static int klb_rtspserve_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     if (KLB_MNP_TEXT == packtype)
     {
@@ -206,18 +203,18 @@ static int klb_rtspclient_conn_send_normal(klb_netconn_t* p_conn, int packtype, 
 
 /// @brief 发送媒体数据包
 /// @return int
-static int klb_rtspclient_conn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data)
+static int klb_rtspserve_conn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     return 0;
 }
 
 /// @brief 当网络上可以发送数据时
 /// @return int
-static int klb_rtspclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
+static int klb_rtspserve_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
     klb_socket_t* p_socket = p_conn->p_socket;
 
     if (KLB_SOCKET_OK != klb_socket_get_status(p_socket))
@@ -276,9 +273,9 @@ static int klb_rtspclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 
 /// @brief 当网络上可以接收数据时
 /// @return int
-static int klb_rtspclient_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
+static int klb_rtspserve_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
     klb_socket_t* p_socket = p_conn->p_socket;
 
     if (KLB_SOCKET_OK != klb_socket_get_status(p_socket))
@@ -308,7 +305,7 @@ static int klb_rtspclient_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
             read_num += recv_len;
 
             // 解析数据
-            parse_recv_data_klb_rtspclient_conn(p_conn);
+            parse_recv_data_klb_rtspserve_conn(p_conn);
 
             klb_rbuf_memmove(p_read_rbuf);
         }
@@ -327,20 +324,20 @@ static int klb_rtspclient_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
 
 /// @brief 当网络上有消息传来时
 /// @return int
-static int klb_rtspclient_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now)
+static int klb_rtspserve_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now)
 {
     switch (msg)
     {
     case KLB_NETCONN_MSG_connect_timeout:
-        on_msg_connect_timeout_klb_rtspclient_conn(p_conn);
+        on_msg_connect_timeout_klb_rtspserve_conn(p_conn);
         break;
 
     case KLB_NETCONN_MSG_connected:
-        on_msg_connected_klb_rtspclient_conn(p_conn);
+        on_msg_connected_klb_rtspserve_conn(p_conn);
         break;
 
     case KLB_NETCONN_MSG_onticker:
-        on_msg_ticker_klb_rtspclient_conn(p_conn);
+        on_msg_ticker_klb_rtspserve_conn(p_conn);
         break;
 
     default:
@@ -356,34 +353,34 @@ static int klb_rtspclient_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t no
 //////////////////////////////////////////////////////////////////////////
 // init / quit
 
-static int klb_rtspclient_conn_init(klb_netconn_t* p_conn)
+static int klb_rtspserve_conn_init(klb_netconn_t* p_conn)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     // 初始化 vtable
     p_conn->vtable.destroy = NULL; // 销毁
     p_conn->vtable.recv_data = NULL; // 当前连接接收到数据/错误等信息,后调用此函数
 
-    p_conn->vtable.ioctrl = klb_rtspclient_conn_ioctrl; // 对连接进行控制操作: get/set,etc.
-    p_conn->vtable.send_normal = klb_rtspclient_conn_send_normal; // 调用者 发送常规数据包
-    p_conn->vtable.send_media = klb_rtspclient_conn_send_media; // 调用者 发送媒体数据包
-    p_conn->vtable.on_send = klb_rtspclient_conn_on_send; // 当网络上可以发送数据时
-    p_conn->vtable.on_recv = klb_rtspclient_conn_on_recv; // 当网络上可以接收数据时
-    p_conn->vtable.on_msg = klb_rtspclient_conn_on_msg; // 当网络上有消息传来时
+    p_conn->vtable.ioctrl = klb_rtspserve_conn_ioctrl; // 对连接进行控制操作: get/set,etc.
+    p_conn->vtable.send_normal = klb_rtspserve_conn_send_normal; // 调用者 发送常规数据包
+    p_conn->vtable.send_media = klb_rtspserve_conn_send_media; // 调用者 发送媒体数据包
+    p_conn->vtable.on_send = klb_rtspserve_conn_on_send; // 当网络上可以发送数据时
+    p_conn->vtable.on_recv = klb_rtspserve_conn_on_recv; // 当网络上可以接收数据时
+    p_conn->vtable.on_msg = klb_rtspserve_conn_on_msg; // 当网络上有消息传来时
 
     // 初始化其他
 
     p_rtsp->p_write_nlist = klb_nlist_create();
 
     // 读
-    p_rtsp->p_read_rbuf = klb_rbuf_malloc(KLB_RTSPCLIENT_rbuf_min);
+    p_rtsp->p_read_rbuf = klb_rbuf_malloc(KLB_RTSPSERVE_rbuf_min);
 
     return 0;
 }
 
-static void klb_rtspclient_conn_quit(klb_netconn_t* p_conn)
+static void klb_rtspserve_conn_quit(klb_netconn_t* p_conn)
 {
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
     // 释放内存
     while (0 < klb_nlist_size(p_rtsp->p_write_nlist))
@@ -399,20 +396,10 @@ static void klb_rtspclient_conn_quit(klb_netconn_t* p_conn)
 
 //////////////////////////////////////////////////////////////////////////
 
-klb_netconn_t* klb_rtspclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port)
+klb_netconn_t* klb_rtspserve_conn_create2(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket)
 {
-    // 连接 socket
-    klb_socket_fd fd = klb_socket_connect(p_host, port, 0);
-    if (INVALID_SOCKET == fd)
-    {
-        return NULL;
-    }
-
-    // 创建 klb_socket_t*
-    klb_socket_t* p_socket = klb_socket_async_create(fd);
-
     // 创建 klb_netconn_t*
-    klb_netconn_t* p_netconn = klb_rtspclient_conn_create(p_netmulti, p_socket);
+    klb_netconn_t* p_netconn = klb_rtspserve_conn_create(p_netmulti, p_socket);
 
     {
         // 放入复用模块
@@ -427,15 +414,15 @@ klb_netconn_t* klb_rtspclient_connect(klb_netmulti_t* p_netmulti, const char* p_
 
 /// @brief 创建rtsp连接
 /// @return klb_netconn_t*
-klb_netconn_t* klb_rtspclient_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket)
+klb_netconn_t* klb_rtspserve_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket)
 {
-    klb_netconn_t* p_conn = KLB_MALLOCZ(klb_netconn_t, 1, sizeof(klb_rtspclient_conn_t));
-    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_netconn_t* p_conn = KLB_MALLOCZ(klb_netconn_t, 1, sizeof(klb_rtspserve_conn_t));
+    klb_rtspserve_conn_t* p_rtsp = (klb_rtspserve_conn_t*)p_conn->extra;
 
-    klb_rtspclient_conn_init(p_conn);
+    klb_rtspserve_conn_init(p_conn);
 
     // 补写 销毁函数
-    p_conn->vtable.destroy = klb_rtspclient_conn_destroy;
+    p_conn->vtable.destroy = klb_rtspserve_conn_destroy;
 
     // socket
     {

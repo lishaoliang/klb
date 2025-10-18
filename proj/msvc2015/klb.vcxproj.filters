@@ -289,6 +289,9 @@
     <Filter Include="src_c\klbnet\klbrtsp">
       <UniqueIdentifier>{bf0cfcbd-90ce-4f5d-bd28-4b59ac6ef8ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbnet\klbrtspserve">
+      <UniqueIdentifier>{71ba1afe-6207-43ea-93bf-b2f41f159801}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1626,6 +1629,12 @@
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h">
       <Filter>inc\klbnet\klbrtsp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h">
+      <Filter>inc\klbnet\klbrtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.h">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2722,6 +2731,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c">
       <Filter>src_c\klbnet\klbrtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbrtspserve\klb_rtspserve_conn.c">
+      <Filter>src_c\klbnet\klbrtspserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c">
+      <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

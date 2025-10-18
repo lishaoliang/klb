@@ -21,10 +21,9 @@ extern "C" {
 #endif
 
 
-typedef struct klb_string_t_
-{
-    sds     p_sds;
-}klb_string_t;
+/// @brief 在源字符串 中 查找 指定的字符串; 不需要'\0'结束
+/// @return char* 寻找到的字符点
+KLB_API char* klb_strnstr_memcmp(const char* p_src, int src_len, const char* p_dst, int dst_len);
 
 
 #ifdef __cplusplus

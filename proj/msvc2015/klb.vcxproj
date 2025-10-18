@@ -211,6 +211,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_http.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
@@ -461,6 +462,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
+    <ClInclude Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_map.h" />
@@ -703,6 +705,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klbflvclient\klb_flvclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbrtspserve\klb_rtspserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_listen.c" />
@@ -829,6 +832,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krpc.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksip.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c" />

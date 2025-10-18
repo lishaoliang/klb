@@ -41,7 +41,7 @@ MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops
 MY_DIRS += ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbmnpclient
 
 # klbnet - rtsp
-MY_DIRS += ./src_c/klbnet/klbrtp ./src_c/klbnet/klbrtsp ./src_c/klbnet/klbrtspclient
+MY_DIRS += ./src_c/klbnet/klbrtp ./src_c/klbnet/klbrtsp ./src_c/klbnet/klbrtspclient ./src_c/klbnet/klbrtspserve
 
 
 # klbformat
