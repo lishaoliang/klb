@@ -129,6 +129,12 @@ int klb_socket_recvfrom(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len, str
 
 //////////////////////////////////////////////////////////////////////////
 
+klb_socket_fd klb_socket_get_fd(klb_socket_t* p_socket)
+{
+    assert(NULL != p_socket);
+    return p_socket->fd;
+}
+
 void klb_socket_attach_fd(klb_socket_t* p_socket, klb_socket_fd fd)
 {
     assert(NULL != p_socket);
@@ -217,6 +223,18 @@ void klb_socket_set_status(klb_socket_t* p_socket, int status)
 uint16_t  klb_socket_get_status(klb_socket_t* p_socket)
 {
     return p_socket->status;
+}
+
+/// @brief 设置 user data
+void klb_socket_set_udata(klb_socket_t* p_socket, void* p_udata)
+{
+    p_socket->p_udata = p_udata;
+}
+
+/// @brief 获取 user data
+void* klb_socket_get_udata(klb_socket_t* p_socket)
+{
+    return p_socket->p_udata;
 }
 
 //////////////////////////////////////////////////////////////////////////

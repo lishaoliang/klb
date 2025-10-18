@@ -142,6 +142,9 @@ KLB_API int klb_socket_sendto(klb_socket_t* p_socket, const uint8_t* p_data, int
 /// @brief UDP接收数据
 KLB_API int klb_socket_recvfrom(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len, struct sockaddr* p_addr, int* p_addr_len);
 
+/// @brief 获取 fd
+KLB_API klb_socket_fd klb_socket_get_fd(klb_socket_t* p_socket);
+
 /// @brief 附加到socket fd
 KLB_API void klb_socket_attach_fd(klb_socket_t* p_socket, klb_socket_fd fd);
 
@@ -177,6 +180,13 @@ KLB_API void klb_socket_set_status(klb_socket_t* p_socket, int status);
 
 /// @brief 获取状态
 KLB_API uint16_t klb_socket_get_status(klb_socket_t* p_socket);
+
+/// @brief 设置 user data
+KLB_API void klb_socket_set_udata(klb_socket_t* p_socket, void* p_udata);
+
+/// @brief 获取 user data
+KLB_API void* klb_socket_get_udata(klb_socket_t* p_socket);
+
 
 /// @brief 关闭socket
 KLB_API void klb_socket_close(klb_socket_fd fd);

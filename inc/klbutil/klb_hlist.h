@@ -32,7 +32,7 @@ typedef struct klb_hlist_t_ klb_hlist_t;
 
 
 /// @brief 创建hlist对象
-/// @param [in] ht_max       hash table大小; 0.使用自适用hash map; 大于0.使用固定大小hash table
+/// @param [in] ht_max       hash table大小; 0.使用自适应hash map; 大于0.使用固定大小hash table
 /// @return klb_hlist_t*     hlist对象
 KLB_API klb_hlist_t* klb_hlist_create(int ht_max);
 

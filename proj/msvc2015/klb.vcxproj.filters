@@ -262,6 +262,33 @@
     <Filter Include="src_c\klua\lua-zlib-1.3">
       <UniqueIdentifier>{7ef202fe-f4b1-4e25-82cb-ccd8ecc10dcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\klbnet\klbrtsp">
+      <UniqueIdentifier>{c51596ed-0101-4220-92d4-dcfdda210836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbrtspclient">
+      <UniqueIdentifier>{8d4a3a7f-6cb6-4a6d-bced-85df3f411652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet\klbflv">
+      <UniqueIdentifier>{131bd3b7-4878-4bf4-9835-e4916fd3cb50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbflvclient">
+      <UniqueIdentifier>{d2f4be79-0a5d-4202-afa8-3d14855989b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbmnpclient">
+      <UniqueIdentifier>{548cce8a-a513-44ce-b160-1e9b09fa928e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet\klbmnp">
+      <UniqueIdentifier>{70f870d6-96be-427a-b0db-540501e7edbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet\klbrtp">
+      <UniqueIdentifier>{377020d7-ea44-4dda-abe5-82a9d0544c26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbrtp">
+      <UniqueIdentifier>{104618d1-016c-4cb3-a26f-afbc3bca52fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbrtsp">
+      <UniqueIdentifier>{bf0cfcbd-90ce-4f5d-bd28-4b59ac6ef8ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1572,6 +1599,33 @@
     <ClInclude Include="..\..\inc\klbgui\klbui_layer.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_netconn.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_netmulti.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_netmulti.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_netmulti.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h">
+      <Filter>inc\klbnet\klbrtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvclient_conn.h">
+      <Filter>inc\klbnet\klbflv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpclient_conn.h">
+      <Filter>inc\klbnet\klbmnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h">
+      <Filter>inc\klbnet\klbrtp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h">
+      <Filter>inc\klbnet\klbrtsp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2647,6 +2701,27 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.c">
       <Filter>src_c\klbgui\extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_netconn.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klb_netmulti.c">
+      <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_netmulti.c">
+      <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c">
+      <Filter>src_c\klbnet\klbrtspclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbflvclient\klb_flvclient_conn.c">
+      <Filter>src_c\klbnet\klbflvclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c">
+      <Filter>src_c\klbnet\klbmnpclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c">
+      <Filter>src_c\klbnet\klbrtsp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

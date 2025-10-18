@@ -96,6 +96,15 @@ typedef klb_buf_t*(*klb_buf_malloc_cb)(void* p_pool, size_t size);
 KLB_API klb_buf_t* klb_buf_malloc(int buf_len, bool zero);
 
 
+/// @brief 写数据
+/// @return int 写入的数据长度
+KLB_API int klb_buf_write(klb_buf_t* p_buf, const char* p_data, int data_len);
+
+
+/// @brief 缓存数据长度
+KLB_API int klb_buf_data_len(klb_buf_t* p_buf);
+
+
 /// @brief 将有效数据拼接在一起
 /// @param [in]  *p_head        缓存头指针
 /// @return klb_buf_t* KLB_BUF_EXTRA类型缓存; [klb_buf_t][data...]

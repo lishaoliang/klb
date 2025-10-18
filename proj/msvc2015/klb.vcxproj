@@ -206,10 +206,17 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_http.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_ncm.h" />
+    <ClInclude Include="..\..\inc\klbnet\klb_netconn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klb_netmulti.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_nsc.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_nsp.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h" />
@@ -370,6 +377,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klua\klua_env_extension.h" />
     <ClInclude Include="..\..\inc\klua\klua_gui.h" />
     <ClInclude Include="..\..\inc\klua\klua_multiplex.h" />
+    <ClInclude Include="..\..\inc\klua\klua_netmulti.h" />
     <ClInclude Include="..\..\inc\klua\klua_object.h" />
     <ClInclude Include="..\..\inc\klua\klua_seri.h" />
     <ClInclude Include="..\..\inc\klua\klua_thread.h" />
@@ -448,6 +456,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_netmulti.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
@@ -691,6 +700,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbflvclient\klb_flvclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_listen.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c" />
@@ -711,6 +724,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_flv.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_mnp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_rtp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_netconn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_netmulti.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_nsc.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_nsp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
@@ -789,6 +804,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_netmulti.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />

@@ -25,6 +25,29 @@ klb_buf_t* klb_buf_malloc(int buf_len, bool zero)
     return p_buf;
 }
 
+int klb_buf_write(klb_buf_t* p_buf, const char* p_data, int data_len)
+{
+    int max_len = p_buf->buf_len - p_buf->end;
+    int cp_len = MIN(max_len, data_len);
+
+    if (0 < cp_len)
+    {
+        memcpy(p_buf->p_buf + p_buf->end, p_data, data_len);
+        p_buf->end += cp_len;
+    }
+
+    return cp_len;
+}
+
+int klb_buf_data_len(klb_buf_t* p_buf)
+{
+    int len = p_buf->end - p_buf->start;
+
+    assert(0 <= len);
+    return len;
+}
+
+
 klb_buf_t* klb_buf_join(klb_buf_t* p_head)
 {
     return NULL;

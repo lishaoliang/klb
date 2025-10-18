@@ -38,6 +38,11 @@ MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
 # klbnet
 MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops
+MY_DIRS += ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbmnpclient
+
+# klbnet - rtsp
+MY_DIRS += ./src_c/klbnet/klbrtp ./src_c/klbnet/klbrtsp ./src_c/klbnet/klbrtspclient
+
 
 # klbformat
 MY_DIRS += ./src_c/klbformat

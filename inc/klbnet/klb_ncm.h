@@ -18,40 +18,11 @@
 #include "klbnet/klb_multiplex.h"
 #include "klbmem/klb_buf.h"
 #include "klbutil/klb_map.h"
+#include "klbnet/klb_netconn.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
-
-
-/// @enum  klb_protocol_e
-/// @brief 协议类型
-typedef enum klb_protocol_e_
-{
-    KLB_PROTOCOL_UNKOWN         = 0,    ///< unkown
-    KLB_PROTOCOL_MNP            = 1,    ///< mnp 协议
-    KLB_PROTOCOL_RTMP           = 2,    ///< rtmp 协议
-    KLB_PROTOCOL_RTSP           = 3,    ///< rtsp 协议
-
-    KLB_PROTOCOL_HTTP_MNP       = 4,    ///< http mnp 协议
-    KLB_PROTOCOL_HTTP_FLV       = 5,    ///< http flv 协议
-    KLB_PROTOCOL_WS_MNP         = 6,    ///< websocket mnp 协议
-    KLB_PROTOCOL_WS_FLV         = 7,    ///< websocket flv 协议
-
-    KLB_PROTOCOL_HTTP           = 8,    ///< http 协议
-    KLB_PROTOCOL_WS             = 9,    ///< websocket 协议
-
-    KLB_PROTOCOL_RPC_MNP_LUA    = 10,   ///< RPC mnp-lua
-    KLB_PROTOCOL_RPC_MNP_JSON   = 11,   ///< RPC mnp-json
-
-    KLB_PROTOCOL_RPC_HTTP_LUA   = 12,   ///< RPC http-lua
-    KLB_PROTOCOL_RPC_HTTP_JSON  = 13,   ///< RPC http-json
-
-    KLB_PROTOCOL_RPC_WS_LUA     = 14,   ///< RPC ws-lua
-    KLB_PROTOCOL_RPC_WS_JSON    = 15,   ///< RPC ws-json
-
-    KLB_PROTOCOL_MAX,
-}klb_protocol_e;
 
 
 typedef enum klb_protocol_preload_e_
