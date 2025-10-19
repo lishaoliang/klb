@@ -183,7 +183,7 @@ function rtspclient:co_connect(url)
 	
 	if u['port'] then
 		port = u['port']
-	end	
+	end
 
 	-- 发起连接
 	local client = krtsp.connect(host, tonumber(port))	
@@ -216,6 +216,16 @@ function rtspclient:co_connect(url)
 	
 	
 	return 0
+end
+
+function rtspclient:co_recv()
+	if self._client then
+		local msg, txt = self._client:co_recv()
+		if 'media' == msg then
+			self._client:dump_media(txt)
+			self._client:free_media(txt)
+		end
+	end
 end
 
 

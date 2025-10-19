@@ -1,7 +1,7 @@
 ﻿///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
-/// @file    klb_sipclient_conn.h
+/// @file    klb_smpclient_conn.h
 /// @author  随风(https://gitee.com/klua/klb)
 /// @brief   文件简要描述
 /// @version 0.1
@@ -9,8 +9,9 @@
 ///  \n [2025-10] 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
-#ifndef __KLB_SIPCLIENT_CONN_H__
-#define __KLB_SIPCLIENT_CONN_H__
+#ifndef __KLB_SMPCLIENT_CONN_H__
+#define __KLB_SMPCLIENT_CONN_H__
+
 
 #include "klb_type.h"
 
@@ -24,5 +25,7 @@ extern "C" {
 }
 #endif
 
-#endif // __KLB_SIPCLIENT_CONN_H__
+
+
+#endif // __KLB_SMPCLIENT_CONN_H__
 //end

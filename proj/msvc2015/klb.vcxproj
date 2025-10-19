@@ -182,6 +182,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbbase\klb_mnp_stream.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_package.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
+    <ClInclude Include="..\..\inc\klbbase\klb_smp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_string.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_str_map.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_flv.h" />
@@ -216,6 +217,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsclient_conn.h" />
@@ -719,6 +724,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtspserve\klb_rtspserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsipclient\klb_sipclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsipserve\klb_sipserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwsclient\klb_wsclient_conn.c" />

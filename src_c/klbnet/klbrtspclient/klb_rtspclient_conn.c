@@ -3,10 +3,14 @@
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_rbuf.h"
+#include "klbmem/klb_buffer.h"
+#include "klbmem/klb_buf_atom.h"
 #include "klbutil/klb_log.h"
 #include "klbutil/klb_nlist.h"
-#include "klbnet/klbrtsp/klb_rtspparser.h"
 #include "klbutil/klb_h26x.h"
+#include "klbbase/klb_mnp.h"
+#include "klbnet/klbrtsp/klb_rtspparser.h"
+
 
 
 /// @def   KLB_RTSPCLIENT_rbuf_min
@@ -30,10 +34,18 @@ typedef struct klb_rtspclient_conn_t_
         klb_nlist_t*                p_write_nlist;      ///< 待发送数据列表
     };
  
-    // read
+    // temp read
     struct
     {
         klb_rbuf_t*                 p_read_rbuf;        ///< 临时读取缓存
+    };
+
+    // media read
+    struct
+    {
+        klb_rtspparser_t            parser;             ///< 上一个视频帧, 解析值
+
+        klb_buffer_t*               p_video_buf;        ///< 视频缓存
     };
 }klb_rtspclient_conn_t;
 
@@ -69,6 +81,27 @@ static void push_data_klb_rtspclient_conn(klb_netconn_t* p_conn, int code, int p
 
 //////////////////////////////////////////////////////////////////////////
 // 
+
+
+static void push_video_data_klb_rtspclient_conn(klb_netconn_t* p_conn)
+{
+    klb_rtspclient_conn_t* p_rtsp = (klb_rtspclient_conn_t*)p_conn->extra;
+    klb_buffer_t* p_video_buf = p_rtsp->p_video_buf;
+
+    int data_len = klb_buffer_datalen(p_video_buf);
+    if (data_len <= 0)
+    {
+        return;
+    }
+
+    klb_buf_t* p_data = klb_buffer_join(p_video_buf, klb_buf_atom_malloc, NULL);
+    klb_buffer_reset(p_video_buf);
+
+    klb_mnp_media_t* p_media = (klb_mnp_media_t*)(p_data->p_buf + p_data->start);
+    p_media->size = klb_buf_data_len(p_data);
+
+    push_data_klb_rtspclient_conn(p_conn, 0, KLB_MNP_MEDIA, p_data);
+}
 
 
 // 解析从网络上接收到的数据
@@ -116,11 +149,63 @@ static void parse_recv_data_klb_rtspclient_conn(klb_netconn_t* p_conn)
                     if (0 == klb_rtspparser_parse_rtp_h264(&parser, p_nalu, nalu_len))
                     {
                         // 解析出来的 rtp nalu 数据
+                        if (KLB_MNP_BEGIN == parser.opt || KLB_MNP_FULL == parser.opt)
+                        {
+                            push_video_data_klb_rtspclient_conn(p_conn);
+                        }
 
-                        //if (parser.opt == KLB_MNP_BEGIN || KLB_MNP_FULL == parser.opt)
-                        //{
-                        //    printf("==> nalu:[%d, %d], data_len:[%d]\n", klb_h264_nalu_type(parser.nalu_value), parser.nalu_value, parser.data_len);
-                        //}
+                        if (NULL != parser.p_data && 0 < parser.data_len)
+                        {
+                            klb_buffer_t* p_video_buf = p_rtsp->p_video_buf;
+
+                            // 补齐起始码
+                            if (KLB_MNP_BEGIN == parser.opt || KLB_MNP_FULL == parser.opt)
+                            {
+                                int nalu_type = klb_h264_nalu_type(parser.nalu_value);
+
+                                // 补齐 klb_mnp_media_t
+                                klb_mnp_media_t media = { 0 };
+
+                                media.dtype = KLB_MNP_DTYPE_H264;
+                                media.time = parser.rtp_head.timestamp;
+
+                                if (KLB_H264_PSLICE == nalu_type)
+                                {
+                                    media.vtype = KLB_MNP_VTYPE_P;
+                                }
+                                else if(KLB_H264_BSLICE == nalu_type)
+                                {
+                                    media.vtype = KLB_MNP_VTYPE_B;
+                                }
+                                else if(KLB_H264_IDRSLICE == nalu_type)
+                                {
+                                    media.vtype = KLB_MNP_VTYPE_I;
+                                }
+                                else if(KLB_H264_SPS == nalu_type || KLB_H264_PPS == nalu_type)
+                                {
+                                    media.vtype = KLB_MNP_VTYPE_CFG;
+                                }
+                                
+                                klb_buffer_write(p_video_buf, (const char*)&media, sizeof(klb_mnp_media_t));
+
+                                // 补齐起始码
+                                uint8_t nalu_h26x[4] = { 0x0, 0x0, 0x0, 0x1 };
+                                klb_buffer_write(p_video_buf, nalu_h26x, 4);
+
+                                uint8_t nalu_value = parser.nalu_value;
+                                klb_buffer_write(p_video_buf, &nalu_value, 1);
+                            }
+
+                            // nalu 数据
+                            klb_buffer_write(p_video_buf, parser.p_data, parser.data_len);
+                        }
+
+                        if (KLB_MNP_END == parser.opt || KLB_MNP_FULL == parser.opt)
+                        {
+                            push_video_data_klb_rtspclient_conn(p_conn);
+                        }
+
+                        p_rtsp->parser = parser;
                     }
                 }
             }
@@ -392,6 +477,9 @@ static int klb_rtspclient_conn_init(klb_netconn_t* p_conn)
     // 读
     p_rtsp->p_read_rbuf = klb_rbuf_malloc(KLB_RTSPCLIENT_rbuf_min);
 
+    // 视频缓存
+    p_rtsp->p_video_buf = klb_buffer_create(KLB_RTSPCLIENT_rbuf_min);
+
     return 0;
 }
 
@@ -408,7 +496,8 @@ static void klb_rtspclient_conn_quit(klb_netconn_t* p_conn)
 
     // 销毁
     KLB_FREE_BY(p_rtsp->p_write_nlist, klb_nlist_destroy);
-    KLB_FREE_BY(p_rtsp->p_read_rbuf, klb_rbuf_datalen);
+    KLB_FREE_BY(p_rtsp->p_read_rbuf, klb_rbuf_free);
+    KLB_FREE_BY(p_rtsp->p_video_buf, klb_buffer_destroy);
 }
 
 //////////////////////////////////////////////////////////////////////////

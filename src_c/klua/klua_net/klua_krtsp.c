@@ -4,10 +4,11 @@
 #include "klua/klua_env.h"
 #include "klua/klua_netmulti.h"
 #include "klua/klua_coroutine.h"
+#include "klua/klua_net/klua_krtsp_serve.h"
 #include "klbutil/klb_nlist.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klbrtsp/klb_rtspclient_conn.h"
-#include "klua/klua_net/klua_krtsp_serve.h"
+#include "klbbase/klb_mnp.h"
 #include <assert.h>
 
 
@@ -24,6 +25,7 @@ typedef struct klua_krtsp_client_t_
     {
         lua_State*              L;              ///< L
         lua_State*              co_recv;        ///< co_recv协程
+
         klua_env_t*             p_env;          ///< lua环境
     };
 
@@ -38,6 +40,7 @@ typedef struct klua_krtsp_client_t_
     struct
     {
         klb_nlist_t*            p_text_nlist;   ///< 待读取的 文本数据列表; 存储 klb_buf_t*
+        klb_nlist_t*            p_media_nlist;  ///< 待读取的 媒体列表; 存储 klb_buf_t*
     };
 }klua_krtsp_client_t;
 
@@ -70,17 +73,28 @@ static int klua_krtsp_client_close(lua_State* L)
 {
     klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);
 
-    // 清空
+    // 清空 文本
     if (NULL != p_client->p_text_nlist)
     {
         while (0 < klb_nlist_size(p_client->p_text_nlist))
         {
-            klb_nlist_pop_head(p_client->p_text_nlist);
+            klb_buf_t* p_txt = klb_nlist_pop_head(p_client->p_text_nlist);
+            KLB_FREE_BY(p_txt, klb_buf_unref);
         }
+    }
 
+    // 清空视频
+    if (NULL != p_client->p_media_nlist)
+    {
+        while (0 < klb_nlist_size(p_client->p_media_nlist))
+        {
+            klb_buf_t* p_txt = klb_nlist_pop_head(p_client->p_media_nlist);
+            KLB_FREE_BY(p_txt, klb_buf_unref_next);
+        }
     }
 
     KLB_FREE_BY(p_client->p_text_nlist, klb_nlist_destroy);
+    KLB_FREE_BY(p_client->p_media_nlist, klb_nlist_destroy);
     KLB_FREE_BY(p_client->p_rtsp_conn, klb_netconn_destroy);
 
     return 0;
@@ -92,7 +106,8 @@ static int call_co_recv_text_klua_krtsp_client(klua_krtsp_client_t* p_client)
 {
     assert(NULL != p_client);
 
-    if (NULL != p_client->co_recv && 0 < klb_nlist_size(p_client->p_text_nlist))
+    if ( NULL != p_client->co_recv && 
+        (0 < klb_nlist_size(p_client->p_text_nlist) || 0 < klb_nlist_size(p_client->p_media_nlist)) )
     {
         lua_State* L = klua_coroutine_rawgeti(klua_coroutine_get(p_client->p_env), p_client->co_recv);
         if (NULL == L) return -1; // 未处理
@@ -101,12 +116,21 @@ static int call_co_recv_text_klua_krtsp_client(klua_krtsp_client_t* p_client)
 
         // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv(klua_krtsp_client_co_recv) 函数; 这里会存在执行函数的交替执行
-        klb_buf_t* p_buf = klb_nlist_pop_head(p_client->p_text_nlist);
 
-        lua_pushstring(L, "text"); // 
-        lua_pushlstring(L, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start); // body
+        klb_buf_t* p_txt = klb_nlist_pop_head(p_client->p_text_nlist);
+        if (NULL != p_txt)
+        {
+            lua_pushstring(L, "text"); // 
+            lua_pushlstring(L, p_txt->p_buf + p_txt->start, p_txt->end - p_txt->start); // body
+            KLB_FREE_BY(p_txt, klb_buf_unref);
+        }
 
-        KLB_FREE_BY(p_buf, klb_buf_unref);
+        klb_buf_t* p_media = klb_nlist_pop_head(p_client->p_media_nlist);
+        if (NULL != p_media)
+        {
+            lua_pushstring(L, "media"); // 
+            lua_pushlightuserdata(L, p_media);
+        }
 
         int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
@@ -137,9 +161,15 @@ static int on_recv_data_klua_krtsp_client(klb_netconn_t* p_conn, int code, int p
 
             on_recv_text_klua_krtsp_client(p_client);
         }
+        else if(KLB_MNP_MEDIA == packtype)
+        {
+            klb_nlist_push_tail(p_client->p_media_nlist, p_data);
+
+            call_co_recv_text_klua_krtsp_client(p_client);
+        }
         else
         {
-            KLB_FREE_BY(p_data, klb_buf_unref);
+            KLB_FREE_BY(p_data, klb_buf_unref_next);
         }
     }
 
@@ -172,22 +202,61 @@ static int klua_krtsp_client_co_recv(lua_State* L)
     klua_check_coroutine(L, "co_recv must in coroutine!");
     assert(NULL == p_client->co_recv);
 
-    klb_buf_t* p_buf = klb_nlist_head(p_client->p_text_nlist);
-    if (NULL != p_buf)
+    klb_buf_t* p_txt = klb_nlist_head(p_client->p_text_nlist);
+    if (NULL != p_txt)
     {
         lua_pushstring(L, "text"); // "text"
-        lua_pushlstring(L, p_buf->p_buf + p_buf->start, p_buf->end - p_buf->start); // body
+        lua_pushlstring(L, p_txt->p_buf + p_txt->start, p_txt->end - p_txt->start); // body
 
         klb_nlist_pop_head(p_client->p_text_nlist);
-        KLB_FREE_BY(p_buf, klb_buf_unref);
+        KLB_FREE_BY(p_txt, klb_buf_unref_next);
 
         return 2;
     }
+
+    klb_buf_t* p_media = klb_nlist_head(p_client->p_media_nlist);
+    if (NULL != p_media)
+    {
+        lua_pushstring(L, "media"); // "media"
+        lua_pushlightuserdata(L, p_media); // C 指针
+
+        klb_nlist_pop_head(p_client->p_media_nlist);
+
+        return 2;
+    }
+
+    p_client->co_recv = L;
+    return lua_yield(L, lua_gettop(L));
+}
+
+static int klua_krtsp_client_free_media(lua_State* L)
+{
+    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);  ///< @1. self
+    klb_buf_t* p_media = lua_touserdata(L, 2);
+
+    KLB_FREE_BY(p_media, klb_buf_unref_next);
+
+    return 0;
+}
+
+static int klua_krtsp_client_dump_media(lua_State* L)
+{
+    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);  ///< @1. self
+    klb_buf_t* p_buf = lua_touserdata(L, 2);
+
+    if (NULL != p_buf)
+    {
+        klb_mnp_media_t* p_media = (klb_mnp_media_t*)(p_buf->p_buf + p_buf->start);
+
+        printf("media : size[%d], dtype:[%d], vtype:[%d], time:[%lld]\n", p_media->size, p_media->dtype, p_media->vtype,
+            p_media->time);
+    }
     else
     {
-        p_client->co_recv = L;
-        return lua_yield(L, lua_gettop(L));
+        printf("media : NULL\n");
     }
+
+    return 0;
 }
 
 ////////////////////////////////////////
@@ -200,6 +269,9 @@ static void klua_krtsp_client_createmeta(lua_State* L)
         { "send_text",      klua_krtsp_client_send_text },
 
         { "co_recv",        klua_krtsp_client_co_recv },
+
+        { "free_media",     klua_krtsp_client_free_media },
+        { "dump_media",     klua_krtsp_client_dump_media },
 
         { NULL,             NULL }
     };
@@ -251,7 +323,7 @@ static int klua_krtsp_client_connect(lua_State* L)
         p_client->p_rtsp_conn = p_rtsp_conn;
 
         p_client->p_text_nlist = klb_nlist_create();
-
+        p_client->p_media_nlist = klb_nlist_create();
 
         // 绑定数据接收
         p_rtsp_conn->p_udata = p_client;

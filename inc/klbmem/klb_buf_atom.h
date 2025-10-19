@@ -21,6 +21,7 @@ extern "C" {
 
 
 KLB_API klb_buf_t* klb_buf_atom_malloc(void* p_pool, size_t size);
+KLB_API klb_buf_t* klb_buf_atom_malloc2(size_t size);
 
 
 KLB_API int klb_buf_atom_ref(klb_buf_t* p_buf);

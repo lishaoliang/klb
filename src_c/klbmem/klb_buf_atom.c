@@ -33,6 +33,11 @@ klb_buf_t* klb_buf_atom_malloc(void* p_pool, size_t size)
     return (klb_buf_t*)p_buf_ex;
 }
 
+klb_buf_t* klb_buf_atom_malloc2(size_t size)
+{
+    return klb_buf_atom_malloc(NULL, size);
+}
+
 int klb_buf_atom_ref(klb_buf_t* p_buf)
 {
     assert(NULL != p_buf);
