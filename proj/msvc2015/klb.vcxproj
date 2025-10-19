@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libklb</TargetName>
-    <IntDir>$(ProjectName)_$(Configuration)</IntDir>
+    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>$(ProjectName)_$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -82,7 +82,7 @@
     <LinkIncremental>false</LinkIncremental>
     <TargetName>libklb</TargetName>
     <OutDir>$(ProjectName)_$(Configuration)\</OutDir>
-    <IntDir>$(ProjectName)_$(Configuration)</IntDir>
+    <IntDir>$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -207,11 +207,19 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbmem\klb_mpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h" />
     <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_http.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
@@ -703,10 +711,18 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbflvclient\klb_flvclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbflvserve\klb_flvserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbhttpclient\klb_httpclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbhttpserve\klb_httpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbmnpserve\klb_mnpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtspserve\klb_rtspserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbwsclient\klb_wsclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbwsserve\klb_wsserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_listen.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c" />

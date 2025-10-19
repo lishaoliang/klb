@@ -292,6 +292,54 @@
     <Filter Include="src_c\klbnet\klbrtspserve">
       <UniqueIdentifier>{71ba1afe-6207-43ea-93bf-b2f41f159801}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src_c\klbnet\klbmnp">
+      <UniqueIdentifier>{c7739b78-eea7-46c3-97fb-244ef3b07f32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbmnpserve">
+      <UniqueIdentifier>{86a70e8f-9a27-4526-ad83-5155b8957caa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbflvserve">
+      <UniqueIdentifier>{458e8dc6-8097-4461-8c7f-214b08b5e1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbflv">
+      <UniqueIdentifier>{45e1df6e-4da0-41ab-a85c-828791f3a788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbhttp">
+      <UniqueIdentifier>{d27aab4c-8947-4caa-90c3-647b1b068d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbhttpclient">
+      <UniqueIdentifier>{043ba916-0d17-4368-a584-6c21605cd5e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbhttpserve">
+      <UniqueIdentifier>{f7a9701a-eb64-4963-9639-ece1f05bd60c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet\klbhttp">
+      <UniqueIdentifier>{7b0fe836-f2fe-4561-a129-e9575b5e50e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet\klbws">
+      <UniqueIdentifier>{3497579b-dca4-4a1f-94dd-78d9c824589c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\klbnet\klbwebrtc">
+      <UniqueIdentifier>{b9c80e5b-72e8-42be-9d82-53510ba684d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbws">
+      <UniqueIdentifier>{6acccb90-0555-46b2-a91d-a602ae6ce4cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbwsclient">
+      <UniqueIdentifier>{af969d46-c2d4-49d7-a648-a9982f6e8113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbwsserve">
+      <UniqueIdentifier>{a641132e-44c4-45d6-873f-0b8f95e6f656}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbwebrtc">
+      <UniqueIdentifier>{1735577d-e545-4933-b5f0-ef90f8c39ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbwebrtcclient">
+      <UniqueIdentifier>{245c247f-6ffb-4e60-9fbc-549c84cb4dd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbwebrtcserve">
+      <UniqueIdentifier>{68befdab-caea-4ff1-aacd-48d186680ac9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1635,6 +1683,30 @@
     <ClInclude Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.h">
       <Filter>src_c\klua\klua_net</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpserve_conn.h">
+      <Filter>inc\klbnet\klbmnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvserve_conn.h">
+      <Filter>inc\klbnet\klbflv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpclient_conn.h">
+      <Filter>inc\klbnet\klbhttp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpserve_conn.h">
+      <Filter>inc\klbnet\klbhttp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsclient_conn.h">
+      <Filter>inc\klbnet\klbws</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsserve_conn.h">
+      <Filter>inc\klbnet\klbws</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcclient_conn.h">
+      <Filter>inc\klbnet\klbwebrtc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcserve_conn.h">
+      <Filter>inc\klbnet\klbwebrtc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2737,6 +2809,30 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c">
       <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbmnpserve\klb_mnpserve_conn.c">
+      <Filter>src_c\klbnet\klbmnpserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbflvserve\klb_flvserve_conn.c">
+      <Filter>src_c\klbnet\klbflvserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbhttpclient\klb_httpclient_conn.c">
+      <Filter>src_c\klbnet\klbhttpclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbhttpserve\klb_httpserve_conn.c">
+      <Filter>src_c\klbnet\klbhttpserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbwsclient\klb_wsclient_conn.c">
+      <Filter>src_c\klbnet\klbwsclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbwsserve\klb_wsserve_conn.c">
+      <Filter>src_c\klbnet\klbwsserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c">
+      <Filter>src_c\klbnet\klbwebrtcclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c">
+      <Filter>src_c\klbnet\klbwebrtcserve</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

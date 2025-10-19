@@ -6,6 +6,7 @@
 #include "klbutil/klb_log.h"
 #include "klbutil/klb_nlist.h"
 #include "klbnet/klbrtsp/klb_rtspparser.h"
+#include "klbutil/klb_h26x.h"
 
 
 /// @def   KLB_RTSPCLIENT_rbuf_min
@@ -107,8 +108,21 @@ static void parse_recv_data_klb_rtspclient_conn(klb_netconn_t* p_conn)
             else if(KLB_RTSPTYPE_rtp == parser.rtsptype)
             {
                 // rtp 包
-                int a = 0;
+                if (96 == parser.rtp_head.payload_type)
+                {
+                    char* p_nalu = ptr + parser.nalu_pos;
+                    int nalu_len = parser.nalu_len;
 
+                    if (0 == klb_rtspparser_parse_rtp_h264(&parser, p_nalu, nalu_len))
+                    {
+                        // 解析出来的 rtp nalu 数据
+
+                        //if (parser.opt == KLB_MNP_BEGIN || KLB_MNP_FULL == parser.opt)
+                        //{
+                        //    printf("==> nalu:[%d, %d], data_len:[%d]\n", klb_h264_nalu_type(parser.nalu_value), parser.nalu_value, parser.data_len);
+                        //}
+                    }
+                }
             }
             else if(KLB_RTSPTYPE_rtcp == parser.rtsptype)
             {

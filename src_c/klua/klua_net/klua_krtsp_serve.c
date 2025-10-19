@@ -20,6 +20,7 @@ typedef struct klua_krtspserve_t_
     {
         lua_State*              L;              ///< L
         lua_State*              co_recv;        ///< co_recv协程
+
         klua_env_t*             p_env;          ///< lua环境
     };
 
@@ -131,9 +132,9 @@ typedef struct klua_krtspserve_listen_t_
     struct
     {
         lua_State*              L;              ///< L
-        klua_env_t*             p_env;          ///< lua环境
-
         lua_State*              co_accept;      ///< sync的"co_accept"函数对应的协程
+
+        klua_env_t*             p_env;          ///< lua环境
     };
 
     // 其他扩展等
@@ -198,9 +199,10 @@ static int klua_krtspserve_listen_co_accept(lua_State* L)
 void klua_krtspserve_listen_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
-        { "close",          klua_krtspserve_listen_close },       ///< 
+        { "close",          klua_krtspserve_listen_close },     ///< 
 
-        { "co_accept",      klua_krtspserve_listen_co_accept },  ///< 
+        { "co_accept",      klua_krtspserve_listen_co_accept }, ///< 
+
         { NULL,             NULL }
     };
 

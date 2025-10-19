@@ -36,13 +36,15 @@ CP_RF	:= -cp -rf
 # 从目录检索需要编译的c文件
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
-# klbnet
+# klbnet - flv, http, mnp, rtsp, sip, webrtc, ws
 MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops
-MY_DIRS += ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbmnpclient
-
-# klbnet - rtsp
+MY_DIRS += ./src_c/klbnet/klbflv ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbflvserve
+MY_DIRS += ./src_c/klbnet/klbhttp ./src_c/klbnet/klbhttpclient ./src_c/klbnet/klbhttpserve
+MY_DIRS += ./src_c/klbnet/klbmnp ./src_c/klbnet/klbmnpclient ./src_c/klbnet/klbmnpserve
 MY_DIRS += ./src_c/klbnet/klbrtp ./src_c/klbnet/klbrtsp ./src_c/klbnet/klbrtspclient ./src_c/klbnet/klbrtspserve
-
+MY_DIRS += ./src_c/klbnet/klbsip ./src_c/klbnet/klbsipclient ./src_c/klbnet/klbsipserve
+MY_DIRS += ./src_c/klbnet/klbwebrtc ./src_c/klbnet/klbwebrtcclient ./src_c/klbnet/klbwebrtcserve
+MY_DIRS += ./src_c/klbnet/klbws ./src_c/klbnet/klbwsclient ./src_c/klbnet/klbwsserve
 
 # klbformat
 MY_DIRS += ./src_c/klbformat

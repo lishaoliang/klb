@@ -3,7 +3,7 @@
 //
 /// @file    klb_rtp.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   文件简要描述
+/// @brief   RTP 结构定义
 /// @version 0.1
 /// @history 修改历史
 ///  \n [2025-10] 创建文件
@@ -20,6 +20,10 @@ extern "C" {
 
 
 #pragma pack(4)
+
+
+//////////////////////////////////////////////////////////////////////////
+// rtp head
 
 /// @struct klb_rtp_head_t
 /// @brief  RTP 头部最小长度为12字节(固定部分), (RFC 3550)
@@ -54,6 +58,62 @@ typedef struct klb_rtp_headex_t_
     uint16_t    profile_id;             ///< 扩展类型
     uint16_t    length;                 ///< 扩展数据实际长度 = length * 4; 不包含本结构体
 }klb_rtp_headex_t;
+
+
+//////////////////////////////////////////////////////////////////////////
+// rtp nalu h264
+
+
+/// @enum  klb_rtp_nalu_type_e
+/// @brief RTP NAL Unit Type 
+typedef enum klb_rtp_nalu_type_e_
+{
+    KLB_RTP_NALU_NULL           = 0,        ///< 未使用
+    KLB_RTP_NALU_VCL_1          = 1,        ///< VCL(1) 单元(视频编码层)
+    KLB_RTP_NALU_VCL_23         = 23,       ///< VCL(23) 单元(视频编码层)
+
+    KLB_RTP_NALU_STAP_A         = 24,       ///< STAP-A (单一时间聚合包): 聚合多个小 NALU 为一个 RTP 包(减少头部开销), 适合多个小尺寸 NALU(如 SPS PPS)
+    KLB_RTP_NALU_STAP_B         = 25,       ///< 类似 STAP-A, 但包含 DTS(解码时间戳)字段,较少使用
+
+    KLB_RTP_NALU_MTAP16         = 26,       ///< MTAP16(多时间聚合包): 聚合不同时间戳的 NALU, 包含 16 比特时间偏移, 用于特殊同步场景
+    KLB_RTP_NALU_MTAP24         = 27,       ///< MTAP24: 类似 MTAP16, 但时间偏移为 24 比特
+
+    KLB_RTP_NALU_FU_A           = 28,       ///< FU-A(Fragmentation Unit 分片单元) : 用于将大 NALU 拆分为多个 RTP 包(最常用的分片方式),通过 S(起始)和 E(结束)位标识分片边界
+    KLB_RTP_NALU_FU_B           = 29,       ///< 类似 FU-A, 但包含 DTS 字段, 较少使用
+
+    KLB_RTP_NALU_UNDEFINED_30   = 30,       ///< 保留
+    KLB_RTP_NALU_UNDEFINED_31   = 31,       ///< 保留
+}klb_rtp_nalu_type_e;
+
+
+/// @struct klb_rtp_nalu_fu_t
+/// @brief  NALU FU 分片头部定义
+typedef struct klb_rtp_nalu_fu_t_
+{
+    uint8_t     start : 1;                  ///< 起始位: 1 表示当前分片是原始 NALU 的第一个分片(首片); 0 表示当前分片是中间分片或最后一个分片
+    uint8_t     end : 1;                    ///< 结束位: 1 表示当前分片是原始 NALU 的最后一个分片(尾片); 0 表示当前分片是起始分片或中间分片
+    uint8_t     reserved : 1;               ///< 保留位: 必须为 0
+    uint8_t     nalu_type : 5;              ///< 原始 NALU 的类型(与原始 NALU 头部的 Type 字段一致); 接收端通过该字段还原原始 NALU 的类型
+}klb_rtp_nalu_fu_t;
+
+
+/// @struct klb_rtp_nalu_h264_t
+/// @brief  RTP NALU H264 头部定义
+///   | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+///   +-+-+-+-+-+-+-+-++-+-+-+-+-+-+-+-+
+///   | F | NRI    |        Type       |
+typedef struct klb_rtp_nalu_h264_t_
+{
+    uint8_t     forbidden : 1;          ///< F(Forbidden Zero Bit) : 禁止位, 必须为 0; 若为 1, 表明该 NALU 存在不可恢复的错误, 接收端应丢弃
+    uint8_t     nri : 2;                ///< NRI(NAL Reference IDC) : 参考重要性指示: 值越大, 该 NALU 对解码的重要性越高(0~3); 关键帧(IDR)的 NRI 通常为 3(最高); 非参考帧的 NRI 可能为 0
+    uint8_t     nalu_type : 5;          ///< NAL Unit Type (klb_rtp_nalu_type_e) : NALU 类型. 标识 NALU 载荷的内容(0~31), 决定了 RTP 封装方式和解析逻辑
+}klb_rtp_nalu_h264_t;
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// rtp nalu h265
+
 
 
 #pragma pack()
