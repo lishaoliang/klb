@@ -211,6 +211,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
@@ -719,6 +720,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klbflvserve\klb_flvserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbhttpclient\klb_httpclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbhttpserve\klb_httpserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbmnpserve\klb_mnpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c" />

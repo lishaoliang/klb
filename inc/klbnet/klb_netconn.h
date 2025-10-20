@@ -234,6 +234,12 @@ KLB_API int klb_netconn_send_rpc_json(klb_netconn_t* p_conn, uint32_t sequence, 
 KLB_API int klb_netconn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out);
 
 
+/// @brief 设置 udata/lparam/wparam
+KLB_API int klb_netconn_set_udata(klb_netconn_t* p_conn, void* p_udata);
+KLB_API int klb_netconn_set_lparam(klb_netconn_t* p_conn, void* p_lparam);
+KLB_API int klb_netconn_set_wparam(klb_netconn_t* p_conn, void* p_wparam);
+
+
 #if defined(__cplusplus)
 }
 #endif

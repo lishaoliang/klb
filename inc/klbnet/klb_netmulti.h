@@ -49,6 +49,7 @@ KLB_API int klb_netmulti_push(klb_netmulti_t* p_multi, klb_netconn_t* p_conn);
 
 /// @brief 移除连接对象
 /// @return int 0.成功; 非0. 失败
+/// @note 直接移除, 非延时移除
 KLB_API int klb_netmulti_remove(klb_netmulti_t* p_multi, klb_netconn_t* p_conn);
 KLB_API klb_netconn_t* klb_netmulti_remove_by_name(klb_netmulti_t* p_multi, const char* p_name);
 

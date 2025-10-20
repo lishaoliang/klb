@@ -1,4 +1,8 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+
+// 引用select之前定义
+#define FD_SETSIZE                  1024
+
 #include "klbnet/klb_netmulti.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"

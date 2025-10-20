@@ -364,6 +364,12 @@
     <Filter Include="src_c\klbnet\klbsmpserve">
       <UniqueIdentifier>{cf5748b2-1443-44da-a37e-31bd39f7c8bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\klbnet\klblisten">
+      <UniqueIdentifier>{6f6fc267-59d2-4ec5-b4d9-35926ebe5b11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klblisten">
+      <UniqueIdentifier>{fbefb14a-eb6b-49b5-8f91-0c7c3538ddc9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\inc\klb_type.h">
@@ -1746,6 +1752,9 @@
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserve_conn.h">
       <Filter>inc\klbnet\klbsmp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h">
+      <Filter>inc\klbnet\klblisten</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2884,6 +2893,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserve_conn.c">
       <Filter>src_c\klbnet\klbsmpserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c">
+      <Filter>src_c\klbnet\klblisten</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
