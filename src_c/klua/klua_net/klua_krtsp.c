@@ -18,7 +18,7 @@
 #define KLUA_KRTSPCLIENT_HANDLE                 "KRTSPCLIENT_HANDLE*"       ///< Lua meta标示
 
 
-typedef struct klua_krtsp_client_t_
+typedef struct klua_krtspclient_t_
 {
     // Lua相关
     struct
@@ -42,36 +42,36 @@ typedef struct klua_krtsp_client_t_
         klb_nlist_t*            p_text_nlist;   ///< 待读取的 文本数据列表; 存储 klb_buf_t*
         klb_nlist_t*            p_media_nlist;  ///< 待读取的 媒体列表; 存储 klb_buf_t*
     };
-}klua_krtsp_client_t;
+}klua_krtspclient_t;
 
 
 ////////////////////////////////////////
-static klua_krtsp_client_t* new_klua_krtsp_client(lua_State* L)
+static klua_krtspclient_t* new_klua_krtspclient(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = (klua_krtsp_client_t*)lua_newuserdata(L, sizeof(klua_krtsp_client_t));
-    KLB_MEMSET(p_client, 0, sizeof(klua_krtsp_client_t));
+    klua_krtspclient_t* p_client = (klua_krtspclient_t*)lua_newuserdata(L, sizeof(klua_krtspclient_t));
+    KLB_MEMSET(p_client, 0, sizeof(klua_krtspclient_t));
     luaL_setmetatable(L, KLUA_KRTSPCLIENT_HANDLE);
     return p_client;
 }
 
-static klua_krtsp_client_t* to_klua_krtsp_client(lua_State* L, int index)
+static klua_krtspclient_t* to_klua_krtspclient(lua_State* L, int index)
 {
-    klua_krtsp_client_t* p_client = (klua_krtsp_client_t*)luaL_checkudata(L, index, KLUA_KRTSPCLIENT_HANDLE);
+    klua_krtspclient_t* p_client = (klua_krtspclient_t*)luaL_checkudata(L, index, KLUA_KRTSPCLIENT_HANDLE);
     luaL_argcheck(L, NULL != p_client, index, "'krtsp-client' expected");
     return p_client;
 }
 
-static int klua_krtsp_client_tostring(lua_State* L)
+static int klua_krtspclient_tostring(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);
+    klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);
 
     lua_pushfstring(L, "krtsp-client:%p", p_client);
     return 1;
 }
 
-static int klua_krtsp_client_close(lua_State* L)
+static int klua_krtspclient_close(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);
+    klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);
 
     // 清空 文本
     if (NULL != p_client->p_text_nlist)
@@ -102,7 +102,8 @@ static int klua_krtsp_client_close(lua_State* L)
 
 ////////////////////////////////////////
 
-static int call_co_recv_text_klua_krtsp_client(klua_krtsp_client_t* p_client)
+// 调用Lua协程
+static int call_co_recv_text_klua_krtspclient(klua_krtspclient_t* p_client)
 {
     assert(NULL != p_client);
 
@@ -115,7 +116,7 @@ static int call_co_recv_text_klua_krtsp_client(klua_krtsp_client_t* p_client)
         p_client->co_recv = NULL; // 清空
 
         // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
-        // 在 Lua 可能会依然调用 co_recv(klua_krtsp_client_co_recv) 函数; 这里会存在执行函数的交替执行
+        // 在 Lua 可能会依然调用 co_recv(klua_krtspclient_co_recv) 函数; 这里会存在执行函数的交替执行
 
         klb_buf_t* p_txt = klb_nlist_pop_head(p_client->p_text_nlist);
         if (NULL != p_txt)
@@ -141,17 +142,10 @@ static int call_co_recv_text_klua_krtsp_client(klua_krtsp_client_t* p_client)
     return -1; // 未处理
 }
 
-static int on_recv_text_klua_krtsp_client(klua_krtsp_client_t* p_client)
+// 数据接收, 当网络上有数据包之后触发
+static int on_recv_data_klua_krtspclient(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data)
 {
-    call_co_recv_text_klua_krtsp_client(p_client);
-
-    return 0;
-}
-
-// 数据接收
-static int on_recv_data_klua_krtsp_client(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data)
-{
-    klua_krtsp_client_t* p_client = p_conn->p_udata;
+    klua_krtspclient_t* p_client = p_conn->p_udata;
 
     if (0 == code)
     {
@@ -159,13 +153,13 @@ static int on_recv_data_klua_krtsp_client(klb_netconn_t* p_conn, int code, int p
         {
             klb_nlist_push_tail(p_client->p_text_nlist, p_data);
 
-            on_recv_text_klua_krtsp_client(p_client);
+            call_co_recv_text_klua_krtspclient(p_client);
         }
         else if(KLB_MNP_MEDIA == packtype)
         {
             klb_nlist_push_tail(p_client->p_media_nlist, p_data);
 
-            call_co_recv_text_klua_krtsp_client(p_client);
+            call_co_recv_text_klua_krtspclient(p_client);
         }
         else
         {
@@ -178,9 +172,9 @@ static int on_recv_data_klua_krtsp_client(klb_netconn_t* p_conn, int code, int p
 
 ////////////////////////////////////////
 
-static int klua_krtsp_client_send_text(lua_State* L)
+static int klua_krtspclient_send_text(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);  ///< @1. self
+    klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);  ///< @1. self
 
     size_t head_len = 0;
     const char* p_head = luaL_checklstring(L, 2, &head_len);    ///< @2. text head
@@ -196,9 +190,9 @@ static int klua_krtsp_client_send_text(lua_State* L)
     return 1;
 }
 
-static int klua_krtsp_client_co_recv(lua_State* L)
+static int klua_krtspclient_co_recv(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);  ///< @1. self
+    klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);  ///< @1. self
     klua_check_coroutine(L, "co_recv must in coroutine!");
     assert(NULL == p_client->co_recv);
 
@@ -229,9 +223,9 @@ static int klua_krtsp_client_co_recv(lua_State* L)
     return lua_yield(L, lua_gettop(L));
 }
 
-static int klua_krtsp_client_free_media(lua_State* L)
+static int klua_krtspclient_free_media(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);  ///< @1. self
+    klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);  ///< @1. self
     klb_buf_t* p_media = lua_touserdata(L, 2);
 
     KLB_FREE_BY(p_media, klb_buf_unref_next);
@@ -239,9 +233,9 @@ static int klua_krtsp_client_free_media(lua_State* L)
     return 0;
 }
 
-static int klua_krtsp_client_dump_media(lua_State* L)
+static int klua_krtspclient_dump_media(lua_State* L)
 {
-    klua_krtsp_client_t* p_client = to_klua_krtsp_client(L, 1);  ///< @1. self
+    klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);  ///< @1. self
     klb_buf_t* p_buf = lua_touserdata(L, 2);
 
     if (NULL != p_buf)
@@ -261,26 +255,26 @@ static int klua_krtsp_client_dump_media(lua_State* L)
 
 ////////////////////////////////////////
 
-static void klua_krtsp_client_createmeta(lua_State* L)
+static void klua_krtspclient_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
-        { "disconnect",     klua_krtsp_client_close },
+        { "disconnect",     klua_krtspclient_close },
 
-        { "send_text",      klua_krtsp_client_send_text },
+        { "send_text",      klua_krtspclient_send_text },
 
-        { "co_recv",        klua_krtsp_client_co_recv },
+        { "co_recv",        klua_krtspclient_co_recv },
 
-        { "free_media",     klua_krtsp_client_free_media },
-        { "dump_media",     klua_krtsp_client_dump_media },
+        { "free_media",     klua_krtspclient_free_media },
+        { "dump_media",     klua_krtspclient_dump_media },
 
         { NULL,             NULL }
     };
 
     static const luaL_Reg metameth[] = {
         { "__index",         NULL },  /* place holder */
-        { "__gc",            klua_krtsp_client_close },
-        { "__close",         klua_krtsp_client_close },
-        { "__tostring",      klua_krtsp_client_tostring },
+        { "__gc",            klua_krtspclient_close },
+        { "__close",         klua_krtspclient_close },
+        { "__tostring",      klua_krtspclient_tostring },
         { NULL,              NULL }
     };
 
@@ -296,7 +290,7 @@ static void klua_krtsp_client_createmeta(lua_State* L)
 ////////////////////////////////////////
 // rtsp client
 
-static int klua_krtsp_client_connect(lua_State* L)
+static int klua_krtspclient_connect(lua_State* L)
 {
     const char* p_host = luaL_checkstring(L, 1);                    ///< @1. 目标域名或IP地址
     int port = (int)luaL_checkinteger(L, 2);                        ///< @2. 端口号
@@ -313,7 +307,7 @@ static int klua_krtsp_client_connect(lua_State* L)
     else
     {
         // 
-        klua_krtsp_client_t* p_client = new_klua_krtsp_client(L);   ///< #1. meta: klua_krtsp_client_createmeta
+        klua_krtspclient_t* p_client = new_klua_krtspclient(L);   ///< #1. meta: klua_krtspclient_createmeta
 
         p_client->L = L;
         p_client->co_recv = NULL;
@@ -327,7 +321,7 @@ static int klua_krtsp_client_connect(lua_State* L)
 
         // 绑定数据接收
         p_rtsp_conn->p_udata = p_client;
-        klb_netconn_bind_recv(p_rtsp_conn, on_recv_data_klua_krtsp_client);
+        klb_netconn_bind_recv(p_rtsp_conn, on_recv_data_klua_krtspclient);
     }
 
     return 1;
@@ -340,9 +334,11 @@ int klua_open_krtsp(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
-        { "connect",            klua_krtsp_client_connect },        ///< 客户端 发起连接
+        { "connect",            klua_krtspclient_connect },        ///< 客户端 发起连接
 
-        { "listen",             klua_krtsp_serve_listen },          ///< 服务端 监听
+        { "listen",             klua_krtspserve_listen },           ///< 服务端 监听
+
+        { "new_serve",          klua_krtspserve_new_serve },        ///< 新建服务连接
 
         { NULL,                 NULL }
     };
@@ -351,7 +347,7 @@ int klua_open_krtsp(lua_State* L)
     luaL_newlib(L, lib);
 
     // k rtsp client
-    klua_krtsp_client_createmeta(L);
+    klua_krtspclient_createmeta(L);
 
     // k rtsp serve
     klua_krtspserve_createmeta(L);

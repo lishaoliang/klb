@@ -11,10 +11,25 @@
 
 
 //////////////////////////////////////////////////////////////////////////
+
+/// @struct klua_krtspserve_listen_socket_t
+/// @brief  监听得到 socket
+typedef struct klua_krtspserve_listen_socket_t_
+{
+    klb_socket_fd               fd;             ///< socket fd
+    struct sockaddr_in          addr;           ///< 地址
+    bool                        tls;            ///< tls
+}klua_krtspserve_listen_socket_t;
+
+
+//////////////////////////////////////////////////////////////////////////
 // klua rtsp serve
 
 #define KLUA_KRTSPSERVE_HANDLE          "KRTSPSERVE_HANDLE*"
 
+
+/// @struct klua_krtspserve_t
+/// @brief  RTSP服务连接
 typedef struct klua_krtspserve_t_
 {
     // Lua相关
@@ -24,6 +39,7 @@ typedef struct klua_krtspserve_t_
         lua_State*              co_recv;        ///< co_recv协程
 
         klua_env_t*             p_env;          ///< lua环境
+        klua_ex_coroutine_t*    p_coex;         ///< Lua协程扩展
     };
 
     // 网络相关
@@ -39,6 +55,7 @@ typedef struct klua_krtspserve_t_
         klb_nlist_t*            p_text_nlist;   ///< 待读取的 文本数据列表; 存储 klb_buf_t*
     };
 }klua_krtspserve_t;
+
 
 ////////////////////////////////////////
 static klua_krtspserve_t* new_klua_krtspserve(lua_State* L)
@@ -83,22 +100,163 @@ static int klua_krtspserve_close(lua_State* L)
     return 0;
 }
 
+//////////////////////////////////////////////////
+
+// 调用Lua协程
+static int call_co_recv_text_klua_krtspserve(klua_krtspserve_t* p_serve)
+{
+    assert(NULL != p_serve);
+
+    if (NULL != p_serve->co_recv && 0 < klb_nlist_size(p_serve->p_text_nlist))
+    {
+        assert(0 == klua_coroutine_debug_check(p_serve->p_coex, p_serve->co_recv));
+
+        lua_State* L = klua_coroutine_rawgeti(klua_coroutine_get(p_serve->p_env), p_serve->co_recv);
+        if (NULL == L) return -1; // 未处理
+
+        p_serve->co_recv = NULL; // 清空
+
+        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
+
+        klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
+        if (NULL != p_txt)
+        {
+            lua_pushlstring(L, p_txt->p_buf + p_txt->start, p_txt->end - p_txt->start); // #1 body
+            lua_pushstring(L, "text"); // #2 "text"
+            KLB_FREE_BY(p_txt, klb_buf_unref);
+        }
+
+        int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? 0 : 1;
+    }
+
+    return -1; // 未处理
+}
+
+// 调用Lua协程 结束
+static int call_co_recv_end_text_klua_krtspserve(klua_krtspserve_t* p_serve)
+{
+    assert(NULL != p_serve);
+
+    if (NULL != p_serve->co_recv)
+    {
+        assert(0 == klua_coroutine_debug_check(p_serve->p_coex, p_serve->co_recv));
+
+        lua_State* L = klua_coroutine_rawgeti(klua_coroutine_get(p_serve->p_env), p_serve->co_recv);
+        if (NULL == L) return -1; // 未处理
+
+        p_serve->co_recv = NULL; // 清空
+
+        lua_pushstring(L, ""); // #1 body
+        lua_pushstring(L, "exit"); // #2 "text"
+
+        int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? 0 : 1;
+    }
+
+    return -1; // 未处理
+}
+
+// 数据接收, 当网络上有数据包时触发
+static int on_recv_data_klua_krtspserve(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data)
+{
+    klua_krtspserve_t* p_serve = (klua_krtspserve_t*)p_conn->p_udata;
+
+    if (0 == code)
+    {
+        if (KLB_MNP_TEXT == packtype)
+        {
+            klb_nlist_push_tail(p_serve->p_text_nlist, p_data);
+
+            call_co_recv_text_klua_krtspserve(p_serve);
+        }
+        else
+        {
+            KLB_FREE_BY(p_data, klb_buf_unref_next);
+        }
+    }
+
+    return 0;
+}
+
+//////////////////////////////////////////////////
+// 
+
 static int klua_krtspserve_send_text(lua_State* L)
 {
-    klua_krtspserve_t* p_serve = to_klua_krtspserve(L, 1);
+    klua_krtspserve_t* p_serve = to_klua_krtspserve(L, 1);                  // @1. self
+
+    size_t head_len = 0;
+    const char* p_head = (const char*)luaL_checklstring(L, 2, &head_len);   // @2. head
+
+    const char* p_body = NULL;
+    size_t body_len = 0;
+    if (klua_is_string(L, 3)) { p_body = (const char*)luaL_checklstring(L, 3, &body_len);} // @3. body
+
+    int ret = 1;
+
+    if (NULL != p_serve->p_rtsp_conn)
+    {
+        ret = klb_netconn_send_text(p_serve->p_rtsp_conn, 0, 0, (const uint8_t*)p_head, (int)head_len, (const uint8_t*)p_body, (int)body_len);
+    }
+
+    lua_pushinteger(L, ret);            // #1.  错误码
+    return 1;
+}
+
+static int klua_krtspserve_send_media(lua_State* L)
+{
+    klua_krtspserve_t* p_serve = to_klua_krtspserve(L, 1);      // @1. self
+    klb_buf_t* p_buf = lua_touserdata(L, 2);                    // @2. 媒体数据
+
+    int ret = 1;
+    if (NULL != p_buf)
+    {
+        ret = klb_netconn_send_media(p_serve->p_rtsp_conn, p_buf);
+    }
+
+    lua_pushinteger(L, ret);            // #1.  错误码
+    return 1;
+}
+
+// 当需要退出等的 退出函数
+static int on_yield_recv_klua_klua_krtspserve(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_krtspserve_t* p_serve = (klua_krtspserve_t*)ptr;
+
+    if (KLUA_ENV_EX_quit == opt)
+    {
+        call_co_recv_end_text_klua_krtspserve(p_serve);
+    }
 
     return 0;
 }
 
 static int klua_krtspserve_co_recv(lua_State* L)
 {
-    klua_krtspserve_t* p_listen = to_klua_krtspserve(L, 1);
+    klua_krtspserve_t* p_serve = to_klua_krtspserve(L, 1);
     klua_check_coroutine(L, "krtspserve:co_recv must in coroutine!");
+    assert(NULL == p_serve->co_recv);
 
-    assert(NULL == p_listen->co_recv);
-    p_listen->co_recv = L;
+    klb_buf_t* p_txt = klb_nlist_head(p_serve->p_text_nlist);
+    if (NULL != p_txt)
+    {
+        lua_pushlstring(L, p_txt->p_buf + p_txt->start, p_txt->end - p_txt->start); // #1. body
+        lua_pushstring(L, "text"); // #2. "text"
 
-    return lua_yield(L, lua_gettop(L));
+        klb_nlist_pop_head(p_serve->p_text_nlist);
+        KLB_FREE_BY(p_txt, klb_buf_unref_next);
+
+        return 2;
+    }
+
+    p_serve->co_recv = L;
+    return klua_coroutine_yield(p_serve->p_coex, L, on_yield_recv_klua_klua_krtspserve, p_serve);
 }
 
 //////////////////////////////////////////////////
@@ -107,11 +265,12 @@ static int klua_krtspserve_co_recv(lua_State* L)
 void klua_krtspserve_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
-        { "disconnect",     klua_krtspserve_close },            ///< 
+        { "disconnect",     klua_krtspserve_close },            ///< 关闭连接
 
-        { "send_text",      klua_krtspserve_send_text },        ///< 
+        { "send_text",      klua_krtspserve_send_text },        ///< 发送文本数据
+        { "send_media",     klua_krtspserve_send_media },       ///< 发送媒体数据
 
-        { "co_recv",        klua_krtspserve_co_recv },          ///< 
+        { "co_recv",        klua_krtspserve_co_recv },          ///< 接收数据
 
         { NULL,             NULL }
     };
@@ -132,22 +291,38 @@ void klua_krtspserve_createmeta(lua_State* L)
     lua_pop(L, 1);                                  /* pop metatable */
 }
 
+//////////////////////////////////////////////////
+
+// 创建
+int klua_krtspserve_new_serve(lua_State* L)
+{
+    klua_krtspserve_listen_socket_t* p_listen_socket = (klua_krtspserve_listen_socket_t*)lua_touserdata(L, 1);
+
+    klb_socket_t* p_socket = klb_socket_async_create(p_listen_socket->fd);
+    klua_krtspserve_t* p_serve = new_klua_krtspserve(L);
+
+    p_serve->L = L;
+    p_serve->co_recv = NULL;
+    p_serve->p_env = klua_env_get_by_L(L);
+    p_serve->p_coex = klua_coroutine_get(p_serve->p_env);
+
+    p_serve->p_netmulti = klua_netmulti_get(p_serve->p_env);
+
+    p_serve->p_text_nlist = klb_nlist_create();
+
+    p_serve->p_rtsp_conn = klb_rtspserve_conn_create(p_serve->p_netmulti, p_socket);
+
+    klb_netconn_set_udata(p_serve->p_rtsp_conn, p_serve);
+    klb_netconn_bind_recv(p_serve->p_rtsp_conn, on_recv_data_klua_krtspserve);
+
+    return 1;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
 // klua rtsp serve listen
 
 #define KLUA_KRTSPSERVE_LISTEN_HANDLE    "KRTSPSERVE_LISTEN_HANDLE*"
-
-
-/// @struct klua_krtspserve_listen_socket_t
-/// @brief  监听得到 socket
-typedef struct klua_krtspserve_listen_socket_t_
-{
-    klb_socket_fd               fd;             ///< socket fd
-    struct sockaddr_in          addr;           ///< 地址
-    bool                        tls;            ///< tls
-}klua_krtspserve_listen_socket_t;
 
 
 /// @struct klua_krtspserve_listen_t
@@ -160,7 +335,8 @@ typedef struct klua_krtspserve_listen_t_
         lua_State*              L;              ///< L
         lua_State*              co_accept;      ///< sync的"co_accept"函数对应的协程
 
-        klua_env_t*             p_env;          ///< lua环境
+        klua_env_t*             p_env;          ///< Lua环境
+        klua_ex_coroutine_t*    p_coex;         ///< Lua协程扩展
     };
 
     // 监听
@@ -230,25 +406,6 @@ static int klua_krtspserve_listen_close(lua_State* L)
 //////////////////////////////////////////////////
 // 
 
-// 创建
-static klua_krtspserve_t* new_klua_krtspserve_by_socket(klua_krtspserve_listen_t* p_listen, klua_krtspserve_listen_socket_t* p_listen_socket)
-{
-    klb_socket_t* p_socket = klb_socket_async_create(p_listen_socket->fd);
-    klua_krtspserve_t* p_serve = new_klua_krtspserve(p_listen->L);
-
-    p_serve->L = p_listen->L;
-    p_serve->co_recv = NULL;
-    p_serve->p_env = p_listen->p_env;
-
-    p_serve->p_netmulti = p_listen->p_netmulti;
-
-    p_serve->p_rtsp_conn = klb_rtspserve_conn_create(p_serve->p_netmulti, p_socket);
-
-    p_serve->p_text_nlist = klb_nlist_create();
-
-    return p_serve;
-}
-
 // call lua 协程
 static int call_co_accept_klua_krtspserve_listen(klua_krtspserve_listen_t* p_listen)
 {
@@ -256,6 +413,8 @@ static int call_co_accept_klua_krtspserve_listen(klua_krtspserve_listen_t* p_lis
 
     if (NULL != p_listen->co_accept && 0 < klb_nlist_size(p_listen->p_socket_nlist))
     {
+        assert(0 == klua_coroutine_debug_check(p_listen->p_coex, p_listen->co_accept));
+
         lua_State* L = klua_coroutine_rawgeti(klua_coroutine_get(p_listen->p_env), p_listen->co_accept);
         if (NULL == L) return -1; // 未处理
 
@@ -266,10 +425,34 @@ static int call_co_accept_klua_krtspserve_listen(klua_krtspserve_listen_t* p_lis
 
         klua_krtspserve_listen_socket_t* p_listen_socket = (klua_krtspserve_listen_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
 
-        lua_pushstring(L, "ok"); // 
-        new_klua_krtspserve_by_socket(p_listen, p_listen_socket); // 
+        lua_pushlightuserdata(L, p_listen_socket); // #1. lua - userdata
+        lua_pushstring(L, "ok"); // #2. 状态消息
 
-        KLB_FREE(p_listen_socket);
+        int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
+        klua_env_report_by_L(L, status);
+
+        return (status == LUA_OK) ? 0 : 1;
+    }
+
+    return -1; // 未处理
+}
+
+// call lua 协程 结束
+static int call_co_accept_end_klua_krtspserve_listen(klua_krtspserve_listen_t* p_listen)
+{
+    assert(NULL != p_listen);
+
+    if (NULL != p_listen->co_accept && 0 < klb_nlist_size(p_listen->p_socket_nlist))
+    {
+        assert(0 == klua_coroutine_debug_check(p_listen->p_coex, p_listen->co_accept));
+
+        lua_State* L = klua_coroutine_rawgeti(klua_coroutine_get(p_listen->p_env), p_listen->co_accept);
+        if (NULL == L) return -1; // 未处理
+
+        p_listen->co_accept = NULL; // 清空
+
+        lua_pushlightuserdata(L, NULL); // #1. lua - userdata
+        lua_pushstring(L, "exit"); // #2. 状态消息
 
         int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
@@ -303,6 +486,19 @@ static int on_accept_klua_krtspserve_listen(klb_netconn_t* p_conn, void* ptr, kl
 
 //////////////////////////////////////////////////
 
+// 当需要退出等的 退出函数
+static int on_yield_accept_klua_krtspserve_listen(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+{
+    klua_krtspserve_listen_t* p_listen = (klua_krtspserve_listen_t*)ptr;
+
+    if (KLUA_ENV_EX_quit == opt)
+    {
+        call_co_accept_end_klua_krtspserve_listen(p_listen);
+    }
+
+    return 0;
+}
+
 static int klua_krtspserve_listen_co_accept(lua_State* L)
 {
     klua_krtspserve_listen_t* p_listen = to_klua_krtspserve_listen(L, 1);
@@ -313,10 +509,8 @@ static int klua_krtspserve_listen_co_accept(lua_State* L)
     {
         klua_krtspserve_listen_socket_t* p_listen_socket = (klua_krtspserve_listen_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
 
-        lua_pushstring(L, "ok"); // 
-        new_klua_krtspserve_by_socket(p_listen, p_listen_socket); // 
-
-        KLB_FREE(p_listen_socket);
+        lua_pushlightuserdata(L, p_listen_socket); // #1. lua - userdata
+        lua_pushstring(L, "ok"); // #2. 状态消息
 
         return 2;
     }
@@ -325,7 +519,7 @@ static int klua_krtspserve_listen_co_accept(lua_State* L)
     assert(NULL == p_listen->co_accept);
     p_listen->co_accept = L;
 
-    return lua_yield(L, lua_gettop(L));
+    return klua_coroutine_yield(p_listen->p_coex, L, on_yield_accept_klua_krtspserve_listen, p_listen);
 }
 
 //////////////////////////////////////////////////
@@ -334,9 +528,9 @@ static int klua_krtspserve_listen_co_accept(lua_State* L)
 void klua_krtspserve_listen_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
-        { "close",          klua_krtspserve_listen_close },     ///< 
+        { "close",          klua_krtspserve_listen_close },     ///< 关闭监听
 
-        { "co_accept",      klua_krtspserve_listen_co_accept }, ///< 
+        { "co_accept",      klua_krtspserve_listen_co_accept }, ///< 接收 新连接
 
         { NULL,             NULL }
     };
@@ -361,7 +555,7 @@ void klua_krtspserve_listen_createmeta(lua_State* L)
 
 
 /// @brief 监听端口
-int klua_krtsp_serve_listen(lua_State* L)
+int klua_krtspserve_listen(lua_State* L)
 {
     int port = (int)luaL_checkinteger(L, 1);                        ///< @1. 端口号
 
@@ -372,13 +566,14 @@ int klua_krtsp_serve_listen(lua_State* L)
     klb_netlisten_conn_set_accept(p_listen_conn, on_accept_klua_krtspserve_listen, NULL);
     klb_netlisten_conn_open(p_listen_conn, port, 20);
 
-    klua_krtspserve_listen_t* p_listen = new_klua_krtspserve_listen(L);
+    klua_krtspserve_listen_t* p_listen = new_klua_krtspserve_listen(L); ///< #1. 监听对象
 
     // 初始化
     {
         p_listen->L = L;
         p_listen->co_accept = NULL;
         p_listen->p_env = p_env;
+        p_listen->p_coex = klua_coroutine_get(p_env);
 
         p_listen->p_netmulti = p_netmulti;
         p_listen->p_listen_conn = p_listen_conn;

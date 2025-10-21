@@ -275,6 +275,12 @@ static klua_coroutine_env_t* new_cowrap_klua_kco(lua_State* L, int idx, int from
     ptr->co_reg = luaL_ref(ptr->p_main, LUA_REGISTRYINDEX);
     ptr->p_co = NL;
 
+    // 初始化
+    {
+        memset(NL->uname, 0, sizeof(NL->uname));
+        NL->udata = NULL;
+    }
+
     //
     klua_ex_coroutine_t* p_ex_co = klua_ex_get_coroutine_by_L(G(L)->mainthread);
     klua_ex_coroutine_push(p_ex_co, ptr);

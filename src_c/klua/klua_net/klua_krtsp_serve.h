@@ -12,7 +12,6 @@
 #ifndef __KLUA_KRTSP_SERVE_H__
 #define __KLUA_KRTSP_SERVE_H__
 
-
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include <assert.h>
@@ -27,13 +26,18 @@ extern "C" {
 void klua_krtspserve_createmeta(lua_State* L);
 
 
+/// @brief rtsp 服务连接 服务
+/// @return void
+int klua_krtspserve_new_serve(lua_State* L);
+
+
 /// @brief 创建rtsp 监听 服务 meta
 /// @return void
 void klua_krtspserve_listen_createmeta(lua_State* L);
 
 
 /// @brief 服务监听
-int klua_krtsp_serve_listen(lua_State* L);
+int klua_krtspserve_listen(lua_State* L);
 
 
 #ifdef __cplusplus

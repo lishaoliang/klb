@@ -436,6 +436,13 @@ klb_netconn_t* klb_rtspserve_conn_create(klb_netmulti_t* p_netmulti, klb_socket_
         klb_socket_set_reading(p_socket, true);
     }
 
+    // 
+    {
+        // 放入复用模块
+        klb_netmulti_push(p_netmulti, p_conn);
+    }
+
+
     return p_conn;
 }
 

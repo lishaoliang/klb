@@ -7,17 +7,24 @@
 -- @history 修改历史
 --]]
 local rtspclienter = require("klbcore.klbrtsp.client.rtspclienter")
-
+local rtsplistener = require("klbcore.klbrtsp.serve.rtsplistener")
 
 local klbrtsp = {}
 
 
-
 -- @brief 新建一个客户端
 -- @param [in]      cfg[table]		客户端配置
--- @return [table]
+-- @return [table]	客户端模块
 klbrtsp.new_client = function (cfg)
 	return rtspclienter.new(cfg)
+end
+
+
+-- @brief 新建一个监听模块
+-- @param [in]      cfg[table]		监听模块配置
+-- @return [table]	监听模块
+klbrtsp.new_listen = function (cfg)
+	return rtsplistener.new(cfg)
 end
 
 

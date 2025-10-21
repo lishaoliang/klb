@@ -6,7 +6,8 @@
 #include "klbutil/klb_nlist.h"
 #include "klua/klua_env.h"
 #include "klbplatform/klb_time.h"
-
+#include "klbutil/klb_rand.h"
+#include "lstate.h"
 
 
 typedef struct klua_ex_coroutine_timeout_t_
@@ -30,6 +31,14 @@ typedef struct klua_ex_coroutine_t_
 
 //////////////////////////////////////////////////////////////////////////
 
+//  查找 co env
+static klua_coroutine_env_t* klua_ex_coroutine_find_co_env(klua_ex_coroutine_t* p_ex, lua_State* p_co)
+{
+    // 使用 额外添加的 lua_State.uname[16] 字段, 作为查找 key
+    klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co->uname, KLUA_EX_STATE_NAME_LEN);
+
+    return p_co_env;
+}
 
 static int klua_ex_coroutine_call_auxwrap(lua_State* L, int reg)
 {
@@ -88,7 +97,7 @@ static int on_exit_klua_ex_coroutine(klua_ex_coroutine_t* p_ex, klua_env_t* p_en
 
         if (p_co_env && p_co_env->cb_wakeup)
         {
-            klua_ex_coroutine_yield_cb cb = p_co_env->cb_wakeup;
+            klua_coroutine_yield_cb cb = p_co_env->cb_wakeup;
             void* ptr = p_co_env->ptr;
 
             cb(ptr, p_ex, p_co_env->p_co, KLUA_ENV_EX_quit);
@@ -131,7 +140,7 @@ static int klua_ex_coroutine_loop_once(void* ptr, klua_env_t* p_env, int64_t las
     while (0 < klb_nlist_size(p_ex->p_wakeup_list))
     {
         lua_State* p_co = (lua_State*)klb_nlist_pop_head(p_ex->p_wakeup_list);
-        klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+        klua_coroutine_env_t* p_co_env = klua_ex_coroutine_find_co_env(p_ex, p_co);// (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
 
         if (NULL != p_co_env)
         {
@@ -151,7 +160,7 @@ static int klua_ex_coroutine_loop_once(void* ptr, klua_env_t* p_env, int64_t las
         if (p_co_timeout->tick_count + p_co_timeout->wait_tc <= now)
         {
             // 时间到
-            klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co_timeout->p_co, sizeof(lua_State*));
+            klua_coroutine_env_t* p_co_env = klua_ex_coroutine_find_co_env(p_ex, p_co_timeout->p_co); // (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co_timeout->p_co, sizeof(lua_State*));
 
             if (NULL != p_co_env)
             {
@@ -189,15 +198,29 @@ int klua_ex_coroutine_exit(klua_env_t* p_env, int64_t now)
 
 int klua_ex_coroutine_push(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_co_env)
 {
-    klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_co_hlist, p_co_env->p_co, sizeof(lua_State*), p_co_env);
-    assert(NULL != p_iter);
+    char uname[16] = { 0 };
+    while (true)
+    {
+        // 随机名称
+        klb_rand_string(uname, KLUA_EX_STATE_NAME_LEN, true);
+
+        // 放入
+        klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_co_hlist, uname, KLUA_EX_STATE_NAME_LEN, p_co_env);
+        if (NULL != p_iter)
+        {
+            // 修改名称
+            strncpy(p_co_env->p_co->uname, uname, sizeof(p_co_env->p_co->uname) - 1);
+
+            break;
+        }
+    }
 
     return 0;
 }
 
 int klua_ex_coroutine_remove(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_co_env)
 {
-    klb_hlist_remove_bykey(p_ex->p_co_hlist, p_co_env->p_co, sizeof(lua_State*));
+    klb_hlist_remove_bykey(p_ex->p_co_hlist, p_co_env->p_co->uname, KLUA_EX_STATE_NAME_LEN);
     return 0;
 }
 
@@ -224,7 +247,7 @@ int klua_ex_coroutine_wakeup_timeout(klua_ex_coroutine_t* p_ex, lua_State* p_co,
 
 lua_State* klua_ex_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co)
 {
-    klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+    klua_coroutine_env_t* p_co_env = klua_ex_coroutine_find_co_env(p_ex, p_co); // (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
 
     if (NULL != p_co_env)
     {
@@ -240,9 +263,9 @@ lua_State* klua_ex_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co)
     return NULL;
 }
 
-int klua_ex_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klua_ex_coroutine_yield_cb cb, void* ptr)
+int klua_ex_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klua_coroutine_yield_cb cb, void* ptr)
 {
-    klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+    klua_coroutine_env_t* p_co_env = klua_ex_coroutine_find_co_env(p_ex, p_co); // (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
 
     if (NULL != p_co_env)
     {
@@ -254,6 +277,37 @@ int klua_ex_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klua_ex_
     }
 
     return lua_yield(p_co, lua_gettop(p_co));
+}
+
+int klua_ex_coroutine_debug_check(klua_ex_coroutine_t* p_ex, lua_State* p_co)
+{
+    klua_coroutine_env_t* p_co_env = klua_ex_coroutine_find_co_env(p_ex, p_co); // (klua_coroutine_env_t*)klb_hlist_find(p_ex->p_co_hlist, p_co, sizeof(lua_State*));
+    if (NULL != p_co_env)
+    {
+        assert(p_co_env->p_co == p_co);
+        if (p_co_env->p_co == p_co)
+        {
+            return 0;
+        }
+    }
+
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_ex->p_co_hlist);
+    while (NULL != p_iter)
+    {
+        klua_coroutine_env_t* p_tmp = klb_hlist_data(p_iter);
+        if (p_tmp->p_co == p_co)
+        {
+            klua_ex_coroutine_find_co_env(p_ex, p_co);
+
+            assert(false);
+            return 2;
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+
+    assert(false);
+    return 1;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -301,3 +355,16 @@ lua_State* klua_coroutine_rawgeti(klua_ex_coroutine_t* p_ex, lua_State* p_co)
 {
     return klua_ex_coroutine_rawgeti(p_ex, p_co);
 }
+
+int klua_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klua_coroutine_yield_cb cb, void* ptr)
+{
+    return klua_ex_coroutine_yield(p_ex, p_co, cb, ptr);
+}
+
+int klua_coroutine_debug_check(klua_ex_coroutine_t* p_ex, lua_State* p_co)
+{
+    return klua_ex_coroutine_debug_check(p_ex, p_co);
+}
+
+//end
+

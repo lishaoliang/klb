@@ -111,17 +111,17 @@ int klb_netconn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* 
     return 1;
 }
 
-int klb_netconn_set_udata(klb_netconn_t* p_conn, void* p_udata)
+void klb_netconn_set_udata(klb_netconn_t* p_conn, void* p_udata)
 {
     p_conn->p_udata = p_udata;
 }
 
-int klb_netconn_set_lparam(klb_netconn_t* p_conn, void* p_lparam)
+void klb_netconn_set_lparam(klb_netconn_t* p_conn, void* p_lparam)
 {
     p_conn->p_lparam = p_lparam;
 }
 
-int klb_netconn_set_wparam(klb_netconn_t* p_conn, void* p_wparam)
+void klb_netconn_set_wparam(klb_netconn_t* p_conn, void* p_wparam)
 {
     p_conn->p_wparam = p_wparam;
 }

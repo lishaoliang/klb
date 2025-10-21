@@ -29,6 +29,7 @@ int klua_register_extension_std(klua_env_t* p_env);
 int klua_register_extension_std_cpp(klua_env_t* p_env);
 
 
+/// @brief 支持CPP-gui
 int klua_using_cpp_gui(klua_env_t* p_env);
 
 

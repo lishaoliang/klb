@@ -218,6 +218,7 @@ function rtspclient:co_connect(url)
 	return 0
 end
 
+-- @brief 接收数据
 function rtspclient:co_recv()
 	if self._client then
 		local msg, txt = self._client:co_recv()
@@ -232,12 +233,12 @@ end
 -- @brief 新建一个rtsp客户端
 rtspclienter.new = function (cfg)
 	local obj = {
-		_client = nil,		-- C/C++ 提供的客户端连接
+		_client = nil,			-- C/C++ 提供的客户端连接
 		
-		cseq = 1,			-- 请求序号
+		cseq = 1,				-- 请求序号
 		
-		url = '',			-- 基础 url	
-		session = '',		-- 会话标识
+		url = '',				-- 基础 url	
+		session = '',			-- 会话标识
 		
 		video = {},			-- 视频列表
 		audio = {},			-- 音频列表

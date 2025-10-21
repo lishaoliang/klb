@@ -251,7 +251,7 @@ rtspsdper.parse_sdp = function (txt)
 		end
 	end
 	
-	local media_type = media['media_type'] or ''	
+	local media_type = media['media_type'] or ''
 	if 'video' == media_type then
 		table.insert(sdp_video, media)
 	elseif 'audio' == media_type then
