@@ -394,21 +394,6 @@ static void klb_rtspserve_conn_quit(klb_netconn_t* p_conn)
     KLB_FREE_BY(p_rtsp->p_read_rbuf, klb_rbuf_datalen);
 }
 
-//////////////////////////////////////////////////////////////////////////
-
-klb_netconn_t* klb_rtspserve_conn_create2(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket)
-{
-    // 创建 klb_netconn_t*
-    klb_netconn_t* p_netconn = klb_rtspserve_conn_create(p_netmulti, p_socket);
-
-    {
-        // 放入复用模块
-        klb_netmulti_push(p_netmulti, p_netconn);
-    }
-
-
-    return p_netconn;
-}
 
 //////////////////////////////////////////////////////////////////////////
 

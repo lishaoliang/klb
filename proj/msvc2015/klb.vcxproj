@@ -202,6 +202,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
+    <ClInclude Include="..\..\inc\klbmem\klb_bufpoolfix.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf_atom.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_fpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h" />
@@ -387,6 +388,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbutil\list.h" />
     <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
+    <ClInclude Include="..\..\inc\klua\klua_buffer.h" />
     <ClInclude Include="..\..\inc\klua\klua_coroutine.h" />
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
     <ClInclude Include="..\..\inc\klua\klua_env_extension.h" />
@@ -467,6 +469,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h" />
     <ClInclude Include="..\..\src_c\klbutil\klb_canvas_in.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_bufagent.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_coroutine.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h" />
@@ -711,6 +714,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tip.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
+    <ClCompile Include="..\..\src_c\klbmem\klb_bufpoolfix.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf_atom.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_fpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
@@ -830,6 +834,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbutil\klb_sds.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_bufagent.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_coroutine.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c" />

@@ -2,6 +2,7 @@
 #include "klbnet/klb_socket.h"                  // Bug. MINGW32/MINGW64 必须先引用 <winsock2.h>, 再 引用 <windows.h>
 #include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_object.h"
+#include "klua/extension/klua_ex_bufagent.h"
 #include "klua/extension/klua_ex_time.h"
 #include "klua/extension/klua_ex_gui.h"
 #include "klua/extension/klua_ex_multiplex.h"
@@ -14,6 +15,9 @@ int klua_register_extension_std(klua_env_t* p_env)
 {
     // ojbect
     klua_ex_register_object(p_env);
+
+    // 缓存代理
+    klua_ex_register_bufagent(p_env);
 
     // 协程
     klua_ex_register_coroutine(p_env);
@@ -35,3 +39,5 @@ int klua_register_extension_std(klua_env_t* p_env)
 
     return 0;
 }
+
+//end

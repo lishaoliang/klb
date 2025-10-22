@@ -131,3 +131,21 @@ int klb_buf_unref_next(klb_buf_t* p_buf)
 
     return 0;
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+
+klb_buf_t* klb_bufagent_malloc(klb_bufagent_t* p_bufagent, size_t size)
+{
+    klb_buf_malloc_cb cb_malloc = p_bufagent->cb_malloc;
+    if (NULL != cb_malloc)
+    {
+        return cb_malloc(p_bufagent->p_pool, size);
+    }
+
+    return NULL;
+}
+
+
+//end
+

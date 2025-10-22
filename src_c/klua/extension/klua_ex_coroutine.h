@@ -1,4 +1,15 @@
-﻿#ifndef __KLUA_EX_COROUTINE_H__
+﻿///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2022, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klua_ex_coroutine.h
+/// @author  随风(https://gitee.com/klua/klb)
+/// @brief   协程扩展
+/// @version 0.1
+/// @history 修改历史
+///  \n [2022] 创建文件
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLUA_EX_COROUTINE_H__
 #define __KLUA_EX_COROUTINE_H__
 
 

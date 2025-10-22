@@ -28,10 +28,6 @@ extern "C" {
 KLB_API klb_netconn_t* klb_rtspserve_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
 
 
-/// @brief 连接目标
-KLB_API klb_netconn_t* klb_rtspserve_conn_create2(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
-
-
 
 #ifdef __cplusplus
 }

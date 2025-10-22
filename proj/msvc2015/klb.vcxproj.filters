@@ -1755,6 +1755,15 @@
     <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h">
       <Filter>inc\klbnet\klblisten</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbmem\klb_bufpoolfix.h">
+      <Filter>inc\klbmem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_bufagent.h">
+      <Filter>src_c\klua\extension</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klua\klua_buffer.h">
+      <Filter>inc\klua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2896,6 +2905,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c">
       <Filter>src_c\klbnet\klblisten</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbmem\klb_bufpoolfix.c">
+      <Filter>src_c\klbmem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_bufagent.c">
+      <Filter>src_c\klua\extension</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
