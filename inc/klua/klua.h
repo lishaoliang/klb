@@ -255,6 +255,12 @@ KLB_API int klua_open_kws(lua_State* L);
 KLB_API int klua_open_kmnp(lua_State* L);
 
 
+/// @brief 扩展库"ksmp"
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_ksmp(lua_State* L);
+
+
 /// @brief 扩展库"kncm": 网络媒体长链接管理模块
 /// @param [in] *L          Lua状态
 /// @return int 返回1

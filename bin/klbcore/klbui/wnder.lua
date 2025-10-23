@@ -124,7 +124,7 @@ wnder.new = function (kwnd)
 		__index = window,
 		__tostring = function(self)
 			return self._kwnd
-        end
+		end
 	})
 	
 	return obj

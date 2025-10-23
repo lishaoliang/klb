@@ -96,7 +96,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
-      <TreatSpecificWarningsAsErrors>4133</TreatSpecificWarningsAsErrors>
+      <TreatSpecificWarningsAsErrors>4133;4013;4047</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -221,7 +221,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipserve_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclientrpc_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclient_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserverpc_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcserve_conn.h" />
@@ -480,6 +482,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
     <ClInclude Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.h" />
+    <ClInclude Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_map.h" />
@@ -732,7 +735,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsipclient\klb_sipclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsipserve\klb_sipserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclientrpc_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserverpc_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c" />
@@ -866,6 +871,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksip.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />

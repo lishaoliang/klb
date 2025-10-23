@@ -5,13 +5,15 @@
 -- @brief  klb rtsp client
 -- @note   rtsp 客户端
 -- @history 修改历史
+--		[2025-10] 添加基础
 --]]
 local krtsp = require("krtsp")
 local kurl = require("kurl")
 local rtspsdper = require("klbcore.klbrtsp.client.rtspsdper")
 
 
-local rtspclienter = {}
+--------------------------------------------------------------------------------------------
+-- 
 local E = {}
 
 
@@ -158,7 +160,7 @@ local req_teardown = function (self)
 end
 
 --------------------------------------------------------------------------------------------
--- 对外接口
+-- rtspclient 对外接口
 
 local rtspclient = {}
 
@@ -186,7 +188,7 @@ function rtspclient:co_connect(url)
 	end
 
 	-- 发起连接
-	local client = krtsp.connect(host, tonumber(port))	
+	local client = krtsp.connect(host, tonumber(port))
 	if not client then
 		return 1 -- 连接失败
 	end
@@ -230,6 +232,12 @@ function rtspclient:co_recv()
 end
 
 
+--------------------------------------------------------------------------------------------
+-- rtspclienter
+
+local rtspclienter = {}
+
+
 -- @brief 新建一个rtsp客户端
 rtspclienter.new = function (cfg)
 	local obj = {
@@ -247,7 +255,7 @@ rtspclienter.new = function (cfg)
 	setmetatable(obj, {
 		__index = rtspclient,
 		__tostring = function(self)
-			return self._client
+			return tostring(self._client)
         end
 	})
 	

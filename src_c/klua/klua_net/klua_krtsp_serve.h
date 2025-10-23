@@ -14,7 +14,6 @@
 
 #include "klua/klua.h"
 #include "klua/klua_env.h"
-#include <assert.h>
 
 #if defined(__cplusplus)
 extern "C" {

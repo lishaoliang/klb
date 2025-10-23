@@ -3,7 +3,7 @@
 //
 /// @file    klb_mnpclient_conn.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   文件简要描述
+/// @brief   MNP客户端连接(klb MNP client connect)
 /// @version 0.1
 /// @history 修改历史
 ///  \n [2025-10] 创建文件
@@ -22,12 +22,12 @@ extern "C" {
 #endif
 
 
-/// @brief 创建rtsp连接
+/// @brief 创建MNP连接
 /// @return klb_netconn_t*
 KLB_API klb_netconn_t* klb_mnpclient_conn_create();
 
 
-/// @brief 连接目标
+/// @brief MNP连接目标
 KLB_API klb_netconn_t* klb_mnpclient_connect();
 
 

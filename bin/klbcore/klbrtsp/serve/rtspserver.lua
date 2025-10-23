@@ -9,7 +9,6 @@
 local krand = require("krand")
 local rtspserve_parser = require("klbcore.klbrtsp.serve.rtspserve_parser")
 
-local rtspserver = {}
 
 --------------------------------------------------------------------------------------------
 -- 前置定义
@@ -167,7 +166,7 @@ end
 
 
 --------------------------------------------------------------------------------------------
--- 对外接口
+-- rtspserve 对外接口
 
 local rtspserve = {}
 
@@ -192,25 +191,29 @@ function rtspserve:send_media(ptr)
 	end
 end
 
+
+--------------------------------------------------------------------------------------------
+-- rtspserver
+
+local rtspserver = {}
+
+
 -- @brief 新建一个 服务连接 
 rtspserver.new = function (conn, cfg)	
 	local obj = {
-		_serve = nil,		-- C/C++ 提供的服务连接
+		_serve = conn,						-- C/C++ 提供的服务连接
 		
-		state = 'options',	-- 状态 'options'(会话交互阶段), 'play'(开启了play)
+		state = 'options',					-- 状态 'options'(会话交互阶段), 'play'(开启了play)
 		
 		session = krand.rand_string(16),	-- 会话ID
-		timeout = 60,		-- 超时时间
+		timeout = 60,						-- 超时时间
 	}
-
-	-- 服务连接
-	obj._serve = conn
 	
 	setmetatable(obj, {
 		__index = rtspserve,
 		__tostring = function(self)
 			return tostring(self._serve)
-        end
+		end
 	})
 	
 	-- init

@@ -3,7 +3,8 @@
 #include "klbmem/klb_mem.h"
 
 
-
+/// @struct klb_flvclient_conn_t
+/// @brief  FLV客户端连接
 typedef struct klb_flvclient_conn_t_
 {
     int a;
@@ -16,7 +17,7 @@ static void klb_flvclient_conn_quit(klb_netconn_t* p_conn);
 
 
 //////////////////////////////////////////////////////////////////////////
-
+// 内部函数
 
 
 
@@ -27,7 +28,7 @@ static void klb_flvclient_conn_quit(klb_netconn_t* p_conn);
 /// @brief 销毁
 static void klb_flvclient_conn_destroy(klb_netconn_t* p_conn)
 {
-    klb_flvclient_conn_t* p_flv = (klb_flvclient_conn_t*)p_conn->extra;
+    klb_flvclient_conn_t* p_flvclient = (klb_flvclient_conn_t*)p_conn->extra;
 
     klb_flvclient_conn_quit(p_conn);
 
@@ -77,6 +78,8 @@ static int klb_flvclient_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now
 }
 
 //////////////////////////////////////////////////////////////////////////
+// 导出函数
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,7 +87,7 @@ static int klb_flvclient_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now
 
 static int klb_flvclient_conn_init(klb_netconn_t* p_conn)
 {
-    klb_flvclient_conn_t* p_flv = (klb_flvclient_conn_t*)p_conn->extra;
+    klb_flvclient_conn_t* p_flvclient = (klb_flvclient_conn_t*)p_conn->extra;
 
     // 初始化 vtable
     p_conn->vtable.destroy = NULL; // 销毁
@@ -102,11 +105,12 @@ static int klb_flvclient_conn_init(klb_netconn_t* p_conn)
 
 static void klb_flvclient_conn_quit(klb_netconn_t* p_conn)
 {
-    klb_flvclient_conn_t* p_flv = (klb_flvclient_conn_t*)p_conn->extra;
+    klb_flvclient_conn_t* p_flvclient = (klb_flvclient_conn_t*)p_conn->extra;
 
 }
 
 //////////////////////////////////////////////////////////////////////////
+/// 连接目标
 
 klb_netconn_t* klb_flvclient_connect()
 {
@@ -115,7 +119,7 @@ klb_netconn_t* klb_flvclient_connect()
 
 //////////////////////////////////////////////////////////////////////////
 
-/// @brief 创建rtsp连接
+/// @brief 创建HTTP连接
 /// @return klb_netconn_t*
 klb_netconn_t* klb_flvclient_conn_create()
 {

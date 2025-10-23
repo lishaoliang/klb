@@ -3,7 +3,7 @@
 //
 /// @file    klb_flvclient_conn.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   文件简要描述
+/// @brief   FLV客户端连接(klb FLV client connect)
 /// @version 0.1
 /// @history 修改历史
 ///  \n [2025-10] 创建文件
@@ -11,7 +11,6 @@
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_FLVCLIENT_CONN_H__
 #define __KLB_FLVCLIENT_CONN_H__
-
 
 #include "klb_type.h"
 #include "klbnet/klb_socket.h"
@@ -23,12 +22,12 @@ extern "C" {
 #endif
 
 
-/// @brief 创建rtsp连接
+/// @brief 创建FLV连接
 /// @return klb_netconn_t*
 KLB_API klb_netconn_t* klb_flvclient_conn_create();
 
 
-/// @brief 连接目标
+/// @brief FLV连接目标
 KLB_API klb_netconn_t* klb_flvclient_connect();
 
 

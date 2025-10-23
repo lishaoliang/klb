@@ -9,7 +9,9 @@
 local krtsp = require("krtsp")
 local rtspserver = require("klbcore.klbrtsp.serve.rtspserver")
 
-local rtsplistener = {}
+
+--------------------------------------------------------------------------------------------
+-- 前置定义
 local E = {}
 
 
@@ -18,7 +20,7 @@ local E = {}
 
 
 --------------------------------------------------------------------------------------------
--- 对外接口
+-- rtsplisten 对外接口
 
 local rtsplisten = {}
 
@@ -50,6 +52,13 @@ function rtsplisten:co_accept()
 	return rtspserver.new(conn)
 end
 
+
+--------------------------------------------------------------------------------------------
+-- rtsplistener
+
+local rtsplistener = {}
+
+
 -- @brief 新建一个监听模块
 rtsplistener.new = function (cfg)
 	local obj = {
@@ -60,10 +69,11 @@ rtsplistener.new = function (cfg)
 		__index = rtsplisten,
 		__tostring = function(self)
 			return self._listen
-        end
+		end
 	})
 	
 	return obj
 end
+
 
 return rtsplistener

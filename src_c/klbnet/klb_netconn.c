@@ -10,7 +10,7 @@ void klb_netconn_destroy(klb_netconn_t* p_conn)
     cb_destroy(p_conn);
 }
 
-int klb_netconn_bind_recv(klb_netconn_t* p_conn, klb_netconn_recv_data_cb cb_recv)
+int klb_netconn_bind_recv_data(klb_netconn_t* p_conn, klb_netconn_recv_data_cb cb_recv)
 {
     p_conn->vtable.recv_data = cb_recv;
     return 0;

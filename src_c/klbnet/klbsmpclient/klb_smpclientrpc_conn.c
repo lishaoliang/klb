@@ -1,21 +1,21 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klbnet/klbsmp/klb_smpclient_conn.h"
+#include "klbnet/klbsmp/klb_smpclientrpc_conn.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_nlist.h"
 #include <assert.h>
 
 
-/// @struct klb_smpserve_conn_t
-/// @brief  SMP客户端连接
-typedef struct klb_smpclient_conn_t_
+/// @struct klb_smpclientrpc_conn_t
+/// @brief  SMP客户端RPC连接(SMP client RPC connect)
+typedef struct klb_smpclientrpc_conn_t_
 {
     klb_netmulti_t*                 p_netmulti;         ///< 复用
-}klb_smpclient_conn_t;
+}klb_smpclientrpc_conn_t;
 
 
 //////////////////////////////////////////////////////////////////////////
 // 前置定义
-static void klb_smpclient_conn_quit(klb_netconn_t* p_conn);
+static void klb_smpclientrpc_conn_quit(klb_netconn_t* p_conn);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -25,19 +25,19 @@ static void klb_smpclient_conn_quit(klb_netconn_t* p_conn);
 
 
 /// @brief connect 超时
-static void on_connect_timeout_klb_smpclient_conn(klb_netconn_t* p_conn, int64_t now)
+static void on_connect_timeout_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
 
 }
 
 /// @brief connect 握手完成
-static void on_connected_timeout_klb_smpclient_conn(klb_netconn_t* p_conn, int64_t now)
+static void on_connected_timeout_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
 
 }
 
 /// @brief ticker 定时器消息
-static void on_ticker_klb_smpclient_conn(klb_netconn_t* p_conn, int64_t now)
+static void on_ticker_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
 
 }
@@ -46,9 +46,9 @@ static void on_ticker_klb_smpclient_conn(klb_netconn_t* p_conn, int64_t now)
 // 继承重写方法
 
 /// @brief 销毁
-static void klb_smpclient_conn_destroy(klb_netconn_t* p_conn)
+static void klb_smpclientrpc_conn_destroy(klb_netconn_t* p_conn)
 {
-    klb_smpclient_conn_t* p_smpclient = (klb_smpclient_conn_t*)p_conn->extra;
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
 
     // 移除
     if (NULL != p_smpclient->p_netmulti)
@@ -61,62 +61,62 @@ static void klb_smpclient_conn_destroy(klb_netconn_t* p_conn)
     KLB_FREE_BY(p_conn->p_socket, klb_socket_destroy);
 
     // 退出
-    klb_smpclient_conn_quit(p_conn);
+    klb_smpclientrpc_conn_quit(p_conn);
 
     KLB_FREE(p_conn);
 }
 
 /// @brief 对连接进行控制操作: get/set,etc.
 /// @return int 0.成功; 非0.失败
-static int klb_smpclient_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out)
+static int klb_smpclientrpc_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out)
 {
     return 0;
 }
 
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
-static int klb_smpclient_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+static int klb_smpclientrpc_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     return 0;
 }
 
 /// @brief 发送媒体数据包
 /// @return int
-static int klb_smpclient_conn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data)
+static int klb_smpclientrpc_conn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data)
 {
     return 0;
 }
 
 /// @brief 当网络上可以发送数据时
 /// @return int
-static int klb_smpclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
+static int klb_smpclientrpc_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 {
     return 0;
 }
 
 /// @brief 当网络上可以接收数据时
 /// @return int
-static int klb_smpclient_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
+static int klb_smpclientrpc_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
 {
     return 0;
 }
 
 /// @brief 当网络上有消息传来时
 /// @param [in] msg             消息类型: klb_netconn_msg_e
-static int klb_smpclient_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now)
+static int klb_smpclientrpc_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now)
 {
     switch (msg)
     {
     case KLB_NETCONN_MSG_connect_timeout:
-        on_connect_timeout_klb_smpclient_conn(p_conn, now);
+        on_connect_timeout_klb_smpclientrpc_conn(p_conn, now);
         break;
 
     case KLB_NETCONN_MSG_connected:
-        on_connected_timeout_klb_smpclient_conn(p_conn, now);
+        on_connected_timeout_klb_smpclientrpc_conn(p_conn, now);
         break;
 
     case KLB_NETCONN_MSG_onticker:
-        on_ticker_klb_smpclient_conn(p_conn, now);
+        on_ticker_klb_smpclientrpc_conn(p_conn, now);
         break;
 
     default:
@@ -135,21 +135,21 @@ static int klb_smpclient_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now
 // init / quit
 
 /// @brief 初始化
-static int klb_smpclient_conn_init(klb_netconn_t* p_conn)
+static int klb_smpclientrpc_conn_init(klb_netconn_t* p_conn)
 {
-    klb_smpclient_conn_t* p_smpclient = (klb_smpclient_conn_t*)p_conn->extra;
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
 
     // 初始化 vtable
     {
         p_conn->vtable.destroy = NULL; // 销毁
         p_conn->vtable.recv_data = NULL; // 当前连接接收到数据/错误等信息,后调用此函数
 
-        p_conn->vtable.ioctrl = klb_smpclient_conn_ioctrl; // 对连接进行控制操作: get/set,etc.
-        p_conn->vtable.send_normal = klb_smpclient_conn_send_normal; // 调用者 发送常规数据包
-        p_conn->vtable.send_media = klb_smpclient_conn_send_media; // 调用者 发送媒体数据包
-        p_conn->vtable.on_send = klb_smpclient_conn_on_send; // 当网络上可以发送数据时
-        p_conn->vtable.on_recv = klb_smpclient_conn_on_recv; // 当网络上可以接收数据时
-        p_conn->vtable.on_msg = klb_smpclient_conn_on_msg; // 当网络上有消息传来时
+        p_conn->vtable.ioctrl = klb_smpclientrpc_conn_ioctrl; // 对连接进行控制操作: get/set,etc.
+        p_conn->vtable.send_normal = klb_smpclientrpc_conn_send_normal; // 调用者 发送常规数据包
+        p_conn->vtable.send_media = klb_smpclientrpc_conn_send_media; // 调用者 发送媒体数据包
+        p_conn->vtable.on_send = klb_smpclientrpc_conn_on_send; // 当网络上可以发送数据时
+        p_conn->vtable.on_recv = klb_smpclientrpc_conn_on_recv; // 当网络上可以接收数据时
+        p_conn->vtable.on_msg = klb_smpclientrpc_conn_on_msg; // 当网络上有消息传来时
     }
 
 
@@ -160,9 +160,9 @@ static int klb_smpclient_conn_init(klb_netconn_t* p_conn)
 }
 
 /// @brief 退出
-static void klb_smpclient_conn_quit(klb_netconn_t* p_conn)
+static void klb_smpclientrpc_conn_quit(klb_netconn_t* p_conn)
 {
-    klb_smpclient_conn_t* p_smpclient = (klb_smpclient_conn_t*)p_conn->extra;
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
 
 }
 
@@ -170,7 +170,7 @@ static void klb_smpclient_conn_quit(klb_netconn_t* p_conn)
 /// 连接目标
 
 /// @brief SMP连接目标
-klb_netconn_t* klb_smpclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port)
+klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port)
 {
     // 连接 socket
     klb_socket_fd fd = klb_socket_connect(p_host, port, 0);
@@ -183,7 +183,7 @@ klb_netconn_t* klb_smpclient_connect(klb_netmulti_t* p_netmulti, const char* p_h
     klb_socket_t* p_socket = klb_socket_async_create(fd);
 
     // 创建 klb_netconn_t*
-    klb_netconn_t* p_netconn = klb_smpclient_conn_create(p_netmulti, p_socket);
+    klb_netconn_t* p_netconn = klb_smpclientrpc_conn_create(p_netmulti, p_socket);
 
     {
         // 放入复用模块
@@ -197,15 +197,15 @@ klb_netconn_t* klb_smpclient_connect(klb_netmulti_t* p_netmulti, const char* p_h
 
 /// @brief 创建SMP连接
 /// @return klb_netconn_t*
-klb_netconn_t* klb_smpclient_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket)
+klb_netconn_t* klb_smpclientrpc_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket)
 {
-    klb_netconn_t* p_conn = KLB_MALLOCZ(klb_netconn_t, 1, sizeof(klb_smpclient_conn_t));
-    klb_smpclient_conn_t* p_smpclient = (klb_smpclient_conn_t*)p_conn->extra;
+    klb_netconn_t* p_conn = KLB_MALLOCZ(klb_netconn_t, 1, sizeof(klb_smpclientrpc_conn_t));
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
 
-    klb_smpclient_conn_init(p_conn);
+    klb_smpclientrpc_conn_init(p_conn);
 
     // 补写 销毁函数
-    p_conn->vtable.destroy = klb_smpclient_conn_destroy;
+    p_conn->vtable.destroy = klb_smpclientrpc_conn_destroy;
 
 
     // socket

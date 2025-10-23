@@ -3,7 +3,7 @@
 //
 /// @file    klb_wsserve_conn.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   文件简要描述
+/// @brief   WS服务端连接(klb web socket serve connect)
 /// @version 0.1
 /// @history 修改历史
 ///  \n [2025-10] 创建文件
@@ -13,10 +13,18 @@
 #define __KLB_WSSERVE_CONN_H__
 
 #include "klb_type.h"
+#include "klbnet/klb_socket.h"
+#include "klbnet/klb_netmulti.h"
+#include "klbnet/klb_netconn.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+/// @brief 创建WS连接
+/// @return klb_netconn_t*
+KLB_API klb_netconn_t* klb_wsserve_conn_create();
 
 
 

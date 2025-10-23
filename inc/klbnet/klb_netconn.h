@@ -71,7 +71,8 @@ typedef enum klb_protocol_e_
 #define KLB_NETCONN_NAME_max    8
 
 
-
+/// @enum  klb_netconn_msg_e
+/// @brief 连接内部消息
 typedef enum klb_netconn_msg_e_
 {
     KLB_NETCONN_MSG_null                = 0,
@@ -117,6 +118,7 @@ typedef int(*klb_netconn_on_send_cb)(klb_netconn_t* p_conn, int64_t now);
 typedef int(*klb_netconn_on_recv_cb)(klb_netconn_t* p_conn, int64_t now);
 
 /// @brief 当网络上有消息传来时
+/// @param [in] msg             消息类型: klb_netconn_msg_e
 /// @return int
 typedef int(*klb_netconn_on_msg_cb)(klb_netconn_t* p_conn, int msg, int64_t now);
 
@@ -193,7 +195,7 @@ KLB_API void klb_netconn_destroy(klb_netconn_t* p_conn);
 
 
 /// @brief 绑定数据接收函数
-KLB_API int klb_netconn_bind_recv(klb_netconn_t* p_conn, klb_netconn_recv_data_cb cb_recv);
+KLB_API int klb_netconn_bind_recv_data(klb_netconn_t* p_conn, klb_netconn_recv_data_cb cb_recv);
 
 
 /// @brief 设置连接名称

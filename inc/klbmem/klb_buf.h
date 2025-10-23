@@ -2,9 +2,12 @@
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_buf.h
-/// @brief   简易缓存
-/// @version 0.1
+/// @author  随风(https://gitee.com/klua/klb)
+/// @brief   基础缓存
+/// @version 0.2
 /// @history 修改历史
+///   \n [2019]    添加基础缓存
+///   \n [2025-10] 调整buf结构; 添加内存池代理
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_BUF_H__

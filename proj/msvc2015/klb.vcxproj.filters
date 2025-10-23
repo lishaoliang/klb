@@ -1764,6 +1764,15 @@
     <ClInclude Include="..\..\inc\klua\klua_buffer.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.h">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclientrpc_conn.h">
+      <Filter>inc\klbnet\klbsmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserverpc_conn.h">
+      <Filter>inc\klbnet\klbsmp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2911,6 +2920,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_bufagent.c">
       <Filter>src_c\klua\extension</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.c">
+      <Filter>src_c\klua\klua_net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclientrpc_conn.c">
+      <Filter>src_c\klbnet\klbsmpclient</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserverpc_conn.c">
+      <Filter>src_c\klbnet\klbsmpserve</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

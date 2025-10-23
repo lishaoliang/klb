@@ -51,6 +51,16 @@ KLB_API int klb_netlisten_conn_close(klb_netconn_t* p_conn);
 KLB_API int klb_netlisten_conn_get_port(klb_netconn_t* p_conn);
 
 
+/// @struct klb_netlisten_socket_t
+/// @brief  监听得到的 socket 参数
+typedef struct klb_netlisten_socket_t_
+{
+    klb_socket_fd               fd;         ///< socket fd
+    struct sockaddr_in          addr;       ///< ip地址
+    bool                        tls;        ///< 
+}klb_netlisten_socket_t;
+
+
 /// @brief 当监听到socket连接建立时回调函数
 /// @param [in] *ptr            用户数据指针
 /// @param [in] fd              socket的系统fd

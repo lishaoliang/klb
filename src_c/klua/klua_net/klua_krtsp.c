@@ -57,7 +57,7 @@ static klua_krtspclient_t* new_klua_krtspclient(lua_State* L)
 static klua_krtspclient_t* to_klua_krtspclient(lua_State* L, int index)
 {
     klua_krtspclient_t* p_client = (klua_krtspclient_t*)luaL_checkudata(L, index, KLUA_KRTSPCLIENT_HANDLE);
-    luaL_argcheck(L, NULL != p_client, index, "'krtsp-client' expected");
+    luaL_argcheck(L, NULL != p_client, index, "'krtspclient' expected");
     return p_client;
 }
 
@@ -65,7 +65,7 @@ static int klua_krtspclient_tostring(lua_State* L)
 {
     klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);
 
-    lua_pushfstring(L, "krtsp-client:%p", p_client);
+    lua_pushfstring(L, "krtspclient:%p", p_client);
     return 1;
 }
 
@@ -193,7 +193,7 @@ static int klua_krtspclient_send_text(lua_State* L)
 static int klua_krtspclient_co_recv(lua_State* L)
 {
     klua_krtspclient_t* p_client = to_klua_krtspclient(L, 1);  ///< @1. self
-    klua_check_coroutine(L, "co_recv must in coroutine!");
+    klua_check_coroutine(L, "krtspclient:co_recv must in coroutine!");
     assert(NULL == p_client->co_recv);
 
     klb_buf_t* p_txt = klb_nlist_head(p_client->p_text_nlist);
@@ -321,7 +321,7 @@ static int klua_krtspclient_connect(lua_State* L)
 
         // 绑定数据接收
         p_rtsp_conn->p_udata = p_client;
-        klb_netconn_bind_recv(p_rtsp_conn, on_recv_data_klua_krtspclient);
+        klb_netconn_bind_recv_data(p_rtsp_conn, on_recv_data_klua_krtspclient);
     }
 
     return 1;

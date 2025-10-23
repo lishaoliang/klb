@@ -5,6 +5,7 @@
 -- @brief  klbrtsp init.lua
 -- @note   rtsp协议
 -- @history 修改历史
+--		[2025-10] 添加基础
 --]]
 local rtspclienter = require("klbcore.klbrtsp.client.rtspclienter")
 local rtsplistener = require("klbcore.klbrtsp.serve.rtsplistener")

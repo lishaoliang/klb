@@ -326,6 +326,7 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_khttp, "khttp"); 
         klua_loadlib(L, klua_open_kws, "kws");
         klua_loadlib(L, klua_open_kmnp, "kmnp");
+        klua_loadlib(L, klua_open_ksmp, "ksmp");
         klua_loadlib(L, klua_open_kncm, "kncm");
         klua_loadlib(L, klua_open_krtsp, "krtsp");
         klua_loadlib(L, klua_open_khttp_flv, "khttp_flv");

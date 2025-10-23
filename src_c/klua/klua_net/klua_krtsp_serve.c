@@ -313,7 +313,7 @@ int klua_krtspserve_new_serve(lua_State* L)
     p_serve->p_rtsp_conn = klb_rtspserve_conn_create(p_serve->p_netmulti, p_socket);
 
     klb_netconn_set_udata(p_serve->p_rtsp_conn, p_serve);
-    klb_netconn_bind_recv(p_serve->p_rtsp_conn, on_recv_data_klua_krtspserve);
+    klb_netconn_bind_recv_data(p_serve->p_rtsp_conn, on_recv_data_klua_krtspserve);
 
     return 1;
 }
