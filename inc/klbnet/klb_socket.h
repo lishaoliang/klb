@@ -176,6 +176,7 @@ KLB_API void klb_socket_set_tls(klb_socket_t* p_socket, bool tls);
 KLB_API bool klb_socket_is_tls(klb_socket_t* p_socket);
 
 /// @brief 设置状态
+/// @param [in]  status             状态: klb_socket_status_e
 KLB_API void klb_socket_set_status(klb_socket_t* p_socket, int status);
 
 /// @brief 获取状态

@@ -215,13 +215,25 @@ static int klua_kco_auxwrap(lua_State *L)
     lua_State *co = lua_tothread(L, lua_upvalueindex(1));
     klua_coroutine_env_t* p_co_env = (klua_coroutine_env_t*)lua_touserdata(L, lua_upvalueindex(2));
 
-    // 附加参数
-    for (int i = 0; i < p_co_env->param_num; i++)
+    int narg = 0;
+    if (p_co_env->is_first)
     {
-        lua_pushvalue(L, lua_upvalueindex(i + 3));
+        p_co_env->is_first = false;
+
+        // 附加参数
+        for (int i = 0; i < p_co_env->param_num; i++)
+        {
+            lua_pushvalue(L, lua_upvalueindex(i + 3));
+        }
+
+        narg = lua_gettop(L);
+    }
+    else
+    {
+        narg = lua_gettop(L);
     }
 
-    int r = auxresume(L, co, lua_gettop(L));
+    int r = auxresume(L, co, narg/*lua_gettop(L)*/);
     if (r < 0) {  /* error? */
         // 异常结束
         free_klua_coroutine_env(p_co_env);
@@ -274,6 +286,7 @@ static klua_coroutine_env_t* new_cowrap_klua_kco(lua_State* L, int idx, int from
     lua_xmove(L, ptr->p_main, 1);  /* move function from L to NL */
     ptr->co_reg = luaL_ref(ptr->p_main, LUA_REGISTRYINDEX);
     ptr->p_co = NL;
+    ptr->is_first = true;
 
     // 初始化
     {

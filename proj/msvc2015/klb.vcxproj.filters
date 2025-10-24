@@ -1773,6 +1773,9 @@
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserverpc_conn.h">
       <Filter>inc\klbnet\klbsmp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.h">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2932,6 +2935,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserverpc_conn.c">
       <Filter>src_c\klbnet\klbsmpserve</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.c">
+      <Filter>src_c\klbnet\klbsmp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

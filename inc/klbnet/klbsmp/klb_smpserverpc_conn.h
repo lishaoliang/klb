@@ -16,6 +16,7 @@
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klb_netconn.h"
+#include "klbbase/klb_smp.h"
 
 #if defined(__cplusplus)
 extern "C" {

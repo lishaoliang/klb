@@ -75,7 +75,7 @@ int klb_netconn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data)
 
 /// @brief 发送RPC-Lua数据
 /// @return int 0.成功; 非0.失败
-int klb_netconn_send_rpc(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+int klb_netconn_send_rpc_lua(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     if (NULL != p_conn->vtable.send_normal)
     {

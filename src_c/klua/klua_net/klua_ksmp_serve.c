@@ -4,6 +4,7 @@
 #include "klbutil/klb_nlist.h"
 #include "klua/klua_netmulti.h"
 #include "klua/klua_coroutine.h"
+#include "klua/klua_seri.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klblisten/klb_netlisten_conn.h"
 #include "klbnet/klbsmp/klb_smpserve_conn.h"
@@ -670,17 +671,19 @@ static int call_co_recv_text_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 
         // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
-
         klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
-        if (NULL != p_txt)
-        {
-            lua_pushlstring(L, p_txt->p_buf + p_txt->start, p_txt->end - p_txt->start); // #1 body
-            lua_pushstring(L, "text"); // #2 "text"
-            KLB_FREE_BY(p_txt, klb_buf_unref);
-        }
 
-        int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
+        klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_txt->p_buf + p_txt->start);
+        char* p_data = p_txt->p_buf + p_txt->start + sizeof(klb_mnp_rpc_t);
+        int data_len = p_txt->end - p_txt->start - sizeof(klb_mnp_rpc_t);
+
+        int num = klua_seri_map_binary_unpack(L, 1, p_data, data_len);  // #1 ~ #N. 展开lua数据
+
+        KLB_FREE_BY(p_txt, klb_buf_unref);
+
+        int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
+
 
         return (status == LUA_OK) ? 0 : 1;
     }
@@ -702,10 +705,9 @@ static int call_co_recv_end_text_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 
         p_serve->co_recv = NULL; // 清空
 
-        lua_pushstring(L, ""); // #1 body
-        lua_pushstring(L, "exit"); // #2 "text"
+        lua_pushnil(L); // #1 空
 
-        int status = lua_pcall(L, 2, 0, 0);                   /* do the call */
+        int status = lua_pcall(L, 1, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
 
         return (status == LUA_OK) ? 0 : 1;
@@ -721,7 +723,8 @@ static int on_recv_data_klua_ksmpserverpc(klb_netconn_t* p_conn, int code, int p
 
     if (0 == code)
     {
-        if (KLB_MNP_TEXT == packtype)
+        if (KLB_MNP_RPC_LUA == packtype ||
+            KLB_MNP_RPC_JSON == packtype)
         {
             klb_nlist_push_tail(p_serve->p_text_nlist, p_data);
 
@@ -729,7 +732,7 @@ static int on_recv_data_klua_ksmpserverpc(klb_netconn_t* p_conn, int code, int p
         }
         else
         {
-            KLB_FREE_BY(p_data, klb_buf_unref_next);
+            KLB_FREE_BY(p_data, klb_buf_unref);
         }
     }
 
@@ -739,40 +742,16 @@ static int on_recv_data_klua_ksmpserverpc(klb_netconn_t* p_conn, int code, int p
 //////////////////////////////////////////////////
 // 
 
-static int klua_ksmpserverpc_send_text(lua_State* L)
+// POST RPC 数据
+static int klua_ksmpserverpc_post(lua_State* L)
 {
-    klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);                  // @1. self
+    klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);      ///< @1 self
+    klb_buf_t* p_data = klua_seri_map_binary_pack(L, 1);            ///< @2 ~ @N 参数
 
-    size_t head_len = 0;
-    const char* p_head = (const char*)luaL_checklstring(L, 2, &head_len);   // @2. head
+    int ret = klb_netconn_send_rpc_lua(p_serve->p_rtsp_conn, 0, 0, NULL, 0, p_data->p_buf + p_data->start, p_data->end - p_data->start);
 
-    const char* p_body = NULL;
-    size_t body_len = 0;
-    if (klua_is_string(L, 3)) { p_body = (const char*)luaL_checklstring(L, 3, &body_len); } // @3. body
-
-    int ret = 1;
-
-    if (NULL != p_serve->p_rtsp_conn)
-    {
-        ret = klb_netconn_send_text(p_serve->p_rtsp_conn, 0, 0, (const uint8_t*)p_head, (int)head_len, (const uint8_t*)p_body, (int)body_len);
-    }
-
-    lua_pushinteger(L, ret);            // #1.  错误码
-    return 1;
-}
-
-static int klua_ksmpserverpc_send_media(lua_State* L)
-{
-    klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);      // @1. self
-    klb_buf_t* p_buf = lua_touserdata(L, 2);                    // @2. 媒体数据
-
-    int ret = 1;
-    if (NULL != p_buf)
-    {
-        ret = klb_netconn_send_media(p_serve->p_rtsp_conn, p_buf);
-    }
-
-    lua_pushinteger(L, ret);            // #1.  错误码
+    KLB_FREE_BY(p_data, klb_buf_unref);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
@@ -795,16 +774,20 @@ static int klua_ksmpserverpc_co_recv(lua_State* L)
     klua_check_coroutine(L, "ksmpserverpc:co_recv must in coroutine!");
     assert(NULL == p_serve->co_recv);
 
-    klb_buf_t* p_txt = klb_nlist_head(p_serve->p_text_nlist);
-    if (NULL != p_txt)
+    if (0 < klb_nlist_size(p_serve->p_text_nlist))
     {
-        lua_pushlstring(L, p_txt->p_buf + p_txt->start, p_txt->end - p_txt->start); // #1. body
-        lua_pushstring(L, "text"); // #2. "text"
+        klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
+
+        klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_txt->p_buf + p_txt->start);
+        char* p_data = p_txt->p_buf + p_txt->start + sizeof(klb_mnp_rpc_t);
+        int data_len = p_txt->end - p_txt->start - sizeof(klb_mnp_rpc_t);
+
+        int num = klua_seri_map_binary_unpack(L, 1, p_data, data_len);  // #1 ~ #N. 展开lua数据
 
         klb_nlist_pop_head(p_serve->p_text_nlist);
-        KLB_FREE_BY(p_txt, klb_buf_unref_next);
+        KLB_FREE_BY(p_txt, klb_buf_unref);
 
-        return 2;
+        return num;
     }
 
     p_serve->co_recv = L;
@@ -817,12 +800,11 @@ static int klua_ksmpserverpc_co_recv(lua_State* L)
 void klua_ksmpserverpc_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
-        { "disconnect",     klua_ksmpserverpc_close },            ///< 关闭连接
+        { "disconnect",     klua_ksmpserverpc_close },              ///< 关闭连接
 
-        { "send_text",      klua_ksmpserverpc_send_text },        ///< 发送文本数据
-        { "send_media",     klua_ksmpserverpc_send_media },       ///< 发送媒体数据
+        { "post",           klua_ksmpserverpc_post },               ///< 发送RPC数据
 
-        { "co_recv",        klua_ksmpserverpc_co_recv },          ///< 接收数据
+        { "co_recv",        klua_ksmpserverpc_co_recv },            ///< 接收数据
 
         { NULL,             NULL }
     };

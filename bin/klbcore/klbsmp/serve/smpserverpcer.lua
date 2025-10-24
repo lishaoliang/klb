@@ -37,35 +37,17 @@ function smpserverpc:disconnect()
 end
 
 
+
 -- @brief 发送文本数据
-function smpserverpc:send_text()
-	
+function smpserverpc:post(...)
+	return self._serve:post(...)
 end
 
--- @brief 发送二进制数据
-function smpserverpc:send_binary()
-	
+-- @brief 接收数据
+function smpserverpc:co_recv()
+	return self._serve:co_recv()
 end
 
--- @brief 发送媒体数据
-function smpserverpc:send_media()
-	
-end
-
--- @brief 接收文本数据
-function smpserverpc:co_recv_text()
-	
-end
-
--- @brief 接收二进制数据
-function smpserverpc:co_recv_binary()
-	
-end
-
--- @brief 接收媒体数据
-function smpserverpc:co_recv_media()
-	
-end
 
 
 --------------------------------------------------------------------------------------------

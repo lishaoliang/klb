@@ -21,7 +21,6 @@ local E = {}
 -- 内部实现
 
 
-
 --------------------------------------------------------------------------------------------
 -- smpclientrpc
 
@@ -53,33 +52,13 @@ end
 
 
 -- @brief 发送文本数据
-function smpclientrpc:send_text()
-	
+function smpclientrpc:post(...)
+	return self._client:post(...)
 end
 
--- @brief 发送二进制数据
-function smpclientrpc:send_binary()
-	
-end
-
--- @brief 发送媒体数据
-function smpclientrpc:send_media()
-	
-end
-
--- @brief 接收文本数据
-function smpclientrpc:co_recv_text()
-	
-end
-
--- @brief 接收二进制数据
-function smpclientrpc:co_recv_binary()
-	
-end
-
--- @brief 接收媒体数据
-function smpclientrpc:co_recv_media()
-	
+-- @brief 接收数据
+function smpclientrpc:co_recv()
+	return self._client:co_recv()
 end
 
 

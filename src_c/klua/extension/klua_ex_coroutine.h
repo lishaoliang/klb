@@ -38,6 +38,8 @@ typedef struct klua_coroutine_env_t_
     lua_State*  p_main;     ///< 主程
     lua_State*  p_co;       ///< 协程
 
+    bool        is_first;   ///< 第一次运行
+
     int         param_num;  ///< 附加参数数目
     int         co_reg;     ///< 协程 ref函数
 

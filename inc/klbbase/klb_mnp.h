@@ -119,6 +119,17 @@ typedef struct klb_mnp_common_t_
     // - 4 + 4 + 4 + 4 + 4 = 20 Byte
 }klb_mnp_common_t;
 
+/// @struct klb_mnp_rpc_t
+/// @brief  RPC header
+typedef struct klb_mnp_rpc_t_
+{
+    uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
+    uint32_t    sequence;   ///< 序列号
+    uint32_t    uid;        ///< 用户自定义ID(user defined id)
+
+    uint32_t    rsv;        ///< 保留: 0
+}klb_mnp_rpc_t;
+
 #pragma pack()
 
 

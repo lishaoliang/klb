@@ -117,6 +117,10 @@ KLB_API int klb_buf_write(klb_buf_t* p_buf, const char* p_data, int data_len);
 KLB_API int klb_buf_data_len(klb_buf_t* p_buf);
 
 
+/// @brief 空闲缓存长度
+KLB_API int klb_buf_idle_len(klb_buf_t* p_buf);
+
+
 /// @brief 将有效数据拼接在一起
 /// @param [in]  *p_head        缓存头指针
 /// @return klb_buf_t* KLB_BUF_EXTRA类型缓存; [klb_buf_t][data...]

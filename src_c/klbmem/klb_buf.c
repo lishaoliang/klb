@@ -47,6 +47,13 @@ int klb_buf_data_len(klb_buf_t* p_buf)
     return len;
 }
 
+int klb_buf_idle_len(klb_buf_t* p_buf)
+{
+    int len = p_buf->buf_len - p_buf->end;
+
+    assert(0 <= len);
+    return len;
+}
 
 klb_buf_t* klb_buf_join(klb_buf_t* p_head)
 {

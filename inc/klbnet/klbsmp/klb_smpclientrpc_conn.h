@@ -16,18 +16,20 @@
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klb_netconn.h"
+#include "klbbase/klb_smp.h"
+
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 
-/// @brief 创建SMP连接
+/// @brief 创建SMP-RPC连接
 /// @return klb_netconn_t*
 KLB_API klb_netconn_t* klb_smpclientrpc_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
 
 
-/// @brief SMP连接目标
+/// @brief SMP-RPC连接目标
 KLB_API klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port);
 
 
