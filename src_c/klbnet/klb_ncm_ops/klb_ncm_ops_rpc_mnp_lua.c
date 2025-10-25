@@ -270,7 +270,7 @@ static int on_send_klb_ncm_ops_rpc_lua_mnp(void* ptr, klb_socket_t* p_socket, in
         }
         else
         {
-            if (first && KLB_SOCKET_WANT_WRITE != p_socket->status_rw)
+            if (first && KLB_SOCKET_WAIT_WRITE != p_socket->status_rw)
             {
                 // select成功, 却第一次无法写, 出现错误
                 err = KLB_SOCKET_DISCONNECT;
@@ -346,7 +346,7 @@ static int on_recv_klb_ncm_ops_rpc_lua_mnp(void* ptr, klb_socket_t* p_socket, in
         }
         else
         {
-            if (first && KLB_SOCKET_WANT_READ != p_socket->status_rw)
+            if (first && KLB_SOCKET_WAIT_READ != p_socket->status_rw)
             {
                 // select成功, 却第一次读不到数据, 表明对方已断开 
                 err = KLB_SOCKET_DISCONNECT;

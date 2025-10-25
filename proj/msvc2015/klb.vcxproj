@@ -233,6 +233,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_ncm.h" />
+    <ClInclude Include="..\..\inc\klbnet\klb_netcode.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netconn.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netmulti.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_nsc.h" />
@@ -461,6 +462,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\shwnd\klbshw_tip.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tip.h" />
     <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.h" />
+    <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.h" />
     <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h" />
@@ -741,6 +743,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserverpc_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbwsclient\klb_wsclient_conn.c" />

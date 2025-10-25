@@ -117,75 +117,10 @@ static int klb_smpserverpc_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p
     return 1;
 }
 
-/// @brief 发送常规 RPC-LUA 数据包
-static int klb_smpserverpc_conn_send_rpc_lua(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
-{
-    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
-
-    int total_len = body_len;
-
-    klb_mnp_rpc_t rpc = { 0 };
-    rpc.sequence = sequence;
-    rpc.uid = uid;
-    rpc.size = total_len + sizeof(klb_mnp_rpc_t);
-
-    klb_smp_t smp = { 0 };
-    smp.magic = KLB_SMP_MAGIC;
-    smp.size = rpc.size + sizeof(klb_smp_t);
-    smp.packtype = KLB_MNP_RPC_LUA;
-
-    klb_buf_t* p_data = klb_buf_malloc(smp.size, false);
-    klb_buf_write(p_data, (const char*)&smp, sizeof(smp)); // SMP 头部
-    klb_buf_write(p_data, (const char*)&rpc, sizeof(rpc)); // RPC 头部
-    klb_buf_write(p_data, p_body, body_len);  // 有效 数据体
-
-    klb_nlist_push_tail(p_smpserve->p_write_nlist, p_data);
-    klb_socket_set_writing(p_conn->p_socket, true);
-
-    return 0;
-}
-
-/// @brief 发送常规 RPC-JSON 数据包
-static int klb_smpserverpc_conn_send_rpc_json(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
-{
-    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
-
-    int total_len = body_len;
-
-    klb_mnp_rpc_t rpc = { 0 };
-    rpc.sequence = sequence;
-    rpc.uid = uid;
-    rpc.size = total_len + sizeof(klb_mnp_rpc_t);
-
-    klb_smp_t smp = { 0 };
-    smp.magic = KLB_SMP_MAGIC;
-    smp.size = rpc.size + sizeof(klb_smp_t);
-    smp.packtype = KLB_MNP_RPC_JSON;
-
-    klb_buf_t* p_data = klb_buf_malloc(smp.size, false);
-    klb_buf_write(p_data, (const char*)&smp, sizeof(smp)); // SMP 头部
-    klb_buf_write(p_data, (const char*)&rpc, sizeof(rpc)); // RPC 头部
-    klb_buf_write(p_data, p_body, body_len);  // 有效 数据体
-
-    klb_nlist_push_tail(p_smpserve->p_write_nlist, p_data);
-    klb_socket_set_writing(p_conn->p_socket, true);
-
-    return 0;
-}
-
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
 static int klb_smpserverpc_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
-    if (KLB_MNP_RPC_LUA == packtype)
-    {
-        return klb_smpserverpc_conn_send_rpc_lua(p_conn, sequence, uid, p_head, head_len, p_body, body_len);
-    }
-    else if (KLB_MNP_RPC_JSON == packtype)
-    {
-        return klb_smpserverpc_conn_send_rpc_json(p_conn, sequence, uid, p_head, head_len, p_body, body_len);
-    }
-
     return 1;
 }
 
@@ -449,7 +384,69 @@ static int klb_smpserverpc_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t n
 //////////////////////////////////////////////////////////////////////////
 // 导出函数
 
+/// @brief 发送数据
+int klb_smpserverpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len)
+{
+    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
 
+    int total_len = body_len;
+
+    klb_mnp_rpc_t rpc = { 0 };
+    rpc.sequence = sequence;
+    rpc.uid = 0;
+    rpc.rpctype = rpctype; // KLB_MNP_RPC_LUA;
+    rpc.method = method; // KLB_MNP_RPC_POST;
+    rpc.size = total_len + sizeof(klb_mnp_rpc_t);
+
+    klb_smp_t smp = { 0 };
+    smp.magic = KLB_SMP_MAGIC;
+    smp.size = rpc.size + sizeof(klb_smp_t);
+    smp.packtype = rpctype; // KLB_MNP_RPC_LUA;
+
+    klb_buf_t* p_data = klb_buf_malloc(smp.size, false);
+    klb_buf_write(p_data, (const char*)&smp, sizeof(smp)); // SMP 头部
+    klb_buf_write(p_data, (const char*)&rpc, sizeof(rpc)); // RPC 头部
+    klb_buf_write(p_data, p_body, body_len);  // 有效 数据体
+
+    klb_nlist_push_tail(p_smpserve->p_write_nlist, p_data);
+
+    klb_socket_set_writing(p_socket, true);
+
+    return 0;
+}
+
+/// @brief 按 buf 发送数据
+int klb_smpserverpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, klb_buf_t* p_data)
+{
+    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
+
+    int total_len = klb_buf_data_len(p_data);
+
+    klb_mnp_rpc_t rpc = { 0 };
+    rpc.sequence = sequence;
+    rpc.uid = 0;
+    rpc.rpctype = rpctype; // KLB_MNP_RPC_LUA;
+    rpc.method = method; // KLB_MNP_RPC_POST;
+    rpc.size = total_len + sizeof(klb_mnp_rpc_t);
+
+    klb_smp_t smp = { 0 };
+    smp.magic = KLB_SMP_MAGIC;
+    smp.size = rpc.size + sizeof(klb_smp_t);
+    smp.packtype = rpctype; // KLB_MNP_RPC_LUA;
+
+    klb_buf_t* p_head = klb_buf_malloc(sizeof(klb_smp_t) + sizeof(klb_mnp_rpc_t), false);
+    klb_buf_write(p_head, (const char*)&smp, sizeof(smp)); // SMP 头部
+    klb_buf_write(p_head, (const char*)&rpc, sizeof(rpc)); // RPC 头部
+
+    klb_nlist_push_tail(p_smpserve->p_write_nlist, p_head);
+    klb_nlist_push_tail(p_smpserve->p_write_nlist, p_data);
+
+    klb_socket_set_writing(p_socket, true);
+
+    return 0;
+}
 
 //////////////////////////////////////////////////////////////////////////
 // init / quit

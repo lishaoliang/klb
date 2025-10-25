@@ -21,6 +21,7 @@
 #include "klbbase/klb_mnp.h"
 #include "klbthird/sds.h"
 #include "klbnet/klb_socket.h"
+#include "klbnet/klb_netcode.h"
 
 
 #if defined(__cplusplus)
@@ -90,8 +91,8 @@ typedef enum klb_netconn_msg_e_
 typedef void(*klb_netconn_destroy_cb)(klb_netconn_t* p_conn);
 
 /// @brief 当前连接接收到数据/错误等信息,后调用此函数
-/// @param [in]  *ptr                   用户指针
-/// @param [in]  code                   错误码: 0.成功; klb_socket_status_e
+/// @param [in]  *p_conn                连接指针
+/// @param [in]  code                   错误码: 0.成功; klb_netcode_e
 /// @param [in]  packtype               数据类型: klb_mnp_packtype_e
 /// @param [in]  *p_data                数据体
 /// @return int 0

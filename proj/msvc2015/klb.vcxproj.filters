@@ -1776,6 +1776,12 @@
     <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.h">
       <Filter>src_c\klbnet\klbsmp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.h">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klb_netcode.h">
+      <Filter>inc\klbnet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2937,6 +2943,9 @@
       <Filter>src_c\klbnet\klbsmpserve</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.c">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.c">
       <Filter>src_c\klbnet\klbsmp</Filter>
     </ClCompile>
   </ItemGroup>

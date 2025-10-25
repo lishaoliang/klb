@@ -123,11 +123,15 @@ typedef struct klb_mnp_common_t_
 /// @brief  RPC header
 typedef struct klb_mnp_rpc_t_
 {
-    uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
-    uint32_t    sequence;   ///< 序列号
-    uint32_t    uid;        ///< 用户自定义ID(user defined id)
+    uint32_t    size;           ///< 完整数据长度(data size, 包含本结构体)
+    uint32_t    sequence;       ///< 序列号
+    uint32_t    uid;            ///< 用户自定义ID(user defined id)
 
-    uint32_t    rsv;        ///< 保留: 0
+    uint16_t    rpctype : 5;    ///< RPC类型: KLB_MNP_RPC_LUA / KLB_MNP_RPC_JSON
+    uint16_t    method : 5;     ///< RPC方法: klb_mnp_rpc_method_e
+    uint16_t    rsv1 : 6;
+
+    uint32_t    rsv;            ///< 保留: 0
 }klb_mnp_rpc_t;
 
 #pragma pack()
@@ -217,6 +221,26 @@ typedef enum klb_mnp_dtype_e_
 
     KLB_MNP_DTYPE_MAX   = 0x7FFF,   ///< max data type
 }klb_mnp_dtype_e;
+
+
+/// @struct klb_mnp_rpc_method_e
+/// @brief  RPC 方法
+typedef enum klb_mnp_rpc_method_e_
+{
+    KLB_MNP_RPC_METHOD_NULL = 0x00,     ///< 空
+    //KLB_MNP_RPC_OPTIONS,                ///< 查询方法, 或查询支持的所有RPC方法
+    //KLB_MNP_RPC_GET,                    ///< 获取
+    KLB_MNP_RPC_POST,                   ///< 提交
+    //KLB_MNP_RPC_PUT,                    ///< 替换
+    //KLB_MNP_RPC_DELETE,                 ///< 删除
+
+    KLB_MNP_RPC_NOTIFY      = 0x0A,     ///< 通知数据
+
+    KLB_MNP_RPC_REQUEST     = 0x10,     ///< 请求, 客户端 向 服务端 请求
+    KLB_MNP_RPC_RESPONSE    = 0x11,     ///< 回应, 服务端 向 客户端 回应请求
+
+    KLB_MNP_RPC_METHOD_MAX  = 0x1F,
+}klb_mnp_rpc_method_e;
 
 
 #ifdef __cplusplus

@@ -109,7 +109,7 @@ static int klb_socket_openssl_async_send(klb_socket_t* p_socket, const uint8_t* 
             p_ssl->need_handshake = false;
         }
 
-        p_socket->status_rw = KLB_SOCKET_WANT_WRITE;
+        p_socket->status_rw = KLB_SOCKET_WAIT_WRITE;
         return 0; // 需要等待
     }
     
@@ -120,7 +120,7 @@ static int klb_socket_openssl_async_send(klb_socket_t* p_socket, const uint8_t* 
         int err = SSL_get_error(p_ssl->p_ssl, send);
         if (SSL_ERROR_WANT_WRITE == err)
         {
-            p_socket->status_rw = KLB_SOCKET_WANT_WRITE;
+            p_socket->status_rw = KLB_SOCKET_WAIT_WRITE;
             send = 0; // 需要等待
         }
     }
@@ -143,7 +143,7 @@ static int klb_socket_openssl_async_recv(klb_socket_t* p_socket, uint8_t* p_buf,
             p_ssl->need_handshake = false;
         }
         
-        p_socket->status_rw = KLB_SOCKET_WANT_READ;
+        p_socket->status_rw = KLB_SOCKET_WAIT_READ;
         return 0; // 需要等待
     }
     
@@ -153,7 +153,7 @@ static int klb_socket_openssl_async_recv(klb_socket_t* p_socket, uint8_t* p_buf,
         int err = SSL_get_error(p_ssl->p_ssl, recv);
         if (SSL_ERROR_WANT_READ == err)
         {
-            p_socket->status_rw = KLB_SOCKET_WANT_READ;
+            p_socket->status_rw = KLB_SOCKET_WAIT_READ;
             recv = 0; // 需要等待
         }
     }

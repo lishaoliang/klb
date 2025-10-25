@@ -8,7 +8,7 @@
 --		[2025-10] 添加基础
 --]]
 local ksmp = require("ksmp")
-local kurl = require("kurl")
+local cjson = require("cjson.safe")
 
 
 --------------------------------------------------------------------------------------------
@@ -16,9 +16,62 @@ local kurl = require("kurl")
 
 local E = {}
 
+local CONST_RPC_LUA		= 0x10		-- KLB_MNP_RPC_LUA
+local CONST_RPC_JSON	= 0x11		-- KLB_MNP_RPC_JSON
+
 
 --------------------------------------------------------------------------------------------
 -- 内部实现
+
+
+-- @brief POST-RPC
+local PostRpc = function (self, ...)
+	local client = self._client
+	local rpctype = self.rpctype
+	
+	if CONST_RPC_JSON == rpctype then
+		local args = {...}
+		local s = cjson.encode(args)
+		
+		return client:post(rpctype, s)
+	end
+	
+	-- CONST_RPC_LUA
+	return client:post(rpctype, ...)
+end
+
+-- @brief NOTIFY-RPC
+local NotifyRpc = function (self, ...)
+	local client = self._client
+	local rpctype = self.rpctype
+	
+	if CONST_RPC_JSON == rpctype then
+		local args = {...}
+		local s = cjson.encode(args)
+		
+		return client:notify(rpctype, s)
+	end
+	
+	-- CONST_RPC_LUA
+	return client:notify(rpctype, ...)
+end
+
+
+-- @brief call
+local CoCall = function (self, ...)
+	local client = self._client
+	local rpctype = self.rpctype
+
+	if CONST_RPC_JSON == rpctype then
+		local args = {...}
+		local s = cjson.encode(args)
+		
+		return client:co_call(rpctype, s)
+	end
+	
+	-- CONST_RPC_LUA
+	return client:co_call(rpctype, ...)
+end
 
 
 --------------------------------------------------------------------------------------------
@@ -53,12 +106,25 @@ end
 
 -- @brief 发送文本数据
 function smpclientrpc:post(...)
-	return self._client:post(...)
+	return PostRpc(self, ...)
 end
+
+
+-- @brief notify - RPC 数据
+function smpclientrpc:notify(...)
+	return NotifyRpc(self, ...)
+end
+
 
 -- @brief 接收数据
 function smpclientrpc:co_recv()
 	return self._client:co_recv()
+end
+
+
+-- @brief 调用远程函数
+function smpclientrpc:co_call(...)
+	return CoCall(self, ...)
 end
 
 
@@ -72,6 +138,8 @@ local smpclientrpcer = {}
 smpclientrpcer.new_rpc = function (cfg)
 	local obj = {
 		_client = nil,						-- C/C++ 提供的客户端连接
+		
+		rpctype = CONST_RPC_LUA,			-- RPC 数据组织方式
 	}
 	
 	setmetatable(obj, {

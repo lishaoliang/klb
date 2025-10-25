@@ -111,4 +111,21 @@ klbsmp.listen_rpc = function (port, cfg)
 end
 
 
+--------------------------------------------------------------------------------------------
+-- 一些常量
+
+-------------------------------------------------------
+-- 数据组织方式
+klbsmp.RPC_LUA			= 'LUA'
+klbsmp.RPC_JSON			= 'JSON'
+
+
+-------------------------------------------------------
+-- RPC 方法
+klbsmp.RPC_POST 		= 'POST'
+klbsmp.RPC_NOTIFY 		= 'NOTIFY'
+klbsmp.RPC_REQUEST 		= 'REQUEST'
+klbsmp.RPC_RESPONSE 	= 'RESPONSE'
+
+
 return klbsmp

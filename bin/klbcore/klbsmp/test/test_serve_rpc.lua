@@ -5,6 +5,12 @@ local klbsmp = require("klbcore.klbsmp")
 local port = 3457
 
 
+local function CoEcho(ser_conn, ...)
+	local args = {...}
+	
+	return ...
+end
+
 
 local function CoAdd(ser_conn, ...)
 	local args = {...}
@@ -26,7 +32,14 @@ local function CoStrCat(ser_conn, ...)
 		table.insert(t, tostring(v))
 	end
 	
-	return table.concat(t)
+	local s = table.concat(t)
+	
+	return s
+end
+
+
+local function CoUnsupported(ser_conn, ...)
+	return ''
 end
 
 
@@ -34,19 +47,22 @@ end
 local function CoOnSmpServeConnRPC(ser_conn)
 	
 	local func_map = {
+		['echo'] = CoEcho,
 		['add'] = CoAdd,	
 		['strcat'] = CoStrCat,
 	}
 	
 	local CoRecv = function (func_name, ...)
-		print('smp-rpc recv : ', func_name, ...)
+		print('smp-rpc recv : ', func_name, ...)	
+		local state = ser_conn:status()
 		
-		local func = func_map[tostring(func_name)]
-		if func then
-			func(ser_conn, ...)
+		local func = func_map[tostring(func_name)] or CoUnsupported
+		
+		if klbsmp.RPC_REQUEST == state.method then
+			ser_conn:response(func(ser_conn, ...))
 		else
-			
-		end	
+			func(ser_conn, ...)
+		end
 	end
 
 	while true do

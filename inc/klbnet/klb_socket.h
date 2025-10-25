@@ -81,8 +81,8 @@ typedef enum klb_socket_status_e_
 typedef enum klb_socket_status_rw_e_
 {
     KLB_SOCKET_RW_OK,
-    KLB_SOCKET_WANT_READ,
-    KLB_SOCKET_WANT_WRITE,
+    KLB_SOCKET_WAIT_READ,
+    KLB_SOCKET_WAIT_WRITE,
 }klb_socket_status_rw_e;
 
 /// @struct klb_socket_t

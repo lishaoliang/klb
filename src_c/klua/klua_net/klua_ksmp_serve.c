@@ -9,6 +9,7 @@
 #include "klbnet/klblisten/klb_netlisten_conn.h"
 #include "klbnet/klbsmp/klb_smpserve_conn.h"
 #include "klbnet/klbsmp/klb_smpserverpc_conn.h"
+#include "klbnet/klbsmp/klb_smprpcer.h"
 #include <assert.h>
 
 
@@ -585,27 +586,35 @@ int klua_ksmpserve_listen(lua_State* L)
 /// @brief  SMP服务RPC连接
 typedef struct klua_ksmpserverpc_t_
 {
-    // Lua相关
+    // klua 相关
     struct
     {
-        lua_State*              L;              ///< L
-        lua_State*              co_recv;        ///< co_recv协程
+        lua_State*              L;              ///< (只读)L
+        klua_env_t*             p_env;          ///< (只读)lua环境
+        klua_ex_coroutine_t*    p_coex;         ///< (只读)Lua协程扩展
+        klb_netmulti_t*         p_netmulti;     ///< (只读)复用; net multiplex
+    };
 
-        klua_env_t*             p_env;          ///< lua环境
-        klua_ex_coroutine_t*    p_coex;         ///< Lua协程扩展
+    // lua 协程
+    struct
+    {
+        lua_State*              co_recv;        ///< co_recv协程
+    };
+
+    // RPC数据
+    struct
+    {
+        klb_nlist_t*            p_rpc_nlist;    ///< 待读取的 RPC 数据列表; 存储 klb_buf_t*
+
+        klb_mnp_rpc_t           rpc;            ///< 上一个RPC信息
+        klb_buf_t*              p_rpc_buf;      ///< RPC数据
     };
 
     // 网络相关
     struct
     {
-        klb_netmulti_t*         p_netmulti;     ///< 复用; net multiplex
-        klb_netconn_t*          p_rtsp_conn;    ///< rtsp 服务连接
-    };
 
-    // 数据
-    struct
-    {
-        klb_nlist_t*            p_text_nlist;   ///< 待读取的 文本数据列表; 存储 klb_buf_t*
+        klb_netconn_t*          p_serve_conn;    ///< SMP-RPC 服务连接
     };
 }klua_ksmpserverpc_t;
 
@@ -616,6 +625,21 @@ static klua_ksmpserverpc_t* new_klua_ksmpserverpc(lua_State* L)
     klua_ksmpserverpc_t* p_serve = (klua_ksmpserverpc_t*)lua_newuserdata(L, sizeof(klua_ksmpserverpc_t));
     KLB_MEMSET(p_serve, 0, sizeof(klua_ksmpserverpc_t));
     luaL_setmetatable(L, KLUA_KSMPSERVERPC_HANDLE);
+
+    // 初始化 只读 参数
+    {
+        p_serve->L = L;
+        p_serve->p_env = klua_env_get_by_L(L);
+        p_serve->p_coex = klua_coroutine_get(p_serve->p_env);
+        p_serve->p_netmulti = klua_netmulti_get(p_serve->p_env);
+    }
+
+    // 初始化 其他参数
+    {
+        p_serve->co_recv = NULL;
+        p_serve->p_rpc_nlist = klb_nlist_create();
+    }
+
     return p_serve;
 }
 
@@ -638,29 +662,44 @@ static int klua_ksmpserverpc_close(lua_State* L)
 {
     klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);
 
-    if (NULL != p_serve->p_text_nlist)
+    if (NULL != p_serve->p_rpc_nlist)
     {
-        while (0 < klb_nlist_size(p_serve->p_text_nlist))
+        while (0 < klb_nlist_size(p_serve->p_rpc_nlist))
         {
-            klb_buf_t* p_tmp = klb_nlist_pop_head(p_serve->p_text_nlist);
-            KLB_FREE_BY(p_tmp, klb_buf_unref_next);
+            klb_buf_t* p_tmp = klb_nlist_pop_head(p_serve->p_rpc_nlist);
+            KLB_FREE_BY(p_tmp, klb_buf_unref);
         }
     }
 
-    KLB_FREE_BY(p_serve->p_rtsp_conn, klb_netconn_destroy);
-    KLB_FREE_BY(p_serve->p_text_nlist, klb_nlist_destroy);
+    KLB_FREE_BY(p_serve->p_serve_conn, klb_netconn_destroy);
+    KLB_FREE_BY(p_serve->p_rpc_buf, klb_buf_unref);
+    KLB_FREE_BY(p_serve->p_rpc_nlist, klb_nlist_destroy);
 
     return 0;
 }
 
 //////////////////////////////////////////////////
 
+// 放入/更新 RPC 数据
+static void update_rpc_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve, klb_buf_t* p_buf)
+{
+    KLB_FREE_BY(p_serve->p_rpc_buf, klb_buf_unref);
+
+    if (NULL != p_buf)
+    {
+        klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_buf->p_buf + p_buf->start);
+        memcpy(&p_serve->rpc, p_rpc, sizeof(klb_mnp_rpc_t));
+
+        p_serve->p_rpc_buf = p_buf;
+    }
+}
+
 // 调用Lua协程
-static int call_co_recv_text_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
+static int call_co_recv_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 {
     assert(NULL != p_serve);
 
-    if (NULL != p_serve->co_recv && 0 < klb_nlist_size(p_serve->p_text_nlist))
+    if (NULL != p_serve->co_recv && 0 < klb_nlist_size(p_serve->p_rpc_nlist))
     {
         assert(0 == klua_coroutine_debug_check(p_serve->p_coex, p_serve->co_recv));
 
@@ -671,19 +710,15 @@ static int call_co_recv_text_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 
         // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
-        klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
-
-        klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_txt->p_buf + p_txt->start);
-        char* p_data = p_txt->p_buf + p_txt->start + sizeof(klb_mnp_rpc_t);
-        int data_len = p_txt->end - p_txt->start - sizeof(klb_mnp_rpc_t);
+        klb_buf_t* p_buf = klb_nlist_pop_head(p_serve->p_rpc_nlist);
+        char* p_data = p_buf->p_buf + p_buf->start + sizeof(klb_mnp_rpc_t);
+        int data_len = p_buf->end - p_buf->start - sizeof(klb_mnp_rpc_t);
 
         int num = klua_seri_map_binary_unpack(L, 1, p_data, data_len);  // #1 ~ #N. 展开lua数据
-
-        KLB_FREE_BY(p_txt, klb_buf_unref);
+        update_rpc_klua_ksmpserverpc(p_serve, p_buf);
 
         int status = lua_pcall(L, num, 0, 0);                   /* do the call */
         klua_env_report_by_L(L, status);
-
 
         return (status == LUA_OK) ? 0 : 1;
     }
@@ -692,7 +727,7 @@ static int call_co_recv_text_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 }
 
 // 调用Lua协程 结束
-static int call_co_recv_end_text_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
+static int call_co_recv_end_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 {
     assert(NULL != p_serve);
 
@@ -723,17 +758,25 @@ static int on_recv_data_klua_ksmpserverpc(klb_netconn_t* p_conn, int code, int p
 
     if (0 == code)
     {
+        bool need_free = true;
+
         if (KLB_MNP_RPC_LUA == packtype ||
             KLB_MNP_RPC_JSON == packtype)
         {
-            klb_nlist_push_tail(p_serve->p_text_nlist, p_data);
+            klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_data->p_buf + p_data->start);
 
-            call_co_recv_text_klua_ksmpserverpc(p_serve);
+            if (KLB_MNP_RPC_POST == p_rpc->method ||
+                KLB_MNP_RPC_NOTIFY == p_rpc->method ||
+                KLB_MNP_RPC_REQUEST == p_rpc->method)
+            {
+                need_free = false;
+
+                klb_nlist_push_tail(p_serve->p_rpc_nlist, p_data);
+                call_co_recv_klua_ksmpserverpc(p_serve);
+            }
         }
-        else
-        {
-            KLB_FREE_BY(p_data, klb_buf_unref);
-        }
+
+        if (need_free) { KLB_FREE_BY(p_data, klb_buf_unref); }
     }
 
     return 0;
@@ -742,56 +785,105 @@ static int on_recv_data_klua_ksmpserverpc(klb_netconn_t* p_conn, int code, int p
 //////////////////////////////////////////////////
 // 
 
-// POST RPC 数据
-static int klua_ksmpserverpc_post(lua_State* L)
+/// @brief 发送 RPC 数据
+/// @param [in]     method              RPC方法: eg. KLB_MNP_RPC_POST, KLB_MNP_RPC_NOTIFY
+/// @return int Lua返回参数个数
+static int klua_ksmpserverpc_send(lua_State* L, klb_mnp_rpc_method_e method)
 {
     klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);      ///< @1 self
-    klb_buf_t* p_data = klua_seri_map_binary_pack(L, 1);            ///< @2 ~ @N 参数
+    int rpctype = (int)luaL_checkinteger(L, 2);                     ///< @2 RPC类型: KLB_MNP_RPC_LUA / KLB_MNP_RPC_JSON
+    int ret = 1;
 
-    int ret = klb_netconn_send_rpc_lua(p_serve->p_rtsp_conn, 0, 0, NULL, 0, p_data->p_buf + p_data->start, p_data->end - p_data->start);
+    if (KLB_MNP_RPC_LUA == rpctype)
+    {
+        klb_buf_t* p_data = klua_seri_map_binary_pack(L, 2);         ///< @3 ~ @N 参数
 
-    KLB_FREE_BY(p_data, klb_buf_unref);
-    lua_pushinteger(L, ret);
+        uint32_t sequence = 0;
+        ret = klb_smpserverpc_conn_send_buf(p_serve->p_serve_conn, KLB_MNP_RPC_LUA, method, sequence, p_data);
+
+        if (0 != ret) { KLB_FREE_BY(p_data, klb_buf_unref); }
+    }
+    else if (KLB_MNP_RPC_JSON == rpctype)
+    {
+        size_t json_len = 0;
+        const char* p_json = luaL_checklstring(L, 3, &json_len);    ///< @3 JSON数据
+
+        uint32_t sequence = 0;
+        ret = klb_smpserverpc_conn_send(p_serve->p_serve_conn, KLB_MNP_RPC_JSON, method, sequence, p_json, (int)json_len);
+    }
+
+    lua_pushinteger(L, ret);            ///< #1 错误码
     return 1;
 }
 
+// POST RPC 数据
+static int klua_ksmpserverpc_post(lua_State* L)
+{
+    return klua_ksmpserverpc_send(L, KLB_MNP_RPC_POST);
+}
+
+// NOTIFY RPC 数据
+static int klua_ksmpserverpc_notify(lua_State* L)
+{
+    return klua_ksmpserverpc_send(L, KLB_MNP_RPC_NOTIFY);
+}
+
+// RESPONSE RPC 数据
+static int klua_ksmpserverpc_response(lua_State* L)
+{
+    return klua_ksmpserverpc_send(L, KLB_MNP_RPC_RESPONSE);
+}
+
 // 当需要退出等的 退出函数
-static int on_yield_recv_klua_klua_ksmpserverpc(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
+static int on_yield_recv_klua_ksmpserverpc(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
 {
     klua_ksmpserverpc_t* p_serve = (klua_ksmpserverpc_t*)ptr;
 
     if (KLUA_ENV_EX_quit == opt)
     {
-        call_co_recv_end_text_klua_ksmpserverpc(p_serve);
+        call_co_recv_end_klua_ksmpserverpc(p_serve);
     }
 
     return 0;
 }
 
+// co recv 数据
 static int klua_ksmpserverpc_co_recv(lua_State* L)
 {
     klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);
     klua_check_coroutine(L, "ksmpserverpc:co_recv must in coroutine!");
     assert(NULL == p_serve->co_recv);
 
-    if (0 < klb_nlist_size(p_serve->p_text_nlist))
+    if (0 < klb_nlist_size(p_serve->p_rpc_nlist))
     {
-        klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
-
-        klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_txt->p_buf + p_txt->start);
-        char* p_data = p_txt->p_buf + p_txt->start + sizeof(klb_mnp_rpc_t);
-        int data_len = p_txt->end - p_txt->start - sizeof(klb_mnp_rpc_t);
+        klb_buf_t* p_buf = klb_nlist_pop_head(p_serve->p_rpc_nlist);
+        char* p_data = p_buf->p_buf + p_buf->start + sizeof(klb_mnp_rpc_t);
+        int data_len = p_buf->end - p_buf->start - sizeof(klb_mnp_rpc_t);
 
         int num = klua_seri_map_binary_unpack(L, 1, p_data, data_len);  // #1 ~ #N. 展开lua数据
 
-        klb_nlist_pop_head(p_serve->p_text_nlist);
-        KLB_FREE_BY(p_txt, klb_buf_unref);
+        update_rpc_klua_ksmpserverpc(p_serve, p_buf);
 
         return num;
     }
 
     p_serve->co_recv = L;
-    return klua_coroutine_yield(p_serve->p_coex, L, on_yield_recv_klua_klua_ksmpserverpc, p_serve);
+    return klua_coroutine_yield(p_serve->p_coex, L, on_yield_recv_klua_ksmpserverpc, p_serve);
+}
+
+// 获取当前 状态
+static int klua_ksmpserverpc_status(lua_State* L)
+{
+    klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);
+
+    lua_newtable(L);
+
+    {
+        klua_setfield_string(L, "rpctype", klb_smprpcer_to_rpctype_string(p_serve->rpc.rpctype)); // RPC数据类型
+        klua_setfield_string(L, "method", klb_smprpcer_to_method_string(p_serve->rpc.method)); // 方法
+    }
+
+    return 1; ///< #1 table
 }
 
 //////////////////////////////////////////////////
@@ -802,9 +894,13 @@ void klua_ksmpserverpc_createmeta(lua_State* L)
     static luaL_Reg meth[] = {
         { "disconnect",     klua_ksmpserverpc_close },              ///< 关闭连接
 
-        { "post",           klua_ksmpserverpc_post },               ///< 发送RPC数据
+        { "post",           klua_ksmpserverpc_post },               ///< 提交RPC数据
+        { "notify",         klua_ksmpserverpc_notify },             ///< 通知RPC数据
+        { "response",       klua_ksmpserverpc_response },           ///< 回复RPC数据
 
         { "co_recv",        klua_ksmpserverpc_co_recv },            ///< 接收数据
+
+        { "status",         klua_ksmpserverpc_status },             ///< 获取当前 状态
 
         { NULL,             NULL }
     };
@@ -829,22 +925,19 @@ void klua_ksmpserverpc_createmeta(lua_State* L)
 // 创建
 
 static klua_ksmpserverpc_t* new_klua_ksmpserverpc_by_socket(lua_State* L, klb_netlisten_socket_t* p_listen_socket)
-{
-    klb_socket_t* p_socket = klb_socket_async_create(p_listen_socket->fd);
+{  
     klua_ksmpserverpc_t* p_serve = new_klua_ksmpserverpc(L);
 
-    p_serve->L = L;
-    p_serve->co_recv = NULL;
-    p_serve->p_env = klua_env_get_by_L(L);
-    p_serve->p_coex = klua_coroutine_get(p_serve->p_env);
+    // 初始化网络
+    {
+        klb_socket_t* p_socket = klb_socket_async_create(p_listen_socket->fd);
+        klb_netconn_t* p_serve_conn = klb_smpserverpc_conn_create(p_serve->p_netmulti, p_socket);
 
-    p_serve->p_netmulti = klua_netmulti_get(p_serve->p_env);
-    p_serve->p_text_nlist = klb_nlist_create();
+        klb_netconn_set_udata(p_serve_conn, p_serve);
+        klb_netconn_bind_recv_data(p_serve_conn, on_recv_data_klua_ksmpserverpc);
 
-    p_serve->p_rtsp_conn = klb_smpserverpc_conn_create(p_serve->p_netmulti, p_socket);
-
-    klb_netconn_set_udata(p_serve->p_rtsp_conn, p_serve);
-    klb_netconn_bind_recv_data(p_serve->p_rtsp_conn, on_recv_data_klua_ksmpserverpc);
+        p_serve->p_serve_conn = p_serve_conn;
+    }
 
     return p_serve;
 }
@@ -860,29 +953,30 @@ static klua_ksmpserverpc_t* new_klua_ksmpserverpc_by_socket(lua_State* L, klb_ne
 /// @brief  SMP服务 RPC 监听
 typedef struct klua_ksmpserverpc_listen_t_
 {
-    // Lua相关
+    // klua 相关
     struct
     {
-        lua_State*              L;              ///< L
-        lua_State*              co_accept;      ///< sync的"co_accept"函数对应的协程
-
-        klua_env_t*             p_env;          ///< Lua环境
-        klua_ex_coroutine_t*    p_coex;         ///< Lua协程扩展
-    };
-
-    // 监听
-    struct
-    {
-        klb_netmulti_t*         p_netmulti;     ///< 复用; net multiplex
-        klb_netconn_t*          p_listen_conn;  ///< 监听连接
+        lua_State*              L;              ///< (只读)L
+        klua_env_t*             p_env;          ///< (只读)Lua环境
+        klua_ex_coroutine_t*    p_coex;         ///< (只读)Lua协程扩展
+        klb_netmulti_t*         p_netmulti;     ///< (只读)复用; net multiplex
     };
 
     // 数据
     struct
     {
+        lua_State*              co_accept;      ///< "co_accept"函数对应的协程
+
         klb_nlist_t*            p_socket_nlist; ///< 待读取的 socket 列表; 存储 klb_netlisten_socket_t*
     };
+
+    // 网络连接
+    struct
+    {
+        klb_netconn_t*          p_listen_conn;  ///< 监听连接
+    };
 }klua_ksmpserverpc_listen_t;
+
 
 ////////////////////////////////////////
 static klua_ksmpserverpc_listen_t* new_klua_ksmpserverpc_listen(lua_State* L)
@@ -890,21 +984,37 @@ static klua_ksmpserverpc_listen_t* new_klua_ksmpserverpc_listen(lua_State* L)
     klua_ksmpserverpc_listen_t* p_listen = (klua_ksmpserverpc_listen_t*)lua_newuserdata(L, sizeof(klua_ksmpserverpc_listen_t));
     KLB_MEMSET(p_listen, 0, sizeof(klua_ksmpserverpc_listen_t));
     luaL_setmetatable(L, KLUA_KSMPSERVERPC_LISTEN_HANDLE);
+
+    // 初始化 只读 参数
+    {
+        p_listen->L = L;
+        p_listen->p_env = klua_env_get_by_L(L);
+        p_listen->p_coex = klua_coroutine_get(p_listen->p_env);
+        p_listen->p_netmulti = klua_netmulti_get(p_listen->p_env);
+    }
+
+    // 初始化 其他参数
+    {
+        p_listen->co_accept = NULL;
+        p_listen->p_socket_nlist = klb_nlist_create();
+    }
+
     return p_listen;
 }
 
 static klua_ksmpserverpc_listen_t* to_klua_ksmpserverpc_listen(lua_State* L, int index)
 {
     klua_ksmpserverpc_listen_t* p_listen = (klua_ksmpserverpc_listen_t*)luaL_checkudata(L, index, KLUA_KSMPSERVERPC_LISTEN_HANDLE);
-    luaL_argcheck(L, NULL != p_listen, index, "'ksmpserverpc listen' expected");
+    luaL_argcheck(L, NULL != p_listen, index, "'ksmpserverpc.listen' expected");
     return p_listen;
 }
 
 static int klua_ksmpserverpc_listen_tostring(lua_State* L)
 {
     klua_ksmpserverpc_listen_t* p_listen = to_klua_ksmpserverpc_listen(L, 1);
+    int port = (NULL != p_listen->p_listen_conn) ? klb_netlisten_conn_get_port(p_listen->p_listen_conn) : 0;
 
-    lua_pushfstring(L, "ksmpserverpc listen:%p", p_listen);
+    lua_pushfstring(L, "ksmpserverpc.listen:[%p],port:[%d]", p_listen, port);
     return 1;
 }
 
@@ -973,7 +1083,7 @@ static int call_co_accept_end_klua_ksmpserverpc_listen(klua_ksmpserverpc_listen_
 {
     assert(NULL != p_listen);
 
-    if (NULL != p_listen->co_accept && 0 < klb_nlist_size(p_listen->p_socket_nlist))
+    if (NULL != p_listen->co_accept)
     {
         assert(0 == klua_coroutine_debug_check(p_listen->p_coex, p_listen->co_accept));
 
@@ -1032,7 +1142,8 @@ static int on_yield_accept_klua_ksmpserverpc_listen(void* ptr, klua_ex_coroutine
 static int klua_ksmpserverpc_listen_co_accept(lua_State* L)
 {
     klua_ksmpserverpc_listen_t* p_listen = to_klua_ksmpserverpc_listen(L, 1);
-    klua_check_coroutine(L, "ksmpserverpc:co_accept must in coroutine!");
+    klua_check_coroutine(L, "ksmpserverpc.listen:co_accept must in coroutine!");
+    assert(NULL == p_listen->co_accept);
 
     // 若列表中有数据, 则直接返回
     if (0 < klb_nlist_size(p_listen->p_socket_nlist))
@@ -1042,11 +1153,10 @@ static int klua_ksmpserverpc_listen_co_accept(lua_State* L)
         new_klua_ksmpserverpc_by_socket(L, p_listen_socket);    // #1. lua - userdata
         KLB_FREE(p_listen_socket);
 
-        return 2;
+        return 1;
     }
 
-    // 若列表中无数据, 则执行协程等待
-    assert(NULL == p_listen->co_accept);
+    // 若列表中无数据, 则执行协程等待 
     p_listen->co_accept = L;
 
     return klua_coroutine_yield(p_listen->p_coex, L, on_yield_accept_klua_ksmpserverpc_listen, p_listen);
@@ -1089,28 +1199,23 @@ int klua_ksmpserverpc_listen(lua_State* L)
 {
     int port = (int)luaL_checkinteger(L, 1);                        ///< @1. 端口号
 
-    klua_env_t* p_env = klua_env_get_by_L(L);
-    klb_netmulti_t* p_netmulti = klua_netmulti_get(p_env);
-    klb_netconn_t* p_listen_conn = klb_netlisten_conn_create(p_netmulti);
-
-    klb_netlisten_conn_set_accept(p_listen_conn, on_accept_klua_ksmpserverpc_listen, NULL);
-    klb_netlisten_conn_open(p_listen_conn, port, 20);
-
     klua_ksmpserverpc_listen_t* p_listen = new_klua_ksmpserverpc_listen(L); ///< #1. 监听对象
 
-    // 初始化
+    // 初始化网络连接
     {
-        p_listen->L = L;
-        p_listen->co_accept = NULL;
-        p_listen->p_env = p_env;
-        p_listen->p_coex = klua_coroutine_get(p_env);
+        klb_netconn_t* p_listen_conn = klb_netlisten_conn_create(p_listen->p_netmulti);
 
-        p_listen->p_netmulti = p_netmulti;
+        // 设置 udata, 绑定 udata 指针
+        klb_netconn_set_udata(p_listen_conn, p_listen);
+
+        // 设置 监听回调
+        klb_netlisten_conn_set_accept(p_listen_conn, on_accept_klua_ksmpserverpc_listen, p_listen);
+
+        // 开启监听
+        klb_netlisten_conn_open(p_listen_conn, port, 20);
+
         p_listen->p_listen_conn = p_listen_conn;
 
-        p_listen->p_socket_nlist = klb_nlist_create();
-
-        klb_netconn_set_udata(p_listen_conn, p_listen);
     }
 
     return 1;
