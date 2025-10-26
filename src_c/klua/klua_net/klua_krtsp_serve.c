@@ -381,11 +381,10 @@ static int klua_krtspserve_listen_close(lua_State* L)
 {
     klua_krtspserve_listen_t* p_listen = to_klua_krtspserve_listen(L, 1);
 
-    if (NULL != p_listen->p_listen_conn)
-    {
-        klb_netlisten_conn_close(p_listen->p_listen_conn);
-    }
+    // 释放 监听连接
+    KLB_FREE_BY(p_listen->p_listen_conn, klb_netlisten_conn_free);
 
+    // 释放 已经 监听得到的 socket
     if (NULL != p_listen->p_socket_nlist)
     {
         while (0 < klb_nlist_size(p_listen->p_socket_nlist))
@@ -398,7 +397,6 @@ static int klua_krtspserve_listen_close(lua_State* L)
     }
 
     KLB_FREE_BY(p_listen->p_socket_nlist, klb_nlist_destroy);
-    KLB_FREE_BY(p_listen->p_listen_conn, klb_netconn_destroy);
 
     return 0;
 }

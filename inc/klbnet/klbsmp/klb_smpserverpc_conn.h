@@ -27,6 +27,9 @@ extern "C" {
 /// @return klb_netconn_t*
 KLB_API klb_netconn_t* klb_smpserverpc_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
 
+/// @brief 释放连接
+KLB_API void klb_smpserverpc_conn_free(klb_netconn_t* p_conn);
+
 
 /// @brief 发送RPC数据
 KLB_API int klb_smpserverpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len);

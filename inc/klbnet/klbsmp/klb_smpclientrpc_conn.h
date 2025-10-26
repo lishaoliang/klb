@@ -33,12 +33,20 @@ KLB_API klb_netconn_t* klb_smpclientrpc_conn_create(klb_netmulti_t* p_netmulti, 
 KLB_API klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port);
 
 
+/// @brief 释放连接
+KLB_API void klb_smpclientrpc_conn_free(klb_netconn_t* p_conn);
+
+
 /// @brief 发送RPC数据
 KLB_API int klb_smpclientrpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len);
 
 
 /// @brief 按 buf 发送RPC数据
 KLB_API int klb_smpclientrpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, klb_buf_t* p_data);
+
+
+/// @brief 写缓存 是否为空
+KLB_API bool klb_smpclientrpc_wbuf_is_empty(klb_netconn_t* p_conn);
 
 
 #ifdef __cplusplus

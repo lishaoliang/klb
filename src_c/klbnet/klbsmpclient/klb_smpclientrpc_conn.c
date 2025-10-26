@@ -42,13 +42,30 @@ static void klb_smpclientrpc_conn_quit(klb_netconn_t* p_conn);
 
 
 /// @brief 接收到数据 之后 放入数据
-/// @param [in] code        错误码: klb_socket_status_e
+/// @param [in] code        错误码: klb_netcode_e
 /// @param [in] packtype    数包类型: klb_mnp_packtype_e
-static void push_data_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data)
+static void push_data_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int packtype, klb_buf_t* p_data)
 {
     klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
 
-    if (KLB_SOCKET_OK != code && KLB_SOCKET_CONNECT != code)
+    if (NULL != p_conn->vtable.recv_data)
+    {
+        p_conn->vtable.recv_data(p_conn, KLB_NETCODE_OK, packtype, p_data);
+    }
+    else
+    {
+        KLB_FREE_BY(p_data, klb_buf_unref);
+    }
+}
+
+/// @brief 接收到数据 之后 放入数据
+/// @param [in] code        错误码: klb_netcode_e
+static void push_netcode_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int code)
+{
+    assert(KLB_NETCODE_OK != code);
+
+    if ((KLB_SOCKET_OK < code && code <= KLB_SOCKET_ERR_MAX) ||
+        KLB_SOCKET_CLOSEING == code)
     {
         // 关闭 socket 读写
         klb_socket_set_reading(p_conn->p_socket, false);
@@ -57,25 +74,20 @@ static void push_data_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int code, int
 
     if (NULL != p_conn->vtable.recv_data)
     {
-        p_conn->vtable.recv_data(p_conn, code, packtype, p_data);
-    }
-    else
-    {
-        KLB_FREE_BY(p_data, klb_buf_unref);
+        p_conn->vtable.recv_data(p_conn, code, 0, NULL);
     }
 }
-
 
 /// @brief connect 超时
 static void on_connect_timeout_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
-
+    push_netcode_klb_smpclientrpc_conn(p_conn, KLB_SOCKET_TIMEOUT);
 }
 
 /// @brief connect 握手完成
 static void on_connected_timeout_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
-
+    push_netcode_klb_smpclientrpc_conn(p_conn, KLB_SOCKET_CONNECT);
 }
 
 /// @brief ticker 定时器消息
@@ -92,12 +104,8 @@ static void klb_smpclientrpc_conn_destroy(klb_netconn_t* p_conn)
 {
     klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
 
-    // 移除
-    if (NULL != p_smpclient->p_netmulti)
-    {
-        klb_netmulti_remove(p_smpclient->p_netmulti, p_conn);
-        p_smpclient->p_netmulti = NULL;
-    }
+    // 之前 需要 调用 klb_smpclientrpc_conn_closing 函数
+    assert(NULL == p_smpclient->p_netmulti);
 
     // 关闭socket
     KLB_FREE_BY(p_conn->p_socket, klb_socket_destroy);
@@ -181,10 +189,13 @@ static int klb_smpclientrpc_conn_on_send(klb_netconn_t* p_conn, int64_t now)
         }
     }
 
-    // 数据写完了, 无需读取
+    // 缓存的数据写完了
     if (klb_nlist_size(p_write_nlist) <= 0)
     {
         klb_socket_set_writing(p_socket, false);
+
+        // 缓存写完了 消息
+        push_netcode_klb_smpclientrpc_conn(p_conn, KLB_NETCODE_WBUF_EMPTY);
     }
 
     return write_num;
@@ -268,7 +279,7 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
                     p_smpclient->parser_status = KLB_SMPPARSER_head;
 
                     // 完整数据
-                    push_data_klb_smpclientrpc_conn(p_conn, KLB_SOCKET_OK, parser.packtype, p_buf);
+                    push_data_klb_smpclientrpc_conn(p_conn, parser.packtype, p_buf);
                 }
             }
             else
@@ -309,7 +320,7 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
                 p_smpclient->parser_status = KLB_SMPPARSER_head;
 
                 // 完整数据
-                push_data_klb_smpclientrpc_conn(p_conn, KLB_SOCKET_OK, p_smpclient->parser.packtype, p_buf);
+                push_data_klb_smpclientrpc_conn(p_conn, p_smpclient->parser.packtype, p_buf);
             }
         }
         else if(0 == recv_len)
@@ -382,6 +393,15 @@ static int klb_smpclientrpc_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t 
 //////////////////////////////////////////////////////////////////////////
 // 导出函数
 
+/// @brief 关闭连接
+void klb_smpclientrpc_conn_free(klb_netconn_t* p_conn)
+{
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
+
+    // 关闭连接
+    klb_netmulti_closing(p_smpclient->p_netmulti, p_conn);
+    p_smpclient->p_netmulti = NULL;
+}
 
 /// @brief 发送RPC数据
 int klb_smpclientrpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len)
@@ -445,6 +465,19 @@ int klb_smpclientrpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int metho
     klb_socket_set_writing(p_socket, true);
 
     return 0;
+}
+
+/// @brief 写缓存 是否为空
+bool klb_smpclientrpc_wbuf_is_empty(klb_netconn_t* p_conn)
+{
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
+
+    if (0 < klb_nlist_size(p_smpclient->p_write_nlist))
+    {
+        return false; // 还有数据
+    }
+
+    return true; // 空了
 }
 
 //////////////////////////////////////////////////////////////////////////

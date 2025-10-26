@@ -369,11 +369,10 @@ static int klua_ksmpserve_listen_close(lua_State* L)
 {
     klua_ksmpserve_listen_t* p_listen = to_klua_ksmpserve_listen(L, 1);
 
-    if (NULL != p_listen->p_listen_conn)
-    {
-        klb_netlisten_conn_close(p_listen->p_listen_conn);
-    }
+    // 释放 监听连接
+    KLB_FREE_BY(p_listen->p_listen_conn, klb_netlisten_conn_free);
 
+    // 释放 已经监听得到的连接数据
     if (NULL != p_listen->p_socket_nlist)
     {
         while (0 < klb_nlist_size(p_listen->p_socket_nlist))
@@ -386,7 +385,6 @@ static int klua_ksmpserve_listen_close(lua_State* L)
     }
 
     KLB_FREE_BY(p_listen->p_socket_nlist, klb_nlist_destroy);
-    KLB_FREE_BY(p_listen->p_listen_conn, klb_netconn_destroy);
 
     return 0;
 }
@@ -662,6 +660,10 @@ static int klua_ksmpserverpc_close(lua_State* L)
 {
     klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);
 
+    // 释放 服务连接
+    KLB_FREE_BY(p_serve->p_serve_conn, klb_smpserverpc_conn_free);
+
+    // 释放 已经获取的 RPC 数据
     if (NULL != p_serve->p_rpc_nlist)
     {
         while (0 < klb_nlist_size(p_serve->p_rpc_nlist))
@@ -671,9 +673,10 @@ static int klua_ksmpserverpc_close(lua_State* L)
         }
     }
 
-    KLB_FREE_BY(p_serve->p_serve_conn, klb_netconn_destroy);
-    KLB_FREE_BY(p_serve->p_rpc_buf, klb_buf_unref);
     KLB_FREE_BY(p_serve->p_rpc_nlist, klb_nlist_destroy);
+
+    // 释放 临时缓存
+    KLB_FREE_BY(p_serve->p_rpc_buf, klb_buf_unref);
 
     return 0;
 }
@@ -1022,11 +1025,10 @@ static int klua_ksmpserverpc_listen_close(lua_State* L)
 {
     klua_ksmpserverpc_listen_t* p_listen = to_klua_ksmpserverpc_listen(L, 1);
 
-    if (NULL != p_listen->p_listen_conn)
-    {
-        klb_netlisten_conn_close(p_listen->p_listen_conn);
-    }
+    // 释放 监听连接
+    KLB_FREE_BY(p_listen->p_listen_conn, klb_netlisten_conn_free);
 
+    // 释放 已经 监听得到的 socket
     if (NULL != p_listen->p_socket_nlist)
     {
         while (0 < klb_nlist_size(p_listen->p_socket_nlist))
@@ -1039,7 +1041,6 @@ static int klua_ksmpserverpc_listen_close(lua_State* L)
     }
 
     KLB_FREE_BY(p_listen->p_socket_nlist, klb_nlist_destroy);
-    KLB_FREE_BY(p_listen->p_listen_conn, klb_netconn_destroy);
 
     return 0;
 }

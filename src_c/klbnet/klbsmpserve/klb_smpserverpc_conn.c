@@ -384,6 +384,14 @@ static int klb_smpserverpc_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t n
 //////////////////////////////////////////////////////////////////////////
 // 导出函数
 
+void klb_smpserverpc_conn_free(klb_netconn_t* p_conn)
+{
+    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
+
+    klb_netmulti_closing(p_smpserve->p_netmulti, p_conn);
+    p_smpserve->p_netmulti = NULL;
+}
+
 /// @brief 发送数据
 int klb_smpserverpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len)
 {

@@ -101,8 +101,11 @@ static void klb_netlisten_conn_destroy(klb_netconn_t* p_conn)
 {
     klb_netlisten_conn_t* p_listen = (klb_netlisten_conn_t*)p_conn->extra;
 
-    // 关闭监听
-    klb_netlisten_conn_close(p_conn);
+    // 需要先调用 klb_netlisten_conn_free
+    assert(NULL == p_listen->p_netmulti);
+
+    // 关闭 socket
+    KLB_FREE_BY(p_conn->p_socket, klb_socket_destroy);
 
     // 退出
     klb_netlisten_conn_quit(p_conn);
@@ -177,13 +180,36 @@ static int klb_netlisten_conn_on_msg(klb_netconn_t* p_conn, int msg, int64_t now
 //////////////////////////////////////////////////////////////////////////
 // 导出函数
 
+void klb_netlisten_conn_free(klb_netconn_t* p_conn)
+{
+    klb_netlisten_conn_t* p_listen = (klb_netlisten_conn_t*)p_conn->extra;
+
+    // 清空
+    klb_netlisten_conn_set_accept(p_conn, NULL, NULL);
+
+    // 删除
+    if (p_listen->is_open)
+    {
+        // 若 已经 open, 则需要 将连接 移交给 复用模块 去关闭
+        p_listen->is_open = false;
+        p_listen->port = 0;
+
+        klb_netmulti_closing(p_listen->p_netmulti, p_conn);
+        p_listen->p_netmulti = NULL;
+    }
+    else
+    {
+        // 若 没有 open, 则 直接销毁
+        p_listen->p_netmulti = NULL;
+
+        klb_netconn_destroy(p_conn);
+    }
+}
+
 /// @brief 监听: 端口
 int klb_netlisten_conn_open(klb_netconn_t* p_conn, int port, int max_connect)
 {
     klb_netlisten_conn_t* p_listen = (klb_netlisten_conn_t*)p_conn->extra;
-
-    // 关闭
-    klb_netlisten_conn_close(p_conn);
 
     // 创建 socket
     klb_socket_fd fd = klb_socket_listen(port, max_connect);
@@ -211,29 +237,6 @@ int klb_netlisten_conn_open(klb_netconn_t* p_conn, int port, int max_connect)
 /// @brief 开启TCP监听: unix路径
 int klb_netlisten_conn_open_unix(klb_netconn_t* p_conn, const char* p_path, int max_connect)
 {
-    return 0;
-}
-
-/// @brief 关闭
-int klb_netlisten_conn_close(klb_netconn_t* p_conn)
-{
-    klb_netlisten_conn_t* p_listen = (klb_netlisten_conn_t*)p_conn->extra;
-
-    if (p_listen->is_open)
-    {
-        p_listen->is_open = false;
-        p_listen->port = 0;
-
-        klb_socket_t* p_socket = p_conn->p_socket;
-        klb_socket_set_reading(p_socket, false);
-
-        // 直接移除
-        klb_netmulti_remove(p_listen->p_netmulti, p_conn);
-
-        p_conn->p_socket = NULL;
-        KLB_FREE_BY(p_socket, klb_socket_destroy);
-    }
-
     return 0;
 }
 

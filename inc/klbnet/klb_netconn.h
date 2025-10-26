@@ -69,6 +69,7 @@ typedef enum klb_protocol_e_
 
 /// @def   KLB_NETCONN_NAME_max
 /// @brief 连接名称最大字符
+#define KLB_NETCONN_NAME_len    4
 #define KLB_NETCONN_NAME_max    8
 
 

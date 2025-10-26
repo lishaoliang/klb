@@ -8,7 +8,9 @@
 --		[2025-10] 添加基础
 --]]
 local ksmp = require("ksmp")
+local kurl = require("kurl")
 local cjson = require("cjson.safe")
+local stringex = require("klbcore.util.stringex")
 
 
 --------------------------------------------------------------------------------------------
@@ -73,6 +75,12 @@ local CoCall = function (self, ...)
 	return client:co_call(rpctype, ...)
 end
 
+-- @brief wait
+local CoWait = function (self)
+	local client = self._client
+	
+	client:co_wait()
+end
 
 --------------------------------------------------------------------------------------------
 -- smpclientrpc
@@ -103,6 +111,27 @@ function smpclientrpc:connect_rpc(host, port)
 	return 0
 end
 
+-- @brief 连接到目标
+function smpclientrpc:connect(url)
+	-- eg. smprpc://username:password@127.0.0.1:3457
+	local u = kurl.parse(url)
+	
+	local schema = u['schema'] or 'smprpc'
+	local host = u['host'] or ''	
+	local port = '3457'
+	local tls = false
+
+	if stringex.cmp_ignore_case('smprpcs', schema) then
+		tls = true
+	end
+	
+	if u['port'] then
+		port = u['port']
+	end
+	
+	return smpclientrpc:connect_rpc(host, port)
+end
+
 
 -- @brief 发送文本数据
 function smpclientrpc:post(...)
@@ -127,6 +156,10 @@ function smpclientrpc:co_call(...)
 	return CoCall(self, ...)
 end
 
+-- @brief 等待发送完成
+function smpclientrpc:co_wait()
+	CoWait(self)
+end
 
 --------------------------------------------------------------------------------------------
 -- smpclientrpcer

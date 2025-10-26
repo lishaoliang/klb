@@ -415,11 +415,13 @@ static int klua_ksmpclientrpc_close(lua_State* L)
 {
     klua_ksmpclientrpc_t* p_client = to_klua_ksmpclientrpc(L, 1);
 
+    // 关闭连接
+    KLB_FREE_BY(p_client->p_client_conn, klb_smpclientrpc_conn_free);
+
     // 清空 RPC数据
     clear_buf_nlist_klua_ksmpclientrpc(p_client->p_rpc_nlist);
     clear_buf_nlist_klua_ksmpclientrpc(p_client->p_res_nlist);
 
-    KLB_FREE_BY(p_client->p_client_conn, klb_netconn_destroy);
     KLB_FREE_BY(p_client->p_rpc_buf, klb_buf_unref);
     KLB_FREE_BY(p_client->p_rpc_nlist, klb_nlist_destroy);
     KLB_FREE_BY(p_client->p_res_buf, klb_buf_unref);
@@ -602,7 +604,7 @@ static int on_recv_data_klua_ksmpclientrpc(klb_netconn_t* p_conn, int code, int 
 {
     klua_ksmpclientrpc_t* p_client = p_conn->p_udata;
 
-    if (0 == code)
+    if (KLB_NETCODE_OK == code)
     {
         bool need_free = true;
 
@@ -629,6 +631,10 @@ static int on_recv_data_klua_ksmpclientrpc(klb_netconn_t* p_conn, int code, int 
         }
 
         if (need_free) { KLB_FREE_BY(p_data, klb_buf_unref); }
+    }
+    else if(KLB_NETCODE_WBUF_EMPTY == code)
+    {
+        call_co_wait_klua_ksmpclientrpc(p_client);
     }
 
     return 0;
@@ -751,6 +757,13 @@ static int klua_ksmpclientrpc_co_wait(lua_State* L)
     klua_check_coroutine(L, "ksmpclientrpc:co_wait must in coroutine!");
     assert(NULL == p_client->co_wait);
 
+    // 先检查是否还有数据 需要 写
+    if (klb_smpclientrpc_wbuf_is_empty(p_client->p_client_conn))
+    {
+        lua_pushnil(L);
+        return 1;
+    }
+
     p_client->co_wait = L;
     return klua_coroutine_yield(p_client->p_coex, L, on_yield_recv_klua_ksmpclientrpc, p_client);
 }
@@ -765,9 +778,11 @@ static int klua_ksmpclientrpc_status(lua_State* L)
     {
         klua_setfield_string(L, "rpctype", klb_smprpcer_to_rpctype_string(p_client->rpc.rpctype)); // RPC数据类型
         klua_setfield_string(L, "method", klb_smprpcer_to_method_string(p_client->rpc.method)); // 方法
+        klua_setfield_integer(L, "sequence", p_client->rpc.sequence); // 序列号
 
         klua_setfield_string(L, "res_rpctype", klb_smprpcer_to_rpctype_string(p_client->res.rpctype)); // RPC数据类型
         klua_setfield_string(L, "res_method", klb_smprpcer_to_method_string(p_client->res.method)); // 方法
+        klua_setfield_integer(L, "res_sequence", p_client->res.sequence); // 序列号
     }
 
     return 1; ///< #1 table

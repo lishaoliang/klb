@@ -84,6 +84,49 @@ end
 
 
 --------------------------------------------------------------------------------------------
+-- 客户端 RPC 一次性接口
+
+-- @brief 发起一次 POST-RPC
+-- @param [in]      url[string]			目标, eg. 'smprpc://username:password@127.0.0.1:3457'
+-- @return [string] 消息
+klbsmp.co_post_rpc = function (url, ...)
+	local r = smpclientrpcer.new_rpc()	
+	r:connect(url)	
+	r:post(...)
+	r:co_wait()
+	r:disconnect()	
+	return 'success'
+end
+
+-- @brief 发起一次 NOTIFY-RPC
+-- @param [in]      url[string]			目标, eg. 'smprpc://username:password@127.0.0.1:3457'
+-- @return [string] 消息
+klbsmp.co_notify_rpc = function (url, ...)
+	local r = smpclientrpcer.new_rpc()
+	r:connect(url)	
+	r:notify(...)
+	r:co_wait()
+	r:disconnect()	
+	return 'success'
+end
+
+-- @brief 发起一次 CALL-RPC
+-- @param [in]      url[string]			目标, eg. 'smprpc://username:password@127.0.0.1:3457'
+-- @return [string] 消息
+--			[...] 回应数据
+klbsmp.co_call_rpc = function (url, ...)
+	local ReturnCoCall = function (r, ...)
+		r:disconnect()
+		return 'success', ...
+	end
+	
+	local r = smpclientrpcer.new_rpc()
+	r:connect(url)
+	
+	return ReturnCoCall(r, r:co_call(...))
+end
+
+--------------------------------------------------------------------------------------------
 -- 服务端 RPC
 
 

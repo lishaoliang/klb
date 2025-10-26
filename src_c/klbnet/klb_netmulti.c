@@ -6,15 +6,26 @@
 #include "klbnet/klb_netmulti.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
+#include "klbutil/klb_nlist.h"
 #include "klbutil/klb_rand.h"
 #include <assert.h>
+
+
+/// @struct klb_netmulti_closing_t
+/// @brief  待关闭的 连接
+typedef struct klb_netmulti_closing_t_
+{
+    klb_netconn_t*          p_netconn;                  ///< 连接
+    char                    name[KLB_NETCONN_NAME_max]; ///< 名称
+}klb_netmulti_closing_t;
 
 
 /// @struct klb_netmulti_t
 /// @brief  多路复用(klb net multiplex)
 typedef struct klb_netmulti_t_
 {
-    klb_hlist_t*            p_conn_hlist;       ///< 存储 klb_netconn_t*
+    klb_hlist_t*            p_conn_hlist;       ///< 当前的所有的连接列表; 存储 klb_netconn_t*
+    klb_nlist_t*            p_closing_nlist;    ///< 待移除的 连接列表; 存储 klb_netmulti_closing_t*
 
     struct
     {
@@ -25,6 +36,7 @@ typedef struct klb_netmulti_t_
 
 
 //////////////////////////////////////////////////////////////////////////
+static int klb_netmulti_loop_once_do_closing(klb_netmulti_t* p_multi);
 
 
 /// @brief 创建
@@ -33,6 +45,7 @@ klb_netmulti_t* klb_netmulti_create(int64_t tc)
     klb_netmulti_t* p_multi = KLB_MALLOCZ(klb_netmulti_t, 1, 0);
 
     p_multi->p_conn_hlist = klb_hlist_create(0);
+    p_multi->p_closing_nlist = klb_nlist_create();
 
     p_multi->now_tc = tc;       ///< 计时: 当前时间
     p_multi->last_tc = tc;
@@ -43,6 +56,10 @@ klb_netmulti_t* klb_netmulti_create(int64_t tc)
 /// @brief 销毁
 void klb_netmulti_destroy(klb_netmulti_t* p_multi)
 {
+    // 关闭连接
+    klb_netmulti_loop_once_do_closing(p_multi);
+
+    KLB_FREE_BY(p_multi->p_closing_nlist, klb_nlist_destroy);
     KLB_FREE_BY(p_multi->p_conn_hlist, klb_hlist_destroy);
     KLB_FREE(p_multi);
 }
@@ -54,7 +71,7 @@ int klb_netmulti_push(klb_netmulti_t* p_multi, klb_netconn_t* p_conn)
 
     // 65^3 = 274,625
     // 65^4 = 17,850,625
-    int name_len = MIN(KLB_NETCONN_NAME_max, 4);
+    int name_len = MIN(KLB_NETCONN_NAME_max, KLB_NETCONN_NAME_len);
 
     while (true)
     {
@@ -103,6 +120,27 @@ klb_netconn_t* klb_netmulti_remove_by_name(klb_netmulti_t* p_multi, const char* 
     return p_conn;
 }
 
+
+/// @brief 托管关闭连接
+int klb_netmulti_closing(klb_netmulti_t* p_multi, klb_netconn_t* p_conn)
+{
+    // 关闭之前的 清理
+    {
+        klb_netconn_bind_recv_data(p_conn, NULL); // 清除绑定的回调函数
+        klb_socket_closing(p_conn->p_socket); // 关闭 socket 状态
+    }
+
+    // 放入待关闭 列表
+    {
+        klb_netmulti_closing_t* p_closing = KLB_MALLOCZ(klb_netmulti_closing_t, 1, 0);
+        p_closing->p_netconn = p_conn;
+        strncpy(p_closing->name, p_conn->name, KLB_NETCONN_NAME_max - 1);
+
+        klb_nlist_push_tail(p_multi->p_closing_nlist, p_closing);
+    }
+
+    return 0;
+}
 
 static int klb_netmulti_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
 {
@@ -236,6 +274,21 @@ static int klb_netmulti_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
     return 4;
 }
 
+// 关闭连接
+static int klb_netmulti_loop_once_do_closing(klb_netmulti_t* p_multi)
+{
+    while (0 < klb_nlist_size(p_multi->p_closing_nlist))
+    {
+        klb_netmulti_closing_t* p_remove = klb_nlist_pop_head(p_multi->p_closing_nlist);
+        klb_netconn_t* p_conn = klb_netmulti_remove_by_name(p_multi, p_remove->name);
+
+        KLB_FREE_BY(p_conn, klb_netconn_destroy);
+        KLB_FREE(p_remove);
+    }
+
+    return 0;
+}
+
 static int klb_netmulti_loop_once_onticker(klb_netmulti_t* p_multi, int64_t now)
 {
     // timer 流程, 可用于检查超时等
@@ -271,8 +324,15 @@ int klb_netmulti_loop_once(klb_netmulti_t* p_multi, int64_t now)
     // 更新计时
     p_multi->now_tc = now;
 
+    // 尝试关闭连接
+    klb_netmulti_loop_once_do_closing(p_multi);
+
     // 执行主体业务
     int ret = klb_netmulti_loop_once_do(p_multi, now);
+
+    // 关闭连接; 执行 klb_netmulti_loop_once_do 之后, 也可能有连接被标记为 关闭
+    // 这里再次 尝试关闭连接
+    klb_netmulti_loop_once_do_closing(p_multi);
 
     // 定时器
     if (2 * 1000 <= ABS_SUB(now, p_multi->last_tc))

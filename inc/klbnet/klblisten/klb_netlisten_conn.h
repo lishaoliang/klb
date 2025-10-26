@@ -28,6 +28,10 @@ extern "C" {
 KLB_API klb_netconn_t* klb_netlisten_conn_create(klb_netmulti_t* p_multi);
 
 
+/// @brief 释放连接
+KLB_API void klb_netlisten_conn_free(klb_netconn_t* p_conn);
+
+
 /// @brief 监听: 端口
 /// @return int 0.成功; 非0.错误码
 KLB_API int klb_netlisten_conn_open(klb_netconn_t* p_conn, int port, int max_connect);
@@ -38,12 +42,6 @@ KLB_API int klb_netlisten_conn_open(klb_netconn_t* p_conn, int port, int max_con
 /// @param [in]  max_connect            操作系统缓存最大的socket数
 /// @return int 0.成功; 非0.错误码
 KLB_API int klb_netlisten_conn_open_unix(klb_netconn_t* p_conn, const char* p_path, int max_connect);
-
-
-/// @brief 关闭
-/// @return int 0.成功; 非0.错误码
-/// @note 直接关闭, 非延时关闭
-KLB_API int klb_netlisten_conn_close(klb_netconn_t* p_conn);
 
 
 /// @brief 获取监听端口
