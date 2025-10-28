@@ -7,11 +7,11 @@
 #include "klua/klua_netmulti.h"
 #include "klua/klua_coroutine.h"
 #include "klua/klua_seri.h"
+#include "klua/klua_net/klua_ksmp_serve.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klbsmp/klb_smpclient_conn.h"
 #include "klbnet/klbsmp/klb_smpclientrpc_conn.h"
 #include "klbnet/klbsmp/klb_smprpcer.h"
-#include "klua/klua_net/klua_ksmp_serve.h"
 #include <assert.h>
 
 
@@ -189,7 +189,7 @@ static int klua_ksmpclient_send_text(lua_State* L)
 
     if (NULL != p_client->p_smp_conn)
     {
-        ret = klb_netconn_send_text(p_client->p_smp_conn, 0, 0, (const uint8_t*)p_head, head_len, NULL, 0);
+        ret = klb_netconn_send_text(p_client->p_smp_conn, 0, (const uint8_t*)p_head, head_len, NULL, 0);
     }
 
     lua_pushinteger(L, ret);
@@ -341,6 +341,8 @@ typedef struct klua_ksmpclientrpc_t_
     // KLB_MNP_RPC_RESPONSE 数据
     struct
     {
+        int                     req_sequence;   ///< 请求的序列号
+
         klb_nlist_t*            p_res_nlist;    ///< 待读取的 RPC - RESPONSE 数据列表; 存储 klb_buf_t*
 
         klb_mnp_rpc_t           res;            ///< 上一个RPC信息
@@ -378,6 +380,8 @@ static klua_ksmpclientrpc_t* new_klua_ksmpclientrpc(lua_State* L)
 
         p_client->p_rpc_nlist = klb_nlist_create();
         p_client->p_res_nlist = klb_nlist_create();
+
+        p_client->req_sequence = 99;
     }
 
     return p_client;
@@ -522,10 +526,30 @@ static int call_co_res_ksmpclientrpc(klua_ksmpclientrpc_t* p_client)
 {
     assert(NULL != p_client);
 
-    if (NULL != p_client->co_call && 0 < klb_nlist_size(p_client->p_res_nlist))
+    if (NULL != p_client->co_call)
     {
-        assert(0 == klua_coroutine_debug_check(p_client->p_coex, p_client->co_call));
+        // 检查数据中, 是否有对应的sequence
+        while (0 < klb_nlist_size(p_client->p_res_nlist))
+        {
+            klb_buf_t* p_tmp = klb_nlist_head(p_client->p_res_nlist);
+            klb_mnp_rpc_t* p_rpc = (klb_mnp_rpc_t*)(p_tmp->p_buf + p_tmp->start);
 
+            if (KLB_MNP_RPC_RESPONSE == p_rpc->method && p_client->req_sequence == p_rpc->sequence)
+            {
+                break; // 对应上了, 保持列表首个, 即是我们需要的数据
+            }
+
+            // 未对应上的直接释放
+            klb_nlist_pop_head(p_client->p_res_nlist);
+            KLB_FREE_BY(p_tmp, klb_buf_unref);
+        }
+
+        if (klb_nlist_size(p_client->p_res_nlist) <= 0)
+        {
+            return -1; // 未处理
+        }
+
+        assert(0 == klua_coroutine_debug_check(p_client->p_coex, p_client->co_call));
         lua_State* L = klua_coroutine_rawgeti(klua_coroutine_get(p_client->p_env), p_client->co_call);
         if (NULL == L) return -1; // 未处理
 
@@ -621,7 +645,7 @@ static int on_recv_data_klua_ksmpclientrpc(klb_netconn_t* p_conn, int code, int 
                 klb_nlist_push_tail(p_client->p_rpc_nlist, p_data);
                 call_co_recv_ksmpclientrpc(p_client);
             }
-            else if (KLB_MNP_RPC_RESPONSE == p_rpc->method)
+            else if (KLB_MNP_RPC_RESPONSE == p_rpc->method && p_client->req_sequence == p_rpc->sequence)
             {
                 need_free = false;
 
@@ -642,20 +666,35 @@ static int on_recv_data_klua_ksmpclientrpc(klb_netconn_t* p_conn, int code, int 
 
 ////////////////////////////////////////
 
+/// @brief 获取下一个序号
+static int get_next_sequence_klua_ksmpclientrpc(klua_ksmpclientrpc_t* p_client)
+{
+    // 值域范围: [0, 2^20=1048576), 参见: klb_mnp_rpc_t.sequence
+    // 这里取范围: [1000, 1000000]
+    int sequence = p_client->req_sequence + 1;
+
+    if (sequence < 1000) { sequence = 1000; }
+    if (1000000 < sequence) { sequence = 1000; }
+
+    return sequence;
+}
+
 /// @brief 发送 RPC 数据
-/// @param [in]     method              RPC方法: eg. KLB_MNP_RPC_POST, KLB_MNP_RPC_NOTIFY
+/// @param [in]     method              RPC方法: eg. KLB_MNP_RPC_POST, KLB_MNP_RPC_NOTIFY, KLB_MNP_RPC_REQUEST
 /// @return int 错误码
-static int klua_ksmpclientrpc_send(lua_State* L, klb_mnp_rpc_method_e method, klua_ksmpclientrpc_t** p_out)
+static int klua_ksmpclientrpc_send(lua_State* L, klb_mnp_rpc_method_e method, klua_ksmpclientrpc_t** p_out, int* p_sequence)
 {
     klua_ksmpclientrpc_t* p_client = to_klua_ksmpclientrpc(L, 1);   ///< @1 self
     int rpctype = (int)luaL_checkinteger(L, 2);                     ///< @2 RPC类型: KLB_MNP_RPC_LUA / KLB_MNP_RPC_JSON
+
+    int sequence = (KLB_MNP_RPC_REQUEST == method) ? get_next_sequence_klua_ksmpclientrpc(p_client) : 0;
+
     int ret = 1;
 
     if (KLB_MNP_RPC_LUA == rpctype)
     {
         klb_buf_t* p_data = klua_seri_map_binary_pack(L, 2);        ///< @3 ~ @N 参数
 
-        uint32_t sequence = 0;
         ret = klb_smpclientrpc_conn_send_buf(p_client->p_client_conn, KLB_MNP_RPC_LUA, method, sequence, p_data);
 
         if (0 != ret) { KLB_FREE_BY(p_data, klb_buf_unref); }
@@ -665,18 +704,19 @@ static int klua_ksmpclientrpc_send(lua_State* L, klb_mnp_rpc_method_e method, kl
         size_t json_len = 0;
         const char* p_json = luaL_checklstring(L, 3, &json_len);    ///< @3 JSON数据
 
-        uint32_t sequence = 0;
         ret = klb_smpclientrpc_conn_send(p_client->p_client_conn, KLB_MNP_RPC_JSON, method, sequence, p_json, (int)json_len);
     }
 
     if (NULL != p_out) { *p_out = p_client; };
+    if (NULL != p_sequence) { *p_sequence = sequence; }
+
     return ret;
 }
 
 // POST RPC, 无需等待回复
 static int klua_ksmpclientrpc_post(lua_State* L)
 {
-    int ret = klua_ksmpclientrpc_send(L, KLB_MNP_RPC_POST, NULL);
+    int ret = klua_ksmpclientrpc_send(L, KLB_MNP_RPC_POST, NULL, NULL);
 
     lua_pushinteger(L, ret);            ///< #1 错误码
     return 1;
@@ -685,7 +725,7 @@ static int klua_ksmpclientrpc_post(lua_State* L)
 // NOTIFY RPC, 无需等待回复
 static int klua_ksmpclientrpc_notify(lua_State* L)
 {
-    int ret = klua_ksmpclientrpc_send(L, KLB_MNP_RPC_NOTIFY, NULL);
+    int ret = klua_ksmpclientrpc_send(L, KLB_MNP_RPC_NOTIFY, NULL, NULL);
 
     lua_pushinteger(L, ret);            ///< #1 错误码
     return 1;
@@ -736,13 +776,15 @@ static int klua_ksmpclientrpc_co_call(lua_State* L)
     klua_check_coroutine(L, "ksmpclientrpc:co_call must in coroutine!");
 
     klua_ksmpclientrpc_t* p_client = NULL;
-    int ret = klua_ksmpclientrpc_send(L, KLB_MNP_RPC_REQUEST, &p_client);
+    int sequence = 0;
+    int ret = klua_ksmpclientrpc_send(L, KLB_MNP_RPC_REQUEST, &p_client, &sequence);
 
     if (0 == ret)
     {
         assert(NULL == p_client->co_call);
 
         p_client->co_call = L;
+        p_client->req_sequence = sequence; // 更新请求序号
         return klua_coroutine_yield(p_client->p_coex, L, on_yield_recv_klua_ksmpclientrpc, p_client);
     }
 
@@ -778,11 +820,11 @@ static int klua_ksmpclientrpc_status(lua_State* L)
     {
         klua_setfield_string(L, "rpctype", klb_smprpcer_to_rpctype_string(p_client->rpc.rpctype)); // RPC数据类型
         klua_setfield_string(L, "method", klb_smprpcer_to_method_string(p_client->rpc.method)); // 方法
-        klua_setfield_integer(L, "sequence", p_client->rpc.sequence); // 序列号
+        klua_setfield_integer(L, "sequence", p_client->rpc.sequence); // 序号
 
         klua_setfield_string(L, "res_rpctype", klb_smprpcer_to_rpctype_string(p_client->res.rpctype)); // RPC数据类型
         klua_setfield_string(L, "res_method", klb_smprpcer_to_method_string(p_client->res.method)); // 方法
-        klua_setfield_integer(L, "res_sequence", p_client->res.sequence); // 序列号
+        klua_setfield_integer(L, "res_sequence", p_client->res.sequence); // 序号
     }
 
     return 1; ///< #1 table

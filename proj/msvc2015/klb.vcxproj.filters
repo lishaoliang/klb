@@ -981,9 +981,6 @@
     <ClInclude Include="..\..\src_c\libavutil\fifo.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\file.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\hash.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
@@ -1126,9 +1123,6 @@
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h">
-      <Filter>src_c\libavutil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\libavutil\xtea.h">
@@ -2018,12 +2012,6 @@
     <ClCompile Include="..\..\src_c\libavutil\fifo.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\file.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\file_open.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\hash.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
@@ -2112,9 +2100,6 @@
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\utils.c">
-      <Filter>src_c\libavutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\libavutil\xga_font_data.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\libavutil\xtea.c">

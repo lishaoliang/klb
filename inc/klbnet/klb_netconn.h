@@ -105,7 +105,7 @@ typedef int(*klb_netconn_ioctrl_cb)(klb_netconn_t* p_conn, const klb_map_t* p_in
 
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
-typedef int(*klb_netconn_send_normal_cb)(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+typedef int(*klb_netconn_send_normal_cb)(klb_netconn_t* p_conn, int packtype, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 /// @brief 发送媒体数据包
 /// @return int
@@ -210,27 +210,17 @@ KLB_API const char* klb_netconn_get_name(klb_netconn_t* p_conn);
 
 /// @brief 发送文本数据
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_netconn_send_text(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+KLB_API int klb_netconn_send_text(klb_netconn_t* p_conn, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 发送二进制数据
 /// @return int 0.成功; 非0.失败
-KLB_API int klb_netconn_send_binary(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
+KLB_API int klb_netconn_send_binary(klb_netconn_t* p_conn, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 发送媒体数据
 /// @return int 0.成功; 非0.失败
 KLB_API int klb_netconn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data);
-
-
-/// @brief 发送RPC-Lua数据
-/// @return int 0.成功; 非0.失败
-KLB_API int klb_netconn_send_rpc_lua(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
-
-
-/// @brief 发送RPC-Json数据
-/// @return int 0.成功; 非0.失败
-KLB_API int klb_netconn_send_rpc_json(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 对某个连接进行控制操作: get/set,etc.

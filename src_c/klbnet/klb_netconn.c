@@ -37,11 +37,11 @@ const char* klb_netconn_get_name(klb_netconn_t* p_conn)
 
 /// @brief 发送文本数据
 /// @return int 0.成功; 非0.失败
-int klb_netconn_send_text(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+int klb_netconn_send_text(klb_netconn_t* p_conn, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     if (NULL != p_conn->vtable.send_normal)
     {
-        return p_conn->vtable.send_normal(p_conn, KLB_MNP_TEXT, sequence, uid, p_head, head_len, p_body, body_len);
+        return p_conn->vtable.send_normal(p_conn, KLB_MNP_TEXT, sequence, p_head, head_len, p_body, body_len);
     }
 
     return 1;
@@ -50,11 +50,11 @@ int klb_netconn_send_text(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid
 
 /// @brief 发送二进制数据
 /// @return int 0.成功; 非0.失败
-int klb_netconn_send_binary(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+int klb_netconn_send_binary(klb_netconn_t* p_conn, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     if (NULL != p_conn->vtable.send_normal)
     {
-        return p_conn->vtable.send_normal(p_conn, KLB_MNP_BINARY, sequence, uid, p_head, head_len, p_body, body_len);
+        return p_conn->vtable.send_normal(p_conn, KLB_MNP_BINARY, sequence, p_head, head_len, p_body, body_len);
     }
 
     return 1;
@@ -71,33 +71,6 @@ int klb_netconn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data)
 
     return 1;
 }
-
-
-/// @brief 发送RPC-Lua数据
-/// @return int 0.成功; 非0.失败
-int klb_netconn_send_rpc_lua(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
-{
-    if (NULL != p_conn->vtable.send_normal)
-    {
-        return p_conn->vtable.send_normal(p_conn, KLB_MNP_RPC_LUA, sequence, uid, p_head, head_len, p_body, body_len);
-    }
-
-    return 1;
-}
-
-
-/// @brief 发送RPC-Json数据
-/// @return int 0.成功; 非0.失败
-int klb_netconn_send_rpc_json(klb_netconn_t* p_conn, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
-{
-    if (NULL != p_conn->vtable.send_normal)
-    {
-        return p_conn->vtable.send_normal(p_conn, KLB_MNP_RPC_JSON, sequence, uid, p_head, head_len, p_body, body_len);
-    }
-
-    return 1;
-}
-
 
 /// @brief 对某个连接进行控制操作: get/set,etc.
 /// @return int 0.成功; 非0.失败

@@ -125,7 +125,7 @@ static int klb_smpclientrpc_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* 
 
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
-static int klb_smpclientrpc_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+static int klb_smpclientrpc_conn_send_normal(klb_netconn_t* p_conn, int packtype, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     return 1;
 }
@@ -404,7 +404,7 @@ void klb_smpclientrpc_conn_free(klb_netconn_t* p_conn)
 }
 
 /// @brief 发送RPC数据
-int klb_smpclientrpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len)
+int klb_smpclientrpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, int sequence, const uint8_t* p_body, int body_len)
 {
     klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
     klb_socket_t* p_socket = p_conn->p_socket;
@@ -413,7 +413,6 @@ int klb_smpclientrpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, u
 
     klb_mnp_rpc_t rpc = { 0 };
     rpc.sequence = sequence;
-    rpc.uid = 0;
     rpc.rpctype = rpctype; // KLB_MNP_RPC_LUA;
     rpc.method = method; // KLB_MNP_RPC_POST;
     rpc.size = total_len + sizeof(klb_mnp_rpc_t);
@@ -436,7 +435,7 @@ int klb_smpclientrpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, u
 }
 
 /// @brief 按 buf 发送RPC数据
-int klb_smpclientrpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, klb_buf_t* p_data)
+int klb_smpclientrpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method, int sequence, klb_buf_t* p_data)
 {
     klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
     klb_socket_t* p_socket = p_conn->p_socket;
@@ -445,7 +444,6 @@ int klb_smpclientrpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int metho
 
     klb_mnp_rpc_t rpc = { 0 };
     rpc.sequence = sequence;
-    rpc.uid = 0;
     rpc.rpctype = rpctype; // KLB_MNP_RPC_LUA;
     rpc.method = method; // KLB_MNP_RPC_POST;
     rpc.size = total_len + sizeof(klb_mnp_rpc_t);

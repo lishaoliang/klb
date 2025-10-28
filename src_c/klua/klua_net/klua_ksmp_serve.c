@@ -194,7 +194,7 @@ static int klua_ksmpserve_send_text(lua_State* L)
 
     if (NULL != p_serve->p_smp_conn)
     {
-        ret = klb_netconn_send_text(p_serve->p_smp_conn, 0, 0, (const uint8_t*)p_head, (int)head_len, (const uint8_t*)p_body, (int)body_len);
+        ret = klb_netconn_send_text(p_serve->p_smp_conn, 0, (const uint8_t*)p_head, (int)head_len, (const uint8_t*)p_body, (int)body_len);
     }
 
     lua_pushinteger(L, ret);            // #1.  错误码
@@ -789,29 +789,39 @@ static int on_recv_data_klua_ksmpserverpc(klb_netconn_t* p_conn, int code, int p
 // 
 
 /// @brief 发送 RPC 数据
-/// @param [in]     method              RPC方法: eg. KLB_MNP_RPC_POST, KLB_MNP_RPC_NOTIFY
+/// @param [in]     method              RPC方法: eg. KLB_MNP_RPC_POST, KLB_MNP_RPC_NOTIFY, KLB_MNP_RPC_RESPONSE
 /// @return int Lua返回参数个数
 static int klua_ksmpserverpc_send(lua_State* L, klb_mnp_rpc_method_e method)
 {
     klua_ksmpserverpc_t* p_serve = to_klua_ksmpserverpc(L, 1);      ///< @1 self
     int rpctype = (int)luaL_checkinteger(L, 2);                     ///< @2 RPC类型: KLB_MNP_RPC_LUA / KLB_MNP_RPC_JSON
+    
+    int sequence = 0, base_idx = 2;
+    if (KLB_MNP_RPC_RESPONSE == method)
+    {
+        sequence = (int)luaL_checkinteger(L, base_idx + 1);         ///< @3 sequence : 序号
+        base_idx += 1; // 偏移
+    }
+
     int ret = 1;
 
     if (KLB_MNP_RPC_LUA == rpctype)
     {
-        klb_buf_t* p_data = klua_seri_map_binary_pack(L, 2);         ///< @3 ~ @N 参数
+        ///< POST/NOTIFY : @3 ~ @N 参数
+        ///< RESPONSE : @4 ~ @N 参数
+        klb_buf_t* p_data = klua_seri_map_binary_pack(L, base_idx);         ///< base_idx = 2时: @3 ~ @N 参数
 
-        uint32_t sequence = 0;
         ret = klb_smpserverpc_conn_send_buf(p_serve->p_serve_conn, KLB_MNP_RPC_LUA, method, sequence, p_data);
 
         if (0 != ret) { KLB_FREE_BY(p_data, klb_buf_unref); }
     }
     else if (KLB_MNP_RPC_JSON == rpctype)
     {
+        ///< POST/NOTIFY : @3 JSON数据
+        ///< RESPONSE : @4 JSON数据
         size_t json_len = 0;
-        const char* p_json = luaL_checklstring(L, 3, &json_len);    ///< @3 JSON数据
+        const char* p_json = luaL_checklstring(L, base_idx + 1, &json_len);    ///< base_idx = 2时: @3 JSON数据
 
-        uint32_t sequence = 0;
         ret = klb_smpserverpc_conn_send(p_serve->p_serve_conn, KLB_MNP_RPC_JSON, method, sequence, p_json, (int)json_len);
     }
 
@@ -884,6 +894,7 @@ static int klua_ksmpserverpc_status(lua_State* L)
     {
         klua_setfield_string(L, "rpctype", klb_smprpcer_to_rpctype_string(p_serve->rpc.rpctype)); // RPC数据类型
         klua_setfield_string(L, "method", klb_smprpcer_to_method_string(p_serve->rpc.method)); // 方法
+        klua_setfield_integer(L, "sequence", p_serve->rpc.sequence); // 序号
     }
 
     return 1; ///< #1 table

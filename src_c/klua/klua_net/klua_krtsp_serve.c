@@ -202,7 +202,7 @@ static int klua_krtspserve_send_text(lua_State* L)
 
     if (NULL != p_serve->p_rtsp_conn)
     {
-        ret = klb_netconn_send_text(p_serve->p_rtsp_conn, 0, 0, (const uint8_t*)p_head, (int)head_len, (const uint8_t*)p_body, (int)body_len);
+        ret = klb_netconn_send_text(p_serve->p_rtsp_conn, 0, (const uint8_t*)p_head, (int)head_len, (const uint8_t*)p_body, (int)body_len);
     }
 
     lua_pushinteger(L, ret);            // #1.  错误码

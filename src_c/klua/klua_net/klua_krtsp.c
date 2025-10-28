@@ -183,7 +183,7 @@ static int klua_krtspclient_send_text(lua_State* L)
 
     if (NULL != p_client->p_rtsp_conn)
     {
-        ret = klb_netconn_send_text(p_client->p_rtsp_conn, 0, 0, (const uint8_t*)p_head, head_len, NULL, 0);
+        ret = klb_netconn_send_text(p_client->p_rtsp_conn, 0, (const uint8_t*)p_head, head_len, NULL, 0);
     }
 
     lua_pushinteger(L, ret);

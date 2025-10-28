@@ -44,7 +44,7 @@ static int klb_mnpclient_conn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_i
 
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
-static int klb_mnpclient_conn_send_normal(klb_netconn_t* p_conn, int packtype, uint32_t sequence, uint32_t uid, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
+static int klb_mnpclient_conn_send_normal(klb_netconn_t* p_conn, int packtype, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len)
 {
     return 0;
 }

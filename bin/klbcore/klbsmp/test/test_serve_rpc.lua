@@ -53,13 +53,14 @@ local function CoOnSmpServeConnRPC(ser_conn)
 	}
 	
 	local CoRecv = function (func_name, ...)
-		print('smp-rpc recv : ', func_name, ...)	
 		local state = ser_conn:status()
+		local sequence = state.sequence
+		print('smp-rpc recv : ', sequence, func_name, ...)
 		
 		local func = func_map[tostring(func_name)] or CoUnsupported
 		
 		if klbsmp.RPC_REQUEST == state.method then
-			ser_conn:response(func(ser_conn, ...))
+			ser_conn:response(sequence, func(ser_conn, ...))
 		else
 			func(ser_conn, ...)
 		end

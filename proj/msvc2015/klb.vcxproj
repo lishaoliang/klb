@@ -560,7 +560,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\libavutil\ffmath.h" />
     <ClInclude Include="..\..\src_c\libavutil\ffversion.h" />
     <ClInclude Include="..\..\src_c\libavutil\fifo.h" />
-    <ClInclude Include="..\..\src_c\libavutil\file.h" />
     <ClInclude Include="..\..\src_c\libavutil\hash.h" />
     <ClInclude Include="..\..\src_c\libavutil\hmac.h" />
     <ClInclude Include="..\..\src_c\libavutil\integer.h" />
@@ -610,7 +609,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\libavutil\twofish.h" />
     <ClInclude Include="..\..\src_c\libavutil\version.h" />
     <ClInclude Include="..\..\src_c\libavutil\wchar_filename.h" />
-    <ClInclude Include="..\..\src_c\libavutil\xga_font_data.h" />
     <ClInclude Include="..\..\src_c\libavutil\xtea.h" />
     <ClInclude Include="..\..\src_c\qrencode-4.1.1\bitstream.h" />
     <ClInclude Include="..\..\src_c\qrencode-4.1.1\mask.h" />
@@ -964,8 +962,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\libavutil\error.c" />
     <ClCompile Include="..\..\src_c\libavutil\eval.c" />
     <ClCompile Include="..\..\src_c\libavutil\fifo.c" />
-    <ClCompile Include="..\..\src_c\libavutil\file.c" />
-    <ClCompile Include="..\..\src_c\libavutil\file_open.c" />
     <ClCompile Include="..\..\src_c\libavutil\hash.c" />
     <ClCompile Include="..\..\src_c\libavutil\hmac.c" />
     <ClCompile Include="..\..\src_c\libavutil\integer.c" />
@@ -997,7 +993,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\libavutil\tree.c" />
     <ClCompile Include="..\..\src_c\libavutil\twofish.c" />
     <ClCompile Include="..\..\src_c\libavutil\utils.c" />
-    <ClCompile Include="..\..\src_c\libavutil\xga_font_data.c" />
     <ClCompile Include="..\..\src_c\libavutil\xtea.c" />
     <ClCompile Include="..\..\src_c\qrencode-4.1.1\bitstream.c" />
     <ClCompile Include="..\..\src_c\qrencode-4.1.1\mask.c" />

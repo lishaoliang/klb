@@ -32,11 +32,11 @@ KLB_API void klb_smpserverpc_conn_free(klb_netconn_t* p_conn);
 
 
 /// @brief 发送RPC数据
-KLB_API int klb_smpserverpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, const uint8_t* p_body, int body_len);
+KLB_API int klb_smpserverpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, int sequence, const uint8_t* p_body, int body_len);
 
 
 /// @brief 按 buf 发送RPC数据
-KLB_API int klb_smpserverpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method, uint32_t sequence, klb_buf_t* p_data);
+KLB_API int klb_smpserverpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method, int sequence, klb_buf_t* p_data);
 
 
 #ifdef __cplusplus

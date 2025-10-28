@@ -34,13 +34,9 @@ typedef struct klb_smp_t_
 #define KLB_SMP_MAGIC           0x504D53EB  ///< "*SMP"
     //- 4 Byte
 
-    uint32_t size;              ///< 数据包长度(包含本结构体)
-
+    uint32_t size : 27;         ///< 数据包长度(包含本结构体); max=2^27=128M
     uint32_t packtype : 5;      ///< 包类型: klb_mnp_packtype_e
-    uint32_t resv1 : 3;
-    uint32_t resv2 : 24;
-
-    //- 4 + 4 + 4 = 12 Byte
+    //- 4 + 4 = 8 Byte
 }klb_smp_t;
 
 #pragma pack()

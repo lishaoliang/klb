@@ -57,7 +57,7 @@ local NotifyRpc = function (self, ...)
 end
 
 -- @brief RESPONSE-RPC
-local ResponseRpc = function (self, ...)
+local ResponseRpc = function (self, sequence, ...)
 	local serve = self._serve
 	local rpctype = self.rpctype
 	
@@ -69,7 +69,7 @@ local ResponseRpc = function (self, ...)
 	end
 	
 	-- CONST_RPC_LUA
-	return serve:response(rpctype, ...)
+	return serve:response(rpctype, sequence, ...)
 end
 
 
@@ -100,8 +100,8 @@ function smpserverpc:notify(...)
 end
 
 -- @brief response - RPC 数据
-function smpserverpc:response(...)
-	return ResponseRpc(self, ...)
+function smpserverpc:response(sequence, ...)
+	return ResponseRpc(self, sequence, ...)
 end
 
 -- @brief 接收数据

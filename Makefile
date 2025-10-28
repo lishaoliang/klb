@@ -37,7 +37,7 @@ CP_RF	:= -cp -rf
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
 # klbnet - flv, http, mnp, rtsp, sip, smp, webrtc, ws
-MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops
+MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops ./src_c/klbnet/klblisten
 MY_DIRS += ./src_c/klbnet/klbflv ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbflvserve
 MY_DIRS += ./src_c/klbnet/klbhttp ./src_c/klbnet/klbhttpclient ./src_c/klbnet/klbhttpserve
 MY_DIRS += ./src_c/klbnet/klbmnp ./src_c/klbnet/klbmnpclient ./src_c/klbnet/klbmnpserve
