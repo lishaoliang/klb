@@ -3,48 +3,10 @@
 * C/C++, Lua
 
 ## 目的
-* 1. 搭建基础C/C++开发环境
-* 2. 搭建Lua基础开发环境
-* 3. 搭建流媒体开发环境
-* 4. 搭建Gui开发环境
-
-
-## 示例
-
-* demo示例, 暂只支持windows
-
-* 基础库示例
-
-```
-cd ./bin
-
-./klua.exe ./help_lua/k_test/t_kco.lua
-./klua.exe ./help_lua/k_test/t_ksys.lua
-./klua.exe ./help_lua/k_test/t_krand.lua
-```
-
-
-* 命令行示例1 : http-flv流服务器
-
-```
-1. step1 在win命令行CMD中
-
-cd ./bin
-./klua.exe ./sample1/http_flv.lua
-
-
-2. step2 使用Google Chrome/Firefox等支持wasm的浏览器测试http-flv流媒体
-
-http://127.0.0.1:3456/httpflv.html
-
-```
-
-* 界面示例
-
-```
-cd ./bin
-./wlua.exe ./sample_ui/main_ui.lua
-```
+* 1. 搭建夸平台基础C/C++开发环境, 以嵌入式为最高优先级 (进度100%, 2019~2010)
+* 2. 搭建夸平台Lua基础开发环境 (进度100%, 2010~2022)
+* 3. 搭建夸平台GUI开发环境 (进度100%, 2022~2025)
+* 4. 搭建夸平台流媒体开发环境 (进度5%, 预估2026~2030)
 
 
 ## 文件目录
@@ -52,24 +14,7 @@ cd ./bin
 ```
 ./klb
  ->bin  -------------------- lua,调试,生成等目录 
-   ->help_lua  ------------- lua帮助文件: 仿C提供的接口提示
-   ->kbase  ---------------- lua基础封装
-   ->knet  ----------------- lua网络封装
-   ->res  ------------------ 资源目录: 字体,网页,JS,H264等文件
-   ->sample_ui  ------------ lua-ui示例
-   ->sample1  -------------- lua示例1
-   ->sample2  -------------- lua示例2
-   --klua.exe  ------------- klua命令行程序
-   --wlua.exe  ------------- wlua界面程序
-
- ->docs
-   ->cn
-   ->en
-   ->licenses
-
- ->lib
- ->proj
- ->src
+   ->klbcore  -------------- lua支持库
 
  ->inc  -------------------- C头文件
  ->src_c  ------------------ C实现文件
@@ -82,21 +27,6 @@ cd ./bin
    ->klbthird  ------------- 第三方库
    ->klbutil  -------------- C基础1
    ->klua  ----------------- lua基础2
-     ->extension  ---------- 标准C扩展
-     ->klua_base  ---------- lua基础2
-     ->klua_format  -------- lua文件结构
-     ->klua_multithread  --- lua多线程相关
-     ->klua_net  ----------- lua网络部分
-     ->klua_platform  ------ lua平台相关: 使用操作系统平台相关函数
-     ->klua_util  ---------- lua基础1
-     ->lpeg-1.0.2  --------- lua正则
-     ->lsqlite3  ----------- lua数据库
-     ->lua-5.4.1  ---------- lua虚拟机
-     ->lua-cjson-2.1.0  ---- json解析
-     ->luafilesystem-2.0  -- 操作文件系统
-     ->LuaXML_130610  ------ xml解析
-     --klua.c  ------------- klua提供的库
-     --klua_env.c  --------- lua附加环境
    ->libavutil  ------------ ffmpeg基础代码
 
  ->inc_hpp  ---------------- C++头文件
@@ -107,18 +37,21 @@ cd ./bin
    ->klbplatform  ---------- C++平台相关
    ->klbutil --------------- C++基础1
 
- ->src_packages  ----------- lua单项附加库
-   ->kpa_flv  -------------- kpa_flv库
-   ->kpa_http  ------------- kpa_http库
-   ->kpa_mnp  -------------- kpa_mnp库
-   ->kpa_rtsp -------------- kpa_rtsp库
-   ->kpa_sip  -------------- kpa_sip库
-   ->kpa_ws  --------------- kpa_ws库
-
  ->third
 
- ->klua  ------------------- klua命令行
- ->wlua  ------------------- wlua窗口
-
  --Makefile
+```
+
+## 感谢
+
+```
+  [2016~2017] 感谢 深圳-袁**, 深圳-郑** 同学 提供C/C++基础数据结构封装思路
+  [2016~2017] 感谢 深圳-袁** 同学 提供GUI仿Web提供支持CSS等建议
+  [2016~2018] 感谢 深圳某公司同学 合作探讨: 使用网络异步IO-libuv库及使用Lua编写GUI的实践思路
+  [2019~2023] 感谢 武汉某公司同学 合作探讨: 自行设计网络异步IO的实践思路 及使用Lua作为嵌入式开发应用主框架实践思路
+  [2022~2023] 感谢 武汉-王** 同学 提供使用Lua协程编程建议
+  [2022~2023] 感谢 云风 同学 提供Lua-table序列化成二进制思路 及 Lua协程 实践思路
+  [2023~2025] 感谢 武汉-程**, 武汉-刘**, 武汉-代** 同学 协作完善GUI框架的试验
+
+  PS. 仅列举了对库影响较大 的思路及建议, 在库中只能看到部分"影子", 当前代码是在这些方向的基础上长期反复探讨/论证/再进化而成
 ```

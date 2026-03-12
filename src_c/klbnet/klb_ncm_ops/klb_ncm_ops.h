@@ -19,32 +19,19 @@ extern "C" {
 #endif
 
 
-int klb_ncm_register_ops_mnp(klb_ncm_t* p_ncm, int protocol);
 int klb_ncm_register_ops_http(klb_ncm_t* p_ncm, int protocol);
-int klb_ncm_register_ops_http_flv(klb_ncm_t* p_ncm, int protocol);
 
 
 /// @def   KLB_NCM_REGISTER_OPS_STD
 /// @brief ncm预注册的解析器
 #define KLB_NCM_REGISTER_OPS_STD(NCM_) {                                \
-    klb_ncm_register_ops_mnp((NCM_), KLB_PROTOCOL_MNP);                 \
     klb_ncm_register_ops_http((NCM_), KLB_PROTOCOL_HTTP);               \
-    klb_ncm_register_ops_http_flv((NCM_), KLB_PROTOCOL_HTTP_FLV);       \
 }
-
-
-int klb_ncm_init_ops_rpc_lua_mnp(klb_ncm_ops_t* p_ops);
-int klb_ncm_register_ops_rpc_lua_mnp(klb_ncm_t* p_ncm, int protocol);
-
-int klb_ncm_init_ops_rpc_json_mnp(klb_ncm_ops_t* p_ops);
-int klb_ncm_register_ops_rpc_json_mnp(klb_ncm_t* p_ncm, int protocol);
 
 
 /// @def   KLB_NCM_REGISTER_OPS_RPC
 /// @brief ncm预注册的解析器
-#define KLB_NCM_REGISTER_OPS_RPC(NCM_) {                                    \
-    klb_ncm_register_ops_rpc_lua_mnp((NCM_), KLB_PROTOCOL_RPC_MNP_LUA);     \
-    klb_ncm_register_ops_rpc_json_mnp((NCM_), KLB_PROTOCOL_RPC_MNP_JSON);   \
+#define KLB_NCM_REGISTER_OPS_RPC(NCM_) {                                \
 }
 
 #ifdef __cplusplus

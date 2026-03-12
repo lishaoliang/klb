@@ -261,22 +261,12 @@ KLB_API int klua_open_kmnp(lua_State* L);
 KLB_API int klua_open_ksmp(lua_State* L);
 
 
-/// @brief 扩展库"kncm": 网络媒体长链接管理模块
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_kncm(lua_State* L);
-
-
 /// @brief 实时流媒体模块
 KLB_API int klua_open_krtsp(lua_State* L);
 KLB_API int klua_open_khttp_flv(lua_State* L);
 KLB_API int klua_open_khttp_mnp(lua_State* L);
 KLB_API int klua_open_kws_flv(lua_State* L);
 KLB_API int klua_open_kws_mnp(lua_State* L);
-
-
-/// @brief RPC模块
-KLB_API int klua_open_krpc(lua_State* L);
 
 
 /// @brief 扩展库"kh26x": h26x文件读取

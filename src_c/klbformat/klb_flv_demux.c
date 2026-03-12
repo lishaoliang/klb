@@ -442,9 +442,9 @@ static int klb_flv_demux_on_aac_raw(klb_flv_demux_t* p_flv_demux, klb_flv_audio_
     p_media->sidx = 0;
     p_media->time = (int64_t)(ts) * 1000;
 
-    p_media->tracks = p_flv_demux->aac_seq_head_info.aac_seq_head.channels; //1.单声道; 2.立体声
-    p_media->bits_per_sample = (KLB_FLV_AUDIO_SAMPLES_8BIT == p_flv_demux->aac_seq_head_info.audio.sound_size) ? 1 : 2;
-    p_media->samples = p_flv_demux->aac_seq_head_info.aac_seq_head.sampling_frequency;
+    //p_media->tracks = p_flv_demux->aac_seq_head_info.aac_seq_head.channels; //1.单声道; 2.立体声
+    //p_media->bits_per_sample = (KLB_FLV_AUDIO_SAMPLES_8BIT == p_flv_demux->aac_seq_head_info.audio.sound_size) ? 1 : 2;
+    //p_media->samples = p_flv_demux->aac_seq_head_info.aac_seq_head.sampling_frequency;
 
     // 得到完整的一帧了
     klb_nlist_push_tail(p_list_out, p_frame);

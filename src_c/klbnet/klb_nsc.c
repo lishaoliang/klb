@@ -159,10 +159,10 @@ static bool get_ops_klb_nsc(int protocol, klb_ncm_ops_t* p_ops)
     switch (protocol)
     {
     case KLB_PROTOCOL_RPC_MNP_LUA:
-        klb_ncm_init_ops_rpc_lua_mnp(p_ops);
+        //klb_ncm_init_ops_rpc_lua_mnp(p_ops);
         return true;
     case KLB_PROTOCOL_RPC_MNP_JSON:
-        klb_ncm_init_ops_rpc_json_mnp(p_ops);
+        //klb_ncm_init_ops_rpc_json_mnp(p_ops);
         return true;
     default:
         break;

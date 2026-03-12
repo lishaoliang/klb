@@ -47,12 +47,12 @@ typedef struct klb_smp_t_
 
 // 包类型定义: 
 // (KLB_MNP_PONG)心跳包(回应) : [klb_smp_t]
-// (KLB_MNP_TEXT)文本数据 : [klb_smp_t] + [klb_mnp_common_t] + [head] + [body] + [padding]
-// (KLB_MNP_BINARY)二进制数据 : [klb_smp_t] + [klb_mnp_common_t] + [head] + [body] + [padding]
-// (KLB_MNP_MEDIA)媒体数据 : [klb_smp_t] + [klb_mnp_media_t] + [H264] + [padding]
+// (KLB_MNP_TEXT)文本数据 : [klb_smp_t] + [klb_mnp_text_t] + [head] + [body]
+// (KLB_MNP_BINARY)二进制数据 : [klb_smp_t] + [klb_mnp_binary_t] + [head] + [body]
+// (KLB_MNP_MEDIA)媒体数据 : [klb_smp_t] + [klb_mnp_media_t] + [H264]
 // (KLB_MNP_PING)心跳包(发起) : [klb_smp_t]
-// (KLB_MNP_RPC_LUA)RPC Lua包 : [klb_smp_t] + [klb_mnp_rpc_t] + [rpc-lua] + [padding]
-// (KLB_MNP_RPC_JSON)RPC Json包 : [klb_smp_t] + [klb_mnp_rpc_t] + [rpc-json] + [padding]
+// (KLB_MNP_RPC_LUA)RPC Lua包 : [klb_smp_t] + [klb_mnp_rpc_t] + [rpc-lua]
+// (KLB_MNP_RPC_JSON)RPC Json包 : [klb_smp_t] + [klb_mnp_rpc_t] + [rpc-json]
 
 
 #ifdef __cplusplus

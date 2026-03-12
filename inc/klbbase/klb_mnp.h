@@ -10,12 +10,12 @@
 ///  \n 2019 0.1 创建文件
 ///  \n 2022 0.2 a.修改心跳机制: 由ping发起, pong回应
 ///              b.添加 RPC Lua, RPC Json数据分包, 在底层协议直接支持RPC
-///  \n 2023 0.3 a.为 klb_mnp_media_t/klb_mnp_common_t 结构体, 添加 padding 对齐字段, 方便做内存对齐处理
-///              b.调整chnn/sidx, 从uint32_t调整为uint16_t, 并联合取名为 sid
-///  \n [2025-10] 0.4 重新设计调整文本/二进制/RPC封包头部定义
+///  \n 2023 0.3 a.为 klb_mnp_media_t 结构体, 添加 padding 对齐字段, 方便做内存对齐处理
+///  \n [2025-10] 0.4 重新设计 调整 文本/二进制/RPC包/媒体包等 头部定义; 变更较大, 不兼容前面设计, 但愿本次坚挺时间长点 :)
 ///                   a. 添加OPTIONS/用户自定义包/保留包等定义
 ///                   b. 添加编码/压缩等定义
 ///                   c. 添加RPC扩展定义
+///                   d. 调整媒体包附加数据方式 由 数据类型(data type)来自行定义,以免完全固定后, 后续添加媒体类型难以扩展
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_MNP_H__
@@ -28,7 +28,13 @@ extern "C" {
 #endif
 
 
+//////////////////////////////////////////////////////////////////////////
+// MNP协议
+
 #pragma pack(4)
+
+//////////////////////////////////////////////////////////////////////////
+// MNP 封包头
 
 /// @struct klb_mnp_opt_e
 /// @brief  包组合方式
@@ -89,81 +95,9 @@ typedef struct klb_mnp_t_
     //- 4 + 4 = 8 Byte
 }klb_mnp_t;
 
-/// @struct klb_mnp_media_t
-/// @brief  media net protocol, media head
-///  \n F包: [klb_mnp_t][klb_mnp_media_t][data...]
-///  \n B包: [klb_mnp_t][klb_mnp_media_t][data...]
-///  \n C包: [klb_mnp_t][data...]
-///  \n E包: [klb_mnp_t][data...]
-///  \n 数据包可以被存储, 只描述与数据有关部分
-/// 待调整; (媒体数据 亦可能包含 与之 对应的 AI 数据? 协商自适应?)
-typedef struct klb_mnp_media_t_
-{
-    uint32_t         size;              ///< 完整数据长度(data size, 包含本结构体)
-    uint16_t         padding;           ///< 末尾对齐数据
-    uint16_t         dtype;             ///< 数据类型(data type): klb_mnp_dtype_e
-    //- 4 + 4 = 8 Byte
 
-    // 标识号
-    union
-    {
-        uint32_t     sid;               ///< 编号
-
-        struct
-        {
-            uint16_t chnn;              ///< 通道(channel)
-            uint16_t sidx;              ///< 流序号(stream index): klb_mnp_sidx_e
-        };
-    };
-    //- 8 + 4 = 12 Byte
-
-    int64_t          time;              ///< 时间戳(基于1970年基准,毫秒)
-    //- 12 + 8 = 20 Byte
-
-    union
-    {
-        uint64_t     resv;              ///< 0
-
-        // 视频参数
-        struct
-        {
-            uint8_t  vtype;             ///< 视频类型(video type): klb_mnp_vtype_e;
-            uint8_t  vtype2;            ///< 
-        };
-
-        // 音频参数
-        struct
-        {
-            uint8_t  tracks;            ///< 音频声道数; 1, 2, 5.1;
-            uint8_t  bits_per_sample;   ///< 音频编码数; 1(8比特), 2(16比特)
-            uint16_t resv2;
-            uint32_t samples;           ///< 音频采样率; 44100
-        };
-    };
-    //- 20 + 8 = 28 Byte
-
-    uint32_t         rsv;               ///< 保留: 0
-    //- 28 + 4 = 32 Byte
-}klb_mnp_media_t;
-
-/// @struct klb_mnp_common_t
-/// @brief  text/binary header
-///  \n F包: [klb_mnp_t][klb_mnp_common_t][head...][data...][padding...]
-///  \n B包: [klb_mnp_t][klb_mnp_common_t][head...][data...][padding...]
-///  \n C包: [klb_mnp_t][head...][data...][padding...]
-///  \n E包: [klb_mnp_t][head...][data...][padding...]
-/// 废弃
-typedef struct klb_mnp_common_t_
-{
-    uint32_t    size;       ///< 完整数据长度(data size, 包含本结构体)
-    uint32_t    head;       ///< 数据头部长度; 正式数据长度 = size - head - sizeof(klb_mnp_common_t) - padding
-    uint32_t    sequence;   ///< 序列号
-    uint32_t    uid;        ///< 用户自定义ID(user defined id)
-
-    uint16_t    padding;    ///< 末尾对齐数据
-    uint16_t    rsv;        ///< 保留: 0
-    // - 4 + 4 + 4 + 4 + 4 = 20 Byte
-}klb_mnp_common_t;
+//////////////////////////////////////////////////////////////////////////
+// 文本/二进制
 
 /// @enum  klb_mnp_encode_e
 /// @brief 编码方式
@@ -176,6 +110,7 @@ typedef enum klb_mnp_encode_e_
 
 /// @struct klb_mnp_text_t
 /// @brief  text header
+///   包类型: packtype = KLB_MNP_TEXT
 /// @note 这里的 size 是 压缩之后的 大小
 ///   裸包格式(encode=NULL): [klb_mnp_text_t] + [数据头] + [数据体]
 ///   压缩包格式(encode=COMPRESS): [klb_mnp_text_t] + [[klb_mnp_compress_t] + [数据头]] + [[klb_mnp_compress_t] + [数据体]]
@@ -195,6 +130,7 @@ typedef struct klb_mnp_text_t_
 
 /// @struct klb_mnp_binary_t
 /// @brief  binary header
+///   包类型: packtype = KLB_MNP_BINARY
 /// @note 这里的 size 是 压缩之后的 大小
 ///   裸包格式(encode=NULL): [klb_mnp_binary_t] + [数据头] + [数据体]
 ///   压缩包格式(encode=COMPRESS): [klb_mnp_binary_t] + [[klb_mnp_compress_t] + [数据头]] + [[klb_mnp_compress_t] + [数据体]]
@@ -212,16 +148,20 @@ typedef struct klb_mnp_binary_t_
     // - 4 + 4 + 4 = 12 字节
 }klb_mnp_binary_t;
 
+
+//////////////////////////////////////////////////////////////////////////
+// RPC
+
 /// @struct klb_mnp_rpc_method_e
 /// @brief  RPC 方法
 typedef enum klb_mnp_rpc_method_e_
 {
     KLB_MNP_RPC_METHOD_NULL = 0x00,     ///< 空
-    //KLB_MNP_RPC_OPTIONS,                ///< 查询方法, 或查询支持的所有RPC方法
-    //KLB_MNP_RPC_GET,                    ///< 获取
-    KLB_MNP_RPC_POST,                   ///< 提交
-    //KLB_MNP_RPC_PUT,                    ///< 替换
-    //KLB_MNP_RPC_DELETE,                 ///< 删除
+    KLB_MNP_RPC_OPTIONS     = 0x01,     ///< 查询方法, 或查询支持的所有RPC方法
+    KLB_MNP_RPC_GET         = 0x02,     ///< 获取
+    KLB_MNP_RPC_POST        = 0x03,     ///< 提交
+    KLB_MNP_RPC_PUT         = 0x04,     ///< 替换
+    KLB_MNP_RPC_DELETE      = 0x05,     ///< 删除
 
     KLB_MNP_RPC_NOTIFY      = 0x0A,     ///< 通知数据
 
@@ -233,6 +173,7 @@ typedef enum klb_mnp_rpc_method_e_
 
 /// @struct klb_mnp_rpc_t
 /// @brief  RPC header
+///   包类型: packtype = KLB_MNP_RPC_LUA / KLB_MNP_RPC_JSON
 /// @note 这里的 size 是 压缩之后的 大小
 ///   裸包格式(encode=NULL): [klb_mnp_rpc_t] + [数据头] + [数据体]
 ///   压缩包格式(encode=COMPRESS): [klb_mnp_rpc_t] + [klb_mnp_compress_t] + [数据体]
@@ -250,7 +191,7 @@ typedef struct klb_mnp_rpc_t_
 
 /// @struct klb_mnp_rpcex_t
 /// @brief  RPC扩展 header
-///     
+///   包类型: packtype = KLB_MNP_RPC_EX
 typedef struct klb_mnp_rpcex_t_
 {
     uint32_t    size : 27;      ///< 完整数据长度(data size, 包含本结构体); max=2^27=128M
@@ -260,17 +201,51 @@ typedef struct klb_mnp_rpcex_t_
     // 待定
 }klb_mnp_rpcex_t;
 
+
+//////////////////////////////////////////////////////////////////////////
+// 用户自定义扩展 [KLB_MNP_PACKTYPE_USER_B, KLB_MNP_PACKTYPE_USER_E]
+// 用于扩展私有数据包
+
+
+/// @enum  klb_mnp_userid_e
+/// @brief 用户自定义格式 标记
+typedef enum klb_mnp_userid_e_
+{
+    KLB_MNP_USERID_NULL     = 0,                                ///< 无压缩
+    KLB_MNP_USERID_MNP      = KLB_FOURCC(0, 'M', 'N', 'P'),     ///< MNP
+    KLB_MNP_USERID_SMP      = KLB_FOURCC(0, 'S', 'M', 'P'),     ///< SMP
+}klb_mnp_userid_e;
+
+
+/// @struct klb_mnp_ptuser_t
+/// @brief  用户自定义类型包头(packet type user)
+///   裸包格式(encode=NULL): [klb_mnp_ptuser_t] + [用户自定义格式数据]
+typedef struct klb_mnp_ptuser_t_
+{
+    uint32_t    size : 27;      ///< 完整数据长度(data size, 包含本结构体); max=2^27=128M
+    uint32_t    encode : 3;     ///< 编码方式(klb_mnp_encode_e)
+    uint32_t    rsv1 : 2;       ///<
+
+    uint32_t    userid;         ///< 用户自定义ID, 用户自定义格式数据
+    // - 4 + 4 = 8 字节
+}klb_mnp_ptuser_t;
+
+
+//////////////////////////////////////////////////////////////////////////
+// 编码 压缩 加密
+
 /// @enum  klb_mnp_compress_e
 /// @brief 压缩/加密 格式
 typedef enum klb_mnp_compress_e_
 {
     KLB_MNP_COMPRESS_NULL   = 0,                                ///< 无压缩
     KLB_MNP_COMPRESS_ZIP    = KLB_FOURCC(0, 'Z', 'I', 'P'),     ///< ZIP压缩
+    KLB_MNP_COMPRESS_MAX    = 0xFFFFFFFF,                       ///< max=2^32
 }klb_mnp_compress_e;
 
 /// @struct klb_mnp_compress_t
 /// @brief  编码压缩头 header
-///   eg. [klb_mnp_rpc_t] + [klb_mnp_compress_t] + [压缩体]
+///   eg. [klb_mnp_rpc_t] + [klb_mnp_compress_t] + [压缩数据]
 typedef struct klb_mnp_compress_t_
 {
     uint32_t    src_size : 27;  ///< 原始完整数据长度(不包含本结构体); max=2^27=128M
@@ -280,62 +255,112 @@ typedef struct klb_mnp_compress_t_
     // - 4 + 4 = 8 字节
 }klb_mnp_compress_t;
 
-#pragma pack()
 
+//////////////////////////////////////////////////////////////////////////
+// 媒体
+
+/// @enum  klb_mnp_dtype_e
+/// @brief 媒体数据类型(media data type)
+/// @note 原打算使用ffmpeg的AVCodecID, 但其版本更新过程中值会变更,
+///   所以这里重新定义
+///   媒体数据类型 包含 音频,视频,图片, 及与这些相关的 AI分析等
+typedef enum klb_mnp_dtype_e_
+{
+    KLB_MNP_DTYPE_NULL  = 0x000,
+    KLB_MNP_DTYPE_H264  = 0x001,   ///< AV_CODEC_ID_H264
+    KLB_MNP_DTYPE_H265  = 0x002,   ///< AV_CODEC_ID_H265
+
+    KLB_MNP_DTYPE_AAC   = 0x051,   ///< AV_CODEC_ID_AAC
+
+    KLB_MNP_DTYPE_JPEG  = 0x0A1,   ///< JPEG
+
+    KLB_MNP_DTYPE_MAX   = 0xFFF,   ///< MAX=2^12=4096
+}klb_mnp_dtype_e;
+
+/// @enum   klb_mnp_sidx_e
+/// @brief  媒体流序号
+typedef enum klb_mnp_sidx_e_
+{
+    KLB_MNP_SIDX_NULL   = 0x000,   ///< NULL
+    KLB_MNP_SIDX_V1     = 0x001,   ///< Video 1
+    KLB_MNP_SIDX_V2     = 0x002,   ///< Video 2
+    KLB_MNP_SIDX_V3     = 0x003,   ///< Video 3
+
+    KLB_MNP_SIDX_A1     = 0x021,   ///< Audio 1
+    KLB_MNP_SIDX_A2     = 0x022,   ///< Audio 2
+    KLB_MNP_SIDX_A3     = 0x023,   ///< Audio 3
+
+    KLB_MNP_SIDX_P1     = 0x041,   ///< Picture 1
+    KLB_MNP_SIDX_P2     = 0x042,   ///< Picture 2
+    KLB_MNP_SIDX_P3     = 0x043,   ///< Picture 3
+
+    KLB_MNP_SIDX_I1     = 0x061,   ///< Image 1
+    KLB_MNP_SIDX_I2     = 0x062,   ///< Image 2
+    KLB_MNP_SIDX_I3     = 0x063,   ///< Image 3
+
+    KLB_MNP_SIDX_MAX    = 0xFFF,   ///< MAX=2^12=4096
+}klb_mnp_sidx_e;
 
 /// @enum   klb_mnp_vtype_e
-/// @brief  视频帧类型
+/// @brief  视频帧类型(video type)
 typedef enum klb_mnp_vtype_e_
 {
     KLB_MNP_VTYPE_P     = 0x00,     ///< P帧
     KLB_MNP_VTYPE_I     = 0x01,     ///< I帧
     KLB_MNP_VTYPE_B     = 0x02,     ///< B帧
     KLB_MNP_VTYPE_CFG   = 0x03,     ///< 视频配置(config)数据: vps, sps, pps, sei, eg.
-    KLB_MNP_VTYPE_MAX   = 0xFF      ///< MAX
+    KLB_MNP_VTYPE_MAX   = 0xFF      ///< MAX=2^8=256
 }klb_mnp_vtype_e;
 
-
-/// @enum   klb_mnp_sidx_e
-/// @brief  媒体流序号
-typedef enum klb_mnp_sidx_e_
+/// @struct klb_mnp_media_t
+/// @brief  media net protocol, media head
+///  \n F包: [klb_mnp_t][klb_mnp_media_t][data...]
+///  \n B包: [klb_mnp_t][klb_mnp_media_t][data...]
+///  \n C包: [klb_mnp_t][data...]
+///  \n E包: [klb_mnp_t][data...]
+///  \n 数据包可以被存储, 只描述与数据有关部分
+///  \n H264视频包格式: [klb_mnp_media_t] + [H264数据]
+///  \n 加密H264视频包格式: [klb_mnp_media_t] + [klb_mnp_compress_t] + [加密H264数据]
+///  \n H265视频包格式: [klb_mnp_media_t] + [H265数据]
+///  \n AAC音频格式: [klb_mnp_media_t] + [klb_mnp_audio_t] + [AAC音频数据]
+typedef struct klb_mnp_media_t_
 {
-    KLB_MNP_SIDX_NULL   = 0x0000,    ///< NULL
-    KLB_MNP_SIDX_V1     = 0x0001,    ///< Video 1
-    KLB_MNP_SIDX_V2     = 0x0002,    ///< Video 2
-    KLB_MNP_SIDX_V3     = 0x0003,    ///< Video 3
+    uint32_t    size : 27;          ///< 完整数据长度(data size, 包含本结构体); max=2^27=128M
+    uint32_t    padding : 5;        ///< 末尾对齐数据; max=2^5=32
 
-    KLB_MNP_SIDX_A1     = 0x0021,    ///< Audio 1
-    KLB_MNP_SIDX_A2     = 0x0022,    ///< Audio 2
-    KLB_MNP_SIDX_A3     = 0x0023,    ///< Audio 3
+    int64_t     time;               ///< 时间戳(基于1970年基准,毫秒)
 
-    KLB_MNP_SIDX_P1     = 0x0041,    ///< Picture 1
-    KLB_MNP_SIDX_P2     = 0x0042,    ///< Picture 2
-    KLB_MNP_SIDX_P3     = 0x0043,    ///< Picture 3
+    uint32_t    dtype : 12;         ///< 数据类型(data type): klb_mnp_dtype_e
+    uint32_t    sidx : 12;          ///< 流序号(stream index): klb_mnp_sidx_e
+    uint32_t    vtype : 8;          ///< 视频类型(video type): klb_mnp_vtype_e;
 
-    KLB_MNP_SIDX_I1     = 0x0061,    ///< Image 1
-    KLB_MNP_SIDX_I2     = 0x0062,    ///< Image 2
-    KLB_MNP_SIDX_I3     = 0x0063,    ///< Image 3
+    uint32_t    chnn : 16;          ///< 通道(channel); max=2^16=65536
+    uint32_t    encode : 3;         ///< 编码方式(klb_mnp_encode_e)
+    uint32_t    rsv : 13;           ///< 保留
+    // - 4 + 8 + 4 + 4 = 20 字节
+}klb_mnp_media_t;
 
-    KLB_MNP_SIDX_MAX    = 0x7FFF,    ///< max sidx
-}klb_mnp_sidx_e;
-
-
-/// @enum  klb_mnp_dtype_e
-/// @brief 媒体数据类型
-/// @note 原打算使用ffmpeg的AVCodecID, 但其版本更新过程中值会变更,
-///   所以这里重新定义
-typedef enum klb_mnp_dtype_e_
+/// @struct klb_mnp_audio_t
+/// @brief  音频头部
+///   音频包格式: [klb_mnp_media_t] + [klb_mnp_audio_t] + [音频]
+///   加密音频包格式: [klb_mnp_media_t] + [klb_mnp_audio_t] +[klb_mnp_compress_t] + [加密音频]
+typedef struct klb_mnp_audio_t_
 {
-    KLB_MNP_DTYPE_NULL  = 0x0000,
-    KLB_MNP_DTYPE_H264  = 0x0001,   ///< AV_CODEC_ID_H264
-    KLB_MNP_DTYPE_H265  = 0x0002,   ///< AV_CODEC_ID_H265
+    uint32_t    samples;                ///< 音频采样率; eg. 44100
 
-    KLB_MNP_DTYPE_AAC   = 0x1001,   ///< AV_CODEC_ID_AAC
+    uint32_t    tracks: 8;              ///< 音频声道数; 1, 2, 5.1;
+    uint32_t    bits_per_sample : 8;    ///< 音频编码数; 1(8比特), 2(16比特)
+    uint32_t    rsv : 16;
+    // - 4 + 4 = 8 字节
+}klb_mnp_audio_t;
 
-    KLB_MNP_DTYPE_JPEG  = 0x2001,   ///< JPEG
 
-    KLB_MNP_DTYPE_MAX   = 0x7FFF,   ///< max data type
-}klb_mnp_dtype_e;
+//////////////////////////////////////////////////////////////////////////
+
+#pragma pack()
+
+// MNP协议 结束
+//////////////////////////////////////////////////////////////////////////
 
 
 #ifdef __cplusplus

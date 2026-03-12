@@ -248,25 +248,25 @@ static void klb_http_push_pack(klb_http_t* p_http)
 
     if (NULL != p_http->p_body)
     {
-        p_data = klb_buffer_join_offset(p_http->p_body, head_len + sizeof(klb_mnp_common_t), 0, NULL, NULL);
+        p_data = klb_buffer_join_offset(p_http->p_body, head_len + sizeof(klb_mnp_text_t), 0, NULL, NULL);
         klb_buffer_reset(p_http->p_body);
 
         body_len = p_data->end - p_data->start;
     }
     else
     {
-        p_data = klb_buf_malloc(head_len + sizeof(klb_mnp_common_t), false);
+        p_data = klb_buf_malloc(head_len + sizeof(klb_mnp_text_t), false);
     }
 
-    klb_mnp_common_t com = { 0 };
-    com.size = head_len + body_len + sizeof(klb_mnp_common_t);
-    com.head = head_len;
+    klb_mnp_text_t com = { 0 };
+    com.size = head_len + body_len + sizeof(klb_mnp_text_t);
+    com.head_size = head_len;
 
-    memcpy(p_data->p_buf, &com, sizeof(klb_mnp_common_t));
+    memcpy(p_data->p_buf, &com, sizeof(klb_mnp_text_t));
 
     if (0 < head_len)
     {
-        memcpy(p_data->p_buf + sizeof(klb_mnp_common_t), p_http->header, head_len);
+        memcpy(p_data->p_buf + sizeof(klb_mnp_text_t), p_http->header, head_len);
     }
 
     p_data->start = 0;

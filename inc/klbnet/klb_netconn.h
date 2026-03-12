@@ -67,10 +67,10 @@ typedef enum klb_protocol_e_
 }klb_protocol_e;
 
 
-/// @def   KLB_NETCONN_NAME_max
+/// @def   KLB_NETCONN_NAME_MAX
 /// @brief 连接名称最大字符
-#define KLB_NETCONN_NAME_len    4
-#define KLB_NETCONN_NAME_max    8
+#define KLB_NETCONN_NAME_LEN    4
+#define KLB_NETCONN_NAME_MAX    8
 
 
 /// @enum  klb_netconn_msg_e
@@ -180,7 +180,7 @@ typedef struct klb_netconn_t_
     int                         id;             ///< 连接ID
 
     // 连接
-    char                        name[KLB_NETCONN_NAME_max]; ///< 连接名称; 用于用于集合之后识别
+    char                        name[KLB_NETCONN_NAME_MAX]; ///< 连接名称; 用于用于集合之后识别
 
     // 用户数据
     void*                       p_udata;        ///< public user data, [附加指针]

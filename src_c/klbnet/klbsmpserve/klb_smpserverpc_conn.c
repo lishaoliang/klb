@@ -404,6 +404,7 @@ int klb_smpserverpc_conn_send(klb_netconn_t* p_conn, int rpctype, int method, in
     rpc.sequence = sequence;
     rpc.rpctype = rpctype; // KLB_MNP_RPC_LUA;
     rpc.method = method; // KLB_MNP_RPC_POST;
+    rpc.encode = KLB_MNP_ENCODE_NULL;
     rpc.size = total_len + sizeof(klb_mnp_rpc_t);
 
     klb_smp_t smp = { 0 };
@@ -435,6 +436,7 @@ int klb_smpserverpc_conn_send_buf(klb_netconn_t* p_conn, int rpctype, int method
     rpc.sequence = sequence;
     rpc.rpctype = rpctype; // KLB_MNP_RPC_LUA;
     rpc.method = method; // KLB_MNP_RPC_POST;
+    rpc.encode = KLB_MNP_ENCODE_NULL;
     rpc.size = total_len + sizeof(klb_mnp_rpc_t);
 
     klb_smp_t smp = { 0 };

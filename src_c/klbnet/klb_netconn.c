@@ -21,7 +21,7 @@ void klb_netconn_set_name(klb_netconn_t* p_conn, const char* p_name)
 {
     if (NULL != p_name)
     {
-        strncpy(p_conn->name, p_name, KLB_NETCONN_NAME_max - 1);
+        strncpy(p_conn->name, p_name, KLB_NETCONN_NAME_MAX - 1);
     }
     else
     {

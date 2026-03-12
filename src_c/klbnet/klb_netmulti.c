@@ -16,7 +16,7 @@
 typedef struct klb_netmulti_closing_t_
 {
     klb_netconn_t*          p_netconn;                  ///< 连接
-    char                    name[KLB_NETCONN_NAME_max]; ///< 名称
+    char                    name[KLB_NETCONN_NAME_MAX]; ///< 名称
 }klb_netmulti_closing_t;
 
 
@@ -67,11 +67,11 @@ void klb_netmulti_destroy(klb_netmulti_t* p_multi)
 /// @brief 放入连接对象
 int klb_netmulti_push(klb_netmulti_t* p_multi, klb_netconn_t* p_conn)
 {
-    char name[KLB_NETCONN_NAME_max] = { 0 };
+    char name[KLB_NETCONN_NAME_MAX] = { 0 };
 
     // 65^3 = 274,625
     // 65^4 = 17,850,625
-    int name_len = MIN(KLB_NETCONN_NAME_max, KLB_NETCONN_NAME_len);
+    int name_len = MIN(KLB_NETCONN_NAME_MAX, KLB_NETCONN_NAME_LEN);
 
     while (true)
     {
@@ -134,7 +134,7 @@ int klb_netmulti_closing(klb_netmulti_t* p_multi, klb_netconn_t* p_conn)
     {
         klb_netmulti_closing_t* p_closing = KLB_MALLOCZ(klb_netmulti_closing_t, 1, 0);
         p_closing->p_netconn = p_conn;
-        strncpy(p_closing->name, p_conn->name, KLB_NETCONN_NAME_max - 1);
+        strncpy(p_closing->name, p_conn->name, KLB_NETCONN_NAME_MAX - 1);
 
         klb_nlist_push_tail(p_multi->p_closing_nlist, p_closing);
     }
