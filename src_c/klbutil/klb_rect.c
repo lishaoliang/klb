@@ -82,3 +82,5 @@ bool klb_rect_intersect(klb_rect_t* p_dst, const klb_rect_t* p_rect1, const klb_
 
     return false;   // 无
 }
+
+//end

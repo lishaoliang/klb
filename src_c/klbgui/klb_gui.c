@@ -96,7 +96,7 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
 static void klb_gui_quit_extensions(klb_gui_t* p_gui)
 {
-    // Bug. [2025/07]需要 反序 退出
+    // Fixed Bug. [2025] 需要 反序 退出
     // 激活扩展的 退出消息
     klb_hlist_iter_t* p_iter = klb_hlist_end(p_gui->p_extension_activated_hlist);
     while (NULL != p_iter)
@@ -303,6 +303,8 @@ int klb_gui_canvas_ioctrl_opt8(klb_gui_t* p_gui, int opt, void* ptr1, void* ptr2
 
 void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2, int lparam, int wparam)
 {
+    assert(NULL != p_gui);
+
     klb_msg_t* p_msg = KLB_MALLOC(klb_msg_t, 1, 0);
     KLB_MEMSET(p_msg, 0, sizeof(klb_msg_t));
 
@@ -321,6 +323,8 @@ void klb_gui_push_msg(klb_gui_t* p_gui, int msg, int x1, int y1, int x2, int y2,
 
 void klb_gui_clear_msg(klb_gui_t* p_gui)
 {
+    assert(NULL != p_gui);
+
     klb_mutex_lock(p_gui->p_msg_mutex);
 
     while (0 < klb_nlist_size(p_gui->p_msg_list))
@@ -404,6 +408,8 @@ int klb_gui_clear(klb_gui_t* p_gui)
 
     // 去除所有当前窗口
     klbuiex_redraw_clear(p_gui->p_redraw);
+
+    // modal/popup/msgbox 栈计数清零; p_modal_wnd[]/p_popup_wnd[] 或残留指针, num==0 时不遍历, 下次 push 自 index 0 覆盖
     p_gui->modal_num = 0;
     p_gui->popup_num = 0;
     p_gui->p_msg_box = NULL;
@@ -413,7 +419,7 @@ int klb_gui_clear(klb_gui_t* p_gui)
     p_gui->focus_tc = 0;
     p_gui->focusdelay = false;
 
-    // Bug. [2025/07] 需要 反序 清理
+    // Fixed Bug. [2025] 需要 反序 清理
     // 所有激活的扩展清理
     klb_hlist_iter_t* p_iter = klb_hlist_end(p_gui->p_extension_activated_hlist);
 
@@ -594,16 +600,18 @@ void klb_gui_set_wnd_layer_type(klb_wnd_t* p_wnd, int layer_type)
 
 int klb_gui_modal(klb_gui_t* p_gui, const char* p_path_name)
 {
+    assert(NULL != p_gui);
+    assert(NULL != p_path_name);
+
     if (KLBUI_MODAL_WND_MAX <= p_gui->modal_num)
     {
         return 1; // 超过最大弹出数目
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
-    int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
@@ -647,7 +655,7 @@ int klb_gui_modal_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         return 1; // 超过最大弹出数目
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
@@ -711,7 +719,9 @@ static void klb_gui_model_end_last(klb_gui_t* p_gui)
 
 int klb_gui_modal_end(klb_gui_t* p_gui, bool all, const char* p_path_name)
 {
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // TODO. p_path_name 预留: 按路径结束指定 modal; 当前仅从栈末尾弹出, 见 klb_gui_model_end_last
+
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
@@ -740,16 +750,18 @@ int klb_gui_modal_num(klb_gui_t* p_gui)
 /// @brief 弹出菜单等页面
 int klb_gui_popup(klb_gui_t* p_gui, const char* p_path_name)
 {
+    assert(NULL != p_gui);
+    assert(NULL != p_path_name);
+
     if (KLBUI_POPUP_WND_MAX <= p_gui->popup_num)
     {
         return 1; // 超过最大弹出数目
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
-    int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
@@ -794,7 +806,7 @@ int klb_gui_popup_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         return 1; // 超过最大弹出数目
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
@@ -861,7 +873,7 @@ static void klb_gui_popup_end_last(klb_gui_t* p_gui)
 
 int klb_gui_popup_end(klb_gui_t* p_gui, bool all)
 {
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
@@ -888,16 +900,18 @@ int klb_gui_popup_num(klb_gui_t* p_gui)
 /// @brief 消息框
 int klb_gui_messagebox(klb_gui_t* p_gui, const char* p_path_name)
 {
+    assert(NULL != p_gui);
+    assert(NULL != p_path_name);
+
     if (NULL != p_gui->p_msg_box)
     {
         return 1; // 已经弹出
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
-    int path_len = strlen(p_path_name);
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
@@ -931,7 +945,7 @@ int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
         return 1; // 已经弹出
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
@@ -939,6 +953,9 @@ int klb_gui_messagebox_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
     if (NULL != p_wnd && klb_wnd_is_top(p_wnd))
     {
         p_gui->p_msg_box = p_wnd;
+
+        // 设置 窗口 图层类型
+        klb_gui_set_wnd_layer_type(p_wnd, KLB_CANVAS_LAYER_msgbox);
 
         // 压栈待显示窗口流程
         do_push_stack_top_wnd(p_gui, p_wnd);
@@ -963,7 +980,7 @@ int klb_gui_messagebox_end(klb_gui_t* p_gui)
         return 1;
     }
 
-    // Bug. 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
+    // Fixed Bug. [2025] 当前绘制窗口 变更时, 需要清理残存的消息列表, 以免残留的消息继续生效
     // 清空 消息事件 队列
     klb_gui_clear_msg(p_gui);
 
@@ -1224,7 +1241,9 @@ bool klb_gui_get_redraw_full_event(klb_gui_t* p_gui)
 /// @brief 给用户图层 绑定窗口
 int klb_gui_udatalayer_bind(klb_gui_t* p_gui, const char* p_path_name)
 {
-    int path_len = strlen(p_path_name);
+    assert(NULL != p_gui);
+    assert(NULL != p_path_name);
+
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && NULL == p_wnd->p_parent)
@@ -1242,7 +1261,7 @@ int klb_gui_udatalayer_bind(klb_gui_t* p_gui, const char* p_path_name)
 /// @brief 给用户图层 绑定窗口
 int klb_gui_udatalayer_bind_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top)
 {
-    if (NULL != p_top && NULL == p_top)
+    if (NULL != p_top && NULL == p_top->p_parent)
     {
         klbuiex_udatalayer_bind_wnd(p_gui->p_udatalayer, p_top);
     }
@@ -1269,7 +1288,9 @@ void klb_gui_udatalayer_move(klb_gui_t* p_gui, int x, int y)
 /// @brief 给用户图层 绑定窗口
 int klb_gui_waitlayer_bind(klb_gui_t* p_gui, const char* p_path_name)
 {
-    int path_len = strlen(p_path_name);
+    assert(NULL != p_gui);
+    assert(NULL != p_path_name);
+
     klb_wnd_t* p_wnd = (klb_wnd_t*)klbuiex_wndhash_find(p_gui->p_wndhash, p_path_name);
 
     if (NULL != p_wnd && NULL == p_wnd->p_parent)
@@ -1538,7 +1559,7 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
     // 此外, 调用者可能需要直接处理相关消息
     // 则 所有消息 总归有一个最顶层窗口处理
 
-    // Bug. klb_wnd_on_control_and_command 调用后
+    // Fixed Bug. [2025] klb_wnd_on_control_and_command 调用后
     // 在其响应函数中可能使用 model/popup/messagebox, 甚至 remove/clear 等函数
     // 此时 已经破坏正常消息处理流程 的条件
     // 所以 这些情况下, 需要终止消息事件 继续传递处理
@@ -1641,7 +1662,7 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             p_wnd = p_gui->p_msg_box;
 
-            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"click"来判定
+            // Fixed Bug. [2025] "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"click"来判定
             // 判定是否在messagebox窗口之外点击
             if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg)
             {
@@ -1655,7 +1676,7 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
         {
             p_wnd = p_gui->p_popup_wnd[p_gui->popup_num - 1];
 
-            // Bug. "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"click"来判定
+            // Fixed Bug. [2025] "click"/"dblclick"/"mousedown", 会重复发送事件, 这里选用"click"来判定
             // 判定是否在popup窗口之外点击
             if (KLBUI_click == p_msg->msg || KLBUI_dblclick == p_msg->msg)
             {
@@ -1747,7 +1768,7 @@ int klb_gui_loop_once(klb_gui_t* p_gui, int64_t tc)
     // step 3. 检查处理 是否需要处理 KLBUI_focusdelay 消息等
     if (!p_gui->is_wait && p_gui->focusdelay && p_gui->focusdelay_tc <= (ABS_SUB(tc, p_gui->focus_tc)))
     {
-        // Bug. 若在 focusdelay 之前,窗口被隐藏, 此时应取消焦点
+        // Fixed Bug. [2025] 若在 focusdelay 之前,窗口被隐藏, 此时应取消焦点
         if (NULL != p_gui->p_focus && !klb_gui_wnd_is_show(p_gui->p_focus))
         {
             // 失去焦点流程

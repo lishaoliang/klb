@@ -109,6 +109,12 @@ static void klb_buffer_expand(klb_buffer_t* p_buffer, int suggest_len)
 int klb_buffer_write(klb_buffer_t* p_buffer, const char* p_data, int data_len)
 {
     assert(NULL != p_buffer);
+
+    if (NULL == p_data || data_len <= 0)
+    {
+        return 0;
+    }   
+
     if (p_buffer->total_buf_len <= p_buffer->total_data_len + data_len)
     {
         klb_buffer_expand(p_buffer, auto_suggest_len_klb_buffer(p_buffer->total_data_len, data_len));

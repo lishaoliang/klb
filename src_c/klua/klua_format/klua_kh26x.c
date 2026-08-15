@@ -90,17 +90,21 @@ static int klua_kh26x_read(lua_State* L)
         {
             p_next = klua_kh26x_read_next(p_h26x);
 
-            klb_mnp_media_t* p_media_next = (klb_mnp_media_t*)(p_next->p_buf + sizeof(klb_mnp_t));
-            p_media_next->time = p_media->time;
+            if (NULL != p_next)
+            {
+                klb_mnp_media_t* p_media_next = (klb_mnp_media_t*)(p_next->p_buf + sizeof(klb_mnp_t));
+                p_media_next->time = p_media->time;
+            }
         }
 
         lua_pushlightuserdata(L, p_buf);
-        lua_pushlightuserdata(L, p_next);
+        if (NULL != p_next) { lua_pushlightuserdata(L, p_next); } else { lua_pushnil(L); }
     }
     else
     {
-        lua_pushnil(NULL);
-        lua_pushnil(NULL);
+        // Fixed Bug. [2026] 空帧分支须传 L, 非 NULL
+        lua_pushnil(L);
+        lua_pushnil(L);
     }
 
     return 2;

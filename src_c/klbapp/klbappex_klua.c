@@ -2,6 +2,7 @@
 #include "klbapp/klbappex_klua.h"
 #include "klbapp/klbappex_klua_in.h"
 #include "klbapp/klb_app_in.h"
+#include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klua/klua_thread.h"
 #include "klbutil/klb_map.h"
@@ -37,13 +38,22 @@ static void* klbappex_klua_create(klb_app_t* p_app)
     return p_appex;
 }
 
+static int on_clear_preload_item_klbappex_klua(void* p_obj, void* p_data)
+{
+    klbappex_preload_item_t* p_item = (klbappex_preload_item_t*)p_data;
+
+    KLB_FREE(p_item);
+
+    return 0;
+}
+
 /// @brief 销毁扩展
 static void klbappex_klua_destroy(void* ptr, klb_app_t* p_app)
 {
     klbappex_klua_t* p_appex = (klbappex_klua_t*)ptr;
 
     // 清空
-    klb_nlist_clear(p_appex->p_preload_nlist, NULL, NULL);
+    klb_nlist_clear(p_appex->p_preload_nlist, on_clear_preload_item_klbappex_klua, NULL);
 
     KLB_FREE_BY(p_appex->p_preload_nlist, klb_nlist_destroy);
     KLB_FREE_BY(p_appex->p_preload_rwlock, klb_rwlock_destroy);
@@ -87,13 +97,20 @@ static int on_preload_klualib_klbappex_klua(lua_State* L)
     klb_nlist_iter_t* p_iter = klb_nlist_begin(p_appex->p_preload_nlist);
     while (NULL != p_iter)
     {
-        lua_CFunction cb_preload = (lua_CFunction)klb_nlist_data(p_iter);
+        klbappex_preload_item_t* p_item = (klbappex_preload_item_t*)klb_nlist_data(p_iter);
 
-        if (NULL != cb_preload)
+        if (NULL != p_item && NULL != p_item->cb)
         {
-            // 调用 预加载函数
-            // 在 函数中 请使用 klua_loadlib() 函数 来对 lua环境 做预加载库
-            cb_preload(L);
+            if (NULL != p_item->name)
+            {
+                // 加载 单个库, 使用库名称
+                klua_loadlib(L, p_item->cb, p_item->name);
+            }
+            else
+            {
+                // wrapper 回调: 在函数中通过 klua_loadlib() 预加载多个库
+                p_item->cb(L);
+            }
         }
 
         p_iter = klb_nlist_next(p_iter);
@@ -144,6 +161,12 @@ int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv)
     klua_thread_register("main", p_appex->p_env);        // main
 
     // 开始加载 lua 入口 脚本
+    if (argc < 2 || NULL == argv[1])
+    {
+        klua_thread_unregister("main");
+        return -1;
+    }
+
     if (0 != klua_env_dofile(p_appex->p_env, argv[1]))
     {
         klua_thread_unregister("main");
@@ -172,11 +195,16 @@ int klbappex_klua_do_prequit(klbappex_klua_t* p_appex)
 //////////////////////////////////////////////////////////////////////////
 // 导出函数
 
-int klbappex_klua_push_preload(klbappex_klua_t* p_appex, lua_CFunction cb_pre_load)
+int klbappex_klua_push_preload(klbappex_klua_t* p_appex, lua_CFunction cb_pre_load, const char* p_name)
 {
+    klbappex_preload_item_t* p_item = KLB_MALLOCZ(klbappex_preload_item_t, 1, 0);
+
+    p_item->cb = cb_pre_load;
+    p_item->name = p_name;
+
     // 写锁
     klb_rwlock_wrlock(p_appex->p_preload_rwlock);
-    klb_nlist_push_tail(p_appex->p_preload_nlist, cb_pre_load);
+    klb_nlist_push_tail(p_appex->p_preload_nlist, p_item);
     klb_rwlock_wrunlock(p_appex->p_preload_rwlock);
 
     return 0;

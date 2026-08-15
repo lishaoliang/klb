@@ -56,7 +56,7 @@ static int klb_netlisten_conn_do_accept(klb_netconn_t* p_conn)
 
             if (cb_accept)
             {
-                cb_accept(p_conn, ptr, fd, &addr, false, NULL);
+                cb_accept(p_conn, ptr, fd, &addr, false);
             }
             else
             {

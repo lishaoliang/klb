@@ -4,6 +4,7 @@
 #include "klbutil/klb_hmap.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
+#include "libavutil/qsort.h"
 #include <assert.h>
 
 
@@ -53,7 +54,7 @@ klb_hlist_t* klb_hlist_create(int ht_max)
 {
     klb_hlist_t* p_list = KLB_MALLOCZ(klb_hlist_t, 1, 0);
 
-    if (0 == ht_max)
+    if (ht_max <= 0)
     {
         p_list->use_type = KLB_HLIST_USE_HMAP;
         p_list->p_hmap = klb_hmap_create(KLB_HMAP_NOT_MALLOC);
@@ -107,12 +108,17 @@ klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, in
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
+    assert(0 <= key_len);
 
-    if (NULL != p_key && NULL != p_data)
+    if (NULL != p_key && NULL != p_data && 0 <= key_len)
     {
         klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, KLB_PADDING_4(key_len));
 
-        memcpy(p_iter->key, p_key, key_len);
+        if (0 < key_len) 
+        {
+            memcpy(p_iter->key, p_key, key_len);
+        }
+
         p_iter->key[key_len] = 0; // 便于key作为字符串使用
         p_iter->key_len = key_len;
 
@@ -166,12 +172,17 @@ klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, in
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
+    assert(0 <= key_len);
 
-    if (NULL != p_key && NULL != p_data)
+    if (NULL != p_key && NULL != p_data && 0 <= key_len)
     {
         klb_hlist_iter_t* p_iter = KLB_MALLOCZ(klb_hlist_iter_t, 1, KLB_PADDING_4(key_len));
 
-        memcpy(p_iter->key, p_key, key_len);
+        if (0 < key_len) 
+        {
+            memcpy(p_iter->key, p_key, key_len);
+        }
+
         p_iter->key[key_len] = 0; // 便于key作为字符串使用
         p_iter->key_len = key_len;
 
@@ -439,6 +450,7 @@ void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, int key_len, void
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
+    assert(0 <= key_len);
 
     klb_hlist_iter_t* p_iter = klb_hlist_find_iter(p_list, p_key, key_len);
 
@@ -457,6 +469,7 @@ klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, in
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
+    assert(0 <= key_len);
 
     klb_hlist_iter_t* p_iter = NULL;
 
@@ -476,6 +489,7 @@ void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, int key_len)
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
+    assert(0 <= key_len);
 
     klb_hlist_iter_t* p_iter = klb_hlist_find_iter(p_list, p_key, key_len);
 
@@ -486,25 +500,26 @@ void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, int key_len
 {
     assert(NULL != p_list);
     assert(NULL != p_key);
+    assert(0 <= key_len);
 
     klb_hlist_iter_t* p_iter = klb_hlist_find_iter(p_list, p_key, key_len);
 
     return klb_hlist_remove(p_list, p_iter);
 }
 
-static int cb_hlist_qsort(void* p_arg, void const* p1, void const* p2)
+static int cmp_hlist_qsort(klb_hlist_iter_t** p1, klb_hlist_iter_t** p2)
 {
-    klb_hlist_iter_t** p_iter1 = (klb_hlist_iter_t**)p1;
-    klb_hlist_iter_t** p_iter2 = (klb_hlist_iter_t**)p2;
+    klb_hlist_iter_t* p_iter1 = *p1;
+    klb_hlist_iter_t* p_iter2 = *p2;
 
     // 默认按关键字长度小到大, memcmp小到大
-    if ((*p_iter1)->key_len < (*p_iter2)->key_len)
+    if (p_iter1->key_len < p_iter2->key_len)
     {
         return -1;
     }
-    else if ((*p_iter1)->key_len == (*p_iter2)->key_len)
+    else if (p_iter1->key_len == p_iter2->key_len)
     {
-        return memcmp((*p_iter1)->key, (*p_iter2)->key, (*p_iter1)->key_len);
+        return memcmp(p_iter1->key, p_iter2->key, p_iter1->key_len);
     }
 
     return 1;
@@ -532,8 +547,7 @@ void klb_hlist_qsort(klb_hlist_t* p_list)
         p_iter = p_iter->p_next;
     }
 
-    //qsort(p_src, size, sizeof(klb_hlist_iter_t*), cb_hlist_qsort);
-    //qsort_s(p_src, size, sizeof(klb_hlist_iter_t*), cb_hlist_qsort, NULL);
+    AV_QSORT(p_src, size, klb_hlist_iter_t*, cmp_hlist_qsort);
 
     for (uint32_t i = 1; i < size - 1; i++)
     {
@@ -556,3 +570,5 @@ void klb_hlist_qsort(klb_hlist_t* p_list)
 
     KLB_FREE(p_src);
 }
+
+//end

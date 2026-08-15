@@ -225,30 +225,6 @@ KLB_API int klua_open_kgui(lua_State* L);
 KLB_API int klua_open_kurl(lua_State* L);
 
 
-/// @brief 扩展库"ktcp"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_ktcp(lua_State* L);
-
-
-/// @brief 扩展库"kudp"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_kudp(lua_State* L);
-
-
-/// @brief 扩展库"khttp"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_khttp(lua_State* L);
-
-
-/// @brief 扩展库"kws"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_kws(lua_State* L);
-
-
 /// @brief 扩展库"kmnp"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -289,7 +265,6 @@ KLB_API int klua_open_kpa_mgui(lua_State* L);
 KLB_API int klua_open_kpa_http(lua_State* L);
 KLB_API int klua_open_kpa_ws(lua_State* L);
 KLB_API int klua_open_kpa_mnp(lua_State* L);
-KLB_API int klua_open_kpa_rtsp(lua_State* L);
 KLB_API int klua_open_kpa_flv(lua_State* L);
 KLB_API int klua_open_kpa_sip(lua_State* L);
 #endif

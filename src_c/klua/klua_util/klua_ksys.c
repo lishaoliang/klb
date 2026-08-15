@@ -61,7 +61,7 @@ static int klua_ksys_pack_json(lua_State* L)
     cJSON* p_json = luaseri_json_pack(L, 0);
     char* p_str = cJSON_PrintUnformatted(p_json);
 
-    lua_pushstring(L, p_str);
+    lua_pushstring(L, NULL != p_str ? p_str : "");
     
     KLB_FREE(p_str);
     KLB_FREE_BY(p_json, cJSON_Delete);

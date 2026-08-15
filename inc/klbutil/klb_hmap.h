@@ -60,7 +60,7 @@ typedef struct klb_hmap_t_ klb_hmap_t;
 
 /// @brief 创建hmap对象
 /// @param [in] auto_malloc  节点内存使用方式: KLB_HMAP_AUTO_MALLOC.内部申请; KLB_HMAP_NOT_MALLOC.调用者传入
-/// @return klb_htab_t* htab对象
+/// @return klb_hmap_t* htab对象
 klb_hmap_t* klb_hmap_create(int auto_malloc);
 
 

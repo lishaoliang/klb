@@ -49,7 +49,8 @@ void klb_semlock_destroy(klb_semlock_t* p_semlock)
 
     if (NULL != p_semlock)
     {
-        KLB_FREE_BY(p_semlock->mutex, ReleaseMutex);
+        // Fixed Bug. [2026] destroy 须 CloseHandle 释放内核句柄, 非 ReleaseMutex
+        KLB_FREE_BY(p_semlock->mutex, CloseHandle);
         KLB_FREE(p_semlock);
     }
 }

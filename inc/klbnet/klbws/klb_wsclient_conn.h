@@ -22,14 +22,6 @@ extern "C" {
 #endif
 
 
-/// @brief 创建WS连接
-/// @return klb_netconn_t*
-KLB_API klb_netconn_t* klb_wsclient_conn_create();
-
-
-/// @brief WS连接目标
-KLB_API klb_netconn_t* klb_wsclient_connect();
-
 
 #ifdef __cplusplus
 }

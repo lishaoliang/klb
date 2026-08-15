@@ -87,7 +87,11 @@ static void klb_nvector_check_resize_inc(klb_nvector_t* p_vector)
     p_vector->idx_talbe += 1;
 
     char** ptr = KLB_REALLOC(p_vector->p_idx, char*, s_klb_nvector_talbe[p_vector->idx_talbe].max, 0);
-    assert(NULL != ptr);
+    if (NULL == ptr)
+    {
+        p_vector->idx_talbe = old_idx;
+        return;
+    }
 
     p_vector->p_idx = ptr;
 }
@@ -111,13 +115,19 @@ static void klb_nvector_check_resize_dec(klb_nvector_t* p_vector)
     p_vector->idx_talbe -= 1;
 
     char** ptr = KLB_REALLOC(p_vector->p_idx, char*, s_klb_nvector_talbe[p_vector->idx_talbe].max, 0);
-    assert(NULL != ptr);
+    if (NULL == ptr)
+    {
+        p_vector->idx_talbe = old_idx;
+        return;
+    }
 
     p_vector->p_idx = ptr;
 }
 
 void klb_nvector_clear(klb_nvector_t* p_vector, klb_nvector_clear_cb cb_clear, void* p_obj)
 {
+    assert(NULL != p_vector);
+
     if (cb_clear)
     {
         for (uint32_t i = 0; i < p_vector->size; i++)
@@ -138,9 +148,17 @@ void klb_nvector_clear(klb_nvector_t* p_vector, klb_nvector_clear_cb cb_clear, v
 
 int klb_nvector_push_tail(klb_nvector_t* p_vector, void* p_data)
 {
+    assert(NULL != p_vector);
+
     klb_nvector_check_resize_inc(p_vector);
 
-    int idx = p_vector->size;
+    // 已满, 无法继续扩容(见 KLB_NVECTOR_MAX)
+    if (s_klb_nvector_talbe[p_vector->idx_talbe].max <= p_vector->size)
+    {
+        return -1;
+    }
+
+    int idx = (int)p_vector->size;
     p_vector->p_idx[idx] = (char*)p_data;
     p_vector->size++;
 
@@ -149,6 +167,8 @@ int klb_nvector_push_tail(klb_nvector_t* p_vector, void* p_data)
 
 void* klb_nvector_pop_head(klb_nvector_t* p_vector)
 {
+    assert(NULL != p_vector);
+
     if (p_vector->size <= 0)
     {
         return NULL;
@@ -170,6 +190,8 @@ void* klb_nvector_pop_head(klb_nvector_t* p_vector)
 
 void* klb_nvector_pop_tail(klb_nvector_t* p_vector)
 {
+    assert(NULL != p_vector);
+
     if (p_vector->size <= 0)
     {
         return NULL;
@@ -184,6 +206,8 @@ void* klb_nvector_pop_tail(klb_nvector_t* p_vector)
 
 void* klb_nvector_head(klb_nvector_t* p_vector)
 {
+    assert(NULL != p_vector);
+
     if (0 < p_vector->size)
     {
         return p_vector->p_idx[0];
@@ -194,9 +218,11 @@ void* klb_nvector_head(klb_nvector_t* p_vector)
 
 void* klb_nvector_tail(klb_nvector_t* p_vector)
 {
+    assert(NULL != p_vector);
+
     if (0 < p_vector->size)
     {
-        p_vector->p_idx[p_vector->size - 1];
+        return p_vector->p_idx[p_vector->size - 1];
     }
 
     return NULL;
@@ -205,6 +231,8 @@ void* klb_nvector_tail(klb_nvector_t* p_vector)
 
 void* klb_nvector_get(klb_nvector_t* p_vector, int index)
 {
+    assert(NULL != p_vector);
+
     if (0 <= index && index < (int)p_vector->size)
     {
         return p_vector->p_idx[index];
@@ -215,6 +243,8 @@ void* klb_nvector_get(klb_nvector_t* p_vector, int index)
 
 void* klb_nvector_update(klb_nvector_t* p_vector, int index, void* p_data)
 {
+    assert(NULL != p_vector);
+
     if (0 <= index && index < (int)p_vector->size)
     {
         void* ptr = p_vector->p_idx[index];
@@ -228,6 +258,8 @@ void* klb_nvector_update(klb_nvector_t* p_vector, int index, void* p_data)
 
 void* klb_nvector_remove(klb_nvector_t* p_vector, int index)
 {
+    assert(NULL != p_vector);
+
     if (0 <= index && index < (int)p_vector->size)
     {
         void* ptr = p_vector->p_idx[index];
@@ -249,11 +281,14 @@ void* klb_nvector_remove(klb_nvector_t* p_vector, int index)
 
 int klb_nvector_size(klb_nvector_t* p_vector)
 {
+    assert(NULL != p_vector);
+
     return (int)p_vector->size;
 }
 
 int klb_nvector_sort(klb_nvector_t* p_vector, klb_nvector_sort_cb cb_sort, void* ptr1, void* ptr2)
 {
+    assert(NULL != p_vector);
     assert(NULL != cb_sort);
 
     uint32_t size = p_vector->size;

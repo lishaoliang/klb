@@ -11,7 +11,7 @@ static int klua_ktime_sleep(lua_State* L)
 
     klb_sleep(ms);
 
-    // Bug.休眠后, 主env中依然保持休眠前的时间, 显然不合理
+    // Fixed Bug. [2025] 休眠后, 主env中依然保持休眠前的时间, 显然不合理
     // 更新计时器
     klua_env_update_tick_count(klua_env_get_by_L(L));
 

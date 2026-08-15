@@ -774,7 +774,7 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
             // 格式 1
             // 格式 ['border-color'] = {{255,10,10,10}, {255,10,10,10}, {255,10,10,10}, {255,10,10,10}}
             // 格式 ['border-color'] = {"0xFF45", "0xFF45", "0xFF45", "0xFF45"}
-            // Bug. 格式 ['border-color'] = {255,10,10,10} 在 格式2 中 支持, 这里仅检查两种
+            // Fixed Bug. [2025] 格式 ['border-color'] = {255,10,10,10} 在 格式2 中 支持, 这里仅检查两种
             uint32_t top = 0, right = 0, bottom = 0, left = 0;
 
             if (klbuicssex_check_color(NULL, p_param, 0, &top))

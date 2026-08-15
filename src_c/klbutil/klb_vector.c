@@ -1,6 +1,7 @@
 ﻿#include "klbutil/klb_vector.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
+#include <limits.h>
 
 
 void klb_vector_init(klb_vector_t* p_vector)
@@ -42,7 +43,7 @@ void klb_vector_append_int64(klb_vector_t* p_vector, int64_t i64)
 
 static void check_idx_klb_vector(klb_vector_t* p_vector, int idx)
 {
-    if (idx < 0) return;
+    if (idx < 0 || INT_MAX <= idx) return; // idx+1 溢出
 
     int u_size = idx + 1;
     int size = klb_nvector_size(p_vector->p_nvector);
@@ -149,3 +150,5 @@ void klb_vector_clear(klb_vector_t* p_vector)
 {
     clean_klb_vector(p_vector);
 }
+
+//end

@@ -5,6 +5,7 @@
 #include "klbutil/klb_adt.h"
 #include "klbthird/sds.h"
 #include <assert.h>
+#include <limits.h>
 
 
 klb_map_t* klb_map_create()
@@ -63,7 +64,7 @@ void klb_map_quit(klb_map_t* p_map)
 }
 
 //////////////////////////////////////////
-static klb_adt_t* get_insert_adt_klb_map_2(klb_map_t* p_map, void* p_key, uint32_t key_len)
+static klb_adt_t* get_insert_adt_klb_map_2(klb_map_t* p_map, void* p_key, int key_len)
 {
     klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_find(p_map->p_hlist, p_key, key_len);
     if (NULL == p_adt)
@@ -456,9 +457,9 @@ void klb_map_append_adt_clone(klb_map_t* p_map, const klb_adt_t* p_adt)
 
 static void check_array_idx_klb_map(klb_map_t* p_map, int idx)
 {
-    if (idx < 0) return;
+    if (idx < 0 || INT_MAX <= idx) return; // idx+1 溢出
 
-    int u_size = (uint32_t)idx + 1;
+    int u_size = idx + 1;
     int size = klb_nvector_size(p_map->p_nvector);
     
     if (size < u_size)
@@ -850,7 +851,11 @@ static int cb_stdcmp_klb_map_array(const klb_adt_t* p_d1, const klb_adt_t* p_d2,
             double v1 = klb_adt_to_double(p_adt1);
             double v2 = klb_adt_to_double(p_adt2);
 
-            if (v1 < v2)
+            if (v1 == v2)
+            {
+                return 0;
+            }
+            else if (v1 < v2)
             {
                 return -1;
             }
@@ -941,7 +946,7 @@ static void copy_klb_map(klb_map_t* p_dst, const klb_map_t* p_src)
     {
         klb_adt_t* p_adt = (klb_adt_t*)klb_hlist_data(iter);
         
-        uint32_t key_len = 0;
+        int key_len = 0;
         void* p_key = klb_hlist_key(iter, &key_len);
         klb_adt_t* p_tmp = get_insert_adt_klb_map_2(p_dst, p_key, key_len);
         assert(NULL != p_tmp);

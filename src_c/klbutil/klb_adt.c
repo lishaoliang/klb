@@ -305,3 +305,5 @@ void klb_adt_copy(klb_adt_t* p_dst, const klb_adt_t* p_src)
         klb_adt_quit(p_dst);
     }
 }
+
+//end

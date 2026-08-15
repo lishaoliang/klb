@@ -11,7 +11,6 @@
 #define __KLB_APP_IN_H__
 
 
-#include "klb_type.h"
 #include "klbapp/klb_app.h"
 #include "klbutil/klb_hlist.h"
 #include "klbutil/klb_nlist.h"

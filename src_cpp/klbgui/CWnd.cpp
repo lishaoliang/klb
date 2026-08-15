@@ -265,7 +265,7 @@ uint32_t CWnd::GetStatus()
 
 bool CWnd::IsFocus()
 {
-    return (KLB_WND_STATUS_FOCUS & m_wnd->state.status) ? false : true;
+    return (KLB_WND_STATUS_FOCUS & m_wnd->state.status) ? true : false;
 }
 
 void CWnd::Show(bool show)
@@ -575,7 +575,8 @@ int CWnd::DrawPoints(const klb_point_t* p_points, int count, uint32_t* p_color)
 
 int CWnd::DrawLine(int x1, int y1, int x2, int y2, uint32_t* p_color)
 {
-    return klb_wnd_draw_line(m_wnd, x1, y2, x2, y2, p_color);
+    // Fixed Bug. [2026] 起点 y 误传 y2
+    return klb_wnd_draw_line(m_wnd, x1, y1, x2, y2, p_color);
 }
 
 int CWnd::DrawLines(const klb_point_t* p_points, int count, uint32_t* p_color)

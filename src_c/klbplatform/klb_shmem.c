@@ -98,19 +98,20 @@ klb_shmem_t* klb_shmem_create(int flag, const char* p_name, size_t size)
 
     key_t key = ftok(p_name, 66);
 
+    // Fixed Bug. [2026] 首次 shmget 误用未初始化 p_shmem->key; shmat 须传 shmget 返回的 shmid 而非 key
     // 获取
-    int fd = shmget(p_shmem->key, p_shmem->size, IPC_CREAT | 0666);
-    if (fd <= 0)
+    int fd = shmget(key, p_shmem->size, 0666);
+    if (fd < 0)
     {
         // 未获取成功; 则创建
         fd = shmget(key, p_shmem->size, IPC_CREAT | IPC_EXCL | 0666);
     }
 
-    assert(0 < fd);
+    assert(0 <= fd);
 
     p_shmem->key = key;
     p_shmem->fd = fd;
-    p_shmem->p_address = shmat(key, NULL, 0); // 映射虚拟地址
+    p_shmem->p_address = shmat(fd, NULL, 0); // 映射虚拟地址
 
     assert(NULL != p_shmem->p_address);
     return p_shmem;

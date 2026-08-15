@@ -161,7 +161,7 @@ bool klbuiex_redraw_need_repaint(klbuiex_redraw_t* p_re, bool* p_redraw_all)
 
         if (0 < count)
         {
-            // Bug. 这里还有一种情况: 放入刷新列表的窗口, 根本不在 所有需要绘制的窗口链中
+            // Fixed Bug. [2025] 这里还有一种情况: 放入刷新列表的窗口, 根本不在 所有需要绘制的窗口链中
             // 在本模块中无法处理这种情况, 需要到真正重绘时, 检查其顶层窗口是否需要绘制.
 
             // 存在先放子窗口, 再放父窗口的情况

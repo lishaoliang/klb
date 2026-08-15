@@ -1,4 +1,4 @@
-﻿#include "klua/klua_util/klua_seri_json.h"
+#include "klua/klua_util/klua_seri_json.h"
 #include "klua/klua_seri.h"
 #include <stdlib.h>
 #include <stdint.h>
@@ -15,43 +15,43 @@ static cJSON* luaseri_json_pack_one_object(lua_State *L, int index, int depth);
 
 static cJSON* luaseri_json_pack_table_array(lua_State *L, int index, int depth) 
 {
-	int array_size = (int)lua_rawlen(L,index);
+    int array_size = (int)lua_rawlen(L,index);
 
     cJSON* p_array = cJSON_CreateArray();
 
-	for (int i = 1; i <= array_size; i++) 
+    for (int i = 1; i <= array_size; i++) 
     {
-		lua_rawgeti(L,index,i);
+        lua_rawgeti(L,index,i);
 
         cJSON* p_item = luaseri_json_pack_one_object(L, -1, depth);
         cJSON_AddItemToArray(p_array, p_item);
 
-		lua_pop(L,1);
-	}
+        lua_pop(L,1);
+    }
 
-	return p_array;
+    return p_array;
 }
 
 static cJSON* luaseri_json_pack_table_hash(lua_State *L, int index, int depth, int array_size) 
 {
     cJSON* p_obj = cJSON_CreateObject();
 
-	lua_pushnil(L);
-	while (lua_next(L, index) != 0) {
+    lua_pushnil(L);
+    while (lua_next(L, index) != 0) {
         int t = lua_type(L, -2);
-		if (LUA_TNUMBER == t)
+        if (LUA_TNUMBER == t)
         {
-			if (lua_isinteger(L, -2))
+            if (lua_isinteger(L, -2))
             {
-				lua_Integer x = lua_tointeger(L,-2);
-				if (x > 0 && x <= array_size)
+                lua_Integer x = lua_tointeger(L,-2);
+                if (x > 0 && x <= array_size)
                 {
-					lua_pop(L,1);
-					continue;
-				}
-			}
-		}
-        else if(LUA_TSTRING == t)
+                    lua_pop(L,1);
+                    continue;
+                }
+            }
+        }
+        else if (LUA_TSTRING == t)
         {
             const char* p_key = lua_tostring(L, -2);
 
@@ -68,20 +68,20 @@ static cJSON* luaseri_json_pack_table_hash(lua_State *L, int index, int depth, i
 #endif
         }
 
-		lua_pop(L, 1);
-	}
+        lua_pop(L, 1);
+    }
 
     return p_obj;
 }
 
 static cJSON* luaseri_json_pack_table(lua_State *L, int index, int depth) 
 {
-	luaL_checkstack(L, LUA_MINSTACK, NULL);
+    luaL_checkstack(L, LUA_MINSTACK, NULL);
 
     if (index < 0) 
     {
-		index = lua_gettop(L) + index + 1;
-	}
+        index = lua_gettop(L) + index + 1;
+    }
 
     int array_size = (int)lua_rawlen(L, index);
     if (0 < array_size)
@@ -144,28 +144,32 @@ static cJSON* luaseri_json_pack_one_object(lua_State *L, int index, int depth)
     case LUA_TUSERDATA:
         {
             char str[64] = { 0 };
-            snprintf(str, sizeof(str) - 1, "userdata:%p", lua_topointer(L, index));
+            snprintf(str, sizeof(str), "userdata:%p", lua_topointer(L, index));
+            str[sizeof(str) - 1] = '\0';
             p_obj = cJSON_CreateString(str);    // 不支持, 直接转化为 string
         }
         break;
     case LUA_TFUNCTION:
         {
             char str[64] = { 0 };
-            snprintf(str, sizeof(str) - 1, "function:%p", lua_topointer(L, index));
+            snprintf(str, sizeof(str), "function:%p", lua_topointer(L, index));
+            str[sizeof(str) - 1] = '\0';
             p_obj = cJSON_CreateString(str);    // 不支持, 直接转化为 string
         }
         break;
     case LUA_TTHREAD:
         {
             char str[64] = { 0 };
-            snprintf(str, sizeof(str) - 1, "thread:%p", lua_topointer(L, index));
+            snprintf(str, sizeof(str), "thread:%p", lua_topointer(L, index));
+            str[sizeof(str) - 1] = '\0';
             p_obj = cJSON_CreateString(str);    // 不支持, 直接转化为 string
         }
         break;
     default:
         {
             char str[64] = { 0 };
-            snprintf(str, sizeof(str) - 1, "unknown:%p", lua_topointer(L, index));
+            snprintf(str, sizeof(str), "unknown:%p", lua_topointer(L, index));
+            str[sizeof(str) - 1] = '\0';
             p_obj = cJSON_CreateString(str);    // 不支持, 直接转化为 string
         }
         break;
@@ -178,12 +182,12 @@ static cJSON* luaseri_json_pack_from(lua_State *L, int from)
 {
     cJSON* p_array = cJSON_CreateArray();
 
-	int n = lua_gettop(L) - from;
-	for (int i = 1; i <= n; i++)
+    int n = lua_gettop(L) - from;
+    for (int i = 1; i <= n; i++)
     {
         cJSON* p_item = luaseri_json_pack_one_object(L, from + i, 0);
         cJSON_AddItemToArray(p_array, p_item);
-	}
+    }
 
     return p_array;
 }

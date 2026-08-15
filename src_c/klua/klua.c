@@ -321,10 +321,6 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_klpc, "klpc");
         klua_loadlib(L, klua_open_kgui, "kgui");
         klua_loadlib(L, klua_open_kurl, "kurl");
-        klua_loadlib(L, klua_open_ktcp, "ktcp");
-        klua_loadlib(L, klua_open_kudp, "kudp");
-        klua_loadlib(L, klua_open_khttp, "khttp"); 
-        klua_loadlib(L, klua_open_kws, "kws");
         klua_loadlib(L, klua_open_kmnp, "kmnp");
         klua_loadlib(L, klua_open_ksmp, "ksmp");
         klua_loadlib(L, klua_open_krtsp, "krtsp");
@@ -342,7 +338,6 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_kpa_http, "kpa_http");
         klua_loadlib(L, klua_open_kpa_ws, "kpa_ws");
         klua_loadlib(L, klua_open_kpa_mnp, "kpa_mnp");
-        klua_loadlib(L, klua_open_kpa_rtsp, "kpa_rtsp");
         klua_loadlib(L, klua_open_kpa_flv, "kpa_flv");
         klua_loadlib(L, klua_open_kpa_sip, "kpa_sip");
 #endif

@@ -53,7 +53,7 @@ typedef int(*klua_coroutine_yield_cb)(void* ptr, klua_ex_coroutine_t* p_ex, lua_
 /// @brief yield
 /// @return int
 /// @note 替代 lua_yield
-///   Bug. 直接使用 lua_yield, 当退出时, 若未满足唤醒条件, 则没有时机去唤醒, 协程一直被阻塞
+///   Fixed Bug. [2025] 直接使用 lua_yield, 当退出时, 若未满足唤醒条件, 则没有时机去唤醒, 协程一直被阻塞
 ///   使用 klua_coroutine_yield 替代, 当退出时, 触发强制唤醒协程时机
 ///   因唤醒协程, 可能有上下文需要处理, 故使用回调函数, 交由调用者处理相关情况
 ///   对于一个协程而言, 同一时间内, 只可能有一个位置处于 yield 

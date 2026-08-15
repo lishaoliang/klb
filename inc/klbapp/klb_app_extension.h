@@ -11,7 +11,7 @@
 #define __KLB_APP_EXTENSION_H__
 
 #include "klb_type.h"
-#include "klua/klua.h"
+#include "lua.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -22,60 +22,70 @@ typedef struct klb_app_t_ klb_app_t;
 typedef struct klb_app_extension_t_ klb_app_extension_t;
 
 
-/// @def   KLBAPPEX_DLSYM_name_max
-/// @brief 扩展的名称最大值
-#define KLBAPPEX_DLSYM_name_max             (128)
+/// @def   KLBAPPEX_DL_name_max
+/// @brief 动态库插件 回写扩展名的最大字符数(不含'\0')
+/// @note  调用方缓冲区至少 name_max+1 字节
+///        插件须保证 p_name 以'\0'结尾, 且 strlen(p_name) <= name_max
+#define KLBAPPEX_DL_name_max                (64)
 
 
-/// @def   KLBAPPEX_DLSYM_extension_init
+/// @def   KLBAPPEX_DL_init
 /// @brief 函数名: 动态库插件 初始化/退出
-#define KLBAPPEX_DLSYM_init_extension       "klbapp_init_extension"
-#define KLBAPPEX_DLSYM_quit_extension       "klbapp_quit_extension"
+#define KLBAPPEX_DL_init                    "klbappex_init"
+#define KLBAPPEX_DL_quit                    "klbappex_quit"
 
-/// @def   KLBAPPEX_DLSYM_extension_count
-/// @brief 函数名: 动态库插件 支持的扩展数目
-#define KLBAPPEX_DLSYM_extension_count      "klbapp_extension_count"
+/// @def   KLBAPPEX_DL_ex_count
+/// @brief 函数名: 动态库插件 支持的 app 扩展数目
+#define KLBAPPEX_DL_ex_count                "klbappex_ex_count"
 
-/// @def   KLBAPPEX_DLSYM_open_extension
-/// @brief 函数名: 打开 扩展
-#define KLBAPPEX_DLSYM_open_extension       "klbapp_open_extension"
+/// @def   KLBAPPEX_DL_ex_open
+/// @brief 函数名: 打开 app 扩展
+#define KLBAPPEX_DL_ex_open                 "klbappex_ex_open"
 
-/// @def   KLBAPPEX_DLSYM_kluaprelib_count
-/// @brief 函数名: 动态库插件 支持klua预加载函数的数目
-#define KLBAPPEX_DLSYM_kluaprelib_count     "klbapp_kluaprelib_count"
+/// @def   KLBAPPEX_DL_pre_count
+/// @brief 函数名: 动态库插件 支持 klua 预加载函数的数目
+#define KLBAPPEX_DL_pre_count               "klbappex_pre_count"
 
-/// @def   KLBAPPEX_DLSYM_open_kluaprelib
-/// @brief 函数名: 打开(获取) klua预加载函数
-///   打开的预加载函数, 会被直接放入全局 预加载函数 列表中
-#define KLBAPPEX_DLSYM_open_kluaprelib      "klbapp_open_kluaprelib"
+/// @def   KLBAPPEX_DL_pre_open
+/// @brief 函数名: 按索引获取 klua 预加载 openlib (对称于 KLBAPPEX_DL_ex_open)
+/// @note  框架内部行为 (klbappex_plugins.c, 本步不调用 openlib):
+///   1. plugins_preload 阶段 klb_dlsym 取本符号, 须与 KLBAPPEX_DL_pre_count 成对
+///   2. 循环 idx=0..pre_count()-1 调用 klbappex_pre_open; 成功项 klbappex_klua_push_preload 入 p_preload_nlist
+///   3. 仅登记 (name, openlib) 指针, 不二次 dlopen, 于 klua_env_doinit 前完成
+///   4. doinit 时 on_preload_klualib 对每项 klua_loadlib 写入 registry._PRELOAD
+///   5. 入口 dofile 之后 require "name" 懒加载并执行 openlib
+#define KLBAPPEX_DL_pre_open                "klbappex_pre_open"
 
 
 /// @brief 动态库插件 初始化/退出
 /// @return int 0.成功; 非0.失败
-typedef int(*klbapp_init_extension_cb)();
-typedef void(*klbapp_quit_extension_cb)();
+typedef int(*klbappex_init_cb)();
+typedef void(*klbappex_quit_cb)();
 
-/// @brief 获取 插件支持的 扩展数目
+/// @brief 获取 插件支持的 app 扩展数目
 /// @return int 动态库插件支持的 扩展数目
-typedef int(*klbapp_extension_count_cb)();
+typedef int(*klbappex_ex_count_cb)();
 
-/// @brief 打开 第idx个 插件扩展
+/// @brief 打开 第idx个 插件 app 扩展
 /// @param [in]     idx             第idx个扩展
 /// @param [out]    *p_extension    app扩展接口
-/// @param [out]    *p_name         扩展的名称
-/// @param [in]     name_max        名称的缓存 最大长度
+/// @param [out]    *p_name         扩展的名称(以'\0'结尾)
+/// @param [in]     name_max        名称缓存可写最大字符数(不含'\0'), 见 KLBAPPEX_DL_name_max
 /// @return int 0.成功; 非0.失败
-typedef int(*klbapp_open_extension_cb)(int idx, klb_app_extension_t* p_extension, char* p_name, int name_max);
+typedef int(*klbappex_ex_open_cb)(int idx, klb_app_extension_t* p_extension, char* p_name, int name_max);
 
-/// @brief 获取 插件支持的 扩展数目
-/// @return int 动态库插件支持的 扩展数目
-typedef int(*klbapp_kluaprelib_count_cb)();
+/// @brief 获取 插件支持的 klua 预加载数目
+/// @return int 动态库插件支持的 预加载回调数目
+typedef int(*klbappex_pre_count_cb)();
 
-/// @brief 打开 第idx个 插件扩展
-/// @param [in]     idx             第idx个扩展
-/// @param [out]    *p_out_preload  [输出]函数地址
+/// @brief 按索引导出第 idx 个 klua 预加载项 (name + openlib)
+/// @param [in]     idx             第 idx 个预加载项, 范围 [0, pre_count())
+/// @param [out]    *p_out_preload  openlib 函数地址 (lua_CFunction)
+/// @param [out]    *p_out_name     require 短名 (以'\0'结尾, 插件持有生命周期, 通常为静态串)
 /// @return int 0.成功; 非0.失败
-typedef int(*klbapp_open_kluaprelib_cb)(int idx, lua_CFunction* p_out_preload);
+/// @note  对称于 klbappex_ex_open_cb: 框架枚举导出, 非 dlopen 亦非执行 openlib
+///   见 KLBAPPEX_DL_pre_open @note: push 预加载链 -> doinit klua_loadlib -> require 懒加载
+typedef int(*klbappex_pre_open_cb)(int idx, lua_CFunction* p_out_preload, const char** p_out_name);
 
 
 /// @struct klbappex_ioctrl_t

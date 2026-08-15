@@ -64,7 +64,8 @@ KLB_API void klb_nvector_clear(klb_nvector_t* p_vector, klb_nvector_clear_cb cb_
 /// @brief 在最后面, 向vector压入数据
 /// @param [in] *p_vector   vector对象
 /// @param [in] *p_data     数据
-/// @return 无
+/// @return int >=0.成功, 返回新元素下标; -1.失败(已达最大容量, 无法继续扩容)
+/// @note vector并不负责数据释放
 KLB_API int klb_nvector_push_tail(klb_nvector_t* p_vector, void* p_data);
 
 

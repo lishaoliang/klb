@@ -1,8 +1,10 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbutil/klb_bitmap.h"
+#include "klbutil/klb_color.h"
 #include "klbmem/klb_mem.h"
 #include <stdio.h>
 #include <assert.h>
+#include <limits.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -43,6 +45,59 @@ typedef struct tagRGBQUAD {
 
 #define KLB_BITMAP_FILE     ((('M') << 8) | ('B'))
 
+static uint32_t pixel_to_argb8888_klb_bitmap(const uint8_t* p_px, int bi_bit_count, const RGBQUAD* p_palette, int palette_count)
+{
+    if (32 == bi_bit_count)
+    {
+        uint8_t b = p_px[0], g = p_px[1], r = p_px[2], a = p_px[3];
+        if (0 == a) a = 0xFF;
+        return KLB_ARGB8888(a, r, g, b);
+    }
+    else if (24 == bi_bit_count)
+    {
+        return KLB_ARGB8888(0xFF, p_px[2], p_px[1], p_px[0]);
+    }
+    else if (16 == bi_bit_count)
+    {
+        uint16_t v = (uint16_t)p_px[0] | ((uint16_t)p_px[1] << 8);
+        int r5 = (v >> 10) & 0x1F, g5 = (v >> 5) & 0x1F, b5 = v & 0x1F;
+        return KLB_ARGB8888(0xFF, (r5 << 3) | (r5 >> 2), (g5 << 3) | (g5 >> 2), (b5 << 3) | (b5 >> 2));
+    }
+    else if (8 == bi_bit_count)
+    {
+        int idx = (int)p_px[0];
+        if (idx < 0 || palette_count <= idx)
+        {
+            idx = 0; // 像素索引越界, 回退调色板首项
+        }
+        if (palette_count <= 0)
+        {
+            return 0;
+        }
+        const RGBQUAD* p_q = p_palette + idx;
+        return KLB_ARGB8888(0xFF, p_q->rgbRed, p_q->rgbGreen, p_q->rgbBlue);
+    }
+
+    return 0;
+}
+
+static void fill_canvas_klb_bitmap(klb_canvas_t* p_canvas, const char* p_data, int stride, int w, int h, int bi_bit_count, const RGBQUAD* p_palette, int palette_count, int color_fmt)
+{
+    int src_bpp = (8 == bi_bit_count) ? 1 : (bi_bit_count >> 3);
+
+    for (int y = 0; y < h; y++)
+    {
+        const uint8_t* p_src_row = (const uint8_t*)p_data + (int64_t)(h - 1 - y) * stride;
+        uint32_t* p_dst_row = (uint32_t*)(p_canvas->p_addr + p_canvas->pitch * y);
+
+        for (int x = 0; x < w; x++)
+        {
+            uint32_t argb8888 = pixel_to_argb8888_klb_bitmap(p_src_row + x * src_bpp, bi_bit_count, p_palette, palette_count);
+            p_dst_row[x] = klb_color_argb8888_to(argb8888, color_fmt);
+        }
+    }
+}
+
 klb_canvas_t* klb_bitmap_read(const char* p_filename, int color_fmt)
 {
     FILE* pf = fopen(p_filename, "rb");
@@ -52,11 +107,13 @@ klb_canvas_t* klb_bitmap_read(const char* p_filename, int color_fmt)
     }
 
     char* p_data = NULL;
+    klb_canvas_t* p_canvas = NULL;
     int stride = 0, bpp = 0, size = 0;
 
     BITMAPFILEHEADER bfh = { 0 };
     BITMAPINFOHEADER bih = { 0 };
     RGBQUAD palette[256] = { 0 };
+    int palette_count = 0;
 
     // BITMAPFILEHEADER
     int read_len = sizeof(BITMAPFILEHEADER);
@@ -90,11 +147,18 @@ klb_canvas_t* klb_bitmap_read(const char* p_filename, int color_fmt)
         goto err_read;
     }
 
-    // 8位位图, 读取调色板
+    // 8位位图, 读取调色板(最多256色)
     if (8 == bih.biBitCount)
     {
-        read_len = (0 == bih.biClrUsed) ? (sizeof(RGBQUAD) * 256) : (bih.biClrUsed * sizeof(RGBQUAD));
-        if (1 != fread(palette, read_len, 1, pf))
+        uint32_t clr_count = (0 == bih.biClrUsed) ? 256 : bih.biClrUsed;
+        if (256 < clr_count)
+        {
+            goto err_read;
+        }
+
+        palette_count = (int)clr_count;
+        read_len = (int)(clr_count * sizeof(RGBQUAD));
+        if (1 != fread(palette, (size_t)read_len, 1, pf))
         {
             goto err_read;
         }
@@ -102,32 +166,67 @@ klb_canvas_t* klb_bitmap_read(const char* p_filename, int color_fmt)
 
     // 行跨距
     bpp = bih.biBitCount >> 3;
-    stride = bpp * bih.biWidth;
-    stride = ((stride + 3) >> 2) << 2; // 4 字节对齐
+    {
+        int64_t stride64 = (int64_t)bpp * (int64_t)bih.biWidth;
+        if (stride64 <= 0 || (int64_t)INT_MAX < stride64)
+        {
+            goto err_read;
+        }
+        stride = (int)stride64;
+        stride = ((stride + 3) >> 2) << 2; // 4 字节对齐
+        if (stride <= 0)
+        {
+            goto err_read;
+        }
+    }
 
     // 读取图像像素
-    size = stride * bih.biHeight;
-    assert(size == bih.biSizeImage);
+    {
+        int64_t size64 = (int64_t)stride * (int64_t)bih.biHeight;
+        if (size64 <= 0 || (int64_t)INT_MAX < size64)
+        {
+            goto err_read;
+        }
+        size = (int)size64;
+    }
 
     p_data = KLB_MALLOC(char, size, 0);
-    assert(NULL != p_data);
-
-    if (1 != fread(p_data, size, 1, pf))
+    if (NULL == p_data)
     {
         goto err_read;
     }
 
+    if (1 != fread(p_data, (size_t)size, 1, pf))
+    {
+        goto err_read;
+    }
+
+    p_canvas = klb_canvas_create(bih.biWidth, bih.biHeight, KLB_COLOR_FMT_ARGB8888);
+    if (NULL == p_canvas || NULL == p_canvas->p_addr)
+    {
+        if (NULL != p_canvas) klb_canvas_destroy(p_canvas);
+        goto err_read;
+    }
+
+    fill_canvas_klb_bitmap(p_canvas, p_data, stride, bih.biWidth, bih.biHeight, bih.biBitCount, palette, palette_count, color_fmt);
+
     KLB_FREE(p_data);
     fclose(pf);
-    return NULL;
+    return p_canvas;
 
 err_read:
+    KLB_FREE(p_data);
     fclose(pf);
     return NULL;
 }
 
 int klb_bitmap_write(const char* p_filename, const klb_canvas_t* p_canvas)
 {
+    if (NULL == p_filename || NULL == p_canvas)
+    {
+        return 1;
+    }
+
     FILE* pf = fopen(p_filename, "wb");
     if (NULL == pf)
     {
@@ -171,3 +270,5 @@ int klb_bitmap_write(const char* p_filename, const klb_canvas_t* p_canvas)
     fclose(pf);
     return 0;
 }
+
+//end

@@ -13,7 +13,12 @@
 
 #include "klb_type.h"
 
+// socket fd 类型
 #ifdef _WIN32
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+
     #include <winsock2.h>
     typedef SOCKET          klb_socket_fd;
 #else

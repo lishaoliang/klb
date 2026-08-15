@@ -116,7 +116,7 @@ static int call_co_recv_text_klua_krtspserve(klua_krtspserve_t* p_serve)
 
         p_serve->co_recv = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
 
         klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
@@ -418,7 +418,7 @@ static int call_co_accept_klua_krtspserve_listen(klua_krtspserve_listen_t* p_lis
 
         p_listen->co_accept = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_accept 函数; 这里会存在执行函数的交替执行
 
         klua_krtspserve_listen_socket_t* p_listen_socket = (klua_krtspserve_listen_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
@@ -462,7 +462,7 @@ static int call_co_accept_end_klua_krtspserve_listen(klua_krtspserve_listen_t* p
 }
 
 /// @brief 当监听到socket连接建立时回调函数
-static int on_accept_klua_krtspserve_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
+static int on_accept_klua_krtspserve_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls)
 {
     klua_krtspserve_listen_t* p_listen = (klua_krtspserve_listen_t*)p_conn->p_udata;
 

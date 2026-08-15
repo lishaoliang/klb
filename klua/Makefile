@@ -68,8 +68,9 @@ MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
 
-
-MY_LIB_A_OBJS := $(addsuffix .o, $(MY_SOURCES))
+# 编译中间文件统一放到 ../tmp/klua/ 下
+MY_TMP_DIR := ../tmp/klua
+MY_LIB_A_OBJS := $(addprefix $(MY_TMP_DIR)/,$(addsuffix .o,$(patsubst ./%,%,$(MY_SOURCES))))
 MY_A_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC)
 
 
@@ -88,10 +89,12 @@ lib: $(MY_TARGET_A)
 so: $(MY_TARGET_SO)
 exe: $(MY_TARGET_EXE)
 
-%.c.o: %.c
+$(MY_TMP_DIR)/%.c.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
 
-%.cpp.o: %.cpp
+$(MY_TMP_DIR)/%.cpp.o: %.cpp
+	@mkdir -p $(dir $@)
 	$(CXX) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
 
 $(MY_TARGET_A): $(MY_LIB_A_OBJS)
@@ -113,7 +116,7 @@ clean:
 	@echo "++++++ make clean ++++++"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
 	@echo "++ RM_F = $(RM_F)"
-	$(RM_F) $(MY_LIB_A_OBJS)
+	$(RM_RF) $(MY_TMP_DIR)
 	$(RM_F) $(MY_TARGET_EXE)
 	@echo "+++++++++++++++++++++++++"
 

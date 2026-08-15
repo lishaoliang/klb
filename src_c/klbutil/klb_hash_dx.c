@@ -46,3 +46,5 @@ uint32_t klb_hash_dx(const char* p_data, int len)
     }
     return hash0 << 1;
 }
+
+//end

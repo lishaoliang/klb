@@ -31,8 +31,9 @@ KLB_API klbappex_klua_t* klbappex_get_klua2();
 
 
 /// @brief 设置klua扩展(主lua环境) 的 预加载库函数
+/// @param [in] p_name 库名称; NULL 表示 cb_pre_load 为 wrapper 回调
 /// @return int 0.成功; 非0.失败
-KLB_API int klbappex_klua_push_preload(klbappex_klua_t* p_appex, lua_CFunction cb_pre_load);
+KLB_API int klbappex_klua_push_preload(klbappex_klua_t* p_appex, lua_CFunction cb_pre_load, const char* p_name);
 
 
 /// @brief 获取Lua环境指针

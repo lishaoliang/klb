@@ -290,3 +290,5 @@ uint32_t klb_htab_size(klb_htab_t* p_htab)
 
     return p_htab->size;
 }
+
+//end

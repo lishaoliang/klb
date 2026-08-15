@@ -1,6 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbutil/klb_sds.h"
-#include <string.h>
 #include <stdio.h>
 
 
@@ -48,9 +47,10 @@ sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
         break;
     case KLB_ADT_double:
         {
-            char str[128];
-            snprintf(str, sizeof(str) - 1, "%.6f", klb_adt_to_double(p_src));
-            
+            char str[128] = {0};
+            snprintf(str, sizeof(str), "%.6f", klb_adt_to_double(p_src));
+            str[sizeof(str) - 1] = '\0'; // 末尾封口, 嵌入式/老 libc 在 snprintf 截断时可能不补 '\0'
+
             dst = sdscpy(dst, str);
         }
         break;
@@ -75,3 +75,5 @@ sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
 
     return dst;
 }
+
+//end

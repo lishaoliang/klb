@@ -88,7 +88,7 @@ static int on_exit_klua_ex_coroutine(klua_ex_coroutine_t* p_ex, klua_env_t* p_en
     klb_hlist_iter_t* p_iter = klb_hlist_begin(p_ex->p_co_hlist);
     while (NULL != p_iter)
     {
-        // Bug. 退出唤醒后, 协程可能在 cb 函数调用后, 被释放掉;
+        // Fixed Bug. [2025] 退出唤醒后, 协程可能在 cb 函数调用后, 被释放掉;
         // 这里先取下一个协程
         klb_hlist_iter_t* p_cur = p_iter;
         p_iter = klb_hlist_next(p_cur);
@@ -209,7 +209,8 @@ int klua_ex_coroutine_push(klua_ex_coroutine_t* p_ex, klua_coroutine_env_t* p_co
         if (NULL != p_iter)
         {
             // 修改名称
-            strncpy(p_co_env->p_co->uname, uname, sizeof(p_co_env->p_co->uname) - 1);
+            strncpy(p_co_env->p_co->uname, uname, sizeof(p_co_env->p_co->uname));
+            p_co_env->p_co->uname[sizeof(p_co_env->p_co->uname) - 1] = '\0';
 
             break;
         }

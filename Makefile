@@ -37,7 +37,7 @@ CP_RF	:= -cp -rf
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
 # klbnet - flv, http, mnp, rtsp, sip, smp, webrtc, ws
-MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klb_ncm_ops ./src_c/klbnet/klblisten
+MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klbiopoll ./src_c/klbnet/klblisten
 MY_DIRS += ./src_c/klbnet/klbflv ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbflvserve
 MY_DIRS += ./src_c/klbnet/klbhttp ./src_c/klbnet/klbhttpclient ./src_c/klbnet/klbhttpserve
 MY_DIRS += ./src_c/klbnet/klbmnp ./src_c/klbnet/klbmnpclient ./src_c/klbnet/klbmnpserve
@@ -106,6 +106,7 @@ include ./clip.mk
 # 裁剪步骤3. 引入裁剪
 # @param [out]		$(MY_CLIP_FLAGS)	处理裁剪参数之后的 宏定义等
 # @param [out]		$(MY_CLIP_DIRS)		处理裁剪之后, 需要加入编译的目录
+# @param [out]		$(MY_CLIP_SOURCES)	处理裁剪之后, 需要加入编译的源文件(非目录)
 # @param [out]		$(MY_CLIP_INC)		处理裁剪之后, 需要引用的头文件目录
 MY_CFLAGS := $(MY_CLIP_FLAGS)
 MY_DIRS += $(MY_CLIP_DIRS)
@@ -120,10 +121,6 @@ MY_CFLAGS += $(MY_CFLAGS_EX) -D_GNU_SOURCE
 # lua的宏
 MY_CFLAGS += -DLUA_USE_LINUX
 
-# pcre2的宏
-MY_CFLAGS += -DHAVE_CONFIG_H
-
-
 # 引用的静态库
 MY_LIB_STATIC := -L ./lib -Bstatic
 
@@ -131,24 +128,19 @@ MY_LIB_STATIC := -L ./lib -Bstatic
 MY_LIB_DYNAMIC := -L ./lib -Bdynamic
 MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 
-
-# openssl
-#MY_CFLAGS += -D__KLB_OPENSSL__
-#MY_LIB_STATIC += -lssl -lcrypto
+# 链接选项
+MY_LDFLAGS := -Wl,--no-undefined
 
 # debug/release
-ifneq ($(MY_VERSION),release)
-	MY_CFLAGS += -g -fno-omit-frame-pointer -rdynamic
+ifeq ($(MY_VERSION),release)
+	MY_CFLAGS += -Os
+else
+	MY_CFLAGS += -g -fno-omit-frame-pointer -Og
+	MY_LDFLAGS += -rdynamic
 endif
 
 # 防止返回值格式错误, 警告变错误
 MY_CFLAGS += -Werror=return-type
-
-# 防止未定义函数
-MY_CFLAGS += -Wl,--no-undefined
-
-# 优化
-MY_CFLAGS += -Os
 
 # 默认隐藏 所有符号; 防止符号污染(仅动态库生效)
 MY_CFLAGS += -D__KLB_SYMBOL_HIDING__ -fvisibility=hidden
@@ -159,10 +151,13 @@ MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
 MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
+MY_SOURCES += $(MY_CLIP_SOURCES)
 
-
-MY_LIB_A_OBJS := $(addsuffix .o, $(MY_SOURCES))
-MY_A_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC)
+# 编译中间文件统一放到 tmp/ 下, 目录结构与源码镜像
+MY_TMP_DIR := ./tmp
+MY_LIB_A_OBJS := $(addprefix $(MY_TMP_DIR)/,$(addsuffix .o,$(patsubst ./%,%,$(MY_SOURCES))))
+MY_COMPILE_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS)
+MY_LINK_PARAMS := $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC) $(MY_LDFLAGS)
 
 
 # 编译静态库时候,使compiler为每个function和data item分配独立的section
@@ -201,11 +196,13 @@ all: lib so
 lib: $(MY_TARGET_A)
 so: $(MY_TARGET_SO)
 
-%.c.o: %.c
-	$(CC) $(MY_STD_C99) $(MY_SO_PARAMS) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
+$(MY_TMP_DIR)/%.c.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(MY_STD_C99) $(MY_SO_PARAMS) $(MY_COMPILE_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
 
-%.cpp.o: %.cpp
-	$(CXX) $(MY_SO_PARAMS) $(MY_A_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
+$(MY_TMP_DIR)/%.cpp.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(MY_SO_PARAMS) $(MY_COMPILE_PARAMS) $(MY_LIB_MINI) -c -o $@ $<
 
 $(MY_TARGET_A): $(MY_LIB_A_OBJS)
 	$(my_tip)
@@ -213,13 +210,13 @@ $(MY_TARGET_A): $(MY_LIB_A_OBJS)
 
 $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(my_tip)
-	$(CXX) -shared -fPIC $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI) -o $@
+	$(CXX) -shared -fPIC $(MY_LIB_A_OBJS) $(MY_LINK_PARAMS) $(MY_LINK_MINI) -o $@
 
 clean:
 	@echo "++++++ make clean ++++++"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
 	@echo "++ RM_F = $(RM_F)"
-	$(RM_F) $(MY_LIB_A_OBJS)
+	$(RM_RF) $(MY_TMP_DIR)
 	$(RM_F) $(MY_TARGET_A)
 	$(RM_F) $(MY_TARGET_SO)
 	@echo "+++++++++++++++++++++++++"
@@ -256,6 +253,7 @@ define my_tip
 	@echo "+ MY_CLIP = $(MY_CLIP)"
 	@echo "+ MY_CLIP_TAG = $(MY_CLIP_TAG)"
 	@echo "+ MY_CFLAGS = $(MY_CFLAGS)"
+	@echo "+ MY_LDFLAGS = $(MY_LDFLAGS)"
 	@echo "+ MY_CLIP_FLAGS = $(MY_CLIP_FLAGS)"
 	@echo "+ MY_SOURCES = $(MY_SOURCES)"
 	@echo "+ MY_DIRS = $(MY_DIRS)"

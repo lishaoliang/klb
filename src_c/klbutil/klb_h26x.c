@@ -16,7 +16,7 @@ int klb_h26x_scan_nalu(char* p_h26x, int h26x_len, int* p_nal_start, int* p_nal_
 
     int pos = 0, flag = -1, last_h_len = 0;
 
-    while (pos + 4 < h26x_len)
+    while (pos + 3 <= h26x_len)
     {
         if (0 == memcmp(p_h26x + pos, nal_h3, 3))
         {
@@ -86,3 +86,5 @@ uint8_t klb_h265_nalu_type(uint8_t v)
 {
     return (v >> 1) & 0x3F;
 }
+
+//end

@@ -1,6 +1,5 @@
 ﻿#include "klbapp/klb_app.h"
 #include "klbapp/klb_app_in.h"
-#include "klbbase/klb_base.h"
 #include "klbmem/klb_mem.h"
 #include "klbplatform/klb_thread.h"
 #include "klbplatform/klb_time.h"
@@ -30,7 +29,7 @@ int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load)
 
     // step2. 初始化 klua 预加载库
     {
-        klbappex_klua_push_preload(p_appex_klua, cb_pre_load);
+        klbappex_klua_push_preload(p_appex_klua, cb_pre_load, NULL);
     }
 
     // step3. 初始化

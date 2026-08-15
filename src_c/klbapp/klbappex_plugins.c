@@ -160,12 +160,12 @@ void klbappex_plugins_push_path(klbappex_plugins_t* p_appex, const char* p_path_
 static bool try_open_klbappex_plugins(klbappex_plugins_t* p_appex, sds filepath, klb_dl_t* p_dl)
 {
     // 动态库 入口函数
-    klbapp_init_extension_cb init_extension = (klbapp_init_extension_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_init_extension);
-    klbapp_quit_extension_cb quit_extension = (klbapp_quit_extension_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_quit_extension);
-    klbapp_extension_count_cb extension_count = (klbapp_extension_count_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_extension_count);
-    klbapp_open_extension_cb open_extension = (klbapp_open_extension_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_open_extension);
-    klbapp_kluaprelib_count_cb kluaprelib_count = (klbapp_kluaprelib_count_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_kluaprelib_count);
-    klbapp_open_kluaprelib_cb open_kluaprelib = (klbapp_open_kluaprelib_cb)klb_dlsym(p_dl, KLBAPPEX_DLSYM_open_kluaprelib);
+    klbappex_init_cb init_extension = (klbappex_init_cb)klb_dlsym(p_dl, KLBAPPEX_DL_init);
+    klbappex_quit_cb quit_extension = (klbappex_quit_cb)klb_dlsym(p_dl, KLBAPPEX_DL_quit);
+    klbappex_ex_count_cb extension_count = (klbappex_ex_count_cb)klb_dlsym(p_dl, KLBAPPEX_DL_ex_count);
+    klbappex_ex_open_cb open_extension = (klbappex_ex_open_cb)klb_dlsym(p_dl, KLBAPPEX_DL_ex_open);
+    klbappex_pre_count_cb kluaprelib_count = (klbappex_pre_count_cb)klb_dlsym(p_dl, KLBAPPEX_DL_pre_count);
+    klbappex_pre_open_cb open_kluaprelib = (klbappex_pre_open_cb)klb_dlsym(p_dl, KLBAPPEX_DL_pre_open);
 
     // 打开 APP 扩展
     int open_count = 0;
@@ -175,14 +175,14 @@ static bool try_open_klbappex_plugins(klbappex_plugins_t* p_appex, sds filepath,
     // 2. 可以 打开扩展, 并 至少 注册 成功 一个
     if (NULL != extension_count && NULL != open_extension)
     {
-        char name[KLBAPPEX_DLSYM_name_max + 4] = { 0 };
+        char name[KLBAPPEX_DL_name_max + 4] = { 0 };
 
         // 获取扩展数目; 并依次打开
         int count = extension_count();
         for (int i = 0; i < count; i++)
         {
             klb_app_extension_t ex = { 0 };
-            if (0 == open_extension(i, &ex, name, KLBAPPEX_DLSYM_name_max))
+            if (0 == open_extension(i, &ex, name, KLBAPPEX_DL_name_max))
             {
                 // 打开成功 且 必须有函数 cb_create / cb_destroy
                 if (NULL != ex.cb_create && NULL != ex.cb_destroy)
@@ -207,10 +207,12 @@ static bool try_open_klbappex_plugins(klbappex_plugins_t* p_appex, sds filepath,
         for (int k = 0; k < num; k++)
         {
             lua_CFunction cb_prelib = NULL;
-            if (0 == open_kluaprelib(k, &cb_prelib) && NULL != cb_prelib)
+            const char* pre_name = NULL;
+
+            if (0 == open_kluaprelib(k, &cb_prelib, &pre_name) && NULL != cb_prelib && NULL != pre_name && '\0' != pre_name[0])
             {
                 // 打开 klua 扩展之后, 直接放入预加载列表中 
-                klbappex_klua_push_preload(p_appex->p_kluaex, cb_prelib);
+                klbappex_klua_push_preload(p_appex->p_kluaex, cb_prelib, pre_name);
 
                 prelib_count += 1; // 获取成功
             }
@@ -291,44 +293,32 @@ static void load_by_path_klbappex_plugins(klbappex_plugins_t* p_appex, sds dir)
 
     sds filepath = sdsempty();
 
-    while (true)
+    do
     {
-        if (_findnext(fd, &c_file) == -1L)
+        if (0 != strcmp(c_file.name, ".") && 0 != strcmp(c_file.name, ".."))
         {
-            break;
-        }
-        else
-        {
-            if (0 == strcmp(c_file.name, ".") || 0 == strcmp(c_file.name, ".."))
-            {
-                // 自身
-                continue;
-            }
-            else
-            {
-                // 路径名
-                filepath = sdscpy(filepath, dir);
-                filepath = sdscat(filepath, "/");
-                filepath = sdscat(filepath, c_file.name);
+            // 路径名
+            filepath = sdscpy(filepath, dir);
+            filepath = sdscat(filepath, "/");
+            filepath = sdscat(filepath, c_file.name);
 
-                struct _stat buf;
-                int result = _stat(filepath, &buf);
+            struct _stat buf;
+            int result = _stat(filepath, &buf);
 
-                if (0 == result)
+            if (0 == result)
+            {
+                if (S_ISDIR(buf.st_mode))
                 {
-                    if (S_ISDIR(buf.st_mode))
-                    {
-                        // 目录
-                    }
-                    else if (S_ISREG(buf.st_mode))
-                    {
-                        // 文件
-                        load_file_klbappex_plugins(p_appex, filepath);
-                    }
+                    // 目录
+                }
+                else if (S_ISREG(buf.st_mode))
+                {
+                    // 文件
+                    load_file_klbappex_plugins(p_appex, filepath);
                 }
             }
         }
-    }
+    } while (0 == _findnext(fd, &c_file));
 
     // 关闭
     _findclose(fd);

@@ -265,18 +265,6 @@
     <Filter Include="inc\klbnet\klbrtsp">
       <UniqueIdentifier>{c51596ed-0101-4220-92d4-dcfdda210836}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klbnet\klbrtspclient">
-      <UniqueIdentifier>{8d4a3a7f-6cb6-4a6d-bced-85df3f411652}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\klbnet\klbflv">
-      <UniqueIdentifier>{131bd3b7-4878-4bf4-9835-e4916fd3cb50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbflvclient">
-      <UniqueIdentifier>{d2f4be79-0a5d-4202-afa8-3d14855989b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbmnpclient">
-      <UniqueIdentifier>{548cce8a-a513-44ce-b160-1e9b09fa928e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\klbnet\klbmnp">
       <UniqueIdentifier>{70f870d6-96be-427a-b0db-540501e7edbf}</UniqueIdentifier>
     </Filter>
@@ -289,29 +277,11 @@
     <Filter Include="src_c\klbnet\klbrtsp">
       <UniqueIdentifier>{bf0cfcbd-90ce-4f5d-bd28-4b59ac6ef8ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klbnet\klbrtspserve">
-      <UniqueIdentifier>{71ba1afe-6207-43ea-93bf-b2f41f159801}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klbnet\klbmnp">
       <UniqueIdentifier>{c7739b78-eea7-46c3-97fb-244ef3b07f32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_c\klbnet\klbmnpserve">
-      <UniqueIdentifier>{86a70e8f-9a27-4526-ad83-5155b8957caa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbflvserve">
-      <UniqueIdentifier>{458e8dc6-8097-4461-8c7f-214b08b5e1e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbflv">
-      <UniqueIdentifier>{45e1df6e-4da0-41ab-a85c-828791f3a788}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klbnet\klbhttp">
       <UniqueIdentifier>{d27aab4c-8947-4caa-90c3-647b1b068d6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbhttpclient">
-      <UniqueIdentifier>{043ba916-0d17-4368-a584-6c21605cd5e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbhttpserve">
-      <UniqueIdentifier>{f7a9701a-eb64-4963-9639-ece1f05bd60c}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbnet\klbhttp">
       <UniqueIdentifier>{7b0fe836-f2fe-4561-a129-e9575b5e50e1}</UniqueIdentifier>
@@ -319,56 +289,23 @@
     <Filter Include="inc\klbnet\klbws">
       <UniqueIdentifier>{3497579b-dca4-4a1f-94dd-78d9c824589c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\klbnet\klbwebrtc">
-      <UniqueIdentifier>{b9c80e5b-72e8-42be-9d82-53510ba684d4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klbnet\klbws">
       <UniqueIdentifier>{6acccb90-0555-46b2-a91d-a602ae6ce4cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbwsclient">
-      <UniqueIdentifier>{af969d46-c2d4-49d7-a648-a9982f6e8113}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbwsserve">
-      <UniqueIdentifier>{a641132e-44c4-45d6-873f-0b8f95e6f656}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbwebrtc">
-      <UniqueIdentifier>{1735577d-e545-4933-b5f0-ef90f8c39ee7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbwebrtcclient">
-      <UniqueIdentifier>{245c247f-6ffb-4e60-9fbc-549c84cb4dd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbwebrtcserve">
-      <UniqueIdentifier>{68befdab-caea-4ff1-aacd-48d186680ac9}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbnet\klbsmp">
       <UniqueIdentifier>{5260adaa-191e-4a7f-9902-be7f1d81f1d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\klbnet\klbsip">
-      <UniqueIdentifier>{23550bea-15f5-483c-9daa-35f55a8d0beb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbsip">
-      <UniqueIdentifier>{2b4779ca-dce1-4107-9f4c-d612b2dafc9d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbsipclient">
-      <UniqueIdentifier>{310a6f05-0e5e-4e1a-9e29-85d79914ec12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbsipserve">
-      <UniqueIdentifier>{d0674a89-d359-4cd4-a4ce-72edd0213b51}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_c\klbnet\klbsmp">
       <UniqueIdentifier>{0a1ba8a7-e73f-4e60-810a-f76cc8e4a094}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbsmpclient">
-      <UniqueIdentifier>{6c0fb199-69a9-499b-a928-7cd1ea54c7ff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbsmpserve">
-      <UniqueIdentifier>{cf5748b2-1443-44da-a37e-31bd39f7c8bb}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbnet\klblisten">
       <UniqueIdentifier>{6f6fc267-59d2-4ec5-b4d9-35926ebe5b11}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klbnet\klblisten">
       <UniqueIdentifier>{fbefb14a-eb6b-49b5-8f91-0c7c3538ddc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_c\klbnet\klbiopoll">
+      <UniqueIdentifier>{9e681c26-8722-419d-9305-485674a6a0dd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1680,9 +1617,6 @@
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h">
       <Filter>inc\klbnet\klbrtsp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvclient_conn.h">
-      <Filter>inc\klbnet\klbflv</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpclient_conn.h">
       <Filter>inc\klbnet\klbmnp</Filter>
     </ClInclude>
@@ -1701,9 +1635,6 @@
     <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpserve_conn.h">
       <Filter>inc\klbnet\klbmnp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvserve_conn.h">
-      <Filter>inc\klbnet\klbflv</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpclient_conn.h">
       <Filter>inc\klbnet\klbhttp</Filter>
     </ClInclude>
@@ -1716,20 +1647,8 @@
     <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsserve_conn.h">
       <Filter>inc\klbnet\klbws</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcclient_conn.h">
-      <Filter>inc\klbnet\klbwebrtc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcserve_conn.h">
-      <Filter>inc\klbnet\klbwebrtc</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbbase\klb_smp.h">
       <Filter>inc\klbbase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipclient_conn.h">
-      <Filter>inc\klbnet\klbsip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipserve_conn.h">
-      <Filter>inc\klbnet\klbsip</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclient_conn.h">
       <Filter>inc\klbnet\klbsmp</Filter>
@@ -1766,6 +1685,9 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_netcode.h">
       <Filter>inc\klbnet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbnet\klb_iopoll_in.h">
+      <Filter>src_c\klbnet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2804,59 +2726,11 @@
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_netmulti.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c">
-      <Filter>src_c\klbnet\klbrtspclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbflvclient\klb_flvclient_conn.c">
-      <Filter>src_c\klbnet\klbflvclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c">
-      <Filter>src_c\klbnet\klbmnpclient</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c">
       <Filter>src_c\klbnet\klbrtsp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbrtspserve\klb_rtspserve_conn.c">
-      <Filter>src_c\klbnet\klbrtspserve</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c">
       <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbmnpserve\klb_mnpserve_conn.c">
-      <Filter>src_c\klbnet\klbmnpserve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbflvserve\klb_flvserve_conn.c">
-      <Filter>src_c\klbnet\klbflvserve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbhttpclient\klb_httpclient_conn.c">
-      <Filter>src_c\klbnet\klbhttpclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbhttpserve\klb_httpserve_conn.c">
-      <Filter>src_c\klbnet\klbhttpserve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbwsclient\klb_wsclient_conn.c">
-      <Filter>src_c\klbnet\klbwsclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbwsserve\klb_wsserve_conn.c">
-      <Filter>src_c\klbnet\klbwsserve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c">
-      <Filter>src_c\klbnet\klbwebrtcclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c">
-      <Filter>src_c\klbnet\klbwebrtcserve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsipclient\klb_sipclient_conn.c">
-      <Filter>src_c\klbnet\klbsipclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsipserve\klb_sipserve_conn.c">
-      <Filter>src_c\klbnet\klbsipserve</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclient_conn.c">
-      <Filter>src_c\klbnet\klbsmpclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserve_conn.c">
-      <Filter>src_c\klbnet\klbsmpserve</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c">
       <Filter>src_c\klbnet\klblisten</Filter>
@@ -2873,17 +2747,55 @@
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.c">
       <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclientrpc_conn.c">
-      <Filter>src_c\klbnet\klbsmpclient</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserverpc_conn.c">
-      <Filter>src_c\klbnet\klbsmpserve</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.c">
       <Filter>src_c\klbnet\klbsmp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.c">
       <Filter>src_c\klbnet\klbsmp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbmnp\klb_mnpclient_conn.c">
+      <Filter>src_c\klbnet\klbmnp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbmnp\klb_mnpserve_conn.c">
+      <Filter>src_c\klbnet\klbmnp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspclient_conn.c">
+      <Filter>src_c\klbnet\klbrtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspserve_conn.c">
+      <Filter>src_c\klbnet\klbrtsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpclient_conn.c">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpclientrpc_conn.c">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpserve_conn.c">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpserverpc_conn.c">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_epoll.c">
+      <Filter>src_c\klbnet\klbiopoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_poll.c">
+      <Filter>src_c\klbnet\klbiopoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_select.c">
+      <Filter>src_c\klbnet\klbiopoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_wsapoll.c">
+      <Filter>src_c\klbnet\klbiopoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_iocp.c">
+      <Filter>src_c\klbnet\klbiopoll</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\src_c\klbnet\klbsmp\klbsmp.txt">
+      <Filter>src_c\klbnet\klbsmp</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -251,7 +251,8 @@ KLB_API int klb_gui_modal_wnd(klb_gui_t* p_gui, klb_wnd_t* p_top);
 
 /// @brief 关闭显示窗口
 /// @param [in] *p_gui          GUI对象
-/// @param [in] *p_path_name    窗口路径(类unix): eg."/home"
+/// @param [in] all             true 关闭全部; false 仅关闭栈顶一个
+/// @param [in] *p_path_name    TODO. 预留: 按路径结束指定 modal; 当前未使用, 流程仅从栈末尾弹出
 /// @return int 0.成功; 非0.失败(错误码)
 KLB_API int klb_gui_modal_end(klb_gui_t* p_gui, bool all, const char* p_path_name);
 

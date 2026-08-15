@@ -2,7 +2,8 @@
 # 处理代码裁剪:
 # @param [in]		$(MY_CLIP)			裁剪参数: eg. "no-all"
 # @param [out]		$(MY_CLIP_FLAGS)	处理裁剪参数之后的 宏定义等
-# @param [out]		$(MY_CLIP_DIRS)		处理裁剪之后, 需要加入编译的目录文件
+# @param [out]		$(MY_CLIP_DIRS)		处理裁剪之后, 需要加入编译的目录
+# @param [out]		$(MY_CLIP_SOURCES)	处理裁剪之后, 需要加入编译的源文件(非目录)
 # @param [out]		$(MY_CLIP_INC)		处理裁剪之后, 需要引用的头文件目录
 
 ##################################################################
@@ -16,6 +17,9 @@ export MY_CLIP_FLAGS :=
 
 # @param [out] $(MY_CLIP_DIRS)	处理裁剪之后, 需要加入编译的目录
 export MY_CLIP_DIRS :=
+
+# @param [out] $(MY_CLIP_SOURCES)	处理裁剪之后, 需要加入编译的源文件(非目录)
+export MY_CLIP_SOURCES :=
 
 # @param [out] $(MY_CLIP_INC)	处理裁剪之后, 需要引用的头文件目录
 export MY_CLIP_INC :=
@@ -35,9 +39,12 @@ endif
 # 分别处理
 
 # 可裁剪参数: MY_CLIP = no-pcre2
+# exclude pcre2 tool sources: grep/dftables/fuzz (contain main or CLI-only code)
 ifeq ($(filter no-pcre2, $(MY_CLIP_TAG)), )
-	MY_CLIP_DIRS += ./src_c/klbthird/pcre2/src
+	MY_PCRE2_SKIP := ./src_c/klbthird/pcre2/src/pcre2grep.c ./src_c/klbthird/pcre2/src/pcre2_dftables.c ./src_c/klbthird/pcre2/src/pcre2_fuzzsupport.c
+	MY_CLIP_SOURCES += $(filter-out $(MY_PCRE2_SKIP),$(wildcard ./src_c/klbthird/pcre2/src/*.c))
 	MY_CLIP_INC += -I ./src_c/klbthird/pcre2/src
+	MY_CLIP_FLAGS += -DHAVE_CONFIG_H
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_PCRE2__
 endif
@@ -77,7 +84,6 @@ ifeq ($(filter no-packages, $(MY_CLIP_TAG)), )
 	MY_CLIP_DIRS += ./src_packages/kpa_http
 	MY_CLIP_DIRS += ./src_packages/kpa_mgui
 	MY_CLIP_DIRS += ./src_packages/kpa_mnp
-	MY_CLIP_DIRS += ./src_packages/kpa_rtsp
 	MY_CLIP_DIRS += ./src_packages/kpa_sip
 	MY_CLIP_DIRS += ./src_packages/kpa_ws
 	MY_CLIP_INC += -I ./src_packages

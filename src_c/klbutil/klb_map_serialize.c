@@ -817,3 +817,5 @@ bool klb_map_seri_read_string(klbmapseri_reader_t* p_reader, char** p_str, int* 
 
     return true;
 }
+
+//end

@@ -23,7 +23,8 @@ uint64_t klb_tick_count64()
 uint32_t klb_tick_count()
 {
     struct timespec tp = { 0 };
-    if (!clock_gettime(CLOCK_MONOTONIC, &tp) < 0)
+    // Fixed Bug. [2026] clock_gettime 失败判断运算符优先级错误: (!...) < 0 永不为真
+    if (clock_gettime(CLOCK_MONOTONIC, &tp) < 0)
     {
         assert(false);
     }
@@ -34,7 +35,8 @@ uint32_t klb_tick_count()
 uint64_t klb_tick_count64()
 {
     struct timespec tp = { 0 };
-    if (!clock_gettime(CLOCK_MONOTONIC, &tp) < 0)
+    // Fixed Bug. [2026] clock_gettime 失败判断运算符优先级错误: (!...) < 0 永不为真
+    if (clock_gettime(CLOCK_MONOTONIC, &tp) < 0)
     {
         assert(false);
     }

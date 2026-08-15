@@ -22,11 +22,6 @@ extern "C" {
 #endif
 
 
-/// @brief 创建HTTP连接
-/// @return klb_netconn_t*
-KLB_API klb_netconn_t* klb_httpserve_conn_create();
-
-
 
 #ifdef __cplusplus
 }

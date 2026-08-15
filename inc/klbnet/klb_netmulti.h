@@ -3,7 +3,7 @@
 //
 /// @file    klb_netmulti.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   (klb net multiplex)使用select/epool等多路复用; 适用于异步流程
+/// @brief   (klb net multiplex)使用select/pool/epool等多路复用; 适用于异步流程
 /// @version 0.2
 /// @history 修改历史
 ///  \n [2025-09] 创建文件

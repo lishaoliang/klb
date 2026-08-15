@@ -121,7 +121,7 @@ static int call_co_recv_text_klua_ksmpclient(klua_ksmpclient_t* p_client)
 
         p_client->co_recv = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
 
         klb_buf_t* p_txt = klb_nlist_pop_head(p_client->p_text_nlist);
@@ -464,7 +464,7 @@ static int call_co_recv_ksmpclientrpc(klua_ksmpclientrpc_t* p_client)
 
         p_client->co_recv = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
         klb_buf_t* p_buf = klb_nlist_pop_head(p_client->p_rpc_nlist);
         char* p_data = p_buf->p_buf + p_buf->start + sizeof(klb_mnp_rpc_t);
@@ -555,7 +555,7 @@ static int call_co_res_ksmpclientrpc(klua_ksmpclientrpc_t* p_client)
 
         p_client->co_call = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
         klb_buf_t* p_buf = klb_nlist_pop_head(p_client->p_res_nlist);
         char* p_data = p_buf->p_buf + p_buf->start + sizeof(klb_mnp_rpc_t);
@@ -704,7 +704,7 @@ static int klua_ksmpclientrpc_send(lua_State* L, klb_mnp_rpc_method_e method, kl
         size_t json_len = 0;
         const char* p_json = luaL_checklstring(L, 3, &json_len);    ///< @3 JSON数据
 
-        ret = klb_smpclientrpc_conn_send(p_client->p_client_conn, KLB_MNP_RPC_JSON, method, sequence, p_json, (int)json_len);
+        ret = klb_smpclientrpc_conn_send(p_client->p_client_conn, KLB_MNP_RPC_JSON, method, sequence, (const uint8_t*)p_json, (int)json_len);
     }
 
     if (NULL != p_out) { *p_out = p_client; };

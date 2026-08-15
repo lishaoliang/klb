@@ -1,5 +1,4 @@
 ﻿#include "klbutil/klb_list.h"
-#include "klbmem/klb_mem.h"
 #include <assert.h>
 
 
@@ -56,7 +55,7 @@ klb_adt_t* klb_list_tail(klb_list_t* p_list)
 
 int klb_list_size(klb_list_t* p_list)
 {
-    return klb_nlist_size(p_list->p_nlist);
+    return 0;
 }
 
 void klb_list_remove(klb_list_t* p_list, klb_list_iter_t* p_iter)
@@ -88,3 +87,5 @@ klb_list_iter_t* klb_list_prev(klb_list_iter_t* p_iter)
 {
     return NULL;
 }
+
+//end

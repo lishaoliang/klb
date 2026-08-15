@@ -40,3 +40,5 @@ uint32_t klb_hash_hgsmi(const char* p_data, int len)
     uint32_t h = klb_hash_hgsmi_process(b, (const char*)p_data, len);
     return klb_hash_hgsmi_end(h);
 }
+
+//end

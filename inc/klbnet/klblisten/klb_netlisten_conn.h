@@ -14,7 +14,6 @@
 
 #include "klb_type.h"
 #include "klbnet/klb_socket.h"
-#include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_netconn.h"
 #include "klbnet/klb_netmulti.h"
 
@@ -64,7 +63,7 @@ typedef struct klb_netlisten_socket_t_
 /// @param [in] fd              socket的系统fd
 /// @param [in] *p_addr         socket信息
 /// @return int 0.成功; 非0.失败
-typedef int(*klb_netlisten_conn_accept_cb)(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param);
+typedef int(*klb_netlisten_conn_accept_cb)(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls);
 
 
 /// @brief 设置当监听到socket连接建立时回调

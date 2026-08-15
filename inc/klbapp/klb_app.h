@@ -10,13 +10,13 @@
 /// @history 修改历史
 ///   \n [2025-4] 添加支持扩展机制: APP模块及扩展 均为 单例
 /// @warning 没有警告
+/// @todo    当前完全信任加载的dll/so, 还需对动态库做鉴权
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_APP_H__
 #define __KLB_APP_H__
 
 #include "klb_type.h"
 #include "klbapp/klb_app_extension.h"
-#include "klua/klua_env.h"
 
 #if defined(__cplusplus)
 extern "C" {

@@ -62,3 +62,5 @@ uint32_t klb_hash_legacy(const char* name, int len)
 
     return (h1 << 1);
 }
+
+//end

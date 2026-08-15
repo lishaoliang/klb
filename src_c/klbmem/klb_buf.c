@@ -32,7 +32,7 @@ int klb_buf_write(klb_buf_t* p_buf, const char* p_data, int data_len)
 
     if (0 < cp_len)
     {
-        memcpy(p_buf->p_buf + p_buf->end, p_data, data_len);
+        memcpy(p_buf->p_buf + p_buf->end, p_data, cp_len);
         p_buf->end += cp_len;
     }
 

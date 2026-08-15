@@ -306,7 +306,7 @@ klb_rbuf_t* klb_rbuf_loadfile(const char* p_path)
         {
             fseek(pf, 0, SEEK_SET);
             int rlen = fread(p_buf->ptr, 1, filelen, pf);
-            assert(rlen = filelen);
+            assert(rlen == filelen);
 
             p_buf->end = filelen;
         }

@@ -248,7 +248,7 @@ static void klb_hmap_check_resize_dec(klb_hmap_t* p_hmap)
     p_hmap->p_idx = KLB_MALLOC(klb_hmap_node_t*, s_klb_hmap_talbe[p_hmap->idx_talbe].max, 0);
     KLB_MEMSET(p_hmap->p_idx, 0, s_klb_hmap_talbe[p_hmap->idx_talbe].max * sizeof(klb_hmap_node_t*));
 
-#if 1
+#if 1  // 快速缩小容量的方式
     // 前面的序列是一致的
     memcpy(p_hmap->p_idx, p_old_idx, s_klb_hmap_talbe[p_hmap->idx_talbe].max * sizeof(klb_hmap_node_t*));
 
@@ -269,7 +269,7 @@ static void klb_hmap_check_resize_dec(klb_hmap_t* p_hmap)
             }
         }
     }
-#else
+#else // 完整缩小容量的方式
     uint32_t num = 0;
     for (uint32_t i = 0; i < s_klb_hmap_talbe[old_idx].max; i++)
     {
@@ -512,3 +512,5 @@ uint32_t klb_hmap_size(klb_hmap_t* p_hmap)
 
     return p_hmap->size;
 }
+
+//end

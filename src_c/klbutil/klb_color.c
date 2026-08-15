@@ -26,3 +26,5 @@ uint32_t klb_color_rgba8888_to(uint32_t rgba8888, int color_fmt)
 {
     return rgba8888;
 }
+
+//end

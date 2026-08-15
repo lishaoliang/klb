@@ -102,7 +102,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\Visual Leak Detector\lib\Win32;..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4049,4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -145,7 +144,6 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       <GenerateDebugInformation>No</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libcrypto_static.lib;libssl_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4049,4217 %(AdditionalOptions)</AdditionalOptions>
     </Link>
@@ -205,8 +203,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvclient_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbflv\klb_flvserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h" />
@@ -216,27 +212,17 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipclient_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbsip\klb_sipserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclientrpc_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserverpc_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserve_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcclient_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbwebrtc\klb_webrtcserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsclient_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_http.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_listen.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_ncm.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netcode.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netconn.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netmulti.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_nsc.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_nsp.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h" />
-    <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_websocket.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_atomic.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_cond.h" />
@@ -252,110 +238,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbplatform\klb_time.h" />
     <ClInclude Include="..\..\inc\klbthird\cJSON.h" />
     <ClInclude Include="..\..\inc\klbthird\http_parser.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\aes.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1err.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1t.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1_mac.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\async.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\asyncerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\bio.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\bioerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\blowfish.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\bn.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\bnerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\buffer.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\buffererr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\camellia.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\cast.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\cmac.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\cms.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\cmserr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\comp.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\comperr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\conf.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\conferr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\conf_api.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\crypto.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\cryptoerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ct.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\cterr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\des.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\dh.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\dherr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\dsa.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\dsaerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\dtls1.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ebcdic.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ec.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ecdh.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ecdsa.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ecerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\engine.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\engineerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\err.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\evp.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\evperr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\e_os2.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\hmac.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\idea.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\kdf.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\kdferr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\lhash.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\md2.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\md4.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\md5.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\mdc2.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\modes.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\objects.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\objectserr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\obj_mac.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ocsp.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ocsperr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\opensslconf.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\opensslv.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ossl_typ.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pem.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pem2.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pemerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs12.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs12err.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs7.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs7err.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rand.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\randerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rand_drbg.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rc2.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rc4.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rc5.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ripemd.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rsa.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\rsaerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\safestack.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\seed.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\sha.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\srp.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\srtp.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ssl.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ssl2.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ssl3.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\sslerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\stack.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\store.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\storeerr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\symhacks.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\tls1.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ts.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\tserr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\txt_db.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\ui.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\uierr.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\whrlpool.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509err.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509v3.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509v3err.h" />
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509_vfy.h" />
     <ClInclude Include="..\..\inc\klbthird\pcre2.h" />
     <ClInclude Include="..\..\inc\klbthird\pcre2posix.h" />
     <ClInclude Include="..\..\inc\klbthird\sds.h" />
@@ -393,7 +275,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klua\klua_env.h" />
     <ClInclude Include="..\..\inc\klua\klua_env_extension.h" />
     <ClInclude Include="..\..\inc\klua\klua_gui.h" />
-    <ClInclude Include="..\..\inc\klua\klua_multiplex.h" />
     <ClInclude Include="..\..\inc\klua\klua_netmulti.h" />
     <ClInclude Include="..\..\inc\klua\klua_object.h" />
     <ClInclude Include="..\..\inc\klua\klua_seri.h" />
@@ -409,11 +290,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc_hpp\klbgui\CGui.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbgui\CWnd.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbmem\CBuf.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbnet\CListen.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbnet\CMultiplex.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbnet\CNcm.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbnet\CNsc.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbnet\CNsp.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CAtomic.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CDynamicLink.hpp" />
     <ClInclude Include="..\..\inc_hpp\klbplatform\CMutex.hpp" />
@@ -460,7 +336,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tip.h" />
     <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.h" />
     <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.h" />
-    <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h" />
+    <ClInclude Include="..\..\src_c\klbnet\klb_iopoll_in.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_intmodedep.h" />
@@ -475,7 +351,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_coroutine.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h" />
-    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_netmulti.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
@@ -628,13 +503,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zconf.h" />
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zlib.h" />
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtp.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.h" />
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\rtp.h" />
     <ClInclude Include="..\Visual Leak Detector\include\vld.h" />
     <ClInclude Include="..\Visual Leak Detector\include\vld_def.h" />
   </ItemGroup>
@@ -656,11 +524,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_cpp\klbgui\CWnd.cpp" />
     <ClCompile Include="..\..\src_cpp\klbgui\CWndCssFunction.cpp" />
     <ClCompile Include="..\..\src_cpp\klbmem\CBuf.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbnet\CNcm.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbnet\CNsc.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbnet\CNsp.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CAtomic.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CDynamicLink.cpp" />
     <ClCompile Include="..\..\src_cpp\klbplatform\CMutex.cpp" />
@@ -719,46 +582,27 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbflvclient\klb_flvclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbflvserve\klb_flvserve_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbhttpclient\klb_httpclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbhttpserve\klb_httpserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_epoll.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_iocp.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_poll.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_select.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_wsapoll.c" />
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbmnpclient\klb_mnpclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbmnpserve\klb_mnpserve_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbrtspclient\klb_rtspclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbrtspserve\klb_rtspserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbmnp\klb_mnpclient_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbmnp\klb_mnpserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbsipclient\klb_sipclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbsipserve\klb_sipserve_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclientrpc_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpclient\klb_smpclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserverpc_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbsmpserve\klb_smpserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpclientrpc_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpclient_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcclient\klb_webrtcclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbwebrtcserve\klb_webrtcserve_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbwsclient\klb_wsclient_conn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klbwsserve\klb_wsserve_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpserverpc_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpserve_conn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_listen.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_mnp.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_rtp.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rtsp.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_flv.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_mnp.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_rtp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_netconn.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_netmulti.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_nsc.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_nsp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
     <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_atomic.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_cond.c" />
@@ -833,7 +677,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_coroutine.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c" />
-    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_netmulti.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
@@ -850,20 +693,15 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_flv.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_mnp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kmnp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksip.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_flv.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_mnp.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c" />
@@ -1006,15 +844,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\kpa_http\klua_kpa_http.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_mgui\klua_kpa_mgui.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_mnp\klua_kpa_mnp.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\klua_kpa_rtsp.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtp.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.cpp" />
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_sip\klua_kpa_sip.cpp" />
     <ClCompile Include="..\..\src_packages\kpa_ws\klua_kpa_ws.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\src_c\klbnet\klbsmp\klbsmp.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

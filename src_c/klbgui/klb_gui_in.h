@@ -131,7 +131,7 @@ typedef struct klb_gui_t_
         void*           p_cppgui;       ///< klbui::CGui*
     };
 
-    // Bug. 在Lua里面直接使用 klb_gui_clear函数, 会导致在自身的GUI流程中, 销毁GUI框架本身
+    // Fixed Bug. [2025] 在Lua里面直接使用 klb_gui_clear函数, 会导致在自身的GUI流程中, 销毁GUI框架本身
     // 这里专门提供异步延时清理机制, klb_gui_clear_async 函数标记清理, GUI框架在合适的时机
     // 执行清理, 清理完成之后, 再使用回调函数通知调用者
     // e. 若有更好方案, 可以修改这里

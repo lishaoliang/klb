@@ -2,10 +2,8 @@
 #define __KLBAPPEX_KLUA_IN_H__
 
 
-#include "klb_type.h"
 #include "klbapp/klbappex_klua.h"
 #include "klua/klua_env.h"
-#include "klua/klua.h"
 #include "klbutil/klb_nlist.h"
 #include "klbplatform/klb_rwlock.h"
 
@@ -13,6 +11,15 @@
 #if defined(__cplusplus)
 extern "C" {
 #endif
+
+
+/// @struct klbappex_preload_item_t
+/// @brief  klua 预加载项
+typedef struct klbappex_preload_item_t_
+{
+    lua_CFunction       cb;                 ///< openlib 或 wrapper 回调
+    const char*         name;               ///< NULL 表示 wrapper 回调; 非 NULL 则 klua_loadlib
+}klbappex_preload_item_t;
 
 
 /// @struct klbappex_klua_t

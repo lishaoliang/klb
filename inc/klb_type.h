@@ -2,6 +2,7 @@
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_type.h
+/// @author  随风(https://gitee.com/klua/klb)
 /// @brief   基础类型,常用宏定义
 ///          C 标准: C99
 ///          C++ 标准: C++98

@@ -32,7 +32,7 @@ typedef struct klb_hlist_t_ klb_hlist_t;
 
 
 /// @brief 创建hlist对象
-/// @param [in] ht_max       hash table大小; 0.使用自适应hash map; 大于0.使用固定大小hash table
+/// @param [in] ht_max       hash table大小; <= 0.使用自适应hash map; 大于0.使用固定大小hash table
 /// @return klb_hlist_t*     hlist对象
 KLB_API klb_hlist_t* klb_hlist_create(int ht_max);
 
@@ -63,24 +63,28 @@ KLB_API void klb_hlist_clear(klb_hlist_t* p_list, klb_hlist_clear_cb cb_clear, v
 /// @brief 在最前面, 向hlist压入数据
 /// @param [in] *p_list     hlist对象
 /// @param [in] *p_key      key关键字(非NULL)
-/// @param [in] key_len     key长度(按char计算)
-/// @param [in] *p_data     数据
+/// @param [in] key_len     key长度(按char计算, >=0; 0表示空key)
+/// @param [in] *p_data     数据(非NULL)
 /// @return klb_hlist_iter_t* NULL.失败; 非NULL.成功之后的迭代子
 /// @note 1. hlist并不负责数据释放
 ///  \n   2. hlist采用已解决hash冲突的查找算法, 不存在hash值冲突问题
 ///  \n   3. 因hlist带有链表特性, 对已存在完全一致的key时, 返回失败, 由调用者决定对如何处理完全一致的key
+///  \n   4. p_data为NULL时, 返回NULL(失败), 不插入节点
+///  \n   5. key_len为0时表示空key, p_key非NULL(可为"")
 KLB_API klb_hlist_iter_t* klb_hlist_push_head(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data);
 
 
 /// @brief 在最后面, 向hlist压入数据
 /// @param [in] *p_list     hlist对象
 /// @param [in] *p_key      key关键字(非NULL)
-/// @param [in] key_len     key长度(按char计算)
-/// @param [in] *p_data     数据
+/// @param [in] key_len     key长度(按char计算, >=0; 0表示空key)
+/// @param [in] *p_data     数据(非NULL)
 /// @return klb_hlist_iter_t* NULL.失败; 非NULL.成功之后的迭代子
 /// @note 1. hlist并不负责数据释放
 ///  \n   2. hlist采用已解决hash冲突的查找算法, 不存在hash值冲突问题
 ///  \n   3. 因hlist带有链表特性, 对已存在完全一致的key时, 返回失败, 由调用者决定对如何处理完全一致的key
+///  \n   4. p_data为NULL时, 返回NULL(失败), 不插入节点
+///  \n   5. key_len为0时表示空key, p_key非NULL(可为"")
 KLB_API klb_hlist_iter_t* klb_hlist_push_tail(klb_hlist_t* p_list, const void* p_key, int key_len, void* p_data);
 
 
@@ -131,29 +135,32 @@ KLB_API void* klb_hlist_data(klb_hlist_iter_t* p_iter);
 
 /// @brief 获取最前面的迭代子
 /// @param [in] *p_list      hlist对象
-/// @return klb_list_iter_t* iter迭代子
-/// @note 返回NULL, 表示无数据
+/// @return klb_hlist_iter_t* iter迭代子
+/// @note 1. 命名借鉴 STL begin; 返回首节点, 空表为NULL
+///  \n   2. 正向遍历: for(p=begin(...); NULL!=p; p=next(p))
 KLB_API klb_hlist_iter_t* klb_hlist_begin(klb_hlist_t* p_list);
 
 
 /// @brief 下一个迭代子
 /// @param [in] *p_iter      iter迭代子
-/// @return klb_list_iter_t* 下一个iter迭代子
-/// @note 和klb_hlist_begin配合使用
+/// @return klb_hlist_iter_t* 下一个iter迭代子
+/// @note 与 klb_hlist_begin 配合正向遍历, 至 NULL 结束
 KLB_API klb_hlist_iter_t* klb_hlist_next(klb_hlist_iter_t* p_iter);
 
 
 /// @brief 获取最后面的迭代子
 /// @param [in] *p_list      hlist对象
-/// @return klb_list_iter_t* iter迭代子
-/// @note 返回NULL, 表示无数据
+/// @return klb_hlist_iter_t* iter迭代子
+/// @note 1. 命名借鉴 STL end, 但实现不同: 返回尾节点, 非 STL 尾后哨兵; 空表为NULL
+///  \n   2. 反向遍历: for(p=end(...); NULL!=p; p=prev(p))
+///  \n   3. 勿用 p!=end(...) 作正向循环结束条件
 KLB_API klb_hlist_iter_t* klb_hlist_end(klb_hlist_t* p_list);
 
 
 /// @brief 前一个迭代子
 /// @param [in] *p_iter      iter迭代子
-/// @return klb_list_iter_t* 前一个iter迭代子
-/// @note 和klb_hlist_end配合使用
+/// @return klb_hlist_iter_t* 前一个iter迭代子
+/// @note 与 klb_hlist_end 配合反向遍历, 至 NULL 结束
 KLB_API klb_hlist_iter_t* klb_hlist_prev(klb_hlist_iter_t* p_iter);
 
 
@@ -167,7 +174,7 @@ KLB_API void* klb_hlist_key(klb_hlist_iter_t* p_iter, int* p_key_len);
 /// @brief 更新数据(只能更新已经存在的key)
 /// @param [in] *p_list     hlist对象
 /// @param [in] *p_key      key关键字(非NULL)
-/// @param [in] key_len     key长度(按char计算)
+/// @param [in] key_len     key长度(按char计算, >=0; 0表示空key)
 /// @param [in] *p_data     数据
 /// @return void*   NULL.失败,未找到原数据; 非NULL.成功,被更新的数据
 /// @note 1. 只能更新已经存在的key
@@ -178,7 +185,7 @@ KLB_API void* klb_hlist_update(klb_hlist_t* p_list, const void* p_key, int key_l
 /// @brief 按key寻找迭代子
 /// @param [in] *p_list      hlist对象
 /// @param [in] *p_key       key关键字(非NULL)
-/// @param [in] key_len      key长度
+/// @param [in] key_len      key长度(按char计算, >=0; 0表示空key)
 /// @return klb_hlist_iter_t* 迭代子指针 或 NULL(未找到)
 KLB_API klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p_key, int key_len);
 
@@ -186,7 +193,7 @@ KLB_API klb_hlist_iter_t* klb_hlist_find_iter(klb_hlist_t* p_list, const void* p
 /// @brief 按key寻找值
 /// @param [in] *p_list      hlist对象
 /// @param [in] *p_key       key关键字(非NULL)
-/// @param [in] key_len      key长度
+/// @param [in] key_len      key长度(按char计算, >=0; 0表示空key)
 /// @return void* 数据指针 或 NULL(未找到)
 KLB_API void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, int key_len);
 
@@ -194,7 +201,7 @@ KLB_API void* klb_hlist_find(klb_hlist_t* p_list, const void* p_key, int key_len
 /// @brief 按key移除节点
 /// @param [in] *p_list      hlist对象
 /// @param [in] *p_key       key关键字(非NULL)
-/// @param [in] key_len      key长度
+/// @param [in] key_len      key长度(按char计算, >=0; 0表示空key)
 /// @return void* 数据指针 或 NULL(未找到)
 KLB_API void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, int key_len);
 
@@ -202,6 +209,8 @@ KLB_API void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, int
 /// @brief 对节点进行排序
 /// @param [in] *p_list      hlist对象
 /// @return 无
+/// @note 1. 按 key_len 升序, 同长则 memcmp 升序; 使用 libavutil/AV_QSORT, 不依赖 libc qsort/qsort_s
+///  \n   2. uClibc 等精简 libc 无 qsort_s; 见 coding-libc-portability / libc-portability
 KLB_API void klb_hlist_qsort(klb_hlist_t* p_list);
 
 

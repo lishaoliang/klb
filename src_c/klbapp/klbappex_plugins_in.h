@@ -2,7 +2,6 @@
 #define __KLBAPPEX_PLUGINS_IN_H__
 
 
-#include "klb_type.h"
 #include "klbapp/klbappex_plugins.h"
 #include "klbapp/klb_app_extension.h"
 #include "klbapp/klbappex_klua.h"
@@ -29,13 +28,13 @@ typedef struct klbappex_plugins_dl_t_
 
     struct
     {
-        klbapp_init_extension_cb    cb_init;        ///< init函数
-        klbapp_quit_extension_cb    cb_quit;        ///< quit函数   
-        klbapp_extension_count_cb   cb_count;       ///< count函数
-        klbapp_open_extension_cb    cb_open;        ///< open函数
+        klbappex_init_cb            cb_init;        ///< init函数
+        klbappex_quit_cb            cb_quit;        ///< quit函数   
+        klbappex_ex_count_cb        cb_count;       ///< count函数
+        klbappex_ex_open_cb         cb_open;        ///< open函数
 
-        klbapp_kluaprelib_count_cb  cb_prelib_count;///< klua预加载库 数目
-        klbapp_open_kluaprelib_cb   cb_open_prelib; ///< 打开 klua预加载函数
+        klbappex_pre_count_cb       cb_prelib_count;///< klua预加载库 数目
+        klbappex_pre_open_cb        cb_open_prelib; ///< 打开 klua预加载函数
     };
 }klbappex_plugins_dl_t;
 

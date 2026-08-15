@@ -8,7 +8,7 @@
 /// @brief  list节点 OR 迭代子
 typedef struct klb_nlist_iter_t_
 {
-    void*               p_data;         ///< 节点数据
+    void*                p_data;         ///< 节点数据
 
     klb_nlist_iter_t*    p_prev;         ///< 前一个节点
     klb_nlist_iter_t*    p_next;         ///< 后一个节点
@@ -22,7 +22,7 @@ typedef struct klb_nlist_t_
     klb_nlist_iter_t*    p_head;         ///< 起始节点
     klb_nlist_iter_t*    p_tail;         ///< 末尾节点
 
-    uint32_t            size;           ///< 节点成员数目
+    uint32_t             size;           ///< 节点成员数目
 }klb_nlist_t;
 
 
@@ -303,3 +303,5 @@ klb_nlist_iter_t* klb_nlist_prev(klb_nlist_iter_t* p_iter)
 
     return p_iter->p_prev;
 }
+
+//end

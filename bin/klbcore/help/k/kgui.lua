@@ -2,6 +2,8 @@
 -- Copyright(c) 2020, LGPL All Rights Reserved
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  GUI接口
+--   \n require("kgui")
+--   \n C导出文件: ./klb/src_c/klua/klua_base/klua_kgui.c
 -- @version 0.1
 --]]
 

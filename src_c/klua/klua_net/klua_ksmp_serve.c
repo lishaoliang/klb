@@ -108,7 +108,7 @@ static int call_co_recv_text_klua_ksmpserve(klua_ksmpserve_t* p_serve)
 
         p_serve->co_recv = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
 
         klb_buf_t* p_txt = klb_nlist_pop_head(p_serve->p_text_nlist);
@@ -406,7 +406,7 @@ static int call_co_accept_klua_ksmpserve_listen(klua_ksmpserve_listen_t* p_liste
 
         p_listen->co_accept = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_accept 函数; 这里会存在执行函数的交替执行
 
         klb_netlisten_socket_t* p_listen_socket = (klb_netlisten_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
@@ -449,7 +449,7 @@ static int call_co_accept_end_klua_ksmpserve_listen(klua_ksmpserve_listen_t* p_l
 }
 
 /// @brief 当监听到socket连接建立时回调函数
-static int on_accept_klua_ksmpserve_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
+static int on_accept_klua_ksmpserve_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls)
 {
     klua_ksmpserve_listen_t* p_listen = (klua_ksmpserve_listen_t*)p_conn->p_udata;
 
@@ -711,7 +711,7 @@ static int call_co_recv_klua_ksmpserverpc(klua_ksmpserverpc_t* p_serve)
 
         p_serve->co_recv = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv 函数; 这里会存在执行函数的交替执行
         klb_buf_t* p_buf = klb_nlist_pop_head(p_serve->p_rpc_nlist);
         char* p_data = p_buf->p_buf + p_buf->start + sizeof(klb_mnp_rpc_t);
@@ -822,7 +822,7 @@ static int klua_ksmpserverpc_send(lua_State* L, klb_mnp_rpc_method_e method)
         size_t json_len = 0;
         const char* p_json = luaL_checklstring(L, base_idx + 1, &json_len);    ///< base_idx = 2时: @3 JSON数据
 
-        ret = klb_smpserverpc_conn_send(p_serve->p_serve_conn, KLB_MNP_RPC_JSON, method, sequence, p_json, (int)json_len);
+        ret = klb_smpserverpc_conn_send(p_serve->p_serve_conn, KLB_MNP_RPC_JSON, method, sequence, (const uint8_t*)p_json, (int)json_len);
     }
 
     lua_pushinteger(L, ret);            ///< #1 错误码
@@ -1073,7 +1073,7 @@ static int call_co_accept_klua_ksmpserverpc_listen(klua_ksmpserverpc_listen_t* p
 
         p_listen->co_accept = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_accept 函数; 这里会存在执行函数的交替执行
 
         klb_netlisten_socket_t* p_listen_socket = (klb_netlisten_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
@@ -1116,7 +1116,7 @@ static int call_co_accept_end_klua_ksmpserverpc_listen(klua_ksmpserverpc_listen_
 }
 
 /// @brief 当监听到socket连接建立时回调函数
-static int on_accept_klua_ksmpserverpc_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls, const klb_socket_tls_param_t* p_tls_param)
+static int on_accept_klua_ksmpserverpc_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls)
 {
     klua_ksmpserverpc_listen_t* p_listen = (klua_ksmpserverpc_listen_t*)p_conn->p_udata;
 

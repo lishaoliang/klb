@@ -275,7 +275,7 @@ void klb_sleep(uint32_t ms)
 {
     if (ms <= 10)
     {
-        // Bug. 部分嵌入式平台, clock_nanosleep 函数无效
+        // Fixed Bug. [2025] 部分嵌入式平台, clock_nanosleep 函数无效
         // 这里替换成 select 休眠
 
         // (0毫秒, 10毫秒]休眠

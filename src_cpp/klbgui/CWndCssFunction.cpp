@@ -747,7 +747,7 @@ void CWnd::OnCssBackgroundColorFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, 
 
     if (KLBUI_CSSEX_get == method)
     {
-        (*p_out)[0] = (int64_t)p_css->GetBackgroundColor();
+        (*p_out)[0] = (int64_t)p_css->GetBackgroundColorFocus();
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -769,7 +769,7 @@ void CWnd::OnCssBackgroundColorDisable(CWnd* p_cwnd, int method, klb::CMap* p_in
 
     if (KLBUI_CSSEX_get == method)
     {
-        (*p_out)[0] = (int64_t)p_css->GetBackgroundColor();
+        (*p_out)[0] = (int64_t)p_css->GetBackgroundColorDisable();
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -1050,9 +1050,9 @@ void CWnd::OnCssBorderColor(CWnd* p_cwnd, int method, klb::CMap* p_in, klb::CMap
         p_css->GetBorderColor(&top, &right, &bottom, &left);
 
         (*p_out)[0] = (int64_t)top;
-        (*p_out)[0] = (int64_t)right;
-        (*p_out)[0] = (int64_t)bottom;
-        (*p_out)[0] = (int64_t)left;
+        (*p_out)[1] = (int64_t)right;
+        (*p_out)[2] = (int64_t)bottom;
+        (*p_out)[3] = (int64_t)left;
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -1078,9 +1078,9 @@ void CWnd::OnCssBorderColorFocus(CWnd* p_cwnd, int method, klb::CMap* p_in, klb:
         p_css->GetBorderColorFocus(&top, &right, &bottom, &left);
 
         (*p_out)[0] = (int64_t)top;
-        (*p_out)[0] = (int64_t)right;
-        (*p_out)[0] = (int64_t)bottom;
-        (*p_out)[0] = (int64_t)left;
+        (*p_out)[1] = (int64_t)right;
+        (*p_out)[2] = (int64_t)bottom;
+        (*p_out)[3] = (int64_t)left;
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -1106,9 +1106,9 @@ void CWnd::OnCssBorderColorDisable(CWnd* p_cwnd, int method, klb::CMap* p_in, kl
         p_css->GetBorderColorDisable(&top, &right, &bottom, &left);
 
         (*p_out)[0] = (int64_t)top;
-        (*p_out)[0] = (int64_t)right;
-        (*p_out)[0] = (int64_t)bottom;
-        (*p_out)[0] = (int64_t)left;
+        (*p_out)[1] = (int64_t)right;
+        (*p_out)[2] = (int64_t)bottom;
+        (*p_out)[3] = (int64_t)left;
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -1137,7 +1137,7 @@ void CWnd::BindCssFunction(const std::string& str, klb_cwnd_css_cb cb_func)
     klb_map_t* p_css_func_map = GetCssFunctionMap();
     if (p_css_func_map)
     {
-        // Bug. C 与 C++ 回调函数 的定义 在参数有差异
+        // Fixed Bug. [2025] C 与 C++ 回调函数 的定义 在参数有差异
         // 约定: C 指针绑定在 第一个位置, CPP指针绑定在第二个指针
         klb_map_set_ptr(p_css_func_map, str.c_str(), NULL, (void*)(cb_func));
     }

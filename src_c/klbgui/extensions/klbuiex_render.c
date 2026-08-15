@@ -128,7 +128,7 @@ static void redraw_wnd_hlist_klbuiex_render(klb_gui_t* p_gui, klb_hlist_t* p_hli
     {
         klb_wnd_t* p_wnd = (klb_wnd_t*)klb_hlist_data(p_iter);
 
-        // Bug. 这里还有一种情况: 放入刷新列表的窗口, 根本不在 所有需要绘制的窗口链中
+        // Fixed Bug. [2025] 这里还有一种情况: 放入刷新列表的窗口, 根本不在 所有需要绘制的窗口链中
         // 在这里排除: 检查其顶层窗口, 是否在 model/popup/messagebox 中
         if (is_in_model_popup_msgbox_klbuiex_render(p_gui, p_wnd))
         {

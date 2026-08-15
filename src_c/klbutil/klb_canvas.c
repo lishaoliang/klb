@@ -44,8 +44,14 @@ klb_canvas_t* klb_canvas_create(int w, int h, int color_fmt)
     {
     case KLB_COLOR_FMT_ARGB8888:
         {
-            p_canvas->pitch = (int64_t)w * 4;
-            p_canvas->mem_len = p_canvas->pitch * h;
+            int64_t pitch = (int64_t)w * 4;
+            if (pitch <= 0 || (0 < h && pitch > INT64_MAX / h))
+            {
+                KLB_FREE(p_canvas);
+                return NULL;
+            }
+            p_canvas->pitch = pitch;
+            p_canvas->mem_len = pitch * h;
             p_canvas->p_addr = KLB_MALLOC(uint8_t, (size_t)p_canvas->mem_len, 0);
         }
         break;
@@ -732,3 +738,5 @@ int klb_canvas_ioctrl_opt8(klb_canvas_t* p_canvas, int opt, void* ptr1, void* pt
 //
 //    return 0;
 //}
+
+//end

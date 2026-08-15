@@ -225,6 +225,7 @@ static int klua_klpc_module_response(lua_State* L)
     ptr->p_data = luaseri_map_binary_pack(L, 2); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
+    ptr->dst_name[KLUA_LPC_NAME_BUF - 1] = '\0';
 
     if (0 != klua_thread_push_lpc_msg(p_name, ptr))
     {
@@ -266,6 +267,7 @@ static int klua_klpc_module_notify(lua_State* L)
     ptr->p_data = luaseri_map_binary_pack(L, 2); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
+    ptr->dst_name[KLUA_LPC_NAME_BUF - 1] = '\0';
 
     if (0 != klua_thread_push_lpc_msg(p_name, ptr))
     {
@@ -496,6 +498,7 @@ static int klua_klpc_post(lua_State* L)
     ptr->p_data = luaseri_map_binary_pack(L, 2); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
+    ptr->dst_name[KLUA_LPC_NAME_BUF - 1] = '\0';
 
     int ret = klua_thread_push_lpc_msg(p_name, ptr);
     if (0 != ret)
@@ -529,7 +532,9 @@ static int klua_klpc_co_call(lua_State* L)
     ptr->p_data = luaseri_map_binary_pack(L, 2);  // pack buffer
 
     strncpy(ptr->dst_name, p_dst_name, KLUA_LPC_NAME_LEN);
+    ptr->dst_name[KLUA_LPC_NAME_BUF - 1] = '\0';
     strncpy(ptr->src_name, p_klpc->name, KLUA_LPC_NAME_LEN);
+    ptr->src_name[KLUA_LPC_NAME_BUF - 1] = '\0';
 
     if (0 == klua_thread_push_lpc_msg(p_dst_name, ptr))
     {
@@ -626,6 +631,7 @@ static int lib_klua_klpc_post(lua_State* L)
     ptr->p_data = luaseri_map_binary_pack(L, 1); // pack buffer
 
     strncpy(ptr->dst_name, p_name, KLUA_LPC_NAME_LEN);
+    ptr->dst_name[KLUA_LPC_NAME_BUF - 1] = '\0';
 
     int ret = klua_thread_push_lpc_msg(p_name, ptr);
     if (0 != ret)

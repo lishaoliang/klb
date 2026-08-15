@@ -10,7 +10,6 @@
 #ifndef __KLB_MPOOL_H__
 #define __KLB_MPOOL_H__
 
-#include "klb_type.h"
 #include "klbmem/klb_buf.h"
 
 #if defined(__cplusplus)

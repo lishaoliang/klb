@@ -1,6 +1,5 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbnet/klb_socket.h"
-#include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_log.h"
 #include "klbthird/sds.h"
@@ -47,9 +46,6 @@ int klb_socket_init()
     signal(SIGPIPE, SIG_IGN);
 #endif
 
-    // tls
-    klb_socket_tls_init();
-
     s_klb_socket_count += 1;
     return 0;
 }
@@ -59,9 +55,6 @@ void klb_socket_quit()
     if (0 < s_klb_socket_count)
     {
         s_klb_socket_count -= 1;
-
-        // tls
-        klb_socket_tls_quit();
 
 #ifdef _WIN32
         if (0 == s_klb_socket_count)
@@ -408,7 +401,8 @@ klb_socket_fd klb_socket_connect(const char* p_host, int port, int time_out)
     struct addrinfo* p_result = NULL;
 
     char str_port[16] = { 0 };
-    snprintf(str_port, 12, "%d", port); // 服务端口
+    snprintf(str_port, sizeof(str_port), "%d", port); // 服务端口
+    str_port[sizeof(str_port) - 1] = '\0';
 
     int ret = getaddrinfo(p_host, str_port, NULL, &p_result);
     if (0 == ret)
@@ -485,7 +479,8 @@ klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect)
 #ifdef _WIN32
     return INVALID_SOCKET;
 #else
-    klb_socket_fd fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    // Fixed Bug. [2026] Unix 域须 AF_UNIX + sun_family=AF_UNIX, 非 AF_INET
+    klb_socket_fd fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (INVALID_SOCKET == fd)
     {
         return INVALID_SOCKET;
@@ -504,8 +499,9 @@ klb_socket_fd klb_socket_listen_unix(const char* p_path, int max_connect)
     klb_socket_set_block(fd, false);
 
     // 绑定 
-    addr.sun_family = AF_INET;
-    strncpy(addr.sun_path, p_path, sizeof(addr.sun_path) - 1);
+    addr.sun_family = AF_UNIX;
+    strncpy(addr.sun_path, p_path, sizeof(addr.sun_path));
+    addr.sun_path[sizeof(addr.sun_path) - 1] = '\0';
 
     unlink(p_path);
 

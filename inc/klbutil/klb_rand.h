@@ -21,7 +21,7 @@ extern "C" {
 /// @brief 伪随机字符串
 /// @param [in,out] *p_dest
 /// @param [in]     str_len
-/// @return char* 返回p_dest
+/// @return char* 成功返回p_dest; NULL.失败(p_dest为NULL或str_len<0)
 /// @note  set_end = true: 缓存长度需要 str_len + 1
 KLB_API char* klb_rand_string(char* p_dest, int str_len, bool set_end);
 
@@ -29,7 +29,7 @@ KLB_API char* klb_rand_string(char* p_dest, int str_len, bool set_end);
 /// @brief 伪随机首位不为0的正整数(10进制)
 /// @param [in,out] *p_dest
 /// @param [in]     str_len
-/// @return char* 返回p_dest
+/// @return char* 成功返回p_dest; NULL.失败(p_dest为NULL或str_len<0)
 /// @note set_end = true: 缓存长度需要 str_len + 1
 KLB_API char* klb_rand_integer(char* p_dest, int str_len, bool set_end);
 

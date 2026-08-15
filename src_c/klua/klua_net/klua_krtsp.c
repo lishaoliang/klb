@@ -115,7 +115,7 @@ static int call_co_recv_text_klua_krtspclient(klua_krtspclient_t* p_client)
 
         p_client->co_recv = NULL; // 清空
 
-        // Bug. 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
+        // Fixed Bug. [2025] 当调用 lua_pcall 函数之后, 函数执行到 Lua 层
         // 在 Lua 可能会依然调用 co_recv(klua_krtspclient_co_recv) 函数; 这里会存在执行函数的交替执行
 
         klb_buf_t* p_txt = klb_nlist_pop_head(p_client->p_text_nlist);
