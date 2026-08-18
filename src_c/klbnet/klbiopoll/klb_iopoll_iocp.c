@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#ifdef _WIN32
+// 默认不启用; IOCP 实现未完善. 显式 -D__KLB_IOPOLL_IOCP__ 时编译
+#if defined(__KLB_IOPOLL_IOCP__)
 
 #include "klbnet/klb_iopoll_in.h"
 #include "klbmem/klb_mem.h"
@@ -613,5 +614,5 @@ klb_iopoll_ops_t g_klb_iopoll_ops = {
     .loop_once = klb_iocp_loop_once,
 };
 
-#endif // _WIN32
+#endif // __KLB_IOPOLL_IOCP__
 //end

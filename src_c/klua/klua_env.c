@@ -135,8 +135,10 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     // 注册标准扩展 C
     klua_register_extension_std(p_env);
 
+#if !defined(__KLB_NO_CPP__)
     // 注册标准扩展 CPP
     klua_register_extension_std_cpp(p_env);
+#endif
 
     // Note. 移除 lua环境初始化 klua_env_init, 在 klua_env_create 中调用
     // 调整成 由调用者 在 klua_env_create 之后 调用 klua_env_doinit 完成

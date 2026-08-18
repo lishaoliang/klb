@@ -4,7 +4,9 @@
 #include "klua/extension/klua_ex_object.h"
 #include "klua/extension/klua_ex_bufagent.h"
 #include "klua/extension/klua_ex_time.h"
+#if !defined(__KLB_NO_GUI__)
 #include "klua/extension/klua_ex_gui.h"
+#endif
 #include "klua/extension/klua_ex_netmulti.h"
 #include "klua/extension/klua_ex_lpc.h"
 #include "klua/extension/klua_ex_coroutine.h"
@@ -30,8 +32,10 @@ int klua_register_extension_std(klua_env_t* p_env)
     // LPC: 本地(跨Lua线程)过程调用(Local Procedure Call Protocol)
     klua_ex_register_lpc(p_env);
 
+#if !defined(__KLB_NO_GUI__)
     // gui
     klua_ex_register_gui(p_env);
+#endif
 
     return 0;
 }

@@ -340,9 +340,13 @@ static void klua_kwnd_createmeta(lua_State* L)
 
 static int klua_kgui_using_cpp(lua_State* L)
 {
+#if defined(__KLB_NO_CPP__)
+    return luaL_error(L, "CPP gui is disabled (no-cpp)");
+#else
     klua_using_cpp_gui(klua_env_get_by_L(L));
 
     return 0;
+#endif
 }
 
 static int klua_kgui_set_default_css(lua_State* L)

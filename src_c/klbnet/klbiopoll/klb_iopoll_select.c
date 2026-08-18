@@ -1,7 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#ifndef _WIN32
 
-// 引用select之前定义
+// 引用 select 之前定义
 #define FD_SETSIZE                  1024
 
 #include "klbnet/klb_iopoll_in.h"
@@ -396,7 +395,5 @@ klb_iopoll_ops_t g_klb_iopoll_ops = {
     .closing = klb_ioselect_closing,
     .loop_once = klb_ioselect_loop_once,
 };
-
-#endif // _WIN32
 
 //end

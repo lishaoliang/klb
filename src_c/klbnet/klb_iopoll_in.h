@@ -3,7 +3,7 @@
 //
 /// @file    klb_iopoll_in.h
 /// @author  随风(https://gitee.com/klua/klb)
-/// @brief   网络底层IO模型
+/// @brief   网络底层 IO 模型 (默认 select; Win 可选 __KLB_IOPOLL_IOCP__)
 /// @version 0.1
 /// @history 修改历史
 ///  \n [2026] 创建文件

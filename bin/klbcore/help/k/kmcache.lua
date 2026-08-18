@@ -31,9 +31,9 @@ kmcache.get = function (key)
 end
 
 
--- @brief 获取总数
+-- @brief 获取条目总数
 -- @return [number(int)] 总数
-kmcache.size = function (key)
+kmcache.size = function ()
 	return 0
 end
 

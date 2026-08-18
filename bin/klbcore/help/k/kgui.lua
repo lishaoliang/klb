@@ -78,6 +78,13 @@ kgui.get_shwnd_css = function (path, ...)
 end
 
 
+-- @brief 是否多画布图层模式 (modal/popup/messagebox 分画布)
+-- @return [boolean] true 多画布; false 单画布
+kgui.is_multi_canvas_layer = function ()
+	return false
+end
+
+
 -- @brief 加载图片
 -- @param [in] key[string]			关键字
 -- @param [in] path[string]			图片路径
@@ -86,6 +93,22 @@ kgui.load_image = function (key, path)
 	return 0
 end
 
+
+-- @brief 清空消息事件队列
+-- @return 无
+kgui.clear_msg = function ()
+	return
+end
+
+
+-- @brief 获取窗口 kwnd 操作接口
+-- @param [in] path[string]			窗口路径: eg. "/home/btn1"
+-- @return [userdata] kwnd; 失败 nil
+kgui.get_kwnd = function (path)
+	return nil
+end
+
+
 -- @brief 添加窗口
 -- @param [in] t[string]			窗口/控件类型: eg. "kbutton"
 -- @param [in] path[string]			窗口路径名: eg. "/home/btn1"
@@ -93,8 +116,9 @@ end
 -- @param [in] y[number(int)]		相对父窗口y坐标
 -- @param [in] w[number(int)]		宽
 -- @param [in] h[number(int)]		高
+-- @param [in] style[number(int)]	[可选] 样式, 默认 0
 -- @return [number(int)] 	0.成功; 非0.失败
-kgui.append = function (t, path, x, y, w, h)
+kgui.append = function (t, path, x, y, w, h, style)
 	return 0
 end
 
@@ -226,6 +250,27 @@ kgui.messagebox_end = function ()
 end
 
 
+-- @brief 当前 modal 窗口数量
+-- @return [number(int)] 数量
+kgui.modal_num = function ()
+	return 0
+end
+
+
+-- @brief 当前 popup 窗口数量
+-- @return [number(int)] 数量
+kgui.popup_num = function ()
+	return 0
+end
+
+
+-- @brief 当前 messagebox 窗口数量
+-- @return [number(int)] 数量
+kgui.messagebox_num = function ()
+	return 0
+end
+
+
 -- @brief 显示或隐藏窗口
 -- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
 -- @param [in] show[boolean]		true.显示; false.隐藏
@@ -288,6 +333,14 @@ end
 -- @brief 窗口刷新(仅标记, UI框架决定刷新时机)
 -- @return 无
 kgui.refresh = function ()
+	return
+end
+
+
+-- @brief 更新全局 tip
+-- @param [in] tip[string]			[可选] tip 文本; 省略则刷新当前 tip
+-- @return 无
+kgui.update_tip = function (tip)
 	return
 end
 
@@ -360,7 +413,65 @@ end
 -- 		调小,精度略微提高, 降低框架性能
 --		调大,精度略微降低, 提高框架性能
 kgui.ticker_interval = function (interval)
-	return 
+	return
+end
+
+
+-- @brief 绑定/解绑用户图层对应窗口
+-- @param [in] path[string]			[可选] 窗口路径; 省略则解绑
+-- @return [number(int)] 0 成功; 非 0 失败
+kgui.bind_udatalayer = function (path)
+	return 0
+end
+
+
+-- @brief 移动用户图层
+-- @param [in] x[number(int)]		[可选] x 坐标, 默认 0
+-- @param [in] y[number(int)]		[可选] y 坐标, 默认 0
+-- @return 无
+kgui.move_udatalayer = function (x, y)
+	return
+end
+
+
+-- @brief 显示/隐藏用户图层
+-- @param [in] show[boolean]		[可选] 默认 false
+-- @return 无
+kgui.show_udatalayer = function (show)
+	return
+end
+
+
+-- @brief 绑定/解绑等待图层对应窗口
+-- @param [in] path[string]			[可选] 窗口路径; 省略则解绑
+-- @return [number(int)] 0 成功; 非 0 失败
+kgui.bind_waitlayer = function (path)
+	return 0
+end
+
+
+-- @brief 移动等待图层
+-- @param [in] x[number(int)]		[可选] x 坐标, 默认 0
+-- @param [in] y[number(int)]		[可选] y 坐标, 默认 0
+-- @return 无
+kgui.move_waitlayer = function (x, y)
+	return
+end
+
+
+-- @brief 开启/关闭等待图层
+-- @param [in] on[boolean]			[可选] 默认 false
+-- @return 无
+kgui.wait = function (on)
+	return
+end
+
+
+-- @brief 设置/获取是否完整绘制事件流程
+-- @param [in] is_full[boolean]		[可选] 设置时传入; 省略则只读当前值
+-- @return [boolean] 是否完整绘制
+kgui.redraw_full_event = function (is_full)
+	return false
 end
 
 

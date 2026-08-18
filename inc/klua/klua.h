@@ -213,10 +213,12 @@ KLB_API int klua_open_kkpa(lua_State* L);
 KLB_API int klua_open_klpc(lua_State* L);
 
 
+#if !defined(__KLB_NO_GUI__)
 /// @brief 扩展库"kgui"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_kgui(lua_State* L);
+#endif
 
 
 /// @brief 扩展库"kurl"
@@ -225,6 +227,7 @@ KLB_API int klua_open_kgui(lua_State* L);
 KLB_API int klua_open_kurl(lua_State* L);
 
 
+#if !defined(__KLB_NO_NET_PROTO__)
 /// @brief 扩展库"kmnp"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -243,12 +246,15 @@ KLB_API int klua_open_khttp_flv(lua_State* L);
 KLB_API int klua_open_khttp_mnp(lua_State* L);
 KLB_API int klua_open_kws_flv(lua_State* L);
 KLB_API int klua_open_kws_mnp(lua_State* L);
+#endif
 
 
+#if !defined(__KLB_NO_FORMAT__)
 /// @brief 扩展库"kh26x": h26x文件读取
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_kh26x(lua_State* L);
+#endif
 
 
 /// @brief 预加载 宏KLUA_LOADLIBS 定义的所有库

@@ -319,8 +319,14 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_kthread, "kthread");
         klua_loadlib(L, klua_open_kkpa, "kkpa");
         klua_loadlib(L, klua_open_klpc, "klpc");
+
+#if !defined(__KLB_NO_GUI__)
         klua_loadlib(L, klua_open_kgui, "kgui");
+#endif
+
         klua_loadlib(L, klua_open_kurl, "kurl");
+
+#if !defined(__KLB_NO_NET_PROTO__)
         klua_loadlib(L, klua_open_kmnp, "kmnp");
         klua_loadlib(L, klua_open_ksmp, "ksmp");
         klua_loadlib(L, klua_open_krtsp, "krtsp");
@@ -328,7 +334,11 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_khttp_mnp, "khttp_mnp");
         klua_loadlib(L, klua_open_kws_flv, "kws_flv");
         klua_loadlib(L, klua_open_kws_mnp, "kws_mnp");
+#endif
+
+#if !defined(__KLB_NO_FORMAT__)
         klua_loadlib(L, klua_open_kh26x, "kh26x");
+#endif
     }
 
     // 预加载扩展包

@@ -357,22 +357,7 @@
     <ClInclude Include="..\..\inc\klbnet\klb_http.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_listen.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_multiplex.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_ncm.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_nsp.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_socket_tls.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_websocket.h">
@@ -476,318 +461,6 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbthird\zlib.h">
       <Filter>inc\klbthird</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\aes.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1_mac.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1err.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\asn1t.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\async.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\asyncerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\bio.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\bioerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\blowfish.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\bn.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\bnerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\buffer.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\buffererr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\camellia.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\cast.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\cmac.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\cms.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\cmserr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\comp.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\comperr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\conf.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\conf_api.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\conferr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\crypto.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\cryptoerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ct.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\cterr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\des.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\dh.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\dherr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\dsa.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\dsaerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\dtls1.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\e_os2.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ebcdic.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ec.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ecdh.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ecdsa.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ecerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\engine.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\engineerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\err.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\evp.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\evperr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\hmac.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\idea.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\kdf.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\kdferr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\lhash.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\md2.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\md4.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\md5.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\mdc2.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\modes.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\obj_mac.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\objects.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\objectserr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ocsp.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ocsperr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\opensslconf.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\opensslv.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ossl_typ.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pem.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pem2.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pemerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs7.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs7err.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs12.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\pkcs12err.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rand.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rand_drbg.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\randerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rc2.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rc4.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rc5.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ripemd.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rsa.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\rsaerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\safestack.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\seed.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\sha.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\srp.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\srtp.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ssl.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ssl2.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ssl3.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\sslerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\stack.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\store.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\storeerr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\symhacks.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\tls1.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ts.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\tserr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\txt_db.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\ui.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\uierr.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\whrlpool.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509_vfy.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509err.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509v3.h">
-      <Filter>inc\klbthird\openssl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbthird\openssl\x509v3err.h">
-      <Filter>inc\klbthird\openssl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\config.h">
       <Filter>src_c</Filter>
@@ -1059,9 +732,6 @@
     <ClInclude Include="..\..\src_c\libavutil\xtea.h">
       <Filter>src_c\libavutil</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops.h">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h">
       <Filter>src_c\klbthird\sds</Filter>
     </ClInclude>
@@ -1072,9 +742,6 @@
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_lpc.h">
-      <Filter>src_c\klua\extension</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_multiplex.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h">
@@ -1134,12 +801,6 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_coroutine.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbnet\CListen.hpp">
-      <Filter>inc_hpp\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbnet\CMultiplex.hpp">
-      <Filter>inc_hpp\klbnet</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_h26x.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
@@ -1151,9 +812,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src_c\klua\lua-skynet\lua-seri.h">
       <Filter>src_c\klua\lua-skynet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_nsc.h">
-      <Filter>inc\klbnet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbthird\cJSON.h">
       <Filter>inc\klbthird</Filter>
@@ -1174,9 +832,6 @@
       <Filter>src_c\klua\klua_util</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_seri.h">
-      <Filter>inc\klua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klua\klua_multiplex.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_map_serialize.h">
@@ -1203,38 +858,8 @@
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h">
       <Filter>src_c\klua\klua_util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\kpa_rtp.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src_packages\kpa_rtsp\rtp.h">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc_hpp\klbbase\CPackage.hpp">
       <Filter>inc_hpp\klbbase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbnet\CNcm.hpp">
-      <Filter>inc_hpp\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbnet\CNsc.hpp">
-      <Filter>inc_hpp\klbnet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc_hpp\klbnet\CNsp.hpp">
-      <Filter>inc_hpp\klbnet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc_hpp\klbplatform\CDynamicLink.hpp">
       <Filter>inc_hpp\klbplatform</Filter>
@@ -1700,13 +1325,9 @@
     <None Include="..\..\src_packages\Makefile">
       <Filter>src_packages</Filter>
     </None>
-    <None Include="..\..\Makefile" />
     <None Include="..\..\build\linux\Makefile">
       <Filter>build\linux</Filter>
     </None>
-    <None Include="..\..\install.mk" />
-    <None Include="..\..\clip.mk" />
-    <None Include="..\..\path.mk" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_c\compat\getopt.c">
@@ -1757,22 +1378,7 @@
     <ClCompile Include="..\..\src_c\klbnet\klb_http.c">
       <Filter>src_c\klbnet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_listen.c">
-      <Filter>src_c\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_multiplex.c">
-      <Filter>src_c\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm.c">
-      <Filter>src_c\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_nsp.c">
-      <Filter>src_c\klbnet</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c">
-      <Filter>src_c\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c">
       <Filter>src_c\klbnet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c">
@@ -2015,9 +1621,6 @@
     <ClCompile Include="..\..\src_c\libavutil\xtea.c">
       <Filter>src_c\libavutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbthird\http_parser.c">
       <Filter>src_c\klbthird</Filter>
     </ClCompile>
@@ -2028,9 +1631,6 @@
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_lpc.c">
-      <Filter>src_c\klua\extension</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_multiplex.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c">
@@ -2053,9 +1653,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c">
       <Filter>src_c\klua\klua_multithread</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp.c">
-      <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c">
       <Filter>src_c\klua\klua_net</Filter>
@@ -2126,12 +1723,6 @@
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kcoro.c">
       <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbnet\CListen.cpp">
-      <Filter>src_cpp\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbnet\CMultiplex.cpp">
-      <Filter>src_cpp\klbnet</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_h26x.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
@@ -2147,20 +1738,11 @@
     <ClCompile Include="..\..\src_c\klua\lua-skynet\lua-seri.c">
       <Filter>src_c\klua\lua-skynet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kudp.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktcp.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbbase\klb_package.c">
       <Filter>src_c\klbbase</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kpackage.c">
       <Filter>src_c\klua\klua_base</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws.c">
-      <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kmnp.c">
       <Filter>src_c\klua\klua_net</Filter>
@@ -2180,35 +1762,11 @@
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_mnp.c">
       <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_mnp.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_rtsp.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_flv.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_mnp.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_http_rtp.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_ncm_ops\klb_ncm_ops_ws_rtp.c">
-      <Filter>src_c\klbnet\klb_ncm_ops</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c">
       <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c">
       <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_nsc.c">
-      <Filter>src_c\klbnet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbthird\cJSON.c">
       <Filter>src_c\klbthird</Filter>
@@ -2218,9 +1776,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_map.c">
       <Filter>src_c\klbutil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksip.c">
-      <Filter>src_c\klua\klua_net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_adt.c">
       <Filter>src_c\klbutil</Filter>
@@ -2251,36 +1806,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_kobject.c">
       <Filter>src_c\klua\klua_util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\klua_kpa_rtsp.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_tcp.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_client_inter.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtcp.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtsp_udp_rtp.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_rtsp\kpa_rtp.cpp">
-      <Filter>src_packages\kpa_rtsp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbnet\CNcm.cpp">
-      <Filter>src_cpp\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbnet\CNsc.cpp">
-      <Filter>src_cpp\klbnet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_cpp\klbnet\CNsp.cpp">
-      <Filter>src_cpp\klbnet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_cpp\klbplatform\CDynamicLink.cpp">
       <Filter>src_cpp\klbplatform</Filter>

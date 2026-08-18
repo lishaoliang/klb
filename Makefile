@@ -1,8 +1,9 @@
 # Doc-Encode UTF8, Unix(LF)
 # 编译命令 : make
 # make MY_VERSION=release MY_TOOL_CHAIN=arm-linux-gnueabi- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
-# 裁剪参数 MY_CLIP="no-pcre2 no-lpeg no-sqlite no-zlib no-packages"
-# 裁剪参数 MY_CLIP="no-all"
+# 裁剪参数 MY_CLIP="min-core"
+# 裁剪参数 MY_CLIP="--disable-gui --disable-zlib"   (同 no-gui no-zlib)
+# 裁剪参数 MY_CLIP="no-pcre2 no-lpeg ..."             (min-core+加库须 clip-build --enable / use-*)
 
 SHELL = /bin/bash
 PWD = `pwd`
@@ -33,49 +34,23 @@ CP_RF	:= -cp -rf
 ###########################################################
 # 基础C/C++文件
 
-# 从目录检索需要编译的c文件
+# 硬核心 + 运行最小集 (klbapp / klua / socket+iopoll; 可选模块见 clip.mk)
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
-# klbnet - flv, http, mnp, rtsp, sip, smp, webrtc, ws
+# klbnet — socket / iopoll / netconn / netmulti (协议栈见 clip.mk no-net-proto)
 MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klbiopoll ./src_c/klbnet/klblisten
-MY_DIRS += ./src_c/klbnet/klbflv ./src_c/klbnet/klbflvclient ./src_c/klbnet/klbflvserve
-MY_DIRS += ./src_c/klbnet/klbhttp ./src_c/klbnet/klbhttpclient ./src_c/klbnet/klbhttpserve
-MY_DIRS += ./src_c/klbnet/klbmnp ./src_c/klbnet/klbmnpclient ./src_c/klbnet/klbmnpserve
-MY_DIRS += ./src_c/klbnet/klbrtp ./src_c/klbnet/klbrtsp ./src_c/klbnet/klbrtspclient ./src_c/klbnet/klbrtspserve
-MY_DIRS += ./src_c/klbnet/klbsip ./src_c/klbnet/klbsipclient ./src_c/klbnet/klbsipserve
-MY_DIRS += ./src_c/klbnet/klbsmp ./src_c/klbnet/klbsmpclient ./src_c/klbnet/klbsmpserve
-MY_DIRS += ./src_c/klbnet/klbwebrtc ./src_c/klbnet/klbwebrtcclient ./src_c/klbnet/klbwebrtcserve
-MY_DIRS += ./src_c/klbnet/klbws ./src_c/klbnet/klbwsclient ./src_c/klbnet/klbwsserve
 
-# klbformat
-MY_DIRS += ./src_c/klbformat
-
-# klbgui
-MY_DIRS += ./src_c/klbgui ./src_c/klbgui/extensions ./src_c/klbgui/widgets ./src_c/klbgui/subviews ./src_c/klbgui/wnd
-MY_DIRS += ./src_c/klbgui/shwnd
-
-# klua
+# klua — 框架 + 最小 bundled (cjson / LuaXML / lfs; 协议/format 绑定见 clip.mk)
 MY_DIRS += ./src_c/klua ./src_c/klua/extension ./src_c/klua/klua_platform ./src_c/klua/klua_util ./src_c/klua/klua_base
-MY_DIRS += ./src_c/klua/klua_multithread ./src_c/klua/klua_net ./src_c/klua/klua_format
+MY_DIRS += ./src_c/klua/klua_multithread
 MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/LuaXML_130610 ./src_c/klua/luafilesystem-2.0/src
 
-# klbapp
+# klbapp — 主应用程序框架
 MY_DIRS += ./src_c/klbapp
 
-# libavutil
+# compat / libavutil / klbthird
 MY_DIRS += ./src_c/compat ./src_c/libavutil
-
-# 第三方库
 MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
-MY_DIRS += ./src_c/qrencode-4.1.1
-
-# cpp / src_cpp
-MY_DIRS += ./src_cpp/klbplatform ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbbase
-MY_DIRS += ./src_cpp/klbnet
-MY_DIRS += ./src_cpp/klbgui ./src_cpp/klbgui/wnd ./src_cpp/klbgui/widgets
-MY_DIRS += ./src_cpp/klua ./src_cpp/klua/extension
-MY_DIRS += ./src_cpp/klbapp
-
 
 ###########################################################
 # 头文件目录
@@ -85,13 +60,8 @@ MY_INCLUDES := -I ./src_c -I ./inc -I ./src_c/compat
 MY_INCLUDES += -I ./src_c/klbthird/sds
 MY_INCLUDES += -I ./inc/klbthird
 
-# 第三方库头文件
+# klua bundled 头文件 (qrencode 等可选见 clip.mk)
 MY_INCLUDES += -I ./src_c/klua/lua-5.4.6/src
-MY_INCLUDES += -I ./src_c/qrencode-4.1.1
-
-# cpp
-MY_INCLUDES += -I ./src_cpp -I ./inc_hpp
-
 
 ###########################################################
 # 裁剪代码
@@ -112,6 +82,14 @@ MY_CFLAGS := $(MY_CLIP_FLAGS)
 MY_DIRS += $(MY_CLIP_DIRS)
 MY_INCLUDES += $(MY_CLIP_INC)
 
+# 引用的动态库 (no-cpp 时不链 libstdc++)
+MY_LIB_DYNAMIC := -L ./lib -Bdynamic
+ifeq ($(filter no-cpp,$(MY_CLIP_TAG)),)
+MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
+else
+MY_LIB_DYNAMIC += -lpthread -lrt -ldl -lm
+endif
+
 
 ###########################################################
 
@@ -123,10 +101,6 @@ MY_CFLAGS += -DLUA_USE_LINUX
 
 # 引用的静态库
 MY_LIB_STATIC := -L ./lib -Bstatic
-
-# 引用的动态库
-MY_LIB_DYNAMIC := -L ./lib -Bdynamic
-MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
 
 # 链接选项
 MY_LDFLAGS := -Wl,--no-undefined
@@ -152,6 +126,7 @@ MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
 MY_SOURCES += $(MY_CLIP_SOURCES)
+MY_SOURCES := $(filter-out $(MY_CLIP_SOURCES_EXCLUDE),$(MY_SOURCES))
 
 # 编译中间文件统一放到 tmp/ 下, 目录结构与源码镜像
 MY_TMP_DIR := ./tmp
