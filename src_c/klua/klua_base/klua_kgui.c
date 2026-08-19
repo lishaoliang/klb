@@ -475,6 +475,27 @@ static int klua_kgui_is_multi_canvas_layer(lua_State* L)
     return 1;
 }
 
+static int klua_kgui_load_font(lua_State* L)
+{
+    const char* p_font_path = luaL_checkstring(L, 1);
+
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+    int ret = klb_gui_load_font(p_gui, p_font_path);
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
+static int klua_kgui_unload_font(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int ret = klb_gui_unload_font(p_gui);
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
 static int klua_kgui_load_image(lua_State* L)
 {
     const char* p_key = luaL_checkstring(L, 1);
@@ -482,6 +503,30 @@ static int klua_kgui_load_image(lua_State* L)
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
     int ret = klb_gui_load_image(p_gui, p_key, p_img_path);
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
+static int klua_kgui_image_size(lua_State* L)
+{
+    const char* p_key = luaL_checkstring(L, 1);
+
+    int w = 0, h = 0;
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    klb_gui_image_size(p_gui, p_key, &w, &h);
+
+    lua_pushinteger(L, w);
+    lua_pushinteger(L, h);
+    return 2;
+}
+
+static int klua_kgui_clear_image(lua_State* L)
+{
+    klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
+
+    int ret = klb_gui_clear_image(p_gui);
 
     lua_pushinteger(L, ret);
     return 1;
@@ -1062,8 +1107,15 @@ int klua_open_kgui(lua_State* L)
         // 画布
         { "is_multi_canvas_layer",      klua_kgui_is_multi_canvas_layer }, // 获取时候支持多画布图层模式
 
+        // 字库
+        { "load_font",          klua_kgui_load_font },      // 加载字库
+        { "unload_font",        klua_kgui_unload_font },    // 卸载字库
+
         // image
         { "load_image",         klua_kgui_load_image },     // 加载图片资源
+        { "image_size",         klua_kgui_image_size },     // 获取图片资源大小
+        { "clear_image",        klua_kgui_clear_image },    // 清空所有图片资源
+
 
         // 消息事件 队列
         { "clear_msg",          klua_kgui_clear_msg },      // 清空 消息事件队列

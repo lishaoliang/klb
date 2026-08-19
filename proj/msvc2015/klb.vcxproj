@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -195,6 +195,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd_ex.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_bufpoolfix.h" />
@@ -509,7 +510,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
   <ItemGroup>
     <None Include="..\..\build\linux\Makefile" />
     <None Include="..\..\src_c\libavutil\libavutil.v" />
-    <None Include="..\..\src_c\libavutil\Makefile" />  </ItemGroup>
+    <None Include="..\..\src_c\libavutil\Makefile" />
+  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp" />
     <ClCompile Include="..\..\src_cpp\klbgui\CCss.cpp" />
@@ -566,6 +568,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_gui_in.c" />
     <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klb_wnd_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_tip.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tip.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf.c" />
@@ -833,7 +836,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\zlib-1.2.11\inftrees.c" />
     <ClCompile Include="..\..\src_c\zlib-1.2.11\trees.c" />
     <ClCompile Include="..\..\src_c\zlib-1.2.11\uncompr.c" />
-    <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c" />  </ItemGroup>
+    <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c" />
+  </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\src_c\klbnet\klbsmp\klbsmp.txt" />
   </ItemGroup>

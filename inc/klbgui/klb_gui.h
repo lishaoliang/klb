@@ -163,13 +163,33 @@ KLB_API klb_wnd_create_cb klb_gui_get_creater(klb_gui_t* p_gui, const char* p_ty
 KLB_API klb_wnd_t* klb_gui_create_wnd(klb_gui_t* p_gui, const char* p_type, int x, int y, int w, int h);
 
 
+/// @brief 加载字库
+/// @param [in] *p_gui          GUI对象
+/// @param [in] *p_font_path    字库文件路径
+/// @return int 0.成功; 非0.失败(错误码)
+/// @note 透过主画布加载; 详见 klb_canvas_load_font
+KLB_API int klb_gui_load_font(klb_gui_t* p_gui, const char* p_font_path);
+
+
+/// @brief 卸载字库
+/// @param [in] *p_gui          GUI对象
+/// @return int 0.成功; 非0.失败(错误码)
+/// @note 透过主画布卸载; 详见 klb_canvas_unload_font
+KLB_API int klb_gui_unload_font(klb_gui_t* p_gui);
+
+
 /// @brief 加载图片资源
 KLB_API int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path);
-
 
 /// @brief 获取图片资源大小
 KLB_API int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w, int* p_out_h);
 
+
+/// @brief 清空所有图片资源
+/// @param [in] *p_gui          GUI对象
+/// @return int 0.成功; 非0.失败(错误码)
+/// @note 仅清理 klb_gui_load_image 加载的图片; 不清理窗口; 详见 klb_canvas_clear_image
+KLB_API int klb_gui_clear_image(klb_gui_t* p_gui);
 
 /// @brief 添加窗口
 /// @param [in] *p_gui          GUI对象

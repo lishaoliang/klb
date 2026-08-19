@@ -1314,6 +1314,9 @@
     <ClInclude Include="..\..\src_c\klbnet\klb_iopoll_in.h">
       <Filter>src_c\klbnet</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd_ex.h">
+      <Filter>inc\klbgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -1321,9 +1324,6 @@
     </None>
     <None Include="..\..\src_c\libavutil\Makefile">
       <Filter>src_c\libavutil</Filter>
-    </None>
-    <None Include="..\..\src_packages\Makefile">
-      <Filter>src_packages</Filter>
     </None>
     <None Include="..\..\build\linux\Makefile">
       <Filter>build\linux</Filter>
@@ -1846,24 +1846,6 @@
     <ClCompile Include="..\..\src_cpp\klbutil\CnVector.cpp">
       <Filter>src_cpp\klbutil</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_mnp\klua_kpa_mnp.cpp">
-      <Filter>src_packages\kpa_mnp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_flv\klua_kpa_flv.cpp">
-      <Filter>src_packages\kpa_flv</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_http\klua_kpa_http.cpp">
-      <Filter>src_packages\kpa_http</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_ws\klua_kpa_ws.cpp">
-      <Filter>src_packages\kpa_ws</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_mgui\klua_kpa_mgui.cpp">
-      <Filter>src_packages\kpa_mgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\kpa_sip\klua_kpa_sip.cpp">
-      <Filter>src_packages\kpa_sip</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c">
       <Filter>src_c\klbgui</Filter>
     </ClCompile>
@@ -2316,6 +2298,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_iocp.c">
       <Filter>src_c\klbnet\klbiopoll</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbgui\klb_wnd_ex.c">
+      <Filter>src_c\klbgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

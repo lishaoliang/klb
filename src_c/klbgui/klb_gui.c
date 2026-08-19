@@ -366,6 +366,26 @@ klb_wnd_t* klb_gui_create_wnd(klb_gui_t* p_gui, const char* p_type, int x, int y
     return ptr;
 }
 
+int klb_gui_load_font(klb_gui_t* p_gui, const char* p_font_path)
+{
+    if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_font)
+    {
+        return p_gui->p_canvas->vtable.load_font(p_gui->p_canvas, p_font_path);
+    }
+
+    return 1;
+}
+
+int klb_gui_unload_font(klb_gui_t* p_gui)
+{
+    if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.unload_font)
+    {
+        return p_gui->p_canvas->vtable.unload_font(p_gui->p_canvas);
+    }
+
+    return 1;
+}
+
 int klb_gui_load_image(klb_gui_t* p_gui, const char* p_key, const char* p_img_path)
 {
     if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.load_image)
@@ -381,6 +401,16 @@ int klb_gui_image_size(klb_gui_t* p_gui, const char* p_key, int* p_out_w, int* p
     if (NULL != p_gui->p_canvas)
     {
         return klb_canvas_image_size(p_gui->p_canvas, p_key, p_out_w, p_out_h);
+    }
+
+    return 1;
+}
+
+int klb_gui_clear_image(klb_gui_t* p_gui)
+{
+    if (NULL != p_gui->p_canvas && NULL != p_gui->p_canvas->vtable.clear_image)
+    {
+        return p_gui->p_canvas->vtable.clear_image(p_gui->p_canvas);
     }
 
     return 1;

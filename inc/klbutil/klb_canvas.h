@@ -110,6 +110,14 @@ typedef struct klb_canvas_vtable_t_
     /// @brief 获取字体高度
     int(*get_font_height)(klb_canvas_t* p_canvas);
 
+    /// @brief 加载字库
+    /// @return int 0.成功; 非0.失败
+    int(*load_font)(klb_canvas_t* p_canvas, const char* p_font_path);
+
+    /// @brief 卸载字库
+    /// @return int 0.成功; 非0.失败
+    int(*unload_font)(klb_canvas_t* p_canvas);
+
     /// @brief 加载图片
     /// @return int 0.成功; 非0.失败
     int(*load_image)(klb_canvas_t* p_canvas, const char* p_key, const char* p_path, int* p_w, int* p_h);
@@ -321,6 +329,12 @@ KLB_API uint32_t klb_canvas_get_draw_color(klb_canvas_t* p_canvas);
 KLB_API int klb_canvas_set_font_height(klb_canvas_t* p_canvas, int h);
 KLB_API int klb_canvas_get_font_height(klb_canvas_t* p_canvas);
 
+/// @brief 加载字库
+KLB_API int klb_canvas_load_font(klb_canvas_t* p_canvas, const char* p_font_path);
+
+/// @brief 卸载字库
+KLB_API int klb_canvas_unload_font(klb_canvas_t* p_canvas);
+
 
 /// @brief 使用颜色清屏幕
 /// @param [in] *p_canvas   画布对象
@@ -364,8 +378,14 @@ KLB_API int klb_canvas_draw_text(klb_canvas_t* p_canvas, const klb_rect_t* p_rec
 /// @brief 获取以当前字体大小, 绘制utf8文本所需要的宽高
 KLB_API int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_len, int* p_out_w, int* p_out_h);
 
+/// @brief 加载图片
+KLB_API int klb_canvas_load_image(klb_canvas_t* p_canvas, const char* p_key, const char* p_path, int* p_w, int* p_h);
+
 /// @brief 获取图片尺寸
 KLB_API int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out_w, int* p_out_h);
+
+/// @brief 清空所有图片资源
+KLB_API int klb_canvas_clear_image(klb_canvas_t* p_canvas);
 
 /// @brief 绘制图片
 KLB_API int klb_canvas_draw_image(klb_canvas_t* p_canvas, const klb_rect_t* p_dst_rect, const char* p_path);

@@ -133,6 +133,36 @@ int klb_canvas_get_font_height(klb_canvas_t* p_canvas)
     return 0;
 }
 
+int klb_canvas_load_font(klb_canvas_t* p_canvas, const char* p_font_path)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (NULL != p_canvas->vtable.load_font)
+    {
+        return p_canvas->vtable.load_font(p_canvas, p_font_path);
+    }
+
+    return 0;
+}
+
+int klb_canvas_unload_font(klb_canvas_t* p_canvas)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (NULL != p_canvas->vtable.unload_font)
+    {
+        return p_canvas->vtable.unload_font(p_canvas);
+    }
+
+    return 0;
+}
+
 int klb_canvas_draw_clear(klb_canvas_t* p_canvas)
 {
     if (NULL == p_canvas)
@@ -340,6 +370,21 @@ int klb_canvas_text_size(klb_canvas_t* p_canvas, const char* p_utf8, int utf8_le
     return 0;
 }
 
+int klb_canvas_load_image(klb_canvas_t* p_canvas, const char* p_key, const char* p_path, int* p_w, int* p_h)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (NULL != p_canvas->vtable.load_image)
+    {
+        return p_canvas->vtable.load_image(p_canvas, p_key, p_path, p_w, p_h);
+    }
+
+    return 0;
+}
+
 int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out_w, int* p_out_h)
 {
     if (NULL == p_canvas)
@@ -350,6 +395,21 @@ int klb_canvas_image_size(klb_canvas_t* p_canvas, const char* p_path, int* p_out
     if (p_canvas->vtable.image_size)
     {
         return p_canvas->vtable.image_size(p_canvas, p_path, p_out_w, p_out_h);
+    }
+
+    return 0;
+}
+
+int klb_canvas_clear_image(klb_canvas_t* p_canvas)
+{
+    if (NULL == p_canvas)
+    {
+        return 0;
+    }
+
+    if (NULL != p_canvas->vtable.clear_image)
+    {
+        return p_canvas->vtable.clear_image(p_canvas);
     }
 
     return 0;
