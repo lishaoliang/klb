@@ -3,7 +3,7 @@
 -- @file   wsdl.lua
 -- @brief  C wsdl, windows SDL, wlua专用, 支持win平台相关的解码显示等
 --   \n require("wsdl")
---   \n C导出文件: ./klb/wlua/wsdl/wsdl.cpp
+--   \n C导出文件: wlua/wsdl/wsdl.cpp
 -- @version 0.1
 --]]
 
@@ -41,40 +41,19 @@ end
 
 
 -- @brief 打开窗口
--- @param [in]      font_path[string]	字库路径: eg. './res/font/simsun.ttc'
 -- @param [in]      w[number(int)]		窗口宽
 -- @param [in]      h[number(int)]		窗口高
 -- @param [in]      title[string]		窗口标题
--- @return [string] 应用程序配置路径
-wsdl.open_wnd = function (font_path, w, h, title)
+-- @note 字库在开窗后由 kgui.load_font / klbui.load_font 加载 (canvas vtable.load_font)
+-- @return 无
+wsdl.open_wnd = function (w, h, title)
 	return 
 end
 
 
 -- @brief 关闭窗口
+-- @return 无
 wsdl.close_wnd = function ()
-	return
-end
-
-
--- @brief 送音视频解码显示
--- @param [in]      chnn[number(int)]		通道号
--- @param [in]      sidx[number(int)]		流序号
--- @param [in]      media[lightuserdata]	C指针: klb_buf_t*
--- @return 无
-wsdl.push_media = function (chnn, sidx, media)
-	return
-end
-
-
--- @brief 设置视频显示位置
--- @param [in]      idx[number(int)]		视频序号
--- @param [in]      x[number(int)]			x位置
--- @param [in]      y[number(int)]			y位置
--- @param [in]      w[number(int)]			宽
--- @param [in]      h[number(int)]			高
--- @return 无
-wsdl.set_video_pos = function (idx, x, y, w, h)
 	return
 end
 

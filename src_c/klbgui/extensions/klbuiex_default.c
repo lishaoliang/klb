@@ -20,7 +20,28 @@ typedef struct klbuiex_default_t_
 typedef void(*klbuiex_default_cb)(klbuiex_default_t* p_default, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
 //////////////////////////////////////////////////////////////////////////
-// 
+// 默认全局参考属性 (klbui_default_t)
+//
+// 控件创建前通过 klb_gui_default_css_set / klbui.default_css 可改本表.
+// 控件 css_init 通常从 klb_gui_get_std_default 复制 margin/padding 与各状态参考属性.
+//
+// 盒模型 (无伪类):
+//   margin  = 0, 0, 0, 0
+//   padding = 1, 1, 1, 1
+//
+// 参考属性分支 (C 字段 -> CSS 伪类, 键名见 klbui_css.md):
+//   normal  -> (无后缀)   常规
+//   focus   -> :focus     聚焦
+//   disable -> :disabled  不使能
+//   check   -> :checked   选中参考 (toggle 控件)
+//   input   -> :input     输入态
+//
+// 默认配色: Visual Studio 深色系; font-size=24; text-align=left
+//   normal   text #DCDCDC  border #505050  bg #1F1F1F
+//   focus    text #DCDC0A  border #DC5050  bg #1F1F1F
+//   disable  text #B4B4B4  border #505050  bg #1F1F1F
+//   check    text #0AD2D2  border #B450B4  bg #1F1F1F
+//   input    text #B4B4B4  border #505050  bg #1F1F1F
 
 static void klbuiex_default_init_normal(klbuicssex_attributes_t* p_normal)
 {
@@ -34,7 +55,7 @@ static void klbuiex_default_init_normal(klbuicssex_attributes_t* p_normal)
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
-    p_normal->background.image = sdsempty();
+    p_normal->background.image = NULL;
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
@@ -58,7 +79,7 @@ static void klbuiex_default_init_focus(klbuicssex_attributes_t* p_normal)
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
-    p_normal->background.image = sdsempty();
+    p_normal->background.image = NULL;
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
@@ -82,7 +103,7 @@ static void klbuiex_default_init_disable(klbuicssex_attributes_t* p_normal)
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
-    p_normal->background.image = sdsempty();
+    p_normal->background.image = NULL;
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
@@ -106,7 +127,7 @@ static void klbuiex_default_init_check(klbuicssex_attributes_t* p_normal)
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
-    p_normal->background.image = sdsempty();
+    p_normal->background.image = NULL;
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
@@ -130,7 +151,7 @@ static void klbuiex_default_init_input(klbuicssex_attributes_t* p_normal)
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
-    p_normal->background.image = sdsempty();
+    p_normal->background.image = NULL;
 
     p_normal->border.width.top = 1;
     p_normal->border.width.right = 1;
@@ -448,17 +469,17 @@ static void klbuiex_default_init_func_map(klbuiex_default_t* p_default)
     klb_map_t* ptr = &p_default->func_map;
 
     //////////////////////////////////////////////
-    // 则添加全局属性解析方法
-    // 仿 CSS 方法
+    // 全局参考属性 CSS 键 (property[:checked][:focus][:disabled][:input])
+    // 用户文档: klbui_default_css.md
 
-    // 外边距 margin
+    // 外边距 margin (无伪类)
     KLBUIEX_default_bind("margin", on_klbuiex_default_margin);
     KLBUIEX_default_bind("margin-top", on_klbuiex_default_margin_top);
     KLBUIEX_default_bind("margin-right", on_klbuiex_default_margin_right);
     KLBUIEX_default_bind("margin-bottom", on_klbuiex_default_margin_bottom);
     KLBUIEX_default_bind("margin-left", on_klbuiex_default_margin_left);
 
-    // 内边距 padding
+    // 内边距 padding (无伪类)
     KLBUIEX_default_bind("padding", on_klbuiex_default_padding);
     KLBUIEX_default_bind("padding-top", on_klbuiex_default_padding_top);
     KLBUIEX_default_bind("padding-right", on_klbuiex_default_padding_right);
@@ -468,50 +489,50 @@ static void klbuiex_default_init_func_map(klbuiex_default_t* p_default)
     // 文本颜色 color
     KLBUIEX_default_bind("color", on_klbuiex_default_text_color);
     KLBUIEX_default_bind("color:focus", on_klbuiex_default_text_color_focus);
-    KLBUIEX_default_bind("color:disable", on_klbuiex_default_text_color_disable);
-    KLBUIEX_default_bind("color:check", on_klbuiex_default_text_color_check);
+    KLBUIEX_default_bind("color:disabled", on_klbuiex_default_text_color_disable);
+    KLBUIEX_default_bind("color:checked", on_klbuiex_default_text_color_check);
     KLBUIEX_default_bind("color:input", on_klbuiex_default_text_color_input);
 
     // 文本对齐 text-align
     KLBUIEX_default_bind("text-align", on_klbuiex_default_text_align);
     KLBUIEX_default_bind("text-align:focus", on_klbuiex_default_text_align_focus);
-    KLBUIEX_default_bind("text-align:disable", on_klbuiex_default_text_align_disable);
-    KLBUIEX_default_bind("text-align:check", on_klbuiex_default_text_align_check);
+    KLBUIEX_default_bind("text-align:disabled", on_klbuiex_default_text_align_disable);
+    KLBUIEX_default_bind("text-align:checked", on_klbuiex_default_text_align_check);
     KLBUIEX_default_bind("text-align:input", on_klbuiex_default_text_align_input);
 
     // 字体大小 font-size
     KLBUIEX_default_bind("font-size", on_klbuiex_default_font_size);
     KLBUIEX_default_bind("font-size:focus", on_klbuiex_default_font_size_focus);
-    KLBUIEX_default_bind("font-size:disable", on_klbuiex_default_font_size_disable);
-    KLBUIEX_default_bind("font-size:check", on_klbuiex_default_font_size_check);
+    KLBUIEX_default_bind("font-size:disabled", on_klbuiex_default_font_size_disable);
+    KLBUIEX_default_bind("font-size:checked", on_klbuiex_default_font_size_check);
     KLBUIEX_default_bind("font-size:input", on_klbuiex_default_font_size_input);
 
     // 背景色 background-color
     KLBUIEX_default_bind("background-color", on_klbuiex_default_background_color);
     KLBUIEX_default_bind("background-color:focus", on_klbuiex_default_background_color_focus);
-    KLBUIEX_default_bind("background-color:disable", on_klbuiex_default_background_color_disable);
-    KLBUIEX_default_bind("background-color:check", on_klbuiex_default_background_color_check);
+    KLBUIEX_default_bind("background-color:disabled", on_klbuiex_default_background_color_disable);
+    KLBUIEX_default_bind("background-color:checked", on_klbuiex_default_background_color_check);
     KLBUIEX_default_bind("background-color:input", on_klbuiex_default_background_color_input);
 
     // 背景图片 background-image
     KLBUIEX_default_bind("background-image", on_klbuiex_default_background_image);
     KLBUIEX_default_bind("background-image:focus", on_klbuiex_default_background_image_focus);
-    KLBUIEX_default_bind("background-image:disable", on_klbuiex_default_background_image_disable);
-    KLBUIEX_default_bind("background-image:check", on_klbuiex_default_background_image_check);
+    KLBUIEX_default_bind("background-image:disabled", on_klbuiex_default_background_image_disable);
+    KLBUIEX_default_bind("background-image:checked", on_klbuiex_default_background_image_check);
     KLBUIEX_default_bind("background-image:input", on_klbuiex_default_background_image_input);
 
     // 边框的宽度 border-width
     KLBUIEX_default_bind("border-width", on_klbuiex_default_border_width);
     KLBUIEX_default_bind("border-width:focus", on_klbuiex_default_border_width_focus);
-    KLBUIEX_default_bind("border-width:disable", on_klbuiex_default_border_width_disable);
-    KLBUIEX_default_bind("border-width:check", on_klbuiex_default_border_width_check);
+    KLBUIEX_default_bind("border-width:disabled", on_klbuiex_default_border_width_disable);
+    KLBUIEX_default_bind("border-width:checked", on_klbuiex_default_border_width_check);
     KLBUIEX_default_bind("border-width:input", on_klbuiex_default_border_width_input);
 
     // 边框的颜色 border-color
     KLBUIEX_default_bind("border-color", on_klbuiex_default_border_color);
     KLBUIEX_default_bind("border-color:focus", on_klbuiex_default_border_color_focus);
-    KLBUIEX_default_bind("border-color:disable", on_klbuiex_default_border_color_disable);
-    KLBUIEX_default_bind("border-color:check", on_klbuiex_default_border_color_check);
+    KLBUIEX_default_bind("border-color:disabled", on_klbuiex_default_border_color_disable);
+    KLBUIEX_default_bind("border-color:checked", on_klbuiex_default_border_color_check);
     KLBUIEX_default_bind("border-color:input", on_klbuiex_default_border_color_input);
 
     //////////////////////////////////////////////
@@ -560,3 +581,6 @@ int klbuiex_register_default(klb_gui_t* p_gui)
 
     return 0;
 }
+
+// end
+

@@ -46,7 +46,7 @@ MY_CLIP_TAG := $(foreach _w,$(MY_CLIP_TAG),$(call KLB_CLIP_MAP_DISABLE,$(_w)))
 ifeq ($(filter min-core no-all,$(MY_CLIP_TAG)),)
 	MY_CLIP_TAG +=
 else
-	MY_CLIP_TAG += no-pcre2 no-lpeg no-sqlite no-zlib no-packages no-cpp no-gui no-format no-qrencode no-net-proto
+	MY_CLIP_TAG += no-pcre2 no-lpeg no-sqlite no-zlib no-klbwui no-cpp no-gui no-format no-qrencode no-net-proto
 endif
 
 
@@ -106,9 +106,18 @@ else
 endif
 
 
-# src_packages: 子目录已迁 backup/src_packages/，待重整；暂不编入
-# 恢复扩展包时: 在此追加 MY_CLIP_DIRS / MY_CLIP_INC，并视情况去掉下行
-MY_CLIP_FLAGS += -D__KLB_NO_PACKAGES__
+# 可裁剪参数: MY_CLIP = no-klbwui
+# klbwui: src_packages/klbwui (依赖 klbgui; no-gui 时跳过编译)
+ifeq ($(filter no-klbwui, $(MY_CLIP_TAG)), )
+ifeq ($(filter no-gui, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbwui/core
+	MY_CLIP_DIRS += ./src_packages/klbwui/embed_wnd
+	MY_CLIP_DIRS += ./src_packages/klbwui/embed_widgets
+	MY_CLIP_INC += -I ./src_packages
+endif
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_KLBWUI__
+endif
 
 
 # 可裁剪参数: MY_CLIP = no-qrencode

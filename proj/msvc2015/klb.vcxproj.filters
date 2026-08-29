@@ -166,32 +166,11 @@
     <Filter Include="src_packages">
       <UniqueIdentifier>{9f91b2a6-5e02-4b06-9ff9-8faf81fd4714}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src_packages\kpa_rtsp">
-      <UniqueIdentifier>{59ab5443-1dd6-4df4-b738-63cf5cd001ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src_cpp\klbbase">
       <UniqueIdentifier>{90b8f444-a8d1-47c7-a365-8c38442d4216}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc_hpp\klbbase">
       <UniqueIdentifier>{a611cb70-6285-46f7-ae97-01df801a5425}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\kpa_mnp">
-      <UniqueIdentifier>{3c2da704-d828-4d1a-9114-162de5a0b6e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\kpa_flv">
-      <UniqueIdentifier>{87b65625-d4c4-4f6f-ad4f-4e00c3efbed9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\kpa_http">
-      <UniqueIdentifier>{205c8cb9-6a6c-4024-b923-4367980d454a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\kpa_ws">
-      <UniqueIdentifier>{690f3cba-70fe-43d1-8cd9-f453a157fed4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\kpa_mgui">
-      <UniqueIdentifier>{2b353071-7f7b-471a-b28c-4475b4438dce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\kpa_sip">
-      <UniqueIdentifier>{7f7e1b83-f202-4923-b56b-e2b4d642ef57}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klbgui\widgets">
       <UniqueIdentifier>{5066e017-b6b6-4fce-8c0f-97b3c1e93817}</UniqueIdentifier>
@@ -306,6 +285,24 @@
     </Filter>
     <Filter Include="src_c\klbnet\klbiopoll">
       <UniqueIdentifier>{9e681c26-8722-419d-9305-485674a6a0dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui">
+      <UniqueIdentifier>{4d2a1569-7892-48c7-9b17-10221523f4e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\core">
+      <UniqueIdentifier>{faf3a3b1-e610-417c-8c77-bfa07f7fc2f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\embed_widgets">
+      <UniqueIdentifier>{56c88cfd-3729-4f5f-9e14-22e60d42c3e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\embed_wnd">
+      <UniqueIdentifier>{d7cb26a0-2be4-4ed0-8801-46cf1ee8bde0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\embed_shwnd">
+      <UniqueIdentifier>{9d25358a-7725-43bd-bc33-aa9f61f00474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\embed_klua">
+      <UniqueIdentifier>{164433e9-ea33-4780-bda4-7e4a3064ca50}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1317,6 +1314,33 @@
     <ClInclude Include="..\..\inc\klbgui\klb_wnd_ex.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\klbwui.h">
+      <Filter>src_packages\klbwui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_extension.h">
+      <Filter>src_packages\klbwui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_css.h">
+      <Filter>src_packages\klbwui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_widgets.h">
+      <Filter>src_packages\klbwui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -2301,6 +2325,45 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klb_wnd_ex.c">
       <Filter>src_c\klbgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_extension.c">
+      <Filter>src_packages\klbwui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_css.c">
+      <Filter>src_packages\klbwui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_register.c">
+      <Filter>src_packages\klbwui\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_view.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_button.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_static.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_picture.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_demo.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

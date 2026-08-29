@@ -2,6 +2,7 @@
 #include "klbgui/klbui_css_ex.h"
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
+#include "klbutil/klb_sds.h"
 #include <string.h>
 #include <assert.h>
 
@@ -106,7 +107,8 @@ void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const kl
 
     if (KLBUI_CSSEX_get == method)
     {
-        klb_map_set_idx_string(p_out, 0, *p_sds);
+        const char* p_str = (NULL != *p_sds) ? *p_sds : "";
+        klb_map_set_idx_string(p_out, 0, p_str);
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -114,7 +116,7 @@ void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const kl
         if (KLB_ADT_string == klb_map_array_type(p_in, start))
         {
             const char* p_value = klb_map_idx_to_string(p_in, start);
-            *p_sds = sdscpy(*p_sds, p_value);
+            *p_sds = klb_sds_assign(*p_sds, p_value);
 
             klb_wnd_update(p_wnd);
         }
@@ -191,7 +193,8 @@ void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, cons
 
     if (KLBUI_CSSEX_get == method)
     {
-        klb_map_set_idx_string(p_out, 0, *p_image);
+        const char* p_str = (NULL != *p_image) ? *p_image : "";
+        klb_map_set_idx_string(p_out, 0, p_str);
     }
     else if (KLBUI_CSSEX_set == method)
     {
@@ -200,7 +203,7 @@ void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, cons
         if (KLB_ADT_string == klb_map_array_type(p_in, start))
         {
             const char* p_value = klb_map_idx_to_string(p_in, start);
-            *p_image = sdscpy(*p_image, p_value);
+            *p_image = klb_sds_assign(*p_image, p_value);
 
             if (NULL != p_wnd)
             {

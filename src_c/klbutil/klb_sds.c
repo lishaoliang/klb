@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbutil/klb_sds.h"
+#include "klbmem/klb_mem.h"
 #include <stdio.h>
 
 
@@ -74,6 +75,17 @@ sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt)
     }
 
     return dst;
+}
+
+sds klb_sds_assign(sds dst, const char* p_str)
+{
+    if (NULL == p_str || '\0' == p_str[0])
+    {
+        KLB_FREE_BY(dst, sdsfree);
+        return NULL;
+    }
+
+    return klb_sdscpy(dst, p_str);
 }
 
 //end

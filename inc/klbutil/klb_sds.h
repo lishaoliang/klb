@@ -31,6 +31,13 @@ KLB_API sds klb_sdscpy(sds s, const char* p_str);
 KLB_API sds klb_sdscpy_adt(sds s, const klb_adt_t* p_adt);
 
 
+/// @brief 可选 sds 赋值; 来源 NULL 或空串则释放目标并返回 NULL; 否则 klb_sdscpy
+/// @param [in]  dst    目标 sds (可为 NULL)
+/// @param [in]  p_str  来源 C 串 (可为 NULL 或空串)
+/// @return sds  dst  返回NULL 或 非NULL的 sds, 可能与原dst地址不一致
+KLB_API sds klb_sds_assign(sds dst, const char* p_str);
+
+
 #if defined(__cplusplus)
 }
 #endif

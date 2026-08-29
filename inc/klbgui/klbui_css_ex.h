@@ -31,9 +31,9 @@ typedef struct klbui_default_t_ klbui_default_t;
 #define KLBUI_CSSEX_set     1                   ///< set method
 
 
-/// @struct klbuicssex_attribute_t
-/// @brief  CSS属性集合: "normal", "focus", "disable"
-///   UI组件 参考属性集合
+/// @struct klbuicssex_attributes_t
+/// @brief  CSS 参考属性集合 (text/font/background/border)
+///   用于 klbui_default_t 各状态分支及控件 per-state 绘制
 typedef struct klbuicssex_attributes_t_
 {
     klbuicss_text_t             text;           ///< 文本属性

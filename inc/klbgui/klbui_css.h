@@ -157,6 +157,14 @@ typedef struct klbuicss_background_t_
     uint32_t    color;      ///< "background-color" 属性指定元素的背景色
     sds         image;      ///< "background-image" 属性指定用作元素背景的图像
 
+    uint8_t     image_mode;
+#define KLBUICSS_bgimg_mode_default     0   ///< 默认: klb_wnd_draw_image
+#define KLBUICSS_bgimg_mode_scale9      1   ///< 九宫格 -> IMAGE_SCALE9
+
+    uint8_t     image_flags;
+#define KLBUICSS_bgimg_flag_none        0   ///< 无 flag
+#define KLBUICSS_bgimg_flag_color_key   0x1 ///< 关键色透明   
+
 #if defined(__KLB_GUI_CSS3__)
     int         repeat;     ///< "background-repeat" 属性指定重复图像
     int         position;   ///< "background-position" 属性用于指定背景图像的位置

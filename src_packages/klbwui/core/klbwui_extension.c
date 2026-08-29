@@ -51,7 +51,7 @@ klb_gui_t* kluaex_klbwui_get_gui(klbwui_extension_t* p_ex)
 }
 
 
-int kluaex_register_klbwui(klua_env_t* p_env)
+static int kluaex_register_klbwui(klua_env_t* p_env)
 {
     klua_env_extension_t ex = { 0 };
 

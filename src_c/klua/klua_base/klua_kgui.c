@@ -1105,7 +1105,7 @@ int klua_open_kgui(lua_State* L)
         { "get_shwnd_css",      klua_kgui_get_shwnd_css },
 
         // 画布
-        { "is_multi_canvas_layer",      klua_kgui_is_multi_canvas_layer }, // 获取时候支持多画布图层模式
+        { "is_multi_canvas_layer",      klua_kgui_is_multi_canvas_layer }, // 获取是否支持多画布图层模式
 
         // 字库
         { "load_font",          klua_kgui_load_font },      // 加载字库

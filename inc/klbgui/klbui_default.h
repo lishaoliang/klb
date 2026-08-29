@@ -24,17 +24,18 @@ extern "C" {
 typedef struct klb_gui_t_ klb_gui_t;
 
 /// @struct klbui_default_t
-/// @brief  gui部分的默认值
+/// @brief  gui 默认全局参考属性 (控件 css_init 复制源)
+///   C 字段与 CSS 伪类后缀对照见 klbui_css.md
 typedef struct klbui_default_t_
 {
-    klbuicss_margin_t           margin;         ///< 外边距
-    klbuicss_padding_t          padding;        ///< 内边距
+    klbuicss_margin_t           margin;         ///< 外边距 (无伪类)
+    klbuicss_padding_t          padding;        ///< 内边距 (无伪类)
 
-    klbuicssex_attributes_t     normal;         ///< normal 常规状态参数
-    klbuicssex_attributes_t     focus;          ///< focus 聚焦状态参数
-    klbuicssex_attributes_t     disable;        ///< disable 不使能状态参数
-    klbuicssex_attributes_t     check;          ///< check 选中状态参数
-    klbuicssex_attributes_t     input;          ///< input 输入状态参数
+    klbuicssex_attributes_t     normal;         ///< normal 常规, CSS 键无伪类后缀
+    klbuicssex_attributes_t     focus;          ///< focus 聚焦, CSS 键后缀 :focus
+    klbuicssex_attributes_t     disable;        ///< disable 不使能, CSS 键后缀 :disabled
+    klbuicssex_attributes_t     check;          ///< check 选中参考, CSS 键后缀 :checked
+    klbuicssex_attributes_t     input;          ///< input 输入态, CSS 键后缀 :input
 }klbui_default_t;
 
 

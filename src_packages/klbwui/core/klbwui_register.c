@@ -1,5 +1,6 @@
 ﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbwui/klbwui.h"
+#include "klbwui/core/klbwui_widgets.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -7,10 +8,15 @@
 
 static int klbwui_register_embed_widgets(klb_gui_t* p_gui)
 {
-    (void)p_gui;
+    int ret = 0;
 
-    // todo. 迁入 embed_widgets/ 后在此聚合 klbui_register_k*
-    return 0;
+    ret |= klbui_register_kbutton(p_gui);
+    ret |= klbui_register_kdemo(p_gui);
+    ret |= klbui_register_kpicture(p_gui);
+    ret |= klbui_register_kstatic(p_gui);
+    ret |= klbui_register_kview(p_gui);
+
+    return ret;
 }
 
 static int klbwui_register_embed_shwnd(klb_gui_t* p_gui)

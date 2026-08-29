@@ -341,17 +341,5 @@ int klua_loadlib_all(lua_State* L)
 #endif
     }
 
-    // 预加载扩展包
-    {
-#if !defined(__KLB_NO_PACKAGES__)
-        klua_loadlib(L, klua_open_kpa_mgui, "kpa_mgui");
-        klua_loadlib(L, klua_open_kpa_http, "kpa_http");
-        klua_loadlib(L, klua_open_kpa_ws, "kpa_ws");
-        klua_loadlib(L, klua_open_kpa_mnp, "kpa_mnp");
-        klua_loadlib(L, klua_open_kpa_flv, "kpa_flv");
-        klua_loadlib(L, klua_open_kpa_sip, "kpa_sip");
-#endif
-    }
-
     return 0;
 }

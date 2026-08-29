@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -309,6 +309,16 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp" />
     <ClInclude Include="..\..\src_cpp\klbgui\CUiWidgets.hpp" />
     <ClInclude Include="..\..\src_cpp\klua\extension\CKluaExGui.hpp" />
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_widgets.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\klbwui.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_extension.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_css.h" />
+
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.h" />
     <ClInclude Include="..\..\src_c\compat\os2threads.h" />
     <ClInclude Include="..\..\src_c\compat\va_copy.h" />
     <ClInclude Include="..\..\src_c\compat\w32dlfcn.h" />
@@ -538,6 +548,19 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExGui.cpp" />
     <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExtension.cpp" />
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_extension.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_css.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_register.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_view.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_button.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_static.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_picture.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_demo.c" />
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
     <ClCompile Include="..\..\src_c\klbapp\klbappex_klua.c" />

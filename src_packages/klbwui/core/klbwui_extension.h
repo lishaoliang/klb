@@ -30,8 +30,6 @@ extern "C" {
 typedef struct klbwui_extension_t_ klbwui_extension_t;
 
 
-int kluaex_register_klbwui(klua_env_t* p_env);
-
 klbwui_extension_t* kluaex_get_klbwui(klua_env_t* p_env);
 klbwui_extension_t* kluaex_get_klbwui_by_L(lua_State* L);
 

@@ -215,6 +215,20 @@ klbui.is_multi_canvas_layer = function ()
 end
 
 
+-- @brief 加载字体
+-- @param [in] path[string]			字体路径
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.load_font = function (path)
+	return kgui.load_font(path)
+end
+
+
+-- @brief 卸载字体
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.unload_font = function ()
+	return kgui.unload_font()
+end
+
 
 -- @brief 加载资源图片
 -- @param [in] key[string]			关键字
@@ -222,6 +236,12 @@ end
 -- @return [number(int)] 	0.成功; 非0.失败
 klbui.load_image = function (key, path)
 	return kgui.load_image(key, path)
+end
+
+-- @brief 清空资源图片
+-- @return [number(int)] 	0.成功; 非0.失败
+klbui.clear_image = function ()
+	return kgui.clear_image()
 end
 
 

@@ -263,19 +263,6 @@ KLB_API int klua_open_kh26x(lua_State* L);
 KLB_API int klua_loadlib_all(lua_State* L);
 
 
-//////////////////////////////////////////////////////////////////////////
-// ./klb/src_packages
-
-#if !defined(__KLB_NO_PACKAGES__)
-KLB_API int klua_open_kpa_mgui(lua_State* L);
-KLB_API int klua_open_kpa_http(lua_State* L);
-KLB_API int klua_open_kpa_ws(lua_State* L);
-KLB_API int klua_open_kpa_mnp(lua_State* L);
-KLB_API int klua_open_kpa_flv(lua_State* L);
-KLB_API int klua_open_kpa_sip(lua_State* L);
-#endif
-
-
 #ifdef __cplusplus
 }
 #endif
