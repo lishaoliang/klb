@@ -1,0 +1,156 @@
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
+//  Copyright(c) 2026, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+//
+/// @file    klbwnd_calendar.h
+/// @author  随风(https://gitee.com/klua/klb)
+/// @brief   klb window calendar, 日历基础组件, 提供C接口
+/// @version 0.1
+/// @history 修改历史
+///   \n 2026 0.1 创建文件
+///   \n [2026] CSS 改本地 attributes_t / klbwuicss_draw_background
+/// @warning 没有警告
+///////////////////////////////////////////////////////////////////////////
+#ifndef __KLBWND_CALENDAR_H__
+#define __KLBWND_CALENDAR_H__
+
+
+#include "klb_type.h"
+#include "klbgui/klb_wnd.h"
+#include "klbgui/klbui_css.h"
+#include "klbgui/klbui_css_ex.h"
+#include "klbwui/core/klbwui_css.h"
+#include "klbutil/klb_sds.h"
+#include "klbwui/embed_wnd/klbwnd_static.h"
+#include "klbgui/klbui_datetime.h"
+
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
+#define KLBWND_CAL_YEAR_min             2020
+#define KLBWND_CAL_YEAR_max             2051
+
+
+#define KLBWND_CAL_PAGE_days            0
+#define KLBWND_CAL_PAGE_months          1
+#define KLBWND_CAL_PAGE_years           2
+
+
+typedef struct klbwnd_calendar_ymd_t_
+{
+    int         year;
+    int         month;
+    int         day;
+} klbwnd_calendar_ymd_t;
+
+
+typedef struct klbwnd_calendar_attributes_t_
+{
+    klbuicss_text_t             text;           ///< color, text-align
+    klbuicss_font_t             font;           ///< font-size
+    klbuicss_background_t       background;     ///< background-color / background-image / image_mode / image_flags
+    klbuicss_border_t           border;         ///< border-width, border-color
+} klbwnd_calendar_attributes_t;
+
+
+typedef struct klbwnd_calendar_btn_attributes_t_
+{
+    klbuicss_text_t             text;           ///< color, text-align
+    klbuicss_font_t             font;           ///< font-size
+    klbuicss_background_t       background;     ///< background-color / background-image / image_mode / image_flags
+    klbuicss_border_t           border;         ///< border-width, border-color
+} klbwnd_calendar_btn_attributes_t;
+
+
+typedef struct klbwnd_calendar_btn_css_t_
+{
+    klbuicss_margin_t                   margin;         ///< 外边距
+    klbuicss_padding_t                  padding;        ///< 内边距
+
+    klbwnd_calendar_btn_attributes_t    normal;         ///< normal 常规状态参数
+    klbwnd_calendar_btn_attributes_t    focus;          ///< focus 聚焦状态参数
+    klbwnd_calendar_btn_attributes_t    disable;        ///< disable 不使能状态参数
+} klbwnd_calendar_btn_css_t;
+
+
+typedef struct klbwnd_calendar_css_t_
+{
+    klbuicss_margin_t               margin;         ///< 外边距
+    klbuicss_padding_t              padding;        ///< 内边距
+
+    klbwnd_calendar_attributes_t    normal;         ///< normal 常规状态参数
+    klbwnd_calendar_attributes_t    focus;          ///< focus 聚焦状态参数
+    klbwnd_calendar_attributes_t    disable;        ///< disable 不使能状态参数
+
+    klbwnd_static_css_t             css_sta;        ///< 静态文本
+    klbwnd_calendar_btn_css_t       css_btn;        ///< 按钮
+} klbwnd_calendar_css_t;
+
+
+typedef struct klbwnd_calendar_t_
+{
+    klbwnd_calendar_css_t*      p_css;          ///< 样式
+
+    // 子控件
+    struct
+    {
+        klb_wnd_t*              p_btn_ymd;      ///< 切换年/月/日按钮
+        klb_wnd_t*              p_btn_prev;     ///< 向前一个年/月
+        klb_wnd_t*              p_btn_next;     ///< 向后一个年/月
+
+        klb_wnd_t*              p_years;        ///< 年页面
+        klb_wnd_t*              p_months;       ///< 月页面
+        klb_wnd_t*              p_days;         ///< 日页面
+    };
+
+    // 数据/记录等
+    struct
+    {
+        int                     cur_page;       ///< 当前页面: KLBWND_CAL_PAGE_days
+    };
+
+    klbwnd_calendar_ymd_t       date_page;      ///< 页面显示年份
+
+    klbwnd_calendar_ymd_t       date;           ///< 当前日期
+} klbwnd_calendar_t;
+
+
+/// @brief init/deinit/create
+void klbwnd_calendar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, int h);
+void klbwnd_calendar_deinit(klb_wnd_t* p_wnd);
+klb_wnd_t* klbwnd_calendar_create(klb_gui_t* p_gui, int x, int y, int w, int h);
+
+
+/// @brief css init/deinit
+void klbwnd_calendar_css_init(klbwnd_calendar_css_t* p_css, klb_gui_t* p_gui);
+void klbwnd_calendar_css_deinit(klbwnd_calendar_css_t* p_css);
+void klbwnd_calendar_css_copy(klbwnd_calendar_css_t* p_dst, klbwnd_calendar_css_t* p_src);
+
+
+/// @brief set css
+void klbwnd_calendar_set_css(klb_wnd_t* p_wnd, klbwnd_calendar_css_t* p_css);
+
+
+/// @brief set 限制日期范围
+void klbwnd_calendar_limit(int* p_year, int* p_month, int* p_day);
+
+
+/// @brief set 设置/获取当前日期
+void klbwnd_calendar_set_date(klb_wnd_t* p_wnd, int year, int month, int day);
+void klbwnd_calendar_get_date(klb_wnd_t* p_wnd, int* p_year, int* p_month, int* p_day);
+
+
+/// @brief set 设置显示日期页面
+void klbwnd_calendar_set_date_page(klb_wnd_t* p_wnd, int year, int month, int day);
+
+
+#if defined(__cplusplus)
+}
+#endif
+
+#endif // __KLBWND_CALENDAR_H__
+
+// end

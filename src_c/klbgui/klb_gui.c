@@ -8,7 +8,7 @@
 #include "klbgui/klbui_widgets.h"
 #include "klbgui/extensions/klbuiex_extensions.h"
 #include "klbgui/shwnd/klbshw_tip.h"
-#ifndef __KLB_NO_KLBWUI__
+#ifndef __KLB_NO_WUI__
 #include "klbwui/klbwui.h"
 #endif
 #include <assert.h>
@@ -88,16 +88,13 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
         // 激活共享窗口
         //klbui_shwnd_get_calendar(p_gui);
-        //klbui_shwnd_get_combomenu(p_gui);
+        //klbui_shwnd_get_combo_menu(p_gui);
         //klbui_shwnd_get_decimal(p_gui);
         //klbui_shwnd_get_messagebox(p_gui);
         klbui_shwnd_get_tip(p_gui);
 
-#ifndef __KLB_NO_KLBWUI__
-        // 注册 embed_widgets
-        KLBWUI_REGISTER_EMBED(p_gui);
-
-        // 注册 sim_widgets
+#ifndef __KLB_NO_WUI__
+        // sim 含 embed; no-wui-sim 时宏退回 register_embed
         KLBWUI_REGISTER_SIM(p_gui);
 #endif
     }

@@ -388,6 +388,11 @@ static void on_klbui_view_border_color(klb_wnd_t* p_wnd, klbui_view_t* p_view, i
 //////////////////////////////////////////////////////////////////////////
 // 自定义属性
 
+static void on_klbui_view_index(klb_wnd_t* p_wnd, klbui_view_t* p_view, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_view->view.index), p_wnd, method, p_in, p_out);
+}
+
 static void on_klbui_view_title(klb_wnd_t* p_wnd, klbui_view_t* p_view, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_sds(&(p_view->view.title), p_wnd, method, p_in, p_out);
@@ -436,6 +441,7 @@ static void klbui_view_init_func_map(klb_wnd_t* p_wnd, klbui_view_t* p_view, klb
     KLBUI_view_bind("border-width", on_klbui_view_border_width);
     KLBUI_view_bind("border-color", on_klbui_view_border_color);
 
+    KLBUI_view_bind("index", on_klbui_view_index);
     KLBUI_view_bind("title", on_klbui_view_title);
 }
 

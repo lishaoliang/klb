@@ -56,6 +56,7 @@ KLB_API void klbuicssex_attributes_copy(klbuicssex_attributes_t* p_dst, const kl
 KLB_API void klbuicssex_attribute_bool(bool* p_bool, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_sds(sds* p_sds, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_int(int* p_int, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
+KLB_API void klbuicssex_attribute_int16(int16_t* p_int, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_color(uint32_t* p_color, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 KLB_API void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 

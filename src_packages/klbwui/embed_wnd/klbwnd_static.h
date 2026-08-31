@@ -85,4 +85,4 @@ const sds klbwnd_static_get_title(klb_wnd_t* p_wnd);
 
 
 #endif // __KLBWND_STATIC_H__
-//end
+// end

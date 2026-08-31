@@ -1,6 +1,7 @@
 # Doc-Encode UTF8, Unix(LF)
 # 处理代码裁剪:
-# @param [in]		$(MY_CLIP)			裁剪参数: eg. "min-core" / "no-all"
+# @param [in]		$(MY_CLIP)			裁剪参数: eg. "min-core" / "no-gui" / "min-core use-zlib"
+# @param [out]		$(MY_CLIP_TAG)		归一后的 no-* 列表 (全集的子集; 空=全量)
 # @param [out]		$(MY_CLIP_FLAGS)	处理裁剪参数之后的 宏定义等
 # @param [out]		$(MY_CLIP_DIRS)		处理裁剪之后, 需要加入编译的目录
 # @param [out]		$(MY_CLIP_SOURCES)	处理裁剪之后, 需要加入编译的源文件(非目录)
@@ -10,8 +11,8 @@
 ##################################################################
 # 入参/出参
 
-# @param [in] $(MY_CLIP)	裁剪参数: 
-MY_CLIP_TAG := $(MY_CLIP)
+# @param [in] $(MY_CLIP)	裁剪参数: no-* 减法, 或 min-core + use-* 加回
+# @param [out] $(MY_CLIP_TAG)	归一后的 no-* (见下节)
 
 # @param [out] $(MY_CLIP_FLAGS)	处理裁剪参数之后的 宏定义等
 export MY_CLIP_FLAGS :=
@@ -29,24 +30,45 @@ export MY_CLIP_INC :=
 export MY_CLIP_SOURCES_EXCLUDE :=
 
 ##################################################################
-# 默认所有
+# 归一: 两种入参 → 同一套 no-* (all 裁剪)
+#   1. 减法: MY_CLIP="no-gui no-zlib" / "--disable-gui"
+#   2. 加回: MY_CLIP="min-core use-zlib" / "use-wui-embed" (仅 use-* 时隐含 min-core)
+# 最终 MY_CLIP_TAG 只含 no-*; 同条中 use-* 覆盖对应 no-* (enable 优先)
+# 记名: no-* 同 --disable-*; use-* 同 --enable-*; no-all 同 min-core
 
-# 预设 min-core / no-all: 展开 clip.mk 内全部 no-*
-#   MY_CLIP = min-core  (推荐, 最小核心预设)
-#   MY_CLIP = no-all    (同 min-core, 兼容旧用法)
-# min-core + 可选库: 勿写 "min-core no-zlib"; 改用手动 no-* / --enable / use-* — 见 klb-min-core
-# 记名: no-* 与 --disable-* 等价; use-* 与 --enable-* 等价 (enable 须 clip-build / klb-clip 组合)
+# 全集 (min-core 基准; 不含 no-wui-sim)
+KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto
 
-# --disable-* -> no-* (make 直传别名)
-define KLB_CLIP_MAP_DISABLE
-$(if $(findstring --disable-,$(1)),$(patsubst --disable-%,no-%,$(1)),$(1))
+# --disable-X -> no-X; --enable-X -> use-X; no-all -> min-core
+define KLB_CLIP_MAP_WORD
+$(strip $(if $(findstring --disable-,$(1)),$(patsubst --disable-%,no-%,$(1)),$(if $(findstring --enable-,$(1)),$(patsubst --enable-%,use-%,$(1)),$(if $(filter no-all,$(1)),min-core,$(1)))))
 endef
-MY_CLIP_TAG := $(foreach _w,$(MY_CLIP_TAG),$(call KLB_CLIP_MAP_DISABLE,$(_w)))
 
-ifeq ($(filter min-core no-all,$(MY_CLIP_TAG)),)
-	MY_CLIP_TAG +=
+# use-* -> 要从 TAG 删掉的 no-* (wui / wui-embed 连带 gui)
+define KLB_CLIP_USE_NOS
+$(strip $(if $(filter use-wui-embed,$(1)),no-wui no-gui,$(if $(filter use-wui use-klbwui use-wui-sim,$(1)),no-wui no-gui,$(if $(filter use-gui use-klbgui use-kgui,$(1)),no-gui,$(if $(filter use-zlib,$(1)),no-zlib,$(if $(filter use-lpeg,$(1)),no-lpeg,$(if $(filter use-sqlite use-lsqlite3,$(1)),no-sqlite,$(if $(filter use-pcre2,$(1)),no-pcre2,$(if $(filter use-cpp,$(1)),no-cpp,$(if $(filter use-format use-kh26x use-klbformat,$(1)),no-format,$(if $(filter use-qrencode use-qr,$(1)),no-qrencode,$(if $(filter use-net-proto use-netproto use-net use-protocol,$(1)),no-net-proto,$(patsubst use-%,no-%,$(1))))))))))))))
+endef
+
+KLB_CLIP_WORDS := $(foreach _w,$(MY_CLIP),$(call KLB_CLIP_MAP_WORD,$(_w)))
+KLB_CLIP_HAS_MIN := $(filter min-core,$(KLB_CLIP_WORDS))
+KLB_CLIP_USE := $(filter use-%,$(KLB_CLIP_WORDS))
+KLB_CLIP_NO := $(filter no-%,$(KLB_CLIP_WORDS))
+
+ifeq ($(KLB_CLIP_HAS_MIN)$(KLB_CLIP_USE),)
+	KLB_CLIP_BASE :=
 else
-	MY_CLIP_TAG += no-pcre2 no-lpeg no-sqlite no-zlib no-klbwui no-cpp no-gui no-format no-qrencode no-net-proto
+	KLB_CLIP_BASE := $(KLB_CLIP_ALL_NO)
+endif
+
+KLB_CLIP_USE_REMOVE := $(foreach _u,$(KLB_CLIP_USE),$(call KLB_CLIP_USE_NOS,$(_u)))
+MY_CLIP_TAG := $(sort $(filter-out $(KLB_CLIP_USE_REMOVE),$(KLB_CLIP_BASE) $(KLB_CLIP_NO)))
+
+# min-core + wui-embed: 加回 embed 后仍裁 sim; 与 use-wui 同时出现时全量 wui 优先
+ifeq ($(filter use-wui use-klbwui use-wui-sim,$(KLB_CLIP_USE)),)
+ifeq ($(filter use-wui-embed,$(KLB_CLIP_USE)),)
+else
+	MY_CLIP_TAG := $(sort $(MY_CLIP_TAG) no-wui-sim)
+endif
 endif
 
 
@@ -106,17 +128,26 @@ else
 endif
 
 
-# 可裁剪参数: MY_CLIP = no-klbwui
-# klbwui: src_packages/klbwui (依赖 klbgui; no-gui 时跳过编译)
-ifeq ($(filter no-klbwui, $(MY_CLIP_TAG)), )
+# 可裁剪参数: MY_CLIP = no-wui / no-wui-sim
+# 正向: MY_CLIP = use-wui / --enable-wui (连带 gui; sim 含 embed) / use-wui-embed / --enable-wui-embed
+# wui: src_packages/klbwui (依赖 klbgui; no-gui 时跳过)
+ifeq ($(filter no-wui, $(MY_CLIP_TAG)), )
 ifeq ($(filter no-gui, $(MY_CLIP_TAG)), )
 	MY_CLIP_DIRS += ./src_packages/klbwui/core
 	MY_CLIP_DIRS += ./src_packages/klbwui/embed_wnd
 	MY_CLIP_DIRS += ./src_packages/klbwui/embed_widgets
+	MY_CLIP_DIRS += ./src_packages/klbwui/embed_shwnd
+ifeq ($(filter no-wui-sim, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbwui/sim_wnd
+	MY_CLIP_DIRS += ./src_packages/klbwui/sim_widgets
+	MY_CLIP_DIRS += ./src_packages/klbwui/sim_shwnd
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_WUI_SIM__
+endif
 	MY_CLIP_INC += -I ./src_packages
 endif
 else
-	MY_CLIP_FLAGS += -D__KLB_NO_KLBWUI__
+	MY_CLIP_FLAGS += -D__KLB_NO_WUI__
 endif
 
 

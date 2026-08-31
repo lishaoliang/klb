@@ -128,48 +128,48 @@ void CCss::SetMargin(int w)
 {
     klbuicss_margin_t* p_margin = Margin();
 
-    p_margin->top = w;
-    p_margin->right = w;
-    p_margin->bottom = w;
-    p_margin->left = w;
+    p_margin->top = (int16_t)w;
+    p_margin->right = (int16_t)w;
+    p_margin->bottom = (int16_t)w;
+    p_margin->left = (int16_t)w;
 }
 
 void CCss::SetMargin(int top, int right, int bottom, int left)
 {
     klbuicss_margin_t* p_margin = Margin();
 
-    p_margin->top = top;
-    p_margin->right = right;
-    p_margin->bottom = bottom;
-    p_margin->left = left;
+    p_margin->top = (int16_t)top;
+    p_margin->right = (int16_t)right;
+    p_margin->bottom = (int16_t)bottom;
+    p_margin->left = (int16_t)left;
 }
 
 void CCss::SetMarginTop(int top)
 {
     klbuicss_margin_t* p_margin = Margin();
 
-    p_margin->top = top;
+    p_margin->top = (int16_t)top;
 }
 
 void CCss::SetMarginRight(int right)
 {
     klbuicss_margin_t* p_margin = Margin();
 
-    p_margin->right = right;
+    p_margin->right = (int16_t)right;
 }
 
 void CCss::SetMarginBottom(int bottom)
 {
     klbuicss_margin_t* p_margin = Margin();
 
-    p_margin->bottom = bottom;
+    p_margin->bottom = (int16_t)bottom;
 }
 
 void CCss::SetMarginLeft(int left)
 {
     klbuicss_margin_t* p_margin = Margin();
 
-    p_margin->left = left;
+    p_margin->left = (int16_t)left;
 }
 
 void CCss::GetMargin(int* p_top, int* p_right, int* p_bottom, int* p_left)
@@ -186,48 +186,48 @@ void CCss::SetPadding(int w)
 {
     klbuicss_padding_t* p_padding = Padding();
 
-    p_padding->top = w;
-    p_padding->right = w;
-    p_padding->bottom = w;
-    p_padding->left = w;
+    p_padding->top = (int16_t)w;
+    p_padding->right = (int16_t)w;
+    p_padding->bottom = (int16_t)w;
+    p_padding->left = (int16_t)w;
 }
 
 void CCss::SetPadding(int top, int right, int bottom, int left)
 {
     klbuicss_padding_t* p_padding = Padding();
 
-    p_padding->top = top;
-    p_padding->right = right;
-    p_padding->bottom = bottom;
-    p_padding->left = left;
+    p_padding->top = (int16_t)top;
+    p_padding->right = (int16_t)right;
+    p_padding->bottom = (int16_t)bottom;
+    p_padding->left = (int16_t)left;
 }
 
 void CCss::SetPaddingTop(int top)
 {
     klbuicss_padding_t* p_padding = Padding();
 
-    p_padding->top = top;
+    p_padding->top = (int16_t)top;
 }
 
 void CCss::SetPaddingRight(int right)
 {
     klbuicss_padding_t* p_padding = Padding();
 
-    p_padding->right = right;
+    p_padding->right = (int16_t)right;
 }
 
 void CCss::SetPaddingBottom(int bottom)
 {
     klbuicss_padding_t* p_padding = Padding();
 
-    p_padding->bottom = bottom;
+    p_padding->bottom = (int16_t)bottom;
 }
 
 void CCss::SetPaddingLeft(int left)
 {
     klbuicss_padding_t* p_padding = Padding();
 
-    p_padding->left = left;
+    p_padding->left = (int16_t)left;
 }
 
 void CCss::GetPadding(int* p_top, int* p_right, int* p_bottom, int* p_left)
@@ -282,19 +282,19 @@ uint32_t CCss::GetColorDisable()
 void CCss::SetTextAlign(int align)
 {
     klbuicssex_attributes_t* p_attr = Normal();
-    p_attr->text.align = align;
+    p_attr->text.align = (uint8_t)align;
 }
 
 void CCss::SetTextAlignFocus(int align)
 {
     klbuicssex_attributes_t* p_attr = Focus();
-    p_attr->text.align = align;
+    p_attr->text.align = (uint8_t)align;
 }
 
 void CCss::SetTextAlignDisable(int align)
 {
     klbuicssex_attributes_t* p_attr = Disable();
-    p_attr->text.align = align;
+    p_attr->text.align = (uint8_t)align;
 }
 
 int CCss::GetTextAlign()
@@ -321,19 +321,19 @@ int CCss::GetTextAlignDisable()
 void CCss::SetFontSize(int font_size)
 {
     klbuicssex_attributes_t* p_attr = Normal();
-    p_attr->font.size = font_size;
+    p_attr->font.size = (int16_t)font_size;
 }
 
 void CCss::SetFontSizeFocus(int font_size)
 {
     klbuicssex_attributes_t* p_attr = Focus();
-    p_attr->font.size = font_size;
+    p_attr->font.size = (int16_t)font_size;
 }
 
 void CCss::SetFontSizeDisable(int font_size)
 {
     klbuicssex_attributes_t* p_attr = Disable();
-    p_attr->font.size = font_size;
+    p_attr->font.size = (int16_t)font_size;
 }
 
 int CCss::GetFontSize()
@@ -508,60 +508,60 @@ void CCss::SetBorderWidth(int w)
 {
     klbuicssex_attributes_t* p_attr = Normal();
 
-    p_attr->border.width.top = w;
-    p_attr->border.width.right = w;
-    p_attr->border.width.bottom = w;
-    p_attr->border.width.left = w;
+    p_attr->border.width.top = (int16_t)w;
+    p_attr->border.width.right = (int16_t)w;
+    p_attr->border.width.bottom = (int16_t)w;
+    p_attr->border.width.left = (int16_t)w;
 }
 
 void CCss::SetBorderWidth(int top, int right, int bottom, int left)
 {
     klbuicssex_attributes_t* p_attr = Normal();
 
-    p_attr->border.width.top = top;
-    p_attr->border.width.right = right;
-    p_attr->border.width.bottom = bottom;
-    p_attr->border.width.left = left;
+    p_attr->border.width.top = (int16_t)top;
+    p_attr->border.width.right = (int16_t)right;
+    p_attr->border.width.bottom = (int16_t)bottom;
+    p_attr->border.width.left = (int16_t)left;
 }
 
 void CCss::SetBorderWidthFocus(int w)
 {
     klbuicssex_attributes_t* p_attr = Focus();
 
-    p_attr->border.width.top = w;
-    p_attr->border.width.right = w;
-    p_attr->border.width.bottom = w;
-    p_attr->border.width.left = w;
+    p_attr->border.width.top = (int16_t)w;
+    p_attr->border.width.right = (int16_t)w;
+    p_attr->border.width.bottom = (int16_t)w;
+    p_attr->border.width.left = (int16_t)w;
 }
 
 void CCss::SetBorderWidthFocus(int top, int right, int bottom, int left)
 {
     klbuicssex_attributes_t* p_attr = Focus();
 
-    p_attr->border.width.top = top;
-    p_attr->border.width.right = right;
-    p_attr->border.width.bottom = bottom;
-    p_attr->border.width.left = left;
+    p_attr->border.width.top = (int16_t)top;
+    p_attr->border.width.right = (int16_t)right;
+    p_attr->border.width.bottom = (int16_t)bottom;
+    p_attr->border.width.left = (int16_t)left;
 }
 
 void CCss::SetBorderWidthDisable(int w)
 {
     klbuicssex_attributes_t* p_attr = Disable();
 
-    p_attr->border.width.top = w;
-    p_attr->border.width.right = w;
-    p_attr->border.width.bottom = w;
-    p_attr->border.width.left = w;
+    p_attr->border.width.top = (int16_t)w;
+    p_attr->border.width.right = (int16_t)w;
+    p_attr->border.width.bottom = (int16_t)w;
+    p_attr->border.width.left = (int16_t)w;
 }
 
 void CCss::SetBorderWidthDisable(int top, int right, int bottom, int left)
 {
     klbuicssex_attributes_t* p_attr = Disable();
 
-    p_attr->border.width.top = top;
-    p_attr->border.width.right = right;
-    p_attr->border.width.bottom = bottom;
-    p_attr->border.width.left = left;
+    p_attr->border.width.top = (int16_t)top;
+    p_attr->border.width.right = (int16_t)right;
+    p_attr->border.width.bottom = (int16_t)bottom;
+    p_attr->border.width.left = (int16_t)left;
 }
 
 void CCss::GetBorderWidth(int* p_top, int* p_right, int* p_bottom, int* p_left)

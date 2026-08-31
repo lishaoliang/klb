@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_css.h
@@ -58,6 +59,7 @@ typedef struct klb_wnd_t_ klb_wnd_t;
 #define KLBUICSS_visibility_visible  0      ///< ["visibility"] = "visible" [默认值]元素是可见的
 #define KLBUICSS_visibility_hidden   1      ///< ["visibility"] = "hidden" 元素是不可见的
 
+#pragma pack(1)
 
 /// @struct klbuicss_margin_t
 /// @brief  外边距
@@ -66,10 +68,10 @@ typedef struct klb_wnd_t_ klb_wnd_t;
 ///   单位像素
 typedef struct klbuicss_margin_t_
 {
-    int     top;            ///< "margin-top" 上外边距
-    int     right;          ///< "margin-right" 右外边距
-    int     bottom;         ///< "margin-bottom" 下外边距
-    int     left;           ///< "margin-left" 左外边距
+    int16_t top;            ///< "margin-top" 上外边距
+    int16_t right;          ///< "margin-right" 右外边距
+    int16_t bottom;         ///< "margin-bottom" 下外边距
+    int16_t left;           ///< "margin-left" 左外边距
 }klbuicss_margin_t;
 
 
@@ -80,10 +82,10 @@ typedef struct klbuicss_margin_t_
 ///   单位像素
 typedef struct klbuicss_padding_t_
 {
-    int     top;            ///< "padding-top" 上内边距
-    int     right;          ///< "padding-right" 右内边距
-    int     bottom;         ///< "padding-bottom" 下内边距
-    int     left;           ///< "padding-left" 左内边距
+    int16_t top;            ///< "padding-top" 上内边距
+    int16_t right;          ///< "padding-right" 右内边距
+    int16_t bottom;         ///< "padding-bottom" 下内边距
+    int16_t left;           ///< "padding-left" 左内边距
 }klbuicss_padding_t;
 
 
@@ -91,19 +93,19 @@ typedef struct klbuicss_padding_t_
 /// @brief  基础盒模型属性
 typedef struct klbuicss_box_t_
 {
-    int     max_height;         ///< ["max-height"] 最大高度
-    int     max_width;          ///< ["max-width"] 最大宽度
-    int     min_height;         ///< ["min-height"] 最小高度
-    int     min_width;          ///< ["min-width"] 最大宽度
+    int16_t max_height;         ///< ["max-height"] 最大高度
+    int16_t max_width;          ///< ["max-width"] 最大宽度
+    int16_t min_height;         ///< ["min-height"] 最小高度
+    int16_t min_width;          ///< ["min-width"] 最小宽度
 }klbuicss_box_t;
 
 
-/// @struct klbuicss_laylout_t
+/// @struct klbuicss_layout_t
 /// @brief  布局属性
-typedef struct klbuicss_laylout_t_
+typedef struct klbuicss_layout_t_
 {
-    int     z_index;            ///< ["z-index"] 堆叠顺序
-}klbuicss_laylout_t;
+    int16_t z_index;            ///< ["z-index"] 堆叠顺序
+}klbuicss_layout_t;
 
 
 /// @struct klbuicss_text_t
@@ -112,19 +114,19 @@ typedef struct klbuicss_laylout_t_
 typedef struct klbuicss_text_t_
 {
     uint32_t    color;          ///< ["color"] 文本颜色
-    int         align;          ///< ["text-align"] 文本对齐
+    uint8_t     align;          ///< ["text-align"] 文本对齐
 #define KLBUICSS_text1_left   0 ///< ["text-align"] = "left" 左对齐
 #define KLBUICSS_text1_center 1 ///< ["text-align"] = "center" 中心对齐
 #define KLBUICSS_text1_right  2 ///< ["text-align"] = "right" 右对齐
 
 #if defined(__KLB_GUI_CSS3__)
-    int         transform;      ///< ["text-transform"] 文本转换
+    uint8_t     transform;      ///< ["text-transform"] 文本转换
+    uint8_t     white_space;    ///< ["white-space"] 属性指定元素内部空白的处理方式
 
-    int         indent;         ///< ["text-indent"] 属性用于指定文本第一行的缩进
-    int         spacing;        ///< ["letter-spacing"] 属性用于指定文本中字符之间的间距
-    int         line_height;    ///< ["line-height"] 属性用于指定行之间的间距
-    int         word_spacing;   ///< ["word-spacing"] 属性用于指定文本中单词之间的间距
-    int         white_space;    ///< ["white-space"] 属性指定元素内部空白的处理方式
+    int16_t     indent;         ///< ["text-indent"] 属性用于指定文本第一行的缩进
+    int16_t     spacing;        ///< ["letter-spacing"] 属性用于指定文本中字符之间的间距
+    int16_t     line_height;    ///< ["line-height"] 属性用于指定行之间的间距
+    int16_t     word_spacing;   ///< ["word-spacing"] 属性用于指定文本中单词之间的间距
 #endif
 }klbuicss_text_t;
 
@@ -135,17 +137,17 @@ typedef struct klbuicss_text_t_
 typedef struct klbuicss_font_t_
 {
 #if defined(__KLB_GUI_CSS3__)
-    int         style;             ///< ["font-style"] 属性主要用于指定斜体文本
+    uint8_t     style;             ///< ["font-style"] 属性主要用于指定斜体文本
 #define KLBUICSS_font1_normal   0  ///< ["font-style"] = "normal" 文字正常显示
 #define KLBUICSS_font1_italic   1  ///< ["font-style"] = "italic" 文本以斜体显示
 #define KLBUICSS_font1_oblique  2  ///< ["font-style"] = "oblique" 文本为"倾斜"(倾斜与斜体非常相似,但支持较少)
 
-    int         weight;             ///< ["font-weight"] 属性指定字体的粗细
+    uint8_t     weight;             ///< ["font-weight"] 属性指定字体的粗细
 #define KLBUICSS_font2_normal   0   ///< ["font-weight"] = "normal"
 #define KLBUICSS_font2_bold     1   ///< ["font-weight"] = "bold"
 #endif
 
-    int         size;               ///< ["font-size"] 属性设置文本的大小
+    int16_t     size;               ///< ["font-size"] 属性设置文本的大小
 }klbuicss_font_t;
 
 
@@ -166,9 +168,9 @@ typedef struct klbuicss_background_t_
 #define KLBUICSS_bgimg_flag_color_key   0x1 ///< 关键色透明   
 
 #if defined(__KLB_GUI_CSS3__)
-    int         repeat;     ///< "background-repeat" 属性指定重复图像
-    int         position;   ///< "background-position" 属性用于指定背景图像的位置
-    int         attachment; ///< "background-attachment" 属性指定背景图像是应该滚动还是固定的(不会随页面的其余部分一起滚动)
+    uint8_t     repeat;     ///< "background-repeat" 属性指定重复图像
+    uint8_t     position;   ///< "background-position" 属性用于指定背景图像的位置
+    uint8_t     attachment; ///< "background-attachment" 属性指定背景图像是应该滚动还是固定的(不会随页面的其余部分一起滚动)
 #endif
 }klbuicss_background_t;
 
@@ -181,10 +183,10 @@ typedef struct klbuicss_border_t_
 #if defined(__KLB_GUI_CSS3__)
     struct
     {
-        int     top;
-        int     right;
-        int     bottom;
-        int     left;
+        uint8_t     top;
+        uint8_t     right;
+        uint8_t     bottom;
+        uint8_t     left;
     }style;                         ///< "border-style" 属性指定要显示的边框类型,属性可以设置一到四个值(用于上边框,右边框,下边框和左边框)
 #define KLBUICSS_border1_none   0   ///< ["border-style"] = "none" 定义无边框
 #define KLBUICSS_border1_dotted 1   ///< ["border-style"] = "dotted" 定义无边框
@@ -195,15 +197,15 @@ typedef struct klbuicss_border_t_
 #define KLBUICSS_border1_inset  6   ///< ["border-style"] = "inset" 定义3D inset边框
 #define KLBUICSS_border1_outset 7   ///< ["border-style"] = "outset" 定义3D outset边框
 
-    int         radius;             ///< "border-radius" 属性用于向元素添加圆角边框
+    int16_t     radius;             ///< "border-radius" 属性用于向元素添加圆角边框
 #endif
 
     struct
     {
-        int     top;
-        int     right;
-        int     bottom;
-        int     left;
+        int16_t top;
+        int16_t right;
+        int16_t bottom;
+        int16_t left;
     }width;                         ///< "border-width" 属性指定四个边框的宽度
 
     struct
@@ -221,7 +223,7 @@ typedef struct klbuicss_border_t_
 ///   参考: https://www.w3school.com.cn/css/css_outline.asp
 typedef struct klbuicss_outline_t
 {
-    int      style;                     ///< ["outline-style"] 属性指定轮廓的样式
+    uint8_t style;                      ///< ["outline-style"] 属性指定轮廓的样式
 #define KLBUICSS_outline1_none       0  ///< ["outline-style"] = "none" 定义无轮廓
 #define KLBUICSS_outline1_dotted     1  ///< ["outline-style"] = "dotted"定义点状的轮廓
 #define KLBUICSS_outline1_dashed     2  ///< ["outline-style"] = "dashed"定义虚线的轮廓
@@ -233,13 +235,13 @@ typedef struct klbuicss_outline_t
 #define KLBUICSS_outline1_outset     8  ///< ["outline-style"] = "outset"定义 3D 凸边轮廓
 #define KLBUICSS_outline1_hidden     9  ///< ["outline-style"] = "hidden"定义隐藏的轮廓
 
-    int      width;                      ///< ["outline-width"] 属性指定轮廓的宽度
+    int16_t  width;                      ///< ["outline-width"] 属性指定轮廓的宽度
 #define KLBUICSS_outline2_thin       1   ///< ["outline-width"] = "thin", 单位像素
 #define KLBUICSS_outline2_medium     3   ///< ["outline-width"] = "medium", 单位像素
 #define KLBUICSS_outline2_thick      5   ///< ["outline-width"] = "thick", 单位像素
 
     uint32_t color;                     ///< ["outline-color"] 属性用于设置轮廓的颜色
-    int      offset;                    ///< ["outline-offset"] 轮廓偏移
+    int16_t  offset;                    ///< ["outline-offset"] 轮廓偏移
 }klbuicss_outline_t;
 
 
@@ -247,8 +249,10 @@ typedef struct klbuicss_outline_t
 /// @brief  其他属性
 typedef struct klbuicss_util_t_
 {
-    int     cursor;                     ///< ["cursor"] = "" 指定光标形状
+    uint8_t cursor;                     ///< ["cursor"] = "" 指定光标形状
 }klbuicss_util_t;
+
+#pragma pack()
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -291,7 +295,7 @@ KLB_API klb_map_t* klb_gui_new_css_map(klb_gui_t* p_gui, const char* p_type);
 //       C. 提供操作全局公共CSS属性的一些接口
 // 其他: 在节省内存方面, 还有待考量思路:
 //       1).每个控件尽可能精简CSS属性. 缺点: 没有标准处理方法, 需要逐个去对待
-//       2).使用CSS-MINI, 精简每个属性占用的字节数: eg. 将 klbuicss_padding_t.top 属性 由"int" 修改为 "int8_t"
+//       2).使用CSS-MINI, 精简每个属性占用的字节数: eg. 将 klbuicss_padding_t.top 属性 由"int" 修改为 "int16_t"
 
 
 /// @brief 通过组件类型获取 全局公共CSS处理表

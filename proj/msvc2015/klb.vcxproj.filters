@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="inc">
@@ -300,9 +300,6 @@
     </Filter>
     <Filter Include="src_packages\klbwui\embed_shwnd">
       <UniqueIdentifier>{9d25358a-7725-43bd-bc33-aa9f61f00474}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_packages\klbwui\embed_klua">
-      <UniqueIdentifier>{164433e9-ea33-4780-bda4-7e4a3064ca50}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1323,23 +1320,173 @@
     <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_css.h">
       <Filter>src_packages\klbwui\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.h">
-      <Filter>src_packages\klbwui\embed_wnd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_widgets.h">
       <Filter>src_packages\klbwui\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex_paint.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.h">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.h">
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_check.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_combo.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_date.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_div.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_edit.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_group.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_hscrollbar.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ip.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_line.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list_row.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex_row.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_2rd.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_item.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_num.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_password.h">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.h">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.h">
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_progress.h">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_radio.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_richtext.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_slider.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_spin.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab_btn.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ticker.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_animation.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_dialog.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_qrcode.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_time.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vscrollbar.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vslider.h">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_calendar_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_messagebox.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_combo_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu_ip.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_edit_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_btn.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_days.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_months.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_years.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_combo_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu_ip.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.h">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2335,35 +2482,272 @@
     <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_register.c">
       <Filter>src_packages\klbwui\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_view.c">
-      <Filter>src_packages\klbwui\embed_widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.c">
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex.c">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_button.c">
-      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex_paint.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.c">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.c">
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_check.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_combo.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_date.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_div.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_edit.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_group.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_hscrollbar.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ip.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_line.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_animation.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_dialog.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_qrcode.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list_row.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex_row.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_2rd.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_item.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_num.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_password.c">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.c">
       <Filter>src_packages\klbwui\embed_wnd</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_static.c">
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_progress.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_radio.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_richtext.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_slider.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_spin.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab_btn.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ticker.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_time.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vscrollbar.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vslider.c">
+      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_btnex.c">
       <Filter>src_packages\klbwui\embed_widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_picture.c">
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_button.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_calendar.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_check.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_combo.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_date.c">
       <Filter>src_packages\klbwui\embed_widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_demo.c">
       <Filter>src_packages\klbwui\embed_widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.c">
-      <Filter>src_packages\klbwui\embed_wnd</Filter>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_div.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_edit.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_group.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_hscrollbar.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_ip.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_line.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_animation.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_dialog.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_qrcode.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_list.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_listex.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_menu.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_num.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_password.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_picture.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_progress.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_radio.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_richtext.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_slider.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_spin.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_static.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_tab.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_ticker.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_time.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_view.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_vscrollbar.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_vslider.c">
+      <Filter>src_packages\klbwui\embed_widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_calendar_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_messagebox.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_combo_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu_ip.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_edit_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_btn.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_days.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_months.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_years.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_combo_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu_ip.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.c">
+      <Filter>src_packages\klbwui\embed_shwnd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,9 +6,6 @@
 #include "klbgui/klb_gui.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
-#ifndef __KLB_NO_KLBWUI__
-#include "klbwui/klbwui.h"
-#endif
 #include <assert.h>
 
 
@@ -72,10 +69,6 @@ static void* klua_ex_gui_create(klua_env_t* p_env)
 
     p_ex->p_gui = klb_gui_create(NULL);
     klb_gui_attach_klua_env(p_ex->p_gui, p_env);
-
-#ifndef __KLB_NO_KLBWUI__
-    klbwui_register_sim(p_ex->p_gui);
-#endif
 
     p_ex->p_bind_hlist = klb_hlist_create(0);
 

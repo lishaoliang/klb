@@ -26,7 +26,7 @@ usage() {
 
 记名 (Autotools 对齐):
   no-* / --disable-*     裁掉库 (全量基准)
-  use-* / --enable-*     加回库 (须配合 --min-core 或仅写 enable 时默认 min-core)
+  use-* / --enable-*     加回库 (须配合 --min-core 或仅写 enable 时默认 min-core; make 直传亦可)
   --min-core             最小预设
 
 示例:
@@ -42,7 +42,7 @@ usage() {
 选项:
   --print / --info / -j N / --raw '...' / -h
 
-库名: zlib lpeg sqlite pcre2 cpp gui format qrencode net-proto klbwui
+库名: zlib lpeg sqlite pcre2 cpp gui format qrencode net-proto wui wui-embed wui-sim
 EOF
 }
 
@@ -181,14 +181,18 @@ elif ((${#_compose_tokens[@]} == 0)); then
     usage >&2
     exit 1
 else
-    MY_CLIP="$(klb_clip_resolve compose "${_compose_tokens[@]}")"
+    MY_CLIP="${_compose_tokens[*]}"
     _mode="compose"
 fi
 
 echo "clip-build.sh: MY_CLIP=${MY_CLIP:-<empty>} tokens=${_compose_tokens[*]:-<raw>}"
 
 if [[ "${_print}" -eq 1 ]]; then
-    printf '%s\n' "${MY_CLIP}"
+    if [[ "${_mode}" == "compose" ]]; then
+        klb_clip_resolve compose "${_compose_tokens[@]}"
+    else
+        printf '%s\n' "${MY_CLIP}"
+    fi
     exit 0
 fi
 

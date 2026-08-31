@@ -23,7 +23,7 @@ static void klbwnd_tip_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_tip_on_paint_status(klb_wnd_t* p_wnd, klbwnd_tip_t* p_tip, klbwnd_tip_css_t* p_css, klbuicssex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    if (0 < sdslen(p_attr->background.image))
+    if (NULL != p_attr->background.image && 0 < sdslen(p_attr->background.image))
     {
         // 图片背景
         klb_wnd_draw_image(p_wnd, p_rect, p_attr->background.image, NULL);

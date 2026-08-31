@@ -3,7 +3,7 @@
 # make MY_VERSION=release MY_TOOL_CHAIN=arm-linux-gnueabi- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
 # 裁剪参数 MY_CLIP="min-core"
 # 裁剪参数 MY_CLIP="--disable-gui --disable-zlib"   (同 no-gui no-zlib)
-# 裁剪参数 MY_CLIP="no-pcre2 no-lpeg ..."             (min-core+加库须 clip-build --enable / use-*)
+# 裁剪参数 MY_CLIP="min-core use-zlib" / "use-wui-embed"  (clip.mk 归一为 no-*)
 
 SHELL = /bin/bash
 PWD = `pwd`

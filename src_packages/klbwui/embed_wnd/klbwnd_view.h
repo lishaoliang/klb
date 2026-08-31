@@ -48,6 +48,7 @@ typedef struct klbwnd_view_t_
 {
     klbwnd_view_css_t*      p_css;          ///< 样式
 
+    int                     index;          ///< 序号
     sds                     title;          ///< 标题
 } klbwnd_view_t;
 
@@ -68,6 +69,11 @@ void klbwnd_view_css_copy(klbwnd_view_css_t* p_dst, klbwnd_view_css_t* p_src);
 void klbwnd_view_set_css(klb_wnd_t* p_wnd, klbwnd_view_css_t* p_css);
 
 
+/// @brief 设置/获取序号
+void klbwnd_view_set_index(klb_wnd_t* p_wnd, int index);
+int  klbwnd_view_get_index(klb_wnd_t* p_wnd);
+
+
 void klbwnd_view_set_title(klb_wnd_t* p_wnd, const char* p_title);
 const sds klbwnd_view_get_title(klb_wnd_t* p_wnd);
 
@@ -78,4 +84,4 @@ const sds klbwnd_view_get_title(klb_wnd_t* p_wnd);
 
 
 #endif // __KLBWND_VIEW_H__
-//end
+// end

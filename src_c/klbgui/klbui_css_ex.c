@@ -14,9 +14,11 @@ void klbuicssex_attributes_init(klbuicssex_attributes_t* p_dst, const klbuicssex
     p_dst->text = p_src->text;
     p_dst->font = p_src->font;
 
-    p_dst->background.image = sdsempty();
     p_dst->background.color = p_src->background.color;
-    p_dst->background.image = sdscpy(p_dst->background.image, p_src->background.image);
+    p_dst->background.image = NULL;
+    p_dst->background.image = klb_sds_assign(p_dst->background.image, p_src->background.image);
+    p_dst->background.image_mode = p_src->background.image_mode;
+    p_dst->background.image_flags = p_src->background.image_flags;
 
 #if defined(__KLB_GUI_CSS3__)
     p_dst->background.repeat = p_src->background.repeat;
@@ -34,16 +36,13 @@ void klbuicssex_attributes_quit(klbuicssex_attributes_t* p_attr)
 
 void klbuicssex_attributes_copy(klbuicssex_attributes_t* p_dst, const klbuicssex_attributes_t* p_src)
 {
-    if (NULL == p_dst->background.image)
-    {
-        p_dst->background.image = sdsempty();
-    }
-
     p_dst->text = p_src->text;
     p_dst->font = p_src->font;
 
     p_dst->background.color = p_src->background.color;
-    p_dst->background.image = sdscpy(p_dst->background.image, p_src->background.image);
+    p_dst->background.image = klb_sds_assign(p_dst->background.image, p_src->background.image);
+    p_dst->background.image_mode = p_src->background.image_mode;
+    p_dst->background.image_flags = p_src->background.image_flags;
 
 #if defined(__KLB_GUI_CSS3__)
     p_dst->background.repeat = p_src->background.repeat;
@@ -150,6 +149,46 @@ void klbuicssex_attribute_int(int* p_int, klb_wnd_t* p_wnd, int method, const kl
         case KLB_ADT_uint64:
             {
                 *p_int = (int)klb_map_idx_to_uint64(p_in, start);
+
+                if (NULL != p_wnd)
+                {
+                    klb_wnd_update(p_wnd);
+                }
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void klbuicssex_attribute_int16(int16_t* p_int, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    assert(NULL != p_int);
+
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_set_idx_int64(p_out, 0, *p_int);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+        int start = 1;
+        int type = klb_map_array_type(p_in, start);
+        switch (type)
+        {
+        case KLB_ADT_int64:
+            {
+                *p_int = (int16_t)klb_map_idx_to_int64(p_in, start);
+
+                if (NULL != p_wnd)
+                {
+                    klb_wnd_update(p_wnd);
+                }
+            }
+            break;
+        case KLB_ADT_uint64:
+            {
+                *p_int = (int16_t)klb_map_idx_to_uint64(p_in, start);
 
                 if (NULL != p_wnd)
                 {
@@ -308,16 +347,16 @@ void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method
         if (KLB_ADT_map == t)
         {
             klb_map_t* ptr = klb_map_idx_to_map(p_in, start);
-            p_margin->top = (int)klb_map_idx_to_int64(ptr, 0);
-            p_margin->right = (int)klb_map_idx_to_int64(ptr, 1);
-            p_margin->bottom = (int)klb_map_idx_to_int64(ptr, 2);
-            p_margin->left = (int)klb_map_idx_to_int64(ptr, 3);
+            p_margin->top = (int16_t)klb_map_idx_to_int64(ptr, 0);
+            p_margin->right = (int16_t)klb_map_idx_to_int64(ptr, 1);
+            p_margin->bottom = (int16_t)klb_map_idx_to_int64(ptr, 2);
+            p_margin->left = (int16_t)klb_map_idx_to_int64(ptr, 3);
 
             if(NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
         else if (KLB_ADT_int64 == t)
         {
-            int w = (int)klb_map_idx_to_int64(p_in, start);
+            int16_t w = (int16_t)klb_map_idx_to_int64(p_in, start);
 
             p_margin->top = w;
             p_margin->right = w;
@@ -328,7 +367,7 @@ void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method
         }
         else if (KLB_ADT_uint64 == t)
         {
-            int w = (int)klb_map_idx_to_uint64(p_in, start);
+            int16_t w = (int16_t)klb_map_idx_to_uint64(p_in, start);
 
             p_margin->top = w;
             p_margin->right = w;
@@ -343,25 +382,25 @@ void klbuicssex_margin(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method
 // 外边距-上 margin-top
 void klbuicssex_margin_top(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_margin->top, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_margin->top, p_wnd, method, p_in, p_out);
 }
 
 // 外边距-右 margin-right
 void klbuicssex_margin_right(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_margin->right, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_margin->right, p_wnd, method, p_in, p_out);
 }
 
 // 外边距-下 margin-bottom
 void klbuicssex_margin_bottom(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_margin->bottom, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_margin->bottom, p_wnd, method, p_in, p_out);
 }
 
 // 外边距-上 margin-left
 void klbuicssex_margin_left(klbuicss_margin_t* p_margin, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_margin->left, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_margin->left, p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -384,16 +423,16 @@ void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int met
         if (KLB_ADT_map == t)
         {
             klb_map_t* ptr = klb_map_idx_to_map(p_in, start);
-            p_padding->top = (int)klb_map_idx_to_int64(ptr, 0);
-            p_padding->right = (int)klb_map_idx_to_int64(ptr, 1);
-            p_padding->bottom = (int)klb_map_idx_to_int64(ptr, 2);
-            p_padding->left = (int)klb_map_idx_to_int64(ptr, 3);
+            p_padding->top = (int16_t)klb_map_idx_to_int64(ptr, 0);
+            p_padding->right = (int16_t)klb_map_idx_to_int64(ptr, 1);
+            p_padding->bottom = (int16_t)klb_map_idx_to_int64(ptr, 2);
+            p_padding->left = (int16_t)klb_map_idx_to_int64(ptr, 3);
 
             if (NULL != p_wnd)   klb_wnd_update(p_wnd);
         }
         else if (KLB_ADT_int64 == t)
         {
-            int w = (int)klb_map_idx_to_int64(p_in, start);
+            int16_t w = (int16_t)klb_map_idx_to_int64(p_in, start);
 
             p_padding->top = w;
             p_padding->right = w;
@@ -404,7 +443,7 @@ void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int met
         }
         else if (KLB_ADT_uint64 == t)
         {
-            int w = (int)klb_map_idx_to_uint64(p_in, start);
+            int16_t w = (int16_t)klb_map_idx_to_uint64(p_in, start);
 
             p_padding->top = w;
             p_padding->right = w;
@@ -419,25 +458,25 @@ void klbuicssex_padding(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int met
 // 内边距-上 padding-top
 void klbuicssex_padding_top(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_padding->top, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_padding->top, p_wnd, method, p_in, p_out);
 }
 
 // 内边距-右 padding-right
 void klbuicssex_padding_right(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_padding->right, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_padding->right, p_wnd, method, p_in, p_out);
 }
 
 // 内边距-下 padding-bottom
 void klbuicssex_padding_bottom(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_padding->bottom, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_padding->bottom, p_wnd, method, p_in, p_out);
 }
 
 // 内边距-上 padding-left
 void klbuicssex_padding_left(klbuicss_padding_t* p_padding, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&p_padding->left, p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&p_padding->left, p_wnd, method, p_in, p_out);
 }
 
 
@@ -598,7 +637,7 @@ void klbuicssex_font_weight(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int metho
 // 字体大小 font-size
 void klbuicssex_font_size(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_attribute_int(&(p_font->size), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&(p_font->size), p_wnd, method, p_in, p_out);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -671,10 +710,10 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
         if (KLB_ADT_map == t)
         {
             klb_map_t* ptr = klb_map_idx_to_map(p_in, start);
-            p_border->width.top = (int)klb_map_idx_to_int64(ptr, 0);
-            p_border->width.right = (int)klb_map_idx_to_int64(ptr, 1);
-            p_border->width.bottom = (int)klb_map_idx_to_int64(ptr, 2);
-            p_border->width.left = (int)klb_map_idx_to_int64(ptr, 3);
+            p_border->width.top = (int16_t)klb_map_idx_to_int64(ptr, 0);
+            p_border->width.right = (int16_t)klb_map_idx_to_int64(ptr, 1);
+            p_border->width.bottom = (int16_t)klb_map_idx_to_int64(ptr, 2);
+            p_border->width.left = (int16_t)klb_map_idx_to_int64(ptr, 3);
 
             if (NULL != p_wnd)
             {
@@ -683,7 +722,7 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
         }
         else if(KLB_ADT_int64 == t)
         {
-            int w = (int)klb_map_idx_to_int64(p_in, start);
+            int16_t w = (int16_t)klb_map_idx_to_int64(p_in, start);
 
             p_border->width.top = w;
             p_border->width.right = w;
@@ -697,7 +736,7 @@ void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
         }
         else if(KLB_ADT_uint64 == t)
         {
-            int w = (int)klb_map_idx_to_uint64(p_in, start);
+            int16_t w = (int16_t)klb_map_idx_to_uint64(p_in, start);
 
             p_border->width.top = w;
             p_border->width.right = w;
@@ -838,7 +877,7 @@ void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int 
 void klbuicssex_border_radius(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
 #if defined(__KLB_GUI_CSS3__)
-    klbuicssex_attribute_int(&(p_border->radius), p_wnd, method, p_in, p_out);
+    klbuicssex_attribute_int16(&(p_border->radius), p_wnd, method, p_in, p_out);
 #endif
 }
 

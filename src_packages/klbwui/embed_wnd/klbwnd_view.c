@@ -90,6 +90,20 @@ void klbwnd_view_set_css(klb_wnd_t* p_wnd, klbwnd_view_css_t* p_css)
     p_view->p_css = p_css;
 }
 
+void klbwnd_view_set_index(klb_wnd_t* p_wnd, int index)
+{
+    klbwnd_view_t* p_view = (klbwnd_view_t*)p_wnd->ctrl;
+
+    p_view->index = index;
+}
+
+int klbwnd_view_get_index(klb_wnd_t* p_wnd)
+{
+    klbwnd_view_t* p_view = (klbwnd_view_t*)p_wnd->ctrl;
+
+    return p_view->index;
+}
+
 void klbwnd_view_set_title(klb_wnd_t* p_wnd, const char* p_title)
 {
     klbwnd_view_t* p_view = (klbwnd_view_t*)p_wnd->ctrl;
@@ -109,6 +123,7 @@ const sds klbwnd_view_get_title(klb_wnd_t* p_wnd)
 
 static void klbwnd_view_init_attribute(klbwnd_view_t* p_view)
 {
+    p_view->index = 0;
     p_view->title = NULL;
 }
 
@@ -216,11 +231,13 @@ void klbwnd_view_deinit(klb_wnd_t* p_wnd)
 
 klb_wnd_t* klbwnd_view_create(klb_gui_t* p_gui, int x, int y, int w, int h)
 {
+    // step1. malloc
     klb_wnd_t* p_wnd = KLB_MALLOCZ(klb_wnd_t, 1, sizeof(klbwnd_view_t));
 
+    // step2. 初始化基础部分    
     klbwnd_view_init(p_wnd, p_gui, x, y, w, h);
 
-    // 补写 destroy 函数
+    // step3. 重写部分函数
     p_wnd->vtable.destroy = klbwnd_view_destroy;
 
     return p_wnd;

@@ -39,7 +39,11 @@ KLB_API int klbwui_register_sim(klb_gui_t* p_gui);
 
 
 #define KLBWUI_REGISTER_EMBED(PTR_GUI_)     klbwui_register_embed((PTR_GUI_))
+#if !defined(__KLB_NO_WUI_SIM__)
 #define KLBWUI_REGISTER_SIM(PTR_GUI_)       klbwui_register_sim((PTR_GUI_))
+#else
+#define KLBWUI_REGISTER_SIM(PTR_GUI_)       klbwui_register_embed((PTR_GUI_))
+#endif
 
 
 #if defined(__cplusplus)
@@ -48,4 +52,4 @@ KLB_API int klbwui_register_sim(klb_gui_t* p_gui);
 
 
 #endif // __KLBWUI_H__
-//end
+// end

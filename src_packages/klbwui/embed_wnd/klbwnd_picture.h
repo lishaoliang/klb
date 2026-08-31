@@ -83,4 +83,4 @@ const sds klbwnd_picture_get_value(klb_wnd_t* p_wnd);
 
 
 #endif // __KLBWND_PICTURE_H__
-//end
+// end

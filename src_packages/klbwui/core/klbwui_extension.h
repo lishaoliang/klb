@@ -42,4 +42,4 @@ klb_gui_t* kluaex_klbwui_get_gui(klbwui_extension_t* p_ex);
 
 
 #endif // __KLBWUI_EXTENSION_H__
-//end
+// end
