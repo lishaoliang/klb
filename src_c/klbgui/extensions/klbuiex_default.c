@@ -48,10 +48,6 @@ static void klbuiex_default_init_normal(klbuicssex_attributes_t* p_normal)
     p_normal->text.color = KLB_ARGB8888(255, 220, 220, 220);
     p_normal->text.align = KLBUICSS_text1_left;
 
-#if defined(__KLB_GUI_CSS3__)
-    p_normal->font.style = KLBUICSS_font1_normal;
-    p_normal->font.weight = KLBUICSS_font2_normal;
-#endif
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
@@ -72,10 +68,6 @@ static void klbuiex_default_init_focus(klbuicssex_attributes_t* p_normal)
     p_normal->text.color = KLB_ARGB8888(255, 220, 220, 10);
     p_normal->text.align = KLBUICSS_text1_left;
 
-#if defined(__KLB_GUI_CSS3__)
-    p_normal->font.style = KLBUICSS_font1_normal;
-    p_normal->font.weight = KLBUICSS_font2_normal;
-#endif
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
@@ -96,10 +88,6 @@ static void klbuiex_default_init_disable(klbuicssex_attributes_t* p_normal)
     p_normal->text.color = KLB_ARGB8888(255, 180, 180, 180);
     p_normal->text.align = KLBUICSS_text1_left;
 
-#if defined(__KLB_GUI_CSS3__)
-    p_normal->font.style = KLBUICSS_font1_normal;
-    p_normal->font.weight = KLBUICSS_font2_normal;
-#endif
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
@@ -120,10 +108,6 @@ static void klbuiex_default_init_check(klbuicssex_attributes_t* p_normal)
     p_normal->text.color = KLB_ARGB8888(255, 10, 210, 210);
     p_normal->text.align = KLBUICSS_text1_left;
 
-#if defined(__KLB_GUI_CSS3__)
-    p_normal->font.style = KLBUICSS_font1_normal;
-    p_normal->font.weight = KLBUICSS_font2_normal;
-#endif
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);
@@ -144,10 +128,6 @@ static void klbuiex_default_init_input(klbuicssex_attributes_t* p_normal)
     p_normal->text.color = KLB_ARGB8888(255, 180, 180, 180);
     p_normal->text.align = KLBUICSS_text1_left;
 
-#if defined(__KLB_GUI_CSS3__)
-    p_normal->font.style = KLBUICSS_font1_normal;
-    p_normal->font.weight = KLBUICSS_font2_normal;
-#endif
     p_normal->font.size = 24;
 
     p_normal->background.color = KLB_ARGB8888(255, 31, 31, 31);

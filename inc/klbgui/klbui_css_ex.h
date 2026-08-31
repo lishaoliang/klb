@@ -123,12 +123,6 @@ KLB_API void klbuicssex_text_align(klbuicss_text_t* p_text, klb_wnd_t* p_wnd, in
 //////////////////////////////////////////////////////////////////////////
 // 字体
 
-// 斜体 font-style
-KLB_API void klbuicssex_font_style(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
-
-// 字体粗细 font-weight
-KLB_API void klbuicssex_font_weight(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
-
 // 字体大小 font-size
 KLB_API void klbuicssex_font_size(klbuicss_font_t* p_font, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
@@ -146,17 +140,11 @@ KLB_API void klbuicssex_background_image(klbuicss_background_t* p_background, kl
 //////////////////////////////////////////////////////////////////////////
 // 边框
 
-// 边框类型 border-style
-KLB_API void klbuicssex_border_style(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
-
 // 边框宽度 border-width
 KLB_API void klbuicssex_border_width(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
 // 边框颜色 border-color
 KLB_API void klbuicssex_border_color(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
-
-// 圆角边框 border-radius
-KLB_API void klbuicssex_border_radius(klbuicss_border_t* p_border, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
 
 
