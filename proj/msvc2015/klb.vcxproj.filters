@@ -318,10 +318,16 @@
     <ClInclude Include="..\..\inc\klbbase\klb_string.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbformat\klb_bitmap.h">
+      <Filter>inc\klbformat</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\inc\klbformat\klb_flv.h">
       <Filter>inc\klbformat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbformat\klb_flv_demux.h">
+      <Filter>inc\klbformat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbformat\klb_png.h">
       <Filter>inc\klbformat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbgui\klb_gui.h">
@@ -383,9 +389,6 @@
     </ClInclude>
     <ClInclude Include="..\..\inc\klbplatform\klb_time.h">
       <Filter>inc\klbplatform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\klbutil\klb_bitmap.h">
-      <Filter>inc\klbutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_canvas.h">
       <Filter>inc\klbutil</Filter>
@@ -1516,10 +1519,16 @@
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c">
       <Filter>src_c\klbbase</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_c\klbformat\klb_bitmap.c">
+      <Filter>src_c\klbformat</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src_c\klbformat\klb_flv.c">
       <Filter>src_c\klbformat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c">
+      <Filter>src_c\klbformat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbformat\klb_png.c">
       <Filter>src_c\klbformat</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\klb_gui.c">
@@ -1581,9 +1590,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbplatform\klb_time.c">
       <Filter>src_c\klbplatform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klbutil\klb_bitmap.c">
-      <Filter>src_c\klbutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas.c">
       <Filter>src_c\klbutil</Filter>

@@ -143,8 +143,9 @@ typedef struct klbuicss_background_t_
     sds         image;      ///< "background-image" 属性指定用作元素背景的图像
 
     uint8_t     image_mode;
-#define KLBUICSS_bgimg_mode_default     0   ///< 默认: klb_wnd_draw_image
-#define KLBUICSS_bgimg_mode_scale9      1   ///< 九宫格 -> IMAGE_SCALE9
+#define KLBUICSS_bgimg_mode_default     0   ///< 默认: klb_wnd_draw_image (原图拷贝, 超出裁剪)
+#define KLBUICSS_bgimg_mode_resize      1   ///< 缩放铺满 -> IMAGE_RESIZE
+#define KLBUICSS_bgimg_mode_scale9      2   ///< 九宫格 -> IMAGE_SCALE9
 
     uint8_t     image_flags;
 #define KLBUICSS_bgimg_flag_none        0   ///< 无 flag

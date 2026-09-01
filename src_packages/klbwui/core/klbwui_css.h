@@ -36,7 +36,7 @@ extern "C" {
 /// @param [in] *p_in       入参 map
 /// @param [in, out] *p_out 出参 map
 /// @return 无
-/// @note 取值: "default" / "scale9"
+/// @note 取值: "default" / "resize" / "scale9"
 void klbwuicss_background_image_mode(klbuicss_background_t* p_bg, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out);
 
 /// @brief 背景图关键色透明 background-image-color-key

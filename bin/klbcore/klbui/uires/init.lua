@@ -73,7 +73,7 @@ end
 
 
 -- @brief 按绝对路径尝试加载单张图片
--- @param [in]	key[string]		图片资源 key (以 '/' 开头); eg. '/aaa/audio.bmp'
+-- @param [in]	key[string]		图片资源 key (以 '/' 开头, 无扩展名); eg. '/aaa/audio'
 -- @param [in]	fullpath[string]	图片文件全路径
 -- @return 无
 function res.try_load_image(key, fullpath)

@@ -27,6 +27,12 @@ static void klbwnd_picture_on_paint_status(klb_wnd_t* p_wnd, klbwnd_picture_t* p
     (void)p_pic;
     (void)p_css;
 
+    // 有图时先刷背景色, 再画图; 避免切 mode 残留
+    if (NULL != p_attr->background.image && 0 < sdslen(p_attr->background.image))
+    {
+        klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
+    }
+
     // 背景: color / image / scale9 / color_key
     klbwuicss_draw_background(p_wnd, p_rect, &p_attr->background);
 

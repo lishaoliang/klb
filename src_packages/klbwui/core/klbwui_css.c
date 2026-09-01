@@ -14,7 +14,11 @@ void klbwuicss_background_image_mode(klbuicss_background_t* p_bg, klb_wnd_t* p_w
 
     if (KLBUI_CSSEX_get == method)
     {
-        if (KLBUICSS_bgimg_mode_scale9 == p_bg->image_mode)
+        if (KLBUICSS_bgimg_mode_resize == p_bg->image_mode)
+        {
+            klb_map_set_idx_string(p_out, 0, "resize");
+        }
+        else if (KLBUICSS_bgimg_mode_scale9 == p_bg->image_mode)
         {
             klb_map_set_idx_string(p_out, 0, "scale9");
         }
@@ -34,7 +38,12 @@ void klbwuicss_background_image_mode(klbuicss_background_t* p_bg, klb_wnd_t* p_w
             return;
         }
 
-        if (0 == strcmp(p_value, "scale9"))
+        if (0 == strcmp(p_value, "resize"))
+        {
+            p_bg->image_mode = KLBUICSS_bgimg_mode_resize;
+            update = true;
+        }
+        else if (0 == strcmp(p_value, "scale9"))
         {
             p_bg->image_mode = KLBUICSS_bgimg_mode_scale9;
             update = true;
@@ -90,7 +99,18 @@ void klbwuicss_draw_background(klb_wnd_t* p_wnd, klb_rect_t* p_rect, klbuicss_ba
     {
         bool color_key = (0 != (p_bg_css->image_flags & KLBUICSS_bgimg_flag_color_key));
 
-        if (KLBUICSS_bgimg_mode_scale9 == p_bg_css->image_mode)
+        if (KLBUICSS_bgimg_mode_resize == p_bg_css->image_mode)
+        {
+            if (color_key)
+            {
+                klb_wndex_draw_image_color_key(p_wnd, p_rect, p_bg_css->image);
+            }
+            else
+            {
+                klb_wndex_draw_image_resize(p_wnd, p_rect, p_bg_css->image);
+            }
+        }
+        else if (KLBUICSS_bgimg_mode_scale9 == p_bg_css->image_mode)
         {
             if (color_key)
             {

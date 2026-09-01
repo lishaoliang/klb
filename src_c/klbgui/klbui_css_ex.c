@@ -214,6 +214,44 @@ void klbuicssex_attribute_color(uint32_t* p_color, klb_wnd_t* p_wnd, int method,
     }
 }
 
+// 图片 key 规范化长度: 剥掉末尾 .bmp / .png (大小写不敏感)
+static int image_key_n_klbuicssex(const char* p_value)
+{
+    if (NULL == p_value || '\0' == p_value[0])
+    {
+        return 0;
+    }
+
+    int n = (int)strlen(p_value);
+
+    if (n < 4)
+    {
+        return n;
+    }
+
+    const char* p = p_value + n - 4;
+
+    if ('.' != p[0])
+    {
+        return n;
+    }
+
+    char c1 = p[1];
+    char c2 = p[2];
+    char c3 = p[3];
+
+    if ((('b' == c1) || ('B' == c1)) && (('m' == c2) || ('M' == c2)) && (('p' == c3) || ('P' == c3)))
+    {
+        return n - 4;
+    }
+    else if ((('p' == c1) || ('P' == c1)) && (('n' == c2) || ('N' == c2)) && (('g' == c3) || ('G' == c3)))
+    {
+        return n - 4;
+    }
+
+    return n;
+}
+
 void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     assert(NULL != p_image);
@@ -230,7 +268,20 @@ void klbuicssex_attribute_image(sds* p_image, klb_wnd_t* p_wnd, int method, cons
         if (KLB_ADT_string == klb_map_array_type(p_in, start))
         {
             const char* p_value = klb_map_idx_to_string(p_in, start);
-            *p_image = klb_sds_assign(*p_image, p_value);
+            int key_n = image_key_n_klbuicssex(p_value);
+
+            if (0 == key_n)
+            {
+                *p_image = klb_sds_assign(*p_image, "");
+            }
+            else if (NULL == *p_image)
+            {
+                *p_image = sdsnewlen(p_value, (size_t)key_n);
+            }
+            else
+            {
+                *p_image = sdscpylen(*p_image, p_value, (size_t)key_n);
+            }
 
             if (NULL != p_wnd)
             {

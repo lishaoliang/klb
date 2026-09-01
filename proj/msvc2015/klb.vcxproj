@@ -180,8 +180,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_smp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_string.h" />
+    <ClInclude Include="..\..\inc\klbformat\klb_bitmap.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_flv.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_flv_demux.h" />
+    <ClInclude Include="..\..\inc\klbformat\klb_png.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_css.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_css_ex.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_datetime.h" />
@@ -246,7 +248,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbthird\zconf.h" />
     <ClInclude Include="..\..\inc\klbthird\zlib.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_adt.h" />
-    <ClInclude Include="..\..\inc\klbutil\klb_bitmap.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_canvas.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_color.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_h26x.h" />
@@ -609,8 +610,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbbase\klb_package.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
+    <ClCompile Include="..\..\src_c\klbformat\klb_bitmap.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c" />
+    <ClCompile Include="..\..\src_c\klbformat\klb_png.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_render.c" />
@@ -710,7 +713,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_xclass.c" />
     <ClCompile Include="..\..\src_c\klbthird\sds\sds.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_adt.c" />
-    <ClCompile Include="..\..\src_c\klbutil\klb_bitmap.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas_argb8888.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_color.c" />
