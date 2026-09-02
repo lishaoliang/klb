@@ -24,8 +24,8 @@ extern "C" {
 /// @param [in]  *p_filename    文件路径
 /// @param [in]  color_fmt      目标色格式
 /// @return klb_canvas_t* 成功非 NULL; 失败 NULL
-/// @note 主路径: 8bit 非交错 (灰/RGB/索引/灰A/RGBA); 依赖 zlib 解 IDAT
-///  \n no-zlib 或非法文件时返回 NULL
+/// @note 非交错: 8bit 灰/RGB/索引/灰A/RGBA; 索引另支持 1/2/4bit; 16bit 降为 8bit 画布
+///  \n 依赖 zlib 解 IDAT; 交错或非法文件时返回 NULL
 KLB_API klb_canvas_t* klb_png_read(const char* p_filename, int color_fmt);
 
 
@@ -33,7 +33,8 @@ KLB_API klb_canvas_t* klb_png_read(const char* p_filename, int color_fmt);
 /// @param [in]  *p_filename    文件路径
 /// @param [in]  *p_canvas      画布
 /// @return 0.成功; 非0.失败
-/// @note 桩: 固定返回 1
+/// @note 主路径: 8bit 非交错 RGBA (color type 6); 依赖 zlib 压 IDAT
+///  \n 画布须为 ARGB8888; no-zlib 或非法入参时返回非0
 KLB_API int klb_png_write(const char* p_filename, const klb_canvas_t* p_canvas);
 
 

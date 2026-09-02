@@ -59,6 +59,15 @@ static uint16_t read_be16_klb_png(const uint8_t* p)
 }
 
 
+static void write_be32_klb_png(uint8_t* p, uint32_t v)
+{
+    p[0] = (uint8_t)((v >> 24) & 0xFF);
+    p[1] = (uint8_t)((v >> 16) & 0xFF);
+    p[2] = (uint8_t)((v >> 8) & 0xFF);
+    p[3] = (uint8_t)(v & 0xFF);
+}
+
+
 static bool is_ancillary_klb_png(uint32_t type)
 {
     uint8_t c = (uint8_t)((type >> 24) & 0xFF);
@@ -66,7 +75,7 @@ static bool is_ancillary_klb_png(uint32_t type)
 }
 
 
-static int filter_bpp_klb_png(int color_type)
+static int channels_klb_png(int color_type)
 {
     if (0 == color_type)
     {
@@ -90,6 +99,58 @@ static int filter_bpp_klb_png(int color_type)
     }
 
     return 0;
+}
+
+
+static int filter_bpp_klb_png(int color_type, int bit_depth)
+{
+    int ch = channels_klb_png(color_type);
+    if (ch <= 0 || bit_depth <= 0)
+    {
+        return 0;
+    }
+
+    int bpp = (ch * bit_depth) / 8;
+    if (bpp <= 0)
+    {
+        return 1;
+    }
+
+    return bpp;
+}
+
+
+static int row_bytes_klb_png(int w, int color_type, int bit_depth)
+{
+    int ch = channels_klb_png(color_type);
+    if (w <= 0 || ch <= 0 || bit_depth <= 0)
+    {
+        return 0;
+    }
+
+    int64_t bits = (int64_t)w * (int64_t)ch * (int64_t)bit_depth;
+    int64_t bytes = (bits + 7) / 8;
+    if (bytes <= 0 || (int64_t)INT_MAX < bytes)
+    {
+        return 0;
+    }
+
+    return (int)bytes;
+}
+
+
+static bool depth_ok_klb_png(int color_type, int bit_depth)
+{
+    if (3 == color_type)
+    {
+        return (1 == bit_depth || 2 == bit_depth || 4 == bit_depth || 8 == bit_depth);
+    }
+    else if (0 == color_type || 2 == color_type || 4 == color_type || 6 == color_type)
+    {
+        return (8 == bit_depth || 16 == bit_depth);
+    }
+
+    return false;
 }
 
 
@@ -142,16 +203,15 @@ static uint8_t paeth_klb_png(uint8_t a, uint8_t b, uint8_t c)
 }
 
 
-static bool unfilter_klb_png(uint8_t* p_raw, int w, int h, int bpp)
+static bool unfilter_klb_png(uint8_t* p_raw, int h, int row_bytes, int bpp)
 {
-    int64_t stride64 = 1 + (int64_t)w * (int64_t)bpp;
-    if (stride64 <= 0 || (int64_t)INT_MAX < stride64)
+    int64_t stride64 = 1 + (int64_t)row_bytes;
+    if (row_bytes <= 0 || stride64 <= 0 || (int64_t)INT_MAX < stride64)
     {
         return false;
     }
 
     int stride = (int)stride64;
-    int row_bytes = w * bpp;
 
     for (int y = 0; y < h; y++)
     {
@@ -214,20 +274,88 @@ static bool unfilter_klb_png(uint8_t* p_raw, int w, int h, int bpp)
 }
 
 
+static uint16_t channel_sample_klb_png(const uint8_t* p_px, int channel, int bit_depth)
+{
+    if (16 == bit_depth)
+    {
+        return read_be16_klb_png(p_px + channel * 2);
+    }
+
+    return (uint16_t)p_px[channel];
+}
+
+
+static uint8_t sample_to_u8_klb_png(uint16_t sample, int bit_depth)
+{
+    if (16 == bit_depth)
+    {
+        return (uint8_t)(((uint32_t)sample * 255u + 32895u) >> 16);
+    }
+
+    return (uint8_t)sample;
+}
+
+
+static uint16_t sample_as_trns16_klb_png(uint16_t sample, int bit_depth)
+{
+    if (16 == bit_depth)
+    {
+        return sample;
+    }
+
+    uint8_t s8 = (uint8_t)sample;
+    return ((uint16_t)s8 << 8) | (uint16_t)s8;
+}
+
+
+static int packed_index_klb_png(const uint8_t* p_row, int x, int bit_depth)
+{
+    if (8 == bit_depth)
+    {
+        return (int)p_row[x];
+    }
+    else if (4 == bit_depth)
+    {
+        uint8_t b = p_row[x >> 1];
+        if (0 == (x & 1))
+        {
+            return (int)(b >> 4);
+        }
+
+        return (int)(b & 0x0F);
+    }
+    else if (2 == bit_depth)
+    {
+        uint8_t b = p_row[x >> 2];
+        int shift = 6 - 2 * (x & 3);
+        return (int)((b >> shift) & 0x03);
+    }
+    else if (1 == bit_depth)
+    {
+        uint8_t b = p_row[x >> 3];
+        int shift = 7 - (x & 7);
+        return (int)((b >> shift) & 0x01);
+    }
+
+    return 0;
+}
+
+
 static uint32_t pixel_to_argb8888_klb_png(const uint8_t* p_px, const klb_png_info_t* p_info)
 {
     int ct = p_info->color_type;
+    int depth = p_info->bit_depth;
 
     if (0 == ct)
     {
-        uint8_t g = p_px[0];
+        uint16_t gs = channel_sample_klb_png(p_px, 0, depth);
+        uint8_t g = sample_to_u8_klb_png(gs, depth);
         uint8_t a = 0xFF;
 
         if (p_info->has_trns && 2 <= p_info->trns_count)
         {
             uint16_t tv = read_be16_klb_png(p_info->trns);
-            uint16_t sv = ((uint16_t)g << 8) | (uint16_t)g;
-            if (tv == sv)
+            if (tv == sample_as_trns16_klb_png(gs, depth))
             {
                 a = 0;
             }
@@ -237,9 +365,12 @@ static uint32_t pixel_to_argb8888_klb_png(const uint8_t* p_px, const klb_png_inf
     }
     else if (2 == ct)
     {
-        uint8_t r = p_px[0];
-        uint8_t g = p_px[1];
-        uint8_t b = p_px[2];
+        uint16_t rs = channel_sample_klb_png(p_px, 0, depth);
+        uint16_t gs = channel_sample_klb_png(p_px, 1, depth);
+        uint16_t bs = channel_sample_klb_png(p_px, 2, depth);
+        uint8_t r = sample_to_u8_klb_png(rs, depth);
+        uint8_t g = sample_to_u8_klb_png(gs, depth);
+        uint8_t b = sample_to_u8_klb_png(bs, depth);
         uint8_t a = 0xFF;
 
         if (p_info->has_trns && 6 <= p_info->trns_count)
@@ -247,10 +378,9 @@ static uint32_t pixel_to_argb8888_klb_png(const uint8_t* p_px, const klb_png_inf
             uint16_t tr = read_be16_klb_png(p_info->trns);
             uint16_t tg = read_be16_klb_png(p_info->trns + 2);
             uint16_t tb = read_be16_klb_png(p_info->trns + 4);
-            uint16_t sr = ((uint16_t)r << 8) | (uint16_t)r;
-            uint16_t sg = ((uint16_t)g << 8) | (uint16_t)g;
-            uint16_t sb = ((uint16_t)b << 8) | (uint16_t)b;
-            if (tr == sr && tg == sg && tb == sb)
+            if (tr == sample_as_trns16_klb_png(rs, depth) &&
+                tg == sample_as_trns16_klb_png(gs, depth) &&
+                tb == sample_as_trns16_klb_png(bs, depth))
             {
                 a = 0;
             }
@@ -280,11 +410,17 @@ static uint32_t pixel_to_argb8888_klb_png(const uint8_t* p_px, const klb_png_inf
     }
     else if (4 == ct)
     {
-        return KLB_ARGB8888(p_px[1], p_px[0], p_px[0], p_px[0]);
+        uint8_t g = sample_to_u8_klb_png(channel_sample_klb_png(p_px, 0, depth), depth);
+        uint8_t a = sample_to_u8_klb_png(channel_sample_klb_png(p_px, 1, depth), depth);
+        return KLB_ARGB8888(a, g, g, g);
     }
     else if (6 == ct)
     {
-        return KLB_ARGB8888(p_px[3], p_px[0], p_px[1], p_px[2]);
+        uint8_t r = sample_to_u8_klb_png(channel_sample_klb_png(p_px, 0, depth), depth);
+        uint8_t g = sample_to_u8_klb_png(channel_sample_klb_png(p_px, 1, depth), depth);
+        uint8_t b = sample_to_u8_klb_png(channel_sample_klb_png(p_px, 2, depth), depth);
+        uint8_t a = sample_to_u8_klb_png(channel_sample_klb_png(p_px, 3, depth), depth);
+        return KLB_ARGB8888(a, r, g, b);
     }
 
     return 0;
@@ -293,8 +429,9 @@ static uint32_t pixel_to_argb8888_klb_png(const uint8_t* p_px, const klb_png_inf
 
 static void fill_canvas_klb_png(klb_canvas_t* p_canvas, const uint8_t* p_raw, const klb_png_info_t* p_info, int color_fmt)
 {
-    int bpp = filter_bpp_klb_png(p_info->color_type);
-    int stride = 1 + p_info->w * bpp;
+    int row_bytes = row_bytes_klb_png(p_info->w, p_info->color_type, p_info->bit_depth);
+    int px_bytes = filter_bpp_klb_png(p_info->color_type, p_info->bit_depth);
+    int stride = 1 + row_bytes;
 
     for (int y = 0; y < p_info->h; y++)
     {
@@ -303,7 +440,18 @@ static void fill_canvas_klb_png(klb_canvas_t* p_canvas, const uint8_t* p_raw, co
 
         for (int x = 0; x < p_info->w; x++)
         {
-            uint32_t argb8888 = pixel_to_argb8888_klb_png(p_src_row + x * bpp, p_info);
+            uint32_t argb8888 = 0;
+
+            if (3 == p_info->color_type)
+            {
+                uint8_t idx = (uint8_t)packed_index_klb_png(p_src_row, x, p_info->bit_depth);
+                argb8888 = pixel_to_argb8888_klb_png(&idx, p_info);
+            }
+            else
+            {
+                argb8888 = pixel_to_argb8888_klb_png(p_src_row + x * px_bytes, p_info);
+            }
+
             p_dst_row[x] = klb_color_argb8888_to(argb8888, color_fmt);
         }
     }
@@ -366,13 +514,12 @@ static bool parse_ihdr_klb_png(klb_png_info_t* p_info, const uint8_t* p_data, ui
     int filter = (int)p_data[11];
     int interlace = (int)p_data[12];
 
-    if (8 != bit_depth || 0 != compression || 0 != filter || 0 != interlace)
+    if (0 != compression || 0 != filter || 0 != interlace)
     {
         return false;
     }
 
-    if (0 != color_type && 2 != color_type && 3 != color_type &&
-        4 != color_type && 6 != color_type)
+    if (!depth_ok_klb_png(color_type, bit_depth))
     {
         return false;
     }
@@ -582,6 +729,111 @@ static uint8_t* load_file_klb_png(FILE* pf, int* p_len)
     return p_file;
 }
 
+
+static bool write_chunk_klb_png(FILE* pf, uint32_t type, const uint8_t* p_data, uint32_t chunk_len)
+{
+    uint8_t hdr[8];
+    write_be32_klb_png(hdr, chunk_len);
+    write_be32_klb_png(hdr + 4, type);
+
+    if (1 != fwrite(hdr, 8, 1, pf))
+    {
+        return false;
+    }
+
+    uLong c = crc32(0L, Z_NULL, 0);
+    c = crc32(c, hdr + 4, 4);
+
+    if (0 < chunk_len)
+    {
+        if (NULL == p_data || (uLong)UINT_MAX < (uLong)chunk_len)
+        {
+            return false;
+        }
+
+        if (1 != fwrite(p_data, (size_t)chunk_len, 1, pf))
+        {
+            return false;
+        }
+
+        c = crc32(c, p_data, (uInt)chunk_len);
+    }
+
+    uint8_t crc_buf[4];
+    write_be32_klb_png(crc_buf, (uint32_t)c);
+    if (1 != fwrite(crc_buf, 4, 1, pf))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
+static uint8_t* pack_rgba_raw_klb_png(const klb_canvas_t* p_canvas, int* p_raw_len)
+{
+    int w = p_canvas->rect.w;
+    int h = p_canvas->rect.h;
+    int stride = 1 + w * 4;
+    int64_t raw64 = (int64_t)h * (int64_t)stride;
+    if (raw64 <= 0 || (int64_t)INT_MAX < raw64 || (int64_t)UINT_MAX < raw64)
+    {
+        return NULL;
+    }
+
+    int raw_len = (int)raw64;
+    uint8_t* p_raw = KLB_MALLOC(uint8_t, raw_len, 0);
+
+    for (int y = 0; y < h; y++)
+    {
+        uint8_t* p_row = p_raw + (int64_t)y * stride;
+        p_row[0] = 0;
+        const uint32_t* p_src = (const uint32_t*)(p_canvas->p_addr + p_canvas->pitch * y);
+        uint8_t* p_dst = p_row + 1;
+
+        for (int x = 0; x < w; x++)
+        {
+            uint32_t c = p_src[x];
+            p_dst[x * 4 + 0] = (uint8_t)((c >> 16) & 0xFF);
+            p_dst[x * 4 + 1] = (uint8_t)((c >> 8) & 0xFF);
+            p_dst[x * 4 + 2] = (uint8_t)(c & 0xFF);
+            p_dst[x * 4 + 3] = (uint8_t)((c >> 24) & 0xFF);
+        }
+    }
+
+    *p_raw_len = raw_len;
+    return p_raw;
+}
+
+
+static uint8_t* deflate_idat_klb_png(const uint8_t* p_raw, int raw_len, int* p_idat_len)
+{
+    uLong bound = compressBound((uLong)raw_len);
+    if (0 == bound || (uLong)INT_MAX < bound)
+    {
+        return NULL;
+    }
+
+    int dest_cap = (int)bound;
+    uint8_t* p_dest = KLB_MALLOC(uint8_t, dest_cap, 0);
+    uLongf out_len = (uLongf)dest_cap;
+
+    int zret = compress2((Bytef*)p_dest, &out_len, (const Bytef*)p_raw, (uLong)raw_len, Z_DEFAULT_COMPRESSION);
+    if (Z_MEM_ERROR == zret)
+    {
+        assert(false);
+    }
+
+    if (Z_OK != zret || 0 == out_len || (uLong)INT_MAX < out_len)
+    {
+        KLB_FREE(p_dest);
+        return NULL;
+    }
+
+    *p_idat_len = (int)out_len;
+    return p_dest;
+}
+
 #endif // !__KLB_NO_ZLIB__
 
 
@@ -632,13 +884,14 @@ klb_canvas_t* klb_png_read(const char* p_filename, int color_fmt)
 
     KLB_FREE(p_file);
 
-    int bpp = filter_bpp_klb_png(info.color_type);
-    if (0 == bpp)
+    int row_bytes = row_bytes_klb_png(info.w, info.color_type, info.bit_depth);
+    int bpp = filter_bpp_klb_png(info.color_type, info.bit_depth);
+    if (0 == row_bytes || 0 == bpp)
     {
         goto err_read;
     }
 
-    int64_t raw64 = (int64_t)info.h * (1 + (int64_t)info.w * (int64_t)bpp);
+    int64_t raw64 = (int64_t)info.h * (1 + (int64_t)row_bytes);
     if (raw64 <= 0 || (int64_t)INT_MAX < raw64 || (int64_t)UINT_MAX < raw64)
     {
         goto err_read;
@@ -658,7 +911,7 @@ klb_canvas_t* klb_png_read(const char* p_filename, int color_fmt)
         return NULL;
     }
 
-    if (!unfilter_klb_png(p_raw, info.w, info.h, bpp))
+    if (!unfilter_klb_png(p_raw, info.h, row_bytes, bpp))
     {
         KLB_FREE(p_raw);
         return NULL;
@@ -687,10 +940,100 @@ err_read:
 
 int klb_png_write(const char* p_filename, const klb_canvas_t* p_canvas)
 {
+#ifdef __KLB_NO_ZLIB__
     (void)p_filename;
     (void)p_canvas;
-
     return 1;
+#else
+    if (NULL == p_filename || NULL == p_canvas || NULL == p_canvas->p_addr)
+    {
+        return 1;
+    }
+
+    int w = p_canvas->rect.w;
+    int h = p_canvas->rect.h;
+    if (w <= 0 || h <= 0 || KLB_PNG_MAX_DIM < w || KLB_PNG_MAX_DIM < h)
+    {
+        return 1;
+    }
+
+    if (KLB_COLOR_FMT_ARGB8888 != p_canvas->color_fmt)
+    {
+        return 1;
+    }
+
+    if (p_canvas->pitch < (int64_t)w * 4)
+    {
+        return 1;
+    }
+
+    FILE* pf = fopen(p_filename, "wb");
+    if (NULL == pf)
+    {
+        return 1;
+    }
+
+    uint8_t* p_raw = NULL;
+    uint8_t* p_idat = NULL;
+
+    // step1. ARGB8888 -> filter None RGBA
+    int raw_len = 0;
+    p_raw = pack_rgba_raw_klb_png(p_canvas, &raw_len);
+    if (NULL == p_raw)
+    {
+        fclose(pf);
+        return 1;
+    }
+
+    // step2. zlib deflate IDAT
+    int idat_len = 0;
+    p_idat = deflate_idat_klb_png(p_raw, raw_len, &idat_len);
+    KLB_FREE(p_raw);
+    if (NULL == p_idat)
+    {
+        fclose(pf);
+        return 1;
+    }
+
+    // step3. 写 signature + IHDR + IDAT + IEND
+    if (1 != fwrite(g_png_sig_klb_png, KLB_PNG_SIG_LEN, 1, pf))
+    {
+        goto err_write;
+    }
+
+    uint8_t ihdr[KLB_PNG_IHDR_LEN];
+    write_be32_klb_png(ihdr, (uint32_t)w);
+    write_be32_klb_png(ihdr + 4, (uint32_t)h);
+    ihdr[8] = 8;
+    ihdr[9] = 6;
+    ihdr[10] = 0;
+    ihdr[11] = 0;
+    ihdr[12] = 0;
+
+    if (!write_chunk_klb_png(pf, KLB_PNG_IHDR, ihdr, KLB_PNG_IHDR_LEN))
+    {
+        goto err_write;
+    }
+
+    if (!write_chunk_klb_png(pf, KLB_PNG_IDAT, p_idat, (uint32_t)idat_len))
+    {
+        goto err_write;
+    }
+
+    if (!write_chunk_klb_png(pf, KLB_PNG_IEND, NULL, 0))
+    {
+        goto err_write;
+    }
+
+    KLB_FREE(p_idat);
+    fclose(pf);
+    return 0;
+
+err_write:
+    KLB_FREE(p_idat);
+    fclose(pf);
+    return 1;
+#endif
 }
 
 // end
