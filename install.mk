@@ -17,7 +17,6 @@ MKDIR_P	:= mkdir -p
 define DO_install
 	$(MKDIR_P) $(INSTALL_INC)/klb
 	$(CP_RLPT) ./inc $(INSTALL_INC)/klb
-	$(CP_RLPT) ./inc_hpp $(INSTALL_INC)/klb
 
 	$(MKDIR_P) $(INSTALL_SHARE)/klua/klbcore
 	$(CP_RLPT) ./bin/klbcore $(INSTALL_SHARE)/klua/klbcore
@@ -42,7 +41,6 @@ define DO_install_by_path
 
 	$(MKDIR_P) $(1)/include/klb
 	$(CP_RLPT) ./inc $(1)/include/klb
-	$(CP_RLPT) ./inc_hpp $(1)/include/klb
 
 	$(MKDIR_P) $(1)/share/klua/klbcore
 	$(CP_RLPT) ./bin/klbcore $(1)/share/klua/klbcore

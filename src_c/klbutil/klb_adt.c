@@ -1,4 +1,5 @@
-﻿#include "klbutil/klb_adt.h"
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+#include "klbutil/klb_adt.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_map.h"
 #include <assert.h>
@@ -6,12 +7,16 @@
 
 void klb_adt_init(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     KLB_MEMSET(p_adt, 0, sizeof(klb_adt_t));
     p_adt->type = KLB_ADT_null;
 }
 
 void klb_adt_quit(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     switch (p_adt->type)
     {
     case KLB_ADT_string:
@@ -50,6 +55,8 @@ klb_adt_t* klb_adt_create()
 
 void klb_adt_destroy(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     klb_adt_quit(p_adt);
     KLB_FREE(p_adt);
 }
@@ -69,31 +76,69 @@ void klb_adt_set_bool(klb_adt_t* p_adt, bool b)
 
 void klb_adt_set_string(klb_adt_t* p_adt, const char* p_str)
 {
+    assert(NULL != p_adt);
+
+    const char* p_src = (NULL != p_str) ? p_str : "";
+
     if (KLB_ADT_string == p_adt->type)
     {
-        p_adt->str = sdscpy(p_adt->str, p_str);
+        sds p_new = sdscpy(p_adt->str, p_src);
+        if (NULL != p_new)
+        {
+            p_adt->str = p_new;
+        }
     }
     else
     {
         klb_adt_quit(p_adt);
 
-        p_adt->type = KLB_ADT_string;
-        p_adt->str = sdsnew(p_str);
+        sds p_new = sdsnew(p_src);
+        if (NULL != p_new)
+        {
+            p_adt->type = KLB_ADT_string;
+            p_adt->str = p_new;
+        }
     }
 }
 
 void klb_adt_set_lstring(klb_adt_t* p_adt, const char* p_str, int str_len)
 {
+    assert(NULL != p_adt);
+    assert(0 <= str_len);
+    if (str_len < 0)
+    {
+        return;
+    }
+
+    if (0 < str_len)
+    {
+        assert(NULL != p_str);
+        if (NULL == p_str)
+        {
+            return;
+        }
+    }
+
+    const char* p_src = (NULL != p_str) ? p_str : "";
+
     if (KLB_ADT_string == p_adt->type)
     {
-        p_adt->str = sdscpylen(p_adt->str, p_str, str_len);
+        sds p_new = sdscpylen(p_adt->str, p_src, (size_t)str_len);
+        if (NULL != p_new)
+        {
+            p_adt->str = p_new;
+        }
     }
     else
     {
         klb_adt_quit(p_adt);
 
-        p_adt->type = KLB_ADT_string;
-        p_adt->str = sdsnewlen(p_str, str_len);
+        sds p_new = sdsnewlen(p_src, (size_t)str_len);
+        if (NULL != p_new)
+        {
+            p_adt->type = KLB_ADT_string;
+            p_adt->str = p_new;
+        }
     }
 }
 
@@ -132,6 +177,13 @@ void klb_adt_set_int64(klb_adt_t* p_adt, int64_t i64)
 
 void klb_adt_set_map(klb_adt_t* p_adt, klb_map_t* ptr)
 {
+    assert(NULL != p_adt);
+
+    if ((KLB_ADT_map == p_adt->type) && (ptr == p_adt->p_map))
+    {
+        return;
+    }
+
     klb_map_t* p_tmp = (NULL != ptr) ? ptr : klb_map_create();
 
     klb_adt_quit(p_adt);
@@ -150,21 +202,29 @@ void klb_adt_set_map_clone(klb_adt_t* p_adt, const klb_map_t* p_src)
 
 klb_adt_type_e klb_adt_type(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (klb_adt_type_e)p_adt->type;
 }
 
 bool klb_adt_to_bool(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_bool == p_adt->type) ? p_adt->b : false;
 }
 
 const char* klb_adt_to_string(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_string == p_adt->type) ? p_adt->str : "";
 }
 
 const char* klb_adt_to_lstring(klb_adt_t* p_adt, int* p_out_len)
 {
+    assert(NULL != p_adt);
+
     if (KLB_ADT_string == p_adt->type)
     {
         if (NULL != p_out_len)
@@ -184,6 +244,8 @@ const char* klb_adt_to_lstring(klb_adt_t* p_adt, int* p_out_len)
 
 const void* klb_adt_to_ptr(klb_adt_t* p_adt, const void** p_out_ptr2)
 {
+    assert(NULL != p_adt);
+
     if (KLB_ADT_ptr == p_adt->type)
     {
         if (NULL != p_out_ptr2)
@@ -202,36 +264,50 @@ const void* klb_adt_to_ptr(klb_adt_t* p_adt, const void** p_out_ptr2)
 
 double klb_adt_to_double(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_double == p_adt->type) ? p_adt->d : 0.0;
 }
 
 uint64_t klb_adt_to_uint64(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_uint64 == p_adt->type) ? p_adt->u64 : 0;
 }
 
 int64_t klb_adt_to_int64(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_int64 == p_adt->type) ? p_adt->i64 : 0;
 }
 
 klb_map_t* klb_adt_to_map(klb_adt_t* p_adt)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_map == p_adt->type) ? p_adt->p_map : NULL;
 }
 
 bool klb_adt_get_bool(klb_adt_t* p_adt, bool default_b)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_bool == p_adt->type) ? p_adt->b : default_b;
 }
 
 const char* klb_adt_get_string(klb_adt_t* p_adt, const char* p_default_str)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_string == p_adt->type) ? p_adt->str : p_default_str;
 }
 
 const char* klb_adt_get_lstring(klb_adt_t* p_adt, const char* p_default_str, int* p_in_out_len)
 {
+    assert(NULL != p_adt);
+
     if (KLB_ADT_string == p_adt->type)
     {
         if (NULL != p_in_out_len)
@@ -247,21 +323,29 @@ const char* klb_adt_get_lstring(klb_adt_t* p_adt, const char* p_default_str, int
 
 double klb_adt_get_double(klb_adt_t* p_adt, double default_d)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_double == p_adt->type) ? p_adt->d : default_d;
 }
 
 uint64_t klb_adt_get_uint64(klb_adt_t* p_adt, uint64_t default_u64)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_uint64 == p_adt->type) ? p_adt->u64 : default_u64;
 }
 
 int64_t klb_adt_get_int64(klb_adt_t* p_adt, int64_t default_i64)
 {
+    assert(NULL != p_adt);
+
     return (KLB_ADT_int64 == p_adt->type) ? p_adt->i64 : default_i64;
 }
 
 void klb_adt_copy(klb_adt_t* p_dst, const klb_adt_t* p_src)
 {
+    assert(NULL != p_dst);
+
     if (NULL != p_src)
     {
         switch (p_src->type)
@@ -306,4 +390,4 @@ void klb_adt_copy(klb_adt_t* p_dst, const klb_adt_t* p_src)
     }
 }
 
-//end
+// end

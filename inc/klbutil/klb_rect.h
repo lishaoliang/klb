@@ -1,10 +1,12 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2020, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_rect.h
 /// @brief   区域等定义
 /// @version 0.1
 /// @history 修改历史
+///  \n [2020] 创建文件
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_RECT_H__
@@ -51,10 +53,17 @@ typedef struct klb_rect_t_
 /// @param [in] x           x坐标
 /// @param [in] y           y坐标
 /// @return bool true.在区域内; false.不在区域内部
+/// @note 半开区间 [x, x+w) x [y, y+h); 右/下边界不含
 KLB_API bool klb_pt_in_rect(const klb_rect_t* p_rect, int x, int y);
 
 
 /// @brief 初始化
+/// @param [out] *p_dst     目标区域
+/// @param [in] x           x坐标
+/// @param [in] y           y坐标
+/// @param [in] w           宽
+/// @param [in] h           高
+/// @return 无
 KLB_API void klb_rect_init(klb_rect_t* p_dst, int x, int y, int w, int h);
 
 
@@ -63,6 +72,7 @@ KLB_API void klb_rect_init(klb_rect_t* p_dst, int x, int y, int w, int h);
 /// @param [in] *p_rect1    区域1
 /// @param [in] *p_rect2    区域2
 /// @return 无
+/// @note 允许 *p_dst 与输入矩形重叠
 KLB_API void klb_rect_union(klb_rect_t* p_dst, const klb_rect_t* p_rect1, const klb_rect_t* p_rect2);
 
 
@@ -71,12 +81,14 @@ KLB_API void klb_rect_union(klb_rect_t* p_dst, const klb_rect_t* p_rect1, const 
 /// @param [in] *p_rect1    区域1
 /// @param [in] *p_rect2    区域2
 /// @return bool true.有交集; false.无交集
+/// @note *p_dst 可为 NULL, 仅判定是否相交; 允许与输入矩形重叠
 KLB_API bool klb_rect_intersect(klb_rect_t* p_dst, const klb_rect_t* p_rect1, const klb_rect_t* p_rect2);
 
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 }
 #endif
 
 #endif // __KLB_RECT_H__
-//end
+
+// end

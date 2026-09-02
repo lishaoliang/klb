@@ -141,8 +141,7 @@ static void redraw_wnd_hlist_klbuiex_render(klb_gui_t* p_gui, klb_hlist_t* p_hli
             }
             else
             {
-                klb_rect_t rect1 = *p_rect;
-                klb_rect_union(p_rect, &rect1, &p_wnd->pos.rect_in_canvas); // 需要刷新区域, 取并集
+                klb_rect_union(p_rect, p_rect, &p_wnd->pos.rect_in_canvas); // 需要刷新区域, 取并集
             }
         }
 

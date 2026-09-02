@@ -65,19 +65,14 @@ static int klbwnd_combo_menu_on_outwindow(klb_wnd_t* p_wnd, klbwnd_combo_menu_t*
     return 0;
 }
 
-static int klbwnd_combo_menu_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_combo_menu_t* p_menu, const klb_point_t* p_pt1, int lparam)
+static int scroll_wheel_klbwnd_combo_menu(klb_wnd_t* p_wnd, klbwnd_combo_menu_t* p_menu, int lparam)
 {
-    int v = KLBUI_MOUSEWHEEL_value(lparam);
-
-    if (v <= 0 || !klb_wnd_is_show(p_menu->p_vscrollbar))
+    if (!klb_wnd_is_show(p_menu->p_vscrollbar))
     {
         return 0;
     }
 
-    if (NULL != p_pt1 && !klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_pt1->x, p_pt1->y))
-    {
-        return 0;
-    }
+    int v = 1;
 
     if (KLBUI_MOUSEWHEEL_is_up(lparam))
     {
@@ -96,7 +91,17 @@ static int klbwnd_combo_menu_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_combo_menu_t
         }
     }
 
-    return 0;
+    return -1;
+}
+
+static int klbwnd_combo_menu_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_combo_menu_t* p_menu, const klb_point_t* p_pt1, int lparam)
+{
+    if (NULL != p_pt1 && !klb_pt_in_rect(&p_wnd->pos.rect_in_canvas, p_pt1->x, p_pt1->y))
+    {
+        return 0;
+    }
+
+    return scroll_wheel_klbwnd_combo_menu(p_wnd, p_menu, lparam);
 }
 
 static int klbwnd_combo_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
@@ -135,11 +140,15 @@ static int on_command_item_klbwnd_combo_menu(klb_wnd_t* p_wnd, int msg, const kl
 {
     (void)p_pt1;
     (void)p_pt2;
-    (void)lparam;
     (void)wparam;
 
     klb_wnd_t* p_wnd_menu = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_combo_menu_t* p_menu = (klbwnd_combo_menu_t*)p_wnd_menu->ctrl;
+
+    if (KLBUI_mousewheel == msg)
+    {
+        return scroll_wheel_klbwnd_combo_menu(p_wnd_menu, p_menu, lparam);
+    }
 
     if (KLBUI_click == msg || KLBUI_dblclick == msg)
     {
@@ -439,7 +448,7 @@ static void klbwnd_combo_menu_init_subwnds(klb_wnd_t* p_wnd)
     klb_wnd_push_child(p_wnd, p_menu->p_vscrollbar);
     klb_wnd_hide(p_menu->p_vscrollbar, true);
     klb_wnd_bind_command(p_menu->p_vscrollbar, on_command_vscrollbar_klbwnd_combo_menu, p_wnd);
-    klbwnd_vscrollbar_enable_mousewheel(p_menu->p_vscrollbar, false);
+    klbwnd_vscrollbar_enable_mousewheel(p_menu->p_vscrollbar, true);
 
     p_menu->row_count = 0;
 }

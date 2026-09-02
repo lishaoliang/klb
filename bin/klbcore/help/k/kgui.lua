@@ -10,13 +10,6 @@
 local kgui = {}
 
 
--- @brief 启用 C++ 扩展控件: 即 支持使用 CPP 相关的GUI接口
-kgui.using_cpp = function ()
-	return
-end
-
-
-
 -- @brief 设置默认CSS参数
 -- @param [in] [任意]...			设置参数
 -- @return [number(int)] 	0.成功; 非0.失败

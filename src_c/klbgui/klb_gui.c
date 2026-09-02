@@ -1,4 +1,4 @@
-﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbgui/klb_gui.h"
 #include "klbgui/klb_gui_in.h"
 #include "klbmem/klb_mem.h"
@@ -1604,8 +1604,8 @@ static int klb_gui_dispatch_message(klb_gui_t* p_gui, klb_msg_t* p_msg)
     // 解决方案1. on_control/on_command函数返回值, 标记是否终止消息 "冒泡". (ps.以前这么处理的, 较为繁琐, 调用者需要谨慎区分)
     // 解决方案2. 将有影响的函数调用中, 做个标记, 这里检测到标记, 终止消息 "冒泡". (ps.当前处理方案)
 
-    // step1. 移动消息; 更新坐标/焦点窗口
-    if (KLBUI_mousemove == p_msg->msg)
+    // step1. 移动/滚轮消息; 更新坐标/焦点窗口
+    if (KLBUI_mousemove == p_msg->msg || KLBUI_mousewheel == p_msg->msg)
     {
         // 更新记录鼠标位置
         p_gui->p_util->mouse_pt = p_msg->pt1;

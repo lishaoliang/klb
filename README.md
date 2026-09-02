@@ -1,26 +1,30 @@
-﻿# KLB项目
+﻿# klb (klua)
 
-跨平台嵌入式基础库 (C/C++ + Lua). 以嵌入式为最高优先级, 提供内存、平台、网络、简易 GUI, 以及内嵌 Lua 运行时 (klua); 应用以 Lua 为主、C 为扩展.
-主要产物为 libklb 与可执行 klua; Lua 支持库见 bin/klbcore/.
+klb 是面向嵌入式的 Lua 编程方案 (klua): 设备上的应用用 Lua 写, C 做扩展与裁剪.
+并已集成常用库, 开箱 `require` (协程、GUI、网络、cjson/lfs 等).
 
-* C/C++, Lua
+* C, Lua, 嵌入式, GUI, 流媒体
 * 开源仓库：<https://gitee.com/klua/klb>
+* 镜像：<https://github.com/lishaoliang/klb>
 * 许可：[LGPL-3.0](LICENSE)
 * 文档：<https://gitee.com/klua/klua_doc>
+* 组织：<https://gitee.com/klua>
 
-## 目的
+## klua
 
-1. 搭建跨平台基础C/C++开发环境, 以嵌入式为最高优先级 (进度100%, 2010~2019)
-1. 搭建跨平台Lua基础开发环境 (进度100%, 2010~2022)
-1. 搭建跨平台GUI开发环境 (进度100%, 2022~2025)
-1. 搭建跨平台流媒体开发环境 (进度5%, 预估2026~2030)
+* 写业务: Lua
+* 用能力: `require("kco")` / `require("kgui")` 等 C 绑定
+* 用脚本库: `require("klbcore.*")` (GUI 页面, net/rtsp 等)
+* 运行: 可执行 `klua`, 或把 `libklb` 链进产品进程
+
+Lua API 文档: <https://gitee.com/klua/klua_doc> (`lua/klua/`, `lua/klbcore/`)
 
 ## 文件目录
 
 ```text
-./klb
+.
  ->bin  -------------------- lua脚本 (发布含 klbcore)
-   ->klbcore  -------------- lua支持库
+   ->klbcore  -------------- lua支持库 (klbui / net / klbrtsp / klbsmp 等)
 
  ->inc  -------------------- C头文件
  ->src_c  ------------------ C实现文件
@@ -39,34 +43,20 @@
    ->zlib-1.2.11  ---------- zlib
    ->qrencode-4.1.1  ------- QR码
 
- ->inc_hpp  ---------------- C++头文件
- ->src_cpp  ---------------- C++实现文件
-   ->klbbase  -------------- C++基础2
-   ->klbgui  --------------- C++简易gui
-   ->klbmem  --------------- C++内存
-   ->klbnet  --------------- C++网络
-   ->klbplatform  ---------- C++平台相关
-   ->klbutil  -------------- C++基础1
-   ->klua  ----------------- C++ lua
-
  ->src_packages  ----------- 扩展包
    ->klbwui  --------------- GUI控件包
 
- ->klua  ------------------- klua可执行入口
+ ->proj/klua  -------------- klua可执行入口
+ ->proj  ------------------- 工程文件 (VS2015)
 
  --Makefile
 ```
 
-## 感谢
+## 推荐
 
-```text
-  [2016~2017] 感谢 深圳-袁**, 深圳-郑** 同学 提供C/C++基础数据结构封装思路
-  [2016~2017] 感谢 深圳-袁** 同学 提供GUI仿Web提供支持CSS等建议
-  [2016~2018] 感谢 深圳某公司同学 合作探讨: 使用网络异步IO-libuv库及使用Lua编写GUI的实践思路
-  [2019~2023] 感谢 武汉某公司同学 合作探讨: 自行设计网络异步IO的实践思路 及使用Lua作为嵌入式开发应用主框架实践思路
-  [2022~2023] 感谢 武汉-王** 同学 提供使用Lua协程编程建议
-  [2022~2023] 感谢 云风 同学 提供Lua-table序列化成二进制思路 及 Lua协程 实践思路
-  [2023~2025] 感谢 武汉-程**, 武汉-刘**, 武汉-代** 同学 协作完善GUI框架的试验
+同组织相关仓库, 可对照阅读、组合使用:
 
-  PS. 仅列举了对库影响较大 的思路及建议, 在库中只能看到部分"影子", 当前代码是在这些方向的基础上长期反复探讨/论证/再进化而成
-```
+* [klua_doc](https://gitee.com/klua/klua_doc) — 文档仓 (klb / pfs / Lua API)
+* [portfs](https://gitee.com/klua/portfs) — 跨平台可移植文件系统
+* [wlua](https://gitee.com/klua/wlua) — Windows 桌面 Lua 宿主 (SDL, 链接 libklb)
+* [pubfw](https://gitee.com/klua/pubfw) — 公共框架 (目前空壳)

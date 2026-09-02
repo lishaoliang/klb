@@ -23,18 +23,6 @@ extern "C" {
 int klua_register_extension_std(klua_env_t* p_env);
 
 
-#if !defined(__KLB_NO_CPP__)
-/// @brief (内部)注册标准 CPP扩展
-/// @return int 0.成功; 非0. 失败
-///  由 .\klb\src_cpp\klua\extension\CKluaExtension.cpp 实现本函数
-int klua_register_extension_std_cpp(klua_env_t* p_env);
-
-
-/// @brief 支持CPP-gui
-int klua_using_cpp_gui(klua_env_t* p_env);
-#endif
-
-
 #ifdef __cplusplus
 }
 #endif

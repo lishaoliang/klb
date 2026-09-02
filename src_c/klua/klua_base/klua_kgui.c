@@ -4,11 +4,9 @@
 #include "klua/klua_env.h"
 #include "klbgui/klb_gui.h"
 #include "klbgui/klb_wnd.h"
-#include "klbutil/klb_obj.h"
 #include "klbmem/klb_mem.h"
 #include "klua/klua_help.h"
 #include "klbutil/klb_hlist.h"
-#include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_gui.h"
 #include "klbutil/klb_map.h"
 #include "klua/klua_seri.h"
@@ -337,17 +335,6 @@ static void klua_kwnd_createmeta(lua_State* L)
 
 //////////////////////////////////////////////////////////////////////////
 // kgui lua 接口
-
-static int klua_kgui_using_cpp(lua_State* L)
-{
-#if defined(__KLB_NO_CPP__)
-    return luaL_error(L, "CPP gui is disabled (no-cpp)");
-#else
-    klua_using_cpp_gui(klua_env_get_by_L(L));
-
-    return 0;
-#endif
-}
 
 static int klua_kgui_set_default_css(lua_State* L)
 {
@@ -1090,9 +1077,6 @@ int klua_open_kgui(lua_State* L)
 {
     static luaL_Reg kgui_lib[] =
     {
-        // cpp 启用 内部CPP扩展 : 即 支持使用 CPP 相关的GUI接口
-        { "using_cpp",          klua_kgui_using_cpp },
-
         // css
         { "set_default_css",    klua_kgui_set_default_css },
         { "get_default_css",    klua_kgui_get_default_css },

@@ -115,17 +115,8 @@ else
 endif
 
 
-# 可裁剪参数: MY_CLIP = no-cpp
-ifeq ($(filter no-cpp, $(MY_CLIP_TAG)), )
-	MY_CLIP_DIRS += ./src_cpp/klbplatform ./src_cpp/klbmem ./src_cpp/klbutil ./src_cpp/klbbase
-	MY_CLIP_DIRS += ./src_cpp/klbnet
-	MY_CLIP_DIRS += ./src_cpp/klbgui ./src_cpp/klbgui/wnd ./src_cpp/klbgui/widgets
-	MY_CLIP_DIRS += ./src_cpp/klua ./src_cpp/klua/extension
-	MY_CLIP_DIRS += ./src_cpp/klbapp
-	MY_CLIP_INC += -I ./src_cpp -I ./inc_hpp
-else
-	MY_CLIP_FLAGS += -D__KLB_NO_CPP__
-endif
+# no-cpp: src_cpp/inc_hpp 已迁 backup/; 保留入参兼容, 无编译效果
+
 
 
 # 可裁剪参数: MY_CLIP = no-wui / no-wui-sim

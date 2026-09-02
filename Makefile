@@ -82,13 +82,9 @@ MY_CFLAGS := $(MY_CLIP_FLAGS)
 MY_DIRS += $(MY_CLIP_DIRS)
 MY_INCLUDES += $(MY_CLIP_INC)
 
-# 引用的动态库 (no-cpp 时不链 libstdc++)
+# 引用的动态库
 MY_LIB_DYNAMIC := -L ./lib -Bdynamic
-ifeq ($(filter no-cpp,$(MY_CLIP_TAG)),)
-MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
-else
 MY_LIB_DYNAMIC += -lpthread -lrt -ldl -lm
-endif
 
 
 ###########################################################
@@ -196,14 +192,14 @@ clean:
 	$(RM_F) $(MY_TARGET_SO)
 	@echo "+++++++++++++++++++++++++"
 
-	if [ -f ./klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./klua/ clean; fi
+	if [ -f ./proj/klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/klua/ clean; fi
 
 strip:
 	#$(CSTRIP) $(MY_TARGET_A)
 	$(CSTRIP) $(MY_TARGET_SO)
 
 klua: all
-	if [ -f ./klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./klua/; fi
+	if [ -f ./proj/klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/klua/; fi
 
 install: klua
 	#$(CSTRIP) $(MY_TARGET_A)

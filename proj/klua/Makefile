@@ -33,19 +33,19 @@ MY_DIRS := .
 MY_CFLAGS := $(MY_CFLAGS_EX) -D_GNU_SOURCE 
 
 # 引用头文件
-MY_INCLUDES := -I . -I ../inc
+MY_INCLUDES := -I . -I ../../inc
 
 
 # 第三方库头文件
-MY_INCLUDES += -I ../src_c/klua/lua-5.4.6/src
+MY_INCLUDES += -I ../../src_c/klua/lua-5.4.6/src
 
 
 # 引用的静态库
-MY_LIB_STATIC := -L ../lib -Bstatic
+MY_LIB_STATIC := -L ../../lib -Bstatic
 
 # 引用的动态库
-MY_LIB_DYNAMIC := -L ../lib -Bdynamic -lklb
-MY_LIB_DYNAMIC += -lstdc++ -lpthread -lrt -ldl -lm
+MY_LIB_DYNAMIC := -L ../../lib -Bdynamic -lklb
+MY_LIB_DYNAMIC += -lpthread -lrt -ldl -lm
 
 # openssl
 #MY_LIB_DYNAMIC += -lssl -lcrypto
@@ -58,9 +58,9 @@ endif
 
 # 编译目标名称
 MY_TARGET_NAME := klua
-MY_TARGET_A := ../lib/lib$(MY_TARGET_NAME).a
-MY_TARGET_SO := ../lib/lib$(MY_TARGET_NAME).so
-MY_TARGET_EXE := ../lib/$(MY_TARGET_NAME)
+MY_TARGET_A := ../../lib/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := ../../lib/lib$(MY_TARGET_NAME).so
+MY_TARGET_EXE := ../../lib/$(MY_TARGET_NAME)
 
 # 所有编译文件
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
@@ -68,8 +68,8 @@ MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
 
-# 编译中间文件统一放到 ../tmp/klua/ 下
-MY_TMP_DIR := ../tmp/klua
+# 编译中间文件统一放到 ../../tmp/klua/ 下
+MY_TMP_DIR := ../../tmp/klua
 MY_LIB_A_OBJS := $(addprefix $(MY_TMP_DIR)/,$(addsuffix .o,$(patsubst ./%,%,$(MY_SOURCES))))
 MY_A_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC)
 

@@ -94,7 +94,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;__KLB_NO_PACKAGES__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>4133;4013;4047</TreatSpecificWarningsAsErrors>
     </ClCompile>
@@ -134,7 +134,7 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;__KLB_NO_PACKAGES__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc_hpp;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_cpp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>4133</TreatSpecificWarningsAsErrors>
@@ -177,7 +177,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_package.h" />
-    <ClInclude Include="..\..\inc\klbbase\klb_resolution.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_smp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_string.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_bitmap.h" />
@@ -264,7 +263,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbutil\klb_nlist.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_nvector.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_obj.h" />
-    <ClInclude Include="..\..\inc\klbutil\klb_obj_hash.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rand.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_rect.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_sds.h" />
@@ -286,30 +284,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\lua.hpp" />
     <ClInclude Include="..\..\inc\luaconf.h" />
     <ClInclude Include="..\..\inc\lualib.h" />
-    <ClInclude Include="..\..\inc_hpp\klbbase\CPackage.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbgui\CCss.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbgui\CDrawDC.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbgui\CGui.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbgui\CWnd.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbmem\CBuf.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CAtomic.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CDynamicLink.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CMutex.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CSemLock.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CShmem.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CSpinLock.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbplatform\CThread.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CList.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CMap.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CnList.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CnMap.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CnVector.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CString.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klbutil\CVector.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klua\CKlua.hpp" />
-    <ClInclude Include="..\..\inc_hpp\klua\CKluaEnv.hpp" />
-    <ClInclude Include="..\..\src_cpp\klbgui\CUiWidgets.hpp" />
-    <ClInclude Include="..\..\src_cpp\klua\extension\CKluaExGui.hpp" />
     <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_widgets.h" />
     <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_calendar_menu.h" />
     <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.h" />
@@ -573,31 +547,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <None Include="..\..\src_c\libavutil\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src_cpp\klbbase\CPackage.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbgui\CCss.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbgui\CDrawDC.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbgui\CGui.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbgui\CWnd.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbgui\CWndCssFunction.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbmem\CBuf.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CAtomic.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CDynamicLink.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CMutex.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CSemLock.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CShmem.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CSpinLock.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbplatform\CThread.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CList.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CMap.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CnList.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CnMap.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CnVector.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CString.cpp" />
-    <ClCompile Include="..\..\src_cpp\klbutil\CVector.cpp" />
-    <ClCompile Include="..\..\src_cpp\klua\CKlua.cpp" />
-    <ClCompile Include="..\..\src_cpp\klua\CKluaEnv.cpp" />
-    <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExGui.cpp" />
-    <ClCompile Include="..\..\src_cpp\klua\extension\CKluaExtension.cpp" />
     <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_extension.c" />
     <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_css.c" />
     <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_register.c" />
@@ -608,7 +557,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbapp\klb_app.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_package.c" />
-    <ClCompile Include="..\..\src_c\klbbase\klb_resolution.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_bitmap.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_flv.c" />
@@ -727,7 +675,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbutil\klb_map_serialize.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_nlist.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_nvector.c" />
-    <ClCompile Include="..\..\src_c\klbutil\klb_obj.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_h26x.c" />

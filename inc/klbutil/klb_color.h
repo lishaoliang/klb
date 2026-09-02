@@ -19,7 +19,6 @@ extern "C" {
 
 /// @enum  klb_color_fmt_e
 /// @brief 像素颜色格式
-///  与"./klb/src/kimage/kcolor/color.go"保持一致
 typedef enum klb_color_fmt_e_
 {
     KLB_COLOR_FMT_NULL      = 0,
@@ -27,9 +26,11 @@ typedef enum klb_color_fmt_e_
     KLB_COLOR_FMT_ARGB4444  = 2,
     KLB_COLOR_FMT_ARGB8888  = 3,
 
-    KLB_COLOR_FMT_RGBA1555  = 11,
+    KLB_COLOR_FMT_RGBA5551  = 11,
     KLB_COLOR_FMT_RGBA4444  = 12,
     KLB_COLOR_FMT_RGBA8888  = 13,
+
+    KLB_COLOR_FMT_RGB565    = 21,
 }klb_color_fmt_e;
 
 

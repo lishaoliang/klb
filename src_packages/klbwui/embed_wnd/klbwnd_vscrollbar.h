@@ -19,7 +19,7 @@
 #include "klbgui/klbui_css.h"
 #include "klbgui/klbui_css_ex.h"
 #include "klbwui/core/klbwui_css.h"
-#include "klbwui/embed_wnd/klbwnd_button.h"
+#include "klbwui/embed_wnd/klbwnd_btnex.h"
 
 
 #if defined(__cplusplus)
@@ -45,7 +45,7 @@ typedef struct klbwnd_vscrollbar_css_t_
     klbwnd_vscrollbar_attributes_t      focus;          ///< focus 聚焦状态参数
     klbwnd_vscrollbar_attributes_t      disable;        ///< disable 不使能状态参数
 
-    klbwnd_button_css_t                 css_btn;        ///< 子按钮样式
+    klbwnd_btnex_css_t                  css_btn;        ///< 子按钮样式 (triangle_up/down + rectangle)
 } klbwnd_vscrollbar_css_t;
 
 
@@ -62,6 +62,7 @@ typedef struct klbwnd_vscrollbar_t_
     int                         step;           ///< 步进
     int                         value;          ///< 当前值
     int                         h_middle;       ///< 滑块高度
+    bool                        enable_mousewheel;  ///< 是否响应鼠标滚轮
 } klbwnd_vscrollbar_t;
 
 
