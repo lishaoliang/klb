@@ -6,7 +6,7 @@
 #include "klbutil/klb_nlist.h"
 
 
-#define KLBUIEX_UDATALAYER   "KLBUIEX-udatalayer"
+#define KLB_GUIEX_udatalayer   "KLB-GUIEX-udatalayer"
 
 
 /// @struct klbuiex_udatalayer_t
@@ -469,7 +469,7 @@ bool klbuiex_udatalayer_get_dirty(klbuiex_udatalayer_t* p_ex, klb_rect_t* p_out_
 
 klbuiex_udatalayer_t* klbuiex_get_udatalayer(klb_gui_t* p_gui)
 {
-    return (klbuiex_udatalayer_t*)klb_gui_get_extension(p_gui, KLBUIEX_UDATALAYER);
+    return (klbuiex_udatalayer_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_udatalayer);
 }
 
 int klbuiex_register_udatalayer(klb_gui_t* p_gui)
@@ -481,7 +481,7 @@ int klbuiex_register_udatalayer(klb_gui_t* p_gui)
     ex.cb_control = klbuiex_udatalayer_control;
     ex.cb_loop_once = klbuiex_udatalayer_loop_once;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_UDATALAYER, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_udatalayer, &ex);
 
     return 0;
 }

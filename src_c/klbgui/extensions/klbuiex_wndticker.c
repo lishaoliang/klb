@@ -5,7 +5,7 @@
 #include "klbutil/klb_nlist.h"
 
 
-#define KLBUIEX_WNDTICKER   "KLBUIEX-wndticker"
+#define KLB_GUIEX_wndticker   "KLB-GUIEX-wndticker"
 
 
 /// @struct klbuiex_wndticker_t
@@ -364,7 +364,7 @@ int klbuiex_wndticker_msgbox_end(klbuiex_wndticker_t* p_wndticker)
 
 klbuiex_wndticker_t* klbuiex_get_wndticker(klb_gui_t* p_gui)
 {
-    return (klbuiex_wndticker_t*)klb_gui_get_extension(p_gui, KLBUIEX_WNDTICKER);
+    return (klbuiex_wndticker_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_wndticker);
 }
 
 int klbuiex_register_wndticker(klb_gui_t* p_gui)
@@ -376,7 +376,7 @@ int klbuiex_register_wndticker(klb_gui_t* p_gui)
     ex.cb_control = klbuiex_wndticker_control;
     ex.cb_loop_once = klbuiex_wndticker_loop_once;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_WNDTICKER, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_wndticker, &ex);
 
     return 0;
 }

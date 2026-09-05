@@ -52,9 +52,9 @@
 #endif
 
 
-/// @def   KLBAPPEX_PLUGINS
+/// @def   KLB_APPEX_plugins
 /// @brief 扩展名称
-#define KLBAPPEX_PLUGINS        "KLBAPPEX-plugins"
+#define KLB_APPEX_plugins        "KLB-APPEX-plugins"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -438,7 +438,7 @@ void klbappex_plugins_preload(klbappex_plugins_t* p_appex)
 /// @return klbappex_plugins_t*
 klbappex_plugins_t* klbappex_get_plugins(klb_app_t* p_app)
 {
-    return (klbappex_plugins_t*)klb_app_get_extension(p_app, KLBAPPEX_PLUGINS);
+    return (klbappex_plugins_t*)klb_app_get_extension(p_app, KLB_APPEX_plugins);
 }
 
 klbappex_plugins_t* klbappex_get_plugins2()
@@ -457,7 +457,7 @@ int klbappex_register_plugins(klb_app_t* p_app)
     ex.cb_control = klbappex_plugins_control;
     ex.cb_loop_once = NULL;
 
-    klb_app_register_extension(p_app, KLBAPPEX_PLUGINS, &ex);
+    klb_app_register_extension(p_app, KLB_APPEX_plugins, &ex);
 
     return 0;
 }

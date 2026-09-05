@@ -23,7 +23,6 @@
 #include "klbgui/extensions/klbuiex_wndticker.h"
 #include "klbgui/extensions/klbuiex_redraw.h"
 #include "klbgui/extensions/klbuiex_default.h"
-#include "klbgui/extensions/klbuiex_time.h"
 #include "klbgui/extensions/klbuiex_shwnd.h"
 #include "klbgui/extensions/klbuiex_udatalayer.h"
 #include "klbgui/extensions/klbuiex_waitlayer.h"
@@ -45,7 +44,6 @@ extern "C" {
     klbuiex_register_redraw((GUI_));    \
     klbuiex_register_wndticker((GUI_)); \
     klbuiex_register_default((GUI_));   \
-    klbuiex_register_time((GUI_));      \
     klbuiex_register_shwnd((GUI_));     \
     klbuiex_register_udatalayer((GUI_));\
     klbuiex_register_waitlayer((GUI_)); \

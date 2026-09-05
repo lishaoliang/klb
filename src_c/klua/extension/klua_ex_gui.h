@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define KLUA_EX_GUI_NAME       "_KLUA_EX_GUI_"
+#define KLUAEX_gui       "_KLUAEX-gui_"
 
 typedef struct klua_ex_gui_t_ klua_ex_gui_t;
 

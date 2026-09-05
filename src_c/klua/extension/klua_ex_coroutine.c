@@ -322,14 +322,14 @@ int klua_ex_register_coroutine(klua_env_t* p_env)
     ex.cb_ctrl = klua_ex_coroutine_ctrl;
     ex.cb_loop_once = klua_ex_coroutine_loop_once;
 
-    klua_env_register_extension(p_env, KLUA_EX_COROUTINE_NAME, &ex);
+    klua_env_register_extension(p_env, KLUAEX_coroutine, &ex);
 
     return 0;
 }
 
 klua_ex_coroutine_t* klua_ex_get_coroutine(klua_env_t* p_env)
 {
-    klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)klua_env_get_extension(p_env, KLUA_EX_COROUTINE_NAME);
+    klua_ex_coroutine_t* p_ex = (klua_ex_coroutine_t*)klua_env_get_extension(p_env, KLUAEX_coroutine);
     return p_ex;
 }
 

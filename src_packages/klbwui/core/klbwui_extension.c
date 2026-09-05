@@ -55,17 +55,17 @@ static int kluaex_register_klbwui(klua_env_t* p_env)
     ex.cb_destroy = klbwui_extension_destroy;
     ex.cb_loop_once = klbwui_extension_loop_once;
 
-    return klua_env_register_extension(p_env, KLBWUI_EXTENSION_NAME, &ex);
+    return klua_env_register_extension(p_env, KLUAEX_wui_extension, &ex);
 }
 
 klbwui_extension_t* kluaex_get_klbwui(klua_env_t* p_env)
 {
-    klbwui_extension_t* p_ex = (klbwui_extension_t*)klua_env_get_extension(p_env, KLBWUI_EXTENSION_NAME);
+    klbwui_extension_t* p_ex = (klbwui_extension_t*)klua_env_get_extension(p_env, KLUAEX_wui_extension);
 
     if (NULL == p_ex)
     {
         kluaex_register_klbwui(p_env);
-        p_ex = (klbwui_extension_t*)klua_env_get_extension(p_env, KLBWUI_EXTENSION_NAME);
+        p_ex = (klbwui_extension_t*)klua_env_get_extension(p_env, KLUAEX_wui_extension);
     }
 
     return p_ex;

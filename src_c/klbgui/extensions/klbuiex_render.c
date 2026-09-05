@@ -6,9 +6,9 @@
 #include "klbutil/klb_canvas.h"
 
 
-/// @def   KLBUIEX_RENDER
+/// @def   KLB_GUIEX_render
 /// @brief 注册的内部扩展名称
-#define KLBUIEX_RENDER          "KLBUIEX-render"
+#define KLB_GUIEX_render          "KLB-GUIEX-render"
 
 
 /// @struct klbuiex_render_t
@@ -902,7 +902,7 @@ int klbuiex_render_msgbox_wnd(klbuiex_render_t* p_render, klb_wnd_t* p_top)
 
 klbuiex_render_t* klbuiex_get_render(klb_gui_t* p_gui)
 {
-    return (klbuiex_render_t*)klb_gui_get_extension(p_gui, KLBUIEX_RENDER);
+    return (klbuiex_render_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_render);
 }
 
 int klbuiex_register_render(klb_gui_t* p_gui)
@@ -913,7 +913,7 @@ int klbuiex_register_render(klb_gui_t* p_gui)
     ex.cb_destroy = klbuiex_render_destroy;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_RENDER, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_render, &ex);
 
     return 0;
 }

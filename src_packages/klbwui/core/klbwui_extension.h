@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 
-#define KLBWUI_EXTENSION_NAME           "_KLBWUI_EXTENSION_"
+#define KLUAEX_wui_extension           "_KLUAEX-wui-extension_"
 
 
 typedef struct klbwui_extension_t_ klbwui_extension_t;

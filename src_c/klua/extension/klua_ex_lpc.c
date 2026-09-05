@@ -152,13 +152,13 @@ int klua_ex_register_lpc(klua_env_t* p_env)
     ex.cb_msg = klua_ex_lpc_msg;
     ex.cb_loop_once = klua_ex_lpc_loop_once;
 
-    klua_env_register_extension(p_env, KLUA_EX_LPC_NAME, &ex);
+    klua_env_register_extension(p_env, KLUAEX_lpc, &ex);
 
     return 0;
 }
 
 klua_ex_lpc_t* klua_ex_get_lpc(klua_env_t* p_env)
 {
-    klua_ex_lpc_t* p_ex = (klua_ex_lpc_t*)klua_env_get_extension(p_env, KLUA_EX_LPC_NAME);
+    klua_ex_lpc_t* p_ex = (klua_ex_lpc_t*)klua_env_get_extension(p_env, KLUAEX_lpc);
     return p_ex;
 }

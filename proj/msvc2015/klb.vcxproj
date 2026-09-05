@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -362,7 +362,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_util.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h" />
-    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.h" />
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
@@ -571,7 +570,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_util.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
-    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />

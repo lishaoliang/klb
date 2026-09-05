@@ -5,7 +5,7 @@
 #include <assert.h>
 
 
-#define KLUA_EX_NETMULTI_NAME           "_KLUAEX_NETMULTI_"
+#define KLUAEX_netmulti           "_KLUAEX-netmulti_"
 
 typedef struct klua_ex_netmulti_t_
 {
@@ -74,14 +74,14 @@ int klua_ex_register_netmulti(klua_env_t* p_env)
     ex.cb_destroy = klua_ex_netmulti_destroy;
     ex.cb_loop_once = klua_ex_netmulti_loop_once;
 
-    klua_env_register_extension(p_env, KLUA_EX_NETMULTI_NAME, &ex);
+    klua_env_register_extension(p_env, KLUAEX_netmulti, &ex);
 
     return 0;
 }
 
 klua_ex_netmulti_t* klua_ex_get_netmulti(klua_env_t* p_env)
 {
-    klua_ex_netmulti_t* p_ex = (klua_ex_netmulti_t*)klua_env_get_extension(p_env, KLUA_EX_NETMULTI_NAME);
+    klua_ex_netmulti_t* p_ex = (klua_ex_netmulti_t*)klua_env_get_extension(p_env, KLUAEX_netmulti);
     return p_ex;
 }
 

@@ -1,11 +1,12 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
-#include "klbgui/extensions/klbuiex_time.h"
+#include "klbgui/extensions/klbuiex_shwnd.h"
+#include "klbgui/klb_wnd.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_hlist.h"
 #include <string.h>
 
 
-#define KLBUIEX_SHWND   "KLBUIEX-shwnd"
+#define KLB_GUIEX_shwnd   "KLB-GUIEX-shwnd"
 
 
 typedef struct klbuiex_shwnd_t_
@@ -148,7 +149,7 @@ klb_map_t* klbuiex_shwnd_css_get(klbuiex_shwnd_t* p_shwnd, const char* p_path, c
 
 klbuiex_shwnd_t* klbuiex_get_shwnd(klb_gui_t* p_gui)
 {
-    return (klbuiex_shwnd_t*)klb_gui_get_extension(p_gui, KLBUIEX_SHWND);
+    return (klbuiex_shwnd_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_shwnd);
 }
 
 int klbuiex_register_shwnd(klb_gui_t* p_gui)
@@ -160,7 +161,7 @@ int klbuiex_register_shwnd(klb_gui_t* p_gui)
     ex.cb_control = klbuiex_shwnd_control;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_SHWND, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_shwnd, &ex);
 
     return 0;
 }

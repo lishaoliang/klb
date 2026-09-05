@@ -11,9 +11,9 @@
 #include "klbmem/klb_mem.h"
 
 
-/// @def   KLBAPPEX_KLUA
+/// @def   KLB_APPEX_klua
 /// @brief APP的扩展
-#define KLBAPPEX_KLUA       "KLBAPPEX-klua"
+#define KLB_APPEX_klua       "KLB-APPEX-klua"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ klua_env_t* klbappex_klua_get_klua_env(klbappex_klua_t* p_appex)
 /// @return klbappex_klua_t*
 klbappex_klua_t* klbappex_get_klua(klb_app_t* p_app)
 {
-    return (klbappex_klua_t*)klb_app_get_extension(p_app, KLBAPPEX_KLUA);
+    return (klbappex_klua_t*)klb_app_get_extension(p_app, KLB_APPEX_klua);
 }
 
 klbappex_klua_t* klbappex_get_klua2()
@@ -241,7 +241,7 @@ int klbappex_register_klua(klb_app_t* p_app)
     ex.cb_control = klbappex_klua_control;
     ex.cb_loop_once = klbappex_klua_loop_once;
 
-    klb_app_register_extension(p_app, KLBAPPEX_KLUA, &ex);
+    klb_app_register_extension(p_app, KLB_APPEX_klua, &ex);
 
     return 0;
 }

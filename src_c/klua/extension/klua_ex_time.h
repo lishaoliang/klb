@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-#define KLUA_EX_TIME_NAME       "_KLUA_EX_TIME_"
+#define KLUAEX_time       "_KLUAEX-time_"
 
 typedef struct klua_ex_time_t_ klua_ex_time_t;
 

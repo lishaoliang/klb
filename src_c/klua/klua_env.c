@@ -606,7 +606,7 @@ static int klua_env_loop_msg(klua_env_t* p_env, int64_t now)
         case KLUA_LPC_RESPONSE:
         case KLUA_LPC_NOTIFY:
             {
-                klua_env_extension_activate_t* p_ex_lpc = klua_env_get_extension_activate(p_env, KLUA_EX_LPC_NAME);
+                klua_env_extension_activate_t* p_ex_lpc = klua_env_get_extension_activate(p_env, KLUAEX_lpc);
                 assert(NULL != p_ex_lpc);
                 assert(NULL != p_ex_lpc->ex.cb_msg);
 

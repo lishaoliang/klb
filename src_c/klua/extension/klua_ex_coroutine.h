@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 
-#define KLUA_EX_COROUTINE_NAME      "_KLUA_EX_COROUTINE_"
+#define KLUAEX_coroutine      "_KLUAEX-coroutine_"
 
 // lua_State.uname[16]
 #define KLUA_EX_STATE_NAME_LEN      12 

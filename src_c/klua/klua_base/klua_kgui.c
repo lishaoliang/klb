@@ -11,7 +11,6 @@
 #include "klbutil/klb_map.h"
 #include "klua/klua_seri.h"
 #include "klua/klua_gui.h"
-#include "klbgui/extensions/klbuiex_time.h"
 #include <assert.h>
 
 

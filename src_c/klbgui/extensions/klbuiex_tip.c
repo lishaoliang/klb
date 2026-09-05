@@ -5,7 +5,7 @@
 #include "klbmem/klb_mem.h"
 
 
-#define KLBUIEX_TIP   "KLBUIEX-tip"
+#define KLB_GUIEX_tip   "KLB-GUIEX-tip"
 
 
 /// @struct klbuiex_tip_t
@@ -232,7 +232,7 @@ bool klbuiex_tip_get_dirty(klbuiex_tip_t* p_ex, klb_rect_t* p_out_diry_rect)
 
 klbuiex_tip_t* klbuiex_get_tip(klb_gui_t* p_gui)
 {
-    return (klbuiex_tip_t*)klb_gui_get_extension(p_gui, KLBUIEX_TIP);
+    return (klbuiex_tip_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_tip);
 }
 
 int klbuiex_register_tip(klb_gui_t* p_gui)
@@ -243,7 +243,7 @@ int klbuiex_register_tip(klb_gui_t* p_gui)
     ex.cb_destroy = klbuiex_tip_destroy;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_TIP, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_tip, &ex);
 
     return 0;
 }

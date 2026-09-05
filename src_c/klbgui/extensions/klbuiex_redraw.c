@@ -3,7 +3,7 @@
 #include "klbmem/klb_mem.h"
 
 
-#define KLBUIEX_REDRAW  "KLBUIEX-redraw"
+#define KLB_GUIEX_redraw  "KLB-GUIEX-redraw"
 
 
 typedef struct klbuiex_redraw_t_
@@ -185,7 +185,7 @@ klb_hlist_t* klbuiex_redraw_get_hlist(klbuiex_redraw_t* p_re)
 
 klbuiex_redraw_t* klbuiex_get_redraw(klb_gui_t* p_gui)
 {
-    return (klbuiex_redraw_t*)klb_gui_get_extension(p_gui, KLBUIEX_REDRAW);
+    return (klbuiex_redraw_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_redraw);
 }
 
 int klbuiex_register_redraw(klb_gui_t* p_gui)
@@ -196,7 +196,7 @@ int klbuiex_register_redraw(klb_gui_t* p_gui)
     ex.cb_destroy = klbuiex_redraw_destroy;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_REDRAW, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_redraw, &ex);
 
     return 0;
 }

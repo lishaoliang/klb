@@ -4,7 +4,7 @@
 #include "klbgui/klb_wnd_in.h"
 
 
-#define KLBUIEX_WNDHASH   "KLBUIEX-wndhash"
+#define KLB_GUIEX_wndhash   "KLB-GUIEX-wndhash"
 
 
 /// @struct klbuiex_wndhash_top_t
@@ -317,7 +317,7 @@ static int klbuiex_wndhash_control(void* ptr, klb_gui_t* p_gui, int msg, uint8_t
 
 klbuiex_wndhash_t* klbuiex_get_wndhash(klb_gui_t* p_gui)
 {
-    return (klbuiex_wndhash_t*)klb_gui_get_extension(p_gui, KLBUIEX_WNDHASH);
+    return (klbuiex_wndhash_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_wndhash);
 }
 
 int klbuiex_register_wndhash(klb_gui_t* p_gui)
@@ -329,7 +329,7 @@ int klbuiex_register_wndhash(klb_gui_t* p_gui)
     ex.cb_control = klbuiex_wndhash_control;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_WNDHASH, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_wndhash, &ex);
 
     return 0;
 }

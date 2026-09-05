@@ -4,7 +4,7 @@
 #include <assert.h>
 
 
-#define KLUA_EX_BUFAGENT_NAME               "_KLUAEX_BUFAGENT_"
+#define KLUAEX_bufagent               "_KLUAEX-bufagent_"
 
 
 typedef struct klua_ex_bufagent_t_
@@ -62,14 +62,14 @@ int klua_ex_register_bufagent(klua_env_t* p_env)
     ex.cb_destroy = klua_ex_bufagent_destroy;
     ex.cb_loop_once = NULL;
 
-    klua_env_register_extension(p_env, KLUA_EX_BUFAGENT_NAME, &ex);
+    klua_env_register_extension(p_env, KLUAEX_bufagent, &ex);
 
     return 0;
 }
 
 klua_ex_bufagent_t* klua_ex_get_bufagent(klua_env_t* p_env)
 {
-    klua_ex_bufagent_t* p_ex = (klua_ex_bufagent_t*)klua_env_get_extension(p_env, KLUA_EX_BUFAGENT_NAME);
+    klua_ex_bufagent_t* p_ex = (klua_ex_bufagent_t*)klua_env_get_extension(p_env, KLUAEX_bufagent);
     return p_ex;
 }
 

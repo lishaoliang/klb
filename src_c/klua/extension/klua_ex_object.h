@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 
-#define KLUA_EX_OBJECT_NAME     "_KLUA_EX_OBJECT_"
+#define KLUAEX_object     "_KLUAEX-object_"
 
 
 typedef struct klua_ex_object_t_ klua_ex_object_t;

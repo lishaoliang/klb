@@ -21,7 +21,7 @@ extern "C" {
 #endif
 
 
-#define KLUA_EX_LPC_NAME      "_KLUA_EX_LPC_"
+#define KLUAEX_lpc      "_KLUAEX-lpc_"
 
 
 typedef struct klua_ex_lpc_t_ klua_ex_lpc_t;

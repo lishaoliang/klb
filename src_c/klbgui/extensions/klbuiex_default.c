@@ -4,7 +4,7 @@
 #include "klbutil/klb_map.h"
 
 
-#define KLBUIEX_DEFAULT   "KLBUIEX-default"
+#define KLB_GUIEX_default   "KLB-GUIEX-default"
 
 
 typedef struct klbuiex_default_t_
@@ -546,7 +546,7 @@ static void klbuiex_default_destroy(void* ptr, klb_gui_t* p_gui)
 
 klbuiex_default_t* klbuiex_get_default(klb_gui_t* p_gui)
 {
-    return (klbuiex_default_t*)klb_gui_get_extension(p_gui, KLBUIEX_DEFAULT);
+    return (klbuiex_default_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_default);
 }
 
 int klbuiex_register_default(klb_gui_t* p_gui)
@@ -557,7 +557,7 @@ int klbuiex_register_default(klb_gui_t* p_gui)
     ex.cb_destroy = klbuiex_default_destroy;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_DEFAULT, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_default, &ex);
 
     return 0;
 }

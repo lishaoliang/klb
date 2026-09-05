@@ -3,7 +3,7 @@
 #include "klbmem/klb_mem.h"
 
 
-#define KLBUIEX_UTIL   "KLBUIEX-util"
+#define KLB_GUIEX_util   "KLB-GUIEX-util"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ static void klbuiex_util_destroy(void* ptr, klb_gui_t* p_gui)
 
 klbuiex_util_t* klbuiex_get_util(klb_gui_t* p_gui)
 {
-    return (klbuiex_util_t*)klb_gui_get_extension(p_gui, KLBUIEX_UTIL);
+    return (klbuiex_util_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_util);
 }
 
 int klbuiex_register_util(klb_gui_t* p_gui)
@@ -111,7 +111,7 @@ int klbuiex_register_util(klb_gui_t* p_gui)
     ex.cb_destroy = klbuiex_util_destroy;
     ex.cb_loop_once = NULL;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_UTIL, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_util, &ex);
 
     return 0;
 }

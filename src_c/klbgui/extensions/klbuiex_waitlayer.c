@@ -5,7 +5,7 @@
 #include "klbgui/klb_wnd_in.h"
 
 
-#define KLBUIEX_WAITLAYER   "KLBUIEX-waitlayer"
+#define KLB_GUIEX_waitlayer   "KLB-GUIEX-waitlayer"
 
 
 /// @struct klbuiex_waitlayer_t
@@ -469,7 +469,7 @@ bool klbuiex_waitlayer_get_dirty(klbuiex_waitlayer_t* p_ex, klb_rect_t* p_out_di
 
 klbuiex_waitlayer_t* klbuiex_get_waitlayer(klb_gui_t* p_gui)
 {
-    return (klbuiex_waitlayer_t*)klb_gui_get_extension(p_gui, KLBUIEX_WAITLAYER);
+    return (klbuiex_waitlayer_t*)klb_gui_get_extension(p_gui, KLB_GUIEX_waitlayer);
 }
 
 int klbuiex_register_waitlayer(klb_gui_t* p_gui)
@@ -481,7 +481,7 @@ int klbuiex_register_waitlayer(klb_gui_t* p_gui)
     ex.cb_control = klbuiex_waitlayer_control;
     ex.cb_loop_once = klbuiex_waitlayer_loop_once;
 
-    klb_gui_register_extension(p_gui, KLBUIEX_WAITLAYER, &ex);
+    klb_gui_register_extension(p_gui, KLB_GUIEX_waitlayer, &ex);
 
     return 0;
 }

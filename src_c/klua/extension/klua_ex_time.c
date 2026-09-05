@@ -233,13 +233,13 @@ int klua_ex_register_time(klua_env_t* p_env)
     ex.cb_destroy = klua_ex_time_destroy;
     ex.cb_loop_once = klua_ex_time_loop_once;
 
-    klua_env_register_extension(p_env, KLUA_EX_TIME_NAME, &ex);
+    klua_env_register_extension(p_env, KLUAEX_time, &ex);
 
     return 0;
 }
 
 klua_ex_time_t* klua_ex_get_time(klua_env_t* p_env)
 {
-    klua_ex_time_t* p_ex = (klua_ex_time_t*)klua_env_get_extension(p_env, KLUA_EX_TIME_NAME);
+    klua_ex_time_t* p_ex = (klua_ex_time_t*)klua_env_get_extension(p_env, KLUAEX_time);
     return p_ex;
 }
