@@ -192,6 +192,7 @@ static void destroy_globalcss_klbwnd_ticker(void* ptr)
 
 static void klbui_ticker_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kticker);
 
     if (NULL != ptr)
@@ -199,18 +200,25 @@ static void klbui_ticker_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kticker);
 
     klbwnd_ticker_css_t* p_css = KLB_MALLOCZ(klbwnd_ticker_css_t, 1, 0);
     klbwnd_ticker_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kticker, p_css, destroy_globalcss_klbwnd_ticker);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_ticker_bind("margin", globalcss_klbui_ticker_margin);
     KLBUI_GLOBAL_ticker_bind("margin-top", globalcss_klbui_ticker_margin_top);
     KLBUI_GLOBAL_ticker_bind("margin-right", globalcss_klbui_ticker_margin_right);
     KLBUI_GLOBAL_ticker_bind("margin-bottom", globalcss_klbui_ticker_margin_bottom);
     KLBUI_GLOBAL_ticker_bind("margin-left", globalcss_klbui_ticker_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_ticker_bind("padding", globalcss_klbui_ticker_padding);
     KLBUI_GLOBAL_ticker_bind("padding-top", globalcss_klbui_ticker_padding_top);
     KLBUI_GLOBAL_ticker_bind("padding-right", globalcss_klbui_ticker_padding_right);
@@ -224,7 +232,6 @@ static void klbui_ticker_init_globalcss(klb_gui_t* p_gui)
 
 static void on_klbui_ticker_margin(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -232,7 +239,6 @@ static void on_klbui_ticker_margin(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, i
 
 static void on_klbui_ticker_margin_top(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_margin_top(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -240,7 +246,6 @@ static void on_klbui_ticker_margin_top(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticke
 
 static void on_klbui_ticker_margin_right(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_margin_right(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -248,7 +253,6 @@ static void on_klbui_ticker_margin_right(klb_wnd_t* p_wnd, klbui_ticker_t* p_tic
 
 static void on_klbui_ticker_margin_bottom(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_margin_bottom(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -256,7 +260,6 @@ static void on_klbui_ticker_margin_bottom(klb_wnd_t* p_wnd, klbui_ticker_t* p_ti
 
 static void on_klbui_ticker_margin_left(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_margin_left(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -264,7 +267,6 @@ static void on_klbui_ticker_margin_left(klb_wnd_t* p_wnd, klbui_ticker_t* p_tick
 
 static void on_klbui_ticker_padding(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -272,7 +274,6 @@ static void on_klbui_ticker_padding(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, 
 
 static void on_klbui_ticker_padding_top(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_padding_top(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -280,7 +281,6 @@ static void on_klbui_ticker_padding_top(klb_wnd_t* p_wnd, klbui_ticker_t* p_tick
 
 static void on_klbui_ticker_padding_right(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_padding_right(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -288,7 +288,6 @@ static void on_klbui_ticker_padding_right(klb_wnd_t* p_wnd, klbui_ticker_t* p_ti
 
 static void on_klbui_ticker_padding_bottom(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_padding_bottom(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -296,7 +295,6 @@ static void on_klbui_ticker_padding_bottom(klb_wnd_t* p_wnd, klbui_ticker_t* p_t
 
 static void on_klbui_ticker_padding_left(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
     klbwnd_ticker_css_t* p_css = check_css_klbui_ticker(p_wnd, method);
 
     klbuicssex_padding_left(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -304,16 +302,10 @@ static void on_klbui_ticker_padding_left(klb_wnd_t* p_wnd, klbui_ticker_t* p_tic
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
-
-static void on_klbui_ticker_index(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_attribute_int(&(p_ticker->ticker.index), p_wnd, method, p_in, p_out);
-}
+// 命令键
 
 static void on_klbui_ticker_ticker(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
 
     if (KLBUI_CSSEX_get == method)
     {
@@ -330,7 +322,6 @@ static void on_klbui_ticker_ticker(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, i
 
 static void on_klbui_ticker_ticker_default(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
 
     if (KLBUI_CSSEX_get == method)
     {
@@ -347,7 +338,6 @@ static void on_klbui_ticker_ticker_default(klb_wnd_t* p_wnd, klbui_ticker_t* p_t
 
 static void on_klbui_ticker_ticker_interval(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ticker;
 
     if (KLBUI_CSSEX_get == method)
     {
@@ -363,6 +353,14 @@ static void on_klbui_ticker_ticker_interval(klb_wnd_t* p_wnd, klbui_ticker_t* p_
 }
 
 
+// 私有自定义
+
+static void on_klbui_ticker_index(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_ticker->ticker.index), p_wnd, method, p_in, p_out);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // css func
 
@@ -370,7 +368,6 @@ static void on_klbui_ticker_ticker_interval(klb_wnd_t* p_wnd, klbui_ticker_t* p_
 
 static void klbui_ticker_init_func_map(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticker, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
 
     // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kticker);
@@ -381,31 +378,37 @@ static void klbui_ticker_init_func_map(klb_wnd_t* p_wnd, klbui_ticker_t* p_ticke
         return;
     }
 
-    // step2. 初始化CSS 支持的方法
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kticker);
     p_ticker->p_func_map = ptr;
 
     //////////////////////////////////////////////
     // step3. 绑定CSS 支持的方法
 
+    // 外边距 margin
     KLBUI_ticker_bind("margin", on_klbui_ticker_margin);
     KLBUI_ticker_bind("margin-top", on_klbui_ticker_margin_top);
     KLBUI_ticker_bind("margin-right", on_klbui_ticker_margin_right);
     KLBUI_ticker_bind("margin-bottom", on_klbui_ticker_margin_bottom);
     KLBUI_ticker_bind("margin-left", on_klbui_ticker_margin_left);
 
+    // 内边距 padding
     KLBUI_ticker_bind("padding", on_klbui_ticker_padding);
     KLBUI_ticker_bind("padding-top", on_klbui_ticker_padding_top);
     KLBUI_ticker_bind("padding-right", on_klbui_ticker_padding_right);
     KLBUI_ticker_bind("padding-bottom", on_klbui_ticker_padding_bottom);
     KLBUI_ticker_bind("padding-left", on_klbui_ticker_padding_left);
 
-    KLBUI_ticker_bind("index", on_klbui_ticker_index);
+    // 命令键
+
     KLBUI_ticker_bind("ticker", on_klbui_ticker_ticker);
     KLBUI_ticker_bind("ticker-default", on_klbui_ticker_ticker_default);
     KLBUI_ticker_bind("ticker-interval", on_klbui_ticker_ticker_interval);
-}
 
+    // 私有自定义
+
+    KLBUI_ticker_bind("index", on_klbui_ticker_index);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

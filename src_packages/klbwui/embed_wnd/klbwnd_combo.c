@@ -165,10 +165,6 @@ static int klbwnd_combo_on_click(klb_wnd_t* p_wnd, klbwnd_combo_t* p_combo)
 
 static int klbwnd_combo_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     klbwnd_combo_t* p_combo = (klbwnd_combo_t*)p_wnd->ctrl;
 

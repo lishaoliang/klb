@@ -57,10 +57,6 @@ static int klbwnd_line_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_line_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     switch (msg)
     {
@@ -165,7 +161,6 @@ void klbwnd_line_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, int w, i
 
 void klbwnd_line_deinit(klb_wnd_t* p_wnd)
 {
-    (void)p_wnd;
 }
 
 

@@ -234,6 +234,7 @@ static void destroy_globalcss_klbwnd_picture(void* ptr)
 
 static void klbui_picture_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kpicture);
 
     if (NULL != ptr)
@@ -241,29 +242,41 @@ static void klbui_picture_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kpicture);
 
     klbwnd_picture_css_t* p_css = KLB_MALLOCZ(klbwnd_picture_css_t, 1, 0);
     klbwnd_picture_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kpicture, p_css, destroy_globalcss_klbwnd_picture);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_pic_bind("margin", globalcss_klbui_picture_margin);
     KLBUI_GLOBAL_pic_bind("margin-top", globalcss_klbui_picture_margin_top);
     KLBUI_GLOBAL_pic_bind("margin-right", globalcss_klbui_picture_margin_right);
     KLBUI_GLOBAL_pic_bind("margin-bottom", globalcss_klbui_picture_margin_bottom);
     KLBUI_GLOBAL_pic_bind("margin-left", globalcss_klbui_picture_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_pic_bind("padding", globalcss_klbui_picture_padding);
     KLBUI_GLOBAL_pic_bind("padding-top", globalcss_klbui_picture_padding_top);
     KLBUI_GLOBAL_pic_bind("padding-right", globalcss_klbui_picture_padding_right);
     KLBUI_GLOBAL_pic_bind("padding-bottom", globalcss_klbui_picture_padding_bottom);
     KLBUI_GLOBAL_pic_bind("padding-left", globalcss_klbui_picture_padding_left);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_pic_bind("background-color", globalcss_klbui_picture_background_color);
+
+    // 背景图片 background-image
     KLBUI_GLOBAL_pic_bind("background-image", globalcss_klbui_picture_background_image);
     KLBUI_GLOBAL_pic_bind("background-image-mode", globalcss_klbui_picture_background_image_mode);
     KLBUI_GLOBAL_pic_bind("background-image-color-key", globalcss_klbui_picture_background_image_color_key);
     
+
+    // 边框宽度 border
     KLBUI_GLOBAL_pic_bind("border-width", globalcss_klbui_picture_border_width);
     KLBUI_GLOBAL_pic_bind("border-color", globalcss_klbui_picture_border_color);
 }
@@ -386,7 +399,7 @@ static void on_klbui_picture_border_color(klb_wnd_t* p_wnd, klbui_picture_t* p_p
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 私有自定义
 
 static void on_klbui_picture_title(klb_wnd_t* p_wnd, klbui_picture_t* p_pic, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -422,30 +435,41 @@ static void klbui_picture_init_func_map(klb_wnd_t* p_wnd, klbui_picture_t* p_pic
     //////////////////////////////////////////////
     // step3. 绑定CSS 支持的方法
 
+    // 外边距 margin
     KLBUI_picture_bind("margin", on_klbui_picture_margin);
     KLBUI_picture_bind("margin-top", on_klbui_picture_margin_top);
     KLBUI_picture_bind("margin-right", on_klbui_picture_margin_right);
     KLBUI_picture_bind("margin-bottom", on_klbui_picture_margin_bottom);
     KLBUI_picture_bind("margin-left", on_klbui_picture_margin_left);
 
+    // 内边距 padding
     KLBUI_picture_bind("padding", on_klbui_picture_padding);
     KLBUI_picture_bind("padding-top", on_klbui_picture_padding_top);
     KLBUI_picture_bind("padding-right", on_klbui_picture_padding_right);
     KLBUI_picture_bind("padding-bottom", on_klbui_picture_padding_bottom);
     KLBUI_picture_bind("padding-left", on_klbui_picture_padding_left);
 
+    // 背景色 background-color
     KLBUI_picture_bind("background-color", on_klbui_picture_background_color);
+
+    // 背景图片 background-image
     KLBUI_picture_bind("background-image", on_klbui_picture_background_image);
     KLBUI_picture_bind("background-image-mode", on_klbui_picture_background_image_mode);
     KLBUI_picture_bind("background-image-color-key", on_klbui_picture_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_picture_bind("border-width", on_klbui_picture_border_width);
     KLBUI_picture_bind("border-color", on_klbui_picture_border_color);
 
+    // 命令键
+
+    KLBUI_picture_bind("image", on_klbui_picture_background_image);
+
+    // 私有自定义
+
     KLBUI_picture_bind("title", on_klbui_picture_title);
     KLBUI_picture_bind("value", on_klbui_picture_value);
-    KLBUI_picture_bind("image", on_klbui_picture_background_image);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

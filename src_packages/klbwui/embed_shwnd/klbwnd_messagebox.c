@@ -78,10 +78,6 @@ static int klbwnd_messagebox_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_messagebox_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     if (KLBUI_onpaint == msg)
     {
@@ -100,10 +96,6 @@ static int on_btn_ok_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_poin
     klb_wnd_t* p_wnd_msgbox = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_messagebox_t* p_msgbox = (klbwnd_messagebox_t*)p_wnd_msgbox->ctrl;
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     if (KLBUI_click == msg || KLBUI_dblclick == msg)
     {
@@ -120,10 +112,6 @@ static int on_btn_cancel_klbwnd_messagebox(klb_wnd_t* p_wnd, int msg, const klb_
     klb_wnd_t* p_wnd_msgbox = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_messagebox_t* p_msgbox = (klbwnd_messagebox_t*)p_wnd_msgbox->ctrl;
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     if (KLBUI_click == msg || KLBUI_dblclick == msg)
     {

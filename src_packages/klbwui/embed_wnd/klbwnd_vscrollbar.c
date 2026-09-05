@@ -90,8 +90,6 @@ static int klbwnd_vscrollbar_on_click(klb_wnd_t* p_wnd, klbwnd_vscrollbar_t* p_v
 
 static int klbwnd_vscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt2;
-    (void)wparam;
 
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd->ctrl;
 
@@ -256,9 +254,6 @@ static int on_mousewheel_klbwnd_vscrollbar(klb_wnd_t* p_wnd_vsc, klbwnd_vscrollb
 
 static int on_command_btn_up_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd_vsc->ctrl;
@@ -278,9 +273,6 @@ static int on_command_btn_up_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int msg, const 
 
 static int on_command_btn_down_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd_vsc->ctrl;
@@ -300,7 +292,6 @@ static int on_command_btn_down_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int msg, cons
 
 static int on_command_btn_middle_klbwnd_vscrollbar(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt2;
 
     klb_wnd_t* p_wnd_vsc = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_vscrollbar_t* p_vsc = (klbwnd_vscrollbar_t*)p_wnd_vsc->ctrl;
@@ -612,7 +603,6 @@ void klbwnd_vscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
 
 void klbwnd_vscrollbar_deinit(klb_wnd_t* p_wnd)
 {
-    (void)p_wnd;
 }
 
 klb_wnd_t* klbwnd_vscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h)

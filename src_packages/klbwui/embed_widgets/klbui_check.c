@@ -570,6 +570,7 @@ static void destroy_globalcss_klbwnd_check(void* ptr)
 
 static void klbui_check_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kcheck);
 
     if (NULL != ptr)
@@ -577,24 +578,32 @@ static void klbui_check_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kcheck);
 
     klbwnd_check_css_t* p_css = KLB_MALLOCZ(klbwnd_check_css_t, 1, 0);
     klbwnd_check_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kcheck, p_css, destroy_globalcss_klbwnd_check);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_check_bind("margin", globalcss_klbui_check_margin);
     KLBUI_GLOBAL_check_bind("margin-top", globalcss_klbui_check_margin_top);
     KLBUI_GLOBAL_check_bind("margin-right", globalcss_klbui_check_margin_right);
     KLBUI_GLOBAL_check_bind("margin-bottom", globalcss_klbui_check_margin_bottom);
     KLBUI_GLOBAL_check_bind("margin-left", globalcss_klbui_check_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_check_bind("padding", globalcss_klbui_check_padding);
     KLBUI_GLOBAL_check_bind("padding-top", globalcss_klbui_check_padding_top);
     KLBUI_GLOBAL_check_bind("padding-right", globalcss_klbui_check_padding_right);
     KLBUI_GLOBAL_check_bind("padding-bottom", globalcss_klbui_check_padding_bottom);
     KLBUI_GLOBAL_check_bind("padding-left", globalcss_klbui_check_padding_left);
 
+    // 文本颜色 color
     KLBUI_GLOBAL_check_bind("color", globalcss_klbui_check_text_color);
     KLBUI_GLOBAL_check_bind("color:focus", globalcss_klbui_check_text_color_focus);
     KLBUI_GLOBAL_check_bind("color:disabled", globalcss_klbui_check_text_color_disable);
@@ -602,6 +611,7 @@ static void klbui_check_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_check_bind("color:checked:focus", globalcss_klbui_check_check_text_color_focus);
     KLBUI_GLOBAL_check_bind("color:checked:disabled", globalcss_klbui_check_check_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_GLOBAL_check_bind("text-align", globalcss_klbui_check_text_align);
     KLBUI_GLOBAL_check_bind("text-align:focus", globalcss_klbui_check_text_align_focus);
     KLBUI_GLOBAL_check_bind("text-align:disabled", globalcss_klbui_check_text_align_disable);
@@ -609,6 +619,7 @@ static void klbui_check_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_check_bind("text-align:checked:focus", globalcss_klbui_check_check_text_align_focus);
     KLBUI_GLOBAL_check_bind("text-align:checked:disabled", globalcss_klbui_check_check_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_GLOBAL_check_bind("font-size", globalcss_klbui_check_font_size);
     KLBUI_GLOBAL_check_bind("font-size:focus", globalcss_klbui_check_font_size_focus);
     KLBUI_GLOBAL_check_bind("font-size:disabled", globalcss_klbui_check_font_size_disable);
@@ -616,6 +627,7 @@ static void klbui_check_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_check_bind("font-size:checked:focus", globalcss_klbui_check_check_font_size_focus);
     KLBUI_GLOBAL_check_bind("font-size:checked:disabled", globalcss_klbui_check_check_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_check_bind("background-color", globalcss_klbui_check_background_color);
     KLBUI_GLOBAL_check_bind("background-color:focus", globalcss_klbui_check_background_color_focus);
     KLBUI_GLOBAL_check_bind("background-color:disabled", globalcss_klbui_check_background_color_disable);
@@ -623,6 +635,7 @@ static void klbui_check_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_check_bind("background-color:checked:focus", globalcss_klbui_check_check_background_color_focus);
     KLBUI_GLOBAL_check_bind("background-color:checked:disabled", globalcss_klbui_check_check_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_GLOBAL_check_bind("background-image", globalcss_klbui_check_background_image);
     KLBUI_GLOBAL_check_bind("background-image:focus", globalcss_klbui_check_background_image_focus);
     KLBUI_GLOBAL_check_bind("background-image:disabled", globalcss_klbui_check_background_image_disable);
@@ -644,6 +657,7 @@ static void klbui_check_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_check_bind("background-image-color-key:checked:focus", globalcss_klbui_check_check_background_image_color_key_focus);
     KLBUI_GLOBAL_check_bind("background-image-color-key:checked:disabled", globalcss_klbui_check_check_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_GLOBAL_check_bind("border-width", globalcss_klbui_check_border_width);
     KLBUI_GLOBAL_check_bind("border-width:focus", globalcss_klbui_check_border_width_focus);
     KLBUI_GLOBAL_check_bind("border-width:disabled", globalcss_klbui_check_border_width_disable);
@@ -1113,7 +1127,7 @@ static void on_klbui_check_check_border_color_disable(klb_wnd_t* p_wnd, klbui_ch
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 命令键
 
 static void on_klbui_check_tip(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -1143,6 +1157,8 @@ static void on_klbui_check_dynamic_tip(klb_wnd_t* p_wnd, klbui_check_t* p_check,
     }
 }
 
+// 私有自定义
+
 static void on_klbui_check_index(klb_wnd_t* p_wnd, klbui_check_t* p_check, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_check->check.index), p_wnd, method, p_in, p_out);
@@ -1170,7 +1186,6 @@ static void on_klbui_check_value(klb_wnd_t* p_wnd, klbui_check_t* p_check, int m
         }
     }
 
-    (void)p_check;
 }
 //////////////////////////////////////////////////////////////////////////
 // css func
@@ -1278,9 +1293,13 @@ static void klbui_check_init_func_map(klb_wnd_t* p_wnd, klbui_check_t* p_check, 
     KLBUI_check_bind("border-color:checked:focus", on_klbui_check_check_border_color_focus);
     KLBUI_check_bind("border-color:checked:disabled", on_klbui_check_check_border_color_disable);
 
+    // 命令键
+
     // 提示 tip
     KLBUI_check_bind("tip", on_klbui_check_tip);
     KLBUI_check_bind("dynamic-tip", on_klbui_check_dynamic_tip);
+
+    // 私有自定义
 
     KLBUI_check_bind("index", on_klbui_check_index);
     KLBUI_check_bind("title", on_klbui_check_title);

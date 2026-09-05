@@ -94,10 +94,6 @@ static int klbwnd_animation_on_control(klb_wnd_t* p_wnd, int msg, const klb_poin
 {
     klbwnd_animation_t* p_ani = (klbwnd_animation_t*)p_wnd->ctrl;
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     if (KLBUI_onpaint == msg)
     {

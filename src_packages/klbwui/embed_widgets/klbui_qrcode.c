@@ -108,31 +108,41 @@ static klbwnd_qrcode_css_t* check_css_klbui_qrcode(klb_wnd_t* p_wnd, int method)
 
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_qrcode_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin(&(((klbwnd_qrcode_css_t*)ptr)->margin), NULL, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = (klbwnd_qrcode_css_t*)ptr;
+
+    klbuicssex_margin(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_qrcode_padding(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding(&(((klbwnd_qrcode_css_t*)ptr)->padding), NULL, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = (klbwnd_qrcode_css_t*)ptr;
+
+    klbuicssex_padding(&(p_css->padding), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_qrcode_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(((klbwnd_qrcode_css_t*)ptr)->normal.background), NULL, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = (klbwnd_qrcode_css_t*)ptr;
+
+    klbuicssex_background_color(&(p_css->normal.background), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_qrcode_border_width(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(((klbwnd_qrcode_css_t*)ptr)->normal.border), NULL, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = (klbwnd_qrcode_css_t*)ptr;
+
+    klbuicssex_border_width(&(p_css->normal.border), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_qrcode_border_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(((klbwnd_qrcode_css_t*)ptr)->normal.border), NULL, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = (klbwnd_qrcode_css_t*)ptr;
+
+    klbuicssex_border_color(&(p_css->normal.border), NULL, method, p_in, p_out);
 }
 
 static void destroy_globalcss_klbwnd_qrcode(void* ptr)
@@ -147,6 +157,7 @@ static void destroy_globalcss_klbwnd_qrcode(void* ptr)
 
 static void klbui_qrcode_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kqrcode);
 
     if (NULL != ptr)
@@ -154,52 +165,73 @@ static void klbui_qrcode_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kqrcode);
 
     klbwnd_qrcode_css_t* p_css = KLB_MALLOCZ(klbwnd_qrcode_css_t, 1, 0);
     klbwnd_qrcode_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kqrcode, p_css, destroy_globalcss_klbwnd_qrcode);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_qrcode_bind("margin", globalcss_klbui_qrcode_margin);
+
+    // 内边距 padding
     KLBUI_GLOBAL_qrcode_bind("padding", globalcss_klbui_qrcode_padding);
+
+    // 背景色 background-color
     KLBUI_GLOBAL_qrcode_bind("background-color", globalcss_klbui_qrcode_background_color);
+
+    // 边框宽度 border
     KLBUI_GLOBAL_qrcode_bind("border-width", globalcss_klbui_qrcode_border_width);
     KLBUI_GLOBAL_qrcode_bind("border-color", globalcss_klbui_qrcode_border_color);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_qrcode_margin(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_qr;
-    klbuicssex_margin(&(check_css_klbui_qrcode(p_wnd, method)->margin), p_wnd, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = check_css_klbui_qrcode(p_wnd, method);
+
+    klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_qrcode_padding(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_qr;
-    klbuicssex_padding(&(check_css_klbui_qrcode(p_wnd, method)->padding), p_wnd, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = check_css_klbui_qrcode(p_wnd, method);
+
+    klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_qrcode_background_color(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_qr;
-    klbuicssex_background_color(&(check_css_klbui_qrcode(p_wnd, method)->normal.background), p_wnd, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = check_css_klbui_qrcode(p_wnd, method);
+
+    klbuicssex_background_color(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_qrcode_border_width(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_qr;
-    klbuicssex_border_width(&(check_css_klbui_qrcode(p_wnd, method)->normal.border), p_wnd, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = check_css_klbui_qrcode(p_wnd, method);
+
+    klbuicssex_border_width(&(p_css->normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_qrcode_border_color(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_qr;
-    klbuicssex_border_color(&(check_css_klbui_qrcode(p_wnd, method)->normal.border), p_wnd, method, p_in, p_out);
+    klbwnd_qrcode_css_t* p_css = check_css_klbui_qrcode(p_wnd, method);
+
+    klbuicssex_border_color(&(p_css->normal.border), p_wnd, method, p_in, p_out);
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+// 私有自定义
 
 static void on_klbui_qrcode_title(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -228,8 +260,7 @@ static void on_klbui_qrcode_value(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, int me
 
 static void klbui_qrcode_init_func_map(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
-
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kqrcode);
 
     if (NULL != ptr)
@@ -238,18 +269,32 @@ static void klbui_qrcode_init_func_map(klb_wnd_t* p_wnd, klbui_qrcode_t* p_qr, k
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kqrcode);
     p_qr->p_func_map = ptr;
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_qrcode_bind("margin", on_klbui_qrcode_margin);
+
+    // 内边距 padding
     KLBUI_qrcode_bind("padding", on_klbui_qrcode_padding);
+
+    // 背景色 background-color
     KLBUI_qrcode_bind("background-color", on_klbui_qrcode_background_color);
+
+    // 边框宽度 border
     KLBUI_qrcode_bind("border-width", on_klbui_qrcode_border_width);
     KLBUI_qrcode_bind("border-color", on_klbui_qrcode_border_color);
+
+    // 私有自定义
+
     KLBUI_qrcode_bind("title", on_klbui_qrcode_title);
     KLBUI_qrcode_bind("value", on_klbui_qrcode_value);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

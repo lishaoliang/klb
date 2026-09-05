@@ -167,9 +167,6 @@ static int klbwnd_slider_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t
 {
     klbwnd_slider_t* p_slider = (klbwnd_slider_t*)p_wnd->ctrl;
 
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     switch (msg)
     {

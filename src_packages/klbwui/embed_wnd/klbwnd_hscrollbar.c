@@ -89,9 +89,6 @@ static int klbwnd_hscrollbar_on_click(klb_wnd_t* p_wnd, klbwnd_hscrollbar_t* p_h
 
 static int klbwnd_hscrollbar_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd->ctrl;
 
@@ -225,10 +222,6 @@ static void klbwnd_hscrollbar_relayout(klb_wnd_t* p_wnd_hsc, klbwnd_hscrollbar_t
 
 static int on_command_btn_left_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_hsc = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd_hsc->ctrl;
@@ -243,10 +236,6 @@ static int on_command_btn_left_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int msg, cons
 
 static int on_command_btn_right_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_hsc = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd_hsc->ctrl;
@@ -261,7 +250,6 @@ static int on_command_btn_right_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int msg, con
 
 static int on_command_btn_middle_klbwnd_hscrollbar(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt2;
 
     klb_wnd_t* p_wnd_hsc = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_hscrollbar_t* p_hsc = (klbwnd_hscrollbar_t*)p_wnd_hsc->ctrl;
@@ -454,8 +442,6 @@ void klbwnd_hscrollbar_set_ranges(klb_wnd_t* p_wnd, int min, int max, int step)
 
 int klbwnd_hscrollbar_enable_mousewheel(klb_wnd_t* p_wnd, bool b)
 {
-    (void)p_wnd;
-    (void)b;
 
     return 0;
 }
@@ -566,7 +552,6 @@ void klbwnd_hscrollbar_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
 
 void klbwnd_hscrollbar_deinit(klb_wnd_t* p_wnd)
 {
-    (void)p_wnd;
 }
 
 klb_wnd_t* klbwnd_hscrollbar_create(klb_gui_t* p_gui, int x, int y, int w, int h)

@@ -126,7 +126,6 @@ static int klbwnd_qrcode_on_paint(klb_wnd_t* p_wnd)
         klbwnd_qrcode_draw_modules(p_wnd, (QRcode*)p_qr->p_qrcode, &qr_rect);
     }
 #else
-    (void)p_qr;
 #endif
 
     return 0;
@@ -134,10 +133,6 @@ static int klbwnd_qrcode_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_qrcode_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     if (KLBUI_onpaint == msg)
     {
@@ -176,7 +171,6 @@ static void encode_qrcode_klbwnd_qrcode(klbwnd_qrcode_t* p_qr)
 #ifndef __KLB_NO_QRENCODE__
     p_qr->p_qrcode = QRcode_encodeString8bit(p_qr->value, 0, QR_ECLEVEL_M);
 #else
-    (void)p_qr;
 #endif
 }
 

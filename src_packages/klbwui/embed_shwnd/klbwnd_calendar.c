@@ -33,8 +33,6 @@ static void klbwnd_calendar_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_calendar_on_paint_status(klb_wnd_t* p_wnd, klbwnd_calendar_t* p_cal, klbwnd_calendar_css_t* p_css, klbwnd_calendar_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_cal;
-    (void)p_css;
 
     klbwuicss_draw_background(p_wnd, p_rect, &p_attr->background);
 

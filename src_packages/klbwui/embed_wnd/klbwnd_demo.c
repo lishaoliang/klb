@@ -87,12 +87,10 @@ void klbwnd_demo_set_css(klb_wnd_t* p_wnd, klbwnd_demo_css_t* p_css)
 
 static void klbwnd_demo_init_attribute(klbwnd_demo_t* p_demo)
 {
-    (void)p_demo;
 }
 
 static void klbwnd_demo_deinit_attribute(klbwnd_demo_t* p_demo)
 {
-    (void)p_demo;
 }
 
 

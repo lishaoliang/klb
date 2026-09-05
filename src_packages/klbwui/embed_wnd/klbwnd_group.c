@@ -83,10 +83,6 @@ static int klbwnd_group_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_group_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     switch (msg)
     {

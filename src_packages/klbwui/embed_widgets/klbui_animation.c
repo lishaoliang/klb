@@ -108,26 +108,34 @@ static klbwnd_animation_css_t* check_css_klbui_animation(klb_wnd_t* p_wnd, int m
 
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_animation_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin(&(((klbwnd_animation_css_t*)ptr)->margin), NULL, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = (klbwnd_animation_css_t*)ptr;
+
+    klbuicssex_margin(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_animation_padding(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding(&(((klbwnd_animation_css_t*)ptr)->padding), NULL, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = (klbwnd_animation_css_t*)ptr;
+
+    klbuicssex_padding(&(p_css->padding), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_animation_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(((klbwnd_animation_css_t*)ptr)->normal.background), NULL, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = (klbwnd_animation_css_t*)ptr;
+
+    klbuicssex_background_color(&(p_css->normal.background), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_animation_background_image(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_image(&(((klbwnd_animation_css_t*)ptr)->normal.background), NULL, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = (klbwnd_animation_css_t*)ptr;
+
+    klbuicssex_background_image(&(p_css->normal.background), NULL, method, p_in, p_out);
 }
 
 static void destroy_globalcss_klbwnd_animation(void* ptr)
@@ -142,6 +150,7 @@ static void destroy_globalcss_klbwnd_animation(void* ptr)
 
 static void klbui_animation_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kanimation);
 
     if (NULL != ptr)
@@ -149,65 +158,67 @@ static void klbui_animation_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kanimation);
 
     klbwnd_animation_css_t* p_css = KLB_MALLOCZ(klbwnd_animation_css_t, 1, 0);
     klbwnd_animation_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kanimation, p_css, destroy_globalcss_klbwnd_animation);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_ani_bind("margin", globalcss_klbui_animation_margin);
+
+    // 内边距 padding
     KLBUI_GLOBAL_ani_bind("padding", globalcss_klbui_animation_padding);
+
+    // 背景色 background-color
     KLBUI_GLOBAL_ani_bind("background-color", globalcss_klbui_animation_background_color);
+    // 背景图片 background-image
     KLBUI_GLOBAL_ani_bind("background-image", globalcss_klbui_animation_background_image);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_animation_margin(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ani;
-    klbuicssex_margin(&(check_css_klbui_animation(p_wnd, method)->margin), p_wnd, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = check_css_klbui_animation(p_wnd, method);
+
+    klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_animation_padding(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ani;
-    klbuicssex_padding(&(check_css_klbui_animation(p_wnd, method)->padding), p_wnd, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = check_css_klbui_animation(p_wnd, method);
+
+    klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_animation_background_color(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ani;
-    klbuicssex_background_color(&(check_css_klbui_animation(p_wnd, method)->normal.background), p_wnd, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = check_css_klbui_animation(p_wnd, method);
+
+    klbuicssex_background_color(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_animation_background_image(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ani;
-    klbuicssex_background_image(&(check_css_klbui_animation(p_wnd, method)->normal.background), p_wnd, method, p_in, p_out);
+    klbwnd_animation_css_t* p_css = check_css_klbui_animation(p_wnd, method);
+
+    klbuicssex_background_image(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 }
 
-static void on_klbui_animation_title(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_attribute_sds(&(p_ani->animation.title), p_wnd, method, p_in, p_out);
-}
 
-static void on_klbui_animation_value(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_attribute_sds(&(p_ani->animation.value), p_wnd, method, p_in, p_out);
-}
-
-static void on_klbui_animation_index(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    (void)p_ani;
-    klbuicssex_attribute_int(&(((klbwnd_animation_t*)p_wnd->ctrl)->index), p_wnd, method, p_in, p_out);
-}
+//////////////////////////////////////////////////////////////////////////
+// 命令键
 
 static void on_klbui_animation_ticker(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ani;
 
     if (KLBUI_CSSEX_get == method)
     {
@@ -224,7 +235,6 @@ static void on_klbui_animation_ticker(klb_wnd_t* p_wnd, klbui_animation_t* p_ani
 
 static void on_klbui_animation_ticker_interval(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_ani;
 
     if (KLBUI_CSSEX_get == method)
     {
@@ -239,6 +249,23 @@ static void on_klbui_animation_ticker_interval(klb_wnd_t* p_wnd, klbui_animation
     }
 }
 
+// 私有自定义
+
+static void on_klbui_animation_title(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_sds(&(p_ani->animation.title), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_animation_value(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_sds(&(p_ani->animation.value), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_animation_index(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_int(&(p_ani->animation.index), p_wnd, method, p_in, p_out);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // css func
@@ -247,8 +274,7 @@ static void on_klbui_animation_ticker_interval(klb_wnd_t* p_wnd, klbui_animation
 
 static void klbui_animation_init_func_map(klb_wnd_t* p_wnd, klbui_animation_t* p_ani, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
-
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kanimation);
 
     if (NULL != ptr)
@@ -257,18 +283,35 @@ static void klbui_animation_init_func_map(klb_wnd_t* p_wnd, klbui_animation_t* p
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kanimation);
     p_ani->p_func_map = ptr;
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_ani_bind("margin", on_klbui_animation_margin);
+
+    // 内边距 padding
     KLBUI_ani_bind("padding", on_klbui_animation_padding);
+
+    // 背景色 background-color
     KLBUI_ani_bind("background-color", on_klbui_animation_background_color);
+    // 背景图片 background-image
     KLBUI_ani_bind("background-image", on_klbui_animation_background_image);
+
+    // 命令键
+
+    KLBUI_ani_bind("ticker", on_klbui_animation_ticker);
+    KLBUI_ani_bind("ticker-interval", on_klbui_animation_ticker_interval);
+
+    // 私有自定义
+
     KLBUI_ani_bind("title", on_klbui_animation_title);
     KLBUI_ani_bind("value", on_klbui_animation_value);
     KLBUI_ani_bind("index", on_klbui_animation_index);
-    KLBUI_ani_bind("ticker", on_klbui_animation_ticker);
-    KLBUI_ani_bind("ticker-interval", on_klbui_animation_ticker_interval);
 }
 
 

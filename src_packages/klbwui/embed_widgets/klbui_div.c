@@ -192,6 +192,7 @@ static void destroy_globalcss_klbwnd_div(void* ptr)
 
 static void klbui_div_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kdiv);
 
     if (NULL != ptr)
@@ -199,18 +200,25 @@ static void klbui_div_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kdiv);
 
     klbwnd_div_css_t* p_css = KLB_MALLOCZ(klbwnd_div_css_t, 1, 0);
     klbwnd_div_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kdiv, p_css, destroy_globalcss_klbwnd_div);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_div_bind("margin", globalcss_klbui_div_margin);
     KLBUI_GLOBAL_div_bind("margin-top", globalcss_klbui_div_margin_top);
     KLBUI_GLOBAL_div_bind("margin-right", globalcss_klbui_div_margin_right);
     KLBUI_GLOBAL_div_bind("margin-bottom", globalcss_klbui_div_margin_bottom);
     KLBUI_GLOBAL_div_bind("margin-left", globalcss_klbui_div_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_div_bind("padding", globalcss_klbui_div_padding);
     KLBUI_GLOBAL_div_bind("padding-top", globalcss_klbui_div_padding_top);
     KLBUI_GLOBAL_div_bind("padding-right", globalcss_klbui_div_padding_right);
@@ -224,7 +232,6 @@ static void klbui_div_init_globalcss(klb_gui_t* p_gui)
 
 static void on_klbui_div_margin(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -232,7 +239,6 @@ static void on_klbui_div_margin(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method
 
 static void on_klbui_div_margin_top(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_margin_top(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -240,7 +246,6 @@ static void on_klbui_div_margin_top(klb_wnd_t* p_wnd, klbui_div_t* p_div, int me
 
 static void on_klbui_div_margin_right(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_margin_right(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -248,7 +253,6 @@ static void on_klbui_div_margin_right(klb_wnd_t* p_wnd, klbui_div_t* p_div, int 
 
 static void on_klbui_div_margin_bottom(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_margin_bottom(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -256,7 +260,6 @@ static void on_klbui_div_margin_bottom(klb_wnd_t* p_wnd, klbui_div_t* p_div, int
 
 static void on_klbui_div_margin_left(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_margin_left(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -264,7 +267,6 @@ static void on_klbui_div_margin_left(klb_wnd_t* p_wnd, klbui_div_t* p_div, int m
 
 static void on_klbui_div_padding(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -272,7 +274,6 @@ static void on_klbui_div_padding(klb_wnd_t* p_wnd, klbui_div_t* p_div, int metho
 
 static void on_klbui_div_padding_top(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_padding_top(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -280,7 +281,6 @@ static void on_klbui_div_padding_top(klb_wnd_t* p_wnd, klbui_div_t* p_div, int m
 
 static void on_klbui_div_padding_right(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_padding_right(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -288,7 +288,6 @@ static void on_klbui_div_padding_right(klb_wnd_t* p_wnd, klbui_div_t* p_div, int
 
 static void on_klbui_div_padding_bottom(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_padding_bottom(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -296,7 +295,6 @@ static void on_klbui_div_padding_bottom(klb_wnd_t* p_wnd, klbui_div_t* p_div, in
 
 static void on_klbui_div_padding_left(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_div;
     klbwnd_div_css_t* p_css = check_css_klbui_div(p_wnd, method);
 
     klbuicssex_padding_left(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -304,7 +302,7 @@ static void on_klbui_div_padding_left(klb_wnd_t* p_wnd, klbui_div_t* p_div, int 
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 私有自定义
 
 static void on_klbui_div_index(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -324,7 +322,6 @@ static void on_klbui_div_title(klb_wnd_t* p_wnd, klbui_div_t* p_div, int method,
 
 static void klbui_div_init_func_map(klb_wnd_t* p_wnd, klbui_div_t* p_div, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
 
     // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kdiv);
@@ -335,29 +332,32 @@ static void klbui_div_init_func_map(klb_wnd_t* p_wnd, klbui_div_t* p_div, klb_gu
         return;
     }
 
-    // step2. 初始化CSS 支持的方法
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kdiv);
     p_div->p_func_map = ptr;
 
     //////////////////////////////////////////////
     // step3. 绑定CSS 支持的方法
 
+    // 外边距 margin
     KLBUI_div_bind("margin", on_klbui_div_margin);
     KLBUI_div_bind("margin-top", on_klbui_div_margin_top);
     KLBUI_div_bind("margin-right", on_klbui_div_margin_right);
     KLBUI_div_bind("margin-bottom", on_klbui_div_margin_bottom);
     KLBUI_div_bind("margin-left", on_klbui_div_margin_left);
 
+    // 内边距 padding
     KLBUI_div_bind("padding", on_klbui_div_padding);
     KLBUI_div_bind("padding-top", on_klbui_div_padding_top);
     KLBUI_div_bind("padding-right", on_klbui_div_padding_right);
     KLBUI_div_bind("padding-bottom", on_klbui_div_padding_bottom);
     KLBUI_div_bind("padding-left", on_klbui_div_padding_left);
 
+    // 私有自定义
+
     KLBUI_div_bind("index", on_klbui_div_index);
     KLBUI_div_bind("title", on_klbui_div_title);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

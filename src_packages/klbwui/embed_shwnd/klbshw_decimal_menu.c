@@ -67,11 +67,10 @@ static klb_map_t* klbshw_decimal_menu_on_get(klb_wnd_t* p_wnd, const klb_map_t* 
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法
+// 仿 CSS 方法 -- 根
 
 static void on_klbshw_decimal_menu_visibility(klb_wnd_t* p_wnd, klbshw_decimal_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_menu;
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
@@ -160,6 +159,10 @@ static void on_klbshw_decimal_menu_border_color(klb_wnd_t* p_wnd, klbshw_decimal
     klbuicssex_border_color(&(p_menu->decimal_menu.css.normal.border), p_wnd, method, p_in, p_out);
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// 仿 CSS 方法 -- part string
+
 static void on_klbshw_decimal_menu_string_background_color(klb_wnd_t* p_wnd, klbshw_decimal_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_background_color(&(p_menu->decimal_menu.css.string_background), p_wnd, method, p_in, p_out);
@@ -177,7 +180,7 @@ static void on_klbshw_decimal_menu_cursor_color(klb_wnd_t* p_wnd, klbshw_decimal
 
 
 //////////////////////////////////////////////////////////////////////////
-// button CSS
+// 仿 CSS 方法 -- part button
 
 static void on_klbshw_decimal_menu_button_margin(klb_wnd_t* p_wnd, klbshw_decimal_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -334,6 +337,9 @@ static void on_klbshw_decimal_menu_button_border_color_disable(klb_wnd_t* p_wnd,
     klbuicssex_border_color(&(p_menu->decimal_menu.css.btn_css.disable.border), p_wnd, method, p_in, p_out);
 }
 
+//////////////////////////////////////
+// stretch-image
+
 static void apply_stretch_klbshw_decimal_menu(sds* p_attr_image, sds* p_bg_image, klb_wnd_t* p_wnd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_image(p_attr_image, p_wnd, method, p_in, p_out);
@@ -373,6 +379,9 @@ static void on_klbshw_decimal_menu_button_check_stretch_image_disable(klb_wnd_t*
 {
     apply_stretch_klbshw_decimal_menu(&p_menu->decimal_menu.css.btn_attr.check_disable_stretch_image, &p_menu->decimal_menu.css.btn_css.check_disable.background.image, p_wnd, method, p_in, p_out);
 }
+
+//////////////////////////////////////
+// foreground-image
 
 static void on_klbshw_decimal_menu_button_moveleft_image(klb_wnd_t* p_wnd, klbshw_decimal_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -439,6 +448,7 @@ static void klbshw_decimal_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_decimal_m
     ptr = klb_gui_new_css_map(p_gui, KLBSHW_decimal_menu);
     p_menu->p_func_map = ptr;
 
+    // 根
     KLBSHW_decimal_menu_bind("visibility", on_klbshw_decimal_menu_visibility);
 
     KLBSHW_decimal_menu_bind("margin", on_klbshw_decimal_menu_margin);
@@ -461,10 +471,12 @@ static void klbshw_decimal_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_decimal_m
     KLBSHW_decimal_menu_bind("border-width", on_klbshw_decimal_menu_border_width);
     KLBSHW_decimal_menu_bind("border-color", on_klbshw_decimal_menu_border_color);
 
+    // part string
     KLBSHW_decimal_menu_bind("string.background-color", on_klbshw_decimal_menu_string_background_color);
     KLBSHW_decimal_menu_bind("string.background-image", on_klbshw_decimal_menu_string_background_image);
     KLBSHW_decimal_menu_bind("cursor-color", on_klbshw_decimal_menu_cursor_color);
 
+    // part button
     KLBSHW_decimal_menu_bind("button.margin", on_klbshw_decimal_menu_button_margin);
     KLBSHW_decimal_menu_bind("button.margin-top", on_klbshw_decimal_menu_button_margin_top);
     KLBSHW_decimal_menu_bind("button.margin-right", on_klbshw_decimal_menu_button_margin_right);
@@ -505,6 +517,7 @@ static void klbshw_decimal_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_decimal_m
     KLBSHW_decimal_menu_bind("button.border-color:focus", on_klbshw_decimal_menu_button_border_color_focus);
     KLBSHW_decimal_menu_bind("button.border-color:disabled", on_klbshw_decimal_menu_button_border_color_disable);
 
+    // part button stretch-image
     KLBSHW_decimal_menu_bind("button.stretch-image", on_klbshw_decimal_menu_button_stretch_image);
     KLBSHW_decimal_menu_bind("button.stretch-image:focus", on_klbshw_decimal_menu_button_stretch_image_focus);
     KLBSHW_decimal_menu_bind("button.stretch-image:disabled", on_klbshw_decimal_menu_button_stretch_image_disable);
@@ -513,6 +526,7 @@ static void klbshw_decimal_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_decimal_m
     KLBSHW_decimal_menu_bind("button.stretch-image:checked:focus", on_klbshw_decimal_menu_button_check_stretch_image_focus);
     KLBSHW_decimal_menu_bind("button.stretch-image:checked:disabled", on_klbshw_decimal_menu_button_check_stretch_image_disable);
 
+    // part button foreground-image
     KLBSHW_decimal_menu_bind("button.moveleft-image", on_klbshw_decimal_menu_button_moveleft_image);
     KLBSHW_decimal_menu_bind("button.moveleft-image:focus", on_klbshw_decimal_menu_button_moveleft_image_focus);
     KLBSHW_decimal_menu_bind("button.moveleft-image:disabled", on_klbshw_decimal_menu_button_moveleft_image_disable);

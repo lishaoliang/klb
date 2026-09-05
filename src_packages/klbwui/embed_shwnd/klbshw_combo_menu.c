@@ -67,11 +67,10 @@ static klb_map_t* klbshw_combo_menu_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_
 
 
 //////////////////////////////////////////////////////////////////////////
-// 菜单本体 CSS
+// 仿 CSS 方法 -- 根
 
 static void on_klbshw_combo_menu_visibility(klb_wnd_t* p_wnd, klbshw_combo_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_menu;
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
@@ -160,6 +159,10 @@ static void on_klbshw_combo_menu_border_color(klb_wnd_t* p_wnd, klbshw_combo_men
     klbuicssex_border_color(&(p_menu->combo_menu.css.normal.border), p_wnd, method, p_in, p_out);
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// 自定义属性
+
 static void on_klbshw_combo_menu_item_h(klb_wnd_t* p_wnd, klbshw_combo_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_int(&(p_menu->combo_menu.css.item_h), p_wnd, method, p_in, p_out);
@@ -177,7 +180,7 @@ static void on_klbshw_combo_menu_height_max(klb_wnd_t* p_wnd, klbshw_combo_menu_
 
 
 //////////////////////////////////////////////////////////////////////////
-// item CSS
+// 仿 CSS 方法 -- part item
 
 static void on_klbshw_combo_menu_item_margin(klb_wnd_t* p_wnd, klbshw_combo_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -336,7 +339,7 @@ static void on_klbshw_combo_menu_item_border_color_disable(klb_wnd_t* p_wnd, klb
 
 
 //////////////////////////////////////////////////////////////////////////
-// vscrollbar 轨道 CSS
+// 仿 CSS 方法 -- part vscrollbar
 
 static void on_klbshw_combo_menu_vs_background_color(klb_wnd_t* p_wnd, klbshw_combo_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -380,7 +383,7 @@ static void on_klbshw_combo_menu_vs_border_color(klb_wnd_t* p_wnd, klbshw_combo_
 
 
 //////////////////////////////////////////////////////////////////////////
-// vscrollbar.button CSS
+// 仿 CSS 方法 -- part vscrollbar-button
 
 static void on_klbshw_combo_menu_vs_btn_background_color(klb_wnd_t* p_wnd, klbshw_combo_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -447,6 +450,7 @@ static void klbshw_combo_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_combo_menu_
     ptr = klb_gui_new_css_map(p_gui, KLBSHW_combo_menu);
     p_menu->p_func_map = ptr;
 
+    // 根
     KLBSHW_combo_menu_bind("visibility", on_klbshw_combo_menu_visibility);
 
     KLBSHW_combo_menu_bind("margin", on_klbshw_combo_menu_margin);
@@ -469,10 +473,12 @@ static void klbshw_combo_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_combo_menu_
     KLBSHW_combo_menu_bind("border-width", on_klbshw_combo_menu_border_width);
     KLBSHW_combo_menu_bind("border-color", on_klbshw_combo_menu_border_color);
 
+    // 自定义属性
     KLBSHW_combo_menu_bind("item_h", on_klbshw_combo_menu_item_h);
     KLBSHW_combo_menu_bind("vscrollbar_w", on_klbshw_combo_menu_vscrollbar_w);
     KLBSHW_combo_menu_bind("height_max", on_klbshw_combo_menu_height_max);
 
+    // part item
     KLBSHW_combo_menu_bind("item.margin", on_klbshw_combo_menu_item_margin);
     KLBSHW_combo_menu_bind("item.margin-top", on_klbshw_combo_menu_item_margin_top);
     KLBSHW_combo_menu_bind("item.margin-right", on_klbshw_combo_menu_item_margin_right);
@@ -513,6 +519,7 @@ static void klbshw_combo_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_combo_menu_
     KLBSHW_combo_menu_bind("item.border-color:focus", on_klbshw_combo_menu_item_border_color_focus);
     KLBSHW_combo_menu_bind("item.border-color:disabled", on_klbshw_combo_menu_item_border_color_disable);
 
+    // part vscrollbar
     KLBSHW_combo_menu_bind("vscrollbar.background-color", on_klbshw_combo_menu_vs_background_color);
     KLBSHW_combo_menu_bind("vscrollbar.background-color:focus", on_klbshw_combo_menu_vs_background_color_focus);
     KLBSHW_combo_menu_bind("vscrollbar.background-color:disabled", on_klbshw_combo_menu_vs_background_color_disable);
@@ -524,17 +531,18 @@ static void klbshw_combo_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_combo_menu_
     KLBSHW_combo_menu_bind("vscrollbar.border-width", on_klbshw_combo_menu_vs_border_width);
     KLBSHW_combo_menu_bind("vscrollbar.border-color", on_klbshw_combo_menu_vs_border_color);
 
-    KLBSHW_combo_menu_bind("vscrollbar.button.color", on_klbshw_combo_menu_vs_btn_text_color);
-    KLBSHW_combo_menu_bind("vscrollbar.button.background-color", on_klbshw_combo_menu_vs_btn_background_color);
-    KLBSHW_combo_menu_bind("vscrollbar.button.background-color:focus", on_klbshw_combo_menu_vs_btn_background_color_focus);
-    KLBSHW_combo_menu_bind("vscrollbar.button.background-color:disabled", on_klbshw_combo_menu_vs_btn_background_color_disable);
+    // part vscrollbar-button
+    KLBSHW_combo_menu_bind("vscrollbar-button.color", on_klbshw_combo_menu_vs_btn_text_color);
+    KLBSHW_combo_menu_bind("vscrollbar-button.background-color", on_klbshw_combo_menu_vs_btn_background_color);
+    KLBSHW_combo_menu_bind("vscrollbar-button.background-color:focus", on_klbshw_combo_menu_vs_btn_background_color_focus);
+    KLBSHW_combo_menu_bind("vscrollbar-button.background-color:disabled", on_klbshw_combo_menu_vs_btn_background_color_disable);
 
-    KLBSHW_combo_menu_bind("vscrollbar.button.background-image", on_klbshw_combo_menu_vs_btn_background_image);
-    KLBSHW_combo_menu_bind("vscrollbar.button.background-image:focus", on_klbshw_combo_menu_vs_btn_background_image_focus);
-    KLBSHW_combo_menu_bind("vscrollbar.button.background-image:disabled", on_klbshw_combo_menu_vs_btn_background_image_disable);
+    KLBSHW_combo_menu_bind("vscrollbar-button.background-image", on_klbshw_combo_menu_vs_btn_background_image);
+    KLBSHW_combo_menu_bind("vscrollbar-button.background-image:focus", on_klbshw_combo_menu_vs_btn_background_image_focus);
+    KLBSHW_combo_menu_bind("vscrollbar-button.background-image:disabled", on_klbshw_combo_menu_vs_btn_background_image_disable);
 
-    KLBSHW_combo_menu_bind("vscrollbar.button.border-width", on_klbshw_combo_menu_vs_btn_border_width);
-    KLBSHW_combo_menu_bind("vscrollbar.button.border-color", on_klbshw_combo_menu_vs_btn_border_color);
+    KLBSHW_combo_menu_bind("vscrollbar-button.border-width", on_klbshw_combo_menu_vs_btn_border_width);
+    KLBSHW_combo_menu_bind("vscrollbar-button.border-color", on_klbshw_combo_menu_vs_btn_border_color);
 }
 
 

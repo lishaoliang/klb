@@ -108,31 +108,167 @@ static klbwnd_dialog_css_t* check_css_klbui_dialog(klb_wnd_t* p_wnd, int method)
 
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_dialog_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_margin(&(((klbwnd_dialog_css_t*)ptr)->margin), NULL, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_margin(&(p_css->margin), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_margin_top(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_margin_top(&(p_css->margin), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_margin_right(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_margin_right(&(p_css->margin), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_margin_bottom(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_margin_bottom(&(p_css->margin), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_margin_left(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_margin_left(&(p_css->margin), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_dialog_padding(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_padding(&(((klbwnd_dialog_css_t*)ptr)->padding), NULL, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_padding(&(p_css->padding), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_padding_top(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_padding_top(&(p_css->padding), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_padding_right(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_padding_right(&(p_css->padding), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_padding_bottom(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_padding_bottom(&(p_css->padding), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_padding_left(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_padding_left(&(p_css->padding), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_text_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_text_color(&(p_css->normal.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_text_align(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_text_align(&(p_css->normal.text), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_font_size(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_font_size(&(p_css->normal.font), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_dialog_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_background_color(&(((klbwnd_dialog_css_t*)ptr)->normal.background), NULL, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_background_color(&(p_css->normal.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_background_image(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_background_image(&(p_css->normal.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_background_image_mode(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbwuicss_background_image_mode(&(p_css->normal.background), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_background_image_color_key(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbwuicss_background_image_color_key(&(p_css->normal.background), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_dialog_border_width(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_width(&(((klbwnd_dialog_css_t*)ptr)->normal.border), NULL, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_border_width(&(p_css->normal.border), NULL, method, p_in, p_out);
 }
 
 static void globalcss_klbui_dialog_border_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    klbuicssex_border_color(&(((klbwnd_dialog_css_t*)ptr)->normal.border), NULL, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_border_color(&(p_css->normal.border), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_titlebar_background_color(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_background_color(&(p_css->normal.titlebar), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_titlebar_background_image(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbuicssex_background_image(&(p_css->normal.titlebar), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_titlebar_background_image_mode(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbwuicss_background_image_mode(&(p_css->normal.titlebar), NULL, method, p_in, p_out);
+}
+
+static void globalcss_klbui_dialog_titlebar_background_image_color_key(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = (klbwnd_dialog_css_t*)ptr;
+
+    klbwuicss_background_image_color_key(&(p_css->normal.titlebar), NULL, method, p_in, p_out);
 }
 
 static void destroy_globalcss_klbwnd_dialog(void* ptr)
@@ -147,6 +283,7 @@ static void destroy_globalcss_klbwnd_dialog(void* ptr)
 
 static void klbui_dialog_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kdialog);
 
     if (NULL != ptr)
@@ -154,52 +291,221 @@ static void klbui_dialog_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kdialog);
 
     klbwnd_dialog_css_t* p_css = KLB_MALLOCZ(klbwnd_dialog_css_t, 1, 0);
     klbwnd_dialog_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kdialog, p_css, destroy_globalcss_klbwnd_dialog);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_dlg_bind("margin", globalcss_klbui_dialog_margin);
+    KLBUI_GLOBAL_dlg_bind("margin-top", globalcss_klbui_dialog_margin_top);
+    KLBUI_GLOBAL_dlg_bind("margin-right", globalcss_klbui_dialog_margin_right);
+    KLBUI_GLOBAL_dlg_bind("margin-bottom", globalcss_klbui_dialog_margin_bottom);
+    KLBUI_GLOBAL_dlg_bind("margin-left", globalcss_klbui_dialog_margin_left);
+
+    // 内边距 padding
     KLBUI_GLOBAL_dlg_bind("padding", globalcss_klbui_dialog_padding);
+    KLBUI_GLOBAL_dlg_bind("padding-top", globalcss_klbui_dialog_padding_top);
+    KLBUI_GLOBAL_dlg_bind("padding-right", globalcss_klbui_dialog_padding_right);
+    KLBUI_GLOBAL_dlg_bind("padding-bottom", globalcss_klbui_dialog_padding_bottom);
+    KLBUI_GLOBAL_dlg_bind("padding-left", globalcss_klbui_dialog_padding_left);
+
+    // 标题文本 color / text-align / font-size
+    KLBUI_GLOBAL_dlg_bind("color", globalcss_klbui_dialog_text_color);
+    KLBUI_GLOBAL_dlg_bind("text-align", globalcss_klbui_dialog_text_align);
+    KLBUI_GLOBAL_dlg_bind("font-size", globalcss_klbui_dialog_font_size);
+
+    // 背景 background
     KLBUI_GLOBAL_dlg_bind("background-color", globalcss_klbui_dialog_background_color);
+    KLBUI_GLOBAL_dlg_bind("background-image", globalcss_klbui_dialog_background_image);
+    KLBUI_GLOBAL_dlg_bind("background-image-mode", globalcss_klbui_dialog_background_image_mode);
+    KLBUI_GLOBAL_dlg_bind("background-image-color-key", globalcss_klbui_dialog_background_image_color_key);
+
+    // 边框 border
     KLBUI_GLOBAL_dlg_bind("border-width", globalcss_klbui_dialog_border_width);
     KLBUI_GLOBAL_dlg_bind("border-color", globalcss_klbui_dialog_border_color);
+
+    // 标题栏 titlebar
+    KLBUI_GLOBAL_dlg_bind("titlebar.background-color", globalcss_klbui_dialog_titlebar_background_color);
+    KLBUI_GLOBAL_dlg_bind("titlebar.background-image", globalcss_klbui_dialog_titlebar_background_image);
+    KLBUI_GLOBAL_dlg_bind("titlebar.background-image-mode", globalcss_klbui_dialog_titlebar_background_image_mode);
+    KLBUI_GLOBAL_dlg_bind("titlebar.background-image-color-key", globalcss_klbui_dialog_titlebar_background_image_color_key);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_dialog_margin(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_dlg;
-    klbuicssex_margin(&(check_css_klbui_dialog(p_wnd, method)->margin), p_wnd, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_margin_top(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_margin_top(&(p_css->margin), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_margin_right(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_margin_right(&(p_css->margin), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_margin_bottom(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_margin_bottom(&(p_css->margin), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_margin_left(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_margin_left(&(p_css->margin), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_dialog_padding(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_dlg;
-    klbuicssex_padding(&(check_css_klbui_dialog(p_wnd, method)->padding), p_wnd, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_padding_top(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_padding_top(&(p_css->padding), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_padding_right(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_padding_right(&(p_css->padding), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_padding_bottom(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_padding_bottom(&(p_css->padding), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_padding_left(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_padding_left(&(p_css->padding), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_text_color(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_text_color(&(p_css->normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_text_align(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_text_align(&(p_css->normal.text), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_font_size(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_font_size(&(p_css->normal.font), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_dialog_background_color(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_dlg;
-    klbuicssex_background_color(&(check_css_klbui_dialog(p_wnd, method)->normal.background), p_wnd, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_background_color(&(p_css->normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_background_image(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_background_image(&(p_css->normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_background_image_mode(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbwuicss_background_image_mode(&(p_css->normal.background), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_background_image_color_key(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbwuicss_background_image_color_key(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_dialog_border_width(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_dlg;
-    klbuicssex_border_width(&(check_css_klbui_dialog(p_wnd, method)->normal.border), p_wnd, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_border_width(&(p_css->normal.border), p_wnd, method, p_in, p_out);
 }
 
 static void on_klbui_dialog_border_color(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_dlg;
-    klbuicssex_border_color(&(check_css_klbui_dialog(p_wnd, method)->normal.border), p_wnd, method, p_in, p_out);
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_border_color(&(p_css->normal.border), p_wnd, method, p_in, p_out);
 }
+
+static void on_klbui_dialog_titlebar_background_color(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_background_color(&(p_css->normal.titlebar), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_titlebar_background_image(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbuicssex_background_image(&(p_css->normal.titlebar), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_titlebar_background_image_mode(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbwuicss_background_image_mode(&(p_css->normal.titlebar), p_wnd, method, p_in, p_out);
+}
+
+static void on_klbui_dialog_titlebar_background_image_color_key(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbwnd_dialog_css_t* p_css = check_css_klbui_dialog(p_wnd, method);
+
+    klbwuicss_background_image_color_key(&(p_css->normal.titlebar), p_wnd, method, p_in, p_out);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+// 私有自定义
 
 static void on_klbui_dialog_title(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -219,8 +525,7 @@ static void on_klbui_dialog_value(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, int m
 
 static void klbui_dialog_init_func_map(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
-
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kdialog);
 
     if (NULL != ptr)
@@ -229,18 +534,52 @@ static void klbui_dialog_init_func_map(klb_wnd_t* p_wnd, klbui_dialog_t* p_dlg, 
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kdialog);
     p_dlg->p_func_map = ptr;
 
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_dlg_bind("margin", on_klbui_dialog_margin);
+    KLBUI_dlg_bind("margin-top", on_klbui_dialog_margin_top);
+    KLBUI_dlg_bind("margin-right", on_klbui_dialog_margin_right);
+    KLBUI_dlg_bind("margin-bottom", on_klbui_dialog_margin_bottom);
+    KLBUI_dlg_bind("margin-left", on_klbui_dialog_margin_left);
+
+    // 内边距 padding
     KLBUI_dlg_bind("padding", on_klbui_dialog_padding);
+    KLBUI_dlg_bind("padding-top", on_klbui_dialog_padding_top);
+    KLBUI_dlg_bind("padding-right", on_klbui_dialog_padding_right);
+    KLBUI_dlg_bind("padding-bottom", on_klbui_dialog_padding_bottom);
+    KLBUI_dlg_bind("padding-left", on_klbui_dialog_padding_left);
+
+    // 标题文本 color / text-align / font-size
+    KLBUI_dlg_bind("color", on_klbui_dialog_text_color);
+    KLBUI_dlg_bind("text-align", on_klbui_dialog_text_align);
+    KLBUI_dlg_bind("font-size", on_klbui_dialog_font_size);
+
+    // 背景 background
     KLBUI_dlg_bind("background-color", on_klbui_dialog_background_color);
+    KLBUI_dlg_bind("background-image", on_klbui_dialog_background_image);
+    KLBUI_dlg_bind("background-image-mode", on_klbui_dialog_background_image_mode);
+    KLBUI_dlg_bind("background-image-color-key", on_klbui_dialog_background_image_color_key);
+
+    // 边框 border
     KLBUI_dlg_bind("border-width", on_klbui_dialog_border_width);
     KLBUI_dlg_bind("border-color", on_klbui_dialog_border_color);
+
+    // 标题栏 titlebar
+    KLBUI_dlg_bind("titlebar.background-color", on_klbui_dialog_titlebar_background_color);
+    KLBUI_dlg_bind("titlebar.background-image", on_klbui_dialog_titlebar_background_image);
+    KLBUI_dlg_bind("titlebar.background-image-mode", on_klbui_dialog_titlebar_background_image_mode);
+    KLBUI_dlg_bind("titlebar.background-image-color-key", on_klbui_dialog_titlebar_background_image_color_key);
+
+    // 私有自定义
     KLBUI_dlg_bind("title", on_klbui_dialog_title);
     KLBUI_dlg_bind("value", on_klbui_dialog_value);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

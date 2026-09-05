@@ -255,6 +255,7 @@ static void destroy_globalcss_klbwnd_static(void* ptr)
 
 static void klbui_static_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kstatic);
 
     if (NULL != ptr)
@@ -262,31 +263,49 @@ static void klbui_static_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kstatic);
 
     klbwnd_static_css_t* p_css = KLB_MALLOCZ(klbwnd_static_css_t, 1, 0);
     klbwnd_static_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kstatic, p_css, destroy_globalcss_klbwnd_static);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_static_bind("margin", globalcss_klbui_static_margin);
     KLBUI_GLOBAL_static_bind("margin-top", globalcss_klbui_static_margin_top);
     KLBUI_GLOBAL_static_bind("margin-right", globalcss_klbui_static_margin_right);
     KLBUI_GLOBAL_static_bind("margin-bottom", globalcss_klbui_static_margin_bottom);
     KLBUI_GLOBAL_static_bind("margin-left", globalcss_klbui_static_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_static_bind("padding", globalcss_klbui_static_padding);
     KLBUI_GLOBAL_static_bind("padding-top", globalcss_klbui_static_padding_top);
     KLBUI_GLOBAL_static_bind("padding-right", globalcss_klbui_static_padding_right);
     KLBUI_GLOBAL_static_bind("padding-bottom", globalcss_klbui_static_padding_bottom);
     KLBUI_GLOBAL_static_bind("padding-left", globalcss_klbui_static_padding_left);
 
+    // 文本颜色 color
     KLBUI_GLOBAL_static_bind("color", globalcss_klbui_static_text_color);
+
+    // 文本对齐 text-align
     KLBUI_GLOBAL_static_bind("text-align", globalcss_klbui_static_text_align);
+
+    // 字体大小 font-size
     KLBUI_GLOBAL_static_bind("font-size", globalcss_klbui_static_font_size);
+
+    // 背景色 background-color
     KLBUI_GLOBAL_static_bind("background-color", globalcss_klbui_static_background_color);
+
+    // 背景图片 background-image
     KLBUI_GLOBAL_static_bind("background-image", globalcss_klbui_static_background_image);
     KLBUI_GLOBAL_static_bind("background-image-mode", globalcss_klbui_static_background_image_mode);
     KLBUI_GLOBAL_static_bind("background-image-color-key", globalcss_klbui_static_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_GLOBAL_static_bind("border-width", globalcss_klbui_static_border_width);
     KLBUI_GLOBAL_static_bind("border-color", globalcss_klbui_static_border_color);
 }
@@ -430,7 +449,7 @@ static void on_klbui_static_border_color(klb_wnd_t* p_wnd, klbui_static_t* p_sta
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 命令键
 
 static void on_klbui_static_tip(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -460,6 +479,8 @@ static void on_klbui_static_dynamic_tip(klb_wnd_t* p_wnd, klbui_static_t* p_stat
         klb_wnd_dyntip(p_wnd, use);
     }
 }
+
+// 私有自定义
 
 static void on_klbui_static_index(klb_wnd_t* p_wnd, klbui_static_t* p_static, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -495,30 +516,48 @@ static void klbui_static_init_func_map(klb_wnd_t* p_wnd, klbui_static_t* p_stati
     //////////////////////////////////////////////
     // step3. 绑定CSS 支持的方法
 
+    // 外边距 margin
     KLBUI_static_bind("margin", on_klbui_static_margin);
     KLBUI_static_bind("margin-top", on_klbui_static_margin_top);
     KLBUI_static_bind("margin-right", on_klbui_static_margin_right);
     KLBUI_static_bind("margin-bottom", on_klbui_static_margin_bottom);
     KLBUI_static_bind("margin-left", on_klbui_static_margin_left);
 
+    // 内边距 padding
     KLBUI_static_bind("padding", on_klbui_static_padding);
     KLBUI_static_bind("padding-top", on_klbui_static_padding_top);
     KLBUI_static_bind("padding-right", on_klbui_static_padding_right);
     KLBUI_static_bind("padding-bottom", on_klbui_static_padding_bottom);
     KLBUI_static_bind("padding-left", on_klbui_static_padding_left);
 
+    // 文本颜色 color
     KLBUI_static_bind("color", on_klbui_static_text_color);
+
+    // 文本对齐 text-align
     KLBUI_static_bind("text-align", on_klbui_static_text_align);
+
+    // 字体大小 font-size
     KLBUI_static_bind("font-size", on_klbui_static_font_size);
+
+    // 背景色 background-color
     KLBUI_static_bind("background-color", on_klbui_static_background_color);
+
+    // 背景图片 background-image
     KLBUI_static_bind("background-image", on_klbui_static_background_image);
     KLBUI_static_bind("background-image-mode", on_klbui_static_background_image_mode);
     KLBUI_static_bind("background-image-color-key", on_klbui_static_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_static_bind("border-width", on_klbui_static_border_width);
     KLBUI_static_bind("border-color", on_klbui_static_border_color);
 
+    // 命令键
+
+    // 提示 tip
     KLBUI_static_bind("tip", on_klbui_static_tip);
     KLBUI_static_bind("dynamic-tip", on_klbui_static_dynamic_tip);
+
+    // 私有自定义
 
     KLBUI_static_bind("index", on_klbui_static_index);
     KLBUI_static_bind("title", on_klbui_static_title);

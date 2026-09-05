@@ -21,8 +21,6 @@ static void klbwnd_radio_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_radio_on_paint_status(klb_wnd_t* p_wnd, klbwnd_radio_t* p_radio, klbwnd_radio_css_t* p_css, klbwnd_radio_attributes_t* p_attr, klb_rect_t* p_rect, bool is_check)
 {
-    (void)p_radio;
-    (void)p_css;
 
     // 背景: color / image / scale9 / color_key
     klbwuicss_draw_background(p_wnd, p_rect, &p_attr->background);
@@ -118,10 +116,6 @@ static int klbwnd_radio_on_click(klb_wnd_t* p_wnd)
 
 static int klbwnd_radio_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     switch (msg)
     {

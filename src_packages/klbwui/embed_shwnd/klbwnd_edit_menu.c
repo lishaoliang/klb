@@ -171,10 +171,6 @@ static int klbwnd_edit_menu_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_edit_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     klbwnd_edit_menu_t* p_menu = (klbwnd_edit_menu_t*)p_wnd->ctrl;
 
@@ -443,9 +439,6 @@ static int on_click_btn_klbwnd_edit_menu(klb_wnd_t* p_wnd_btn, klb_wnd_t* p_wnd_
 
 static int on_command_btn_klbwnd_edit_menu(klb_wnd_t* p_wnd_btn, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_menu = (klb_wnd_t*)p_wnd_btn->p_udata;
     klbwnd_edit_menu_t* p_menu = (klbwnd_edit_menu_t*)p_wnd_menu->ctrl;
@@ -564,7 +557,6 @@ static int klbwnd_edit_menu_init_subwnd(klb_wnd_t* p_wnd_menu, klbwnd_edit_menu_
 
 static void klbwnd_edit_menu_init_attribute(klb_wnd_t* p_wnd, klbwnd_edit_menu_t* p_menu)
 {
-    (void)p_wnd;
 
     p_menu->title = sdsempty();
     p_menu->value = sdsempty();
@@ -688,7 +680,6 @@ const sds klbwnd_edit_menu_get_value(klb_wnd_t* p_wnd)
 
 int klbwnd_edit_menu_wh(klb_wnd_t* p_wnd, int* p_out_w, int* p_out_h)
 {
-    (void)p_wnd;
 
     if (NULL != p_out_w)
     {

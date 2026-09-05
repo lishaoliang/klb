@@ -109,7 +109,6 @@ void klbwnd_div_css_init(klbwnd_div_css_t* p_css, klb_gui_t* p_gui)
 
 void klbwnd_div_css_deinit(klbwnd_div_css_t* p_css)
 {
-    (void)p_css;
 }
 
 void klbwnd_div_css_copy(klbwnd_div_css_t* p_dst, klbwnd_div_css_t* p_src)

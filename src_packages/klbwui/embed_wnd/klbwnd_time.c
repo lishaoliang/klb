@@ -146,7 +146,6 @@ static int on_popup_end_klbwnd_time(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, in
         klb_wnd_update(p_wnd_time);
     }
 
-    (void)p_wnd_dec;
     return 0;
 }
 
@@ -230,9 +229,6 @@ static int klbwnd_time_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
         break;
     }
 
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
     return 0;
 }
 

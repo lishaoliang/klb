@@ -93,7 +93,6 @@ static int on_decimal_klbwnd_num(void* ptr, klb_wnd_t* p_wnd_dec, bool ok, int v
         klb_wnd_update(p_wnd_num);
     }
 
-    (void)p_wnd_dec;
     return 0;
 }
 
@@ -205,9 +204,6 @@ static int klbwnd_num_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p
         break;
     }
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)wparam;
     return 0;
 }
 

@@ -71,7 +71,6 @@ static klb_map_t* klbshw_edit_menu_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_m
 
 static void on_klbshw_edit_menu_visibility(klb_wnd_t* p_wnd, klbshw_edit_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_menu;
     klbuicssex_visibility(p_wnd, method, p_in, p_out);
 }
 
@@ -446,7 +445,6 @@ static void on_klbshw_edit_menu_button_global_image_disable(klb_wnd_t* p_wnd, kl
 
 static void klbshw_edit_menu_init_func_map(klb_wnd_t* p_wnd, klbshw_edit_menu_t* p_menu, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
 
     // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBSHW_edit_menu);

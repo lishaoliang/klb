@@ -68,7 +68,6 @@ static int klbwui_register_embed_shwnd(klb_gui_t* p_gui)
 #if !defined(__KLB_NO_WUI_SIM__)
 static int klbwui_register_sim_widgets(klb_gui_t* p_gui)
 {
-    (void)p_gui;
 
     // todo. 迁入 sim_widgets/ 后在此注册 PC 增补 type
     return 0;
@@ -76,7 +75,6 @@ static int klbwui_register_sim_widgets(klb_gui_t* p_gui)
 
 static int klbwui_register_sim_shwnd(klb_gui_t* p_gui)
 {
-    (void)p_gui;
 
     // todo. 迁入 sim_shwnd/ 后在此注册 PC 增补共享窗
     return 0;

@@ -21,7 +21,6 @@ static void klbwnd_progress_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_progress_on_paint_status(klb_wnd_t* p_wnd, klbwnd_progress_t* p_prog, klbwnd_progress_css_t* p_css, klbwnd_progress_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_css;
 
     // 背景: color / image / scale9 / color_key
     klbwuicss_draw_background(p_wnd, p_rect, &p_attr->background);
@@ -91,10 +90,6 @@ static int klbwnd_progress_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_progress_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     switch (msg)
     {

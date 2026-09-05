@@ -112,7 +112,7 @@ static klbwnd_listex_css_t* check_css_klbui_listex(klb_wnd_t* p_wnd, int method)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS 方法 - 公共CSS属性
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_listex_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -497,13 +497,14 @@ static void destroy_globalcss_klbwnd_listex(void* ptr)
 
 static void klbui_listex_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_klistex);
     if (NULL != ptr)
     {
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_klistex);
 
     // 添加全局 CSS 
@@ -511,9 +512,9 @@ static void klbui_listex_init_globalcss(klb_gui_t* p_gui)
     klbwnd_listex_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_klistex, p_css, destroy_globalcss_klbwnd_listex);
 
+
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法 - 全局CSS属性
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_GLOBAL_listex_bind("margin", globalcss_klbui_listex_margin);
@@ -620,15 +621,15 @@ static void klbui_listex_init_globalcss(klb_gui_t* p_gui)
     // 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
 
     // 子控件(v scrollbar)-(klbwnd_btnex_t) : 文本颜色 color
-    KLBUI_GLOBAL_listex_bind("vscrollbar.btn.color", globalcss_klbui_listex_vscrollbar_btnex_text_color);
-    KLBUI_GLOBAL_listex_bind("vscrollbar.btn.color:focus", globalcss_klbui_listex_vscrollbar_btnex_text_color_focus);
-    KLBUI_GLOBAL_listex_bind("vscrollbar.btn.color:disabled", globalcss_klbui_listex_vscrollbar_btnex_text_color_disable);
+    KLBUI_GLOBAL_listex_bind("vscrollbar-btn.color", globalcss_klbui_listex_vscrollbar_btnex_text_color);
+    KLBUI_GLOBAL_listex_bind("vscrollbar-btn.color:focus", globalcss_klbui_listex_vscrollbar_btnex_text_color_focus);
+    KLBUI_GLOBAL_listex_bind("vscrollbar-btn.color:disabled", globalcss_klbui_listex_vscrollbar_btnex_text_color_disable);
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法 -- 私有CSS属性
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_listex_margin(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -1000,7 +1001,7 @@ static void on_klbui_listex_vscrollbar_btnex_text_color_disable(klb_wnd_t* p_wnd
 }
 
 //////////////////////////////////////
-// 自定义属性
+// 命令键
 
 
 static void on_klbui_listex_append_column(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -1096,32 +1097,6 @@ static void on_klbui_listex_clear_data(klb_wnd_t* p_wnd, klbui_listex_t* p_list,
     klb_wnd_update(p_wnd);
 }
 
-static void on_klbui_listex_value(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    // 值
-    if (KLBUI_CSSEX_get == method)
-    {
-        klb_map_t* p_checks_map = klb_map_create();
-        klb_map_t* p_data_map = klbwnd_listex_get_data_map(p_wnd);
-
-        int array_size = klb_map_array_size(p_data_map);
-        for (int i = 0; i < array_size; i++)
-        {
-            klb_map_t* p_row_map = klb_map_idx_to_map(p_data_map, i);
-            if (NULL != p_row_map && klb_map_to_bool(p_row_map, "check"))
-            {
-                klb_map_append_map_clone(p_checks_map, p_row_map);
-            }   
-        }
-
-        klb_map_set_idx_map(p_out, 0, p_checks_map);
-    }
-    else if (KLBUI_CSSEX_set == method)
-    {
-
-    }
-}
-
 static void on_klbui_listex_event_wnd(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klb_wnd_t* p_event_wnd =  klbwnd_listex_get_event_wnd(p_wnd);
@@ -1158,6 +1133,34 @@ static void on_klbui_listex_event_wnd(klb_wnd_t* p_wnd, klbui_listex_t* p_list, 
     }
 }
 
+// 私有自定义
+
+static void on_klbui_listex_value(klb_wnd_t* p_wnd, klbui_listex_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    // 值
+    if (KLBUI_CSSEX_get == method)
+    {
+        klb_map_t* p_checks_map = klb_map_create();
+        klb_map_t* p_data_map = klbwnd_listex_get_data_map(p_wnd);
+
+        int array_size = klb_map_array_size(p_data_map);
+        for (int i = 0; i < array_size; i++)
+        {
+            klb_map_t* p_row_map = klb_map_idx_to_map(p_data_map, i);
+            if (NULL != p_row_map && klb_map_to_bool(p_row_map, "check"))
+            {
+                klb_map_append_map_clone(p_checks_map, p_row_map);
+            }   
+        }
+
+        klb_map_set_idx_map(p_out, 0, p_checks_map);
+    }
+    else if (KLBUI_CSSEX_set == method)
+    {
+
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////
 // css func
 
@@ -1165,6 +1168,7 @@ static void on_klbui_listex_event_wnd(klb_wnd_t* p_wnd, klbui_listex_t* p_list, 
 
 static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_klistex);
     if (NULL != ptr)
     {
@@ -1172,14 +1176,13 @@ static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list,
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_klistex);
     p_list->p_func_map = ptr;
 
 
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_listex_bind("margin", on_klbui_listex_margin);
@@ -1286,21 +1289,21 @@ static void klbui_listex_init_func_map(klb_wnd_t* p_wnd, klbui_listex_t* p_list,
     // 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
 
     // 子控件(v scrollbar)-(klbwnd_btnex_t) : 文本颜色 color
-    KLBUI_listex_bind("vscrollbar.btn.color", on_klbui_listex_vscrollbar_btnex_text_color);
-    KLBUI_listex_bind("vscrollbar.btn.color:focus", on_klbui_listex_vscrollbar_btnex_text_color_focus);
-    KLBUI_listex_bind("vscrollbar.btn.color:disabled", on_klbui_listex_vscrollbar_btnex_text_color_disable);
+    KLBUI_listex_bind("vscrollbar-btn.color", on_klbui_listex_vscrollbar_btnex_text_color);
+    KLBUI_listex_bind("vscrollbar-btn.color:focus", on_klbui_listex_vscrollbar_btnex_text_color_focus);
+    KLBUI_listex_bind("vscrollbar-btn.color:disabled", on_klbui_listex_vscrollbar_btnex_text_color_disable);
 
-    //////////////////////////////////////////////
-    // 自定义方法
+    // 命令键
 
     KLBUI_listex_bind("append_column", on_klbui_listex_append_column);
     KLBUI_listex_bind("append", on_klbui_listex_append);
     KLBUI_listex_bind("clear", on_klbui_listex_clear);
     KLBUI_listex_bind("clear_data", on_klbui_listex_clear_data);
+    KLBUI_listex_bind("event_wnd", on_klbui_listex_event_wnd);
+
+    // 私有自定义
 
     KLBUI_listex_bind("value", on_klbui_listex_value);
-
-    KLBUI_listex_bind("event_wnd", on_klbui_listex_event_wnd);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -97,7 +97,6 @@ static int on_menu_popup_end_klbwnd_edit(void* ptr, klb_wnd_t* p_wnd_menu, bool 
         klb_wnd_update(p_wnd);
     }
 
-    (void)p_wnd_menu;
     return 0;
 }
 
@@ -204,10 +203,6 @@ static int klbwnd_edit_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
         break;
     }
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
     return 0;
 }
 

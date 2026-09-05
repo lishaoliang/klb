@@ -439,9 +439,6 @@ static int on_click_btn_klbwnd_decimal_menu_ip(klb_wnd_t* p_wnd_btn, klb_wnd_t* 
 
 static int on_command_btn_klbwnd_decimal_menu_ip(klb_wnd_t* p_wnd_btn, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_menu = (klb_wnd_t*)p_wnd_btn->p_udata;
     klbwnd_decimal_menu_ip_t* p_menu = (klbwnd_decimal_menu_ip_t*)p_wnd_menu->ctrl;
@@ -534,7 +531,6 @@ static int klbwnd_decimal_menu_ip_init_subwnd(klb_wnd_t* p_wnd_menu, klbwnd_deci
 
 static void klbwnd_decimal_menu_ip_init_attribute(klb_wnd_t* p_wnd, klbwnd_decimal_menu_ip_t* p_menu)
 {
-    (void)p_wnd;
 
     p_menu->title = sdsempty();
     p_menu->value = sdsnew("0");
@@ -662,7 +658,6 @@ int klbwnd_decimal_menu_ip_get_value(klb_wnd_t* p_wnd)
 
 int klbwnd_decimal_menu_ip_wh(klb_wnd_t* p_wnd, int* p_out_w, int* p_out_h)
 {
-    (void)p_wnd;
 
     if (NULL != p_out_w)
     {

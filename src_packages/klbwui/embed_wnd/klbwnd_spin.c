@@ -95,10 +95,6 @@ static int klbwnd_spin_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
         break;
     }
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
     return 0;
 }
 

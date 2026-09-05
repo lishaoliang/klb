@@ -381,6 +381,7 @@ static void destroy_globalcss_klbwnd_edit(void* ptr)
 
 static void klbui_edit_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kedit);
 
     if (NULL != ptr)
@@ -388,40 +389,52 @@ static void klbui_edit_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kedit);
 
     klbwnd_edit_css_t* p_css = KLB_MALLOCZ(klbwnd_edit_css_t, 1, 0);
     klbwnd_edit_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kedit, p_css, destroy_globalcss_klbwnd_edit);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_edit_bind("margin", globalcss_klbui_edit_margin);
     KLBUI_GLOBAL_edit_bind("margin-top", globalcss_klbui_edit_margin_top);
     KLBUI_GLOBAL_edit_bind("margin-right", globalcss_klbui_edit_margin_right);
     KLBUI_GLOBAL_edit_bind("margin-bottom", globalcss_klbui_edit_margin_bottom);
     KLBUI_GLOBAL_edit_bind("margin-left", globalcss_klbui_edit_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_edit_bind("padding", globalcss_klbui_edit_padding);
     KLBUI_GLOBAL_edit_bind("padding-top", globalcss_klbui_edit_padding_top);
     KLBUI_GLOBAL_edit_bind("padding-right", globalcss_klbui_edit_padding_right);
     KLBUI_GLOBAL_edit_bind("padding-bottom", globalcss_klbui_edit_padding_bottom);
     KLBUI_GLOBAL_edit_bind("padding-left", globalcss_klbui_edit_padding_left);
 
+    // 文本颜色 color
     KLBUI_GLOBAL_edit_bind("color", globalcss_klbui_edit_text_color);
     KLBUI_GLOBAL_edit_bind("color:focus", globalcss_klbui_edit_text_color_focus);
     KLBUI_GLOBAL_edit_bind("color:disabled", globalcss_klbui_edit_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_GLOBAL_edit_bind("text-align", globalcss_klbui_edit_text_align);
     KLBUI_GLOBAL_edit_bind("text-align:focus", globalcss_klbui_edit_text_align_focus);
     KLBUI_GLOBAL_edit_bind("text-align:disabled", globalcss_klbui_edit_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_GLOBAL_edit_bind("font-size", globalcss_klbui_edit_font_size);
     KLBUI_GLOBAL_edit_bind("font-size:focus", globalcss_klbui_edit_font_size_focus);
     KLBUI_GLOBAL_edit_bind("font-size:disabled", globalcss_klbui_edit_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_edit_bind("background-color", globalcss_klbui_edit_background_color);
     KLBUI_GLOBAL_edit_bind("background-color:focus", globalcss_klbui_edit_background_color_focus);
     KLBUI_GLOBAL_edit_bind("background-color:disabled", globalcss_klbui_edit_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_GLOBAL_edit_bind("background-image", globalcss_klbui_edit_background_image);
     KLBUI_GLOBAL_edit_bind("background-image:focus", globalcss_klbui_edit_background_image_focus);
     KLBUI_GLOBAL_edit_bind("background-image:disabled", globalcss_klbui_edit_background_image_disable);
@@ -434,6 +447,7 @@ static void klbui_edit_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_edit_bind("background-image-color-key:focus", globalcss_klbui_edit_background_image_color_key_focus);
     KLBUI_GLOBAL_edit_bind("background-image-color-key:disabled", globalcss_klbui_edit_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_GLOBAL_edit_bind("border-width", globalcss_klbui_edit_border_width);
     KLBUI_GLOBAL_edit_bind("border-width:focus", globalcss_klbui_edit_border_width_focus);
     KLBUI_GLOBAL_edit_bind("border-width:disabled", globalcss_klbui_edit_border_width_disable);
@@ -708,7 +722,7 @@ static void on_klbui_edit_border_color_disable(klb_wnd_t* p_wnd, klbui_edit_t* p
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 命令键
 
 static void on_klbui_edit_tip(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -725,7 +739,6 @@ static void on_klbui_edit_tip(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method
         klb_wnd_dyntip(p_wnd, false);
     }
 
-    (void)p_edit;
 }
 
 static void on_klbui_edit_dynamic_tip(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -739,8 +752,9 @@ static void on_klbui_edit_dynamic_tip(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, in
         klb_wnd_dyntip(p_wnd, use);
     }
 
-    (void)p_edit;
 }
+
+// 私有自定义
 
 static void on_klbui_edit_title(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -757,7 +771,6 @@ static void on_klbui_edit_title(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int meth
         klb_wnd_update(p_wnd);
     }
 
-    (void)p_edit;
 }
 
 
@@ -768,6 +781,7 @@ static void on_klbui_edit_title(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, int meth
 
 static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kedit);
     if (NULL != ptr)
     {
@@ -775,37 +789,49 @@ static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kedit);
     p_edit->p_func_map = ptr;
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_edit_bind("margin", on_klbui_edit_margin);
     KLBUI_edit_bind("margin-top", on_klbui_edit_margin_top);
     KLBUI_edit_bind("margin-right", on_klbui_edit_margin_right);
     KLBUI_edit_bind("margin-bottom", on_klbui_edit_margin_bottom);
     KLBUI_edit_bind("margin-left", on_klbui_edit_margin_left);
 
+    // 内边距 padding
     KLBUI_edit_bind("padding", on_klbui_edit_padding);
     KLBUI_edit_bind("padding-top", on_klbui_edit_padding_top);
     KLBUI_edit_bind("padding-right", on_klbui_edit_padding_right);
     KLBUI_edit_bind("padding-bottom", on_klbui_edit_padding_bottom);
     KLBUI_edit_bind("padding-left", on_klbui_edit_padding_left);
 
+    // 文本颜色 color
     KLBUI_edit_bind("color", on_klbui_edit_text_color);
     KLBUI_edit_bind("color:focus", on_klbui_edit_text_color_focus);
     KLBUI_edit_bind("color:disabled", on_klbui_edit_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_edit_bind("text-align", on_klbui_edit_text_align);
     KLBUI_edit_bind("text-align:focus", on_klbui_edit_text_align_focus);
     KLBUI_edit_bind("text-align:disabled", on_klbui_edit_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_edit_bind("font-size", on_klbui_edit_font_size);
     KLBUI_edit_bind("font-size:focus", on_klbui_edit_font_size_focus);
     KLBUI_edit_bind("font-size:disabled", on_klbui_edit_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_edit_bind("background-color", on_klbui_edit_background_color);
     KLBUI_edit_bind("background-color:focus", on_klbui_edit_background_color_focus);
     KLBUI_edit_bind("background-color:disabled", on_klbui_edit_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_edit_bind("background-image", on_klbui_edit_background_image);
     KLBUI_edit_bind("background-image:focus", on_klbui_edit_background_image_focus);
     KLBUI_edit_bind("background-image:disabled", on_klbui_edit_background_image_disable);
@@ -818,6 +844,7 @@ static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb
     KLBUI_edit_bind("background-image-color-key:focus", on_klbui_edit_background_image_color_key_focus);
     KLBUI_edit_bind("background-image-color-key:disabled", on_klbui_edit_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_edit_bind("border-width", on_klbui_edit_border_width);
     KLBUI_edit_bind("border-width:focus", on_klbui_edit_border_width_focus);
     KLBUI_edit_bind("border-width:disabled", on_klbui_edit_border_width_disable);
@@ -826,12 +853,17 @@ static void klbui_edit_init_func_map(klb_wnd_t* p_wnd, klbui_edit_t* p_edit, klb
     KLBUI_edit_bind("border-color:focus", on_klbui_edit_border_color_focus);
     KLBUI_edit_bind("border-color:disabled", on_klbui_edit_border_color_disable);
 
+    // 命令键
+
+    // 提示 tip
     KLBUI_edit_bind("tip", on_klbui_edit_tip);
     KLBUI_edit_bind("dynamic-tip", on_klbui_edit_dynamic_tip);
+
+    // 私有自定义
+
     KLBUI_edit_bind("title", on_klbui_edit_title);
     KLBUI_edit_bind("value", on_klbui_edit_title);
 
-    (void)p_wnd;
 }
 
 

@@ -70,7 +70,6 @@ static int on_paint_klbwnd_btnex_select(klb_wnd_t* p_wnd)
 
 static void on_paint_rectangle_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -94,7 +93,6 @@ static int on_paint_rectangle_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_triangle_left_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -118,7 +116,6 @@ static int on_paint_triangle_left_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_triangle_up_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -142,7 +139,6 @@ static int on_paint_triangle_up_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_triangle_right_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -166,7 +162,6 @@ static int on_paint_triangle_right_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_triangle_down_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -190,7 +185,6 @@ static int on_paint_triangle_down_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_plus_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -214,7 +208,6 @@ static int on_paint_line_plus_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_minus_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -238,7 +231,6 @@ static int on_paint_line_minus_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_x_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -262,7 +254,6 @@ static int on_paint_line_x_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_1_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -286,7 +277,6 @@ static int on_paint_line_1_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_2_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -310,7 +300,6 @@ static int on_paint_line_2_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_3_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);
@@ -334,7 +323,6 @@ static int on_paint_line_3_klbwnd_btnex(klb_wnd_t* p_wnd)
 
 static void on_paint_line_4_status_klbwnd_btnex(klb_wnd_t* p_wnd, klbwnd_btnex_t* p_btn, klbwnd_btnex_css_t* p_css, klbwnd_btnex_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_btn;
 
     klb_wnd_draw_fill_rect2(p_wnd, p_rect, p_attr->background.color);
     klbuicssex_draw_border(p_wnd, p_rect, &p_attr->border);

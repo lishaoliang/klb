@@ -175,7 +175,6 @@ static void klbwnd_ticker_init_attribute(klb_wnd_t* p_wnd, klbwnd_ticker_t* p_ti
 
 static void klbwnd_ticker_deinit_attribute(klbwnd_ticker_t* p_ticker)
 {
-    (void)p_ticker;
 }
 
 
@@ -192,7 +191,6 @@ void klbwnd_ticker_css_init(klbwnd_ticker_css_t* p_css, klb_gui_t* p_gui)
 
 void klbwnd_ticker_css_deinit(klbwnd_ticker_css_t* p_css)
 {
-    (void)p_css;
 }
 
 void klbwnd_ticker_css_copy(klbwnd_ticker_css_t* p_dst, klbwnd_ticker_css_t* p_src)

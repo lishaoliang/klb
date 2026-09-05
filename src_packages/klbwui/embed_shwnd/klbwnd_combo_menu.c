@@ -106,8 +106,6 @@ static int klbwnd_combo_menu_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_combo_menu_t
 
 static int klbwnd_combo_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt2;
-    (void)wparam;
 
     klbwnd_combo_menu_t* p_menu = (klbwnd_combo_menu_t*)p_wnd->ctrl;
 
@@ -138,9 +136,6 @@ static int klbwnd_combo_menu_on_control(klb_wnd_t* p_wnd, int msg, const klb_poi
 
 static int on_command_item_klbwnd_combo_menu(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_menu = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_combo_menu_t* p_menu = (klbwnd_combo_menu_t*)p_wnd_menu->ctrl;
@@ -165,10 +160,6 @@ static int on_command_item_klbwnd_combo_menu(klb_wnd_t* p_wnd, int msg, const kl
 
 static int on_command_vscrollbar_klbwnd_combo_menu(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     klb_wnd_t* p_wnd_menu = (klb_wnd_t*)p_wnd->p_udata;
     klbwnd_combo_menu_t* p_menu = (klbwnd_combo_menu_t*)p_wnd_menu->ctrl;
@@ -670,7 +661,6 @@ void klbwnd_combo_menu_init(klb_wnd_t* p_wnd, klb_gui_t* p_gui, int x, int y, in
 
 void klbwnd_combo_menu_deinit(klb_wnd_t* p_wnd)
 {
-    (void)p_wnd;
 }
 
 klb_wnd_t* klbwnd_combo_menu_create(klb_gui_t* p_gui, int x, int y, int w, int h)

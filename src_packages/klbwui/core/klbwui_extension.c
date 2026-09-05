@@ -31,10 +31,6 @@ static void klbwui_extension_destroy(void* ptr)
 
 static int klbwui_extension_loop_once(void* ptr, klua_env_t* p_env, int64_t last_tc, int64_t now)
 {
-    (void)ptr;
-    (void)p_env;
-    (void)last_tc;
-    (void)now;
 
     return 0;
 }

@@ -112,7 +112,7 @@ static klbwnd_menu_css_t* check_css_klbui_menu(klb_wnd_t* p_wnd, int method)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS 方法 - 公共CSS属性
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_menu_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -305,13 +305,14 @@ static void destroy_globalcss_klbwnd_menu(void* ptr)
 
 static void klbui_menu_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kmenu);
     if (NULL != ptr)
     {
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kmenu);
 
     // 添加全局 CSS 
@@ -319,9 +320,9 @@ static void klbui_menu_init_globalcss(klb_gui_t* p_gui)
     klbwnd_menu_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kmenu, p_css, destroy_globalcss_klbwnd_menu);
 
+
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法 - 全局CSS属性
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_GLOBAL_menu_bind("margin", globalcss_klbui_menu_margin);
@@ -384,7 +385,7 @@ static void klbui_menu_init_globalcss(klb_gui_t* p_gui)
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法 -- 私有CSS属性
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_menu_margin(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -564,12 +565,7 @@ static void on_klbui_menu_item_background_color_disable(klb_wnd_t* p_wnd, klbui_
 }
 
 //////////////////////////////////////
-// 自定义属性
-
-static void on_klbui_menu_value(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
-{
-    klbuicssex_attribute_sds(&(p_menu->menu.value), p_wnd, method, p_in, p_out);
-}
+// 命令键
 
 static void on_klbui_menu_append(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -691,6 +687,14 @@ static void on_klbui_menu_item_2rd_update(klb_wnd_t* p_wnd, klbui_menu_t* p_menu
     }
 }
 
+// 私有自定义
+
+static void on_klbui_menu_value(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, int method, const klb_map_t* p_in, klb_map_t* p_out)
+{
+    klbuicssex_attribute_sds(&(p_menu->menu.value), p_wnd, method, p_in, p_out);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // css func
 
@@ -698,6 +702,7 @@ static void on_klbui_menu_item_2rd_update(klb_wnd_t* p_wnd, klbui_menu_t* p_menu
 
 static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kmenu);
     if (NULL != ptr)
     {
@@ -705,14 +710,13 @@ static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kmenu);
     p_menu->p_func_map = ptr;
 
 
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_menu_bind("margin", on_klbui_menu_margin);
@@ -772,16 +776,16 @@ static void klbui_menu_init_func_map(klb_wnd_t* p_wnd, klbui_menu_t* p_menu, klb
     KLBUI_menu_bind("item.background-color:focus", on_klbui_menu_item_background_color_focus);
     KLBUI_menu_bind("item.background-color:disabled", on_klbui_menu_item_background_color_disable);
 
-    //////////////////////////////////////////////
-    // 自定义方法
-
-    KLBUI_menu_bind("value", on_klbui_menu_value);
+    // 命令键
 
     KLBUI_menu_bind("append", on_klbui_menu_append);
     KLBUI_menu_bind("append_2rd", on_klbui_menu_append_2rd);
-
     KLBUI_menu_bind("update", on_klbui_menu_item_update);
     KLBUI_menu_bind("update_2rd", on_klbui_menu_item_2rd_update);
+
+    // 私有自定义
+
+    KLBUI_menu_bind("value", on_klbui_menu_value);
 }
 
 //////////////////////////////////////////////////////////////////////////

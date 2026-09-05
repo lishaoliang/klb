@@ -105,7 +105,6 @@ static int on_popup_end_klbwnd_date(void* ptr, klb_wnd_t* p_wnd_cal, bool ok, in
         klb_wnd_update(p_wnd_date);
     }
 
-    (void)p_wnd_cal;
     return 0;
 }
 
@@ -157,10 +156,6 @@ static int klbwnd_date_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* 
         break;
     }
 
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
     return 0;
 }
 

@@ -161,12 +161,6 @@ static void klbwnd_vslider_on_click(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslide
 
 static void klbwnd_vslider_on_mousedrag(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslider, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_wnd;
-    (void)p_vslider;
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     if (klb_wnd_is_disable(p_wnd))
     {
@@ -176,7 +170,6 @@ static void klbwnd_vslider_on_mousedrag(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vs
 
 static void klbwnd_vslider_on_mousewheel(klb_wnd_t* p_wnd, klbwnd_vslider_t* p_vslider, const klb_point_t* p_pt1, int lparam)
 {
-    (void)p_pt1;
 
     if (klb_wnd_is_disable(p_wnd))
     {
@@ -320,7 +313,6 @@ static void klbwnd_vslider_init_attribute(klbwnd_vslider_t* p_vslider)
 
 static void klbwnd_vslider_deinit_attribute(klbwnd_vslider_t* p_vslider)
 {
-    (void)p_vslider;
 }
 
 

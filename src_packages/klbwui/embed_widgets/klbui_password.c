@@ -381,6 +381,7 @@ static void destroy_globalcss_klbwnd_password(void* ptr)
 
 static void klbui_password_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kpassword);
 
     if (NULL != ptr)
@@ -388,40 +389,52 @@ static void klbui_password_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kpassword);
 
     klbwnd_password_css_t* p_css = KLB_MALLOCZ(klbwnd_password_css_t, 1, 0);
     klbwnd_password_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kpassword, p_css, destroy_globalcss_klbwnd_password);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_passwd_bind("margin", globalcss_klbui_password_margin);
     KLBUI_GLOBAL_passwd_bind("margin-top", globalcss_klbui_password_margin_top);
     KLBUI_GLOBAL_passwd_bind("margin-right", globalcss_klbui_password_margin_right);
     KLBUI_GLOBAL_passwd_bind("margin-bottom", globalcss_klbui_password_margin_bottom);
     KLBUI_GLOBAL_passwd_bind("margin-left", globalcss_klbui_password_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_passwd_bind("padding", globalcss_klbui_password_padding);
     KLBUI_GLOBAL_passwd_bind("padding-top", globalcss_klbui_password_padding_top);
     KLBUI_GLOBAL_passwd_bind("padding-right", globalcss_klbui_password_padding_right);
     KLBUI_GLOBAL_passwd_bind("padding-bottom", globalcss_klbui_password_padding_bottom);
     KLBUI_GLOBAL_passwd_bind("padding-left", globalcss_klbui_password_padding_left);
 
+    // 文本颜色 color
     KLBUI_GLOBAL_passwd_bind("color", globalcss_klbui_password_text_color);
     KLBUI_GLOBAL_passwd_bind("color:focus", globalcss_klbui_password_text_color_focus);
     KLBUI_GLOBAL_passwd_bind("color:disabled", globalcss_klbui_password_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_GLOBAL_passwd_bind("text-align", globalcss_klbui_password_text_align);
     KLBUI_GLOBAL_passwd_bind("text-align:focus", globalcss_klbui_password_text_align_focus);
     KLBUI_GLOBAL_passwd_bind("text-align:disabled", globalcss_klbui_password_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_GLOBAL_passwd_bind("font-size", globalcss_klbui_password_font_size);
     KLBUI_GLOBAL_passwd_bind("font-size:focus", globalcss_klbui_password_font_size_focus);
     KLBUI_GLOBAL_passwd_bind("font-size:disabled", globalcss_klbui_password_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_passwd_bind("background-color", globalcss_klbui_password_background_color);
     KLBUI_GLOBAL_passwd_bind("background-color:focus", globalcss_klbui_password_background_color_focus);
     KLBUI_GLOBAL_passwd_bind("background-color:disabled", globalcss_klbui_password_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_GLOBAL_passwd_bind("background-image", globalcss_klbui_password_background_image);
     KLBUI_GLOBAL_passwd_bind("background-image:focus", globalcss_klbui_password_background_image_focus);
     KLBUI_GLOBAL_passwd_bind("background-image:disabled", globalcss_klbui_password_background_image_disable);
@@ -434,6 +447,7 @@ static void klbui_password_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_passwd_bind("background-image-color-key:focus", globalcss_klbui_password_background_image_color_key_focus);
     KLBUI_GLOBAL_passwd_bind("background-image-color-key:disabled", globalcss_klbui_password_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_GLOBAL_passwd_bind("border-width", globalcss_klbui_password_border_width);
     KLBUI_GLOBAL_passwd_bind("border-width:focus", globalcss_klbui_password_border_width_focus);
     KLBUI_GLOBAL_passwd_bind("border-width:disabled", globalcss_klbui_password_border_width_disable);
@@ -708,7 +722,7 @@ static void on_klbui_password_border_color_disable(klb_wnd_t* p_wnd, klbui_passw
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 命令键
 
 static void on_klbui_password_tip(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -725,7 +739,6 @@ static void on_klbui_password_tip(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, 
         klb_wnd_dyntip(p_wnd, false);
     }
 
-    (void)p_passwd;
 }
 
 static void on_klbui_password_dynamic_tip(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -739,7 +752,6 @@ static void on_klbui_password_dynamic_tip(klb_wnd_t* p_wnd, klbui_password_t* p_
         klb_wnd_dyntip(p_wnd, use);
     }
 
-    (void)p_passwd;
 }
 
 static void on_klbui_password_title(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -757,7 +769,6 @@ static void on_klbui_password_title(klb_wnd_t* p_wnd, klbui_password_t* p_passwd
         klb_wnd_update(p_wnd);
     }
 
-    (void)p_passwd;
 }
 
 static void on_klbui_password_stretch_image(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -851,6 +862,8 @@ static void on_klbui_password_button_clear_foreground_image_disable(klb_wnd_t* p
     klbuicssex_attribute_image(&p_css->disable.btn_clear_image, p_wnd, method, p_in, p_out);
 }
 
+// 私有自定义
+
 static void on_klbui_password_hide_passwd(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_bool(&(p_passwd->password.is_hide_letter), p_wnd, method, p_in, p_out);
@@ -869,6 +882,7 @@ static void on_klbui_password_index(klb_wnd_t* p_wnd, klbui_password_t* p_passwd
 
 static void klbui_password_init_func_map(klb_wnd_t* p_wnd, klbui_password_t* p_passwd, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kpassword);
     if (NULL != ptr)
     {
@@ -876,37 +890,49 @@ static void klbui_password_init_func_map(klb_wnd_t* p_wnd, klbui_password_t* p_p
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kpassword);
     p_passwd->p_func_map = ptr;
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_passwd_bind("margin", on_klbui_password_margin);
     KLBUI_passwd_bind("margin-top", on_klbui_password_margin_top);
     KLBUI_passwd_bind("margin-right", on_klbui_password_margin_right);
     KLBUI_passwd_bind("margin-bottom", on_klbui_password_margin_bottom);
     KLBUI_passwd_bind("margin-left", on_klbui_password_margin_left);
 
+    // 内边距 padding
     KLBUI_passwd_bind("padding", on_klbui_password_padding);
     KLBUI_passwd_bind("padding-top", on_klbui_password_padding_top);
     KLBUI_passwd_bind("padding-right", on_klbui_password_padding_right);
     KLBUI_passwd_bind("padding-bottom", on_klbui_password_padding_bottom);
     KLBUI_passwd_bind("padding-left", on_klbui_password_padding_left);
 
+    // 文本颜色 color
     KLBUI_passwd_bind("color", on_klbui_password_text_color);
     KLBUI_passwd_bind("color:focus", on_klbui_password_text_color_focus);
     KLBUI_passwd_bind("color:disabled", on_klbui_password_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_passwd_bind("text-align", on_klbui_password_text_align);
     KLBUI_passwd_bind("text-align:focus", on_klbui_password_text_align_focus);
     KLBUI_passwd_bind("text-align:disabled", on_klbui_password_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_passwd_bind("font-size", on_klbui_password_font_size);
     KLBUI_passwd_bind("font-size:focus", on_klbui_password_font_size_focus);
     KLBUI_passwd_bind("font-size:disabled", on_klbui_password_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_passwd_bind("background-color", on_klbui_password_background_color);
     KLBUI_passwd_bind("background-color:focus", on_klbui_password_background_color_focus);
     KLBUI_passwd_bind("background-color:disabled", on_klbui_password_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_passwd_bind("background-image", on_klbui_password_background_image);
     KLBUI_passwd_bind("background-image:focus", on_klbui_password_background_image_focus);
     KLBUI_passwd_bind("background-image:disabled", on_klbui_password_background_image_disable);
@@ -919,6 +945,7 @@ static void klbui_password_init_func_map(klb_wnd_t* p_wnd, klbui_password_t* p_p
     KLBUI_passwd_bind("background-image-color-key:focus", on_klbui_password_background_image_color_key_focus);
     KLBUI_passwd_bind("background-image-color-key:disabled", on_klbui_password_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_passwd_bind("border-width", on_klbui_password_border_width);
     KLBUI_passwd_bind("border-width:focus", on_klbui_password_border_width_focus);
     KLBUI_passwd_bind("border-width:disabled", on_klbui_password_border_width_disable);
@@ -936,24 +963,26 @@ static void klbui_password_init_func_map(klb_wnd_t* p_wnd, klbui_password_t* p_p
     KLBUI_passwd_bind("button.foreground-image-width", on_klbui_password_button_foreground_image_width);
     KLBUI_passwd_bind("button.foreground-image-height", on_klbui_password_button_foreground_image_height);
 
-    KLBUI_passwd_bind("button.symbol.foreground-image", on_klbui_password_button_symbol_foreground_image);
-    KLBUI_passwd_bind("button.symbol.foreground-image:focus", on_klbui_password_button_symbol_foreground_image_focus);
-    KLBUI_passwd_bind("button.symbol.foreground-image:disabled", on_klbui_password_button_symbol_foreground_image_disable);
+    KLBUI_passwd_bind("button-symbol.foreground-image", on_klbui_password_button_symbol_foreground_image);
+    KLBUI_passwd_bind("button-symbol.foreground-image:focus", on_klbui_password_button_symbol_foreground_image_focus);
+    KLBUI_passwd_bind("button-symbol.foreground-image:disabled", on_klbui_password_button_symbol_foreground_image_disable);
 
-    KLBUI_passwd_bind("button.clear.foreground-image", on_klbui_password_button_clear_foreground_image);
-    KLBUI_passwd_bind("button.clear.foreground-image:focus", on_klbui_password_button_clear_foreground_image_focus);
-    KLBUI_passwd_bind("button.clear.foreground-image:disabled", on_klbui_password_button_clear_foreground_image_disable);
+    KLBUI_passwd_bind("button-clear.foreground-image", on_klbui_password_button_clear_foreground_image);
+    KLBUI_passwd_bind("button-clear.foreground-image:focus", on_klbui_password_button_clear_foreground_image_focus);
+    KLBUI_passwd_bind("button-clear.foreground-image:disabled", on_klbui_password_button_clear_foreground_image_disable);
+
+    // 命令键
 
     KLBUI_passwd_bind("tip", on_klbui_password_tip);
     KLBUI_passwd_bind("dynamic-tip", on_klbui_password_dynamic_tip);
     KLBUI_passwd_bind("hide-passwd", on_klbui_password_hide_passwd);
+
+    // 私有自定义
+
     KLBUI_passwd_bind("index", on_klbui_password_index);
     KLBUI_passwd_bind("title", on_klbui_password_title);
     KLBUI_passwd_bind("value", on_klbui_password_title);
-
-    (void)p_wnd;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

@@ -234,6 +234,7 @@ static void destroy_globalcss_klbwnd_line(void* ptr)
 
 static void klbui_line_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kline);
 
     if (NULL != ptr)
@@ -241,28 +242,40 @@ static void klbui_line_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kline);
 
     klbwnd_line_css_t* p_css = KLB_MALLOCZ(klbwnd_line_css_t, 1, 0);
     klbwnd_line_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kline, p_css, destroy_globalcss_klbwnd_line);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_line_bind("margin", globalcss_klbui_line_margin);
     KLBUI_GLOBAL_line_bind("margin-top", globalcss_klbui_line_margin_top);
     KLBUI_GLOBAL_line_bind("margin-right", globalcss_klbui_line_margin_right);
     KLBUI_GLOBAL_line_bind("margin-bottom", globalcss_klbui_line_margin_bottom);
     KLBUI_GLOBAL_line_bind("margin-left", globalcss_klbui_line_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_line_bind("padding", globalcss_klbui_line_padding);
     KLBUI_GLOBAL_line_bind("padding-top", globalcss_klbui_line_padding_top);
     KLBUI_GLOBAL_line_bind("padding-right", globalcss_klbui_line_padding_right);
     KLBUI_GLOBAL_line_bind("padding-bottom", globalcss_klbui_line_padding_bottom);
     KLBUI_GLOBAL_line_bind("padding-left", globalcss_klbui_line_padding_left);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_line_bind("background-color", globalcss_klbui_line_background_color);
+
+    // 背景图片 background-image
     KLBUI_GLOBAL_line_bind("background-image", globalcss_klbui_line_background_image);
     KLBUI_GLOBAL_line_bind("background-image-mode", globalcss_klbui_line_background_image_mode);
     KLBUI_GLOBAL_line_bind("background-image-color-key", globalcss_klbui_line_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_GLOBAL_line_bind("border-width", globalcss_klbui_line_border_width);
     KLBUI_GLOBAL_line_bind("border-color", globalcss_klbui_line_border_color);
 }
@@ -273,7 +286,6 @@ static void klbui_line_init_globalcss(klb_gui_t* p_gui)
 
 static void on_klbui_line_margin(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -281,7 +293,6 @@ static void on_klbui_line_margin(klb_wnd_t* p_wnd, klbui_line_t* p_line, int met
 
 static void on_klbui_line_margin_top(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_margin_top(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -289,7 +300,6 @@ static void on_klbui_line_margin_top(klb_wnd_t* p_wnd, klbui_line_t* p_line, int
 
 static void on_klbui_line_margin_right(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_margin_right(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -297,7 +307,6 @@ static void on_klbui_line_margin_right(klb_wnd_t* p_wnd, klbui_line_t* p_line, i
 
 static void on_klbui_line_margin_bottom(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_margin_bottom(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -305,7 +314,6 @@ static void on_klbui_line_margin_bottom(klb_wnd_t* p_wnd, klbui_line_t* p_line, 
 
 static void on_klbui_line_margin_left(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_margin_left(&(p_css->margin), p_wnd, method, p_in, p_out);
@@ -313,7 +321,6 @@ static void on_klbui_line_margin_left(klb_wnd_t* p_wnd, klbui_line_t* p_line, in
 
 static void on_klbui_line_padding(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -321,7 +328,6 @@ static void on_klbui_line_padding(klb_wnd_t* p_wnd, klbui_line_t* p_line, int me
 
 static void on_klbui_line_padding_top(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_padding_top(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -329,7 +335,6 @@ static void on_klbui_line_padding_top(klb_wnd_t* p_wnd, klbui_line_t* p_line, in
 
 static void on_klbui_line_padding_right(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_padding_right(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -337,7 +342,6 @@ static void on_klbui_line_padding_right(klb_wnd_t* p_wnd, klbui_line_t* p_line, 
 
 static void on_klbui_line_padding_bottom(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_padding_bottom(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -345,7 +349,6 @@ static void on_klbui_line_padding_bottom(klb_wnd_t* p_wnd, klbui_line_t* p_line,
 
 static void on_klbui_line_padding_left(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_padding_left(&(p_css->padding), p_wnd, method, p_in, p_out);
@@ -353,7 +356,6 @@ static void on_klbui_line_padding_left(klb_wnd_t* p_wnd, klbui_line_t* p_line, i
 
 static void on_klbui_line_background_color(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_background_color(&(p_css->normal.background), p_wnd, method, p_in, p_out);
@@ -361,7 +363,6 @@ static void on_klbui_line_background_color(klb_wnd_t* p_wnd, klbui_line_t* p_lin
 
 static void on_klbui_line_background_image(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_background_image(&(p_css->normal.background), p_wnd, method, p_in, p_out);
@@ -369,7 +370,6 @@ static void on_klbui_line_background_image(klb_wnd_t* p_wnd, klbui_line_t* p_lin
 
 static void on_klbui_line_background_image_mode(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbwuicss_background_image_mode(&(p_css->normal.background), p_wnd, method, p_in, p_out);
@@ -377,7 +377,6 @@ static void on_klbui_line_background_image_mode(klb_wnd_t* p_wnd, klbui_line_t* 
 
 static void on_klbui_line_background_image_color_key(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbwuicss_background_image_color_key(&(p_css->normal.background), p_wnd, method, p_in, p_out);
@@ -385,7 +384,6 @@ static void on_klbui_line_background_image_color_key(klb_wnd_t* p_wnd, klbui_lin
 
 static void on_klbui_line_border_width(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_border_width(&(p_css->normal.border), p_wnd, method, p_in, p_out);
@@ -393,7 +391,6 @@ static void on_klbui_line_border_width(klb_wnd_t* p_wnd, klbui_line_t* p_line, i
 
 static void on_klbui_line_border_color(klb_wnd_t* p_wnd, klbui_line_t* p_line, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_line;
     klbwnd_line_css_t* p_css = check_css_klbui_line(p_wnd, method);
 
     klbuicssex_border_color(&(p_css->normal.border), p_wnd, method, p_in, p_out);
@@ -407,8 +404,7 @@ static void on_klbui_line_border_color(klb_wnd_t* p_wnd, klbui_line_t* p_line, i
 
 static void klbui_line_init_func_map(klb_wnd_t* p_wnd, klbui_line_t* p_line, klb_gui_t* p_gui)
 {
-    (void)p_wnd;
-
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kline);
 
     if (NULL != ptr)
@@ -417,25 +413,37 @@ static void klbui_line_init_func_map(klb_wnd_t* p_wnd, klbui_line_t* p_line, klb
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kline);
     p_line->p_func_map = ptr;
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_line_bind("margin", on_klbui_line_margin);
     KLBUI_line_bind("margin-top", on_klbui_line_margin_top);
     KLBUI_line_bind("margin-right", on_klbui_line_margin_right);
     KLBUI_line_bind("margin-bottom", on_klbui_line_margin_bottom);
     KLBUI_line_bind("margin-left", on_klbui_line_margin_left);
 
+    // 内边距 padding
     KLBUI_line_bind("padding", on_klbui_line_padding);
     KLBUI_line_bind("padding-top", on_klbui_line_padding_top);
     KLBUI_line_bind("padding-right", on_klbui_line_padding_right);
     KLBUI_line_bind("padding-bottom", on_klbui_line_padding_bottom);
     KLBUI_line_bind("padding-left", on_klbui_line_padding_left);
 
+    // 背景色 background-color
     KLBUI_line_bind("background-color", on_klbui_line_background_color);
+
+    // 背景图片 background-image
     KLBUI_line_bind("background-image", on_klbui_line_background_image);
     KLBUI_line_bind("background-image-mode", on_klbui_line_background_image_mode);
     KLBUI_line_bind("background-image-color-key", on_klbui_line_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_line_bind("border-width", on_klbui_line_border_width);
     KLBUI_line_bind("border-color", on_klbui_line_border_color);
 }

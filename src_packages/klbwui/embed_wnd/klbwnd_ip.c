@@ -165,7 +165,6 @@ static int on_menu_popup_end_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, bool ok
         klb_wnd_update(p_wnd);
     }
 
-    (void)p_wnd_menu;
     return 0;
 }
 
@@ -181,8 +180,6 @@ static int on_menu_click_point_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, bool 
         klbwnd_ip_select_octet(p_wnd, p_ip, p_ip->sel_idx + 1);
     }
 
-    (void)p_wnd_menu;
-    (void)ok;
     return 0;
 }
 
@@ -203,8 +200,6 @@ static int on_menu_click_number_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, bool
 
     klb_wnd_update(p_wnd);
 
-    (void)p_wnd_menu;
-    (void)ok;
     return 0;
 }
 
@@ -220,8 +215,6 @@ static int on_menu_click_moveleft_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, bo
         klbwnd_ip_select_octet(p_wnd, p_ip, p_ip->sel_idx - 1);
     }
 
-    (void)p_wnd_menu;
-    (void)ok;
     return 0;
 }
 
@@ -237,8 +230,6 @@ static int on_menu_click_moveright_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, b
         klbwnd_ip_select_octet(p_wnd, p_ip, p_ip->sel_idx + 1);
     }
 
-    (void)p_wnd_menu;
-    (void)ok;
     return 0;
 }
 
@@ -259,8 +250,6 @@ static int on_menu_click_backspace_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, b
         klb_wnd_update(p_wnd);
     }
 
-    (void)p_wnd_menu;
-    (void)ok;
     return 0;
 }
 
@@ -273,9 +262,6 @@ static int on_menu_click_clear_klbwnd_ip(void* ptr, klb_wnd_t* p_wnd_menu, bool 
     klbshw_decimal_menu_ip_set_value(p_ip->p_menu, 0);
     klb_wnd_update(p_wnd);
 
-    (void)p_wnd_menu;
-    (void)ok;
-    (void)value;
     return 0;
 }
 
@@ -352,9 +338,6 @@ static int klbwnd_ip_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_
         break;
     }
 
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
     return 0;
 }
 

@@ -170,7 +170,6 @@ static int on_menu_popup_end_klbwnd_password(void* ptr, klb_wnd_t* p_wnd_menu, b
         klb_wnd_update(p_wnd);
     }
 
-    (void)p_wnd_menu;
     return 0;
 }
 
@@ -300,9 +299,6 @@ static int klbwnd_password_on_control(klb_wnd_t* p_wnd, int msg, const klb_point
         break;
     }
 
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
     return 0;
 }
 

@@ -112,7 +112,7 @@ static klbwnd_list_css_t* check_css_klbui_list(klb_wnd_t* p_wnd, int method)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS 方法 - 公共CSS属性
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_list_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -503,13 +503,14 @@ static void destroy_globalcss_klbwnd_list(void* ptr)
 
 static void klbui_list_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_klist);
     if (NULL != ptr)
     {
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_klist);
 
     // 添加全局 CSS 
@@ -517,9 +518,9 @@ static void klbui_list_init_globalcss(klb_gui_t* p_gui)
     klbwnd_list_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_klist, p_css, destroy_globalcss_klbwnd_list);
 
+
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法 - 全局CSS属性
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_GLOBAL_list_bind("margin", globalcss_klbui_list_margin);
@@ -606,7 +607,7 @@ static void klbui_list_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_list_bind("row2.background-color:disabled", globalcss_klbui_list_row2_background_color_disable);
 
     // 子控件(row): 选中行背景色 row.background-color
-    KLBUI_GLOBAL_list_bind("row.check.background-color", globalcss_klbui_list_row_check_background_color);
+    KLBUI_GLOBAL_list_bind("row-check.background-color", globalcss_klbui_list_row_check_background_color);
 
 
     //////////////////////////////////////////////
@@ -632,13 +633,13 @@ static void klbui_list_init_globalcss(klb_gui_t* p_gui)
     // 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
 
     // 子控件(v scrollbar)-(klbwnd_btnex_t) : 文本颜色 color
-    KLBUI_GLOBAL_list_bind("vscrollbar.btn.color", globalcss_klbui_list_vscrollbar_btnex_text_color);
-    KLBUI_GLOBAL_list_bind("vscrollbar.btn.color:focus", globalcss_klbui_list_vscrollbar_btnex_text_color_focus);
-    KLBUI_GLOBAL_list_bind("vscrollbar.btn.color:disabled", globalcss_klbui_list_vscrollbar_btnex_text_color_disable);
+    KLBUI_GLOBAL_list_bind("vscrollbar-btn.color", globalcss_klbui_list_vscrollbar_btnex_text_color);
+    KLBUI_GLOBAL_list_bind("vscrollbar-btn.color:focus", globalcss_klbui_list_vscrollbar_btnex_text_color_focus);
+    KLBUI_GLOBAL_list_bind("vscrollbar-btn.color:disabled", globalcss_klbui_list_vscrollbar_btnex_text_color_disable);
 }
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法 -- 私有CSS属性
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_list_margin(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -1016,7 +1017,7 @@ static void on_klbui_list_vscrollbar_btnex_text_color_disable(klb_wnd_t* p_wnd, 
 }
 
 //////////////////////////////////////
-// 自定义属性
+// 命令键
 
 // 追加题头列
 static void on_klbui_list_append_column(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -1159,6 +1160,8 @@ static void on_klbui_list_clear_data(klb_wnd_t* p_wnd, klbui_list_t* p_list, int
     klb_wnd_update(p_wnd);
 }
 
+// 私有自定义
+
 static void on_klbui_list_value(klb_wnd_t* p_wnd, klbui_list_t* p_list, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     // 值
@@ -1195,6 +1198,7 @@ static void on_klbui_list_value(klb_wnd_t* p_wnd, klbui_list_t* p_list, int meth
 
 static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_klist);
     if (NULL != ptr)
     {
@@ -1202,14 +1206,13 @@ static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_klist);
     p_list->p_func_map = ptr;
 
 
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_list_bind("margin", on_klbui_list_margin);
@@ -1296,7 +1299,7 @@ static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb
     KLBUI_list_bind("row2.background-color:disabled", on_klbui_list_row2_background_color_disable);
 
     // 子控件(row): 选中行背景色 row.background-color
-    KLBUI_list_bind("row.check.background-color", on_klbui_list_row_check_background_color);
+    KLBUI_list_bind("row-check.background-color", on_klbui_list_row_check_background_color);
 
 
     //////////////////////////////////////////////
@@ -1322,19 +1325,19 @@ static void klbui_list_init_func_map(klb_wnd_t* p_wnd, klbui_list_t* p_list, klb
     // 子控件(v scrollbar) 的子控件(klbwnd_btnex_t): klbwnd_vscrollbar_t
 
     // 子控件(v scrollbar)-(klbwnd_btnex_t) : 文本颜色 color
-    KLBUI_list_bind("vscrollbar.btn.color", on_klbui_list_vscrollbar_btnex_text_color);
-    KLBUI_list_bind("vscrollbar.btn.color:focus", on_klbui_list_vscrollbar_btnex_text_color_focus);
-    KLBUI_list_bind("vscrollbar.btn.color:disabled", on_klbui_list_vscrollbar_btnex_text_color_disable);
+    KLBUI_list_bind("vscrollbar-btn.color", on_klbui_list_vscrollbar_btnex_text_color);
+    KLBUI_list_bind("vscrollbar-btn.color:focus", on_klbui_list_vscrollbar_btnex_text_color_focus);
+    KLBUI_list_bind("vscrollbar-btn.color:disabled", on_klbui_list_vscrollbar_btnex_text_color_disable);
 
-
-    //////////////////////////////////////////////
-    // 自定义方法
+    // 命令键
 
     KLBUI_list_bind("append_column", on_klbui_list_append_column);  // 追加题头列
     KLBUI_list_bind("update_column", on_klbui_list_update_column);  // 更新题头列
     KLBUI_list_bind("append", on_klbui_list_append);                // 追加数据
     KLBUI_list_bind("clear", on_klbui_list_clear);                  // 清空题头和数据
     KLBUI_list_bind("clear_data", on_klbui_list_clear_data);        // 清空数据
+
+    // 私有自定义
 
     KLBUI_list_bind("value", on_klbui_list_value);                  // 当前选中值
 }

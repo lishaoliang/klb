@@ -59,8 +59,6 @@ static int klbshw_calendar_menu_on_paint(klb_wnd_t* p_wnd)
     klbshw_calendar_menu_t* p_cal = (klbshw_calendar_menu_t*)p_wnd->ctrl;
     klb_rect_t* p_rect = &p_wnd->pos.rect_in_canvas;
 
-    (void)p_cal;
-    (void)p_rect;
 
     if (KLB_WND_STATUS_HIDE & p_wnd->state.status)
     {
@@ -183,7 +181,6 @@ klb_wnd_t* klbui_shwnd_get_calendar_menu(klb_gui_t* p_gui)
 /// @brief 获取所需要的宽高
 int klbshw_calendar_menu_wh(klb_wnd_t* p_wnd, int* p_out_w, int* p_out_h)
 {
-    (void)p_wnd;
 
     if (NULL != p_out_w)
     {
@@ -225,7 +222,6 @@ static void klbshw_calendar_menu_init_attribute(klb_wnd_t* p_wnd, klbshw_calenda
     const klbui_default_t* p_default = klb_gui_get_std_default(p_wnd->p_gui);
     klb_gui_t* p_gui = p_wnd->p_gui;
 
-    (void)p_default;
     klbwnd_calendar_css_init(&p_cal->calendar_css, p_gui);
 }
 

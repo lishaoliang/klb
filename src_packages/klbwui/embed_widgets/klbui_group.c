@@ -381,6 +381,7 @@ static void destroy_globalcss_klbwnd_group(void* ptr)
 
 static void klbui_group_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kgroup);
 
     if (NULL != ptr)
@@ -388,40 +389,52 @@ static void klbui_group_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kgroup);
 
     klbwnd_group_css_t* p_css = KLB_MALLOCZ(klbwnd_group_css_t, 1, 0);
     klbwnd_group_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kgroup, p_css, destroy_globalcss_klbwnd_group);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_group_bind("margin", globalcss_klbui_group_margin);
     KLBUI_GLOBAL_group_bind("margin-top", globalcss_klbui_group_margin_top);
     KLBUI_GLOBAL_group_bind("margin-right", globalcss_klbui_group_margin_right);
     KLBUI_GLOBAL_group_bind("margin-bottom", globalcss_klbui_group_margin_bottom);
     KLBUI_GLOBAL_group_bind("margin-left", globalcss_klbui_group_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_group_bind("padding", globalcss_klbui_group_padding);
     KLBUI_GLOBAL_group_bind("padding-top", globalcss_klbui_group_padding_top);
     KLBUI_GLOBAL_group_bind("padding-right", globalcss_klbui_group_padding_right);
     KLBUI_GLOBAL_group_bind("padding-bottom", globalcss_klbui_group_padding_bottom);
     KLBUI_GLOBAL_group_bind("padding-left", globalcss_klbui_group_padding_left);
 
+    // 文本颜色 color
     KLBUI_GLOBAL_group_bind("color", globalcss_klbui_group_text_color);
     KLBUI_GLOBAL_group_bind("color:focus", globalcss_klbui_group_text_color_focus);
     KLBUI_GLOBAL_group_bind("color:disabled", globalcss_klbui_group_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_GLOBAL_group_bind("text-align", globalcss_klbui_group_text_align);
     KLBUI_GLOBAL_group_bind("text-align:focus", globalcss_klbui_group_text_align_focus);
     KLBUI_GLOBAL_group_bind("text-align:disabled", globalcss_klbui_group_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_GLOBAL_group_bind("font-size", globalcss_klbui_group_font_size);
     KLBUI_GLOBAL_group_bind("font-size:focus", globalcss_klbui_group_font_size_focus);
     KLBUI_GLOBAL_group_bind("font-size:disabled", globalcss_klbui_group_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_group_bind("background-color", globalcss_klbui_group_background_color);
     KLBUI_GLOBAL_group_bind("background-color:focus", globalcss_klbui_group_background_color_focus);
     KLBUI_GLOBAL_group_bind("background-color:disabled", globalcss_klbui_group_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_GLOBAL_group_bind("background-image", globalcss_klbui_group_background_image);
     KLBUI_GLOBAL_group_bind("background-image:focus", globalcss_klbui_group_background_image_focus);
     KLBUI_GLOBAL_group_bind("background-image:disabled", globalcss_klbui_group_background_image_disable);
@@ -434,6 +447,7 @@ static void klbui_group_init_globalcss(klb_gui_t* p_gui)
     KLBUI_GLOBAL_group_bind("background-image-color-key:focus", globalcss_klbui_group_background_image_color_key_focus);
     KLBUI_GLOBAL_group_bind("background-image-color-key:disabled", globalcss_klbui_group_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_GLOBAL_group_bind("border-width", globalcss_klbui_group_border_width);
     KLBUI_GLOBAL_group_bind("border-width:focus", globalcss_klbui_group_border_width_focus);
     KLBUI_GLOBAL_group_bind("border-width:disabled", globalcss_klbui_group_border_width_disable);
@@ -453,7 +467,6 @@ static void on_klbui_group_margin(klb_wnd_t* p_wnd, klbui_group_t* p_group, int 
 
     klbuicssex_margin(&(p_css->margin), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_margin_top(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -462,7 +475,6 @@ static void on_klbui_group_margin_top(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
 
     klbuicssex_margin_top(&(p_css->margin), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_margin_right(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -471,7 +483,6 @@ static void on_klbui_group_margin_right(klb_wnd_t* p_wnd, klbui_group_t* p_group
 
     klbuicssex_margin_right(&(p_css->margin), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_margin_bottom(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -480,7 +491,6 @@ static void on_klbui_group_margin_bottom(klb_wnd_t* p_wnd, klbui_group_t* p_grou
 
     klbuicssex_margin_bottom(&(p_css->margin), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_margin_left(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -489,7 +499,6 @@ static void on_klbui_group_margin_left(klb_wnd_t* p_wnd, klbui_group_t* p_group,
 
     klbuicssex_margin_left(&(p_css->margin), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_padding(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -498,7 +507,6 @@ static void on_klbui_group_padding(klb_wnd_t* p_wnd, klbui_group_t* p_group, int
 
     klbuicssex_padding(&(p_css->padding), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_padding_top(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -507,7 +515,6 @@ static void on_klbui_group_padding_top(klb_wnd_t* p_wnd, klbui_group_t* p_group,
 
     klbuicssex_padding_top(&(p_css->padding), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_padding_right(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -516,7 +523,6 @@ static void on_klbui_group_padding_right(klb_wnd_t* p_wnd, klbui_group_t* p_grou
 
     klbuicssex_padding_right(&(p_css->padding), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_padding_bottom(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -525,7 +531,6 @@ static void on_klbui_group_padding_bottom(klb_wnd_t* p_wnd, klbui_group_t* p_gro
 
     klbuicssex_padding_bottom(&(p_css->padding), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_padding_left(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -534,7 +539,6 @@ static void on_klbui_group_padding_left(klb_wnd_t* p_wnd, klbui_group_t* p_group
 
     klbuicssex_padding_left(&(p_css->padding), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_text_color(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -543,7 +547,6 @@ static void on_klbui_group_text_color(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
 
     klbuicssex_text_color(&(p_css->normal.text), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_text_color_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -552,7 +555,6 @@ static void on_klbui_group_text_color_focus(klb_wnd_t* p_wnd, klbui_group_t* p_g
 
     klbuicssex_text_color(&(p_css->focus.text), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_text_color_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -561,7 +563,6 @@ static void on_klbui_group_text_color_disable(klb_wnd_t* p_wnd, klbui_group_t* p
 
     klbuicssex_text_color(&(p_css->disable.text), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_text_align(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -570,7 +571,6 @@ static void on_klbui_group_text_align(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
 
     klbuicssex_text_align(&(p_css->normal.text), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_text_align_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -579,7 +579,6 @@ static void on_klbui_group_text_align_focus(klb_wnd_t* p_wnd, klbui_group_t* p_g
 
     klbuicssex_text_align(&(p_css->focus.text), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_text_align_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -588,7 +587,6 @@ static void on_klbui_group_text_align_disable(klb_wnd_t* p_wnd, klbui_group_t* p
 
     klbuicssex_text_align(&(p_css->disable.text), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_font_size(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -597,7 +595,6 @@ static void on_klbui_group_font_size(klb_wnd_t* p_wnd, klbui_group_t* p_group, i
 
     klbuicssex_font_size(&(p_css->normal.font), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_font_size_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -606,7 +603,6 @@ static void on_klbui_group_font_size_focus(klb_wnd_t* p_wnd, klbui_group_t* p_gr
 
     klbuicssex_font_size(&(p_css->focus.font), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_font_size_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -615,7 +611,6 @@ static void on_klbui_group_font_size_disable(klb_wnd_t* p_wnd, klbui_group_t* p_
 
     klbuicssex_font_size(&(p_css->disable.font), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_color(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -624,7 +619,6 @@ static void on_klbui_group_background_color(klb_wnd_t* p_wnd, klbui_group_t* p_g
 
     klbuicssex_background_color(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_color_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -633,7 +627,6 @@ static void on_klbui_group_background_color_focus(klb_wnd_t* p_wnd, klbui_group_
 
     klbuicssex_background_color(&(p_css->focus.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_color_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -642,7 +635,6 @@ static void on_klbui_group_background_color_disable(klb_wnd_t* p_wnd, klbui_grou
 
     klbuicssex_background_color(&(p_css->disable.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -651,7 +643,6 @@ static void on_klbui_group_background_image(klb_wnd_t* p_wnd, klbui_group_t* p_g
 
     klbuicssex_background_image(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -660,7 +651,6 @@ static void on_klbui_group_background_image_focus(klb_wnd_t* p_wnd, klbui_group_
 
     klbuicssex_background_image(&(p_css->focus.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -669,7 +659,6 @@ static void on_klbui_group_background_image_disable(klb_wnd_t* p_wnd, klbui_grou
 
     klbuicssex_background_image(&(p_css->disable.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_mode(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -678,7 +667,6 @@ static void on_klbui_group_background_image_mode(klb_wnd_t* p_wnd, klbui_group_t
 
     klbwuicss_background_image_mode(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_mode_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -687,7 +675,6 @@ static void on_klbui_group_background_image_mode_focus(klb_wnd_t* p_wnd, klbui_g
 
     klbwuicss_background_image_mode(&(p_css->focus.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_mode_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -696,7 +683,6 @@ static void on_klbui_group_background_image_mode_disable(klb_wnd_t* p_wnd, klbui
 
     klbwuicss_background_image_mode(&(p_css->disable.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_color_key(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -705,7 +691,6 @@ static void on_klbui_group_background_image_color_key(klb_wnd_t* p_wnd, klbui_gr
 
     klbwuicss_background_image_color_key(&(p_css->normal.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_color_key_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -714,7 +699,6 @@ static void on_klbui_group_background_image_color_key_focus(klb_wnd_t* p_wnd, kl
 
     klbwuicss_background_image_color_key(&(p_css->focus.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_background_image_color_key_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -723,7 +707,6 @@ static void on_klbui_group_background_image_color_key_disable(klb_wnd_t* p_wnd, 
 
     klbwuicss_background_image_color_key(&(p_css->disable.background), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_border_width(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -732,7 +715,6 @@ static void on_klbui_group_border_width(klb_wnd_t* p_wnd, klbui_group_t* p_group
 
     klbuicssex_border_width(&(p_css->normal.border), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_border_width_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -741,7 +723,6 @@ static void on_klbui_group_border_width_focus(klb_wnd_t* p_wnd, klbui_group_t* p
 
     klbuicssex_border_width(&(p_css->focus.border), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_border_width_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -750,7 +731,6 @@ static void on_klbui_group_border_width_disable(klb_wnd_t* p_wnd, klbui_group_t*
 
     klbuicssex_border_width(&(p_css->disable.border), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_border_color(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -759,7 +739,6 @@ static void on_klbui_group_border_color(klb_wnd_t* p_wnd, klbui_group_t* p_group
 
     klbuicssex_border_color(&(p_css->normal.border), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_border_color_focus(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -768,7 +747,6 @@ static void on_klbui_group_border_color_focus(klb_wnd_t* p_wnd, klbui_group_t* p
 
     klbuicssex_border_color(&(p_css->focus.border), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 static void on_klbui_group_border_color_disable(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
@@ -777,12 +755,11 @@ static void on_klbui_group_border_color_disable(klb_wnd_t* p_wnd, klbui_group_t*
 
     klbuicssex_border_color(&(p_css->disable.border), p_wnd, method, p_in, p_out);
 
-    (void)p_group;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-// 自定义属性
+// 私有自定义
 
 static void on_klbui_group_title(klb_wnd_t* p_wnd, klbui_group_t* p_group, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -802,6 +779,7 @@ static void on_klbui_group_value(klb_wnd_t* p_wnd, klbui_group_t* p_group, int m
 
 static void klbui_group_init_func_map(klb_wnd_t* p_wnd, klbui_group_t* p_group, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_kgroup);
     if (NULL != ptr)
     {
@@ -809,37 +787,49 @@ static void klbui_group_init_func_map(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
         return;
     }
 
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_kgroup);
     p_group->p_func_map = ptr;
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_group_bind("margin", on_klbui_group_margin);
     KLBUI_group_bind("margin-top", on_klbui_group_margin_top);
     KLBUI_group_bind("margin-right", on_klbui_group_margin_right);
     KLBUI_group_bind("margin-bottom", on_klbui_group_margin_bottom);
     KLBUI_group_bind("margin-left", on_klbui_group_margin_left);
 
+    // 内边距 padding
     KLBUI_group_bind("padding", on_klbui_group_padding);
     KLBUI_group_bind("padding-top", on_klbui_group_padding_top);
     KLBUI_group_bind("padding-right", on_klbui_group_padding_right);
     KLBUI_group_bind("padding-bottom", on_klbui_group_padding_bottom);
     KLBUI_group_bind("padding-left", on_klbui_group_padding_left);
 
+    // 文本颜色 color
     KLBUI_group_bind("color", on_klbui_group_text_color);
     KLBUI_group_bind("color:focus", on_klbui_group_text_color_focus);
     KLBUI_group_bind("color:disabled", on_klbui_group_text_color_disable);
 
+    // 文本对齐 text-align
     KLBUI_group_bind("text-align", on_klbui_group_text_align);
     KLBUI_group_bind("text-align:focus", on_klbui_group_text_align_focus);
     KLBUI_group_bind("text-align:disabled", on_klbui_group_text_align_disable);
 
+    // 字体大小 font-size
     KLBUI_group_bind("font-size", on_klbui_group_font_size);
     KLBUI_group_bind("font-size:focus", on_klbui_group_font_size_focus);
     KLBUI_group_bind("font-size:disabled", on_klbui_group_font_size_disable);
 
+    // 背景色 background-color
     KLBUI_group_bind("background-color", on_klbui_group_background_color);
     KLBUI_group_bind("background-color:focus", on_klbui_group_background_color_focus);
     KLBUI_group_bind("background-color:disabled", on_klbui_group_background_color_disable);
 
+    // 背景图片 background-image
     KLBUI_group_bind("background-image", on_klbui_group_background_image);
     KLBUI_group_bind("background-image:focus", on_klbui_group_background_image_focus);
     KLBUI_group_bind("background-image:disabled", on_klbui_group_background_image_disable);
@@ -852,6 +842,7 @@ static void klbui_group_init_func_map(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
     KLBUI_group_bind("background-image-color-key:focus", on_klbui_group_background_image_color_key_focus);
     KLBUI_group_bind("background-image-color-key:disabled", on_klbui_group_background_image_color_key_disable);
 
+    // 边框宽度 border
     KLBUI_group_bind("border-width", on_klbui_group_border_width);
     KLBUI_group_bind("border-width:focus", on_klbui_group_border_width_focus);
     KLBUI_group_bind("border-width:disabled", on_klbui_group_border_width_disable);
@@ -860,12 +851,11 @@ static void klbui_group_init_func_map(klb_wnd_t* p_wnd, klbui_group_t* p_group, 
     KLBUI_group_bind("border-color:focus", on_klbui_group_border_color_focus);
     KLBUI_group_bind("border-color:disabled", on_klbui_group_border_color_disable);
 
+    // 私有自定义
+
     KLBUI_group_bind("title", on_klbui_group_title);
     KLBUI_group_bind("value", on_klbui_group_value);
-
-    (void)p_wnd;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // create, register

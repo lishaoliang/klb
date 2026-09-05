@@ -24,8 +24,6 @@ static void klbwnd_picture_destroy(klb_wnd_t* p_wnd)
 
 static void klbwnd_picture_on_paint_status(klb_wnd_t* p_wnd, klbwnd_picture_t* p_pic, klbwnd_picture_css_t* p_css, klbwnd_picture_attributes_t* p_attr, klb_rect_t* p_rect)
 {
-    (void)p_pic;
-    (void)p_css;
 
     // 有图时先刷背景色, 再画图; 避免切 mode 残留
     if (NULL != p_attr->background.image && 0 < sdslen(p_attr->background.image))
@@ -74,10 +72,6 @@ static int klbwnd_picture_on_paint(klb_wnd_t* p_wnd)
 
 static int klbwnd_picture_on_control(klb_wnd_t* p_wnd, int msg, const klb_point_t* p_pt1, const klb_point_t* p_pt2, int lparam, int wparam)
 {
-    (void)p_pt1;
-    (void)p_pt2;
-    (void)lparam;
-    (void)wparam;
 
     switch (msg)
     {

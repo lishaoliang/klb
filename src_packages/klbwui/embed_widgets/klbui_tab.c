@@ -113,7 +113,7 @@ static klbwnd_tab_css_t* check_css_klbui_tab(klb_wnd_t* p_wnd, int method)
 
 
 //////////////////////////////////////////////////////////////////////////
-// global CSS 方法 - 公共CSS属性
+// global CSS 方法 - 公共 CSS 属性
 
 static void globalcss_klbui_tab_margin(void* ptr, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -231,13 +231,14 @@ static void destroy_globalcss_klbwnd_tab(void* ptr)
 
 static void klbui_tab_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_ktab);
     if (NULL != ptr)
     {
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_ktab);
 
     // 添加全局 CSS 
@@ -245,9 +246,9 @@ static void klbui_tab_init_globalcss(klb_gui_t* p_gui)
     klbwnd_tab_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_ktab, p_css, destroy_globalcss_klbwnd_tab);
 
+
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法 - 全局CSS属性
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_GLOBAL_tab_bind("margin", globalcss_klbui_tab_margin);
@@ -286,7 +287,7 @@ static void klbui_tab_init_globalcss(klb_gui_t* p_gui)
 }
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法 -- 私有CSS属性
+// 仿 CSS 方法 -- 私有 CSS 属性
 
 static void on_klbui_tab_margin(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -391,7 +392,7 @@ static void on_klbui_tab_border_color(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, int 
 }
 
 //////////////////////////////////////
-// 自定义属性
+// 私有自定义
 
 static void on_klbui_tab_title(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -410,6 +411,7 @@ static void on_klbui_tab_value(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, int method,
 
 static void klbui_tab_init_func_map(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_css_map(p_gui, KLBWUI_ktab);
     if (NULL != ptr)
     {
@@ -417,14 +419,13 @@ static void klbui_tab_init_func_map(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, klb_gu
         return;
     }
 
-    // 未找到, 则新添加 解析map, 及处理函数
+    // step2. 新添加 解析map, 及处理函数
     ptr = klb_gui_new_css_map(p_gui, KLBWUI_ktab);
     p_tab->p_func_map = ptr;
 
 
     //////////////////////////////////////////////
-    // 若第一次, 则添加全局属性解析方法
-    // 仿 CSS 方法
+    // step3. 绑定CSS 支持的方法
 
     // 外边距 margin
     KLBUI_tab_bind("margin", on_klbui_tab_margin);
@@ -461,8 +462,7 @@ static void klbui_tab_init_func_map(klb_wnd_t* p_wnd, klbui_tab_t* p_tab, klb_gu
     // 边框的颜色 border-color
     KLBUI_tab_bind("border-color", on_klbui_tab_border_color);
 
-    //////////////////////////////////////////////
-    // 自定义方法
+    // 私有自定义
 
     KLBUI_tab_bind("title", on_klbui_tab_title);
     KLBUI_tab_bind("value", on_klbui_tab_value);

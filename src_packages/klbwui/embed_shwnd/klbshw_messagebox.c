@@ -68,7 +68,7 @@ static klb_map_t* klbshw_messagebox_on_get(klb_wnd_t* p_wnd, const klb_map_t* p_
 
 
 //////////////////////////////////////////////////////////////////////////
-// 仿 CSS 方法
+// 仿 CSS 方法 -- 根
 
 static void on_klbshw_messagebox_margin(klb_wnd_t* p_wnd, klbshw_messagebox_t* p_msgbox, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
@@ -95,6 +95,10 @@ static void on_klbshw_messagebox_border_color(klb_wnd_t* p_wnd, klbshw_messagebo
     klbuicssex_border_color(&(p_msgbox->css.normal.border), p_wnd, method, p_in, p_out);
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// 自定义属性
+
 static void on_klbshw_messagebox_title(klb_wnd_t* p_wnd, klbshw_messagebox_t* p_msgbox, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
     klbuicssex_attribute_sds(&(p_msgbox->msgbox.title), p_wnd, method, p_in, p_out);
@@ -102,8 +106,6 @@ static void on_klbshw_messagebox_title(klb_wnd_t* p_wnd, klbshw_messagebox_t* p_
 
 static void on_klbshw_messagebox_value(klb_wnd_t* p_wnd, klbshw_messagebox_t* p_msgbox, int method, const klb_map_t* p_in, klb_map_t* p_out)
 {
-    (void)p_msgbox;
-    (void)p_in;
 
     if (KLBUI_CSSEX_get == method)
     {
@@ -128,13 +130,13 @@ static void on_klbshw_messagebox_value(klb_wnd_t* p_wnd, klbshw_messagebox_t* p_
 //////////////////////////////////////////////////////////////////////////
 // css func
 
-#define KLBUI_msgbox_bind(KEY_, FUNC_) { klb_map_set_ptr(p_msgbox->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
+#define KLBSHW_messagebox_bind(KEY_, FUNC_) { klb_map_set_ptr(p_msgbox->p_func_map, (KEY_), (void*)(FUNC_), NULL); }
 
 static void klbshw_messagebox_init_func_map(klb_wnd_t* p_wnd, klbshw_messagebox_t* p_msgbox, klb_gui_t* p_gui)
 {
-    klb_map_t* ptr = klb_gui_css_map(p_gui, KLBSHW_messagebox);
-
     (void)p_wnd;
+
+    klb_map_t* ptr = klb_gui_css_map(p_gui, KLBSHW_messagebox);
 
     if (NULL != ptr)
     {
@@ -145,13 +147,16 @@ static void klbshw_messagebox_init_func_map(klb_wnd_t* p_wnd, klbshw_messagebox_
     ptr = klb_gui_new_css_map(p_gui, KLBSHW_messagebox);
     p_msgbox->p_func_map = ptr;
 
-    KLBUI_msgbox_bind("margin", on_klbshw_messagebox_margin);
-    KLBUI_msgbox_bind("padding", on_klbshw_messagebox_padding);
-    KLBUI_msgbox_bind("background-color", on_klbshw_messagebox_background_color);
-    KLBUI_msgbox_bind("border-width", on_klbshw_messagebox_border_width);
-    KLBUI_msgbox_bind("border-color", on_klbshw_messagebox_border_color);
-    KLBUI_msgbox_bind("title", on_klbshw_messagebox_title);
-    KLBUI_msgbox_bind("value", on_klbshw_messagebox_value);
+    // 根
+    KLBSHW_messagebox_bind("margin", on_klbshw_messagebox_margin);
+    KLBSHW_messagebox_bind("padding", on_klbshw_messagebox_padding);
+    KLBSHW_messagebox_bind("background-color", on_klbshw_messagebox_background_color);
+    KLBSHW_messagebox_bind("border-width", on_klbshw_messagebox_border_width);
+    KLBSHW_messagebox_bind("border-color", on_klbshw_messagebox_border_color);
+
+    // 自定义属性
+    KLBSHW_messagebox_bind("title", on_klbshw_messagebox_title);
+    KLBSHW_messagebox_bind("value", on_klbshw_messagebox_value);
 }
 
 
@@ -203,7 +208,6 @@ klb_wnd_t* klbui_shwnd_get_messagebox(klb_gui_t* p_gui)
 
 int klbshw_messagebox_wh(klb_gui_t* p_gui, int* p_out_w, int* p_out_h)
 {
-    (void)p_gui;
 
     if (NULL != p_out_w)
     {

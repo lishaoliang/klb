@@ -245,6 +245,7 @@ static void destroy_globalcss_klbwnd_demo(void* ptr)
 
 static void klbui_demo_init_globalcss(klb_gui_t* p_gui)
 {
+    // step1. 获取CSS 支持的方法
     klb_map_t* ptr = klb_gui_globalcss_map(p_gui, KLBWUI_kdemo);
 
     if (NULL != ptr)
@@ -252,31 +253,47 @@ static void klbui_demo_init_globalcss(klb_gui_t* p_gui)
         return;
     }
 
+    // step2. 新添加 解析map, 及公共 CSS 对象
     ptr = klb_gui_new_globalcss_map(p_gui, KLBWUI_kdemo);
 
     klbwnd_demo_css_t* p_css = KLB_MALLOCZ(klbwnd_demo_css_t, 1, 0);
     klbwnd_demo_css_init(p_css, p_gui);
     klb_gui_globalcss_set_ptr(p_gui, KLBWUI_kdemo, p_css, destroy_globalcss_klbwnd_demo);
 
+
+    //////////////////////////////////////////////
+    // step3. 绑定CSS 支持的方法
+
+    // 外边距 margin
     KLBUI_GLOBAL_demo_bind("margin", globalcss_klbui_demo_margin);
     KLBUI_GLOBAL_demo_bind("margin-top", globalcss_klbui_demo_margin_top);
     KLBUI_GLOBAL_demo_bind("margin-right", globalcss_klbui_demo_margin_right);
     KLBUI_GLOBAL_demo_bind("margin-bottom", globalcss_klbui_demo_margin_bottom);
     KLBUI_GLOBAL_demo_bind("margin-left", globalcss_klbui_demo_margin_left);
 
+    // 内边距 padding
     KLBUI_GLOBAL_demo_bind("padding", globalcss_klbui_demo_padding);
     KLBUI_GLOBAL_demo_bind("padding-top", globalcss_klbui_demo_padding_top);
     KLBUI_GLOBAL_demo_bind("padding-right", globalcss_klbui_demo_padding_right);
     KLBUI_GLOBAL_demo_bind("padding-bottom", globalcss_klbui_demo_padding_bottom);
     KLBUI_GLOBAL_demo_bind("padding-left", globalcss_klbui_demo_padding_left);
 
+    // 背景色 background-color
     KLBUI_GLOBAL_demo_bind("background-color", globalcss_klbui_demo_background_color);
+
+    // 背景图片 background-image
     KLBUI_GLOBAL_demo_bind("background-image", globalcss_klbui_demo_background_image);
     KLBUI_GLOBAL_demo_bind("background-image-mode", globalcss_klbui_demo_background_image_mode);
     KLBUI_GLOBAL_demo_bind("background-image-color-key", globalcss_klbui_demo_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_GLOBAL_demo_bind("border-width", globalcss_klbui_demo_border_width);
     KLBUI_GLOBAL_demo_bind("border-color", globalcss_klbui_demo_border_color);
+
+    // 文本颜色 color
     KLBUI_GLOBAL_demo_bind("color", globalcss_klbui_demo_color);
+
+    // 字体大小 font-size
     KLBUI_GLOBAL_demo_bind("font-size", globalcss_klbui_demo_font_size);
 }
 
@@ -434,25 +451,36 @@ static void klbui_demo_init_func_map(klb_wnd_t* p_wnd, klbui_demo_t* p_demo, klb
     //////////////////////////////////////////////
     // step3. 绑定CSS 支持的方法
 
+    // 外边距 margin
     KLBUI_demo_bind("margin", on_klbui_demo_margin);
     KLBUI_demo_bind("margin-top", on_klbui_demo_margin_top);
     KLBUI_demo_bind("margin-right", on_klbui_demo_margin_right);
     KLBUI_demo_bind("margin-bottom", on_klbui_demo_margin_bottom);
     KLBUI_demo_bind("margin-left", on_klbui_demo_margin_left);
 
+    // 内边距 padding
     KLBUI_demo_bind("padding", on_klbui_demo_padding);
     KLBUI_demo_bind("padding-top", on_klbui_demo_padding_top);
     KLBUI_demo_bind("padding-right", on_klbui_demo_padding_right);
     KLBUI_demo_bind("padding-bottom", on_klbui_demo_padding_bottom);
     KLBUI_demo_bind("padding-left", on_klbui_demo_padding_left);
 
+    // 背景色 background-color
     KLBUI_demo_bind("background-color", on_klbui_demo_background_color);
+
+    // 背景图片 background-image
     KLBUI_demo_bind("background-image", on_klbui_demo_background_image);
     KLBUI_demo_bind("background-image-mode", on_klbui_demo_background_image_mode);
     KLBUI_demo_bind("background-image-color-key", on_klbui_demo_background_image_color_key);
+
+    // 边框宽度 border
     KLBUI_demo_bind("border-width", on_klbui_demo_border_width);
     KLBUI_demo_bind("border-color", on_klbui_demo_border_color);
+
+    // 文本颜色 color
     KLBUI_demo_bind("color", on_klbui_demo_color);
+
+    // 字体大小 font-size
     KLBUI_demo_bind("font-size", on_klbui_demo_font_size);
 }
 

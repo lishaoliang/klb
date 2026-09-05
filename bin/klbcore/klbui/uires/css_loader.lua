@@ -6,6 +6,7 @@
 -- @note   与 klbcore.klbui.csser (parse 管线) 不同; 启动前须 res.configure({ css_dirs = {...} })
 -- @history 修改历史
 --  \n [2026] 创建文件
+--  \n [2026] load_css 按 S/M/L 写入字号阶梯, 供 S000_css 等通过 getter 读取
 --]]
 local lfs = require("lfs")
 local klbui = require("klbcore.klbui")
@@ -33,13 +34,42 @@ local allCssCur = {}
 local font_size_str = 'M'
 
 
--- 基础标准字号 (默认值; 页面在标准字号上 +1/-1 使用)
-local font_size_S = 20		-- 字号 --
-local font_size_M = 22		-- 字号 -
+-- 基础标准字号 (M 档默认 24, 对齐 pref DEFAULT_FONT / klbui_default_css.md)
+local font_size_S = 16		-- 字号 --
+local font_size_M = 20		-- 字号 -
 local font_size = 24		-- 当前 标准字号
 local font_size_L = 26		-- 字号 +
 local font_size_XL = 28		-- 字号 ++
-local font_size_max = 48	-- 字号 max
+local font_size_max = 42	-- 字号 max
+
+
+-- @brief 按字号档位写入像素阶梯
+-- @param [in] tier[string]	'S' / 'M' / 'L'
+-- @return 无
+local function ApplyFontTier(tier)
+	if 'S' == tier then
+		font_size_S = 14
+		font_size_M = 15
+		font_size = 16
+		font_size_L = 18
+		font_size_XL = 20
+		font_size_max = 36
+	elseif 'L' == tier then
+		font_size_S = 24
+		font_size_M = 28
+		font_size = 32
+		font_size_L = 34
+		font_size_XL = 36
+		font_size_max = 48
+	else
+		font_size_S = 18
+		font_size_M = 20
+		font_size = 24
+		font_size_L = 26
+		font_size_XL = 28
+		font_size_max = 42
+	end
+end
 
 
 -- @brief 拷贝CSS
@@ -230,6 +260,8 @@ function css_loader.load_css(font_str)
 		font_size_str = 'M'
 	end
 
+	ApplyFontTier(font_size_str)
+
 	-- step3. 依次从 configure 指定的路径列表中读取 css 定义文件
 	-- 并将结果 用 "拷贝 + 覆盖" 的方式, 存储于 defaultCssCur / globalCssCur
 	print('Lua. load_css')
@@ -246,6 +278,16 @@ function css_loader.load_css(font_str)
 	for i = 1, #css_files do
 		LoadCssFile(css_files[i])
 	end
+end
+
+
+-- @brief 当前 S000 default 基线 (须在 load_css 之后)
+-- @return css[table]
+function css_loader.default()
+	local css = {}
+
+	CopyCss(css, defaultCssCur)
+	return css
 end
 
 
