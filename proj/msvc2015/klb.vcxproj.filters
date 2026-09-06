@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="inc">
@@ -112,7 +112,7 @@
     <Filter Include="src_c\klua\luafilesystem-2.0\src">
       <UniqueIdentifier>{9a0eccee-3998-4b14-ade5-3783b4717d63}</UniqueIdentifier>
     </Filter>
-<Filter Include="src_c\klua\LuaXML_130610">
+    <Filter Include="src_c\klua\LuaXML_130610">
       <UniqueIdentifier>{8d9394db-fc17-4dc9-bb1f-e4ce3218761c}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbthird">
@@ -121,16 +121,16 @@
     <Filter Include="inc\klbthird\openssl">
       <UniqueIdentifier>{a1ba7eb4-230f-404e-9208-ef290f2836c8}</UniqueIdentifier>
     </Filter>
-<Filter Include="src_c\klua\klua_format">
+    <Filter Include="src_c\klua\klua_format">
       <UniqueIdentifier>{473b897d-0c81-4eb7-a14b-6febed14a225}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klua\lua-skynet">
       <UniqueIdentifier>{4dcc6a0b-7593-4374-ad26-ebf6624cf2f4}</UniqueIdentifier>
     </Filter>
-<Filter Include="src_packages">
+    <Filter Include="src_packages">
       <UniqueIdentifier>{9f91b2a6-5e02-4b06-9ff9-8faf81fd4714}</UniqueIdentifier>
     </Filter>
-<Filter Include="src_c\klbgui\widgets">
+    <Filter Include="src_c\klbgui\widgets">
       <UniqueIdentifier>{5066e017-b6b6-4fce-8c0f-97b3c1e93817}</UniqueIdentifier>
     </Filter>
     <Filter Include="build">
@@ -181,7 +181,7 @@
     <Filter Include="src_c\klbapp">
       <UniqueIdentifier>{5dfe523c-8a25-4363-994b-71aeaa709a88}</UniqueIdentifier>
     </Filter>
-<Filter Include="src_c\klua\lua-zlib-1.3">
+    <Filter Include="src_c\klua\lua-zlib-1.3">
       <UniqueIdentifier>{7ef202fe-f4b1-4e25-82cb-ccd8ecc10dcc}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbnet\klbrtsp">
@@ -717,7 +717,7 @@
     <ClInclude Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.h">
       <Filter>src_c\klua\luafilesystem-2.0\src</Filter>
     </ClInclude>
-<ClInclude Include="..\..\inc\klbbase\klb_package.h">
+    <ClInclude Include="..\..\inc\klbbase\klb_package.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_coroutine.h">
@@ -759,7 +759,7 @@
     <ClInclude Include="..\..\inc\klbutil\klb_map_serialize.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
-<ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h">
+    <ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_object.h">
@@ -768,7 +768,7 @@
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h">
       <Filter>src_c\klua\klua_util</Filter>
     </ClInclude>
-<ClInclude Include="..\..\inc\klbutil\klb_nlist.h">
+    <ClInclude Include="..\..\inc\klbutil\klb_nlist.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbutil\klb_nvector.h">
@@ -780,7 +780,7 @@
     <ClInclude Include="..\..\inc\klbutil\klb_vector.h">
       <Filter>inc\klbutil</Filter>
     </ClInclude>
-<ClInclude Include="..\..\inc\klua\klua_gui.h">
+    <ClInclude Include="..\..\inc\klua\klua_gui.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klua\klua_thread.h">
@@ -801,13 +801,13 @@
     <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h">
       <Filter>src_c\klbgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_time.h">
-      <Filter>src_c\klbgui\extensions</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h">
+      <Filter>src_c\klbgui\extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_flex.h">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h">
@@ -999,10 +999,10 @@
     <ClInclude Include="..\..\inc\lualib.h">
       <Filter>inc</Filter>
     </ClInclude>
-<ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.h">
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.h">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClInclude>
-<ClInclude Include="..\..\inc\klbapp\klbappex_klua.h">
+    <ClInclude Include="..\..\inc\klbapp\klbappex_klua.h">
       <Filter>inc\klbapp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src_c\klbapp\klbappex_klua_in.h">
@@ -1355,6 +1355,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.h">
       <Filter>src_packages\klbwui\embed_shwnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd_flex.h">
+      <Filter>inc\klbgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1735,7 +1738,7 @@
     <ClCompile Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.c">
       <Filter>src_c\klua\luafilesystem-2.0\src</Filter>
     </ClCompile>
-<ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c">
+    <ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c">
       <Filter>src_c\klua\LuaXML_130610</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_ksys.c">
@@ -1810,7 +1813,7 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_map_serialize.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
-<ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c">
+    <ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_klist.c">
@@ -1819,7 +1822,7 @@
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_kobject.c">
       <Filter>src_c\klua\klua_util</Filter>
     </ClCompile>
-<ClCompile Include="..\..\src_c\klbutil\klb_nlist.c">
+    <ClCompile Include="..\..\src_c\klbutil\klb_nlist.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbutil\klb_nvector.c">
@@ -1831,13 +1834,13 @@
     <ClCompile Include="..\..\src_c\klbutil\klb_vector.c">
       <Filter>src_c\klbutil</Filter>
     </ClCompile>
-<ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c">
+    <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c">
       <Filter>src_c\klbgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_time.c">
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c">
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_flex.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c">
@@ -2011,10 +2014,10 @@
     <ClCompile Include="..\..\src_c\klbapp\klb_app.c">
       <Filter>src_c\klbapp</Filter>
     </ClCompile>
-<ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.c">
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.c">
       <Filter>src_c\klbgui\extensions</Filter>
     </ClCompile>
-<ClCompile Include="..\..\src_c\klbapp\klbappex_klua.c">
+    <ClCompile Include="..\..\src_c\klbapp\klbappex_klua.c">
       <Filter>src_c\klbapp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_kenv.c">

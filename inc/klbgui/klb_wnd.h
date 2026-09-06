@@ -1,10 +1,11 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2020, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_wnd.h
 /// @author  随风(https://gitee.com/klua/klb)
 /// @brief   窗口定义
-/// @version 0.8
+/// @version 1.0
 /// @history 修改历史
 ///   \n [2023-4] 提供 klb_wnd_push_child 函数, 许可在扩展控件开发中 自行构建窗口树
 ///   \n [2023-5] 添加 klb_wnd_on_paint_cb 定义, 许可控件开发者替换绘图函数
@@ -16,18 +17,22 @@
 ///   \n [2025-1] 添加 KLB_WND_STYLE_LAYER_POPUP, KLB_WND_STYLE_LAYER_MSGBOX 图层定义
 ///   \n [2025-2] 添加 KLB_WND_STATUS_TIP_DYNAMIC 动态TIP机制
 ///   \n [2025-7] 添加 KLB_WND_STYLE_LAYER_UDATA, KLB_WND_STYLE_LAYER_WAIT 图层定义
+///   \n [2026+] 添加 KLB_WND_STYLE_FLEX, KLB_WND_STATUS_FLEX_DIRTY 自动布局定义(详见 klbuiex_flex_t 扩展 / klb_wnd_flex.h)
+///   \n [2026+] 扩充klb_wnd_pos_t: 自动布局(flex), "z-index", klb_wnd_pos_t.rect_in_flex
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_WND_H__
 #define __KLB_WND_H__
+
 
 #include "klb_type.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_rect.h"
 #include "klbutil/klb_color.h"
 #include "klbutil/klb_canvas.h"
-#include "klbgui/klb_msg.h"
 #include "klbutil/klb_map.h"
 #include "klbthird/sds.h"
+#include "klbgui/klb_msg.h"
+#include "klbgui/klb_wnd_flex.h"
 
 
 #if defined(__cplusplus)
@@ -45,8 +50,12 @@ typedef struct klb_wnd_pos_t_
 {
     klb_rect_t  rect_in_canvas;             ///< 基于画布的坐标(屏幕)
     klb_rect_t  rect_in_parent;             ///< 基于父窗口的坐标
-}klb_wnd_pos_t;
 
+    klb_rect_t  rect_in_flex;               ///< [2026+]flex 自动布局声明: 详见 klbuiex_flex_t 扩展
+
+    uint16_t    layout_algo;                ///< [2026+]L1 布局引擎: klb_wnd_flex_algo_e; 详见 klb_wnd_flex.h / klbuiex_flex_t
+    int16_t     z_index;                    ///< [2026+]["z-index"] 堆叠顺序; 默认0;
+}klb_wnd_pos_t;
 
 /// @enum  klb_wnd_style_e
 /// @brief 窗口样式标记
@@ -63,6 +72,8 @@ typedef enum klb_wnd_style_e_
 
     KLB_WND_STYLE_TICKER                = 0x0400,   ///< 支持控件定时器(只要处于激活的顶层窗口, 即生效)
     KLB_WND_STYLE_TICKER_TOPMOST        = 0x0800,   ///< 支持控件定时器(必须处于激活的最顶层窗口, 即生效)
+
+    KLB_WND_STYLE_FLEX                  = 0x8000,   ///< [2026+]flex 自动布局: append 的 x,y,w,h 为 flex 声明; 详见 klbuiex_flex_t / klb_wnd_flex.h
 
     KLB_WND_STYLE_LAYER_POPUP           = 0x0010000,///< popup 图层
     KLB_WND_STYLE_LAYER_MSGBOX          = 0x0020000,///< messagebox 图层
@@ -81,8 +92,9 @@ typedef enum klb_wnd_status_e_
     KLB_WND_STATUS_CHECK                = 0x0004,   ///< 选中状态
     KLB_WND_STATUS_DISABLE              = 0x0008,   ///< 不使能
 
-    KLB_WND_STATUS_TOPMOST              = 0x0100,   ///< 激活中的最顶层窗口: 所有 "modal"/"popup"/"messagebox"中处于最顶层
-    
+    KLB_WND_STATUS_TOPMOST              = 0x0100,   ///< 激活中的最顶层窗口: 所有 "modal"/"popup"/"messagebox"中处于最顶层 
+    KLB_WND_STATUS_FLEX_DIRTY           = 0x0800,   ///< [2026+]需要 flex 自动布局: 详见 klbuiex_flex_t 扩展
+
     KLB_WND_STATUS_FOCUS                = 0x1000,   ///< 鼠标聚焦
     KLB_WND_STATUS_TIP_DYNAMIC          = 0x2000,   ///< 需要重新计算动态TIP
     KLB_WND_STATUS_RESIZE               = 0x4000,   ///< 重置了窗口大小, 需要控件处理布局问题
@@ -344,6 +356,13 @@ KLB_API bool klb_wnd_is_enable(klb_wnd_t* p_wnd);
 /// @note  此状态的设置函数, 只能由框架内部决定
 KLB_API bool klb_wnd_is_topmost(klb_wnd_t* p_wnd);
 
+/// @brief 设置 flex 布局是否需要重新计算
+/// @note 仅标记, 由框架决定合适的刷新时机; 且设置 KLB_WND_STYLE_FLEX 才生效
+KLB_API void klb_wnd_flex_dirty(klb_wnd_t* p_wnd, bool dirty);
+
+/// @brief 获取 flex 布局是否需要重新计算
+KLB_API bool klb_wnd_is_flex_dirty(klb_wnd_t* p_wnd);
+
 /// @brief 设置动态 是否需要更新
 ///  dynamic tip 
 KLB_API void klb_wnd_dyntip(klb_wnd_t* p_wnd, bool update);
@@ -352,6 +371,22 @@ KLB_API void klb_wnd_dyntip(klb_wnd_t* p_wnd, bool update);
 ///  dynamic tip 
 KLB_API bool klb_wnd_is_dyntip(klb_wnd_t* p_wnd);
 
+
+//////////////////////////////////////////////////////////////////////////
+// flex 自动布局
+
+/// @brief 设置 flex 布局引擎
+/// @note 仅设置 KLB_WND_STYLE_FLEX 才生效
+KLB_API void klb_wnd_set_flex_algo(klb_wnd_t* p_wnd, klb_wnd_flex_algo_e algo);
+
+/// @brief 获取 flex 布局引擎
+KLB_API klb_wnd_flex_algo_e klb_wnd_get_flex_algo(klb_wnd_t* p_wnd);
+
+/// @brief 设置 z 索引
+KLB_API void klb_wnd_set_z_index(klb_wnd_t* p_wnd, int z_index);
+
+/// @brief 获取 z 索引
+KLB_API int klb_wnd_get_z_index(klb_wnd_t* p_wnd);
 
 //////////////////////////////////////////////////////////////////////////
 // tip
@@ -507,6 +542,9 @@ KLB_API int klb_wnd_text_size2(klb_wnd_t* p_wnd, const char* p_utf8, int utf8_le
 KLB_API int klb_wnd_draw_text2(klb_wnd_t* p_wnd, const klb_rect_t* p_rect, const char* p_utf8, int utf8_len, uint32_t color, int font_h);
 
 
+//////////////////////////////////////////////////////////////////////////
+// 扩展绘图
+
 /// @brief 可扩展绘图接口
 KLB_API int klb_wnd_draw_opt1(klb_wnd_t* p_wnd, int opt, const void* ptr1);
 KLB_API int klb_wnd_draw_opt2(klb_wnd_t* p_wnd, int opt, const void* ptr1, const void* ptr2);
@@ -523,4 +561,5 @@ KLB_API int klb_wnd_draw_opt8(klb_wnd_t* p_wnd, int opt, const void* ptr1, const
 #endif
 
 #endif // __KLB_WND_H__
-//end
+
+// end

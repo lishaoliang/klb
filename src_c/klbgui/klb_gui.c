@@ -79,6 +79,15 @@ klb_gui_t* klb_gui_create(klb_canvas_t* p_canvas)
 
         // util
         p_gui->p_util = klbuiex_get_util(p_gui);
+
+        // 取得 flex 自动布局 模块
+        p_gui->p_flex = klbuiex_get_flex(p_gui);
+    }
+
+    // 设置依赖
+    {
+        // wndhasn 依赖 flex
+        klbuiex_wndhash_set_flex(p_gui->p_wndhash, p_gui->p_flex);
     }
 
     // 注册标准窗口类型
@@ -424,9 +433,9 @@ int klb_gui_clear_image(klb_gui_t* p_gui)
     return 1;
 }
 
-int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style)
+int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd)
 {
-    return klbuiex_wndhash_append(p_gui->p_wndhash, p_type, p_path_name, x, y, w, h, style);
+    return klbuiex_wndhash_append(p_gui->p_wndhash, p_type, p_path_name, x, y, w, h, style, p_out_wnd);
 }
 
 klb_wnd_t* klb_gui_find_wnd(klb_gui_t* p_gui, const char* p_path_name)
@@ -548,6 +557,11 @@ static void do_push_stack_top_wnd(klb_gui_t* p_gui, klb_wnd_t* p_wnd)
 
         // 只有最顶层窗口拥有 "onload"事件响应
         klb_wnd_call_command(p_wnd, KLBUI_onload, NULL, NULL, 0, 0);
+    }
+
+    // "onflex" 事件处理 : 处理 flex 自动布局
+    {
+        klbuiex_flex_do_parent_rect(p_gui->p_flex);
     }
 
     // "onpredraw" 事件

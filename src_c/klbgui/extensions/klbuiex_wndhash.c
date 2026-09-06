@@ -21,6 +21,7 @@ typedef struct klbuiex_wndhash_top_t_
 typedef struct klbuiex_wndhash_t_
 {
     klb_gui_t*      p_gui;              ///< gui对象
+    klbuiex_flex_t* p_flex;             ///< 自动布局扩展
 
     klb_hlist_t*    p_creater_hlist;    ///< 类型对应的创建函数表
     klb_hlist_t*    p_wnd_hlist;        ///< 顶层窗口: klbuiex_wndhash_top_t*
@@ -32,6 +33,12 @@ static void klbuiex_wndhash_quit(klbuiex_wndhash_t* p_wndhash);
 
 //////////////////////////////////////////////////////////////////////////
 // 
+
+int klbuiex_wndhash_set_flex(klbuiex_wndhash_t* p_wndhash, klbuiex_flex_t* p_flex)
+{
+    p_wndhash->p_flex = p_flex;
+    return 0;
+}
 
 int klbuiex_wndhash_register(klbuiex_wndhash_t* p_wndhash, const char* p_type, klb_wnd_create_cb cb_create)
 {
@@ -99,7 +106,7 @@ static void klbuiex_wndhash_split_path_name(const char* p_path_name, char** p_di
     }
 }
 
-int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style)
+int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd)
 {
     // step 1. 获取控件类型创建函数
     klb_wnd_create_cb cb_create = klbuiex_wndhash_get_creater(p_wndhash, p_type);
@@ -145,13 +152,39 @@ int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, con
             return 4; // 已经存在
         }
 
-        // step D. 创建窗口
-        klb_wnd_t* p_wnd = cb_create(p_wndhash->p_gui, x, y, w, h);
+        // step D. 检查是否需要自动布局
+        int x1 = 0, y1 = 0, w1 = 0, h1 = 0;
+        bool is_flex = klbuiex_flex_is_flex(x, y, w, h, style, &x1, &y1, &w1, &h1);
+
+        // step E. 创建窗口
+        klb_wnd_t* p_wnd = cb_create(p_wndhash->p_gui, x1, y1, w1, h1);
         klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
+
+        // step F. 将窗口添加到父窗口
         klb_wnd_push_child(p_parent, p_wnd);
 
-        // step E. 存储
+        // step G. 存储
         klb_hlist_push_tail(p_top->p_hlist, p_path_name, path_len, p_wnd);
+
+        // step H. 自身检查是否需要自动布局
+        if( is_flex ) 
+        {
+            p_wnd->pos.rect_in_flex.x = x;
+            p_wnd->pos.rect_in_flex.y = y;
+            p_wnd->pos.rect_in_flex.w = w;
+            p_wnd->pos.rect_in_flex.h = h;
+
+            // KLB_WND_STATUS_FLEX_DIRTY 
+            p_wnd->state.status |= KLB_WND_STATUS_FLEX_DIRTY;
+
+            // 父窗口放入 klbuiex_flex_push
+            klbuiex_flex_push(p_wndhash->p_flex, p_parent);
+        }
+
+        if( NULL != p_out_wnd )
+        {
+            *p_out_wnd = p_wnd;
+        }
     }
     else
     {
@@ -163,19 +196,43 @@ int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, con
             return 4; // 已经存在
         }
 
-        // step B. 创建顶层窗口
-        klb_wnd_t* p_wnd = cb_create(p_wndhash->p_gui, x, y, w, h);
+        // step B. 检查是否需要自动布局
+        int x1 = 0, y1 = 0, w1 = 0, h1 = 0;
+        bool is_flex = klbuiex_flex_is_flex(x, y, w, h, style, &x1, &y1, &w1, &h1);
+
+        // step C. 创建顶层窗口
+        klb_wnd_t* p_wnd = cb_create(p_wndhash->p_gui, x1, y1, w1, h1);
         klb_wnd_set_top(p_wnd);
         klb_wnd_set_style(p_wnd, style | klb_wnd_get_style(p_wnd));
 
-        // step C. 将顶层窗口及对应的索引 存入 p_wnd_hlist
+        // step E. 将顶层窗口及对应的索引 存入 p_wnd_hlist
         klbuiex_wndhash_top_t* p_top = KLB_MALLOCZ(klbuiex_wndhash_top_t, 1, 0);
         p_top->p_top_wnd = p_wnd;
         p_top->p_hlist = klb_hlist_create(0);
         klb_hlist_push_tail(p_wndhash->p_wnd_hlist, p_path_name, path_len, p_top);
 
-        // step D. 顶层窗口本身也存一份
+        // step F. 顶层窗口本身也存一份
         klb_hlist_push_tail(p_top->p_hlist, p_path_name, path_len, p_wnd);
+
+        // step G. 检查是否需要自动布局
+        if( is_flex ) 
+        {
+            p_wnd->pos.rect_in_flex.x = x;
+            p_wnd->pos.rect_in_flex.y = y;
+            p_wnd->pos.rect_in_flex.w = w;
+            p_wnd->pos.rect_in_flex.h = h;
+
+            // KLB_WND_STATUS_FLEX_DIRTY 
+            p_wnd->state.status |= KLB_WND_STATUS_FLEX_DIRTY;
+
+            // 自身放入 klbuiex_flex_push, 本身是顶层窗口,  布局则依赖画布 
+            klbuiex_flex_push(p_wndhash->p_flex, p_wnd);
+        }
+        
+        if( NULL != p_out_wnd )
+        {
+            *p_out_wnd = p_wnd;
+        }
     }
 
     return 0;

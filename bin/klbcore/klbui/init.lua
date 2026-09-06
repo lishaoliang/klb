@@ -10,6 +10,8 @@
 --		[2025-1] 添加设置控件定时器时间间隔
 --		[2025-2] 添加 并默认 启用 C++ 扩展控件
 --		[2025-7] 添加 操作单个窗口 接口 wnder.new()
+--		[2026-] 删除 支持 C++, 核心不再直接支持C++
+--		[2026+] 添加 独立的 flexer 模块, 支持 flex 自动布局 / z-index
 --]]
 local kco = require("kco")
 local kgui = require("kgui")
@@ -33,10 +35,11 @@ local klbui = {}
 --	local dialog = {
 --		['path'] = '/home',['type'] = 'kdialog',['pos'] = {0, 0, 1280, 720},
 --		['title'] = '测试解析对话框!',
+--		['name'] = 'test_dialog',
 --		['child'] = {{...}, {...}, {...}}
 --	}
 --	local commands = {
---		['/home'] = {
+--		['test_dialog'] = {
 --			['load'] = function ()
 --				...
 --			end
@@ -44,7 +47,7 @@ local klbui = {}
 --				...
 --			end
 --		},
---		['/xxx'] = {...}
+--		['xxx'] = {...}
 -- 	}
 --  local css = {
 --		['type'] = {
@@ -359,9 +362,9 @@ klbui.resize = function (path, w, h)
 end
 
 
--- @brief 获取窗口位置
+-- @brief 获取窗口位置大小(x,y,w,h);  依参数决定: 画布坐标 或 基于父窗口的相对坐标
 -- @param [in] path[string]			窗口路径(类unix): eg."/home/btn1"
--- @param [in] is_in_canvas[bool]	画布坐标(默认true)
+-- @param [in] is_in_canvas[bool]	画布坐标(默认true): true.画布坐标; false.基于父窗口的相对坐标
 -- @return [table]		{x=0,y=0,w=1024,h=768} 或 {}
 klbui.wndpos = function (path, is_in_canvas)
 	return kgui.wndpos(path, is_in_canvas)

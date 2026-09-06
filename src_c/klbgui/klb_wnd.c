@@ -261,6 +261,25 @@ bool klb_wnd_is_topmost(klb_wnd_t* p_wnd)
     return (KLB_WND_STATUS_TOPMOST & p_wnd->state.status) ? true : false;
 }
 
+/// @brief 设置 flex 布局是否需要重新计算
+KLB_API void klb_wnd_flex_dirty(klb_wnd_t* p_wnd, bool dirty)
+{
+    if (dirty)
+    {
+        p_wnd->state.status |= KLB_WND_STATUS_FLEX_DIRTY;
+    }
+    else
+    {
+        p_wnd->state.status &= ~(uint32_t)(KLB_WND_STATUS_FLEX_DIRTY);
+    }
+}
+
+/// @brief 获取 flex 布局是否需要重新计算
+KLB_API bool klb_wnd_is_flex_dirty(klb_wnd_t* p_wnd)
+{
+    return (KLB_WND_STATUS_FLEX_DIRTY & p_wnd->state.status) ? true : false;
+}
+
 void klb_wnd_dyntip(klb_wnd_t* p_wnd, bool update)
 {
     if (update)
@@ -277,6 +296,51 @@ bool klb_wnd_is_dyntip(klb_wnd_t* p_wnd)
 {
     return (KLB_WND_STATUS_TIP_DYNAMIC & p_wnd->state.status) ? true : false;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// flex 布局
+
+/// @brief 设置 flex 布局引擎
+void klb_wnd_set_flex_algo(klb_wnd_t* p_wnd, klb_wnd_flex_algo_e algo)
+{
+    p_wnd->pos.layout_algo = algo;
+}
+
+/// @brief 获取 flex 布局引擎
+klb_wnd_flex_algo_e klb_wnd_get_flex_algo(klb_wnd_t* p_wnd)
+{
+    return p_wnd->pos.layout_algo;
+}
+
+/// @brief 设置 z 索引
+void klb_wnd_set_z_index(klb_wnd_t* p_wnd, int z_index)
+{
+    // ["z-index"] 范围: [-32768, 32767]
+    int16_t z_index16 = 0;
+    if (z_index < -32768)
+    {
+        z_index16 = -32768;
+    }
+    else if (z_index > 32767)
+    {
+        z_index16 = 32767;
+    }
+    else
+    {
+        z_index16 = (int16_t)z_index;
+    }
+
+    p_wnd->pos.z_index = z_index;
+}
+
+/// @brief 获取 z 索引
+int klb_wnd_get_z_index(klb_wnd_t* p_wnd)
+{
+    return p_wnd->pos.z_index;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// tip
 
 void klb_wnd_set_tip(klb_wnd_t* p_wnd, const char* p_tip)
 {

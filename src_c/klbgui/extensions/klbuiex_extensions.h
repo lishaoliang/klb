@@ -28,6 +28,7 @@
 #include "klbgui/extensions/klbuiex_waitlayer.h"
 #include "klbgui/extensions/klbuiex_tip.h"
 #include "klbgui/extensions/klbuiex_util.h"
+#include "klbgui/extensions/klbuiex_flex.h"
 
 
 #if defined(__cplusplus)
@@ -49,6 +50,7 @@ extern "C" {
     klbuiex_register_waitlayer((GUI_)); \
     klbuiex_register_tip((GUI_));       \
     klbuiex_register_util((GUI_));      \
+    klbuiex_register_flex((GUI_));      \
 }
 
 

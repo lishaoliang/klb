@@ -197,6 +197,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
     <ClInclude Include="..\..\inc\klbgui\klb_wnd_ex.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd_flex.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_bufpoolfix.h" />
@@ -354,6 +355,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbapp\klb_app_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
+    <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_flex.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_render.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.h" />
@@ -562,6 +564,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbformat\klb_flv_demux.c" />
     <ClCompile Include="..\..\src_c\klbformat\klb_png.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_default.c" />
+    <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_flex.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_redraw.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_render.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_shwnd.c" />

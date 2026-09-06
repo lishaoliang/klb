@@ -7,7 +7,7 @@
 ///   默认配色采用 visual studio 深色系风格
 ///   图标来源于1: http://iconpark.oceanengine.com/official
 ///   图标来源于2: https://remixicon.com/
-/// @version 0.7
+/// @version 0.8
 /// @history 修改历史
 ///   \n [2023-1] 调整绘制窗体类型: "modal" - "popup" - "messagebox" - "tip"
 ///   \n [2023-1] 添加扩展机制: 将由扩展来处理ui的部分功能
@@ -16,6 +16,7 @@
 ///   \n [2025-6] 调整UI图形渲染功能到专门的内部渲染扩展模块中
 ///   \n [2025-6] 添加支持多画布图层绘图模式(指 modal/popup/msgbox 分别使用不同的 画布)
 ///   \n [2025-8] 剔除UI框架中的所有控件(仅保留tip, 降低核心库大小), 改由可选扩展包支持
+///   \n [2026+] 添加 flex 自动布局支持
 /// @warning 没有警告
 ///////////////////////////////////////////////////////////////////////////
 #ifndef __KLB_GUI_H__
@@ -199,9 +200,11 @@ KLB_API int klb_gui_clear_image(klb_gui_t* p_gui);
 /// @param [in] y               相对父窗口Y坐标
 /// @param [in] w               宽
 /// @param [in] h               高
+/// @param [in] style           窗口样式: 详见 klb_wnd_style_e
+/// @param [out] *p_out_wnd     输出窗口指针
 /// @return int 0.成功; 非0.失败(错误码)
 /// @note 前父窗口必须存在; eg. "/home/btn1" 则需要 "/home" 必须存在, 才能添加
-KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
+KLB_API int klb_gui_append(klb_gui_t* p_gui, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd);
 
 
 /// @brief 依路径查找窗口

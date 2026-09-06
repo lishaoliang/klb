@@ -3,6 +3,8 @@
 -- @file   wnder.lua
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  窗口
+-- @history 修改历史
+--		[2026+] 添加 自动布局相关 flex_algo / z_index 接口
 --]]
 
 local wnder = {}
@@ -38,6 +40,24 @@ function window:hide(is_hide)
 	end
 end
 
+
+-- 设置/获取 flex 自动布局 引擎
+function window:flex_algo(algo)
+	if self._kwnd then
+		return self._kwnd:flex_algo(algo)
+	end
+	
+	return 0
+end
+
+-- 设置/获取 z 索引
+function window:z_index(z_index)
+	if self._kwnd then
+		return self._kwnd:z_index(z_index)
+	end
+	
+	return 0
+end
 
 -- 设置/获取 静态TIP
 function window:tip(s)

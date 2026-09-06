@@ -76,6 +76,7 @@ typedef struct klb_gui_t_
         klbuiex_waitlayer_t*    p_waitlayer;            ///< wait layer 等待图层 扩展
         klbuiex_tip_t*          p_tip;                  ///< tip 图层扩展
         klbuiex_util_t*         p_util;                 ///< util
+        klbuiex_flex_t*         p_flex;                 ///< flex 自动布局 扩展
     };
 
     // 当前绘制窗口, 窗口显示次序

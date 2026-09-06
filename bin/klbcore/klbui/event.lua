@@ -139,6 +139,11 @@ event.onresize = 0x603		-- onresize
 event.onchange = 0x604		-- onchange
 
 
+-- @def   KLBUI_onflex
+-- @brief flex 自动布局事件: 框架 klbuiex_flex_t 完成 BoxFlow 布局后触发
+event.onflex = 0x640		-- onflex
+
+
 -- @def   KLBUI_focusin
 -- @brief 即将获得焦点事件: 窗口组件即将获得焦点时触发
 event.focusin = 0x700		-- focusin
@@ -244,6 +249,9 @@ local transform_map = {
 	
 	['onchange'] = event.onchange,		-- 内容变更事件
 	[event.onchange] = 'onchange',		-- 内容变更事件
+	
+	['onflex'] = event.onflex,			-- flex 自动布局事件
+	[event.onflex] = 'onflex',			-- flex 自动布局事件
 	
 	['focusin'] = event.focusin,		-- 即将获得焦点事件: 窗口组件即将获得焦点时触发
 	[event.focusin] = 'focusin',

@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2023, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbui_event.h
@@ -6,10 +7,11 @@
 /// @brief   klb ui event 事件
 ///        1. UI消息/事件只是名称上的叫法, 在UI里面描述的是同一个
 ///        2. 事件名称定义参考 H5
-/// @version 0.1
+/// @version 0.3
 /// @history 修改历史
 ///   \n [2023-1]调整自定义message名称为 event 事件
 ///   \n [2025-1]添加定时器事件
+///   \n [2026+]添加 flex 自动布局事件
 /// @warning 没有警告
 /// @note 窗口流程:
 ///        -> *_create(...) / klb_wnd_push_child(...) / klb_gui_append(...)         创建及加入窗口树
@@ -224,6 +226,11 @@ typedef enum klbui_mousedrag_lparam_e_
 #define KLBUI_onchange          0x604           // onchange
 
 
+/// @def   KLBUI_onflex
+/// @brief flex 自动布局事件: 框架 klbuiex_flex_t 完成 BoxFlow 布局后触发
+/// @note  与 KLBUI_layout(控件内部重布局) / KLBUI_onresize(几何变更通知) 区分
+#define KLBUI_onflex            0x640           // onflex
+
 
 ///////////////////////////////////////
 // 焦点相关
@@ -313,4 +320,5 @@ typedef enum klbui_mousedrag_lparam_e_
 #endif
 
 #endif // __KLBUI_EVENT_H__
-//end
+
+// end

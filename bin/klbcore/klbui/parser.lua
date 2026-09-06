@@ -7,13 +7,16 @@
 --   [2023-4] parse解析时, 加入随机唯一路径机制, 使用者可以省略['path']参数
 -- @note 关键字等含义 参考 html5 标准: https://www.w3school.com.cn/html/html5_intro.asp
 ---   https://www.runoob.com/html/html5-form-input-types.html
+-- @history 修改历史
+--		[2026+] 添加 z-index 参数解析
+--		[2026+] 添加 独立的 flexer 模块, 解析 flex 自动布局 / z-index
 --]]
 local table = require("table")
 local kgui = require("kgui")
 local krand = require("krand")
 local csser = require("klbcore.klbui.csser")
 local event = require("klbcore.klbui.event")
-
+local flexer = require("klbcore.klbui.flexer")
 
 local parser = {}
 local E = {}
@@ -37,6 +40,9 @@ local CONST_keys = {
 	-- 显示区域
 	['pos'] = true,			-- 位置,大小
 	
+	-- z 索引
+	['z-index'] = true,		-- z 索引
+
 	-- 子窗口
 	['child'] = true,		-- 包含的子窗口
 	
@@ -76,69 +82,6 @@ local function OnCommand(cmds1, cmds2, cmds3, obj, msg, x1, y1, x2, y2, lparam, 
 	
 	return 0
 end
-
-
--- 自动对齐区域(x, y, w, h)
--- -1: 将需要自动对齐父窗口的宽高
-local function AutoRect(parent_path, x, y, w, h)
-	local auto_x, auto_y, auto_w, auto_h = x, y, w, h
-	
-	-- do. 1. 不需要处理
-	if 0 <= auto_x and 0 <= auto_y and 0 <= auto_w and 0 <= auto_h then
-		return auto_x, auto_y, auto_w, auto_h
-	end
-	
-	-- 屏幕宽/高
-	local sceen_w, sceen_h = kgui.wh()
-	
-	-- 父窗口宽/高
-	local parent_rect = {}
-	if parent_path then
-		parent_rect = kgui.wndpos(parent_path, false)
-	end
-	
-	local parent_w = parent_rect['w'] or sceen_w
-	local parent_h = parent_rect['h'] or sceen_h
-	
-	-- do. 2 自动宽
-	if 0 <= x and auto_w < 0 then
-		auto_w = parent_w - x
-		
-		if auto_w < 0 then
-			auto_w = 0
-		end
-	end
-	
-	-- do. 3. 自动高
-	if 0 <= y and auto_h < 0 then
-		auto_h = parent_h - y
-		
-		if auto_h < 0 then
-			auto_h = 0
-		end
-	end
-	
-	-- do. 4. 自动x, 向右对齐
-	if x < 0 and auto_w >= 0 then
-		auto_x = parent_w - auto_w
-		
-		if auto_x < 0 then
-			auto_x = 0
-		end
-	end
-	
-	-- do. 5. 自动y, 向下对齐
-	if y < 0 and auto_h >= 0 then
-		auto_y = parent_h - auto_h
-		
-		if auto_y < 0 then
-			auto_y = 0
-		end
-	end
-	
-	return auto_x, auto_y, auto_w, auto_h
-end
-
 
 -- 去除前后空白
 local function TrimString(s)
@@ -186,12 +129,11 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 	-- 参考
 	-- https://www.w3school.com.cn/html/html5_intro.asp	
 	local t = wnd['type'] or ''
-	local pos = wnd['pos'] or {}
 
-	local x = pos[1]
-	local y = pos[2]
-	local w = pos[3]
-	local h = pos[4]
+	-- pos/z-index 参数 在 flexer 解析
+	-- local pos = wnd['pos'] or {}
+	-- local x, y, w, h = pos[1], pos[2], pos[3], pos[4]
+
 	local path = ''
 	
 	if '' ~= t then
@@ -200,12 +142,15 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 			-- 若原始路径已被占用, 则随机分配一个路径地址, 直到无重复为止
 			path = parent_path
 			
-			-- 简易自动(x,y,w,h)
-			x, y, w, h = AutoRect(nil, x, y, w, h)
+			-- 解析 flex 自动布局 / z-index
+			local is_flex, x1, y1, w1, h1, style, layout_algo, z_index = flexer.parse_wnd_layout(wnd, nil)
 			
 			local try_count = 0
 			while true do
-				if 0 == kgui.append(t, path, x, y, w, h) then
+				local ret, hwnd = kgui.append(t, path, x1, y1, w1, h1, style)
+				if 0 == ret then
+					if is_flex and nil ~= hwnd then hwnd:flex_algo(layout_algo) end -- 设置 flex 自动布局 引擎
+					if nil ~= hwnd then hwnd:z_index(z_index) end -- 设置 z 索引
 					break -- 添加成功
 				end
 				
@@ -225,15 +170,18 @@ local function ParseWnd(wnd, commands, css, parent_path, first)
 			-- 非首次运行, 则不是顶层对话框
 			-- 随机分配一个路径地址, 直到无重复为止
 			
-			-- 简易自动(x,y,w,h)
-			x, y, w, h = AutoRect(parent_path, x, y, w, h)
+			-- 解析 flex 自动布局 / z-index
+			local is_flex, x1, y1, w1, h1, style, layout_algo, z_index = flexer.parse_wnd_layout(wnd, parent_path)
 			
 			local try_count = 0
 			while true do
 				--path = parent_path .. '/' .. krand.rand_string(CONST_rand_max)
 				path = table.concat({parent_path, '/', krand.rand_string(CONST_rand_max)})
 				
-				if 0 == kgui.append(t, path, x, y, w, h) then
+				local ret, hwnd = kgui.append(t, path, x1, y1, w1, h1, style)
+				if 0 == ret then
+					if is_flex and nil ~= hwnd then hwnd:flex_algo(layout_algo) end -- 设置 flex 自动布局 引擎
+					if nil ~= hwnd then hwnd:z_index(z_index) end -- 设置 z 索引
 					break -- 添加成功
 				end
 				

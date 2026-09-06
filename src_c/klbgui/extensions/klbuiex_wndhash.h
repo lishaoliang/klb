@@ -16,6 +16,7 @@
 
 #include "klb_type.h"
 #include "klbgui/klb_gui.h"
+#include "klbgui/extensions/klbuiex_flex.h"
 
 
 #if defined(__cplusplus)
@@ -28,6 +29,7 @@ typedef struct klbuiex_wndhash_t_ klbuiex_wndhash_t;
 int klbuiex_register_wndhash(klb_gui_t* p_gui);
 klbuiex_wndhash_t* klbuiex_get_wndhash(klb_gui_t* p_gui);
 
+int klbuiex_wndhash_set_flex(klbuiex_wndhash_t* p_wndhash, klbuiex_flex_t* p_flex);
 
 /// @brief 注册窗口类型
 /// @param [in] *p_type         窗口类型名
@@ -44,7 +46,7 @@ klb_wnd_create_cb klbuiex_wndhash_get_creater(klbuiex_wndhash_t* p_wndhash, cons
 
 
 /// @brief 添加窗口
-int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style);
+int klbuiex_wndhash_append(klbuiex_wndhash_t* p_wndhash, const char* p_type, const char* p_path_name, int x, int y, int w, int h, uint32_t style, klb_wnd_t** p_out_wnd);
 
 /// @brief 移除窗口
 int klbuiex_wndhash_remove(klbuiex_wndhash_t* p_wndhash, const char* p_path_name);

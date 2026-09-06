@@ -142,6 +142,50 @@ static int klua_kwnd_hide(lua_State* L)
     return 1;
 }
 
+// 设置/获取 自动布局 引擎
+static int klua_kwnd_flex_algo(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    int idx = 2;
+    if (klua_is_integer(L, idx))
+    {
+        // 设置
+        klb_wnd_flex_algo_e layout_algo = (klb_wnd_flex_algo_e)lua_tointeger(L, idx);
+        klb_wnd_set_flex_algo(p_kwnd->p_wnd, layout_algo);
+
+        lua_pushinteger(L, layout_algo);
+    }
+    else
+    {
+        // 获取
+        int layout_algo = klb_wnd_get_flex_algo(p_kwnd->p_wnd);
+        lua_pushinteger(L, layout_algo);
+    }
+
+    return 1;
+}
+
+// 设置/获取 z 索引
+static int klua_kwnd_z_index(lua_State* L)
+{
+    klua_kwnd_t* p_kwnd = to_klua_kwnd(L, 1);           ///< @1 自身self
+
+    int idx = 2;
+    if (klua_is_integer(L, idx))
+    {
+        // 设置
+        int z_index = (int)lua_tointeger(L, idx);
+        klb_wnd_set_z_index(p_kwnd->p_wnd, z_index); // 范围: [-32768, 32767]
+    }
+
+    // 获取
+    int z_index = klb_wnd_get_z_index(p_kwnd->p_wnd);
+    lua_pushinteger(L, z_index);
+
+    return 1;
+}
+
 // 设置/获取 静态TIP
 static int klua_kwnd_tip(lua_State* L)
 {
@@ -293,6 +337,10 @@ static void klua_kwnd_createmeta(lua_State* L)
         // 状态
         { "show",            klua_kwnd_show },          // 设置/获取 显示状态
         { "hide",            klua_kwnd_hide },          // 设置/获取 隐藏状态
+
+        // 自动布局 引擎
+        { "flex_algo",      klua_kwnd_flex_algo },      // 设置/获取 flex 自动布局 引擎
+        { "z_index",        klua_kwnd_z_index },        // 设置/获取 z 索引
 
         // tip
         { "tip",             klua_kwnd_tip },           // 设置/获取 静态TIP
@@ -561,10 +609,22 @@ static int klua_kgui_append(lua_State* L)
 
     klb_gui_t* p_gui = klua_ex_gui_get(klua_ex_get_gui_by_L(L));
 
-    int ret = klb_gui_append(p_gui, p_type, p_path_name, x, y, w, h, style);
+    klb_wnd_t* p_wnd = NULL;
+    int ret = klb_gui_append(p_gui, p_type, p_path_name, x, y, w, h, style, &p_wnd);
 
     lua_pushinteger(L, ret);                                ///< #1. 0.成功; 非0.失败(错误码)
-    return 1;
+    
+    if (NULL != p_wnd)
+    {
+        klua_kwnd_t* p_kwnd = new_klua_kwnd(L);             ///< #2. 成功; kwnd 接口
+        p_kwnd->p_wnd = p_wnd;
+    }
+    else
+    {
+        lua_pushnil(L);                                     ///< #2. 失败; nil
+    }
+
+    return 2;
 }
 
 static int klua_kgui_remove(lua_State* L)
