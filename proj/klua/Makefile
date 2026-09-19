@@ -1,5 +1,8 @@
+# Doc-Encode UTF8, Unix(LF)
 # 编译命令 : make
 # make MY_VERSION=release MY_TOOL_CHAIN=arm-himix200-linux- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
+# mingw-w64 (非默认, 见 mingw.mk): 由主编译 make mingw klua 传入 MY_HOST=mingw
+# mingw-w64: make MY_HOST=mingw  /  make MY_TOOL_CHAIN=x86_64-w64-mingw32-
 
 SHELL = /bin/bash
 PWD = `pwd`
@@ -9,7 +12,13 @@ PWD = `pwd`
 MY_TOOL_CHAIN ?= 
 MY_CFLAGS_EX ?= 
 MY_VERSION ?= debug
+MY_HOST ?= 
 
+# Linux 默认产物目录; mingw 覆盖见 mingw.mk
+MY_OUT_DIR := ../../lib
+MY_TMP_DIR := ../../tmp/klua
+
+include ../../mingw.mk
 
 # gcc编译工具链
 CC		:= $(MY_TOOL_CHAIN)gcc
@@ -31,6 +40,9 @@ MY_DIRS := .
 
 # 编译选项 -D__XXX_XXX__
 MY_CFLAGS := $(MY_CFLAGS_EX) -D_GNU_SOURCE 
+MY_LIB_DYNAMIC := -L $(MY_OUT_DIR) -Bdynamic -lklb
+MY_LIB_DYNAMIC += -lpthread -lrt -ldl -lm
+MY_LIB_STATIC := -L $(MY_OUT_DIR) -Bstatic
 
 # 引用头文件
 MY_INCLUDES := -I . -I ../../inc
@@ -39,13 +51,6 @@ MY_INCLUDES := -I . -I ../../inc
 # 第三方库头文件
 MY_INCLUDES += -I ../../src_c/klua/lua-5.4.6/src
 
-
-# 引用的静态库
-MY_LIB_STATIC := -L ../../lib -Bstatic
-
-# 引用的动态库
-MY_LIB_DYNAMIC := -L ../../lib -Bdynamic -lklb
-MY_LIB_DYNAMIC += -lpthread -lrt -ldl -lm
 
 # openssl
 #MY_LIB_DYNAMIC += -lssl -lcrypto
@@ -58,9 +63,12 @@ endif
 
 # 编译目标名称
 MY_TARGET_NAME := klua
-MY_TARGET_A := ../../lib/lib$(MY_TARGET_NAME).a
-MY_TARGET_SO := ../../lib/lib$(MY_TARGET_NAME).so
-MY_TARGET_EXE := ../../lib/$(MY_TARGET_NAME)
+MY_TARGET_A := $(MY_OUT_DIR)/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := $(MY_OUT_DIR)/lib$(MY_TARGET_NAME).so
+MY_TARGET_EXE := $(MY_OUT_DIR)/$(MY_TARGET_NAME)
+
+# mingw 覆盖编译/链接/产物 (Linux 时无操作)
+include ../../mingw.mk
 
 # 所有编译文件
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
@@ -68,8 +76,7 @@ MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
 
-# 编译中间文件统一放到 ../../tmp/klua/ 下
-MY_TMP_DIR := ../../tmp/klua
+# 编译中间文件统一放到 MY_TMP_DIR 下
 MY_LIB_A_OBJS := $(addprefix $(MY_TMP_DIR)/,$(addsuffix .o,$(patsubst ./%,%,$(MY_SOURCES))))
 MY_A_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS) $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC)
 
@@ -81,7 +88,7 @@ MY_LIB_MINI = -ffunction-sections -fdata-sections
 MY_LINK_MINI = -Wl,--gc-sections
 
 
-.PHONY: all strip clean
+.PHONY: all strip clean mingw
 
 all: exe
 
@@ -107,6 +114,7 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 
 $(MY_TARGET_EXE): $(MY_LIB_A_OBJS)
 	$(my_tip)
+	@mkdir -p $(dir $@)
 	$(CXX) -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
 
 strip:
@@ -123,12 +131,13 @@ clean:
 
 define my_tip
 	@echo "++++++ make tip ++++++"
+	@echo "+ MY_HOST = $(MY_HOST)"
 	@echo "+ MY_TOOL_CHAIN = $(MY_TOOL_CHAIN)"
 	@echo "+ CC = $(CC)"
 	@echo "+ CXX = $(CXX)"
 	@echo "+ MY_SOURCES = $(MY_SOURCES)"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
 	@echo "+ MY_CFLAGS = $(MY_CFLAGS)"
-	@echo "+ MY_TARGET_A = $(MY_TARGET_A)"
+	@echo "+ MY_TARGET_EXE = $(MY_TARGET_EXE)"
 	@echo "++++++++++++++++++++++"
 endef

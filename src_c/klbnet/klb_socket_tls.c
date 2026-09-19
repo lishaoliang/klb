@@ -9,10 +9,22 @@
 #include "mbedtls/ssl.h"
 #include "mbedtls/entropy.h"
 #include "mbedtls/ctr_drbg.h"
+#include "mbedtls/x509_crt.h"
+#include "mbedtls/pk.h"
 
 #ifndef _WIN32
 #include <errno.h>
 #endif
+
+typedef struct klb_socket_tls_server_ctx_t_
+{
+    int                         ref;            ///< 引用计数; create=1, socket +1
+    mbedtls_ssl_config          conf;
+    mbedtls_ctr_drbg_context    ctr_drbg;
+    mbedtls_entropy_context     entropy;
+    mbedtls_x509_crt            cert;
+    mbedtls_pk_context          key;
+}klb_socket_tls_server_ctx_t;
 
 typedef struct klb_socket_tls_t_
 {
@@ -21,6 +33,8 @@ typedef struct klb_socket_tls_t_
     mbedtls_ctr_drbg_context    ctr_drbg;
     mbedtls_entropy_context     entropy;
     bool                        handshake_done;
+    bool                        is_server;
+    klb_socket_tls_server_ctx_t* p_server_ctx;
 }klb_socket_tls_t;
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,6 +171,26 @@ static void quit_klb_socket_tls(klb_socket_tls_t* p_tls)
     mbedtls_entropy_free(&p_tls->entropy);
 }
 
+static void quit_klb_socket_tls_server_ctx(klb_socket_tls_server_ctx_t* p_ctx)
+{
+    mbedtls_pk_free(&p_ctx->key);
+    mbedtls_x509_crt_free(&p_ctx->cert);
+    mbedtls_ssl_config_free(&p_ctx->conf);
+    mbedtls_ctr_drbg_free(&p_ctx->ctr_drbg);
+    mbedtls_entropy_free(&p_ctx->entropy);
+}
+
+static size_t pem_buflen_klb_socket_tls(const char* p_pem, int len)
+{
+    size_t buflen = (size_t)len;
+    if ((0 < len) && ('\0' != p_pem[len - 1]))
+    {
+        buflen = (size_t)len + 1;
+    }
+
+    return buflen;
+}
+
 static int init_klb_socket_tls(klb_socket_t* p_socket)
 {
     klb_socket_tls_t* p_tls = (klb_socket_tls_t*)p_socket->extra;
@@ -206,7 +240,17 @@ static void destroy_klb_socket_tls(klb_socket_t* p_socket)
         mbedtls_ssl_close_notify(&p_tls->ssl);
     }
 
-    quit_klb_socket_tls(p_tls);
+    if (p_tls->is_server)
+    {
+        mbedtls_ssl_free(&p_tls->ssl);
+        klb_socket_tls_server_ctx_destroy(p_tls->p_server_ctx);
+        p_tls->p_server_ctx = NULL;
+    }
+    else
+    {
+        quit_klb_socket_tls(p_tls);
+    }
+
     KLB_SOCKET_CLOSE(p_socket->fd);
     KLB_FREE(p_socket);
 }
@@ -224,6 +268,11 @@ static int send_klb_socket_tls(klb_socket_t* p_socket, const uint8_t* p_data, in
             return -1;
         }
 
+        return 0;
+    }
+
+    if ((NULL == p_data) || (len <= 0))
+    {
         return 0;
     }
 
@@ -334,11 +383,170 @@ klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd)
     return p_socket;
 }
 
+static int init_klb_socket_tls_server(klb_socket_t* p_socket, klb_socket_tls_server_ctx_t* p_ctx)
+{
+    klb_socket_tls_t* p_tls = (klb_socket_tls_t*)p_socket->extra;
+    p_tls->is_server = true;
+    p_tls->p_server_ctx = p_ctx;
+
+    mbedtls_ssl_init(&p_tls->ssl);
+
+    int ret = mbedtls_ssl_setup(&p_tls->ssl, &p_ctx->conf);
+    if (0 != ret)
+    {
+        mbedtls_ssl_free(&p_tls->ssl);
+        p_tls->p_server_ctx = NULL;
+        return -1;
+    }
+
+    mbedtls_ssl_set_bio(&p_tls->ssl, p_socket, bio_send_klb_socket_tls, bio_recv_klb_socket_tls, NULL);
+    return 0;
+}
+
+klb_socket_tls_server_ctx_t* klb_socket_tls_server_ctx_create(const char* p_cert_pem, int cert_len, const char* p_key_pem, int key_len)
+{
+    if ((NULL == p_cert_pem) || (NULL == p_key_pem) || (cert_len <= 0) || (key_len <= 0))
+    {
+        return NULL;
+    }
+
+    // step1. 分配并 init mbedtls 对象
+    klb_socket_tls_server_ctx_t* p_ctx = KLB_MALLOCZ(klb_socket_tls_server_ctx_t, 1, 0);
+    p_ctx->ref = 1;
+
+    mbedtls_ssl_config_init(&p_ctx->conf);
+    mbedtls_ctr_drbg_init(&p_ctx->ctr_drbg);
+    mbedtls_entropy_init(&p_ctx->entropy);
+    mbedtls_x509_crt_init(&p_ctx->cert);
+    mbedtls_pk_init(&p_ctx->key);
+
+    static const unsigned char pers[] = "klb";
+    int ret = mbedtls_ctr_drbg_seed(&p_ctx->ctr_drbg, mbedtls_entropy_func, &p_ctx->entropy, pers, sizeof(pers) - 1);
+    if (0 != ret)
+    {
+        goto err;
+    }
+
+    ret = mbedtls_ssl_config_defaults(&p_ctx->conf,
+        MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
+    if (0 != ret)
+    {
+        goto err;
+    }
+
+    // step2. 解析 PEM 证书/私钥
+    ret = mbedtls_x509_crt_parse(&p_ctx->cert, (const unsigned char*)p_cert_pem,
+        pem_buflen_klb_socket_tls(p_cert_pem, cert_len));
+    if (0 != ret)
+    {
+        goto err;
+    }
+
+    ret = mbedtls_pk_parse_key(&p_ctx->key, (const unsigned char*)p_key_pem,
+        pem_buflen_klb_socket_tls(p_key_pem, key_len), NULL, 0,
+        mbedtls_ctr_drbg_random, &p_ctx->ctr_drbg);
+    if (0 != ret)
+    {
+        goto err;
+    }
+
+    // step3. 绑定证书; 不验客户端证书
+    mbedtls_ssl_conf_authmode(&p_ctx->conf, MBEDTLS_SSL_VERIFY_NONE);
+    mbedtls_ssl_conf_rng(&p_ctx->conf, mbedtls_ctr_drbg_random, &p_ctx->ctr_drbg);
+
+    ret = mbedtls_ssl_conf_own_cert(&p_ctx->conf, &p_ctx->cert, &p_ctx->key);
+    if (0 != ret)
+    {
+        goto err;
+    }
+
+    return p_ctx;
+
+err:
+    quit_klb_socket_tls_server_ctx(p_ctx);
+    KLB_FREE(p_ctx);
+    return NULL;
+}
+
+void klb_socket_tls_server_ctx_destroy(klb_socket_tls_server_ctx_t* p_ctx)
+{
+    if (NULL == p_ctx)
+    {
+        return;
+    }
+
+    assert(0 < p_ctx->ref);
+    p_ctx->ref--;
+    if (0 < p_ctx->ref)
+    {
+        return;
+    }
+
+    quit_klb_socket_tls_server_ctx(p_ctx);
+    KLB_FREE(p_ctx);
+}
+
+klb_socket_t* klb_socket_async_create_tls_server(klb_socket_fd fd, klb_socket_tls_server_ctx_t* p_ctx)
+{
+    assert(INVALID_SOCKET != fd);
+    if (NULL == p_ctx)
+    {
+        return NULL;
+    }
+
+    // step1. 分配 socket + mbedtls extra
+    klb_socket_t* p_socket = KLB_MALLOCZ(klb_socket_t, 1, sizeof(klb_socket_tls_t));
+
+    // step2. 填 vtable, 非阻塞 fd
+    p_socket->vtable.cb_destroy = destroy_klb_socket_tls;
+    p_socket->vtable.cb_send = send_klb_socket_tls;
+    p_socket->vtable.cb_recv = recv_klb_socket_tls;
+    p_socket->vtable.cb_sendto = sendto_klb_socket_tls;
+    p_socket->vtable.cb_recvfrom = recvfrom_klb_socket_tls;
+
+    p_socket->status = KLB_SOCKET_OK;
+    p_socket->fd = fd;
+    p_socket->nonblock = 0x1;
+    klb_socket_set_block(fd, false);
+    klb_socket_set_tls(p_socket, true);
+
+    // step3. ssl_setup 共用服务端 conf (失败不关 fd)
+    if (0 != init_klb_socket_tls_server(p_socket, p_ctx))
+    {
+        KLB_FREE(p_socket);
+        return NULL;
+    }
+
+    p_ctx->ref++;
+    return p_socket;
+}
+
 #else
 
 klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd)
 {
     (void)fd;
+    return NULL;
+}
+
+klb_socket_tls_server_ctx_t* klb_socket_tls_server_ctx_create(const char* p_cert_pem, int cert_len, const char* p_key_pem, int key_len)
+{
+    (void)p_cert_pem;
+    (void)cert_len;
+    (void)p_key_pem;
+    (void)key_len;
+    return NULL;
+}
+
+void klb_socket_tls_server_ctx_destroy(klb_socket_tls_server_ctx_t* p_ctx)
+{
+    (void)p_ctx;
+}
+
+klb_socket_t* klb_socket_async_create_tls_server(klb_socket_fd fd, klb_socket_tls_server_ctx_t* p_ctx)
+{
+    (void)fd;
+    (void)p_ctx;
     return NULL;
 }
 

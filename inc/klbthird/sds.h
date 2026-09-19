@@ -30,7 +30,7 @@
  */
 
 /*
- *  2020,李绍良
+ *  2020,随风
  *  修改通过Visual Studio 2019编译, 去除编译警告
  *  https://github.com/antirez/sds
  *  https://codeload.github.com/antirez/sds/zip/2.0.0
@@ -46,7 +46,7 @@
 #include <stdint.h>
 
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #define __attribute__(x)
 #define __packed__
 #endif

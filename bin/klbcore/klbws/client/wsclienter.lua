@@ -39,15 +39,22 @@ end
 -- @brief 连接到目标
 -- @param [in]      host[string]		主机
 -- @param [in]      port[number(int)]	端口
--- @param [in]      path[string]		[可选] 握手路径, 默认 `/`
+-- @param [in]      path[string]		[可选] 握手路径, 默认 `/`; 也可为 opts table
+-- @param [in]      opts[table]			[可选] 连接选项; 见内联 opts 注释
 -- @return [number]	0 成功; 非0 失败
-function wsclient:connect(host, port, path)
+function wsclient:connect(host, port, path, opts)
+	-- opts = {
+	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
+	-- }
 	local ws_path = "/"
-	if path then
+	local connect_opts = opts
+	if "table" == type(path) then
+		connect_opts = path
+	elseif path then
 		ws_path = tostring(path)
 	end
 
-	local client = kws.connect(tostring(host), tonumber(port), ws_path)
+	local client = kws.connect(tostring(host), tonumber(port), ws_path, connect_opts)
 	if not client then
 		return 1 -- 连接失败
 	end

@@ -1,9 +1,11 @@
 # Doc-Encode UTF8, Unix(LF)
-# 编译命令 : make
+# 编译命令 : make / make linux
 # make MY_VERSION=release MY_TOOL_CHAIN=arm-linux-gnueabi- MY_CFLAGS_EX="-D__XXXX_XX__ -D__XXXX_YYY__"
 # 裁剪参数 MY_CLIP="min-core"
 # 裁剪参数 MY_CLIP="--disable-gui --disable-zlib"   (同 no-gui no-zlib)
 # 裁剪参数 MY_CLIP="min-core use-zlib" / "use-wui-embed"  (clip.mk 归一为 no-*)
+# mingw-w64 (非默认, 见 mingw.mk): make mingw
+# mingw-w64: make MY_HOST=mingw  /  make MY_TOOL_CHAIN=x86_64-w64-mingw32-
 
 SHELL = /bin/bash
 PWD = `pwd`
@@ -15,6 +17,13 @@ MY_TOOL_CHAIN ?=
 MY_CFLAGS_EX ?= 
 MY_VERSION ?= debug
 MY_CLIP ?= 
+MY_HOST ?= 
+
+# Linux 默认产物目录; mingw 覆盖见 mingw.mk
+MY_OUT_DIR := ./lib
+MY_TMP_DIR := ./tmp
+
+include ./mingw.mk
 
 # gcc编译工具链
 CC		:= $(MY_TOOL_CHAIN)gcc
@@ -84,21 +93,16 @@ MY_CFLAGS := $(MY_CLIP_FLAGS)
 MY_DIRS += $(MY_CLIP_DIRS)
 MY_INCLUDES += $(MY_CLIP_INC)
 
-# 引用的动态库
-MY_LIB_DYNAMIC := -L ./lib -Bdynamic
+MY_LIB_DYNAMIC := -L $(MY_OUT_DIR) -Bdynamic
 MY_LIB_DYNAMIC += -lpthread -lrt -ldl -lm
+MY_LIB_STATIC := -L $(MY_OUT_DIR) -Bstatic
 
 
 ###########################################################
 
 # 编译选项 -D__XXX_XXX__
 MY_CFLAGS += $(MY_CFLAGS_EX) -D_GNU_SOURCE 
-
-# lua的宏
 MY_CFLAGS += -DLUA_USE_LINUX
-
-# 引用的静态库
-MY_LIB_STATIC := -L ./lib -Bstatic
 
 # 链接选项
 MY_LDFLAGS := -Wl,--no-undefined
@@ -118,6 +122,38 @@ MY_CFLAGS += -Werror=return-type
 MY_CFLAGS += -D__KLB_SYMBOL_HIDING__ -fvisibility=hidden
 
 
+MY_SO_PARAMS := -fPIC
+MY_STD_C99 := -std=c99
+
+
+# 传递给子makefile的参数
+MK_PARAMS := OS=$(OS) ARCH=$(ARCH) MY_TOOL_CHAIN=$(MY_TOOL_CHAIN) MY_HOST=$(MY_HOST) MY_VERSION=$(MY_VERSION)
+
+
+# 编译目标名称
+MY_TARGET_NAME := klb
+MY_TARGET_A := $(MY_OUT_DIR)/lib$(MY_TARGET_NAME).a
+MY_TARGET_SO := $(MY_OUT_DIR)/lib$(MY_TARGET_NAME).so
+
+# Linux 动态库链接; mingw.mk 可覆盖
+MY_SO_LINK = $(CXX) -shared -fPIC $(MY_LIB_A_OBJS) $(MY_LINK_PARAMS) $(MY_LINK_MINI) -o $@
+
+define DO_host_install
+	#$(CSTRIP) $(MY_TARGET_A)
+	$(CSTRIP) $(MY_TARGET_SO)
+	$(call DO_install_by_path, /usr/local)
+endef
+
+define DO_host_local
+	#$(CSTRIP) $(MY_TARGET_A)
+	$(CSTRIP) $(MY_TARGET_SO)
+	$(call DO_install_by_path, ./install)
+endef
+
+# mingw 覆盖编译/链接/产物 (Linux 时无操作)
+include ./mingw.mk
+
+
 # 所有编译文件 C/C++
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
 MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
@@ -127,7 +163,6 @@ MY_SOURCES += $(MY_CLIP_SOURCES)
 MY_SOURCES := $(filter-out $(MY_CLIP_SOURCES_EXCLUDE),$(MY_SOURCES))
 
 # 编译中间文件统一放到 tmp/ 下, 目录结构与源码镜像
-MY_TMP_DIR := ./tmp
 MY_LIB_A_OBJS := $(addprefix $(MY_TMP_DIR)/,$(addsuffix .o,$(patsubst ./%,%,$(MY_SOURCES))))
 MY_COMPILE_PARAMS := $(MY_INCLUDES) $(MY_CFLAGS)
 MY_LINK_PARAMS := $(MY_LIB_STATIC) $(MY_LIB_DYNAMIC) $(MY_LDFLAGS)
@@ -139,19 +174,6 @@ MY_LIB_MINI = -ffunction-sections -fdata-sections
 # 编译动态库或执行档时,使compiler删除所有未被使用的function和data,即编译之后的文件最小化
 MY_LINK_MINI = -Wl,--gc-sections
 
-MY_SO_PARAMS := -fPIC
-MY_STD_C99 := -std=c99
-
-
-# 传递给子makefile的参数
-MK_PARAMS := OS=$(OS) ARCH=$(ARCH) MY_TOOL_CHAIN=$(MY_TOOL_CHAIN)
-
-
-# 编译目标名称
-MY_TARGET_NAME := klb
-MY_TARGET_A := ./lib/lib$(MY_TARGET_NAME).a
-MY_TARGET_SO := ./lib/lib$(MY_TARGET_NAME).so
-
 ###########################################################
 # install
 
@@ -162,9 +184,10 @@ include ./install.mk
 ###########################################################
 # .PHONY
 
-.PHONY: all clean strip klua install
+.PHONY: all linux clean strip klua install mingw
 
 all: lib so
+linux: all
 
 lib: $(MY_TARGET_A)
 so: $(MY_TARGET_SO)
@@ -179,11 +202,13 @@ $(MY_TMP_DIR)/%.cpp.o: %.cpp
 
 $(MY_TARGET_A): $(MY_LIB_A_OBJS)
 	$(my_tip)
+	@mkdir -p $(dir $@)
 	$(CAR) rs $(MY_TARGET_A) $(MY_LIB_A_OBJS)
 
 $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 	$(my_tip)
-	$(CXX) -shared -fPIC $(MY_LIB_A_OBJS) $(MY_LINK_PARAMS) $(MY_LINK_MINI) -o $@
+	@mkdir -p $(dir $@)
+	$(MY_SO_LINK)
 
 clean:
 	@echo "++++++ make clean ++++++"
@@ -192,6 +217,7 @@ clean:
 	$(RM_RF) $(MY_TMP_DIR)
 	$(RM_F) $(MY_TARGET_A)
 	$(RM_F) $(MY_TARGET_SO)
+	$(RM_F) $(MY_TARGET_IMPLIB)
 	@echo "+++++++++++++++++++++++++"
 
 	if [ -f ./proj/klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/klua/ clean; fi
@@ -204,22 +230,17 @@ klua: all
 	if [ -f ./proj/klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/klua/; fi
 
 install: klua
-	#$(CSTRIP) $(MY_TARGET_A)
-	$(CSTRIP) $(MY_TARGET_SO)
-
-	$(call DO_install_by_path, /usr/local)
+	$(DO_host_install)
 
 local:
-	#$(CSTRIP) $(MY_TARGET_A)
-	$(CSTRIP) $(MY_TARGET_SO)
-
-	$(call DO_install_by_path, ./install)
+	$(DO_host_local)
 
 info:
 	$(my_tip)
 
 define my_tip
 	@echo "++++++ make tip ++++++"
+	@echo "+ MY_HOST = $(MY_HOST)"
 	@echo "+ MY_TOOL_CHAIN = $(MY_TOOL_CHAIN)"
 	@echo "+ CC = $(CC)"
 	@echo "+ CXX = $(CXX)"	
@@ -230,6 +251,8 @@ define my_tip
 	@echo "+ MY_CLIP_FLAGS = $(MY_CLIP_FLAGS)"
 	@echo "+ MY_SOURCES = $(MY_SOURCES)"
 	@echo "+ MY_DIRS = $(MY_DIRS)"
+	@echo "+ MY_TMP_DIR = $(MY_TMP_DIR)"
 	@echo "+ MY_TARGET_A = $(MY_TARGET_A)"
+	@echo "+ MY_TARGET_SO = $(MY_TARGET_SO)"
 	@echo "++++++++++++++++++++++"
 endef

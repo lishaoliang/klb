@@ -36,6 +36,7 @@ extern "C" {
 
 
 typedef struct klb_socket_t_ klb_socket_t;
+typedef struct klb_socket_tls_server_ctx_t_ klb_socket_tls_server_ctx_t;
 
 
 /// @brief 销毁
@@ -256,10 +257,36 @@ KLB_API int klb_socket_bind(klb_socket_fd fd, const struct sockaddr* p_addr, int
 KLB_API klb_socket_t* klb_socket_async_create(klb_socket_fd fd);
 
 
-/// @brief 创建一个异步TLS socket
+/// @brief 创建一个异步 TLS socket (客户端)
 /// @param [in]  fd             socket fd
 /// @return klb_socket_t* NULL.创建失败; 非NULL
+/// @note no-ssl 或 mbedtls init 失败时返回 NULL; 失败不关闭 fd
 KLB_API klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd);
+
+
+/// @brief 创建 TLS 服务端上下文
+/// @param [in]  *p_cert_pem    证书 PEM (可含中间证书)
+/// @param [in]  cert_len       p_cert_pem 字节数; 不含结尾 0 时内部补 1
+/// @param [in]  *p_key_pem     私钥 PEM
+/// @param [in]  key_len        p_key_pem 字节数; 不含结尾 0 时内部补 1
+/// @return klb_socket_tls_server_ctx_t* NULL.失败; 非NULL
+/// @note no-ssl / 证书或私钥解析失败返回 NULL; destroy 为引用计数
+KLB_API klb_socket_tls_server_ctx_t* klb_socket_tls_server_ctx_create(const char* p_cert_pem, int cert_len, const char* p_key_pem, int key_len);
+
+
+/// @brief 释放 TLS 服务端上下文
+/// @param [in]  *p_ctx         上下文; 可为 NULL
+/// @return 无
+/// @note 引用计数减 1; 至 0 时释放
+KLB_API void klb_socket_tls_server_ctx_destroy(klb_socket_tls_server_ctx_t* p_ctx);
+
+
+/// @brief 创建一个异步 TLS socket (服务端)
+/// @param [in]  fd             已 accept 的 socket fd
+/// @param [in]  *p_ctx         TLS 服务端上下文; 不可为 NULL
+/// @return klb_socket_t* NULL.创建失败; 非NULL
+/// @note 成功后持有 ctx 引用; 失败不关闭 fd
+KLB_API klb_socket_t* klb_socket_async_create_tls_server(klb_socket_fd fd, klb_socket_tls_server_ctx_t* p_ctx);
 
 
 #ifdef __cplusplus

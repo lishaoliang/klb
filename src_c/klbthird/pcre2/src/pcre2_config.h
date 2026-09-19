@@ -29,7 +29,7 @@ PCRE2 uses memmove() if HAVE_MEMMOVE is defined; otherwise it uses bcopy() if
 HAVE_BCOPY is defined. If your system has neither bcopy() nor memmove(), make
 sure both macros are undefined; an emulation function will then be used. */
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #define __attribute__(x)
 #define __packed__
 #define visibility(x)

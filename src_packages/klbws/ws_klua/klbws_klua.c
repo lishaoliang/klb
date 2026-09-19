@@ -538,6 +538,8 @@ typedef struct klua_kws_listen_t_
     {
         klb_netmulti_t*         p_netmulti;     ///< 复用; net multiplex
         klb_netconn_t*          p_listen_conn;  ///< 监听连接
+        bool                    tls;            ///< 是否 TLS
+        klb_socket_tls_server_ctx_t* p_tls_ctx; ///< TLS 服务端上下文
     };
 
     // 数据
@@ -577,6 +579,7 @@ static int klua_kws_listen_close(lua_State* L)
     klua_kws_listen_t* p_listen = to_klua_kws_listen(L, 1);
 
     KLB_FREE_BY(p_listen->p_listen_conn, klb_netlisten_conn_free);
+    KLB_FREE_BY(p_listen->p_tls_ctx, klb_socket_tls_server_ctx_destroy);
 
     if (NULL != p_listen->p_socket_nlist)
     {
@@ -593,9 +596,23 @@ static int klua_kws_listen_close(lua_State* L)
     return 0;
 }
 
-static klua_kws_t* new_klua_kws_by_socket(lua_State* L, klb_netlisten_socket_t* p_listen_socket)
+static klua_kws_t* new_klua_kws_by_socket(lua_State* L, klua_kws_listen_t* p_listen, klb_netlisten_socket_t* p_listen_socket)
 {
-    klb_socket_t* p_socket = klb_socket_async_create(p_listen_socket->fd);
+    klb_socket_t* p_socket = NULL;
+    if (p_listen->tls)
+    {
+        p_socket = klb_socket_async_create_tls_server(p_listen_socket->fd, p_listen->p_tls_ctx);
+        if (NULL == p_socket)
+        {
+            KLB_SOCKET_CLOSE(p_listen_socket->fd);
+            return NULL;
+        }
+    }
+    else
+    {
+        p_socket = klb_socket_async_create(p_listen_socket->fd);
+    }
+
     klua_env_t* p_env = klua_env_get_by_L(L);
     klb_netmulti_t* p_netmulti = klua_netmulti_get(p_env);
     klb_netconn_t* p_conn = klb_wsserve_conn_create(p_netmulti, p_socket);
@@ -625,10 +642,16 @@ static int call_co_accept_klua_kws_listen(klua_kws_listen_t* p_listen)
     p_listen->co_accept = NULL;
 
     klb_netlisten_socket_t* p_listen_socket = (klb_netlisten_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
-    new_klua_kws_by_socket(L, p_listen_socket);
+    if (NULL == new_klua_kws_by_socket(L, p_listen, p_listen_socket))
+    {
+        lua_pushnil(L);
+        lua_pushstring(L, "error");
+    }
+    else
+    {
+        lua_pushstring(L, "ok");
+    }
     KLB_FREE(p_listen_socket);
-
-    lua_pushstring(L, "ok");
 
     int status = lua_pcall(L, 2, 0, 0);
     klua_env_report_by_L(L, status);
@@ -671,7 +694,8 @@ static int on_accept_klua_kws_listen(klb_netconn_t* p_conn, void* ptr, klb_socke
     klb_netlisten_socket_t* p_tmp = KLB_MALLOCZ(klb_netlisten_socket_t, 1, 0);
     p_tmp->fd = fd;
     p_tmp->addr = *p_addr;
-    p_tmp->tls = tls;
+    p_tmp->tls = p_listen->tls;
+    (void)tls;
 
     klb_nlist_push_tail(p_listen->p_socket_nlist, p_tmp);
     call_co_accept_klua_kws_listen(p_listen);
@@ -700,10 +724,17 @@ static int klua_kws_listen_co_accept(lua_State* L)
     if (0 < klb_nlist_size(p_listen->p_socket_nlist))
     {
         klb_netlisten_socket_t* p_listen_socket = (klb_netlisten_socket_t*)klb_nlist_pop_head(p_listen->p_socket_nlist);
-        new_klua_kws_by_socket(L, p_listen_socket);
+        if (NULL == new_klua_kws_by_socket(L, p_listen, p_listen_socket))
+        {
+            lua_pushnil(L);
+            lua_pushstring(L, "error");
+        }
+        else
+        {
+            lua_pushstring(L, "ok");
+        }
         KLB_FREE(p_listen_socket);
 
-        lua_pushstring(L, "ok");
         return 2;
     }
 
@@ -741,6 +772,44 @@ static int klua_kws_listen(lua_State* L)
 {
     int port = (int)luaL_checkinteger(L, 1);
 
+    bool tls = false;
+    const char* p_cert = NULL;
+    size_t cert_len = 0;
+    const char* p_key = NULL;
+    size_t key_len = 0;
+
+    if (klua_is_table(L, 2))
+    {
+        lua_getfield(L, 2, "tls");
+        tls = klua_check_option_boolean(L, -1, false);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "cert");
+        if (klua_is_string(L, -1))
+        {
+            p_cert = lua_tolstring(L, -1, &cert_len);
+        }
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "key");
+        if (klua_is_string(L, -1))
+        {
+            p_key = lua_tolstring(L, -1, &key_len);
+        }
+        lua_pop(L, 1);
+    }
+
+    klb_socket_tls_server_ctx_t* p_tls_ctx = NULL;
+    if (tls)
+    {
+        p_tls_ctx = klb_socket_tls_server_ctx_create(p_cert, (int)cert_len, p_key, (int)key_len);
+        if (NULL == p_tls_ctx)
+        {
+            lua_pushnil(L);
+            return 1;
+        }
+    }
+
     klua_env_t* p_env = klua_env_get_by_L(L);
     klb_netmulti_t* p_netmulti = klua_netmulti_get(p_env);
     klb_netconn_t* p_listen_conn = klb_netlisten_conn_create(p_netmulti);
@@ -757,6 +826,8 @@ static int klua_kws_listen(lua_State* L)
 
     p_listen->p_netmulti = p_netmulti;
     p_listen->p_listen_conn = p_listen_conn;
+    p_listen->tls = tls;
+    p_listen->p_tls_ctx = p_tls_ctx;
 
     p_listen->p_socket_nlist = klb_nlist_create();
 

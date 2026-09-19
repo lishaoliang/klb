@@ -447,6 +447,18 @@ static int klb_httpserve_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 
     if (klb_nlist_size(p_write_nlist) <= 0)
     {
+        if (klb_socket_is_tls(p_socket) && (KLB_SOCKET_WAIT_WRITE == p_socket->status_rw))
+        {
+            klb_socket_send(p_socket, NULL, 0);
+            if (KLB_SOCKET_WAIT_WRITE == p_socket->status_rw)
+            {
+                return write_num;
+            }
+
+            klb_socket_set_writing(p_socket, false);
+            return write_num;
+        }
+
         klb_socket_set_writing(p_socket, false);
         push_netcode_klb_httpserve_conn(p_conn, KLB_NETCODE_WBUF_EMPTY);
     }

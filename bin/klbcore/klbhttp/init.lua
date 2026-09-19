@@ -83,9 +83,14 @@ end
 
 -- @brief 开始 监听模块
 -- @param [in]      port[number(int)]	端口
--- @param [in]      cfg[table]			[可选]监听模块配置
+-- @param [in]      cfg[table]			[可选]监听模块配置; 见内联 opts 注释
 -- @return [table]	监听模块
 klbhttp.listen = function (port, cfg)
+	-- cfg = {
+	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
+	--   cert[string]			tls 时必填, 证书 PEM
+	--   key[string]			tls 时必填, 私钥 PEM
+	-- }
 	-- 新建
 	local l = httplistener.new(cfg)
 

@@ -37,12 +37,23 @@ end
 
 -- @brief 开始监听端口
 -- @param [in]      port[number(int)]	端口
-function wslisten:open(port)
+-- @param [in]      opts[table]			[可选] 监听选项; 默认使用 new(cfg)
+function wslisten:open(port, opts)
+	-- opts = {
+	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
+	--   cert[string]			tls 时必填, 证书 PEM
+	--   key[string]			tls 时必填, 私钥 PEM
+	-- }
+
 	-- 关闭
 	self:close()
 
 	-- 开启监听
-	self._listen = kws.listen(port)
+	local listen_opts = opts
+	if not listen_opts then
+		listen_opts = self._cfg
+	end
+	self._listen = kws.listen(port, listen_opts)
 end
 
 -- @brief 接收 新连接
@@ -72,6 +83,7 @@ local wslistener = {}
 wslistener.new = function (cfg)
 	local obj = {
 		_listen = nil,						-- C 提供的监听模块
+		_cfg = cfg,							-- 监听选项; tls/cert/key
 	}
 
 	setmetatable(obj, {
