@@ -184,41 +184,11 @@
     <Filter Include="src_c\klua\lua-zlib-1.3">
       <UniqueIdentifier>{7ef202fe-f4b1-4e25-82cb-ccd8ecc10dcc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\klbnet\klbrtsp">
-      <UniqueIdentifier>{c51596ed-0101-4220-92d4-dcfdda210836}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\klbnet\klbmnp">
-      <UniqueIdentifier>{70f870d6-96be-427a-b0db-540501e7edbf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\klbnet\klbrtp">
       <UniqueIdentifier>{377020d7-ea44-4dda-abe5-82a9d0544c26}</UniqueIdentifier>
     </Filter>
     <Filter Include="src_c\klbnet\klbrtp">
       <UniqueIdentifier>{104618d1-016c-4cb3-a26f-afbc3bca52fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbrtsp">
-      <UniqueIdentifier>{bf0cfcbd-90ce-4f5d-bd28-4b59ac6ef8ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbmnp">
-      <UniqueIdentifier>{c7739b78-eea7-46c3-97fb-244ef3b07f32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbhttp">
-      <UniqueIdentifier>{d27aab4c-8947-4caa-90c3-647b1b068d6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\klbnet\klbhttp">
-      <UniqueIdentifier>{7b0fe836-f2fe-4561-a129-e9575b5e50e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\klbnet\klbws">
-      <UniqueIdentifier>{3497579b-dca4-4a1f-94dd-78d9c824589c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbws">
-      <UniqueIdentifier>{6acccb90-0555-46b2-a91d-a602ae6ce4cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\klbnet\klbsmp">
-      <UniqueIdentifier>{5260adaa-191e-4a7f-9902-be7f1d81f1d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src_c\klbnet\klbsmp">
-      <UniqueIdentifier>{0a1ba8a7-e73f-4e60-810a-f76cc8e4a094}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\klbnet\klblisten">
       <UniqueIdentifier>{6f6fc267-59d2-4ec5-b4d9-35926ebe5b11}</UniqueIdentifier>
@@ -243,6 +213,78 @@
     </Filter>
     <Filter Include="src_packages\klbwui\embed_shwnd">
       <UniqueIdentifier>{9d25358a-7725-43bd-bc33-aa9f61f00474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\sim_wnd">
+      <UniqueIdentifier>{2abae357-f3e3-4e0b-8b85-b0fb811b5c9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\sim_widgets">
+      <UniqueIdentifier>{b820f369-b679-4f1b-93ae-8dca28091c1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbwui\sim_shwnd">
+      <UniqueIdentifier>{8e9c26e3-0893-4983-850d-58d898ce6428}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbhttp">
+      <UniqueIdentifier>{44e8136f-4481-4d91-b658-bd957e7368e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbhttp\core">
+      <UniqueIdentifier>{88a56704-bd1e-4eca-828f-1a0ff8f15073}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbhttp\http_klua">
+      <UniqueIdentifier>{90cce794-9b2a-47cc-8fcb-66156c9ff8f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbws">
+      <UniqueIdentifier>{ffefe72d-f44e-41ec-945e-e250a7f4392c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbws\core">
+      <UniqueIdentifier>{f7a6e45b-7b37-48fe-a0c6-37fc7f65d8d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbws\ws_klua">
+      <UniqueIdentifier>{822925fd-1075-4287-b615-b428f6868658}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbsmp">
+      <UniqueIdentifier>{744cb034-4718-4bed-8fbb-9a61464ad079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbsmp\core">
+      <UniqueIdentifier>{c04401ce-8417-4c69-b0fe-1da57c37e909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbsmp\smp_klua">
+      <UniqueIdentifier>{c6475c4a-b469-4eba-8ba5-6b08a8785995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbrtsp">
+      <UniqueIdentifier>{2d7b2a19-62bf-460e-ad48-6136220ca9cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbrtsp\core">
+      <UniqueIdentifier>{42948f8f-a2a0-44b5-8487-30e7cf449686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbrtsp\rtsp_klua">
+      <UniqueIdentifier>{897d7dbf-7ea6-435e-8f57-2fd18251e84a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbmnp">
+      <UniqueIdentifier>{5ad340be-c6f5-42a4-b75b-3ab828e227c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbmnp\core">
+      <UniqueIdentifier>{a96c187b-a567-4d5b-942f-af48a60e8b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_packages\klbmnp\mnp_klua">
+      <UniqueIdentifier>{c62d836d-35ca-4d20-ae6e-22a162053877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_vendor">
+      <UniqueIdentifier>{26c329fd-1745-464d-ac13-27393ab46b54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_vendor\mbedtls-3.6.7">
+      <UniqueIdentifier>{552029e4-6b9f-48ba-b681-e8c41e1ac05c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_vendor\mbedtls-3.6.7\library">
+      <UniqueIdentifier>{3ed5c9ae-976c-40e4-9013-efb903d3b4a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_vendor\mbedtls-3.6.7\include">
+      <UniqueIdentifier>{1a4d2645-7d8b-43ed-b936-cf249fbc3ef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_vendor\mbedtls-3.6.7\include\mbedtls">
+      <UniqueIdentifier>{1fa9b1f3-d054-4218-bef0-414a09225a44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src_vendor\mbedtls-3.6.7\include\psa">
+      <UniqueIdentifier>{c999bfcd-63bc-4ecb-a804-4347738cd11f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -294,14 +336,11 @@
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h">
       <Filter>inc\klbmem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_http.h">
-      <Filter>inc\klbnet</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h">
       <Filter>inc\klbnet</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klb_websocket.h">
-      <Filter>inc\klbnet</Filter>
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_websocket.h">
+      <Filter>src_packages\klbws\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbplatform\klb_atomic.h">
       <Filter>inc\klbplatform</Filter>
@@ -1101,47 +1140,47 @@
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_netmulti.h">
       <Filter>src_c\klua\extension</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspclient_conn.h">
-      <Filter>inc\klbnet\klbrtsp</Filter>
+    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.h">
+      <Filter>src_packages\klbrtsp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpclient_conn.h">
-      <Filter>inc\klbnet\klbmnp</Filter>
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.h">
+      <Filter>src_packages\klbmnp\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h">
       <Filter>inc\klbnet\klbrtp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspparser.h">
-      <Filter>inc\klbnet\klbrtsp</Filter>
+    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspparser.h">
+      <Filter>src_packages\klbrtsp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbrtsp\klb_rtspserve_conn.h">
-      <Filter>inc\klbnet\klbrtsp</Filter>
+    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspserve_conn.h">
+      <Filter>src_packages\klbrtsp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.h">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClInclude Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_serve_klua.h">
+      <Filter>src_packages\klbrtsp\rtsp_klua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbmnp\klb_mnpserve_conn.h">
-      <Filter>inc\klbnet\klbmnp</Filter>
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.h">
+      <Filter>src_packages\klbmnp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpclient_conn.h">
-      <Filter>inc\klbnet\klbhttp</Filter>
+    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.h">
+      <Filter>src_packages\klbhttp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbhttp\klb_httpserve_conn.h">
-      <Filter>inc\klbnet\klbhttp</Filter>
+    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.h">
+      <Filter>src_packages\klbhttp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsclient_conn.h">
-      <Filter>inc\klbnet\klbws</Filter>
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsclient_conn.h">
+      <Filter>src_packages\klbws\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbws\klb_wsserve_conn.h">
-      <Filter>inc\klbnet\klbws</Filter>
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsserve_conn.h">
+      <Filter>src_packages\klbws\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbbase\klb_smp.h">
       <Filter>inc\klbbase</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclient_conn.h">
-      <Filter>inc\klbnet\klbsmp</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpclient_conn.h">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserve_conn.h">
-      <Filter>inc\klbnet\klbsmp</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpserve_conn.h">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h">
       <Filter>inc\klbnet\klblisten</Filter>
@@ -1155,20 +1194,20 @@
     <ClInclude Include="..\..\inc\klua\klua_buffer.h">
       <Filter>inc\klua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.h">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_serve_klua.h">
+      <Filter>src_packages\klbsmp\smp_klua</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpclientrpc_conn.h">
-      <Filter>inc\klbnet\klbsmp</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpclientrpc_conn.h">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\klbnet\klbsmp\klb_smpserverpc_conn.h">
-      <Filter>inc\klbnet\klbsmp</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpserverpc_conn.h">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.h">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpparser.h">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.h">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smprpcer.h">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\inc\klbnet\klb_netcode.h">
       <Filter>inc\klbnet</Filter>
@@ -1359,6 +1398,507 @@
     <ClInclude Include="..\..\inc\klbgui\klb_wnd_flex.h">
       <Filter>inc\klbgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbhttp\klbhttp.h">
+      <Filter>src_packages\klbhttp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbws\klbws.h">
+      <Filter>src_packages\klbws</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbsmp\klbsmp.h">
+      <Filter>src_packages\klbsmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbrtsp\klbrtsp.h">
+      <Filter>src_packages\klbrtsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_packages\klbmnp\klbmnp.h">
+      <Filter>src_packages\klbmnp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\aes.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\aria.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\asn1.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\asn1write.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\base64.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\bignum.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\block_cipher.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\build_info.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\camellia.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ccm.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\chacha20.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\chachapoly.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\check_config.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\cipher.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\cmac.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\compat-2.x.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_legacy_crypto.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_legacy_from_psa.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_psa_from_legacy.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_psa_superset_legacy.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_ssl.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_x509.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_psa.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\constant_time.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ctr_drbg.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\debug.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\des.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\dhm.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecdh.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecdsa.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecjpake.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecp.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\entropy.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\error.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\gcm.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\hkdf.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\hmac_drbg.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\lms.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\mbedtls_config.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\md.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\md5.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\memory_buffer_alloc.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\net_sockets.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\nist_kw.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\oid.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pem.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pk.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pkcs12.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pkcs5.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pkcs7.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\platform.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\platform_time.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\platform_util.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\poly1305.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\private_access.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\psa_util.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ripemd160.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\rsa.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha1.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha256.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha3.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha512.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_cache.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_ciphersuites.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_cookie.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_ticket.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\threading.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\timing.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\version.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509_crl.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509_crt.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509_csr.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\build_info.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_auto_enabled.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_config_dependencies.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_config_key_pair_types.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_config_synonyms.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_builtin_composites.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_builtin_key_derivation.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_builtin_primitives.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_compat.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_config.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_common.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_contexts_composites.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_contexts_key_derivation.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_contexts_primitives.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_extra.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_legacy.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_platform.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_se_driver.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_sizes.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_struct.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_types.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_values.h">
+      <Filter>src_vendor\mbedtls-3.6.7\include\psa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\aesce.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\aesni.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\alignment.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\base64_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_core.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_core_invasive.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod_raw.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod_raw_invasive.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\block_cipher_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bn_mul.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\chacha20_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\check_crypto_config.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher_invasive.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher_wrap.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\common.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\constant_time_impl.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\constant_time_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ctr.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\debug_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_internal_alt.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_invasive.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\entropy_poll.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\lmots.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\md_psa.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\md_wrap.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_common.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_error.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_reader.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_trace.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\padlock.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_wrap.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\pkwrite.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_aead.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_cipher.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_core.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_core_common.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_driver_wrappers.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_driver_wrappers_no_static.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ecp.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ffdh.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_hash.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_invasive.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_its.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_mac.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_pake.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_random.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_random_impl.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_rsa.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_se.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_slot_management.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_storage.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_util_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa_alt_helpers.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_ciphersuites_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_client.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_debug_helpers.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_misc.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_invasive.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_keys.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\threading_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_internal.h">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src_c\libavutil\libavutil.v">
@@ -1420,14 +1960,32 @@
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c">
       <Filter>src_c\klbmem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_http.c">
-      <Filter>src_c\klbnet</Filter>
+    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.c">
+      <Filter>src_packages\klbhttp\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.c">
+      <Filter>src_packages\klbhttp\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbhttp\http_klua\klbhttp_klua.c">
+      <Filter>src_packages\klbhttp\http_klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klb_socket.c">
       <Filter>src_c\klbnet</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klb_websocket.c">
+    <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c">
       <Filter>src_c\klbnet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_websocket.c">
+      <Filter>src_packages\klbws\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsclient_conn.c">
+      <Filter>src_packages\klbws\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsserve_conn.c">
+      <Filter>src_packages\klbws\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_packages\klbws\ws_klua\klbws_klua.c">
+      <Filter>src_packages\klbws\ws_klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbplatform\klb_atomic.c">
       <Filter>src_c\klbplatform</Filter>
@@ -1771,29 +2329,11 @@
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kpackage.c">
       <Filter>src_c\klua\klua_base</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kmnp.c">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClCompile Include="..\..\src_packages\klbmnp\mnp_klua\klbmnp_klua.c">
+      <Filter>src_packages\klbmnp\mnp_klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_flv.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_khttp_mnp.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_flv.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_mnp.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_kws_rtp.c">
-      <Filter>src_c\klua\klua_net</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtp.c">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClCompile Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_klua.c">
+      <Filter>src_packages\klbrtsp\rtsp_klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbthird\cJSON.c">
       <Filter>src_c\klbthird</Filter>
@@ -2197,11 +2737,11 @@
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_netmulti.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspparser.c">
-      <Filter>src_c\klbnet\klbrtsp</Filter>
+    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspparser.c">
+      <Filter>src_packages\klbrtsp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_krtsp_serve.c">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClCompile Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_serve_klua.c">
+      <Filter>src_packages\klbrtsp\rtsp_klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c">
       <Filter>src_c\klbnet\klblisten</Filter>
@@ -2212,41 +2752,41 @@
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_bufagent.c">
       <Filter>src_c\klua\extension</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp.c">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_klua.c">
+      <Filter>src_packages\klbsmp\smp_klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ksmp_serve.c">
-      <Filter>src_c\klua\klua_net</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_serve_klua.c">
+      <Filter>src_packages\klbsmp\smp_klua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpparser.c">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpparser.c">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smprpcer.c">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smprpcer.c">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbmnp\klb_mnpclient_conn.c">
-      <Filter>src_c\klbnet\klbmnp</Filter>
+    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.c">
+      <Filter>src_packages\klbmnp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbmnp\klb_mnpserve_conn.c">
-      <Filter>src_c\klbnet\klbmnp</Filter>
+    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.c">
+      <Filter>src_packages\klbmnp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspclient_conn.c">
-      <Filter>src_c\klbnet\klbrtsp</Filter>
+    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.c">
+      <Filter>src_packages\klbrtsp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbrtsp\klb_rtspserve_conn.c">
-      <Filter>src_c\klbnet\klbrtsp</Filter>
+    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspserve_conn.c">
+      <Filter>src_packages\klbrtsp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpclient_conn.c">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpclient_conn.c">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpclientrpc_conn.c">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpclientrpc_conn.c">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpserve_conn.c">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpserve_conn.c">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src_c\klbnet\klbsmp\klb_smpserverpc_conn.c">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpserverpc_conn.c">
+      <Filter>src_packages\klbsmp\core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_epoll.c">
       <Filter>src_c\klbnet\klbiopoll</Filter>
@@ -2542,10 +3082,340 @@
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.c">
       <Filter>src_packages\klbwui\embed_shwnd</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aes.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aesce.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aesni.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aria.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\asn1parse.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\asn1write.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\base64.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_core.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod_raw.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\block_cipher.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\camellia.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ccm.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\chacha20.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\chachapoly.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher_wrap.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\cmac.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\constant_time.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ctr_drbg.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\debug.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\des.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\dhm.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecdh.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecdsa.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecjpake.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_curves.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_curves_new.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\entropy.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\entropy_poll.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\error.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\gcm.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\hkdf.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\hmac_drbg.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\lmots.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\lms.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\md.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\md5.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\memory_buffer_alloc.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_reader.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_trace.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\net_sockets.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\nist_kw.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\oid.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\padlock.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pem.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pk.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_ecc.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_wrap.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkcs12.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkcs5.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkcs7.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkparse.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkwrite.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\platform.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\platform_util.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\poly1305.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_aead.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_cipher.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_client.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_driver_wrappers_no_static.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ecp.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ffdh.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_hash.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_mac.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_pake.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_random.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_rsa.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_se.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_slot_management.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_storage.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_its_file.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_util.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ripemd160.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa_alt_helpers.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha1.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha256.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha3.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha512.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_cache.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_ciphersuites.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_client.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_cookie.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_debug_helpers_generated.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_msg.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_ticket.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls12_client.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls12_server.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_client.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_generic.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_keys.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_server.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\threading.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\timing.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\version.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\version_features.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_create.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_crl.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_crt.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_csr.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509write.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509write_crt.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509write_csr.c">
+      <Filter>src_vendor\mbedtls-3.6.7\library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\src_c\klbnet\klbsmp\klbsmp.txt">
-      <Filter>src_c\klbnet\klbsmp</Filter>
+    <Text Include="..\..\src_packages\klbsmp\core\klbsmp.txt">
+      <Filter>src_packages\klbsmp\core</Filter>
+    </Text>
+    <Text Include="..\..\src_packages\klbmnp\core\klbmnp.txt">
+      <Filter>src_packages\klbmnp\core</Filter>
     </Text>
   </ItemGroup>
 </Project>

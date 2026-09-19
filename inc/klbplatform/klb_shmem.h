@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2021, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_shmem.h
@@ -67,4 +68,5 @@ KLB_API size_t klb_shmem_size(klb_shmem_t* p_shmem);
 #endif
 
 #endif // __KLB_SHMEM_H__
-//end
+
+// end

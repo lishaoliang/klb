@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_mutex.h
@@ -63,4 +64,5 @@ KLB_API void klb_mutex_unlock(klb_mutex_t* p_mutex);
 #endif
 
 #endif // __KLB_MUTEX_H__
-//end
+
+// end

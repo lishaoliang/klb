@@ -46,6 +46,8 @@ Lua API 文档: <https://gitee.com/klua/klua_doc> (`lua/klua/`, `lua/klbcore/`)
  ->src_packages  ----------- 扩展包
    ->klbwui  --------------- GUI控件包
 
+ ->src_vendor  ------------- 第三方开源可裁剪库
+
  ->proj/klua  -------------- klua可执行入口
  ->proj  ------------------- 工程文件 (VS2015)
 

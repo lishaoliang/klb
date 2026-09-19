@@ -37,7 +37,7 @@ export MY_CLIP_SOURCES_EXCLUDE :=
 # 记名: no-* 同 --disable-*; use-* 同 --enable-*; no-all 同 min-core
 
 # 全集 (min-core 基准; 不含 no-wui-sim)
-KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto
+KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto no-http no-ws no-smp no-rtsp no-mnp no-ssl
 
 # --disable-X -> no-X; --enable-X -> use-X; no-all -> min-core
 define KLB_CLIP_MAP_WORD
@@ -46,7 +46,7 @@ endef
 
 # use-* -> 要从 TAG 删掉的 no-* (wui / wui-embed 连带 gui)
 define KLB_CLIP_USE_NOS
-$(strip $(if $(filter use-wui-embed,$(1)),no-wui no-gui,$(if $(filter use-wui use-klbwui use-wui-sim,$(1)),no-wui no-gui,$(if $(filter use-gui use-klbgui use-kgui,$(1)),no-gui,$(if $(filter use-zlib,$(1)),no-zlib,$(if $(filter use-lpeg,$(1)),no-lpeg,$(if $(filter use-sqlite use-lsqlite3,$(1)),no-sqlite,$(if $(filter use-pcre2,$(1)),no-pcre2,$(if $(filter use-cpp,$(1)),no-cpp,$(if $(filter use-format use-kh26x use-klbformat,$(1)),no-format,$(if $(filter use-qrencode use-qr,$(1)),no-qrencode,$(if $(filter use-net-proto use-netproto use-net use-protocol,$(1)),no-net-proto,$(patsubst use-%,no-%,$(1))))))))))))))
+$(strip $(if $(filter use-wui-embed,$(1)),no-wui no-gui,$(if $(filter use-wui use-klbwui use-wui-sim,$(1)),no-wui no-gui,$(if $(filter use-gui use-klbgui use-kgui,$(1)),no-gui,$(if $(filter use-zlib,$(1)),no-zlib,$(if $(filter use-lpeg,$(1)),no-lpeg,$(if $(filter use-sqlite use-lsqlite3,$(1)),no-sqlite,$(if $(filter use-pcre2,$(1)),no-pcre2,$(if $(filter use-cpp,$(1)),no-cpp,$(if $(filter use-format use-kh26x use-klbformat,$(1)),no-format,$(if $(filter use-qrencode use-qr,$(1)),no-qrencode,$(if $(filter use-net-proto use-netproto use-net use-protocol,$(1)),no-net-proto,$(if $(filter use-ssl use-mbedtls use-tls,$(1)),no-ssl,$(patsubst use-%,no-%,$(1)))))))))))))))
 endef
 
 KLB_CLIP_WORDS := $(foreach _w,$(MY_CLIP),$(call KLB_CLIP_MAP_WORD,$(_w)))
@@ -171,12 +171,80 @@ endif
 
 
 # 可裁剪参数: MY_CLIP = no-net-proto
-# min-core 保留 klbnet(socket/iopoll/netconn/netmulti) 与 kurl; 裁协议栈与 klua 网络绑定
+# min-core 保留 klbnet(socket/iopoll/netconn/netmulti) 与 kurl; 裁剩余 klua_net 绑定
+# SMP/RTSP/MNP/HTTP/WS 已迁 src_packages, 由 no-smp / no-rtsp / no-mnp / no-http / no-ws 单独裁剪
 ifeq ($(filter no-net-proto, $(MY_CLIP_TAG)), )
-	MY_CLIP_DIRS += ./src_c/klbnet/klbmnp ./src_c/klbnet/klbrtsp ./src_c/klbnet/klbsmp
 	MY_CLIP_DIRS += ./src_c/klua/klua_net
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_NET_PROTO__
-	MY_CLIP_SOURCES_EXCLUDE += ./src_c/klbnet/klb_http.c ./src_c/klbnet/klb_websocket.c
 	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_kurl.c
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-http
+# 正向: MY_CLIP = use-http / --enable-http
+ifeq ($(filter no-http, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbhttp/core
+	MY_CLIP_DIRS += ./src_packages/klbhttp/http_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_HTTP__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-ws
+# 正向: MY_CLIP = use-ws / --enable-ws
+ifeq ($(filter no-ws, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbws/core
+	MY_CLIP_DIRS += ./src_packages/klbws/ws_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_WS__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-smp
+# 正向: MY_CLIP = use-smp / --enable-smp
+ifeq ($(filter no-smp, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbsmp/core
+	MY_CLIP_DIRS += ./src_packages/klbsmp/smp_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_SMP__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-rtsp
+# 正向: MY_CLIP = use-rtsp / --enable-rtsp
+ifeq ($(filter no-rtsp, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbrtsp/core
+	MY_CLIP_DIRS += ./src_packages/klbrtsp/rtsp_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_RTSP__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-mnp
+# 正向: MY_CLIP = use-mnp / --enable-mnp
+ifeq ($(filter no-mnp, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbmnp/core
+	MY_CLIP_DIRS += ./src_packages/klbmnp/mnp_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_MNP__
+endif
+
+
+# src_vendor: 第三方开源可裁剪库 (V1; 上游原名+版本)
+# 可裁剪参数: MY_CLIP = no-ssl
+# 正向: MY_CLIP = use-ssl / --enable-ssl
+# 勿把第三方放入 src_packages; 勿用上游 CMake
+ifeq ($(filter no-ssl, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_vendor/mbedtls-3.6.7/library
+	MY_CLIP_INC += -I ./src_vendor/mbedtls-3.6.7/include
+	MY_CLIP_FLAGS += -DMBEDTLS_USER_CONFIG_FILE=\"klbnet/klb_mbedtls_user_config.h\"
+	MY_CLIP_FLAGS += -D__KLB_MBEDTLS__
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_SSL__
 endif

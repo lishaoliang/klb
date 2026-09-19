@@ -28,6 +28,7 @@
 -- @history 修改历史
 --   \n 2026 0.1 创建文件
 --]]
+local kgui = require("kgui")
 
 local flexer = {}
 local E = {}

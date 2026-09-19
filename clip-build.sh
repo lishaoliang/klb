@@ -42,7 +42,7 @@ usage() {
 选项:
   --print / --info / -j N / --raw '...' / -h
 
-库名: zlib lpeg sqlite pcre2 cpp gui format qrencode net-proto wui wui-embed wui-sim
+库名: zlib lpeg sqlite pcre2 cpp gui format qrencode net-proto http ws smp rtsp mnp ssl wui wui-embed wui-sim
 EOF
 }
 

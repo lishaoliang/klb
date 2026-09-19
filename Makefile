@@ -37,7 +37,7 @@ CP_RF	:= -cp -rf
 # 硬核心 + 运行最小集 (klbapp / klua / socket+iopoll; 可选模块见 clip.mk)
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
-# klbnet — socket / iopoll / netconn / netmulti (协议栈见 clip.mk no-net-proto)
+# klbnet — socket / iopoll / netconn / netmulti (协议包见 clip.mk no-smp/no-rtsp/no-mnp/no-http/no-ws)
 MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klbiopoll ./src_c/klbnet/klblisten
 
 # klua — 框架 + 最小 bundled (cjson / LuaXML / lfs; 协议/format 绑定见 clip.mk)
@@ -51,6 +51,8 @@ MY_DIRS += ./src_c/klbapp
 # compat / libavutil / klbthird
 MY_DIRS += ./src_c/compat ./src_c/libavutil
 MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
+
+# src_vendor: 第三方开源可裁剪库 (clip.mk; mbedtls-3.6.7 / no-ssl)
 
 ###########################################################
 # 头文件目录

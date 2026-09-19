@@ -256,9 +256,16 @@ KLB_API int klb_socket_bind(klb_socket_fd fd, const struct sockaddr* p_addr, int
 KLB_API klb_socket_t* klb_socket_async_create(klb_socket_fd fd);
 
 
+/// @brief 创建一个异步TLS socket
+/// @param [in]  fd             socket fd
+/// @return klb_socket_t* NULL.创建失败; 非NULL
+KLB_API klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd);
+
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif // __KLB_SOCKET_H__
-//end
+
+// end

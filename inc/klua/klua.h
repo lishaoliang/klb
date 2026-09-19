@@ -227,28 +227,6 @@ KLB_API int klua_open_kgui(lua_State* L);
 KLB_API int klua_open_kurl(lua_State* L);
 
 
-#if !defined(__KLB_NO_NET_PROTO__)
-/// @brief 扩展库"kmnp"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_kmnp(lua_State* L);
-
-
-/// @brief 扩展库"ksmp"
-/// @param [in] *L          Lua状态
-/// @return int 返回1
-KLB_API int klua_open_ksmp(lua_State* L);
-
-
-/// @brief 实时流媒体模块
-KLB_API int klua_open_krtsp(lua_State* L);
-KLB_API int klua_open_khttp_flv(lua_State* L);
-KLB_API int klua_open_khttp_mnp(lua_State* L);
-KLB_API int klua_open_kws_flv(lua_State* L);
-KLB_API int klua_open_kws_mnp(lua_State* L);
-#endif
-
-
 #if !defined(__KLB_NO_FORMAT__)
 /// @brief 扩展库"kh26x": h26x文件读取
 /// @param [in] *L          Lua状态

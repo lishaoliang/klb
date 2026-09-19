@@ -3,6 +3,21 @@
 #include "klbmem/klb_mem.h"
 #include "lstate.h"
 #include <assert.h>
+#if !defined(__KLB_NO_HTTP__)
+#include "klbhttp/klbhttp.h"
+#endif
+#if !defined(__KLB_NO_WS__)
+#include "klbws/klbws.h"
+#endif
+#if !defined(__KLB_NO_SMP__)
+#include "klbsmp/klbsmp.h"
+#endif
+#if !defined(__KLB_NO_RTSP__)
+#include "klbrtsp/klbrtsp.h"
+#endif
+#if !defined(__KLB_NO_MNP__)
+#include "klbmnp/klbmnp.h"
+#endif
 
 
 void klua_loadlib(lua_State* L, lua_CFunction openlib, const char* p_name)
@@ -326,14 +341,24 @@ int klua_loadlib_all(lua_State* L)
 
         klua_loadlib(L, klua_open_kurl, "kurl");
 
-#if !defined(__KLB_NO_NET_PROTO__)
+#if !defined(__KLB_NO_HTTP__)
+        klua_loadlib(L, klua_open_khttp, "khttp");
+#endif
+
+#if !defined(__KLB_NO_WS__)
+        klua_loadlib(L, klua_open_kws, "kws");
+#endif
+
+#if !defined(__KLB_NO_MNP__)
         klua_loadlib(L, klua_open_kmnp, "kmnp");
+#endif
+
+#if !defined(__KLB_NO_SMP__)
         klua_loadlib(L, klua_open_ksmp, "ksmp");
+#endif
+
+#if !defined(__KLB_NO_RTSP__)
         klua_loadlib(L, klua_open_krtsp, "krtsp");
-        klua_loadlib(L, klua_open_khttp_flv, "khttp_flv");
-        klua_loadlib(L, klua_open_khttp_mnp, "khttp_mnp");
-        klua_loadlib(L, klua_open_kws_flv, "kws_flv");
-        klua_loadlib(L, klua_open_kws_mnp, "kws_mnp");
 #endif
 
 #if !defined(__KLB_NO_FORMAT__)

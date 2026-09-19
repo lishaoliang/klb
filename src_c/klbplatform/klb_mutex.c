@@ -1,17 +1,11 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbplatform/klb_mutex.h"
+#include "klbplatform/klb_mutex_in.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
 #ifdef _WIN32
 #include <windows.h>
-
-/// @struct klb_mutex_t
-/// @brief  通用(互斥量)锁
-typedef struct klb_mutex_t_
-{
-    CRITICAL_SECTION    section;    ///< 互斥量
-}klb_mutex_t;
 
 klb_mutex_t* klb_mutex_create()
 {
@@ -66,13 +60,6 @@ void klb_mutex_unlock(klb_mutex_t* p_mutex)
 #ifndef __APPLE__
 #include <sys/prctl.h>
 #endif
-
-/// @struct klb_mutex_t
-/// @brief  通用(互斥量)锁
-typedef struct klb_mutex_t_
-{
-    pthread_mutex_t     mutex;      ///< 互斥量
-}klb_mutex_t;
 
 
 #ifndef PTHREAD_MUTEX_RECURSIVE

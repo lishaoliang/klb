@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2021, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_semlock.h
@@ -54,4 +55,5 @@ KLB_API void klb_semlock_unlock(klb_semlock_t* p_semlock);
 #endif
 
 #endif // __KLB_SEMLOCK_H__
-//end
+
+// end

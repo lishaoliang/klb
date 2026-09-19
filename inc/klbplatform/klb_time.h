@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_time.h
@@ -43,23 +44,23 @@ KLB_API int64_t klb_gmt_time_ms();
 
 
 /// @def   KLB_TIME_1M
-/// @brief 1分钟 = ‭60,000‬毫秒
-#define KLB_TIME_1M         ‭60000‬
+/// @brief 1分钟 = 60,000毫秒
+#define KLB_TIME_1M         60000
 
 
 /// @def   KLB_TIME_1H
-/// @brief 1小时 = ‭‭3,600,000‬毫秒
-#define KLB_TIME_1H         ‭3600000‬
+/// @brief 1小时 = 3,600,000毫秒
+#define KLB_TIME_1H         3600000
 
 
-/// @def   ‭KLB_TIME_12H
-/// @brief 12小时 = ‭‭43,200,000‬毫秒
-#define KLB_TIME_12H        43200000‬
+/// @def   KLB_TIME_12H
+/// @brief 12小时 = 43,200,000毫秒
+#define KLB_TIME_12H        43200000
 
 
-/// @def   ‭KLB_TIME_24H
-/// @brief 24小时 = ‭‭‭86,400,000‬‬毫秒
-#define KLB_TIME_1D         ‭86400000‬
+/// @def   KLB_TIME_1D
+/// @brief 24小时 = 86,400,000毫秒
+#define KLB_TIME_1D         86400000
 
 
 #ifdef __cplusplus
@@ -67,4 +68,5 @@ KLB_API int64_t klb_gmt_time_ms();
 #endif
 
 #endif // __KLB_TIME_H__
-//end
+
+// end

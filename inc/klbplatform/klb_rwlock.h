@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_rwlock.h
@@ -73,4 +74,5 @@ KLB_API void klb_rwlock_wrunlock(klb_rwlock_t* p_rwlock);
 #endif
 
 #endif // __KLB_RWLOCK_H__
-//end
+
+// end

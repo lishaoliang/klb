@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2019, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_thread.h
@@ -61,7 +62,7 @@ KLB_API int klb_thread_tid();
 
 
 /// @brief 毫秒级休眠
-/// @param [in] ms          毫秒[0 - ‭2,147,483,648‬]
+/// @param [in] ms          毫秒[0 - 2,147,483,648]
 /// @return 无
 /// @note 1秒 = 1000毫秒
 KLB_API void klb_sleep(uint32_t ms);
@@ -81,4 +82,5 @@ KLB_API void klb_sleep_ns(uint32_t ns);
 #endif
 
 #endif // __KLB_THREAD_H__
-//end
+
+// end
