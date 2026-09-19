@@ -1,12 +1,21 @@
-﻿local stringex = require("klbcore.util.stringex")
+﻿--[[
+-- Copyright (c) 2026, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+-- @file   http_mime.lua
+-- @author 随风(https://gitee.com/klua/klb)
+-- @brief  按扩展名查 HTTP Content-Type
+-- @note   模块导出单一函数 (非 table); 未知为 application/octet-stream
+-- @history 修改历史
+--  \n [2026] 创建文件
+--]]
+local stringex = require("klbcore.util.stringex")
 
 local my_mime = {
-	avi = 'video/avi',
+	avi = 'video/x-msvideo',
 	apk = 'application/vnd.android.package-archive',	
 	asp = 'text/asp',
 	awf = 'application/vnd.adobe.workflow',
 	
-	bmp = 'application/x-bmp',
+	bmp = 'image/bmp',
 	
 	crt = 'application/x-x509-ca-cert',
 	css = 'text/css',
@@ -49,30 +58,30 @@ local my_mime = {
 	jfif = 'image/jpeg',
 
 	m2v = 'video/x-mpeg',
-	m4e = 'video/mpeg4',
-	mp1 = 'audio/mp1',
+	m4e = 'video/mp4',
+	mp1 = 'audio/mpeg',
 	mp2v = 'video/mpeg',
-	mp4 = 'video/mpeg4',
-	mpeg = 'video/mpg',
+	mp4 = 'video/mp4',
+	mpeg = 'video/mpeg',
 	mtx = 'text/xml',
 	m1v = 'video/x-mpeg',
 	mml = 'text/xml',
-	mp2 = 'audio/mp2',
-	mp3 = 'audio/mp3',
+	mp2 = 'audio/mpeg',
+	mp3 = 'audio/mpeg',
 	mpa = 'video/x-mpg',
 	mpe = 'video/x-mpeg',
-	mpg = 'video/mpg',
-	md = 'text/x-markdown',
+	mpg = 'video/mpeg',
+	md = 'text/markdown',
 
 	pdf = 'application/pdf',
 	png = 'image/png',
 	plg = 'text/html',
-	ppt = 'application/x-ppt',
+	ppt = 'application/vnd.ms-powerpoint',
 	
 	rmvb = 'application/vnd.rn-realmedia-vbr',
 	
 	sdp = 'application/sdp',
-	svg = 'text/xml',
+	svg = 'image/svg+xml',
 	stm = 'text/html',
 	
 	tif = 'image/tiff',
@@ -90,14 +99,38 @@ local my_mime = {
 	wav = 'audio/wav',
 	wasm = 'application/wasm',
 
-	xls = 'application/x-xls',
+	xls = 'application/vnd.ms-excel',
 	xml = 'text/xml',
 	xsl = 'text/xml',
-	xwd = 'application/x-xwd'
+	xwd = 'application/x-xwd',
+
+	aac = 'audio/aac',
+	csv = 'text/csv',
+	docx = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	flv = 'video/x-flv',
+	gz = 'application/gzip',
+	m3u8 = 'application/vnd.apple.mpegurl',
+	m4a = 'audio/mp4',
+	mjs = 'text/javascript',
+	ogg = 'audio/ogg',
+	otf = 'font/otf',
+	pptx = 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+	ts = 'video/mp2t',
+	ttf = 'font/ttf',
+	webm = 'video/webm',
+	webp = 'image/webp',
+	woff = 'font/woff',
+	woff2 = 'font/woff2',
+	xlsx = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+	zip = 'application/zip',
+	['7z'] = 'application/x-7z-compressed'
 }
 
 -- default = 'application/octet-stream'
 
+-- @brief 由文件名扩展名查 MIME
+-- @param [in]	filename[string]		文件名或路径; eg. 'index.html'
+-- @return [string]		MIME 类型; 未知为 'application/octet-stream'
 local http_mime = function (filename)
 	local ext = string.match(filename, '[^.]*$')
 	

@@ -8,12 +8,19 @@ local table = require("table")
 
 local stringex = {}
 
+-- @brief URL 编码
+-- @param [in]      s[string]		要编码的字符串
+-- @return [string]	编码后的字符串
 stringex.url_encode = function (s)
 	s = string.gsub(s, '([^%w%.%- ])', function(c) return string.format('%%%02X', string.byte(c)) end)
     return string.gsub(s, ' ', '+')
 end
 
+-- @brief URL 解码
+-- @param [in]      s[string]		要解码的字符串
+-- @return [string]	解码后的字符串
 stringex.url_decode = function (s)
+	s = string.gsub(s or "", "+", " ")
 	s = string.gsub(s, '%%(%x%x)', function(h) return string.char(tonumber(h, 16)) end)
 	return s
 end
