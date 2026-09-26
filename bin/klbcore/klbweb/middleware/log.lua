@@ -26,7 +26,7 @@ local function log(opts)
 		nxt()
 		local dt = ktime.tick_count() - t0
 		local code = res._status_code or 0
-		write(req.method, req.tls and "https" or "http", req.path, code, dt)
+		write(req.method, req.tls and "https" or "http", req.path, code, dt, req.request_id or "")
 	end
 end
 

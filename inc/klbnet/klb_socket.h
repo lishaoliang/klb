@@ -62,6 +62,7 @@ typedef struct klb_socket_vtable_t_
     klb_socket_destroy_cb   cb_destroy;     ///< 销毁
     klb_socket_send_cb      cb_send;        ///< TCP发送数据
     klb_socket_recv_cb      cb_recv;        ///< TCP接收数据
+    klb_socket_recv_cb      cb_recv_peek;   ///< TCP窥探接收; 不消费队列
     klb_socket_sendto_cb    cb_sendto;      ///< UDP发送数据
     klb_socket_recvfrom_cb  cb_recvfrom;    ///< UDP接收数据
 }klb_socket_vtable_t;
@@ -142,6 +143,14 @@ KLB_API int klb_socket_send(klb_socket_t* p_socket, const uint8_t* p_data, int l
 
 /// @brief TCP接收数据
 KLB_API int klb_socket_recv(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len);
+
+/// @brief TCP窥探接收数据
+/// @param [in]  *p_socket          socket
+/// @param [out] *p_buf             接收缓存
+/// @param [in]  buf_len            缓存大小
+/// @return int >0.字节数; 0.对端关闭; <0.错误
+/// @note 不从套接字队列摘走数据 (MSG_PEEK); TLS 时窥探的是内核密文
+KLB_API int klb_socket_recv_peek(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len);
 
 /// @brief UDP发送数据
 KLB_API int klb_socket_sendto(klb_socket_t* p_socket, const uint8_t* p_data, int len, const struct sockaddr* p_addr, int addr_len);

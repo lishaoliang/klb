@@ -2,7 +2,7 @@
 -- Copyright (c) 2026, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file   file.lua
 -- @author 随风(https://gitee.com/klua/klb)
--- @brief  klbweb 静态文件读取 (304 / Range / gzip)
+-- @brief  klbweb 静态文件 (304 / Range / gzip; body 由 C send_file)
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
@@ -144,6 +144,20 @@ local function gzip_body(body)
 end
 
 
+local function no_file()
+	return { path = "", offset = 0, length = 0 }
+end
+
+
+local function file_src(path, offset, length)
+	return {
+		path = path or "",
+		offset = offset or 0,
+		length = length or 0,
+	}
+end
+
+
 -- @brief 组装 Cache-Control / ETag / Last-Modified
 file.extra_of = function (mime, kind, filename, etag, mtime, extra)
 	extra = extra or {}
@@ -188,11 +202,11 @@ local function want_gzip(headers)
 end
 
 
--- @brief 读单个文件 (含 304 / Range / gzip)
+-- @brief 读单个文件 (含 304 / Range / gzip); 实体走 C send_file
 file.open = function (real, rel, headers, max_file, gzip, gzip_dynamic)
 	local attr = lfs.attributes(real)
 	if not attr or "file" ~= attr.mode then
-		return 404, "", "", "miss", {}
+		return 404, "", "", "miss", {}, no_file()
 	end
 
 	local size = attr.size or 0
@@ -205,74 +219,53 @@ file.open = function (real, rel, headers, max_file, gzip, gzip_dynamic)
 		local gz_path = real .. ".gz"
 		local gz_attr = lfs.attributes(gz_path)
 		if gz_attr and "file" == gz_attr.mode then
-			if 0 < max_file and max_file < (gz_attr.size or 0) then
-				return 413, "text/plain", "file too large", "large", {}
-			end
-
 			local etag = make_etag(gz_attr.size, gz_attr.modification)
 			extra = file.extra_of(mime, "file", filename, etag, gz_attr.modification, {
 				{ "Content-Encoding", "gzip" },
 				{ "Vary", "Accept-Encoding" },
 			})
 			if cond_304(headers, etag, gz_attr.modification) then
-				return 304, mime, "", "not-modified", extra
+				return 304, mime, "", "not-modified", extra, no_file()
 			end
 
-			local body = read_file(gz_path)
-			if not body then
-				return 404, "", "", "miss", {}
-			end
-
-			return 200, mime, body, "file", extra
+			return 200, mime, "", "file", extra, file_src(gz_path, 0, gz_attr.size or 0)
 		end
 	end
 
 	if cond_304(headers, make_etag(size, mtime), mtime) then
-		return 304, mime, "", "not-modified", extra
+		return 304, mime, "", "not-modified", extra, no_file()
 	end
 
 	local rng = parser.parse_range(headers, size)
 	if false == rng then
 		extra[#extra + 1] = { "Content-Range", string.format("bytes */%d", size) }
-		return 416, "text/plain", "Range Not Satisfiable", "range", extra
+		return 416, "text/plain", "Range Not Satisfiable", "range", extra, no_file()
 	end
 
 	if rng then
 		local slice = rng.last - rng.first + 1
-		if 0 < max_file and max_file < slice then
-			return 413, "text/plain", "file too large", "large", {}
-		end
-
-		local body = read_range(real, rng.first, rng.last)
-		if not body then
-			return 404, "", "", "miss", {}
-		end
-
 		extra[#extra + 1] = { "Accept-Ranges", "bytes" }
 		extra[#extra + 1] = { "Content-Range", string.format("bytes %d-%d/%d", rng.first, rng.last, size) }
-		return 206, mime, body, "file", extra
-	end
-
-	if 0 < max_file and max_file < size then
-		return 413, "text/plain", "file too large", "large", {}
-	end
-
-	local body = read_file(real)
-	if not body then
-		return 404, "", "", "miss", {}
+		return 206, mime, "", "file", extra, file_src(real, rng.first, slice)
 	end
 
 	if gzip_dynamic and want_gzip(headers) and 64 < size then
-		local gz = gzip_body(body)
-		if gz and #gz < #body then
-			extra[#extra + 1] = { "Content-Encoding", "gzip" }
-			extra[#extra + 1] = { "Vary", "Accept-Encoding" }
-			return 200, mime, gz, "file", extra
+		local too_big = (0 < max_file and max_file < size)
+		if not too_big then
+			local body = read_file(real)
+			if body then
+				local gz = gzip_body(body)
+				if gz and #gz < #body then
+					extra[#extra + 1] = { "Content-Encoding", "gzip" }
+					extra[#extra + 1] = { "Vary", "Accept-Encoding" }
+					return 200, mime, gz, "file", extra, no_file()
+				end
+			end
 		end
 	end
 
 	extra[#extra + 1] = { "Accept-Ranges", "bytes" }
-	return 200, mime, body, "file", extra
+	return 200, mime, "", "file", extra, file_src(real, 0, size)
 end
 
 

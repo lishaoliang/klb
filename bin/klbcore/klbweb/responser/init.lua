@@ -1,14 +1,16 @@
 ﻿--[[
 -- Copyright (c) 2026, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
--- @file   responser.lua
+-- @file   init.lua
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klbweb 响应对象
--- @note   header / cookie / redirect / send; 组包走 pack_head
+-- @note   header / cookie / redirect / send; 组包走 pack_head; 子目录可再扩
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
 local cjson = require("cjson.safe")
 local coder = require("klbcore.klbweb.coder")
+local chunked = require("klbcore.klbweb.responser.chunked")
+local sse = require("klbcore.klbweb.responser.sse")
 
 
 local responser = {}
@@ -33,8 +35,9 @@ end
 -- @param [in]      size[number]		Content-Length (按原 body)
 -- @param [in]      keep_alive[boolean]	是否 keep-alive
 -- @param [in]      extra[table]		额外头 `{ { name, value }, ... }`
+-- @param [in]      mode[string]		[可选] `chunked` / `stream` 时不写 Content-Length
 -- @return [string]						头块 (含结尾空行)
-responser.pack_head = function (app, status, mime, size, keep_alive, extra)
+responser.pack_head = function (app, status, mime, size, keep_alive, extra, mode)
 	local server = "klbweb"
 	if app and app._cfg and "string" == type(app._cfg.server) and "" ~= app._cfg.server then
 		server = app._cfg.server
@@ -54,7 +57,12 @@ responser.pack_head = function (app, status, mime, size, keep_alive, extra)
 		t[#t + 1] = string.format("Content-Type: %s\r\n", mime)
 	end
 
-	t[#t + 1] = string.format("Content-Length: %d\r\n", size or 0)
+	local no_length = ("chunked" == mode) or ("stream" == mode) or header_has(extra, "Transfer-Encoding")
+	if not no_length then
+		t[#t + 1] = string.format("Content-Length: %d\r\n", size or 0)
+	elseif "chunked" == mode and not header_has(extra, "Transfer-Encoding") then
+		t[#t + 1] = "Transfer-Encoding: chunked\r\n"
+	end
 
 	if not header_has(extra, "Cache-Control") then
 		t[#t + 1] = "Cache-Control: max-age=0\r\n"
@@ -76,13 +84,16 @@ end
 -- @brief 构造 res; finish 由 weber 注入
 -- @param [in]      app[table]			站点对象
 -- @param [in]      finish[function]	`finish(status_line, mime, body)`
+-- @param [in]      io[table]			[可选] 流式 `{ start, write, stop }`
 -- @return res[table]					响应对象
-responser.make = function (app, finish)
+responser.make = function (app, finish, io)
 	local res = {
 		_app = app,
 		_sent = false,
 		_headers = {},
 		_status_code = 0,
+		_streaming = false,
+		_stream_closed = false,
 	}
 
 	function res:header(name, value)
@@ -129,13 +140,13 @@ responser.make = function (app, finish)
 		finish(coder.status(200), mime or "text/html", body or "")
 	end
 
-	function res:co_status(status, mime, body)
+	function res:co_status(status, mime, body, file)
 		if "number" == type(status) then
 			self._status_code = status
 			status = coder.status(status)
 		end
 
-		finish(status, mime or "text/plain", body or "")
+		finish(status, mime or "text/plain", body or "", file)
 	end
 
 	function res:co_json(obj, code)
@@ -160,6 +171,98 @@ responser.make = function (app, finish)
 		self._status_code = code
 		self:header("Location", url or "/")
 		finish(coder.status(code), "text/plain", "")
+	end
+
+	local function ensure_io()
+		return io and "function" == type(io.start) and "function" == type(io.write) and "function" == type(io.stop)
+	end
+
+	local function start_mode(mode, mime, code)
+		if res._omit_body then
+			res._status_code = code or 200
+			finish(coder.status(res._status_code), mime, "")
+			return false
+		end
+
+		if not ensure_io() then
+			res._status_code = 500
+			finish(coder.status(500), "text/plain", "stream unsupported")
+			return false
+		end
+
+		if res._sent and not res._streaming then
+			return false
+		end
+
+		if not res._streaming then
+			res._status_code = code or 200
+			if not io.start(coder.status(res._status_code), mime, mode) then
+				return false
+			end
+		end
+
+		return true
+	end
+
+	function res:co_chunk(data, mime)
+		if not start_mode("chunked", mime or "application/octet-stream", 200) then
+			return
+		end
+
+		io.write(chunked.wrap(data or ""))
+	end
+
+	function res:co_chunk_end()
+		if not self._streaming or self._stream_closed then
+			return
+		end
+
+		if ensure_io() then
+			io.write(chunked.tail())
+			io.stop()
+		end
+	end
+
+	function res:co_sse_open()
+		if not header_has(self._headers, "Cache-Control") then
+			self:header("Cache-Control", "no-cache")
+		end
+
+		start_mode("stream", "text/event-stream", 200)
+	end
+
+	function res:co_sse(data, event, id)
+		if not self._streaming then
+			self:co_sse_open()
+		end
+
+		if not self._streaming or not ensure_io() then
+			return
+		end
+
+		io.write(sse.pack(data, event, id))
+	end
+
+	function res:co_sse_comment(text)
+		if not self._streaming then
+			self:co_sse_open()
+		end
+
+		if not self._streaming or not ensure_io() then
+			return
+		end
+
+		io.write(sse.comment(text))
+	end
+
+	function res:co_sse_end()
+		if not self._streaming or self._stream_closed then
+			return
+		end
+
+		if ensure_io() then
+			io.stop()
+		end
 	end
 
 	return res

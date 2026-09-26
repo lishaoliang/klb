@@ -61,6 +61,8 @@ typedef enum klb_protocol_e_
     KLB_PROTOCOL_RPC_WS_LUA     = 14,       ///< RPC ws-lua
     KLB_PROTOCOL_RPC_WS_JSON    = 15,       ///< RPC ws-json
 
+    KLB_PROTOCOL_SMP            = 16,       ///< smp 协议
+
     KLB_PROTOCOL_MAX,
 
     KLB_PROTOCOL_user           = 2000,     ///< 用户自定义 开始

@@ -8,6 +8,10 @@
 #include "klbthird/sds.h"
 #include "klbbase/klb_mnp.h"
 #include <string.h>
+#include <stdio.h>
+#ifndef _WIN32
+#include <sys/types.h>
+#endif
 #include <assert.h>
 
 
@@ -21,6 +25,8 @@ typedef struct klb_httpclient_conn_t_
     struct
     {
         klb_nlist_t*                p_write_nlist;      ///< 发送 HTTP数据 列表
+        FILE*                       p_file;             ///< 待发送文件; 无则为 NULL
+        int64_t                     file_remain;        ///< 文件剩余未发送字节
     };
 
     // 读取 数据
@@ -48,6 +54,8 @@ typedef struct klb_httpclient_conn_t_
 // 前置定义
 static void klb_httpclient_conn_quit(klb_netconn_t* p_conn);
 static void reset_msg_klb_httpclient_conn(klb_netconn_t* p_conn);
+static void close_file_klb_httpclient_conn(klb_httpclient_conn_t* p_httpclient);
+static void push_netcode_klb_httpclient_conn(klb_netconn_t* p_conn, int code);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -406,6 +414,78 @@ static int klb_httpclient_conn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_da
     return 1;
 }
 
+#define KLB_HTTPCLIENT_FILE_CHUNK           (32 * 1024)
+
+
+/// @brief 关闭待发送文件
+static void close_file_klb_httpclient_conn(klb_httpclient_conn_t* p_httpclient)
+{
+    if (NULL != p_httpclient->p_file)
+    {
+        fclose(p_httpclient->p_file);
+        p_httpclient->p_file = NULL;
+    }
+
+    p_httpclient->file_remain = 0;
+}
+
+
+/// @brief 文件 seek 到 offset
+static int seek_file_klb_httpclient_conn(FILE* p_file, int64_t offset)
+{
+#ifdef _WIN32
+    return _fseeki64(p_file, offset, SEEK_SET);
+#else
+    return fseeko(p_file, (off_t)offset, SEEK_SET);
+#endif
+}
+
+
+/// @brief 从文件读一块入写队列
+/// @return int 0.成功或无文件; 非0.读失败
+static int fill_file_klb_httpclient_conn(klb_netconn_t* p_conn)
+{
+    klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+
+    if (NULL == p_httpclient->p_file)
+    {
+        return 0;
+    }
+
+    if (p_httpclient->file_remain <= 0)
+    {
+        close_file_klb_httpclient_conn(p_httpclient);
+        return 0;
+    }
+
+    int chunk = KLB_HTTPCLIENT_FILE_CHUNK;
+    if (p_httpclient->file_remain < (int64_t)chunk)
+    {
+        chunk = (int)p_httpclient->file_remain;
+    }
+
+    klb_buf_t* p_buf = klb_buf_malloc(chunk, false);
+    size_t n = fread(p_buf->p_buf, 1, (size_t)chunk, p_httpclient->p_file);
+    if (0 == n)
+    {
+        KLB_FREE_BY(p_buf, klb_buf_unref);
+        close_file_klb_httpclient_conn(p_httpclient);
+        push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_ERR_PROTOCOL);
+        return -1;
+    }
+
+    p_buf->end = (int)n;
+    p_httpclient->file_remain -= (int64_t)n;
+    if (p_httpclient->file_remain <= 0)
+    {
+        close_file_klb_httpclient_conn(p_httpclient);
+    }
+
+    klb_nlist_push_tail(p_httpclient->p_write_nlist, p_buf);
+    return 0;
+}
+
+
 /// @brief 当网络上可以发送数据时
 /// @return int
 static int klb_httpclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
@@ -426,7 +506,16 @@ static int klb_httpclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
         klb_buf_t* p_buf = klb_nlist_head(p_write_nlist);
         if (NULL == p_buf)
         {
-            break;
+            if (0 != fill_file_klb_httpclient_conn(p_conn))
+            {
+                break;
+            }
+
+            p_buf = klb_nlist_head(p_write_nlist);
+            if (NULL == p_buf)
+            {
+                break;
+            }
         }
 
         int data_len = klb_buf_data_len(p_buf);
@@ -458,7 +547,7 @@ static int klb_httpclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
     }
 
     // 缓存的数据写完了
-    if (klb_nlist_size(p_write_nlist) <= 0)
+    if (klb_nlist_size(p_write_nlist) <= 0 && NULL == p_httpclient->p_file)
     {
         klb_socket_set_writing(p_socket, false);
 
@@ -664,7 +753,61 @@ bool klb_httpclient_wbuf_is_empty(klb_netconn_t* p_conn)
         return false; // 还有数据
     }
 
+    if (NULL != p_httpclient->p_file)
+    {
+        return false;
+    }
+
     return true; // 空了
+}
+
+
+/// @brief 发送HTTP请求头 + 本地文件体
+int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, int head_len,
+    const char* p_path, int64_t offset, int64_t length)
+{
+    klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
+
+    if (NULL == p_path || 0 == p_path[0] || offset < 0 || length < 0)
+    {
+        return 1;
+    }
+
+    if (NULL != p_httpclient->p_file)
+    {
+        return 1;
+    }
+
+    FILE* p_file = NULL;
+    if (0 < length)
+    {
+        p_file = fopen(p_path, "rb");
+        if (NULL == p_file)
+        {
+            return 1;
+        }
+
+        if (0 < offset)
+        {
+            if (0 != seek_file_klb_httpclient_conn(p_file, offset))
+            {
+                fclose(p_file);
+                return 1;
+            }
+        }
+    }
+
+    if (0 < head_len && NULL != p_head)
+    {
+        klb_httpclient_conn_send(p_conn, p_head, head_len, NULL, 0);
+    }
+
+    p_httpclient->p_file = p_file;
+    p_httpclient->file_remain = length;
+    klb_socket_set_writing(p_socket, true);
+
+    return 0;
 }
 
 
@@ -713,6 +856,8 @@ static int klb_httpclient_conn_init(klb_netconn_t* p_conn)
     p_httpclient->status_crlf = false;
     p_httpclient->header = NULL;
     p_httpclient->p_body = NULL;
+    p_httpclient->p_file = NULL;
+    p_httpclient->file_remain = 0;
 
     return 0;
 }
@@ -721,6 +866,8 @@ static int klb_httpclient_conn_init(klb_netconn_t* p_conn)
 static void klb_httpclient_conn_quit(klb_netconn_t* p_conn)
 {
     klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+
+    close_file_klb_httpclient_conn(p_httpclient);
 
     while (0 < klb_nlist_size(p_httpclient->p_write_nlist))
     {

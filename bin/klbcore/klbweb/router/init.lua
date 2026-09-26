@@ -80,6 +80,44 @@ function R:add(method, path, fn)
 end
 
 
+-- @brief 删除一条精确路由
+-- @param [in]      method[string]		HTTP 方法
+-- @param [in]      path[string]		URL 路径; 精确 path, 非 `:name` / `*`
+-- @return ok[boolean]					true 已删除; 未命中或参数非法为 false
+function R:remove(method, path)
+	if "string" ~= type(method) or "string" ~= type(path) then
+		return false
+	end
+
+	if "" == method or "" == path then
+		return false
+	end
+
+	method = string.upper(method)
+	path = compile.normalize_path(path)
+	if compile.is_pattern(path) then
+		return false
+	end
+
+	local key = method .. "\t" .. path
+	if not self._map[key] then
+		return false
+	end
+
+	self._map[key] = nil
+	local list = {}
+	for i = 1, #self._list do
+		local e = self._list[i]
+		if e.method ~= method or e.path ~= path then
+			list[#list + 1] = e
+		end
+	end
+
+	self._list = list
+	return true
+end
+
+
 -- @brief 匹配路由
 -- @param [in]      method[string]		HTTP 方法
 -- @param [in]      path[string]		URL 路径 (已规范化)

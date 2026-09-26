@@ -36,6 +36,18 @@ function httpserve:disconnect()
 end
 
 
+-- @brief 本连接是否为 TLS
+-- @return tls[boolean]					true 为 HTTPS; false 为明文 HTTP
+-- @note 同端口混用时按连接判定, 不按监听 cfg
+function httpserve:tls()
+	if not self._serve or not self._serve.tls then
+		return false
+	end
+
+	return self._serve:tls()
+end
+
+
 -- @brief 发送 HTTP 文本
 -- @param [in]      head[string]		HTTP 头
 -- @param [in]      body[string]		[可选] HTTP 体
@@ -46,6 +58,20 @@ function httpserve:send(head, body)
 	end
 
 	return self._serve:send(head, body)
+end
+
+
+-- @brief 发送 HTTP 头 + 本地文件体
+-- @param [in]      head[string]		HTTP 头 (含 Content-Length)
+-- @param [in]      path[string]		本地文件路径
+-- @param [in]      opts[table]			[可选] offset/length
+-- @return [number]	0 成功; 非0 失败
+function httpserve:send_file(head, path, opts)
+	if not self._serve then
+		return 1
+	end
+
+	return self._serve:send_file(head, path, opts)
 end
 
 

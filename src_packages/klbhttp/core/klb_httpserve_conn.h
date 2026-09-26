@@ -54,6 +54,19 @@ int klb_httpserve_conn_send(klb_netconn_t* p_conn, const uint8_t* p_head, int he
 int klb_httpserve_conn_send_buf(klb_netconn_t* p_conn, klb_buf_t* p_data);
 
 
+/// @brief 发送HTTP响应头 + 本地文件体
+/// @param [in] *p_conn           连接对象
+/// @param [in] *p_head           响应头; 可为 NULL
+/// @param [in] head_len          响应头长度
+/// @param [in] *p_path           本地文件路径
+/// @param [in] offset            文件起始偏移; 字节
+/// @param [in] length            发送字节数; 0 则只发头
+/// @return int 0.成功; 非0.失败
+/// @note 先打开文件再入队头; 失败不发送头. 非内核 sendfile; on_send 分块读入写队列
+int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, int head_len,
+    const char* p_path, int64_t offset, int64_t length);
+
+
 /// @brief 写缓存 是否为空
 /// @param [in] *p_conn           连接对象
 /// @return bool true.空; false.还有数据

@@ -213,6 +213,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.h" />
     <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netprobe_conn.h" />
     <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.h" />
     <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.h" />
     <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
@@ -769,6 +770,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_select.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_wsapoll.c" />
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netprobe_conn.c" />
     <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.c" />
     <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.c" />
     <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.c" />

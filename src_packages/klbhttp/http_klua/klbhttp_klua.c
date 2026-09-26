@@ -10,6 +10,7 @@
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_netmulti.h"
 #include "klbnet/klblisten/klb_netlisten_conn.h"
+#include "klbnet/klblisten/klb_netprobe_conn.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klua/klua_netmulti.h"
@@ -292,6 +293,52 @@ static int klua_khttp_send(lua_State* L)
     return 1;
 }
 
+static int klua_khttp_send_file(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+
+    size_t head_len = 0;
+    const char* p_head = luaL_checklstring(L, 2, &head_len);
+    const char* p_path = luaL_checkstring(L, 3);
+
+    int64_t offset = 0;
+    int64_t length = 0;
+    if (klua_is_table(L, 4))
+    {
+        lua_getfield(L, 4, "offset");
+        if (lua_isnumber(L, -1))
+        {
+            offset = (int64_t)lua_tointeger(L, -1);
+        }
+        lua_pop(L, 1);
+
+        lua_getfield(L, 4, "length");
+        if (lua_isnumber(L, -1))
+        {
+            length = (int64_t)lua_tointeger(L, -1);
+        }
+        lua_pop(L, 1);
+    }
+
+    int ret = 1;
+    if (NULL != p_http->p_conn)
+    {
+        if (p_http->is_client)
+        {
+            ret = klb_httpclient_conn_send_file(p_http->p_conn, (const uint8_t*)p_head, (int)head_len,
+                p_path, offset, length);
+        }
+        else
+        {
+            ret = klb_httpserve_conn_send_file(p_http->p_conn, (const uint8_t*)p_head, (int)head_len,
+                p_path, offset, length);
+        }
+    }
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
 static int on_yield_recv_klua_khttp(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
 {
     klua_khttp_t* p_http = (klua_khttp_t*)ptr;
@@ -302,6 +349,20 @@ static int on_yield_recv_klua_khttp(void* ptr, klua_ex_coroutine_t* p_ex, lua_St
     }
 
     return 0;
+}
+
+static int klua_khttp_tls(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+    bool tls = false;
+
+    if (NULL != p_http->p_conn && NULL != p_http->p_conn->p_socket)
+    {
+        tls = klb_socket_is_tls(p_http->p_conn->p_socket);
+    }
+
+    lua_pushboolean(L, tls);
+    return 1;
 }
 
 static int klua_khttp_co_recv(lua_State* L)
@@ -339,8 +400,11 @@ static void klua_khttp_createmeta(lua_State* L)
         { "disconnect",     klua_khttp_close },
 
         { "send",           klua_khttp_send },
+        { "send_file",      klua_khttp_send_file },
 
         { "co_recv",        klua_khttp_co_recv },
+
+        { "tls",            klua_khttp_tls },
 
         { NULL,             NULL }
     };
@@ -420,15 +484,27 @@ typedef struct klua_khttp_listen_t_
         klb_netmulti_t*         p_netmulti;     ///< 复用; net multiplex
         klb_netconn_t*          p_listen_conn;  ///< 监听连接
         bool                    tls;            ///< 是否 TLS
+        bool                    plain;          ///< tls 时是否同时收明文 HTTP; 默认 false
         klb_socket_tls_server_ctx_t* p_tls_ctx; ///< TLS 服务端上下文
     };
 
     // 数据
     struct
     {
+        bool                    closed;         ///< 已 close; 探测回调勿再入队
+        klb_nlist_t*            p_probe_nlist;  ///< 进行中的探测; 存储 klb_netconn_t*
         klb_nlist_t*            p_socket_nlist; ///< 待 accept 的 socket; 存储 klb_netlisten_socket_t*
     };
 }klua_khttp_listen_t;
+
+
+/// @struct klua_khttp_probe_t
+/// @brief  探测上下文: listen 指针 + accept 地址
+typedef struct klua_khttp_probe_t_
+{
+    klua_khttp_listen_t*        p_listen;       ///< 所属 listen
+    struct sockaddr_in          addr;           ///< accept 地址
+}klua_khttp_probe_t;
 
 
 ////////////////////////////////////////
@@ -455,11 +531,59 @@ static int klua_khttp_listen_tostring(lua_State* L)
     return 1;
 }
 
+static void remove_probe_klua_khttp_listen(klua_khttp_listen_t* p_listen, klb_netconn_t* p_probe)
+{
+    assert(NULL != p_listen);
+    assert(NULL != p_probe);
+
+    if (NULL == p_listen->p_probe_nlist)
+    {
+        return;
+    }
+
+    klb_nlist_iter_t* p_iter = klb_nlist_begin(p_listen->p_probe_nlist);
+    while (NULL != p_iter)
+    {
+        klb_nlist_iter_t* p_next = klb_nlist_next(p_iter);
+        if (p_probe == (klb_netconn_t*)klb_nlist_data(p_iter))
+        {
+            klb_nlist_remove(p_listen->p_probe_nlist, p_iter);
+            break;
+        }
+
+        p_iter = p_next;
+    }
+}
+
+static void abort_probes_klua_khttp_listen(klua_khttp_listen_t* p_listen)
+{
+    assert(NULL != p_listen);
+
+    if (NULL == p_listen->p_probe_nlist)
+    {
+        return;
+    }
+
+    while (0 < klb_nlist_size(p_listen->p_probe_nlist))
+    {
+        klb_netconn_t* p_probe = (klb_netconn_t*)klb_nlist_pop_head(p_listen->p_probe_nlist);
+        klua_khttp_probe_t* p_ctx = (klua_khttp_probe_t*)p_probe->p_udata;
+
+        klb_netconn_set_udata(p_probe, NULL);
+        KLB_FREE(p_ctx);
+        klb_netprobe_conn_free(p_probe);
+    }
+}
+
 static int klua_khttp_listen_close(lua_State* L)
 {
     klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
 
+    p_listen->closed = true;
+
     KLB_FREE_BY(p_listen->p_listen_conn, klb_netlisten_conn_free);
+    abort_probes_klua_khttp_listen(p_listen);
+    KLB_FREE_BY(p_listen->p_probe_nlist, klb_nlist_destroy);
     KLB_FREE_BY(p_listen->p_tls_ctx, klb_socket_tls_server_ctx_destroy);
 
     if (NULL != p_listen->p_socket_nlist)
@@ -480,7 +604,7 @@ static int klua_khttp_listen_close(lua_State* L)
 static klua_khttp_t* new_klua_khttp_by_socket(lua_State* L, klua_khttp_listen_t* p_listen, klb_netlisten_socket_t* p_listen_socket)
 {
     klb_socket_t* p_socket = NULL;
-    if (p_listen->tls)
+    if (p_listen_socket->tls)
     {
         p_socket = klb_socket_async_create_tls_server(p_listen_socket->fd, p_listen->p_tls_ctx);
         if (NULL == p_socket)
@@ -568,19 +692,80 @@ static int call_co_accept_end_klua_khttp_listen(klua_khttp_listen_t* p_listen)
     return (LUA_OK == status) ? 0 : 1;
 }
 
-static int on_accept_klua_khttp_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls)
+static int on_probe_done_klua_khttp_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, int protocol, bool tls, const uint8_t* p_peek, int peek_len)
 {
-    klua_khttp_listen_t* p_listen = (klua_khttp_listen_t*)p_conn->p_udata;
+    klua_khttp_probe_t* p_ctx = (klua_khttp_probe_t*)ptr;
+    klua_khttp_listen_t* p_listen = p_ctx->p_listen;
+
+    (void)p_peek;
+    (void)peek_len;
+
+    remove_probe_klua_khttp_listen(p_listen, p_conn);
+    klb_netconn_set_udata(p_conn, NULL);
+
+    bool take = false;
+    if (!p_listen->closed)
+    {
+        if (tls)
+        {
+            take = (NULL != p_listen->p_tls_ctx);
+        }
+        else if (KLB_PROTOCOL_HTTP == protocol)
+        {
+            take = (!p_listen->tls) || p_listen->plain;
+        }
+    }
+
+    if (!take)
+    {
+        KLB_SOCKET_CLOSE(fd);
+        KLB_FREE(p_ctx);
+        return 0;
+    }
 
     klb_netlisten_socket_t* p_tmp = KLB_MALLOCZ(klb_netlisten_socket_t, 1, 0);
     p_tmp->fd = fd;
-    p_tmp->addr = *p_addr;
-    p_tmp->tls = p_listen->tls;
-    (void)tls;
+    p_tmp->addr = p_ctx->addr;
+    p_tmp->tls = tls;
+    KLB_FREE(p_ctx);
 
     klb_nlist_push_tail(p_listen->p_socket_nlist, p_tmp);
     call_co_accept_klua_khttp_listen(p_listen);
 
+    return 0;
+}
+
+static int on_accept_klua_khttp_listen(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, const struct sockaddr_in* p_addr, bool tls)
+{
+    klua_khttp_listen_t* p_listen = (klua_khttp_listen_t*)p_conn->p_udata;
+
+    (void)ptr;
+    (void)tls;
+
+    if (p_listen->closed)
+    {
+        KLB_SOCKET_CLOSE(fd);
+        return 0;
+    }
+
+    klua_khttp_probe_t* p_ctx = KLB_MALLOCZ(klua_khttp_probe_t, 1, 0);
+    p_ctx->p_listen = p_listen;
+    p_ctx->addr = *p_addr;
+
+    klb_netconn_t* p_probe = klb_netprobe_conn_create(p_listen->p_netmulti);
+    klb_netconn_set_udata(p_probe, p_ctx);
+    klb_netprobe_conn_set_done(p_probe, on_probe_done_klua_khttp_listen, p_ctx);
+
+    if (0 != klb_netprobe_conn_open(p_probe, fd, 0))
+    {
+        klb_netconn_set_udata(p_probe, NULL);
+        KLB_FREE(p_ctx);
+        klb_netprobe_conn_free(p_probe);
+        KLB_SOCKET_CLOSE(fd);
+        return 0;
+    }
+
+    klb_nlist_push_tail(p_listen->p_probe_nlist, p_probe);
     return 0;
 }
 
@@ -654,6 +839,7 @@ static int klua_khttp_listen(lua_State* L)
     int port = (int)luaL_checkinteger(L, 1);
 
     bool tls = false;
+    bool plain = false;
     const char* p_cert = NULL;
     size_t cert_len = 0;
     const char* p_key = NULL;
@@ -663,6 +849,10 @@ static int klua_khttp_listen(lua_State* L)
     {
         lua_getfield(L, 2, "tls");
         tls = klua_check_option_boolean(L, -1, false);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "plain");
+        plain = klua_check_option_boolean(L, -1, false);
         lua_pop(L, 1);
 
         lua_getfield(L, 2, "cert");
@@ -708,8 +898,11 @@ static int klua_khttp_listen(lua_State* L)
     p_listen->p_netmulti = p_netmulti;
     p_listen->p_listen_conn = p_listen_conn;
     p_listen->tls = tls;
+    p_listen->plain = plain;
     p_listen->p_tls_ctx = p_tls_ctx;
 
+    p_listen->closed = false;
+    p_listen->p_probe_nlist = klb_nlist_create();
     p_listen->p_socket_nlist = klb_nlist_create();
 
     klb_netconn_set_udata(p_listen_conn, p_listen);

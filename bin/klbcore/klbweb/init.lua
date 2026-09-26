@@ -9,8 +9,6 @@
 --		[2026-09] 创建文件
 --]]
 local weber = require("klbcore.klbweb.weber")
-local coder = require("klbcore.klbweb.coder")
-local mw = require("klbcore.klbweb.mw")
 
 
 local klbweb = {}
@@ -18,13 +16,6 @@ local klbweb = {}
 
 --------------------------------------------------------------------------------------------
 -- 包入口
-
--- HTTP 状态码与 reason-phrase / 状态行
-klbweb.coder = coder
-
--- 内置中间件工厂: cors / basic / log / limit / https / bearer / session
-klbweb.mw = mw
-
 
 -- @brief 新建一个独立站点对象
 -- @param [in]      cfg[table]			[可选] 站点配置
@@ -36,7 +27,7 @@ end
 
 --------------------------------------------------------------------------------------------
 -- 内置站点 (一份; 与 new 互不影响)
--- 默认 nil; 首次 setup / listen / fork_accept / 路由等再创建
+-- 默认 nil; 首次 setup / serve / 路由等再创建
 
 local builtin = nil
 
@@ -51,57 +42,43 @@ local function ensure_builtin()
 end
 
 
--- @brief 配置内置站点
--- @param [in]      cfg[table]			[可选] 站点配置; 见 weber.new
--- @return ok[boolean]					true 成功; 已 listen 为 false
--- @note 须在路由 / listen 之前调用
+-- @brief 配置内置站点; 可多次; 后写字段覆盖
+-- @param [in]      cfg[table]			[可选] 站点配置; 见 cfger.new
+-- @return ok[boolean]					true 成功; 服务中未 stop 或参数非法为 false
+-- @note 省略的键不变. 不重建站点, 已注册路由/中间件保留.
+--   \n cors/log/session/request_id/csrf/healthz 在 serve 时按汇总结果安装; stop 后再 serve 会重装.
+--   \n `listen` 只记规格; serve 时自行 bind. 未设时默认 8000 HTTP.
+--   \n 同端口 HTTP+HTTPS 写一项 `tls=true, plain=true`, 或两项同 port 由 cfger 合并.
 klbweb.setup = function (cfg)
-	local site = ensure_builtin()
-	if 0 < #site._listeners then
-		return false
-	end
-
-	builtin = weber.new(cfg)
-	return true
+	return ensure_builtin():setup(cfg)
 end
 
 
--- @brief 内置站点打开端口
--- @param [in]      port[number(int)]	端口
--- @param [in]      cfg[table]			[可选] 监听配置; 见内联 opts 注释
--- @return ok[boolean]					true 成功; 失败为 false
--- @note 只 bind, 不启动 accept 循环; 可多次; 须再调用 klbweb.fork_accept
-klbweb.listen = function (port, cfg)
-	-- cfg = {
-	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
-	--   cert[string]			tls 时必填, 证书 PEM 原文或文件路径
-	--   key[string]			tls 时必填, 私钥 PEM 原文或文件路径
-	-- }
-	return ensure_builtin():listen(port, cfg)
-end
-
-
--- @brief 启动内置站点的 accept 循环
--- @return 无
+-- @brief 按 setup.listen 自行 bind, 再启动 accept 循环
+-- @return ok[boolean]					true 全部 bind 成功; 任一项失败为 false
 -- @note 幂等; 已启动的 listener 跳过
-klbweb.fork_accept = function ()
-	ensure_builtin():fork_accept()
+--   \n 未配置 listen 时默认 8000 HTTP
+klbweb.serve = function ()
+	return ensure_builtin():serve()
 end
 
 
--- @brief 关闭内置站点全部监听
--- @return 无
-klbweb.close = function ()
+-- @brief 停止内置站点对外服务; 许可再 setup / serve
+-- @return ok[boolean]					true
+-- @note 关全部监听; 保留路由 / 静态 / 汇总配置
+klbweb.stop = function ()
 	if builtin then
-		builtin:close()
+		builtin:stop()
 	end
+
+	return true
 end
 
 
 -- 路由 / 静态 / 中间件转到内置站点; 签名同 weber W:*
 local FORWARD = {
 	"route", "get", "post", "put", "delete", "patch", "head", "options",
-	"use", "static",
+	"use", "static", "apply_cfg",
 }
 
 for i = 1, #FORWARD do

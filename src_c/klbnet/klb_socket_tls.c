@@ -330,6 +330,22 @@ static int recv_klb_socket_tls(klb_socket_t* p_socket, uint8_t* p_buf, int buf_l
     return -1;
 }
 
+static int recv_peek_klb_socket_tls(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len)
+{
+#ifdef _WIN32
+    int ret = recv(p_socket->fd, (char*)p_buf, buf_len, MSG_PEEK);
+#else
+    int flags = MSG_PEEK;
+    if (0 != p_socket->nonblock)
+    {
+        flags |= MSG_DONTWAIT;
+    }
+    int ret = recv(p_socket->fd, (char*)p_buf, buf_len, flags);
+#endif
+
+    return ret;
+}
+
 static int sendto_klb_socket_tls(klb_socket_t* p_socket, const uint8_t* p_data, int len, const struct sockaddr* p_addr, int addr_len)
 {
     (void)p_socket;
@@ -363,6 +379,7 @@ klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd)
     p_socket->vtable.cb_destroy = destroy_klb_socket_tls;
     p_socket->vtable.cb_send = send_klb_socket_tls;
     p_socket->vtable.cb_recv = recv_klb_socket_tls;
+    p_socket->vtable.cb_recv_peek = recv_peek_klb_socket_tls;
     p_socket->vtable.cb_sendto = sendto_klb_socket_tls;
     p_socket->vtable.cb_recvfrom = recvfrom_klb_socket_tls;
 
@@ -501,6 +518,7 @@ klb_socket_t* klb_socket_async_create_tls_server(klb_socket_fd fd, klb_socket_tl
     p_socket->vtable.cb_destroy = destroy_klb_socket_tls;
     p_socket->vtable.cb_send = send_klb_socket_tls;
     p_socket->vtable.cb_recv = recv_klb_socket_tls;
+    p_socket->vtable.cb_recv_peek = recv_peek_klb_socket_tls;
     p_socket->vtable.cb_sendto = sendto_klb_socket_tls;
     p_socket->vtable.cb_recvfrom = recvfrom_klb_socket_tls;
 

@@ -6,7 +6,7 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
-local util = require("klbcore.klbweb.mw.util")
+local util = require("klbcore.klbweb.util.header")
 
 
 -- @brief Bearer 骨架; 校验函数留给产品

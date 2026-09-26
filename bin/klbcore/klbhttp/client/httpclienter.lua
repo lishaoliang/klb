@@ -71,6 +71,21 @@ function httpclient:send(head, body)
 end
 
 
+-- @brief 发送 HTTP 头 + 本地文件体
+-- @param [in]      head[string]		HTTP 头 (含 Content-Length)
+-- @param [in]      path[string]		本地文件路径
+-- @param [in]      opts[table]			[可选] offset/length
+-- @return [number]	0 成功; 非0 失败
+-- @note 须在 kco 协程内配合 co_recv
+function httpclient:send_file(head, path, opts)
+	if not self._client then
+		return 1
+	end
+
+	return self._client:send_file(head, path, opts)
+end
+
+
 -- @brief 接收 HTTP 文本
 -- @return msg[string]					"text" / "error" / "exit"
 -- @return head[string|number]			text 时为 head; error 时为 code

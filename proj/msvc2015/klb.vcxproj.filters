@@ -1185,6 +1185,9 @@
     <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h">
       <Filter>inc\klbnet\klblisten</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netprobe_conn.h">
+      <Filter>inc\klbnet\klblisten</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\inc\klbmem\klb_bufpoolfix.h">
       <Filter>inc\klbmem</Filter>
     </ClInclude>
@@ -2744,6 +2747,9 @@
       <Filter>src_packages\klbrtsp\rtsp_klua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c">
+      <Filter>src_c\klbnet\klblisten</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netprobe_conn.c">
       <Filter>src_c\klbnet\klblisten</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src_c\klbmem\klb_bufpoolfix.c">

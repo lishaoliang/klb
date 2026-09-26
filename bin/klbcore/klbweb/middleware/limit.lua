@@ -6,7 +6,7 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
-local util = require("klbcore.klbweb.mw.util")
+local util = require("klbcore.klbweb.util.header")
 
 
 -- @brief 简单限流 (无对端 IP 时按 Authorization / Cookie / `*`)

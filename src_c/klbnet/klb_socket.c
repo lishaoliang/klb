@@ -106,6 +106,13 @@ int klb_socket_recv(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len)
     return p_socket->vtable.cb_recv(p_socket, p_buf, buf_len);
 }
 
+int klb_socket_recv_peek(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len)
+{
+    assert(NULL != p_socket);
+    assert(NULL != p_socket->vtable.cb_recv_peek);
+    return p_socket->vtable.cb_recv_peek(p_socket, p_buf, buf_len);
+}
+
 int klb_socket_sendto(klb_socket_t* p_socket, const uint8_t* p_data, int len, const struct sockaddr* p_addr, int addr_len)
 {
     assert(NULL != p_socket);
@@ -618,6 +625,23 @@ static int klb_socket_async_recv(klb_socket_t* p_socket, uint8_t* p_buf, int buf
     return ret;
 }
 
+/// @brief TCP窥探接收数据
+static int klb_socket_async_recv_peek(klb_socket_t* p_socket, uint8_t* p_buf, int buf_len)
+{
+#ifdef _WIN32
+    int ret = recv(p_socket->fd, (char*)p_buf, buf_len, MSG_PEEK);
+#else
+    int flags = MSG_PEEK;
+    if (0 != p_socket->nonblock)
+    {
+        flags |= MSG_DONTWAIT;
+    }
+    int ret = recv(p_socket->fd, (char*)p_buf, buf_len, flags);
+#endif
+
+    return ret;
+}
+
 /// @brief UDP发送数据
 static int klb_socket_async_sendto(klb_socket_t* p_socket, const uint8_t* p_data, int len, const struct sockaddr* p_addr, int addr_len)
 {
@@ -662,6 +686,7 @@ klb_socket_t* klb_socket_async_create(klb_socket_fd fd)
     p_socket->vtable.cb_destroy = klb_socket_async_destroy;
     p_socket->vtable.cb_send = klb_socket_async_send;
     p_socket->vtable.cb_recv = klb_socket_async_recv;
+    p_socket->vtable.cb_recv_peek = klb_socket_async_recv_peek;
     p_socket->vtable.cb_sendto = klb_socket_async_sendto;
     p_socket->vtable.cb_recvfrom = klb_socket_async_recvfrom;
 

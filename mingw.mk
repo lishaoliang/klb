@@ -36,10 +36,11 @@ endif
 	MY_TMP_DIR := $(MINGW_MK_DIR)/tmp/mingw
 endif
 
-# 非默认目标: 仅当唯一目标时编 all; `make mingw info` 只看变量
+# 非默认目标: 勿在无 mingw 目标时定义规则 (否则抢默认目标)
+# 仅当唯一目标时编 all; `make mingw info` 只看变量
 ifeq ($(MAKECMDGOALS),mingw)
 mingw: all
-else
+else ifneq ($(filter mingw,$(MAKECMDGOALS)),)
 mingw:
 	@true
 endif

@@ -3,18 +3,23 @@
 -- @file   weber.lua
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klbweb 站点对象
--- @note   路由 / 静态 / listen; 内部使用 klbhttp
+-- @note   路由 / 静态 / listen; 内部使用 klbhttp; :use 与路由/静态按注册序
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
 local kco = require("kco")
 local router = require("klbcore.klbweb.router")
+local compile = require("klbcore.klbweb.router.compile")
 local staticer = require("klbcore.klbweb.static")
 local parser = require("klbcore.klbweb.parser")
 local responser = require("klbcore.klbweb.responser")
-local mw = require("klbcore.klbweb.mw")
+local mw = require("klbcore.klbweb.middleware")
+local html = {
+	[404] = require("klbcore.klbweb.html.html404"),
+}
 local pathex = require("klbcore.util.pathex")
 local klbhttp = require("klbcore.klbhttp")
+local cfger = require("klbcore.klbweb.cfger")
 
 
 --------------------------------------------------------------------------------------------
@@ -22,21 +27,6 @@ local klbhttp = require("klbcore.klbhttp")
 
 local KLB_SOCKET_CONNECT = 63
 local KLB_NETCODE_WBUF_EMPTY = 70
-local DEFAULT_MAX_BODY = 256 * 1024
-local DEFAULT_MAX_KA = 100
-
-local BODY_404 = [[<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>404</title>
-</head>
-<body>
-<h1>Not Found</h1>
-<p>404</p>
-</body>
-</html>
-]]
 
 
 --------------------------------------------------------------------------------------------
@@ -107,7 +97,7 @@ local function max_body_of(app, path)
 		end
 	end
 
-	return app._cfg.max_body or DEFAULT_MAX_BODY
+	return app._cfg.max_body or cfger.defaults.max_body
 end
 
 
@@ -152,15 +142,40 @@ local function co_wait_wbuf_empty(serve)
 end
 
 
-local function co_reply(app, serve, status_line, mime, body, keep_alive, omit_body, extra)
+local function co_send_part(serve, head, body)
+	local rc = serve:send(head or "", body or "")
+	if 0 ~= rc then
+		serve:disconnect()
+		return "error", nil, nil
+	end
+
+	return co_wait_wbuf_empty(serve)
+end
+
+
+local function co_reply(app, serve, status_line, mime, body, keep_alive, omit_body, extra, file)
 	body = body or ""
 	mime = mime or "text/plain"
+	file = file or { path = "", offset = 0, length = 0 }
 	local payload = body
 	if omit_body then
 		payload = ""
 	end
 
-	local rc = serve:send(responser.pack_head(app, status_line, mime, #body, keep_alive, extra), payload)
+	local size = #body
+	if "string" == type(file.path) and "" ~= file.path then
+		size = file.length or 0
+	end
+
+	local head = responser.pack_head(app, status_line, mime, size, keep_alive, extra)
+	local rc
+	if omit_body or "" == (file.path or "") then
+		rc = serve:send(head, payload)
+	elseif 0 < (file.length or 0) then
+		rc = serve:send_file(head, file.path, { offset = file.offset or 0, length = file.length })
+	else
+		rc = serve:send(head, "")
+	end
 	if 0 ~= rc then
 		serve:disconnect()
 		return false, nil, nil
@@ -192,19 +207,97 @@ end
 
 local function make_res(app, serve, keep_alive, omit_body, out)
 	local res
-	local function finish(status_line, mime, body)
+	local function finish(status_line, mime, body, file)
 		if res._sent then
 			return
 		end
 
-		local alive, ph, pb = co_reply(app, serve, status_line, mime, body, res._keep_alive, res._omit_body, res._headers)
+		local alive, ph, pb = co_reply(app, serve, status_line, mime, body, res._keep_alive, res._omit_body, res._headers, file)
 		res._sent = true
 		out.alive = alive
 		out.pending_head = ph
 		out.pending_body = pb
 	end
 
-	res = responser.make(app, finish)
+	local function start_stream(status_line, mime, mode)
+		if res._sent then
+			return false
+		end
+
+		local ka = res._keep_alive
+		if "stream" == mode then
+			ka = true
+		end
+
+		local head = responser.pack_head(app, status_line, mime, 0, ka, res._headers, mode)
+		local msg = co_send_part(serve, head, "")
+		if "ok" ~= msg then
+			serve:disconnect()
+			out.alive = false
+			res._sent = true
+			return false
+		end
+
+		res._sent = true
+		res._streaming = true
+		res._stream_mode = mode
+		if "stream" == mode then
+			res._keep_alive = false
+		end
+
+		return true
+	end
+
+	local function write_stream(data)
+		if not res._streaming or res._stream_closed then
+			return false
+		end
+
+		local msg = co_send_part(serve, "", data or "")
+		if "ok" ~= msg then
+			serve:disconnect()
+			out.alive = false
+			res._stream_closed = true
+			return false
+		end
+
+		return true
+	end
+
+	local function stop_stream()
+		if res._stream_closed then
+			return
+		end
+
+		res._stream_closed = true
+		if "stream" == res._stream_mode or not res._keep_alive then
+			serve:disconnect()
+			out.alive = false
+			return
+		end
+
+		local msg, h, b = co_wait_wbuf_empty(serve)
+		if "text" == msg then
+			out.alive = true
+			out.pending_head = h
+			out.pending_body = b
+			return
+		end
+
+		if "ok" ~= msg then
+			serve:disconnect()
+			out.alive = false
+			return
+		end
+
+		out.alive = true
+	end
+
+	res = responser.make(app, finish, {
+		start = start_stream,
+		write = write_stream,
+		stop = stop_stream,
+	})
 	res._keep_alive = keep_alive
 	res._omit_body = omit_body
 	return res
@@ -229,8 +322,9 @@ local function send_error(app, req, res, code, mime, body)
 		end
 	end
 
-	if 404 == code and (not mime or "text/html" == mime) then
-		res:co_status(404, "text/html", body or BODY_404)
+	local page = html[code]
+	if "string" == type(page) and "" ~= page and (not mime or "text/html" == mime) then
+		res:co_status(code, "text/html", body or page)
 		return
 	end
 
@@ -308,46 +402,32 @@ local function co_run_fns(app, tag, url_rel, fns, req, res, idx)
 end
 
 
-local function co_run_mws(app, req, res, idx, tag, after)
-	if res._sent then
-		after()
-		return
+local function match_route_layer(layer, method, path)
+	if layer.method ~= method then
+		if not ("HEAD" == method and "GET" == layer.method) then
+			return nil, {}
+		end
 	end
 
-	local item = app._mws[idx]
-	if not item then
-		after()
-		return
-	end
-
-	if not path_prefixed(item.prefix, req.path) then
-		co_run_mws(app, req, res, idx + 1, tag, after)
-		return
-	end
-
-	local proceeded = false
-	local function nxt()
-		if proceeded or res._sent then
-			return
+	if layer.pat then
+		local caps = { string.match(path, layer.pat) }
+		if 0 == #caps then
+			return nil, {}
 		end
 
-		proceeded = true
-		co_run_mws(app, req, res, idx + 1, tag, after)
-	end
-
-	local ok, err = pcall(item.fn, req, res, nxt)
-	if not ok then
-		print("middleware error", tag, req.path, err)
-		if not res._sent then
-			send_error(app, req, res, 500, "text/plain", "middleware error")
+		local params = {}
+		for j = 1, #layer.names do
+			params[layer.names[j]] = caps[j] or ""
 		end
 
-		return
+		return layer.fns, params
 	end
 
-	if not proceeded and not res._sent then
-		res:co_status(204, "text/plain", "")
+	if layer.path == path then
+		return layer.fns, {}
 	end
+
+	return nil, {}
 end
 
 
@@ -369,47 +449,139 @@ local function spa_accepts_html(headers)
 end
 
 
-local function co_serve_static(app, req, res, tag, method, url_rel)
-	local status, mime, sbody, _, extra = app._static:serve(url_rel, req.headers)
+local function apply_static_hit(app, req, res, status, mime, sbody, extra, sfile)
 	if 400 == status then
 		res:co_status(400, mime, sbody)
-		return
+		return true
 	end
 
 	if 413 == status then
 		send_error(app, req, res, 413, mime, sbody)
-		return
+		return true
 	end
 
 	if 416 == status then
 		apply_extra(res, extra)
 		res:co_status(416, mime, sbody)
-		return
+		return true
 	end
 
 	if 0 == status or 404 == status then
-		local spa = app._cfg.spa
-		if spa and ("GET" == method or "HEAD" == method) and spa_accepts_html(req.headers) then
-			local spa_path = true == spa and "/index.html" or spa
-			local st, sm, sb, _, se = app._static:serve(spa_path, req.headers)
-			if 200 == st or 304 == st then
-				apply_extra(res, se)
-				res:co_status(st, sm, sb)
-				return
-			end
-		end
-
-		send_error(app, req, res, 404, "text/html", BODY_404)
-		return
+		return false
 	end
 
 	apply_extra(res, extra)
 	if 304 == status then
 		res:co_status(304, mime, "")
+		return true
+	end
+
+	res:co_status(status, mime, sbody, sfile)
+	return true
+end
+
+
+local function after_stack(app, req, res, method, url_rel)
+	if res._sent then
 		return
 	end
 
-	res:co_status(status, mime, sbody)
+	if "GET" == method or "HEAD" == method then
+		local spa = app._cfg.spa
+		if spa and spa_accepts_html(req.headers) then
+			local spa_path = true == spa and "/index.html" or spa
+			local st, sm, sb, _, se, sf = app._static:serve(spa_path, req.headers)
+			if 200 == st or 304 == st then
+				apply_extra(res, se)
+				res:co_status(st, sm, sb, sf)
+				return
+			end
+		end
+
+		send_error(app, req, res, 404, "text/html")
+		return
+	end
+
+	local allows = app._router:methods_of(url_rel)
+	if 0 < #allows then
+		res:header("Allow", table.concat(allows, ", "))
+		res:co_status(405, "text/plain", "Method Not Allowed")
+		return
+	end
+
+	send_error(app, req, res, 404, "text/plain", "Not Found")
+end
+
+
+local function co_run_stack(app, req, res, idx, tag, method, url_rel)
+	if res._sent then
+		return
+	end
+
+	local layer = app._stack[idx]
+	if not layer then
+		after_stack(app, req, res, method, url_rel)
+		return
+	end
+
+	if "mw" == layer.kind then
+		if not path_prefixed(layer.prefix, req.path) then
+			co_run_stack(app, req, res, idx + 1, tag, method, url_rel)
+			return
+		end
+
+		local proceeded = false
+		local function nxt()
+			if proceeded or res._sent then
+				return
+			end
+
+			proceeded = true
+			co_run_stack(app, req, res, idx + 1, tag, method, url_rel)
+		end
+
+		local ok, err = pcall(layer.fn, req, res, nxt)
+		if not ok then
+			print("middleware error", tag, req.path, err)
+			if not res._sent then
+				send_error(app, req, res, 500, "text/plain", "middleware error")
+			end
+
+			return
+		end
+
+		if not proceeded and not res._sent then
+			res:co_status(204, "text/plain", "")
+		end
+
+		return
+	end
+
+	if "route" == layer.kind then
+		local fns, params = match_route_layer(layer, method, url_rel)
+		if not fns then
+			co_run_stack(app, req, res, idx + 1, tag, method, url_rel)
+			return
+		end
+
+		req.params = params or {}
+		co_run_fns(app, tag, url_rel, fns, req, res, 1)
+		return
+	end
+
+	if "static" == layer.kind then
+		if "GET" == method or "HEAD" == method then
+			local status, mime, sbody, _, extra, sfile = app._static:serve(url_rel, req.headers)
+			if apply_static_hit(app, req, res, status, mime, sbody, extra, sfile) then
+				return
+			end
+		end
+
+		co_run_stack(app, req, res, idx + 1, tag, method, url_rel)
+		return
+	end
+
+	co_run_stack(app, req, res, idx + 1, tag, method, url_rel)
 end
 
 
@@ -422,7 +594,7 @@ local function parse_body_fields(app, req, headers, body)
 
 	local ctype = string.lower(headers["content-type"] or "")
 	if string.find(ctype, "multipart/form-data", 1, true) then
-		local form, files, err = parser.parse_multipart(headers, body, app._cfg.upload_dir or "", app._cfg.max_file or (2 * 1024 * 1024))
+		local form, files, err = parser.parse_multipart(headers, body, app._cfg.upload_dir or "", app._cfg.max_file or cfger.defaults.max_file)
 		if "" ~= err then
 			return err
 		end
@@ -482,6 +654,8 @@ local function co_dispatch(app, serve, tag, head, body)
 		token = "",
 		session = {},
 		session_id = "",
+		request_id = "",
+		csrf_token = "",
 		_app = app,
 	}
 
@@ -496,41 +670,14 @@ local function co_dispatch(app, serve, tag, head, body)
 		return out
 	end
 
-	local function after_mw()
-		if res._sent then
-			return
+	co_run_stack(app, req, res, 1, tag, method, url_rel)
+
+	if res._streaming and not res._stream_closed then
+		if "chunked" == res._stream_mode then
+			res:co_chunk_end()
+		else
+			res:co_sse_end()
 		end
-
-		local fns, params = app._router:match(method, url_rel)
-		if not fns and "HEAD" == method then
-			fns, params = app._router:match("GET", url_rel)
-		end
-
-		if fns then
-			req.params = params or {}
-			co_run_fns(app, tag, url_rel, fns, req, res, 1)
-			return
-		end
-
-		local allows = app._router:methods_of(url_rel)
-		if "GET" ~= method and "HEAD" ~= method then
-			if 0 < #allows then
-				res:header("Allow", table.concat(allows, ", "))
-				res:co_status(405, "text/plain", "Method Not Allowed")
-				return
-			end
-
-			send_error(app, req, res, 404, "text/plain", "Not Found")
-			return
-		end
-
-		co_serve_static(app, req, res, tag, method, url_rel)
-	end
-
-	if 0 == #app._mws then
-		after_mw()
-	else
-		co_run_mws(app, req, res, 1, tag, after_mw)
 	end
 
 	if not res._sent then
@@ -538,6 +685,15 @@ local function co_dispatch(app, serve, tag, head, body)
 	end
 
 	return out
+end
+
+
+local function conn_tag(serve)
+	if serve and serve.tls and serve:tls() then
+		return "https"
+	end
+
+	return "http"
 end
 
 
@@ -549,7 +705,7 @@ local function co_serve_conn(app, serve, tag)
 	end
 
 	local nreq = 0
-	local max_ka = app._cfg.max_keep_alive or DEFAULT_MAX_KA
+	local max_ka = app._cfg.max_keep_alive or cfger.defaults.max_keep_alive
 	while true do
 		nreq = nreq + 1
 		if 0 < max_ka and max_ka < nreq then
@@ -576,7 +732,7 @@ local function co_serve_conn(app, serve, tag)
 end
 
 
-local function co_accept_loop(app, listener, tag)
+local function co_accept_loop(app, listener)
 	while true do
 		local serve = listener:co_accept()
 		if not serve then
@@ -584,47 +740,48 @@ local function co_accept_loop(app, listener, tag)
 		end
 
 		kco.fork(function ()
-			co_serve_conn(app, serve, tag)
+			co_serve_conn(app, serve, conn_tag(serve))
 		end)
 	end
 end
 
 
-local function fork_accept(app, listener, tag)
+local function fork_accept(app, listener)
 	kco.fork(function ()
-		co_accept_loop(app, listener, tag)
+		co_accept_loop(app, listener)
 	end)
 end
 
 
-local function listen_cfg_only(cfg)
-	if not cfg then
-		return nil
+local function collect_builtin_mw(obj, cfg)
+	local list = {}
+
+	if false ~= cfg.request_id then
+		local ropt = cfg.request_id
+		if true == ropt or "table" ~= type(ropt) then
+			ropt = {}
+		end
+
+		list[#list + 1] = {
+			prefix = "/",
+			fn = mw.request_id(ropt),
+		}
 	end
 
-	return {
-		tls = cfg.tls,
-		cert = cfg.cert,
-		key = cfg.key,
-	}
-end
-
-
-local function install_builtin_mw(obj, cfg)
 	if false ~= cfg.log then
 		local write = cfg.log
 		if "function" ~= type(write) then
 			write = nil
 		end
 
-		obj._mws[#obj._mws + 1] = {
+		list[#list + 1] = {
 			prefix = "/",
 			fn = mw.log({ write = write }),
 		}
 	end
 
 	if false ~= cfg.cors and nil ~= cfg.cors then
-		obj._mws[#obj._mws + 1] = {
+		list[#list + 1] = {
 			prefix = "/",
 			fn = mw.cors(cfg.cors),
 		}
@@ -638,7 +795,7 @@ local function install_builtin_mw(obj, cfg)
 
 		obj._sessions = {}
 		sopt = sopt or {}
-		obj._mws[#obj._mws + 1] = {
+		list[#list + 1] = {
 			prefix = "/",
 			fn = mw.session({
 				store = obj._sessions,
@@ -648,6 +805,162 @@ local function install_builtin_mw(obj, cfg)
 			}),
 		}
 	end
+
+	if cfg.csrf then
+		local copt = cfg.csrf
+		if true == copt or "table" ~= type(copt) then
+			copt = {}
+		end
+
+		list[#list + 1] = {
+			prefix = "/",
+			fn = mw.csrf(copt),
+		}
+	end
+
+	return list
+end
+
+
+local function apply_static_patch(static_obj, cfg)
+	local d = static_obj._defaults
+
+	if nil ~= cfg.listing then
+		d.listing = true == cfg.listing
+	end
+
+	if nil ~= cfg.index then
+		d.index = cfg.index
+	end
+
+	if "number" == type(cfg.max_file) then
+		d.max_file = cfg.max_file
+	end
+
+	if nil ~= cfg.gzip then
+		d.gzip = false ~= cfg.gzip
+	end
+
+	if nil ~= cfg.gzip_dynamic then
+		d.gzip_dynamic = true == cfg.gzip_dynamic
+	end
+end
+
+
+local function apply_site(obj)
+	if obj._applied then
+		return
+	end
+
+	obj._applied = true
+
+	local cfg = obj._cfg
+	local built = collect_builtin_mw(obj, cfg)
+	obj._builtin_mw_n = #built
+	if 0 < #built then
+		local stack = {}
+		for i = 1, #built do
+			stack[i] = {
+				kind = "mw",
+				prefix = built[i].prefix,
+				fn = built[i].fn,
+				builtin = true,
+			}
+		end
+
+		for i = 1, #obj._stack do
+			stack[#stack + 1] = obj._stack[i]
+		end
+
+		obj._stack = stack
+	end
+
+	if true == cfg.healthz then
+		local fns = obj._router:match("GET", "/healthz")
+		if not fns then
+			local hfn = function (req, res)
+				res:co_json({ ok = true })
+			end
+
+			obj._router:add("GET", "/healthz", { hfn })
+			local pos = (obj._builtin_mw_n or 0) + 1
+			table.insert(obj._stack, pos, {
+				kind = "route",
+				method = "GET",
+				path = "/healthz",
+				fns = { hfn },
+				healthz_own = true,
+			})
+			obj._healthz_own = true
+		end
+	end
+end
+
+
+local function unapply_site(obj)
+	local stack = {}
+	for i = 1, #obj._stack do
+		local layer = obj._stack[i]
+		if not layer.builtin and not layer.healthz_own then
+			stack[#stack + 1] = layer
+		end
+	end
+
+	obj._stack = stack
+	obj._builtin_mw_n = 0
+	if obj._healthz_own then
+		obj._router:remove("GET", "/healthz")
+		obj._healthz_own = false
+	end
+
+	obj._applied = false
+end
+
+
+local function listen_has_port(obj, port)
+	for i = 1, #obj._listeners do
+		if obj._listeners[i].port == port then
+			return true
+		end
+	end
+
+	return false
+end
+
+
+local function bind_listen_specs(obj)
+	local specs = obj._listen_specs
+	if nil == specs then
+		if 0 == #obj._listeners then
+			specs = {
+				{ port = cfger.defaults.listen_port },
+			}
+		else
+			return true
+		end
+	end
+
+	local ok = true
+	for i = 1, #specs do
+		local spec = specs[i]
+		if spec and not listen_has_port(obj, spec.port) then
+			local lcfg = nil
+			if spec.tls or spec.plain or spec.cert or spec.key then
+				lcfg = {
+					tls = spec.tls,
+					plain = spec.plain,
+					cert = spec.cert,
+					key = spec.key,
+				}
+			end
+
+			if not obj:listen(spec.port, lcfg) then
+				ok = false
+			end
+		end
+	end
+
+	return ok
 end
 
 
@@ -667,7 +980,38 @@ function W:route(method, path, ...)
 		return false
 	end
 
-	return self._router:add(method, path, fns)
+	if not self._router:add(method, path, fns) then
+		return false
+	end
+
+	method = string.upper(method)
+	path = compile.normalize_path(path)
+	local layer = {
+		kind = "route",
+		method = method,
+		path = path,
+		fns = fns,
+	}
+	if compile.is_pattern(path) then
+		local pat, names = compile.compile_path(path)
+		if not pat then
+			return false
+		end
+
+		layer.pat = pat
+		layer.names = names
+	end
+
+	for i = 1, #self._stack do
+		local e = self._stack[i]
+		if "route" == e.kind and e.method == method and e.path == path then
+			self._stack[i] = layer
+			return true
+		end
+	end
+
+	self._stack[#self._stack + 1] = layer
+	return true
 end
 
 
@@ -718,10 +1062,11 @@ end
 -- @param [in]      path_or_fn[string|function]		前缀或处理函数
 -- @param [in]      fn[function]					[可选] 前缀形式时的处理函数
 -- @return ok[boolean]								true 成功; 参数非法为 false
--- @note `fn(req, res, next)`; 不调用 next 且未发送则 204
+-- @note `fn(req, res, next)`; 不调用 next 且未发送则 204; 与 :get/:static 按注册序
 function W:use(path_or_fn, fn)
 	if "function" == type(path_or_fn) then
-		self._mws[#self._mws + 1] = {
+		self._stack[#self._stack + 1] = {
+			kind = "mw",
 			prefix = "/",
 			fn = path_or_fn,
 		}
@@ -733,7 +1078,8 @@ function W:use(path_or_fn, fn)
 			return false
 		end
 
-		self._mws[#self._mws + 1] = {
+		self._stack[#self._stack + 1] = {
+			kind = "mw",
 			prefix = normalize_mw_prefix(path_or_fn),
 			fn = fn,
 		}
@@ -750,7 +1096,74 @@ end
 -- @param [in]      opts[table]			[可选] listing/index/max_file/gzip/gzip_dynamic
 -- @return ok[boolean]					true 成功; 参数非法为 false
 function W:static(prefix, dir, opts)
-	return self._static:mount(prefix, dir, opts)
+	if not self._static:mount(prefix, dir, opts) then
+		return false
+	end
+
+	for i = 1, #self._stack do
+		if "static" == self._stack[i].kind then
+			return true
+		end
+	end
+
+	self._stack[#self._stack + 1] = {
+		kind = "static",
+	}
+	return true
+end
+
+
+-- @brief 汇总站点配置; 可多次; 后写字段覆盖
+-- @param [in]      cfg[table]			[可选] 站点配置; 字段见 cfger.new
+-- @return ok[boolean]					true 成功; 服务中未 stop 或参数非法为 false
+-- @note 省略的键不变. cors/log/session/request_id/csrf/healthz 在 serve 时按汇总结果安装; stop 后再 serve 会重装.
+--   \n `listen` 只记规格, 不 bind; serve 时再开端口. 未设且未 :listen 时默认 8000 HTTP.
+function W:setup(cfg)
+	-- cfg.listen = 8000
+	-- cfg.listen = { port = 8000, tls, plain, cert, key }
+	-- cfg.listen = { port = 8000, tls = true, plain = true, cert, key }	同端口 HTTP+HTTPS
+	-- cfg.listen = { { port = 8000 }, { port = 8000, tls = true, cert, key } }	同端口合并为一个监听
+	if self._applied then
+		return false
+	end
+
+	if 0 < #self._listeners then
+		return false
+	end
+
+	if nil ~= cfg and "table" ~= type(cfg) then
+		return false
+	end
+
+	if cfg then
+		if nil ~= cfg.listen then
+			local specs, lok = cfger.parse_listen(cfg.listen)
+			if not lok then
+				return false
+			end
+
+			self._listen_specs = specs
+		end
+
+		cfger.apply(self._cfg, cfg)
+		apply_static_patch(self._static, cfg)
+	end
+
+	return true
+end
+
+
+-- @brief 修改已生效的站点配置
+-- @param [in]      patch[table]		要覆盖的字段; 省略的键不变
+-- @return ok[boolean]					true 成功; 参数非法为 false
+-- @note 立即影响后续请求读 `_cfg` 的项. cors/log/session/request_id/csrf/healthz/静态 listing 不重装.
+function W:apply_cfg(patch)
+	if "table" ~= type(patch) then
+		return false
+	end
+
+	cfger.apply(self._cfg, patch)
+	return true
 end
 
 
@@ -758,13 +1171,15 @@ end
 -- @param [in]      port[number(int)]	端口
 -- @param [in]      cfg[table]			[可选] 监听配置; 见内联 opts 注释
 -- @return ok[boolean]					true 成功; 失败为 false
--- @note 内部使用 klbhttp.listen; 可多次调用以同时听 HTTP/HTTPS
---   \n 只 bind, 不启动 accept 循环; 须再调用 :fork_accept
+-- @note 内部使用 klbhttp.listen; 同端口 HTTP+HTTPS 一次调用 (`tls` + `plain`)
+--   \n 不同端口可多次; 同一 port 已 bind 则失败
+--   \n 只 bind, 不启动 accept 循环; 须再调用 :serve
 --   \n cert/key 可为 PEM 原文或文件路径, 由 klbhttp 解析
---   \n 只把 tls/cert/key 传给 klbhttp; 站点字段见 new(cfg)
+--   \n 只把 tls/plain/cert/key 传给 klbhttp; 站点字段见 new/setup
 function W:listen(port, cfg)
 	-- cfg = {
 	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
+	--   plain[boolean]			[可选] tls 时是否同时收明文 HTTP, 默认 `false`
 	--   cert[string]			tls 时必填, 证书 PEM 原文或文件路径
 	--   key[string]			tls 时必填, 私钥 PEM 原文或文件路径
 	-- }
@@ -772,19 +1187,20 @@ function W:listen(port, cfg)
 		return false
 	end
 
-	local listener = klbhttp.listen(port, listen_cfg_only(cfg))
+	if listen_has_port(self, port) then
+		return false
+	end
+
+	local listener = klbhttp.listen(port, cfger.listen_only(cfg))
 	if not listener then
 		return false
 	end
 
-	local tag = "http"
-	if cfg and true == cfg.tls then
-		tag = "https"
-	end
+	apply_site(self)
 
 	self._listeners[#self._listeners + 1] = {
 		listener = listener,
-		tag = tag,
+		port = port,
 		forked = false,
 	}
 
@@ -792,24 +1208,31 @@ function W:listen(port, cfg)
 end
 
 
--- @brief 启动已打开端口的 accept 循环
--- @return 无
+-- @brief 按汇总 listen 规格 bind (若尚未打开), 再启动 accept 循环
+-- @return ok[boolean]					true 全部 bind 成功; 任一项失败为 false
 -- @note 幂等; 已启动的 listener 跳过
---   \n 须在全部 :listen 之后调用
-function W:fork_accept()
+--   \n 未 setup listen 且未 :listen 时默认 8000 HTTP
+--   \n bind 失败不回滚已成功端口, 仍对已 bind 项起 accept
+function W:serve()
+	apply_site(self)
+
+	local ok = bind_listen_specs(self)
 	for i = 1, #self._listeners do
 		local slot = self._listeners[i]
 		if slot and slot.listener and not slot.forked then
-			fork_accept(self, slot.listener, slot.tag)
+			fork_accept(self, slot.listener)
 			slot.forked = true
 		end
 	end
+
+	return ok
 end
 
 
--- @brief 关闭监听
--- @return 无
-function W:close()
+-- @brief 停止对外服务; 关全部监听, 许可再 setup / serve
+-- @return ok[boolean]					true
+-- @note 保留路由 / 静态 / 汇总 cfg 与 listen 规格. cors/log/session/request_id/csrf/healthz 在下次 serve 时按当时汇总重装.
+function W:stop()
 	for i = 1, #self._listeners do
 		local slot = self._listeners[i]
 		local l = slot and slot.listener
@@ -819,6 +1242,8 @@ function W:close()
 	end
 
 	self._listeners = {}
+	unapply_site(self)
+	return true
 end
 
 
@@ -828,85 +1253,30 @@ end
 local weber = {}
 
 -- @brief 新建一个站点对象
--- @param [in]      cfg[table]			[可选] 站点配置; 见内联 opts 注释
+-- @param [in]      cfg[table]			[可选] 初始站点配置; 字段见 cfger.new
 -- @return [table]	站点对象
+-- @note 可用 :setup 继续汇总; cors/log/session/request_id/csrf/healthz 在 serve 时安装, stop 后再 serve 会重装
+--   \n cfg.listen 只记规格; 未设则 serve 默认 8000 HTTP
 weber.new = function (cfg)
-	-- cfg = {
-	--   server[string]			[可选] Server 头, 默认 `klbweb`
-	--   keep_alive[boolean]	[可选] 是否允许 keep-alive, 默认 `true`
-	--   max_body[number]		[可选] 请求体上限字节, 默认 256KiB; 0 不限制
-	--   max_body_paths[table]	[可选] 前缀 -> 更大上限, 供升级包等
-	--   max_keep_alive[number]	[可选] 每连接最大请求数, 默认 100
-	--   cors[boolean|table]	[可选] 默认关; `true` 或表见 mw.cors
-	--   log[boolean|function]	[可选] 默认开; `false` 关闭; 函数为写日志
-	--   session[boolean|table]	[可选] 默认关; 内存 Cookie 会话
-	--   healthz[boolean]		[可选] 默认关; 为 true 时注册 GET /healthz
-	--   spa[boolean|string]	[可选] 静态 404 且 Accept html 时回 index
-	--   pages[table]			[可选] `[404]` / `[500]` HTML
-	--   on_error[function]		[可选] `fn(req, res, code)`
-	--   upload_dir[string]		[可选] multipart 落盘目录
-	--   listing[boolean]		[可选] 静态目录列表默认, 默认关
-	--   max_file[number]		[可选] 静态单文件上限, 默认 2MiB
-	--   gzip[boolean]			[可选] 静态预压 .gz, 默认开
-	--   gzip_dynamic[boolean]	[可选] 动态 gzip, 默认关
-	-- }
 	cfg = cfg or {}
-	local site = {
-		server = "klbweb",
-		keep_alive = true,
-		max_body = DEFAULT_MAX_BODY,
-		max_body_paths = cfg.max_body_paths,
-		max_keep_alive = DEFAULT_MAX_KA,
-		cors = cfg.cors,
-		log = cfg.log,
-		session = cfg.session,
-		session_secret = cfg.session_secret,
-		healthz = cfg.healthz,
-		spa = cfg.spa,
-		pages = cfg.pages,
-		on_error = cfg.on_error,
-		upload_dir = cfg.upload_dir,
-		max_file = cfg.max_file,
-	}
-
-	if "string" == type(cfg.server) and "" ~= cfg.server then
-		site.server = cfg.server
-	end
-
-	if false == cfg.keep_alive then
-		site.keep_alive = false
-	end
-
-	if "number" == type(cfg.max_body) then
-		site.max_body = cfg.max_body
-	end
-
-	if "number" == type(cfg.max_keep_alive) then
-		site.max_keep_alive = cfg.max_keep_alive
+	local site = cfger.new(cfg)
+	local specs, lok = cfger.parse_listen(cfg.listen)
+	if not lok then
+		specs = nil
 	end
 
 	local obj = {
 		_cfg = site,
 		_router = router.new(),
-		_static = staticer.new({
-			listing = cfg.listing,
-			index = cfg.index,
-			max_file = cfg.max_file,
-			gzip = cfg.gzip,
-			gzip_dynamic = cfg.gzip_dynamic,
-		}),
+		_static = staticer.new(cfger.static_defaults(cfg)),
 		_listeners = {},
-		_mws = {},
+		_listen_specs = specs,
+		_stack = {},
 		_sessions = {},
+		_applied = false,
+		_builtin_mw_n = 0,
+		_healthz_own = false,
 	}
-
-	install_builtin_mw(obj, site)
-
-	if true == site.healthz then
-		obj._router:add("GET", "/healthz", { function (req, res)
-			res:co_json({ ok = true })
-		end })
-	end
 
 	return setmetatable(obj, { __index = W })
 end

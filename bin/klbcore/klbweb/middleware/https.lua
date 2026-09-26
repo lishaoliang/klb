@@ -6,11 +6,11 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
-local util = require("klbcore.klbweb.mw.util")
+local util = require("klbcore.klbweb.util.header")
 
 
 -- @brief HTTP -> HTTPS 重定向
--- @param [in]      opts[table]			`port` 可选 HTTPS 端口
+-- @param [in]      opts[table]			`port` 可选 HTTPS 端口; 省略则保留原 Host (含端口, 同端口混用)
 -- @return fn[function]					中间件
 local function https(opts)
 	opts = opts or {}
@@ -25,13 +25,16 @@ local function https(opts)
 		local host = util.header_get(req.headers, "host")
 		if "" == host then
 			host = "127.0.0.1"
-		else
-			host = string.gsub(host, ":%d+$", "")
 		end
 
 		local loc
-		if "number" == type(https_port) and 443 ~= https_port then
-			loc = string.format("https://%s:%d%s", host, https_port, req.path)
+		if "number" == type(https_port) then
+			host = string.gsub(host, ":%d+$", "")
+			if 443 ~= https_port then
+				loc = string.format("https://%s:%d%s", host, https_port, req.path)
+			else
+				loc = string.format("https://%s%s", host, req.path)
+			end
 		else
 			loc = string.format("https://%s%s", host, req.path)
 		end

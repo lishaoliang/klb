@@ -18,6 +18,9 @@ MY_HOST ?=
 MY_OUT_DIR := ../../lib
 MY_TMP_DIR := ../../tmp/klua
 
+# 裸 make → all (勿让 mingw.mk 空目标抢默认)
+.DEFAULT_GOAL := all
+
 include ../../mingw.mk
 
 # gcc编译工具链

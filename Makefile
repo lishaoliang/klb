@@ -23,6 +23,9 @@ MY_HOST ?=
 MY_OUT_DIR := ./lib
 MY_TMP_DIR := ./tmp
 
+# 裸 make → linux (勿让 mingw.mk 空目标抢默认)
+.DEFAULT_GOAL := linux
+
 include ./mingw.mk
 
 # gcc编译工具链
@@ -186,8 +189,8 @@ include ./install.mk
 
 .PHONY: all linux clean strip klua install mingw
 
-all: lib so
 linux: all
+all: lib so
 
 lib: $(MY_TARGET_A)
 so: $(MY_TARGET_SO)

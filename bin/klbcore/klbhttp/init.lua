@@ -88,9 +88,11 @@ end
 klbhttp.listen = function (port, cfg)
 	-- cfg = {
 	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
+	--   plain[boolean]			[可选] tls 时是否同时收明文 HTTP, 默认 `false`
 	--   cert[string]			tls 时必填, 证书 PEM 原文或文件路径
 	--   key[string]			tls 时必填, 私钥 PEM 原文或文件路径
 	-- }
+	-- @note 同端口 HTTP+HTTPS: `tls=true, plain=true` 一次 listen
 	-- 新建
 	local l = httplistener.new(cfg)
 

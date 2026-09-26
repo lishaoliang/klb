@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbnet/klb_netconn.h"
+#include <string.h>
 
 
 /// @brief 销毁连接

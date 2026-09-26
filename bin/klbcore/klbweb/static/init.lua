@@ -78,14 +78,14 @@ local function open_path(mount, rel, url_path, headers)
 		if do_listing then
 			local body = listing.make(url_path, real)
 			local extra = file.extra_of("text/html", "listing", "index.html", nil, nil, {})
-			return 200, "text/html", body, "listing", extra
+			return 200, "text/html", body, "listing", extra, { path = "", offset = 0, length = 0 }
 		end
 
-		return 404, "", "", "miss", {}
+		return 404, "", "", "miss", {}, { path = "", offset = 0, length = 0 }
 	end
 
 	if "file" ~= mode then
-		return 404, "", "", "miss", {}
+		return 404, "", "", "miss", {}, { path = "", offset = 0, length = 0 }
 	end
 
 	return file.open(real, rel, headers, max_file, gzip, gzip_dynamic)
@@ -162,20 +162,6 @@ function S:mount(prefix, dir, opts)
 end
 
 
--- @brief 按请求路径取本地文件
--- @param [in]      url_path[string]	请求 URL 路径 (可含 query)
--- @return body[string]					文件内容; 未命中或失败为 nil
--- @return mime[string]					MIME; 失败为 `""`
-function S:read_file(url_path)
-	local status, mime, body = self:serve(url_path)
-	if 200 == status then
-		return body, mime
-	end
-
-	return nil, ""
-end
-
-
 -- @brief 按请求路径提供静态内容
 -- @param [in]      url_path[string]	请求 URL 路径
 -- @param [in]      headers[table]		[可选] 请求头 (Range / 条件缓存 / Accept-Encoding)
@@ -184,15 +170,16 @@ end
 -- @return body[string]
 -- @return kind[string]
 -- @return extra[table]					额外响应头数组 `{ { name, value }, ... }`
+-- @return file[table]					C 发文件 `{ path, offset, length }`; 无文件时 path 为 `""`
 function S:serve(url_path, headers)
 	local path = pathex.filter_path(url_path)
 	if not path then
-		return 400, "text/plain", "bad path", "bad", {}
+		return 400, "text/plain", "bad path", "bad", {}, { path = "", offset = 0, length = 0 }
 	end
 
 	local mount, rel, prefix = resolve_mount(path, self._mounts)
 	if not mount then
-		return 0, "", "", "none", {}
+		return 0, "", "", "none", {}, { path = "", offset = 0, length = 0 }
 	end
 
 	local url = mount_url(prefix, rel)
