@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>alua 配置页</title>
+<style>
+  :root { --bg:#0f1115; --panel:#171a21; --line:#2a2f3a; --fg:#e6e9ef; --muted:#98a2b3; --ok:#3fb950; --err:#f85149; --pri:#2f81f7; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:20px; background:var(--bg); color:var(--fg); font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .sub { color:var(--muted); font-size:12px; margin-bottom:16px; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:14px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  input[type=text], input[type=password], select, textarea {
+    background:#0d0f13; color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:7px 9px; font:inherit;
+  }
+  input[type=text], input[type=password] { flex:1 1 240px; }
+  textarea { width:100%; min-height:220px; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+  button { background:var(--pri); color:#fff; border:0; border-radius:6px; padding:7px 12px; font:inherit; cursor:pointer; }
+  button.ghost { background:#232936; }
+  button:disabled { opacity:.5; cursor:default; }
+  pre { background:#0d0f13; border:1px solid var(--line); border-radius:6px; padding:10px; overflow:auto; max-height:220px; font-size:12px; margin:0; }
+  .tag { color:var(--muted); font-size:12px; }
+  .ok { color:var(--ok); } .err { color:var(--err); }
+  .hide { display:none; }
+</style>
+</head>
+<body>
+<h1>alua 配置页</h1>
+<div class="sub">/api/v1/* · 端口组 HTTP/HTTPS · 会话登录</div>
+
+<div class="panel" id="loginPanel">
+  <div class="row">
+    <input type="password" id="token" placeholder="alua token (ALUA_SERVE_TOKEN)" autocomplete="off">
+    <button id="loginBtn">登录</button>
+  </div>
+  <div class="tag" id="loginMsg"></div>
+</div>
+
+<div id="main" class="hide">
+  <div class="panel">
+    <div class="row">
+      <button class="ghost" id="btnStatus">刷新状态</button>
+      <button class="ghost" id="btnLogs">刷新日志</button>
+      <button class="ghost" id="btnLogout">注销</button>
+      <span class="tag" id="who"></span>
+    </div>
+    <pre id="status"></pre>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <select id="module">
+        <option value="runtime">runtime</option>
+        <option value="log">log</option>
+        <option value="proxy">proxy</option>
+        <option value="serve">serve</option>
+        <option value="web" selected>web</option>
+        <option value="peers">peers</option>
+      </select>
+      <button class="ghost" id="btnCfgLoad">读取</button>
+      <button id="btnCfgSave">保存</button>
+      <span class="tag" id="cfgMsg"></span>
+    </div>
+    <textarea id="cfg" spellcheck="false"></textarea>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <select id="aclDefault">
+        <option value="allow" selected>default: allow</option>
+        <option value="deny">default: deny</option>
+      </select>
+      <button class="ghost" id="btnAclLoad">读取 ACL</button>
+      <button id="btnAclSave">保存 ACL</button>
+      <span class="tag" id="aclMsg"></span>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <textarea id="aclAllow" style="min-height:84px" spellcheck="false"
+        placeholder="白名单 allow: 每行或逗号分隔 IP / CIDR（空=不启用白名单）"></textarea>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <textarea id="aclDeny" style="min-height:84px" spellcheck="false"
+        placeholder="黑名单 deny: 每行或逗号分隔 IP / CIDR（deny 优先）"></textarea>
+    </div>
+    <div class="tag">deny 优先；allow 为空时按 default；保存后约 1s 热更（仅 acl；端口/证书改动需重启服务）<br>
+      注意：deny 命中当前客户端 IP 会立即被拒，恢复须改写 web.json 或用 <code>alua setup web --deny …</code></div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <button class="ghost" data-svc="serve" data-act="start">启动 serve</button>
+      <button class="ghost" data-svc="serve" data-act="stop">停止 serve</button>
+      <button class="ghost" data-svc="proxy" data-act="start">启动 proxy</button>
+      <button class="ghost" data-svc="proxy" data-act="stop">停止 proxy</button>
+      <span class="tag" id="svcMsg"></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <input type="text" id="logModule" placeholder="module (可选)" style="flex:0 1 180px">
+      <input type="text" id="logLevel" placeholder="level (可选)" style="flex:0 1 140px">
+      <input type="text" id="logLines" value="50" style="flex:0 1 90px">
+      <button class="ghost" id="btnLogs2">查看</button>
+    </div>
+    <pre id="logs"></pre>
+  </div>
+</div>
+
+<script>
+(function () {
+  var csrf = sessionStorage.getItem("alua_web_csrf") || "";
+  var profile = sessionStorage.getItem("alua_web_profile") || "";
+
+  function $(id) { return document.getElementById(id); }
+
+  function show(el, on) { el.classList.toggle("hide", !on); }
+
+  function msg(el, text, bad) {
+    el.textContent = text || "";
+    el.className = "tag " + (bad ? "err" : "ok");
+  }
+
+  function api(method, path, body, needCsrf) {
+    var opt = { method: method, headers: { "Accept": "application/json" }, credentials: "same-origin" };
+    if (body !== undefined && body !== null) {
+      opt.headers["Content-Type"] = "application/json";
+      opt.body = JSON.stringify(body);
+    }
+    if (needCsrf && csrf) { opt.headers["X-CSRF-Token"] = csrf; }
+    return fetch(path, opt).then(function (r) {
+      return r.json().catch(function () { return { ok: false, message: "bad json" }; });
+    });
+  }
+
+  function enter(info) {
+    csrf = info.csrf || "";
+    profile = info.profile || "";
+    sessionStorage.setItem("alua_web_csrf", csrf);
+    sessionStorage.setItem("alua_web_profile", profile);
+    show($("loginPanel"), false);
+    show($("main"), true);
+    $("who").textContent = "profile=" + profile;
+    loadStatus();
+    loadAcl();
+  }
+
+  function loadStatus() {
+    api("GET", "/api/v1/status").then(function (r) {
+      if (!r.ok) { $("status").textContent = JSON.stringify(r, null, 2); return; }
+      var d = r.data || {};
+      var sv = d.serve || {};
+      var px = d.proxy || {};
+      $("status").textContent = JSON.stringify({
+        version: d.version, profile: d.profile, host: d.host && d.host.host_kind,
+        serve: { port: sv.port, listening: sv.listening, health: sv.health },
+        proxy: { running: px.running, listen: px.listen },
+        peers: d.peers, unit: d.unit
+      }, null, 2);
+    });
+  }
+
+  function loadCfg() {
+    var m = $("module").value;
+    api("GET", "/api/v1/config/" + m).then(function (r) {
+      if (!r.ok) { msg($("cfgMsg"), r.message || "读取失败", true); return; }
+      $("cfg").value = JSON.stringify(r.data, null, 2);
+      msg($("cfgMsg"), "已读取 " + m, false);
+    });
+  }
+
+  function saveCfg() {
+    var m = $("module").value;
+    var obj;
+    try { obj = JSON.parse($("cfg").value); }
+    catch (e) { msg($("cfgMsg"), "JSON 格式错误", true); return; }
+    api("PUT", "/api/v1/config/" + m, obj, true).then(function (r) {
+      if (!r.ok) { msg($("cfgMsg"), r.message || "保存失败", true); return; }
+      $("cfg").value = JSON.stringify(r.data, null, 2);
+      msg($("cfgMsg"), "已保存 " + m, false);
+    });
+  }
+
+  function splitRules(text) {
+    var out = [];
+    (text || "").split(/[\s,;]+/).forEach(function (x) {
+      x = x.trim();
+      if (x && out.indexOf(x) < 0) { out.push(x); }
+    });
+    return out;
+  }
+
+  function fillAcl(acl) {
+    acl = acl || {};
+    $("aclAllow").value = (acl.allow || []).join("\n");
+    $("aclDeny").value = (acl.deny || []).join("\n");
+    $("aclDefault").value = (acl.default === "deny") ? "deny" : "allow";
+  }
+
+  function loadAcl() {
+    api("GET", "/api/v1/config/web").then(function (r) {
+      if (!r.ok) { msg($("aclMsg"), r.message || "读取失败", true); return; }
+      fillAcl((r.data || {}).acl);
+      msg($("aclMsg"), "已读取 ACL", false);
+    });
+  }
+
+  function saveAcl() {
+    api("GET", "/api/v1/config/web").then(function (r) {
+      if (!r.ok) { msg($("aclMsg"), r.message || "读取失败", true); return; }
+      var cfg = r.data || {};
+      var deny = splitRules($("aclDeny").value);
+      if (deny.length && !window.confirm(
+          "deny 非空：若包含当前客户端 IP，约 1s 后即被拒绝（恢复需改写 web.json 或用 alua setup web）。继续保存？")) {
+        return;
+      }
+      cfg.acl = {
+        allow: splitRules($("aclAllow").value),
+        deny: deny,
+        default: $("aclDefault").value
+      };
+      api("PUT", "/api/v1/config/web", cfg, true).then(function (r2) {
+        if (!r2.ok) { msg($("aclMsg"), r2.message || "保存失败", true); return; }
+        fillAcl((r2.data || {}).acl || cfg.acl);
+        msg($("aclMsg"), "已保存（约 1s 热更生效）", false);
+      });
+    });
+  }
+
+  function loadLogs() {
+    var q = [];
+    if ($("logModule").value) { q.push("module=" + encodeURIComponent($("logModule").value)); }
+    if ($("logLevel").value) { q.push("level=" + encodeURIComponent($("logLevel").value)); }
+    q.push("lines=" + (parseInt($("logLines").value, 10) || 50));
+    api("GET", "/api/v1/logs?" + q.join("&")).then(function (r) {
+      if (!r.ok) { $("logs").textContent = JSON.stringify(r, null, 2); return; }
+      var d = r.data || {};
+      var rows = (d.lines || []).map(function (x) { return JSON.stringify(x); });
+      $("logs").textContent = rows.join("\n");
+    });
+  }
+
+  $("loginBtn").onclick = function () {
+    var tok = $("token").value.trim();
+    if (!tok) { msg($("loginMsg"), "请输入 token", true); return; }
+    api("POST", "/api/v1/session", { token: tok }).then(function (r) {
+      if (!r.ok) { msg($("loginMsg"), r.message || "登录失败", true); return; }
+      msg($("loginMsg"), "", false);
+      enter(r.data || {});
+    });
+  };
+
+  $("btnStatus").onclick = loadStatus;
+  $("btnLogs").onclick = loadLogs;
+  $("btnLogs2").onclick = loadLogs;
+  $("btnCfgLoad").onclick = loadCfg;
+  $("btnCfgSave").onclick = saveCfg;
+  $("btnAclLoad").onclick = loadAcl;
+  $("btnAclSave").onclick = saveAcl;
+
+  $("btnLogout").onclick = function () {
+    api("DELETE", "/api/v1/session").then(function () {
+      csrf = ""; profile = "";
+      sessionStorage.removeItem("alua_web_csrf");
+      sessionStorage.removeItem("alua_web_profile");
+      show($("main"), false);
+      show($("loginPanel"), true);
+    });
+  };
+
+  Array.prototype.forEach.call(document.querySelectorAll("button[data-svc]"), function (b) {
+    b.onclick = function () {
+      var svc = b.getAttribute("data-svc");
+      var act = b.getAttribute("data-act");
+      msg($("svcMsg"), "执行中…", false);
+      api("POST", "/api/v1/services/" + svc, { action: act }, true).then(function (r) {
+        msg($("svcMsg"), r.ok ? (svc + " " + act + " ok") : (r.message || "失败"), !r.ok);
+        loadStatus();
+      });
+    };
+  });
+})();
+</script>
+</body>
+</html>
