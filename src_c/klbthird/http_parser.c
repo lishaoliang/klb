@@ -939,12 +939,12 @@ reexecute:
         parser->index = 1;
         switch (ch) {
           case 'A': parser->method = HTTP_ACL; break;
-          case 'B': parser->method = HTTP_BIND; break;
+          case 'B': parser->method = HTTP_BIND; /* or BASELINE-CONTROL */ break;
           case 'C': parser->method = HTTP_CONNECT; /* or COPY, CHECKOUT */ break;
           case 'D': parser->method = HTTP_DELETE; break;
           case 'G': parser->method = HTTP_GET; break;
           case 'H': parser->method = HTTP_HEAD; break;
-          case 'L': parser->method = HTTP_LOCK; /* or LINK */ break;
+          case 'L': parser->method = HTTP_LOCK; /* or LINK, LABEL */ break;
           case 'M': parser->method = HTTP_MKCOL; /* or MOVE, MKACTIVITY, MERGE, M-SEARCH, MKCALENDAR */ break;
           case 'N': parser->method = HTTP_NOTIFY; break;
           case 'O': parser->method = HTTP_OPTIONS; break;
@@ -954,7 +954,7 @@ reexecute:
           case 'R': parser->method = HTTP_REPORT; /* or REBIND */ break;
           case 'S': parser->method = HTTP_SUBSCRIBE; /* or SEARCH, SOURCE */ break;
           case 'T': parser->method = HTTP_TRACE; break;
-          case 'U': parser->method = HTTP_UNLOCK; /* or UNSUBSCRIBE, UNBIND, UNLINK */ break;
+          case 'U': parser->method = HTTP_UNLOCK; /* or UNSUBSCRIBE, UNBIND, UNLINK, UPDATE */ break;
           default:
             SET_ERRNO(HPE_INVALID_METHOD);
             goto error;
@@ -1005,6 +1005,9 @@ reexecute:
             XX(UNLOCK,    2, 'S', UNSUBSCRIBE)
             XX(UNLOCK,    2, 'B', UNBIND)
             XX(UNLOCK,    3, 'I', UNLINK)
+            XX(LOCK,      1, 'A', LABEL)
+            XX(UNLOCK,    1, 'P', UPDATE)
+            XX(BIND,      1, 'A', BASELINE_CONTROL)
 #undef XX
             default:
               SET_ERRNO(HPE_INVALID_METHOD);

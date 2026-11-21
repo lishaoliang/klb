@@ -100,6 +100,45 @@ static int klua_krand_rand_integer(lua_State* L)
     return 1;
 }
 
+static int klua_krand_rand_bytes(lua_State* L)
+{
+    size_t len = KLUA_KRAND_LEN;
+    if (lua_isinteger(L, 1))
+    {
+        len = (size_t)lua_tointeger(L, 1);
+    }
+
+    if (0 == len)
+    {
+        lua_pushlstring(L, "", 0);
+        return 1;
+    }
+
+    char buf[KLUA_KRAND_STACK_BUF] = { 0 };
+    char* p_buf = NULL;
+    char* p_str = buf;
+
+    if (KLUA_KRAND_STACK_BUF < len)
+    {
+        p_buf = KLB_MALLOC(char, len, 0);
+        p_str = p_buf;
+    }
+
+    // CSPRNG: 熵源不可用返回 nil + 错误串 (禁伪随机回退)
+    if (!klb_rand_secure(p_str, (uint32_t)len))
+    {
+        KLB_FREE(p_buf);
+        lua_pushnil(L);
+        lua_pushstring(L, "csprng unavailable");
+        return 2;
+    }
+
+    lua_pushlstring(L, p_str, len);
+
+    KLB_FREE(p_buf);
+    return 1;
+}
+
 int klua_open_krand(lua_State* L)
 {
     static luaL_Reg lib[] =
@@ -108,6 +147,7 @@ int klua_open_krand(lua_State* L)
 
         { "rand_string",    klua_krand_rand_string },
         { "rand_integer",   klua_krand_rand_integer },
+        { "rand_bytes",     klua_krand_rand_bytes },
 
         { NULL,             NULL }
     };

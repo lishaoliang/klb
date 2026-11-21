@@ -14,6 +14,26 @@ local selector = {}
 local E = {}
 
 
+-- @brief class 多类匹配 (空格分隔; 空类不匹配)
+local function ClassMatch(wnd_class, want)
+	if 'string' ~= type(wnd_class) or 'string' ~= type(want) or '' == want then
+		return false
+	end
+
+	if wnd_class == want then
+		return true
+	end
+
+	for one in string.gmatch(wnd_class, '%S+') do
+		if one == want then
+			return true
+		end
+	end
+
+	return false
+end
+
+
 local function FindWnds(t, wnd, cfg, sel_multi)
 	if 'table' ~= type(wnd) then
 		return
@@ -28,7 +48,7 @@ local function FindWnds(t, wnd, cfg, sel_multi)
 	elseif cfg['id'] and wnd['id'] == cfg['id'] then
 		table.insert(t, wnd)
 		if not sel_multi then return end
-	elseif cfg['class'] and wnd['class'] == cfg['class'] then
+	elseif cfg['class'] and ClassMatch(wnd['class'], cfg['class']) then
 		table.insert(t, wnd)
 		if not sel_multi then return end
 	elseif cfg['type'] and wnd['type'] == cfg['type'] then
@@ -107,18 +127,20 @@ selector.select = function (dlg, multi)
 				break
 			end
 			
-			-- 选择 'all' 所有控件
+			-- 选择 'all' 所有控件; '*' 强制多选语义 (收集全部, 单选接口仍取首个)
 			local all = string.match(s, '^%*(.*)')
 			if nil ~= all then
-				FindWnds(wnds, dlg, {['all']=true}, sel_multi)
+				FindWnds(wnds, dlg, {['all']=true}, true)
 				break
 			end
 			
 			break
 		end
-		
-		if not sel_multi then
-			assert(#wnds <= 1)
+
+		-- 单选多命中: 取首个, 不 assert 崩
+		if not sel_multi and 1 < #wnds then
+			local first = wnds[1]
+			wnds = { first }
 		end
 		
 		-- wnds 中第一个wnd的路径

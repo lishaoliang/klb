@@ -6,11 +6,14 @@
 -- @note   header / cookie / redirect / send; 组包走 pack_head; 子目录可再扩
 -- @history 修改历史
 --		[2026-09] 创建文件
+--		[2026-11] 调用方已给 Content-Length 时不再补默认值 (修 HEAD 重复 CL)
+--		[2026-11] co_chunk 增可选状态码参数 (Range 206 流式)
 --]]
 local cjson = require("cjson.safe")
-local coder = require("klbcore.klbweb.coder")
+local http_status = require("klbcore.klbweb.status")
 local chunked = require("klbcore.klbweb.responser.chunked")
 local sse = require("klbcore.klbweb.responser.sse")
+local sendfile = require("klbcore.klbweb.responser.file")
 
 
 local responser = {}
@@ -57,7 +60,9 @@ responser.pack_head = function (app, status, mime, size, keep_alive, extra, mode
 		t[#t + 1] = string.format("Content-Type: %s\r\n", mime)
 	end
 
-	local no_length = ("chunked" == mode) or ("stream" == mode) or header_has(extra, "Transfer-Encoding")
+	local no_length = ("chunked" == mode) or ("stream" == mode)
+		or header_has(extra, "Transfer-Encoding")
+		or header_has(extra, "Content-Length")
 	if not no_length then
 		t[#t + 1] = string.format("Content-Length: %d\r\n", size or 0)
 	elseif "chunked" == mode and not header_has(extra, "Transfer-Encoding") then
@@ -137,13 +142,13 @@ responser.make = function (app, finish, io)
 
 	function res:co_send(body, mime)
 		self._status_code = 200
-		finish(coder.status(200), mime or "text/html", body or "")
+		finish(http_status.line(200), mime or "text/html", body or "")
 	end
 
 	function res:co_status(status, mime, body, file)
 		if "number" == type(status) then
 			self._status_code = status
-			status = coder.status(status)
+			status = http_status.line(status)
 		end
 
 		finish(status, mime or "text/plain", body or "", file)
@@ -155,7 +160,7 @@ responser.make = function (app, finish, io)
 			local s = cjson.encode(obj)
 			if not s then
 				self._status_code = 500
-				finish(coder.status(500), "text/plain", "json encode error")
+				finish(http_status.line(500), "text/plain", "json encode error")
 				return
 			end
 
@@ -163,14 +168,63 @@ responser.make = function (app, finish, io)
 		end
 
 		self._status_code = code or 200
-		finish(coder.status(code or 200), "application/json; charset=utf-8", body)
+		finish(http_status.line(code or 200), "application/json; charset=utf-8", body)
 	end
 
 	function res:co_redirect(url, code)
 		code = code or 302
 		self._status_code = code
 		self:header("Location", url or "/")
-		finish(coder.status(code), "text/plain", "")
+		finish(http_status.line(code), "text/plain", "")
+	end
+
+	local function send_local(path, mime, filename)
+		if self._sent then
+			return
+		end
+
+		local code, out_mime, src = sendfile.open(path, mime)
+		if 200 ~= code then
+			local body = "Not Found"
+			if 400 == code then
+				body = "bad path"
+			end
+
+			self:co_status(code, "text/plain", body)
+			return
+		end
+
+		if filename then
+			self:header("Content-Disposition", sendfile.attachment(filename))
+		end
+
+		self._status_code = 200
+		finish(http_status.line(200), out_mime, "", src)
+	end
+
+	function res:co_sendfile(path, opts)
+		if "table" ~= type(opts) then
+			opts = {}
+		end
+
+		send_local(path, opts.mime, nil)
+	end
+
+	function res:co_download(path, filename, opts)
+		if "table" == type(filename) then
+			opts = filename
+			filename = nil
+		end
+
+		if "table" ~= type(opts) then
+			opts = {}
+		end
+
+		if "string" ~= type(filename) or "" == filename then
+			filename = path
+		end
+
+		send_local(path, opts.mime, filename)
 	end
 
 	local function ensure_io()
@@ -180,13 +234,13 @@ responser.make = function (app, finish, io)
 	local function start_mode(mode, mime, code)
 		if res._omit_body then
 			res._status_code = code or 200
-			finish(coder.status(res._status_code), mime, "")
+			finish(http_status.line(res._status_code), mime, "")
 			return false
 		end
 
 		if not ensure_io() then
 			res._status_code = 500
-			finish(coder.status(500), "text/plain", "stream unsupported")
+			finish(http_status.line(500), "text/plain", "stream unsupported")
 			return false
 		end
 
@@ -196,7 +250,7 @@ responser.make = function (app, finish, io)
 
 		if not res._streaming then
 			res._status_code = code or 200
-			if not io.start(coder.status(res._status_code), mime, mode) then
+			if not io.start(http_status.line(res._status_code), mime, mode) then
 				return false
 			end
 		end
@@ -204,8 +258,9 @@ responser.make = function (app, finish, io)
 		return true
 	end
 
-	function res:co_chunk(data, mime)
-		if not start_mode("chunked", mime or "application/octet-stream", 200) then
+	-- @param [in] code[number] [可选] 首次调用时的状态码, 默认 200 (如 Range 206)
+	function res:co_chunk(data, mime, code)
+		if not start_mode("chunked", mime or "application/octet-stream", code or 200) then
 			return
 		end
 

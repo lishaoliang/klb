@@ -5,10 +5,20 @@
 -- @brief  C ksys
 --   \n require("ksys")
 --   \n C导出文件: ./klb/src_c/klua/klua_util/klua_ksys.c
--- @version 0.1
+-- @version 0.2
 --]]
 
 local ksys = {}
+
+
+-- @brief 获取 klb 库版本
+-- @return [string] 版本串 (如 "1.2.3")
+-- @return [number(int)] 版本号 (klb_version_number)
+-- @return [number(int)] 版本日期 (klb_version_date)
+-- @note eg. local ver, num, date = ksys.version()
+ksys.version = function ()
+	return '', 0, 0
+end
 
 
 -- @brief 退出当前环境 lua_State(klua_env_t)

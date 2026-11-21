@@ -22,6 +22,11 @@ local function https(opts)
 			return
 		end
 
+		if req._upgrade then
+			res:co_status(400, "text/plain", "websocket requires tls")
+			return
+		end
+
 		local host = util.header_get(req.headers, "host")
 		if "" == host then
 			host = "127.0.0.1"

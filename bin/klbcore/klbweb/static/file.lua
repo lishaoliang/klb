@@ -203,6 +203,7 @@ end
 
 
 -- @brief 读单个文件 (含 304 / Range / gzip); 实体走 C send_file
+-- @note max_file 只挡住动态 gzip 读入 Lua 字符串. 体积超限仍 C 直发, 不返回 413
 file.open = function (real, rel, headers, max_file, gzip, gzip_dynamic)
 	local attr = lfs.attributes(real)
 	if not attr or "file" ~= attr.mode then

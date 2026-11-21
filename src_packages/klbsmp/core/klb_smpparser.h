@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_smpparser.h
@@ -59,4 +60,5 @@ int klb_smpparser_parse(klb_smpparser_t* p_parser, char* p_data, int data_len);
 #endif
 
 #endif // __KLB_SMPPARSER_H__
-//end
+
+// end

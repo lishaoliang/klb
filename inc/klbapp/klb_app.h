@@ -28,16 +28,24 @@ typedef struct klb_app_t_ klb_app_t;
 
 /// @brief app main 流程
 /// @param [in]  argc           参数个数
-/// @param [in]  **argv         参数字符串数组
+/// @param [in]  **argv         参数字符串数组; 壳选项见 Usage (-h/-v/-p)
 /// @param [in]  cb_pre_load    所有 Lua 环境 的预加载库
-/// @return int 0
+/// @param [in]  has_loop       true=C 侧 while 泵送 klb_app_loop_once; false=dofile 后即收尾
+/// @return int 0.成功; 非0.失败 (缺入口/非法选项/加载失败等)
+/// @note  形态: prog [options] <entry.lua> [args...]; 无选项时与 argv[1]=入口 兼容
 ///   调用次序: klb_base_init() => klb_app_main() => klb_base_quit()
-KLB_API int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load);
+///   has_loop 写入 app.has_loop_c, 并 C 侧 klua_env_set_has_loop_c 主 env; Lua 仅 kenv.has_loop_c 只读
+KLB_API int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load, bool has_loop);
 
 
 /// @brief 获取app实例
 /// @return klb_app_t* 实例指针
 KLB_API klb_app_t* klb_app_instance();
+
+
+/// @brief 获取是否由C泵送loop (只读真源)
+/// @return bool 无 app 实例时 false
+KLB_API bool klb_app_has_loop_c();
 
 
 //////////////////////////////////////////////////////////////////////////

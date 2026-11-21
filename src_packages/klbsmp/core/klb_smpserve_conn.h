@@ -62,6 +62,27 @@ int klb_smpserve_conn_send_buf(klb_netconn_t* p_conn, klb_buf_t* p_data);
 bool klb_smpserve_wbuf_is_empty(klb_netconn_t* p_conn);
 
 
+/// @brief 写缓存 未发送字节数
+/// @param [in] *p_conn           连接对象
+/// @return int64_t 待发送字节数; 0 表示已排空
+int64_t klb_smpserve_wbuf_size(klb_netconn_t* p_conn);
+
+
+/// @brief 设置服务端主动心跳
+/// @param [in] *p_conn           连接对象
+/// @param [in] interval_ms       Ping 间隔; 默认 30000; 0=关闭; 负值回落默认
+/// @param [in] timeout_ms        等 Pong 超时; 默认 10000; <=0 且 interval>0 时用默认
+/// @return 无
+/// @note Lua 不感知 Ping/Pong; 超时拆连后脚本仅见断连
+void klb_smpserve_conn_set_ping(klb_netconn_t* p_conn, int interval_ms, int timeout_ms);
+
+
+/// @brief 设置本端发送加码并发送 CRYPTO_PSK OPTIONS
+/// @return int 0.成功; 非0.失败(失败时 TX 状态不变)
+int klb_smpserve_conn_send_crypto_psk(klb_netconn_t* p_conn, int sequence,
+    uint32_t format, const uint8_t* p_key, uint32_t key_size);
+
+
 #ifdef __cplusplus
 }
 #endif

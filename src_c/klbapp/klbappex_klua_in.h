@@ -43,8 +43,14 @@ typedef struct klbappex_klua_t_
 int klbappex_register_klua(klb_app_t* p_app);
 
 
-// lua 环境 在 loop 之前的 准备流程
-int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv);
+/// @brief lua 环境在 loop 之前的准备流程
+/// @param [in]  *p_appex       klua 扩展
+/// @param [in]  argc           原始参数个数
+/// @param [in]  **argv         原始参数数组
+/// @param [in]  entry_idx      入口脚本在 argv 中的下标 (通常为 klb_optind)
+/// @return int 0.成功; 非0.失败
+/// @note  写入 env 的 get_args 为: argv[0] + argv[entry_idx..]; 与无壳选项时 argv[1]=脚本 兼容
+int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv, int entry_idx);
 
 
 // lua 环境 在 loop 之后的 清理流程

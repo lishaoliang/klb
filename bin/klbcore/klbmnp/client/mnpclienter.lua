@@ -8,6 +8,7 @@
 --		[2026-09] 创建文件
 --]]
 local kmnp = require("kmnp")
+local errcode = require("klbcore.klbmnp.errcode")
 
 
 --------------------------------------------------------------------------------------------
@@ -39,17 +40,38 @@ end
 -- @brief 连接到目标
 -- @param [in]      host[string]		主机
 -- @param [in]      port[number(int)]	端口
--- @return [number]	0 成功; 非0 失败
-function mnpclient:connect(host, port)
-	local client = kmnp.connect(tostring(host), tonumber(port))
+-- @param [in]      opts[table|nil]		[可选] `{ tls[boolean], crypto[table] }`
+-- \n crypto: `{ format[string|number], key_size[number], key[string|nil], rekey_after[number|nil] }`
+-- \n 首配 crypto 时连接后首包发 CRYPTO_PSK; key 省略则按 key_size 随机
+-- @return [number]	0 成功; 非0 为 klb_netcode_e
+function mnpclient:connect(host, port, opts)
+	local client, code = kmnp.connect(tostring(host), tonumber(port), opts)
 	if not client then
-		return 1 -- 连接失败
+		self._last_code = code or 1
+		self._last_error = errcode.str(code or errcode.E_UNKNOWN)
+		return self._last_code
 	end
 
 	-- 更新
 	self._client = client
+	self._last_code = 0
+	self._last_error = nil
 
 	return 0
+end
+
+
+-- @brief 最近一次错误码 / 描述
+-- @return [number|nil] code
+-- @return [string|nil] err
+function mnpclient:last_error_of()
+	return self._last_code, self._last_error
+end
+
+-- @brief 是否已连接
+-- @return ok[boolean]
+function mnpclient:is_open()
+	return nil ~= self._client
 end
 
 
@@ -83,15 +105,26 @@ end
 
 -- @brief 接收 MNP 包
 -- @return msg[string]					"text" / "binary" / "media" / "error" / "exit"
--- @return head[string|number|userdata]	text/binary 时为 head; media 时为 buf; error 时为 code
--- @return body[string]					text/binary 时为 body
--- @note 须在 kco 协程内; media 须随后 free_media
+-- @return head[string|number|userdata]	text/binary 时为 head; media 时为 buf; error 时为 code; 其余为 ""
+-- @return body[string]					text/binary/exit 时为 body; media/error 时为 ""
+-- @note 须在 kco 协程内; 恒 3 值; media 须随后 free_media
 function mnpclient:co_recv()
 	if not self._client then
-		return "error", 1
+		return "error", 1, ""
 	end
 
-	return self._client:co_recv()
+	local msg, head, body = self._client:co_recv()
+	if "error" == msg then
+		self._last_code = head or 1
+		self._last_error = errcode.str(errcode.E_IO)
+		return "error", self._last_code, self._last_error
+	end
+
+	if "media" == msg then
+		return "media", head, ""
+	end
+
+	return msg, head or "", body or ""
 end
 
 
@@ -114,9 +147,13 @@ local mnpclienter = {}
 
 
 -- @brief 新建一个 MNP 客户端
+-- @param [in]      cfg[table]			[可选] 预留配置表; 现行无字段
 mnpclienter.new = function (cfg)
 	local obj = {
 		_client = nil,						-- C 提供的客户端连接
+		_cfg = cfg,							-- 预留; 现行无消费字段
+		_last_code = 0,						-- 最近一次 connect 失败码
+		_last_error = nil,					-- 最近一次错误描述
 	}
 
 	setmetatable(obj, {

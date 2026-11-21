@@ -18,6 +18,7 @@
 #include "klbnet/klb_socket.h"
 #include "klbnet/klb_netconn.h"
 #include "klbnet/klb_netmulti.h"
+#include "klbnet/klb_netcode.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -71,7 +72,7 @@ KLB_API void klb_netprobe_conn_free(klb_netconn_t* p_conn);
 /// @param [in]  *p_conn            探测连接
 /// @param [in]  fd                 已 accept 的 socket fd
 /// @param [in]  timeout_ms         超时(毫秒); <=0 使用 KLB_NETPROBE_TIMEOUT_DEFAULT
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 /// @note MSG_PEEK 不消费内核数据; done 后调用方仍可从 fd 头读
 KLB_API int klb_netprobe_conn_open(klb_netconn_t* p_conn, klb_socket_fd fd, int timeout_ms);
 
@@ -84,7 +85,7 @@ KLB_API int klb_netprobe_conn_open(klb_netconn_t* p_conn, klb_socket_fd fd, int 
 /// @param [in]  tls                是否判定为 TLS
 /// @param [in]  *p_peek            本次 PEEK 副本; 仅回调期间有效
 /// @param [in]  peek_len           副本字节数
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netprobe_conn_done_cb)(klb_netconn_t* p_conn, void* ptr, klb_socket_fd fd, int protocol, bool tls, const uint8_t* p_peek, int peek_len);
 
 

@@ -132,6 +132,52 @@ static int klua_kenv_get_loop_sleep(lua_State* L)
 }
 
 
+// 驱动一次 env 事件循环 (net/kco 等); 返回建议休眠毫秒
+// 供同步工具在 dofile 内泵送短生命周期请求 (如 alua net.http_*)
+static int klua_kenv_loop_once(lua_State* L)
+{
+    klua_env_t* p_env = klua_env_get_by_L(L);
+    int sleep_ms = klua_env_loop_once(p_env);
+
+    lua_pushinteger(L, sleep_ms);
+    return 1;
+}
+
+
+// 获取是否由 C 侧主循环泵送 loop_once
+static int klua_kenv_has_loop_c(lua_State* L)
+{
+    bool has_loop_c = klua_env_has_loop_c(klua_env_get_by_L(L));
+
+    lua_pushboolean(L, has_loop_c);
+    return 1;
+}
+
+
+// 设置 LPC 队列长度上限(背压)
+static int klua_kenv_set_lpc_max(lua_State* L)
+{
+    int max = (int)luaL_checkinteger(L, 1);
+
+    klua_env_t* p_env = klua_env_get_by_L(L);
+    klua_env_set_lpc_msg_max(p_env, max);
+
+    return 0;
+}
+
+
+// 设置单条 LPC 消息字节上限
+static int klua_kenv_set_lpc_bytes_max(lua_State* L)
+{
+    int64_t max = (int64_t)luaL_checkinteger(L, 1);
+
+    klua_env_t* p_env = klua_env_get_by_L(L);
+    klua_env_set_lpc_bytes_max(p_env, max);
+
+    return 0;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -154,6 +200,12 @@ int klua_open_kenv(lua_State* L)
 
         { "set_loop_sleep",         klua_kenv_set_loop_sleep },     // 设置 loop 循环 休眠时间(单位:毫秒)
         { "get_loop_sleep",         klua_kenv_get_loop_sleep },     // 获取 loop 循环 休眠时间(单位:毫秒)
+
+        { "set_lpc_max",            klua_kenv_set_lpc_max },        // 设置 LPC 队列长度上限(背压)
+        { "set_lpc_bytes_max",      klua_kenv_set_lpc_bytes_max },  // 设置单条 LPC 消息字节上限
+
+        { "has_loop_c",             klua_kenv_has_loop_c },         // 获取是否 C 侧主循环泵送
+        { "loop_once",              klua_kenv_loop_once },          // 驱动一次 env loop; 返回建议 sleep ms
 
         { NULL,                     NULL }
     };

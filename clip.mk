@@ -37,7 +37,7 @@ export MY_CLIP_SOURCES_EXCLUDE :=
 # 记名: no-* 同 --disable-*; use-* 同 --enable-*; no-all 同 min-core
 
 # 全集 (min-core 基准; 不含 no-wui-sim)
-KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto no-http no-ws no-smp no-rtsp no-mnp no-ssl
+KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto no-http no-ws no-smp no-rtsp no-mnp no-mp4 no-tar no-socks5 no-tunnel no-store no-onvif no-ice no-srtp no-rtp no-webrtc no-ssl
 
 # --disable-X -> no-X; --enable-X -> use-X; no-all -> min-core
 define KLB_CLIP_MAP_WORD
@@ -171,13 +171,18 @@ endif
 
 
 # 可裁剪参数: MY_CLIP = no-net-proto
-# min-core 保留 klbnet(socket/iopoll/netconn/netmulti) 与 kurl; 裁剩余 klua_net 绑定
-# SMP/RTSP/MNP/HTTP/WS 已迁 src_packages, 由 no-smp / no-rtsp / no-mnp / no-http / no-ws 单独裁剪
+# min-core 保留 klbnet(socket/iopoll/netconn/netmulti) 与 kurl/knetcode; 裁剩余 klua_net 绑定
+# SMP/RTSP/MNP/HTTP/WS/ONVIF 已迁 src_packages, 由 no-smp / no-rtsp / no-mnp / no-http / no-ws / no-onvif 单独裁剪
 ifeq ($(filter no-net-proto, $(MY_CLIP_TAG)), )
 	MY_CLIP_DIRS += ./src_c/klua/klua_net
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_NET_PROTO__
 	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_kurl.c
+	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_knetcode.c
+	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_klisten.c
+	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_ktls.c
+	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_kproxy.c
+	MY_CLIP_SOURCES += ./src_c/klua/klua_net/klua_kproxy_co.c
 endif
 
 
@@ -236,15 +241,132 @@ else
 endif
 
 
-# src_vendor: 第三方开源可裁剪库 (V1; 上游原名+版本)
+# 可裁剪参数: MY_CLIP = no-mp4
+# 正向: MY_CLIP = use-mp4 / --enable-mp4
+ifeq ($(filter no-mp4, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbmp4/core
+	MY_CLIP_DIRS += ./src_packages/klbmp4/mp4_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_MP4__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-tar
+# 正向: MY_CLIP = use-tar / --enable-tar
+ifeq ($(filter no-tar, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbtar/core
+	MY_CLIP_DIRS += ./src_packages/klbtar/tar_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_TAR__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-socks5
+# 正向: MY_CLIP = use-socks5 / --enable-socks5
+ifeq ($(filter no-socks5, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbsocks5/core
+	MY_CLIP_DIRS += ./src_packages/klbsocks5/socks5_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_SOCKS5__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-tunnel
+# 正向: MY_CLIP = use-tunnel / --enable-tunnel
+ifeq ($(filter no-tunnel, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbtunnel/core
+	MY_CLIP_DIRS += ./src_packages/klbtunnel/tunnel_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_TUNNEL__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-store
+# 正向: MY_CLIP = use-store / --enable-store
+ifeq ($(filter no-store, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbstore/core
+	MY_CLIP_DIRS += ./src_packages/klbstore/store_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_STORE__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-onvif
+# 正向: MY_CLIP = use-onvif / --enable-onvif
+ifeq ($(filter no-onvif, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbonvif/core
+	MY_CLIP_DIRS += ./src_packages/klbonvif/onvif_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_ONVIF__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-ice
+# 正向: MY_CLIP = use-ice / --enable-ice
+ifeq ($(filter no-ice, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbice/core
+	MY_CLIP_DIRS += ./src_packages/klbice/ice_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_ICE__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-srtp
+# 正向: MY_CLIP = use-srtp / --enable-srtp
+ifeq ($(filter no-srtp, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbsrtp/core
+	MY_CLIP_DIRS += ./src_packages/klbsrtp/srtp_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_SRTP__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-rtp
+# 正向: MY_CLIP = use-rtp / --enable-rtp
+ifeq ($(filter no-rtp, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbrtp/core
+	MY_CLIP_DIRS += ./src_packages/klbrtp/rtp_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_RTP__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-webrtc
+# 正向: MY_CLIP = use-webrtc / --enable-webrtc (依赖 ice + srtp + rtp)
+ifeq ($(filter no-webrtc, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbwebrtc/core
+	MY_CLIP_DIRS += ./src_packages/klbwebrtc/webrtc_klua
+	MY_CLIP_INC += -I ./src_packages
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_WEBRTC__
+endif
+
+
+# src_3rdparty: 第三方开源可裁剪库 (V1; 上游原名+版本)
 # 可裁剪参数: MY_CLIP = no-ssl
 # 正向: MY_CLIP = use-ssl / --enable-ssl
 # 勿把第三方放入 src_packages; 勿用上游 CMake
 ifeq ($(filter no-ssl, $(MY_CLIP_TAG)), )
-	MY_CLIP_DIRS += ./src_vendor/mbedtls-3.6.7/library
-	MY_CLIP_INC += -I ./src_vendor/mbedtls-3.6.7/include
+	MY_CLIP_DIRS += ./src_3rdparty/mbedtls-3.6.7/library
+	MY_CLIP_INC += -I ./src_3rdparty/mbedtls-3.6.7/include
 	MY_CLIP_FLAGS += -DMBEDTLS_USER_CONFIG_FILE=\"klbnet/klb_mbedtls_user_config.h\"
 	MY_CLIP_FLAGS += -D__KLB_MBEDTLS__
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_SSL__
 endif
+
+# getopt (Ludvik Jerabek): 常编入; 对外转接 klbthird/klb_getopt.h
+# STATIC_GETOPT: 关闭上游 dllimport/export, 由 KLB_API 导出 klb_*
+MY_CLIP_DIRS += ./src_3rdparty/getopt
+MY_CLIP_INC += -I ./src_3rdparty/getopt
+MY_CLIP_FLAGS += -DSTATIC_GETOPT
+MY_CLIP_FLAGS += -D__KLB_GETOPT__

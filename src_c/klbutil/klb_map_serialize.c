@@ -285,131 +285,217 @@ static int klbmapseri_read(klb_map_t* p_map, char* p_data, int data_len);
 
 static int klbmapseri_read_head(klbmapseri_head_t* p_h, char* ptr, int len)
 {
+    // Fixed Bug.2026-3-klb
+    if (len < (int)sizeof(klbmapseri_head_t))
+    {
+        return -1;
+    }
+
     memcpy(p_h, ptr, sizeof(klbmapseri_head_t));
 
-    return sizeof(klbmapseri_head_t);
+    return (int)sizeof(klbmapseri_head_t);
 }
 
 static int klbmapseri_read_bool(uint8_t payload, char* ptr, int len, bool* p_v)
 {
     if (KLBMAPSERI_payload_1 == payload)
     {
+        if (len < 1)
+        {
+            return -1;
+        }
+
         int8_t v = *((int8_t*)ptr);
         *p_v = (0 == v) ? false : true;
         return 1;
     }
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read_double(uint8_t payload, char* ptr, int len, klb_adt_t* p_adt)
 {
     if (KLBMAPSERI_payload_8 == payload)
     {
+        if (len < (int)sizeof(double))
+        {
+            return -1;
+        }
+
         double d = *((double*)ptr);
         klb_adt_set_double(p_adt, d);
 
         assert(KLBMAPSERI_payload_8 == sizeof(double));
-        return sizeof(double);
+        return (int)sizeof(double);
     }
 
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read_string(uint8_t payload, char* ptr, int len, klb_adt_t* p_adt)
 {
     if (KLBMAPSERI_payload_size_1B == payload)
     {
-        int8_t i8_len = *((int8_t*)ptr);
-        ptr += sizeof(int8_t);
+        if (len < (int)sizeof(int8_t))
+        {
+            return -1;
+        }
 
+        int8_t i8_len = *((int8_t*)ptr);
+        if (i8_len < 0 || len - (int)sizeof(int8_t) < (int)i8_len)
+        {
+            return -1;
+        }
+
+        ptr += sizeof(int8_t);
         klb_adt_set_lstring(p_adt, ptr, i8_len);
 
-        return i8_len + sizeof(int8_t);
+        return i8_len + (int)sizeof(int8_t);
     }
     else if(KLBMAPSERI_payload_size_2B == payload)
     {
-        int16_t i16_len = *((int16_t*)ptr);
-        ptr += sizeof(int16_t);
+        if (len < (int)sizeof(int16_t))
+        {
+            return -1;
+        }
 
+        int16_t i16_len = *((int16_t*)ptr);
+        if (i16_len < 0 || len - (int)sizeof(int16_t) < (int)i16_len)
+        {
+            return -1;
+        }
+
+        ptr += sizeof(int16_t);
         klb_adt_set_lstring(p_adt, ptr, i16_len);
 
-        return i16_len + sizeof(int16_t);
+        return i16_len + (int)sizeof(int16_t);
     }
     else if (KLBMAPSERI_payload_size_4B == payload)
     {
-        int32_t i32_len = *((int32_t*)ptr);
-        ptr += sizeof(int32_t);
+        if (len < (int)sizeof(int32_t))
+        {
+            return -1;
+        }
 
+        int32_t i32_len = *((int32_t*)ptr);
+        if (i32_len < 0 || len - (int)sizeof(int32_t) < (int)i32_len)
+        {
+            return -1;
+        }
+
+        ptr += sizeof(int32_t);
         klb_adt_set_lstring(p_adt, ptr, i32_len);
 
-        return i32_len + sizeof(int32_t);
+        return i32_len + (int)sizeof(int32_t);
     }
 
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read_int(uint8_t payload, char* ptr, int len, int64_t* p_v)
 {
     if (KLBMAPSERI_payload_1 == payload) 
-    { 
+    {
+        if (len < 1)
+        {
+            return -1;
+        }
+
         *p_v = *((int8_t*)ptr);
         return 1;
     }
     else if(KLBMAPSERI_payload_2 == payload) 
-    { 
+    {
+        if (len < 2)
+        {
+            return -1;
+        }
+
         *p_v = *((int16_t*)ptr);
         return 2;
     }
     else if (KLBMAPSERI_payload_4 == payload) 
     {
+        if (len < 4)
+        {
+            return -1;
+        }
+
         *p_v = *((int32_t*)ptr);
         return 4;
     }
     else if (KLBMAPSERI_payload_8 == payload)
-    { 
+    {
+        if (len < 8)
+        {
+            return -1;
+        }
+
         *p_v = *((int64_t*)ptr);
         return 8;
     }
 
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read_uint(uint8_t payload, char* ptr, int len, uint64_t* p_v)
 {
     if (KLBMAPSERI_payload_1 == payload)
     {
+        if (len < 1)
+        {
+            return -1;
+        }
+
         *p_v = *((uint8_t*)ptr);
         return 1;
     }
     else if (KLBMAPSERI_payload_2 == payload)
     {
+        if (len < 2)
+        {
+            return -1;
+        }
+
         *p_v = *((uint16_t*)ptr);
         return 2;
     }
     else if (KLBMAPSERI_payload_4 == payload)
     {
+        if (len < 4)
+        {
+            return -1;
+        }
+
         *p_v = *((uint32_t*)ptr);
         return 4;
     }
     else if (KLBMAPSERI_payload_8 == payload)
     {
+        if (len < 8)
+        {
+            return -1;
+        }
+
         *p_v = *((uint64_t*)ptr);
         return 8;
     }
 
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read_adt(klbmapseri_head_t* p_h, char* ptr, int len, klb_adt_t* p_adt)
 {
-    int off = 0;
+    int off = -1;
     switch (p_h->adt_type)
     {
     case KLB_ADT_bool:
         {
             bool b = false;
             off = klbmapseri_read_bool(p_h->payload, ptr, len, &b);
-            klb_adt_set_bool(p_adt, b);
+            if (0 <= off)
+            {
+                klb_adt_set_bool(p_adt, b);
+            }
         }
         break;
     case KLB_ADT_string:
@@ -426,26 +512,38 @@ static int klbmapseri_read_adt(klbmapseri_head_t* p_h, char* ptr, int len, klb_a
         {
             int64_t i64 = 0;
             off = klbmapseri_read_int(p_h->payload, ptr, len, &i64);
-
-            klb_adt_set_int64(p_adt, i64);            
+            if (0 <= off)
+            {
+                klb_adt_set_int64(p_adt, i64);
+            }
         }
         break;
     case KLB_ADT_uint64:
         {
             uint64_t u64 = 0;
             off = klbmapseri_read_uint(p_h->payload, ptr, len, &u64);
-
-            klb_adt_set_uint64(p_adt, u64);
+            if (0 <= off)
+            {
+                klb_adt_set_uint64(p_adt, u64);
+            }
         }
         break;
     case KLB_ADT_map:
         {
             klb_map_t* p_map = klb_map_create();
             off = klbmapseri_read(p_map, ptr, len);
-            klb_adt_set_map(p_adt, p_map);
+            if (0 <= off)
+            {
+                klb_adt_set_map(p_adt, p_map);
+            }
+            else
+            {
+                klb_map_destroy(p_map);
+            }
         }
         break;
     default:
+        off = -1;
         break;
     }
 
@@ -456,74 +554,121 @@ static int klbmapseri_read_idx(uint8_t payload, char* ptr, int len, int* p_idx)
 {
     if (KLBMAPSERI_payload_1 == payload)
     {
+        if (len < 1)
+        {
+            return -1;
+        }
+
         *p_idx = *((int8_t*)ptr);
         return 1;
     }
     else if(KLBMAPSERI_payload_2 == payload)
     {
+        if (len < 2)
+        {
+            return -1;
+        }
+
         *p_idx = *((int16_t*)ptr);
         return 2;
     }
     else if (KLBMAPSERI_payload_4 == payload)
     {
+        if (len < 4)
+        {
+            return -1;
+        }
+
         *p_idx = *((int32_t*)ptr);
         return 4;
     }
 
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read_key(uint8_t payload, char* ptr, int len, sds* key)
 {
     if (KLBMAPSERI_payload_size_1B == payload)
     {
+        if (len < (int)sizeof(int8_t))
+        {
+            return -1;
+        }
+
         int8_t i8_len = *((int8_t*)ptr);
+        if (i8_len < 0 || len - (int)sizeof(int8_t) < (int)i8_len)
+        {
+            return -1;
+        }
 
         ptr += sizeof(int8_t);
-        len -= sizeof(int8_t);
-
         *key = sdsnewlen(ptr, i8_len);
 
-        return i8_len + sizeof(int8_t);
+        return i8_len + (int)sizeof(int8_t);
     }
     else if(KLBMAPSERI_payload_size_2B == payload)
     {
+        if (len < (int)sizeof(int16_t))
+        {
+            return -1;
+        }
+
         int16_t i16_len = *((int16_t*)ptr);
+        if (i16_len < 0 || len - (int)sizeof(int16_t) < (int)i16_len)
+        {
+            return -1;
+        }
 
         ptr += sizeof(int16_t);
-        len -= sizeof(int16_t);
-
         *key = sdsnewlen(ptr, i16_len);
 
-        return i16_len + sizeof(int16_t);
+        return i16_len + (int)sizeof(int16_t);
     }
     else if (KLBMAPSERI_payload_size_4B == payload)    
     {
+        if (len < (int)sizeof(int32_t))
+        {
+            return -1;
+        }
+
         int32_t i32_len = *((int32_t*)ptr);
+        if (i32_len < 0 || len - (int)sizeof(int32_t) < (int)i32_len)
+        {
+            return -1;
+        }
 
         ptr += sizeof(int32_t);
-        len -= sizeof(int32_t);
-
         *key = sdsnewlen(ptr, i32_len);
 
-        return i32_len + sizeof(int32_t);
+        return i32_len + (int)sizeof(int32_t);
     }
 
-    return 0;
+    return -1;
 }
 
 static int klbmapseri_read(klb_map_t* p_map, char* p_data, int data_len)
 {
+    // Fixed Bug.2026-3-klb: bound checks; reject off<=0 to avoid infinite loop
+    if (NULL == p_data || data_len < 0)
+    {
+        return -1;
+    }
+
     char* ptr = p_data;
     int len = data_len;
     int offset = 0;
 
-    while (0 < len)
+    while ((int)sizeof(klbmapseri_head_t) <= len)
     {
         // key
         klbmapseri_head_t h = { 0 };
 
         int off = klbmapseri_read_head(&h, ptr, len);
+        if (off <= 0)
+        {
+            return -1;
+        }
+
         ptr += off;
         len -= off;
         offset += off;
@@ -534,6 +679,11 @@ static int klbmapseri_read(klb_map_t* p_map, char* p_data, int data_len)
         if (KLB_ADT_int64 == h.adt_type)
         {
             off = klbmapseri_read_idx(h.payload, ptr, len, &idx);
+            if (off <= 0)
+            {
+                return -1;
+            }
+
             ptr += off;
             len -= off;
             offset += off;
@@ -541,6 +691,11 @@ static int klbmapseri_read(klb_map_t* p_map, char* p_data, int data_len)
         else if(KLB_ADT_string == h.adt_type)
         {
             off = klbmapseri_read_key(h.payload, ptr, len, &key);
+            if (off <= 0)
+            {
+                return -1;
+            }
+
             ptr += off;
             len -= off;
             offset += off;
@@ -549,10 +704,20 @@ static int klbmapseri_read(klb_map_t* p_map, char* p_data, int data_len)
         {
             break;
         }
+        else
+        {
+            return -1;
+        }
 
         // value
         klbmapseri_head_t h_v = { 0 };
         off = klbmapseri_read_head(&h_v, ptr, len);
+        if (off <= 0)
+        {
+            KLB_FREE_BY(key, sdsfree);
+            return -1;
+        }
+
         ptr += off;
         len -= off;
         offset += off;
@@ -562,6 +727,13 @@ static int klbmapseri_read(klb_map_t* p_map, char* p_data, int data_len)
         if (KLB_ADT_null != h_v.adt_type)
         {
             off = klbmapseri_read_adt(&h_v, ptr, len, p_adt);
+            if (off < 0)
+            {
+                klb_adt_destroy(p_adt);
+                KLB_FREE_BY(key, sdsfree);
+                return -1;
+            }
+
             ptr += off;
             len -= off;
             offset += off;
@@ -586,9 +758,16 @@ bool klb_map_seri_unpack(klb_map_t* p_map, const char* p_data, int data_len)
 {
     assert(NULL != p_map);
 
-    // TODO. 异常数据检查
+    // Fixed Bug.2026-3-klb
+    if (NULL == p_data || data_len < 0)
+    {
+        return false;
+    }
 
-    klbmapseri_read(p_map, (char*)p_data, data_len);
+    if (klbmapseri_read(p_map, (char*)p_data, data_len) < 0)
+    {
+        return false;
+    }
 
     return true;
 }
@@ -604,13 +783,39 @@ void klb_map_seri_read_init(klbmapseri_reader_t* p_reader, const char* p_data, i
     p_reader->offset = 0;
 }
 
+// Fixed Bug.2026-7-klb: stream reader must check offset against data_len
+static bool reader_need_klb_map_seri(klbmapseri_reader_t* p_reader, int need)
+{
+    if (need < 0)
+    {
+        return false;
+    }
+
+    if (p_reader->offset < 0 || p_reader->data_len < p_reader->offset)
+    {
+        return false;
+    }
+
+    return (p_reader->data_len - p_reader->offset >= need);
+}
+
+static void reader_advance_klb_map_seri(klbmapseri_reader_t* p_reader, int offset)
+{
+    p_reader->ptr += offset;
+    p_reader->offset += offset;
+}
+
 bool klb_map_seri_read_head(klbmapseri_reader_t* p_reader, klbmapseri_head_t* p_head)
 {
+    if (!reader_need_klb_map_seri(p_reader, (int)sizeof(klbmapseri_head_t)))
+    {
+        return false;
+    }
+
     memcpy(&p_reader->h, p_reader->ptr, sizeof(klbmapseri_head_t));
     memcpy(p_head, p_reader->ptr, sizeof(klbmapseri_head_t));
-    
-    p_reader->ptr += sizeof(klbmapseri_head_t);
-    p_reader->offset += sizeof(klbmapseri_head_t);
+
+    reader_advance_klb_map_seri(p_reader, (int)sizeof(klbmapseri_head_t));
 
     return true;
 }
@@ -623,19 +828,40 @@ bool klb_map_seri_read_idx(klbmapseri_reader_t* p_reader, int* p_idx)
 
     if (KLBMAPSERI_payload_1 == payload)
     {
-        *p_idx = *((int8_t*)ptr);   offset = sizeof(int8_t);
+        offset = (int)sizeof(int8_t);
+        if (!reader_need_klb_map_seri(p_reader, offset))
+        {
+            return false;
+        }
+
+        *p_idx = *((int8_t*)ptr);
     }
     else if (KLBMAPSERI_payload_2 == payload)
     {
-        *p_idx = *((int16_t*)ptr);  offset = sizeof(int16_t);
+        offset = (int)sizeof(int16_t);
+        if (!reader_need_klb_map_seri(p_reader, offset))
+        {
+            return false;
+        }
+
+        *p_idx = *((int16_t*)ptr);
     }
     else if (KLBMAPSERI_payload_4 == payload)
     {
-        *p_idx = *((int32_t*)ptr);  offset = sizeof(int32_t);
+        offset = (int)sizeof(int32_t);
+        if (!reader_need_klb_map_seri(p_reader, offset))
+        {
+            return false;
+        }
+
+        *p_idx = *((int32_t*)ptr);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }
@@ -648,37 +874,64 @@ bool klb_map_seri_read_key(klbmapseri_reader_t* p_reader, char** p_key, int* p_k
 
     if (KLBMAPSERI_payload_size_1B == payload)
     {
-        int8_t i8_len = *((int8_t*)ptr);
-        ptr += sizeof(int8_t);
+        if (!reader_need_klb_map_seri(p_reader, (int)sizeof(int8_t)))
+        {
+            return false;
+        }
 
+        int8_t i8_len = *((int8_t*)ptr);
+        if (i8_len < 0 || !reader_need_klb_map_seri(p_reader, (int)sizeof(int8_t) + (int)i8_len))
+        {
+            return false;
+        }
+
+        ptr += sizeof(int8_t);
         *p_key = ptr;
         *p_key_len = i8_len;
-
-        offset = i8_len + sizeof(int8_t);
+        offset = i8_len + (int)sizeof(int8_t);
     }
     else if (KLBMAPSERI_payload_size_2B == payload)
     {
-        int16_t i16_len = *((int16_t*)ptr);
-        ptr += sizeof(int16_t);
+        if (!reader_need_klb_map_seri(p_reader, (int)sizeof(int16_t)))
+        {
+            return false;
+        }
 
+        int16_t i16_len = *((int16_t*)ptr);
+        if (i16_len < 0 || !reader_need_klb_map_seri(p_reader, (int)sizeof(int16_t) + (int)i16_len))
+        {
+            return false;
+        }
+
+        ptr += sizeof(int16_t);
         *p_key = ptr;
         *p_key_len = i16_len;
-
-        offset = i16_len + sizeof(int16_t);
+        offset = i16_len + (int)sizeof(int16_t);
     }
     else if (KLBMAPSERI_payload_size_4B == payload)
     {
-        int32_t i32_len = *((int32_t*)ptr);
-        ptr += sizeof(int32_t);
+        if (!reader_need_klb_map_seri(p_reader, (int)sizeof(int32_t)))
+        {
+            return false;
+        }
 
+        int32_t i32_len = *((int32_t*)ptr);
+        if (i32_len < 0 || !reader_need_klb_map_seri(p_reader, (int)sizeof(int32_t) + (int)i32_len))
+        {
+            return false;
+        }
+
+        ptr += sizeof(int32_t);
         *p_key = ptr;
         *p_key_len = i32_len;
-
-        offset = i32_len + sizeof(int32_t);
+        offset = i32_len + (int)sizeof(int32_t);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }
@@ -691,14 +944,21 @@ bool klb_map_seri_read_bool(klbmapseri_reader_t* p_reader, bool* p_b)
 
     if (KLBMAPSERI_payload_1 == payload)
     {
+        offset = (int)sizeof(int8_t);
+        if (!reader_need_klb_map_seri(p_reader, offset))
+        {
+            return false;
+        }
+
         int8_t v = *((int8_t*)ptr);
         *p_b = (0 == v) ? false : true;
-
-        offset = sizeof(int8_t);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }
@@ -710,23 +970,48 @@ bool klb_map_seri_read_int64(klbmapseri_reader_t* p_reader, int64_t* p_v)
 
     if (KLBMAPSERI_payload_1 == p_reader->h.payload)
     {
-        *p_v = *((int8_t*)ptr);     offset = sizeof(int8_t);
+        offset = (int)sizeof(int8_t);
     }
     else if (KLBMAPSERI_payload_2 == p_reader->h.payload)
     {
-        *p_v = *((int16_t*)ptr);    offset = sizeof(int16_t);
+        offset = (int)sizeof(int16_t);
     }
     else if (KLBMAPSERI_payload_4 == p_reader->h.payload)
     {
-        *p_v = *((int32_t*)ptr);    offset = sizeof(int32_t);
+        offset = (int)sizeof(int32_t);
     }
     else if (KLBMAPSERI_payload_8 == p_reader->h.payload)
     {
-        *p_v = *((int64_t*)ptr);    offset = sizeof(int64_t);
+        offset = (int)sizeof(int64_t);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    if (!reader_need_klb_map_seri(p_reader, offset))
+    {
+        return false;
+    }
+
+    if (KLBMAPSERI_payload_1 == p_reader->h.payload)
+    {
+        *p_v = *((int8_t*)ptr);
+    }
+    else if (KLBMAPSERI_payload_2 == p_reader->h.payload)
+    {
+        *p_v = *((int16_t*)ptr);
+    }
+    else if (KLBMAPSERI_payload_4 == p_reader->h.payload)
+    {
+        *p_v = *((int32_t*)ptr);
+    }
+    else
+    {
+        *p_v = *((int64_t*)ptr);
+    }
+
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }
@@ -738,23 +1023,48 @@ bool klb_map_seri_read_uint64(klbmapseri_reader_t* p_reader, uint64_t* p_v)
 
     if (KLBMAPSERI_payload_1 == p_reader->h.payload)
     {
-        *p_v = *((uint8_t*)ptr);    offset = sizeof(uint8_t);
+        offset = (int)sizeof(uint8_t);
     }
     else if (KLBMAPSERI_payload_2 == p_reader->h.payload)
     {
-        *p_v = *((uint16_t*)ptr);   offset = sizeof(uint16_t);
+        offset = (int)sizeof(uint16_t);
     }
     else if (KLBMAPSERI_payload_4 == p_reader->h.payload)
     {
-        *p_v = *((uint32_t*)ptr);   offset = sizeof(uint32_t);
+        offset = (int)sizeof(uint32_t);
     }
     else if (KLBMAPSERI_payload_8 == p_reader->h.payload)
     {
-        *p_v = *((uint64_t*)ptr);   offset = sizeof(uint64_t);
+        offset = (int)sizeof(uint64_t);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    if (!reader_need_klb_map_seri(p_reader, offset))
+    {
+        return false;
+    }
+
+    if (KLBMAPSERI_payload_1 == p_reader->h.payload)
+    {
+        *p_v = *((uint8_t*)ptr);
+    }
+    else if (KLBMAPSERI_payload_2 == p_reader->h.payload)
+    {
+        *p_v = *((uint16_t*)ptr);
+    }
+    else if (KLBMAPSERI_payload_4 == p_reader->h.payload)
+    {
+        *p_v = *((uint32_t*)ptr);
+    }
+    else
+    {
+        *p_v = *((uint64_t*)ptr);
+    }
+
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }
@@ -767,11 +1077,20 @@ bool klb_map_seri_read_double(klbmapseri_reader_t* p_reader, double* p_v)
     if (KLBMAPSERI_payload_8 == p_reader->h.payload)
     {
         assert(KLBMAPSERI_payload_8 == sizeof(double));
-        *p_v = *((double*)ptr);     offset = sizeof(double);
+        offset = (int)sizeof(double);
+        if (!reader_need_klb_map_seri(p_reader, offset))
+        {
+            return false;
+        }
+
+        *p_v = *((double*)ptr);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }
@@ -783,37 +1102,64 @@ bool klb_map_seri_read_string(klbmapseri_reader_t* p_reader, char** p_str, int* 
 
     if (KLBMAPSERI_payload_size_1B == p_reader->h.payload)
     {
-        int8_t i8_len = *((int8_t*)ptr);
-        ptr += sizeof(int8_t);
+        if (!reader_need_klb_map_seri(p_reader, (int)sizeof(int8_t)))
+        {
+            return false;
+        }
 
+        int8_t i8_len = *((int8_t*)ptr);
+        if (i8_len < 0 || !reader_need_klb_map_seri(p_reader, (int)sizeof(int8_t) + (int)i8_len))
+        {
+            return false;
+        }
+
+        ptr += sizeof(int8_t);
         *p_str = ptr;
         *p_str_len = i8_len;
-
-        offset = i8_len + sizeof(int8_t);
+        offset = i8_len + (int)sizeof(int8_t);
     }
     else if (KLBMAPSERI_payload_size_2B == p_reader->h.payload)
     {
-        int16_t i16_len = *((int16_t*)ptr);
-        ptr += sizeof(int16_t);
+        if (!reader_need_klb_map_seri(p_reader, (int)sizeof(int16_t)))
+        {
+            return false;
+        }
 
+        int16_t i16_len = *((int16_t*)ptr);
+        if (i16_len < 0 || !reader_need_klb_map_seri(p_reader, (int)sizeof(int16_t) + (int)i16_len))
+        {
+            return false;
+        }
+
+        ptr += sizeof(int16_t);
         *p_str = ptr;
         *p_str_len = i16_len;
-
-        offset = i16_len + sizeof(int16_t);
+        offset = i16_len + (int)sizeof(int16_t);
     }
     else if (KLBMAPSERI_payload_size_4B == p_reader->h.payload)
     {
-        int32_t i32_len = *((int32_t*)ptr);
-        ptr += sizeof(int32_t);
+        if (!reader_need_klb_map_seri(p_reader, (int)sizeof(int32_t)))
+        {
+            return false;
+        }
 
+        int32_t i32_len = *((int32_t*)ptr);
+        if (i32_len < 0 || !reader_need_klb_map_seri(p_reader, (int)sizeof(int32_t) + (int)i32_len))
+        {
+            return false;
+        }
+
+        ptr += sizeof(int32_t);
         *p_str = ptr;
         *p_str_len = i32_len;
-
-        offset = i32_len + sizeof(int32_t);
+        offset = i32_len + (int)sizeof(int32_t);
+    }
+    else
+    {
+        return false;
     }
 
-    p_reader->ptr += offset;
-    p_reader->offset += offset;
+    reader_advance_klb_map_seri(p_reader, offset);
 
     return true;
 }

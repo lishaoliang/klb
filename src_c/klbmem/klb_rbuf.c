@@ -44,13 +44,19 @@ void klb_rbuf_quit(klb_rbuf_t* p_buf)
     memset(p_buf, 0, sizeof(klb_rbuf_t));
 }
 
-static void klb_rbuf_new_init(klb_rbuf_t* p_buf, int buf_len, const void* ptr, int len)
+static int klb_rbuf_new_init(klb_rbuf_t* p_buf, int buf_len, const void* ptr, int len)
 {
     assert(len <= buf_len);
 
     if (0 < buf_len)
     {
         p_buf->ptr = (char*)KLB_RBUF_malloc(buf_len);
+        // Fixed Bug.2026-1-klb: bare malloc must check NULL
+        if (NULL == p_buf->ptr)
+        {
+            return -1;
+        }
+
         p_buf->buf_len = buf_len;
     }
 
@@ -59,14 +65,26 @@ static void klb_rbuf_new_init(klb_rbuf_t* p_buf, int buf_len, const void* ptr, i
         memcpy(p_buf->ptr, ptr, len);
         p_buf->end = len;
     }
+
+    return 0;
 }
 
 klb_rbuf_t* klb_rbuf_new(const void* ptr, int len)
 {
     klb_rbuf_t* p_buf = (klb_rbuf_t*)KLB_RBUF_malloc(sizeof(klb_rbuf_t));
+    // Fixed Bug.2026-1-klb
+    if (NULL == p_buf)
+    {
+        return NULL;
+    }
+
     memset(p_buf, 0, sizeof(klb_rbuf_t));
 
-    klb_rbuf_new_init(p_buf, len, ptr, len);
+    if (0 != klb_rbuf_new_init(p_buf, len, ptr, len))
+    {
+        KLB_RBUF_free(p_buf);
+        return NULL;
+    }
 
     return p_buf;
 }
@@ -74,9 +92,19 @@ klb_rbuf_t* klb_rbuf_new(const void* ptr, int len)
 klb_rbuf_t* klb_rbuf_malloc(int buf_len)
 {
     klb_rbuf_t* p_buf = (klb_rbuf_t*)KLB_RBUF_malloc(sizeof(klb_rbuf_t));
+    // Fixed Bug.2026-1-klb
+    if (NULL == p_buf)
+    {
+        return NULL;
+    }
+
     memset(p_buf, 0, sizeof(klb_rbuf_t));
 
-    klb_rbuf_new_init(p_buf, buf_len, NULL, 0);
+    if (0 != klb_rbuf_new_init(p_buf, buf_len, NULL, 0))
+    {
+        KLB_RBUF_free(p_buf);
+        return NULL;
+    }
 
     return p_buf;
 }
@@ -84,11 +112,21 @@ klb_rbuf_t* klb_rbuf_malloc(int buf_len)
 klb_rbuf_t* klb_rbuf_dup(const klb_rbuf_t* p_buf)
 {
     klb_rbuf_t* p_new = (klb_rbuf_t*)KLB_RBUF_malloc(sizeof(klb_rbuf_t));
+    // Fixed Bug.2026-1-klb
+    if (NULL == p_new)
+    {
+        return NULL;
+    }
+
     memset(p_new, 0, sizeof(klb_rbuf_t));
 
     if (NULL != p_buf)
     {
-        klb_rbuf_new_init(p_new, p_buf->buf_len, p_buf->ptr + p_buf->start, p_buf->end - p_buf->start);
+        if (0 != klb_rbuf_new_init(p_new, p_buf->buf_len, p_buf->ptr + p_buf->start, p_buf->end - p_buf->start))
+        {
+            KLB_RBUF_free(p_new);
+            return NULL;
+        }
     }
 
     return p_new;

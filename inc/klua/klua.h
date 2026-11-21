@@ -177,6 +177,12 @@ KLB_API int klua_open_kenv(lua_State* L);
 KLB_API int klua_open_krand(lua_State* L);
 
 
+/// @brief 扩展库"kcrypto" (md5/sha/hmac/crc/base64)
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kcrypto(lua_State* L);
+
+
 /// @brief 扩展库"ktime"
 /// @param [in] *L          Lua状态
 /// @return int 返回1
@@ -193,6 +199,12 @@ KLB_API int klua_open_kmcache(lua_State* L);
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_klist(lua_State* L);
+
+
+/// @brief 扩展库"kmuxlist" (专用 klb_netmux_socket_t* 跨线程队列)
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kmuxlist(lua_State* L);
 
 
 /// @brief 扩展库"kthread"
@@ -213,6 +225,12 @@ KLB_API int klua_open_kkpa(lua_State* L);
 KLB_API int klua_open_klpc(lua_State* L);
 
 
+/// @brief 扩展库"kxpc", 本机跨进程通信
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kxpc(lua_State* L);
+
+
 #if !defined(__KLB_NO_GUI__)
 /// @brief 扩展库"kgui"
 /// @param [in] *L          Lua状态
@@ -225,6 +243,42 @@ KLB_API int klua_open_kgui(lua_State* L);
 /// @param [in] *L          Lua状态
 /// @return int 返回1
 KLB_API int klua_open_kurl(lua_State* L);
+
+
+/// @brief 扩展库"knetcode": klb_netcode_e 常量与 strerror
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_knetcode(lua_State* L);
+
+
+/// @brief 扩展库"kbasecode": 仅 klb_basecode_strerror (常量见脚本 klbcode.basecode)
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kbasecode(lua_State* L);
+
+
+/// @brief 扩展库"klisten": 共享 listen + probe 分发
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_klisten(lua_State* L);
+
+
+/// @brief 扩展库"ktls": TLS 证书工具 (mbedtls 自签)
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_ktls(lua_State* L);
+
+
+/// @brief 扩展库"kproxy": 代理泵送 / 原始入口交接 (桩)
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kproxy(lua_State* L);
+
+
+/// @brief 扩展库"kuart": 串口 open/read/write/close (Linux/Windows)
+/// @param [in] *L          Lua状态
+/// @return int 返回1
+KLB_API int klua_open_kuart(lua_State* L);
 
 
 #if !defined(__KLB_NO_FORMAT__)

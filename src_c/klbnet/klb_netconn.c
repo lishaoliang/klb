@@ -1,5 +1,6 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
 #include "klbnet/klb_netconn.h"
+#include "klbmem/klb_mem.h"
 #include <string.h>
 
 
@@ -8,6 +9,9 @@ void klb_netconn_destroy(klb_netconn_t* p_conn)
 {
     klb_netconn_destroy_cb cb_destroy = p_conn->vtable.destroy;
 
+    KLB_FREE_BY(p_conn->p_tmp_recv_buf, klb_buf_unref);
+    KLB_FREE_BY(p_conn->p_tmp_send_buf, klb_buf_unref);
+
     cb_destroy(p_conn);
 }
 
@@ -15,6 +19,38 @@ int klb_netconn_bind_recv_data(klb_netconn_t* p_conn, klb_netconn_recv_data_cb c
 {
     p_conn->vtable.recv_data = cb_recv;
     return 0;
+}
+
+/// @brief 设置模块交换用已读残留缓冲
+void klb_netconn_set_tmp_recv_buf(klb_netconn_t* p_conn, klb_buf_t* p_buf)
+{
+    if (p_conn->p_tmp_recv_buf != p_buf)
+    {
+        KLB_FREE_BY(p_conn->p_tmp_recv_buf, klb_buf_unref);
+        p_conn->p_tmp_recv_buf = p_buf;
+    }
+}
+
+/// @brief 获取模块交换用已读残留缓冲
+klb_buf_t* klb_netconn_get_tmp_recv_buf(klb_netconn_t* p_conn)
+{
+    return p_conn->p_tmp_recv_buf;
+}
+
+/// @brief 设置模块交换用待发送缓冲
+void klb_netconn_set_tmp_send_buf(klb_netconn_t* p_conn, klb_buf_t* p_buf)
+{
+    if (p_conn->p_tmp_send_buf != p_buf)
+    {
+        KLB_FREE_BY(p_conn->p_tmp_send_buf, klb_buf_unref);
+        p_conn->p_tmp_send_buf = p_buf;
+    }
+}
+
+/// @brief 获取模块交换用待发送缓冲
+klb_buf_t* klb_netconn_get_tmp_send_buf(klb_netconn_t* p_conn)
+{
+    return p_conn->p_tmp_send_buf;
 }
 
 /// @brief 设置连接名称

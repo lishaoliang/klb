@@ -1,10 +1,37 @@
-﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbsmp/core/klb_smpserverpc_conn.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_rbuf.h"
 #include "klbutil/klb_nlist.h"
 #include "klbsmp/core/klb_smpparser.h"
 #include <assert.h>
+
+#ifdef _WIN32
+#include <ws2tcpip.h>
+#else
+#include <errno.h>
+#endif
+
+
+/// @brief 非阻塞套接字无数据时 recv 返回负值, 不是断线
+static bool recv_would_block_klb_smpserverpc_conn(void)
+{
+#ifdef _WIN32
+    int err = WSAGetLastError();
+
+    if (WSAEWOULDBLOCK == err || WSAEINTR == err)
+    {
+        return true;
+    }
+#else
+    if (EAGAIN == errno || EWOULDBLOCK == errno || EINTR == errno)
+    {
+        return true;
+    }
+#endif
+
+    return false;
+}
 
 
 /// @struct klb_smpserverpc_conn_t
@@ -29,8 +56,17 @@ typedef struct klb_smpserverpc_conn_t_
 
         klb_buf_t*                  p_read_body;        ///< 读取到的数据
         int                         reading_len;        ///< 还需要读取body的数据长度
+
+        int                         ping_interval_ms;   ///< 服务端 Ping 间隔; 0=关
+        int                         ping_timeout_ms;    ///< 等 Pong 超时
+        int64_t                     last_ping_tc;       ///< 上次 Ping 时刻; 0=未武装
+        int64_t                     ping_deadline_tc;   ///< 等待 Pong 截止
+        bool                        ping_waiting;       ///< 已发 Ping 待 Pong
     };
 }klb_smpserverpc_conn_t;
+
+#define KLB_SMPSERVERPC_PING_INTERVAL_MS_DEFAULT    15000
+#define KLB_SMPSERVERPC_PING_TIMEOUT_MS_DEFAULT     30000
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,10 +116,82 @@ static void on_connected_timeout_klb_smpserverpc_conn(klb_netconn_t* p_conn, int
 
 }
 
+static void enqueue_ctrl_klb_smpserverpc_conn(klb_netconn_t* p_conn, int packtype)
+{
+    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
+    klb_smp_t smp = { 0 };
+    klb_buf_t* p_buf = NULL;
+
+    smp.magic = KLB_SMP_MAGIC;
+    smp.size = (uint32_t)sizeof(klb_smp_t);
+    smp.packtype = (uint32_t)packtype;
+
+    p_buf = klb_buf_malloc((int)sizeof(klb_smp_t), false);
+    klb_buf_write(p_buf, (const char*)&smp, (int)sizeof(smp));
+    klb_nlist_push_tail(p_smpserve->p_write_nlist, p_buf);
+    klb_socket_set_writing(p_socket, true);
+}
+
+static void normalize_ping_klb_smpserverpc_conn(klb_smpserverpc_conn_t* p_smpserve, int interval_ms, int timeout_ms)
+{
+    if (0 > interval_ms)
+    {
+        interval_ms = KLB_SMPSERVERPC_PING_INTERVAL_MS_DEFAULT;
+    }
+
+    if (0 == interval_ms)
+    {
+        p_smpserve->ping_interval_ms = 0;
+        p_smpserve->ping_timeout_ms = 0;
+        p_smpserve->ping_waiting = false;
+        p_smpserve->ping_deadline_tc = 0;
+        return;
+    }
+
+    if (0 >= timeout_ms)
+    {
+        timeout_ms = KLB_SMPSERVERPC_PING_TIMEOUT_MS_DEFAULT;
+    }
+
+
+    p_smpserve->ping_interval_ms = interval_ms;
+    p_smpserve->ping_timeout_ms = timeout_ms;
+}
+
 /// @brief ticker 定时器消息
 static void on_ticker_klb_smpserverpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
+    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
 
+    if (0 >= p_smpserve->ping_interval_ms)
+    {
+        return;
+    }
+
+    if (0 == p_smpserve->last_ping_tc)
+    {
+        p_smpserve->last_ping_tc = now;
+        return;
+    }
+
+    if (p_smpserve->ping_waiting)
+    {
+        if (now >= p_smpserve->ping_deadline_tc)
+        {
+            push_data_klb_smpserverpc_conn(p_conn, KLB_SOCKET_ERR_PROTOCOL, 0, NULL);
+        }
+
+        return;
+    }
+
+    if ((int64_t)p_smpserve->ping_interval_ms <= ABS_SUB(now, p_smpserve->last_ping_tc))
+    {
+        enqueue_ctrl_klb_smpserverpc_conn(p_conn, KLB_MNP_PING);
+        p_smpserve->last_ping_tc = now;
+        p_smpserve->ping_waiting = true;
+        p_smpserve->ping_deadline_tc = now + (int64_t)p_smpserve->ping_timeout_ms;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,22 +273,24 @@ static int klb_smpserverpc_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 
         uint8_t* p_data = p_buf->p_buf + p_buf->start;
         int send_num = klb_socket_send(p_socket, p_data, data_len);
+        int judge = 0;
+        int close_status = KLB_SOCKET_DISCONNECT;
 
         if (0 < send_num)
         {
             p_buf->start += send_num;
             write_num += send_num;
+            continue;
         }
-        else if (0 == send_num)
+
+        judge = klb_socket_send_judge(p_socket, send_num, &close_status);
+        if (KLB_SOCKET_SEND_AGAIN == judge)
         {
-            // 无法发送了
             break;
         }
-        else
-        {
-            // 
-            break;
-        }
+
+        klb_socket_recv_closed(p_socket, close_status);
+        return write_num;
     }
 
     // 数据写完了, 无需读取
@@ -190,6 +300,49 @@ static int klb_smpserverpc_conn_on_send(klb_netconn_t* p_conn, int64_t now)
     }
 
     return write_num;
+}
+
+static bool is_rpc_pack_klb_smpserverpc_conn(int packtype)
+{
+    if (KLB_MNP_RPC_LUA == packtype || KLB_MNP_RPC_JSON == packtype)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+static void skip_body_klb_smpserverpc_conn(klb_netconn_t* p_conn, klb_smpparser_t* p_parser, klb_rbuf_t* p_head)
+{
+    klb_smpserverpc_conn_t* p_smpserve = (klb_smpserverpc_conn_t*)p_conn->extra;
+    int body_need = p_parser->pack_len - p_parser->head_len;
+
+    if (0 > body_need)
+    {
+        body_need = 0;
+    }
+
+    int body_len = 0;
+    klb_rbuf_data(p_head, &body_len);
+
+    int cp_len = MIN(body_need, body_len);
+    if (0 < cp_len)
+    {
+        klb_rbuf_use(p_head, cp_len);
+        body_need -= cp_len;
+    }
+
+    if (0 < body_need)
+    {
+        p_smpserve->p_read_body = klb_buf_malloc(body_need, false);
+        p_smpserve->reading_len = body_need;
+        p_smpserve->parser = *p_parser;
+        p_smpserve->parser_status = KLB_SMPPARSER_body;
+    }
+    else
+    {
+        p_smpserve->parser_status = KLB_SMPPARSER_head;
+    }
 }
 
 /// @brief 接收网络数据
@@ -212,13 +365,15 @@ static int do_recv_klb_smpserverpc_conn(klb_netconn_t* p_conn, int* p_read_num)
             klb_rbuf_cat_end(p_head, recv_len);
             *p_read_num += recv_len;
         }
-        else if (0 == recv_len)
-        {
-            return 1; // 无数据可以读
-        }
         else
         {
-            // 连接断开等错误
+            int close_status = KLB_SOCKET_DISCONNECT;
+            int judge = klb_socket_recv_judge(p_socket, recv_len, &close_status);
+            if (KLB_SOCKET_RECV_AGAIN == judge)
+            {
+                return 1;
+            }
+            klb_socket_recv_closed(p_socket, close_status);
             return -1;
         }
 
@@ -234,10 +389,19 @@ static int do_recv_klb_smpserverpc_conn(klb_netconn_t* p_conn, int* p_read_num)
             klb_rbuf_use(p_head, parser.head_len);
 
             // 解析成功
-            if (KLB_MNP_PONG == parser.packtype ||
-                KLB_MNP_PING == parser.packtype)
+            if (KLB_MNP_PING == parser.packtype)
             {
+                enqueue_ctrl_klb_smpserverpc_conn(p_conn, KLB_MNP_PONG);
                 p_smpserve->parser_status = KLB_SMPPARSER_head;
+                klb_rbuf_memmove(p_head);
+            }
+            else if (KLB_MNP_PONG == parser.packtype)
+            {
+                // C 层吞掉 Pong; 不推 Lua
+                p_smpserve->ping_waiting = false;
+                p_smpserve->ping_deadline_tc = 0;
+                p_smpserve->parser_status = KLB_SMPPARSER_head;
+                klb_rbuf_memmove(p_head);
             }
             else if (KLB_MNP_RPC_LUA == parser.packtype ||
                 KLB_MNP_RPC_JSON == parser.packtype)
@@ -263,23 +427,23 @@ static int do_recv_klb_smpserverpc_conn(klb_netconn_t* p_conn, int* p_read_num)
 
                     p_smpserve->parser = parser;
                     p_smpserve->parser_status = KLB_SMPPARSER_body;
+                    klb_rbuf_memmove(p_head);
                 }
                 else
                 {
                     // 完整的数据包
                     p_smpserve->parser_status = KLB_SMPPARSER_head;
 
-                    // 完整数据
+                    // 先整理 rbuf, 再回调; 避免 Lua disconnect 后 memmove 悬空
+                    klb_rbuf_memmove(p_head);
                     push_data_klb_smpserverpc_conn(p_conn, KLB_SOCKET_OK, parser.packtype, p_buf);
                 }
             }
             else
             {
-                // 不支持
-                p_smpserve->parser_status = KLB_SMPPARSER_null;
+                skip_body_klb_smpserverpc_conn(p_conn, &parser, p_head);
+                klb_rbuf_memmove(p_head);
             }
-
-            klb_rbuf_memmove(p_head);
         }
         else if (0 < ret_parse)
         {
@@ -289,7 +453,7 @@ static int do_recv_klb_smpserverpc_conn(klb_netconn_t* p_conn, int* p_read_num)
         else
         {
             // 协议错误
-            return -1;
+            return -2;
         }
     }
     else if (KLB_SMPPARSER_body == p_smpserve->parser_status)
@@ -310,18 +474,26 @@ static int do_recv_klb_smpserverpc_conn(klb_netconn_t* p_conn, int* p_read_num)
                 p_smpserve->p_read_body = NULL;
                 p_smpserve->parser_status = KLB_SMPPARSER_head;
 
-                // 完整数据
-                push_data_klb_smpserverpc_conn(p_conn, KLB_SOCKET_OK, p_smpserve->parser.packtype, p_buf);
+                if (is_rpc_pack_klb_smpserverpc_conn(p_smpserve->parser.packtype))
+                {
+                    push_data_klb_smpserverpc_conn(p_conn, KLB_SOCKET_OK, p_smpserve->parser.packtype, p_buf);
+                }
+                else
+                {
+                    KLB_FREE_BY(p_buf, klb_buf_unref);
+                }
             }
-        }
-        else if (0 == recv_len)
-        {
-            // 无数据可读
-            return 1;
         }
         else
         {
-            // 连接错误
+            int close_status = KLB_SOCKET_DISCONNECT;
+            int judge = klb_socket_recv_judge(p_socket, recv_len, &close_status);
+            if (KLB_SOCKET_RECV_AGAIN == judge)
+            {
+                return 1;
+            }
+
+            klb_socket_recv_closed(p_socket, close_status);
             return -1;
         }
     }
@@ -346,6 +518,25 @@ static int klb_smpserverpc_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
     while (true)
     {
         int ret = do_recv_klb_smpserverpc_conn(p_conn, &read_num);
+
+        if (0 > ret)
+        {
+            int code = (int)klb_socket_get_status(p_socket);
+
+            if (-2 == ret)
+            {
+                code = KLB_SOCKET_ERR_PROTOCOL;
+                klb_socket_recv_closed(p_socket, code);
+            }
+            else if (KLB_SOCKET_OK == code)
+            {
+                code = KLB_SOCKET_DISCONNECT;
+                klb_socket_recv_closed(p_socket, code);
+            }
+
+            push_data_klb_smpserverpc_conn(p_conn, code, 0, NULL);
+            break;
+        }
 
         if (0 != ret)
         {
@@ -486,6 +677,10 @@ static int klb_smpserverpc_conn_init(klb_netconn_t* p_conn)
 
     p_smpserve->p_read_body = NULL;
     p_smpserve->reading_len = 0;
+    normalize_ping_klb_smpserverpc_conn(p_smpserve, KLB_SMPSERVERPC_PING_INTERVAL_MS_DEFAULT, KLB_SMPSERVERPC_PING_TIMEOUT_MS_DEFAULT);
+    p_smpserve->last_ping_tc = 0;
+    p_smpserve->ping_deadline_tc = 0;
+    p_smpserve->ping_waiting = false;
 
     return 0;
 }

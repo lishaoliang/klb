@@ -80,7 +80,7 @@ static int klbuiex_shwnd_control(void* ptr, klb_gui_t* p_gui, int msg, uint8_t* 
         break;
 
     case KLBUI_EX_MSG_clear:
-        //klbuiex_shwnd_clear(p_shwnd);
+        klbuiex_shwnd_clear(p_shwnd); // Fixed Bug.2026-14-klb
         break;
 
     default:

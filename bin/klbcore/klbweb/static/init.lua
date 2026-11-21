@@ -165,7 +165,7 @@ end
 -- @brief 按请求路径提供静态内容
 -- @param [in]      url_path[string]	请求 URL 路径
 -- @param [in]      headers[table]		[可选] 请求头 (Range / 条件缓存 / Accept-Encoding)
--- @return status[number]				200/206/304/400/404/413/416; 0 无挂载
+-- @return status[number]				200/206/304/400/404/416; 0 无挂载. 体积不返回 413
 -- @return mime[string]
 -- @return body[string]
 -- @return kind[string]
@@ -202,7 +202,7 @@ staticer.new = function (defaults)
 		_defaults = {
 			listing = true == defaults.listing,
 			index = defaults.index or "index.html",
-			max_file = defaults.max_file or (2 * 1024 * 1024),
+			max_file = defaults.max_file or (8 * 1024 * 1024),
 			gzip = false ~= defaults.gzip,
 			gzip_dynamic = true == defaults.gzip_dynamic,
 		},

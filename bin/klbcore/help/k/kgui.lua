@@ -4,7 +4,7 @@
 -- @brief  GUI接口
 --   \n require("kgui")
 --   \n C导出文件: ./klb/src_c/klua/klua_base/klua_kgui.c
--- @version 0.1
+-- @version 0.2
 --]]
 
 local kgui = {}
@@ -87,6 +87,38 @@ kgui.load_image = function (key, path)
 end
 
 
+-- @brief 获取图片资源大小
+-- @param [in] key[string]			图片关键字
+-- @return w[number(int)]			宽
+-- @return h[number(int)]			高
+-- @note 未加载的 key 返回 0, 0
+kgui.image_size = function (key)
+	return 0, 0
+end
+
+
+-- @brief 清空所有已加载图片资源
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.clear_image = function ()
+	return 0
+end
+
+
+-- @brief 加载字库
+-- @param [in] path[string]			字库文件路径
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.load_font = function (path)
+	return 0
+end
+
+
+-- @brief 卸载字库
+-- @return [number(int)] 	0.成功; 非0.失败
+kgui.unload_font = function ()
+	return 0
+end
+
+
 -- @brief 清空消息事件队列
 -- @return 无
 kgui.clear_msg = function ()
@@ -97,8 +129,109 @@ end
 -- @brief 获取窗口 kwnd 操作接口
 -- @param [in] path[string]			窗口路径: eg. "/home/btn1"
 -- @return [userdata] kwnd; 失败 nil
+-- @note kwnd 方法: style / show / hide / flex_algo / z_index
+--   \n  tip / tip_dynamic / tip_update / move / resize / refresh / set / get / tick_count
 kgui.get_kwnd = function (path)
-	return nil
+	local kwnd = {}
+
+	-- @brief 设置/获取 样式
+	-- @param [in] style[number(int)]	[可选] 不传为获取
+	-- @return [number(int)] 当前样式
+	kwnd.style = function (self, style)
+		return 0
+	end
+
+	-- @brief 设置/获取 显示状态
+	-- @param [in] show[boolean]		[可选] 不传为获取
+	-- @return [boolean]
+	kwnd.show = function (self, show)
+		return true
+	end
+
+	-- @brief 设置/获取 隐藏状态
+	-- @param [in] hide[boolean]		[可选] 不传为获取
+	-- @return [boolean]
+	kwnd.hide = function (self, hide)
+		return false
+	end
+
+	-- @brief 设置/获取 flex 自动布局引擎
+	-- @param [in] algo[number(int)]	[可选] klb_wnd_flex_algo_e; 不传为获取
+	-- @return [number(int)]
+	kwnd.flex_algo = function (self, algo)
+		return 0
+	end
+
+	-- @brief 设置/获取 z 索引
+	-- @param [in] z[number(int)]		[可选] 范围 [-32768, 32767]; 不传为获取
+	-- @return [number(int)]
+	kwnd.z_index = function (self, z)
+		return 0
+	end
+
+	-- @brief 设置/获取 静态 TIP
+	-- @param [in] tip[string]			[可选] 不传为获取
+	-- @return [string] 当前 TIP; 无则为空串
+	kwnd.tip = function (self, tip)
+		return ''
+	end
+
+	-- @brief 设置/获取 动态 TIP
+	-- @param [in] tip[string]			[可选] 不传为获取
+	-- @return [string] 当前动态 TIP; 无则为空串
+	kwnd.tip_dynamic = function (self, tip)
+		return ''
+	end
+
+	-- @brief 立即更新 TIP 显示
+	-- @return 无
+	kwnd.tip_update = function (self)
+		return
+	end
+
+	-- @brief 基于父窗口移动到相对坐标
+	-- @param [in] x[number(int)]		[可选] 默认 0
+	-- @param [in] y[number(int)]		[可选] 默认 0
+	-- @return 无
+	kwnd.move = function (self, x, y)
+		return
+	end
+
+	-- @brief 重新设置控件大小
+	-- @param [in] w[number(int)]		宽
+	-- @param [in] h[number(int)]		高
+	-- @return 无
+	kwnd.resize = function (self, w, h)
+		return
+	end
+
+	-- @brief 标记刷新 (UI 框架决定时机)
+	-- @return 无
+	kwnd.refresh = function (self)
+		return
+	end
+
+	-- @brief 按参数序号设置控件数据 (样式/显示/状态等)
+	-- @param [in] ...	[任意] 参数列表, 语义同 kgui.set
+	-- @return 无
+	kwnd.set = function (self, ...)
+		return
+	end
+
+	-- @brief 按参数序号获取控件数据
+	-- @param [in] ...	[任意] 参数列表, 语义同 kgui.get
+	-- @return [...] 任意类型
+	kwnd.get = function (self, ...)
+		return ...
+	end
+
+	-- @brief 获取 GUI 当前系统滴答数
+	-- @return [number(int)] 毫秒
+	kwnd.tick_count = function (self)
+		return 0
+	end
+
+	return kwnd
 end
 
 

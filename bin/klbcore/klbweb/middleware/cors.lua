@@ -17,6 +17,7 @@ local function cors(opts)
 	--   methods[string]		默认 GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS
 	--   headers[string]		默认 Content-Type,Authorization
 	--   max_age[number]		默认 600
+	--   credentials[boolean]	默认关; true 时回显 Origin + Allow-Credentials + Vary
 	-- }
 	if false == opts then
 		return function (req, res, nxt)
@@ -33,9 +34,28 @@ local function cors(opts)
 	local methods = opts.methods or "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS"
 	local allow_headers = opts.headers or "Content-Type, Authorization"
 	local max_age = tostring(opts.max_age or 600)
+	local credentials = true == opts.credentials
 
 	return function (req, res, nxt)
-		res:header("Access-Control-Allow-Origin", origin)
+		local allow_origin = origin
+		if credentials then
+			local req_origin = (req.headers and req.headers["origin"]) or ""
+			if "" ~= req_origin then
+				allow_origin = req_origin
+			elseif "*" == origin then
+				allow_origin = ""
+			end
+
+			if "" ~= allow_origin then
+				res:header("Access-Control-Allow-Origin", allow_origin)
+				res:header("Vary", "Origin")
+			end
+
+			res:header("Access-Control-Allow-Credentials", "true")
+		else
+			res:header("Access-Control-Allow-Origin", allow_origin)
+		end
+
 		res:header("Access-Control-Allow-Methods", methods)
 		res:header("Access-Control-Allow-Headers", allow_headers)
 		res:header("Access-Control-Max-Age", max_age)

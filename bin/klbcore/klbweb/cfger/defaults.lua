@@ -15,12 +15,15 @@ defaults.server = "klbweb"
 defaults.keep_alive = true
 defaults.max_body = 256 * 1024
 defaults.max_keep_alive = 100
-defaults.max_file = 2 * 1024 * 1024
+defaults.max_file = 8 * 1024 * 1024
 defaults.index = "index.html"
 defaults.listing = false
 defaults.gzip = true
 defaults.gzip_dynamic = false
 defaults.listen_port = 8000
+defaults.read_timeout_ms = 0
+defaults.write_timeout_ms = 0
+defaults.idle_ms = 0
 
 
 -- @brief 一份新的站点生效表 (未 apply 用户 cfg)
@@ -32,7 +35,11 @@ defaults.site = function ()
 		max_body = defaults.max_body,
 		max_body_paths = nil,
 		max_keep_alive = defaults.max_keep_alive,
+		read_timeout_ms = defaults.read_timeout_ms,
+		write_timeout_ms = defaults.write_timeout_ms,
+		idle_ms = defaults.idle_ms,
 		cors = nil,
+		https = nil,
 		log = nil,
 		session = nil,
 		session_secret = nil,

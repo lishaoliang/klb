@@ -1,4 +1,4 @@
-﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbsmp/core/klb_smprpcer.h"
 
 
@@ -27,4 +27,4 @@ const char* klb_smprpcer_to_method_string(klb_mnp_rpc_method_e method)
     return "";
 }
 
-//end
+// end

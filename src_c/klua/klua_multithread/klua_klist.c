@@ -68,7 +68,7 @@ void klua_klist_quit()
         {
             klb_obj_t* p_obj = (klb_obj_t*)klb_nlist_pop_head(p_item->p_list);
             
-            klb_obj_destroy_cb cb_destroy = p_obj->ops.cb_destroy;
+            klb_obj_destroy_cb cb_destroy = p_obj->cb_destroy;
             assert(NULL != cb_destroy);
             cb_destroy(p_obj);
         }
@@ -146,7 +146,7 @@ static int klua_klist_push(lua_State* L)
     klua_klist_userdata_t* p_ud = to_klua_klist(L, 1);
     klb_obj_t* p_obj = (klb_obj_t*)luaL_checklightuserdata(L, 2);
     assert(NULL != p_obj);
-    assert(NULL != p_obj->ops.cb_destroy);
+    assert(NULL != p_obj->cb_destroy);
 
     lock_klist_item(p_ud->p_item);
     klb_nlist_push_tail(p_ud->p_item->p_list, p_obj);
@@ -211,7 +211,7 @@ static int klua_klist_clear(lua_State* L)
     while (0 < klb_nlist_size(p_ud->p_tmp_list))
     {
         klb_obj_t* p_obj = (klb_obj_t*)klb_nlist_pop_head(p_ud->p_tmp_list);
-        klb_obj_destroy_cb cb_destroy = p_obj->ops.cb_destroy;
+        klb_obj_destroy_cb cb_destroy = p_obj->cb_destroy;
         assert(NULL != cb_destroy);
 
         cb_destroy(p_obj);
@@ -272,7 +272,7 @@ static int lib_klua_klist_push(lua_State* L)
     const char* p_path = luaL_checklstring(L, 1, &path_len);
     klb_obj_t* p_obj = (klb_obj_t*)luaL_checklightuserdata(L, 2);
     assert(NULL != p_obj);
-    assert(NULL != p_obj->ops.cb_destroy);
+    assert(NULL != p_obj->cb_destroy);
 
     lock_klist(g_klua_klist);
 

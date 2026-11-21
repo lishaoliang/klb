@@ -42,6 +42,10 @@ int klua_main(int argc, char** argv, klua_openlibs_cb cb)
 
     // env
     klua_env_t* p_env = klua_env_create(cb);    // env
+
+    // 优雅退出: SIGTERM 由 env 转成退出状态
+    klua_env_install_quit_signal();
+
     klua_main_set_args(p_env, argc, argv);      // args
     klua_env_doinit(p_env);
 

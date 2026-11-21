@@ -15,7 +15,7 @@ local json = {}
 -- @brief 解析 JSON 体
 -- @param [in]      headers[table]		小写键头表
 -- @param [in]      body[string]		请求体
--- @return obj[table]					解码为 table 时; 否则 `{}`
+-- @return obj[any]						解码值 (table/标量/cjson.null); 非 json 类型或空体为 `{}`
 -- @return err[string]					Content-Type 含 json 且体非空但解码失败时为原因; 否则 `""`
 json.parse_json = function (headers, body)
 	local ctype = string.lower((headers and headers["content-type"]) or "")
@@ -28,7 +28,8 @@ json.parse_json = function (headers, body)
 	end
 
 	local obj = cjson.decode(body)
-	if "table" ~= type(obj) then
+	-- decode 失败为 nil; 合法 JSON 标量 (number/string/boolean/null→cjson.null) 亦接受
+	if nil == obj then
 		return {}, "invalid json"
 	end
 

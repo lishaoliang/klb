@@ -3,9 +3,9 @@
 #include "klbmem/klb_mem.h"
 #include "klbplatform/klb_atomic.h"
 #include <assert.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 
 
@@ -59,6 +59,25 @@ static klb_fpool_buf_extra_t* get_buf_by_idx_klb_fpool(klb_fpool_t* p_pool, int 
 
 klb_fpool_t* klb_fpool_create(int item_size, int item_num, int aligned)
 {
+    // Fixed Bug.2026-2-klb: reject overflow / invalid size before multiply
+    if (item_size <= 0 || item_num <= 0)
+    {
+        assert(false);
+        return NULL;
+    }
+
+    if (item_num > (int)(INT_MAX / (size_t)item_size))
+    {
+        assert(false);
+        return NULL;
+    }
+
+    if (item_num > (int)(INT_MAX / sizeof(klb_fpool_buf_extra_t)))
+    {
+        assert(false);
+        return NULL;
+    }
+
     klb_fpool_t* p_pool = (klb_fpool_t*)KLB_MALLOCZ(klb_fpool_t, 1, 0);
 
     p_pool->aligned = aligned;

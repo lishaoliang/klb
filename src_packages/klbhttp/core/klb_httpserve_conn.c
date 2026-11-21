@@ -1,5 +1,6 @@
 ﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbhttp/core/klb_httpserve_conn.h"
+#include "klbnet/klb_netcode.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_buffer.h"
@@ -13,6 +14,10 @@
 #include <sys/types.h>
 #endif
 #include <assert.h>
+
+
+/// @brief klb_mnp_text_t.size 为 27 位位域的最大值 (128MiB - 1)
+#define KLB_HTTPSERVE_TEXT_SIZE_MAX     (0x7FFFFFF)
 
 
 /// @struct klb_httpserve_conn_t
@@ -40,11 +45,23 @@ typedef struct klb_httpserve_conn_t_
         http_parser                 parser;             ///< HTTP解析器
         http_parser_settings        settings;           ///< 解析器设置
         bool                        req_line_crlf;      ///< 请求行是否已补 HTTP/x.x CRLF
+        bool                        header_value_open;  ///< 头字段值是否处于未闭合状态 (分片回调)
+        bool                        upgrade_hold;       ///< Upgrade 后停在 HTTP 解析, 尾字节留给下一协议
 
         klb_buf_t*                  p_read_buf;         ///< 读取缓存
 
         sds                         header;             ///< 已解析的请求头
         klb_buffer_t*               p_body;             ///< 已解析的请求体
+    };
+
+    // 超时 / 体上限 (0=关闭)
+    struct
+    {
+        int                         read_timeout_ms;    ///< 读超时
+        int                         write_timeout_ms;   ///< 写超时
+        int                         idle_timeout_ms;    ///< 空闲超时
+        int64_t                     max_body;           ///< 请求体上限; 0=不限
+        bool                        body_too_large;     ///< 体超限标记
     };
 }klb_httpserve_conn_t;
 
@@ -81,10 +98,9 @@ static void push_netcode_klb_httpserve_conn(klb_netconn_t* p_conn, int code)
 {
     assert(KLB_NETCODE_OK != code);
 
-    if ((KLB_SOCKET_OK < code && code <= KLB_SOCKET_ERR_MAX) ||
-        KLB_SOCKET_CLOSEING == code)
+    // 断联/超时/协议错/RBUF_FULL 等均须移出 select; 仅 WBUF_EMPTY/CONNECT 保持读写标记
+    if (KLB_NETCODE_WBUF_EMPTY != code && KLB_SOCKET_CONNECT != code)
     {
-        // 关闭 socket 读写
         klb_socket_set_reading(p_conn->p_socket, false);
         klb_socket_set_writing(p_conn->p_socket, false);
     }
@@ -95,19 +111,105 @@ static void push_netcode_klb_httpserve_conn(klb_netconn_t* p_conn, int code)
     }
 }
 
+/// @brief 头字段名是否匹配(大小写不敏感; 后接 ':')
+static bool header_name_eq_klb_httpserve_conn(const char* p, int line_len, const char* name, int name_len)
+{
+    int i = 0;
+
+    if (line_len <= name_len || ':' != p[name_len])
+    {
+        return false;
+    }
+
+    for (i = 0; i < name_len; i++)
+    {
+        char a = p[i];
+        char b = name[i];
+
+        if ('A' <= a && 'Z' >= a)
+        {
+            a = (char)(a - 'A' + 'a');
+        }
+
+        if (a != b)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/// @brief chunked 已解码时改写头: 去掉 Transfer-Encoding, 写 Content-Length=body_len
+static void rewrite_decoded_header_klb_httpserve_conn(klb_httpserve_conn_t* p_httpserve, int body_len)
+{
+    sds old = NULL;
+    sds neu = NULL;
+    const char* p = NULL;
+    const char* end = NULL;
+
+    if (NULL == p_httpserve || NULL == p_httpserve->header)
+    {
+        return;
+    }
+
+    if (0 == (p_httpserve->parser.flags & F_CHUNKED))
+    {
+        return;
+    }
+
+    old = p_httpserve->header;
+    neu = sdsnew("");
+    p = old;
+    end = old + (int)sdslen(old);
+
+    while (p < end)
+    {
+        const char* line_end = p;
+        int line_len = 0;
+
+        while (line_end + 1 < end && !('\r' == line_end[0] && '\n' == line_end[1]))
+        {
+            line_end++;
+        }
+
+        if (line_end + 1 >= end)
+        {
+            break;
+        }
+
+        line_len = (int)(line_end - p);
+        if (0 == line_len)
+        {
+            break;
+        }
+
+        if (header_name_eq_klb_httpserve_conn(p, line_len, "transfer-encoding", 17)
+            || header_name_eq_klb_httpserve_conn(p, line_len, "content-length", 14))
+        {
+            p = line_end + 2;
+            continue;
+        }
+
+        neu = sdscatlen(neu, p, (size_t)(line_len + 2));
+        p = line_end + 2;
+    }
+
+    neu = sdscatfmt(neu, "Content-Length: %i\r\n\r\n", body_len);
+    sdsfree(old);
+    p_httpserve->header = neu;
+}
+
 /// @brief 组装完整HTTP请求, 按 TEXT 包上送
 static void push_pack_klb_httpserve_conn(klb_netconn_t* p_conn)
 {
     klb_httpserve_conn_t* p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
 
     int head_len = 0;
-    if (NULL != p_httpserve->header)
-    {
-        head_len = (int)sdslen(p_httpserve->header);
-    }
-
     int body_len = 0;
     klb_buf_t* p_body_part = NULL;
+    int total = 0;
+
     if (NULL != p_httpserve->p_body && 0 < klb_buffer_datalen(p_httpserve->p_body))
     {
         p_body_part = klb_buffer_join(p_httpserve->p_body, NULL, NULL);
@@ -115,11 +217,21 @@ static void push_pack_klb_httpserve_conn(klb_netconn_t* p_conn)
         klb_buffer_reset(p_httpserve->p_body);
     }
 
-    int total = (int)sizeof(klb_mnp_text_t) + head_len + body_len;
+    // chunked 体已由 parser 解码; 头须与解码后长度一致
+    rewrite_decoded_header_klb_httpserve_conn(p_httpserve, body_len);
+
+    if (NULL != p_httpserve->header)
+    {
+        head_len = (int)sdslen(p_httpserve->header);
+    }
+
+    total = (int)sizeof(klb_mnp_text_t) + head_len + body_len;
     klb_buf_t* p_data = klb_buf_malloc(total, false);
 
     klb_mnp_text_t com = { 0 };
-    com.size = (uint32_t)total;
+    // size 为 27 位位域(上限 128MiB); 本机 TEXT 包按缓冲真实长度取体,
+    // 超限时钳到上限, 避免回绕成小值误导其他读取方
+    com.size = (uint32_t)((KLB_HTTPSERVE_TEXT_SIZE_MAX < total) ? KLB_HTTPSERVE_TEXT_SIZE_MAX : total);
     com.head_size = (uint32_t)head_len;
 
     memcpy(p_data->p_buf, &com, sizeof(com));
@@ -154,10 +266,47 @@ static void on_connected_timeout_klb_httpserve_conn(klb_netconn_t* p_conn, int64
 
 }
 
-/// @brief ticker 定时器消息
+/// @brief ticker 定时器消息: 读/写/idle 超时
 static void on_ticker_klb_httpserve_conn(klb_netconn_t* p_conn, int64_t now)
 {
+    klb_httpserve_conn_t* p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
+    bool writing = false;
+    bool reading = false;
 
+    if (NULL == p_socket || KLB_SOCKET_OK != klb_socket_get_status(p_socket))
+    {
+        return;
+    }
+
+    writing = (0 < klb_nlist_size(p_httpserve->p_write_nlist)) || (NULL != p_httpserve->p_file);
+    reading = (NULL != p_httpserve->header)
+        || (NULL != p_httpserve->p_body && 0 < klb_buffer_datalen(p_httpserve->p_body))
+        || (p_httpserve->p_read_buf->start < p_httpserve->p_read_buf->end);
+
+    // step1. 写超时: 队列未空且长时间无发包
+    if (writing && 0 < p_httpserve->write_timeout_ms
+        && (int64_t)p_httpserve->write_timeout_ms <= ABS_SUB(now, p_socket->last_send_tc))
+    {
+        push_netcode_klb_httpserve_conn(p_conn, KLB_SOCKET_TIMEOUT);
+        return;
+    }
+
+    // step2. 读超时: 请求进行中且长时间无收包
+    if (reading && 0 < p_httpserve->read_timeout_ms
+        && (int64_t)p_httpserve->read_timeout_ms <= ABS_SUB(now, p_socket->last_recv_tc))
+    {
+        push_netcode_klb_httpserve_conn(p_conn, KLB_SOCKET_TIMEOUT);
+        return;
+    }
+
+    // step3. idle: 无读写进行且长时间无收包
+    if (!writing && !reading && 0 < p_httpserve->idle_timeout_ms
+        && (int64_t)p_httpserve->idle_timeout_ms <= ABS_SUB(now, p_socket->last_recv_tc))
+    {
+        push_netcode_klb_httpserve_conn(p_conn, KLB_SOCKET_TIMEOUT);
+        return;
+    }
 }
 
 
@@ -169,10 +318,12 @@ static int on_message_begin_klb_httpserve_conn(http_parser* p_parser)
     klb_netconn_t* p_conn = (klb_netconn_t*)p_parser->data;
     klb_httpserve_conn_t* p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
 
+    // 注意. message_begin 时 method 仅为首字母猜测 (P->POST), PROPFIND 等尚未解析完
+    // 请求行 METHOD 在 finish_req_line 用最终 p_parser->method 回填
     KLB_FREE_BY(p_httpserve->header, sdsfree);
-    p_httpserve->header = sdsnew(http_method_str((enum http_method)p_parser->method));
-    p_httpserve->header = sdscat(p_httpserve->header, " ");
+    p_httpserve->header = sdsnew("");
     p_httpserve->req_line_crlf = false;
+    p_httpserve->header_value_open = false;
 
     return 0;
 }
@@ -202,6 +353,9 @@ static int on_status_klb_httpserve_conn(http_parser* p_parser, const char* at, s
 
 static void finish_req_line_klb_httpserve_conn(http_parser* p_parser, klb_httpserve_conn_t* p_httpserve)
 {
+    const char* p_meth = NULL;
+    sds url = NULL;
+
     if (p_httpserve->req_line_crlf)
     {
         return;
@@ -212,8 +366,25 @@ static void finish_req_line_klb_httpserve_conn(http_parser* p_parser, klb_httpse
         p_httpserve->header = sdsnew("");
     }
 
-    p_httpserve->header = sdscatfmt(p_httpserve->header, " HTTP/%u.%u\r\n",
-        p_parser->http_major, p_parser->http_minor);
+    // header 当前仅为 URL (on_url 追加); 拼最终 METHOD + URL + 版本
+    p_meth = http_method_str((enum http_method)p_parser->method);
+    if (NULL == p_meth || 0 == p_meth[0])
+    {
+        p_meth = "GET";
+    }
+
+    url = p_httpserve->header;
+    if (0 == sdslen(url))
+    {
+        p_httpserve->header = sdscatfmt(sdsempty(), "%s / HTTP/%u.%u\r\n",
+            p_meth, p_parser->http_major, p_parser->http_minor);
+    }
+    else
+    {
+        p_httpserve->header = sdscatfmt(sdsempty(), "%s %s HTTP/%u.%u\r\n",
+            p_meth, url, p_parser->http_major, p_parser->http_minor);
+    }
+    sdsfree(url);
     p_httpserve->req_line_crlf = true;
 }
 
@@ -224,8 +395,13 @@ static int on_header_field_klb_httpserve_conn(http_parser* p_parser, const char*
 
     finish_req_line_klb_httpserve_conn(p_parser, p_httpserve);
 
+    if (p_httpserve->header_value_open)
+    {
+        p_httpserve->header = sdscat(p_httpserve->header, "\r\n");
+        p_httpserve->header_value_open = false;
+    }
+
     p_httpserve->header = sdscatlen(p_httpserve->header, at, length);
-    p_httpserve->header = sdscat(p_httpserve->header, ": ");
 
     return 0;
 }
@@ -235,8 +411,18 @@ static int on_header_value_klb_httpserve_conn(http_parser* p_parser, const char*
     klb_netconn_t* p_conn = (klb_netconn_t*)p_parser->data;
     klb_httpserve_conn_t* p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
 
+    if (NULL == p_httpserve->header)
+    {
+        p_httpserve->header = sdsnew("");
+    }
+
+    if (!p_httpserve->header_value_open)
+    {
+        p_httpserve->header = sdscat(p_httpserve->header, ": ");
+        p_httpserve->header_value_open = true;
+    }
+
     p_httpserve->header = sdscatlen(p_httpserve->header, at, length);
-    p_httpserve->header = sdscat(p_httpserve->header, "\r\n");
 
     return 0;
 }
@@ -247,7 +433,23 @@ static int on_headers_complete_klb_httpserve_conn(http_parser* p_parser)
     klb_httpserve_conn_t* p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
 
     finish_req_line_klb_httpserve_conn(p_parser, p_httpserve);
+
+    if (p_httpserve->header_value_open)
+    {
+        p_httpserve->header = sdscat(p_httpserve->header, "\r\n");
+        p_httpserve->header_value_open = false;
+    }
+
     p_httpserve->header = sdscat(p_httpserve->header, "\r\n");
+
+    // Content-Length 已知且超上限: 尽早拒收
+    if (0 < p_httpserve->max_body
+        && 0 < p_parser->content_length
+        && (uint64_t)p_httpserve->max_body < p_parser->content_length)
+    {
+        p_httpserve->body_too_large = true;
+        return -1;
+    }
 
     return 0;
 }
@@ -256,6 +458,7 @@ static int on_body_klb_httpserve_conn(http_parser* p_parser, const char* at, siz
 {
     klb_netconn_t* p_conn = (klb_netconn_t*)p_parser->data;
     klb_httpserve_conn_t* p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
+    int cur = 0;
 
     if (0 == length)
     {
@@ -265,6 +468,14 @@ static int on_body_klb_httpserve_conn(http_parser* p_parser, const char* at, siz
     if (NULL == p_httpserve->p_body)
     {
         p_httpserve->p_body = klb_buffer_create(4096);
+    }
+
+    cur = klb_buffer_datalen(p_httpserve->p_body);
+    if (0 < p_httpserve->max_body
+        && p_httpserve->max_body < (int64_t)cur + (int64_t)length)
+    {
+        p_httpserve->body_too_large = true;
+        return -1;
     }
 
     klb_buffer_write(p_httpserve->p_body, at, (int)length);
@@ -279,6 +490,11 @@ static int on_message_complete_klb_httpserve_conn(http_parser* p_parser)
 
     p_httpserve->parser_status = KLB_HTTPSERVE_PARSER_OVER;
 
+    // 流水线: 同一读缓存可能含多条请求; http_parser_execute 默认会一次解析完,
+    // 后续消息的 message_begin 会重置 header/body, 只留下最后一条.
+    // 暂停在消息边界, 交由解析循环逐条上送 (回调内不得重入 Lua)
+    http_parser_pause(p_parser, 1);
+
     return 0;
 }
 
@@ -289,6 +505,7 @@ static void reset_msg_klb_httpserve_conn(klb_netconn_t* p_conn)
 
     p_httpserve->parser_status = KLB_HTTPSERVE_PARSER;
     p_httpserve->req_line_crlf = false;
+    p_httpserve->body_too_large = false;
 
     KLB_FREE_BY(p_httpserve->header, sdsfree);
     if (NULL != p_httpserve->p_body)
@@ -327,7 +544,12 @@ static int parser_klb_httpserve_conn(klb_netconn_t* p_conn)
         size_t nparsed = http_parser_execute(&p_httpserve->parser, &p_httpserve->settings,
             p_buf->p_buf + p_buf->start, have);
 
-        if (0 != p_httpserve->parser.http_errno)
+        // 暂停表示停在单条消息边界 (流水线), 不是错误: 解除暂停后按 OVER 处理本条
+        if (HPE_PAUSED == p_httpserve->parser.http_errno)
+        {
+            http_parser_pause(&p_httpserve->parser, 0);
+        }
+        else if (0 != p_httpserve->parser.http_errno)
         {
             p_httpserve->parser_status = KLB_HTTPSERVE_PARSER_ERR;
             compact_read_klb_httpserve_conn(p_httpserve);
@@ -341,7 +563,16 @@ static int parser_klb_httpserve_conn(klb_netconn_t* p_conn)
 
         if (KLB_HTTPSERVE_PARSER_OVER == p_httpserve->parser_status)
         {
+            bool upgrading = (0 != p_httpserve->parser.upgrade);
+
             push_pack_klb_httpserve_conn(p_conn);
+            if (upgrading)
+            {
+                p_httpserve->upgrade_hold = true;
+                compact_read_klb_httpserve_conn(p_httpserve);
+                return 0;
+            }
+
             reset_msg_klb_httpserve_conn(p_conn);
             continue;
         }
@@ -518,20 +749,25 @@ static int klb_httpserve_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 
         uint8_t* p_data = (uint8_t*)(p_buf->p_buf + p_buf->start);
         int send_num = klb_socket_send(p_socket, p_data, data_len);
+        int judge = 0;
+        int close_status = KLB_SOCKET_DISCONNECT;
 
         if (0 < send_num)
         {
             p_buf->start += send_num;
             write_num += send_num;
+            continue;
         }
-        else if (0 == send_num)
+
+        judge = klb_socket_send_judge(p_socket, send_num, &close_status);
+        if (KLB_SOCKET_SEND_AGAIN == judge)
         {
             break;
         }
-        else
-        {
-            break;
-        }
+
+        klb_socket_recv_closed(p_socket, close_status);
+        push_netcode_klb_httpserve_conn(p_conn, close_status);
+        return write_num;
     }
 
     if (klb_nlist_size(p_write_nlist) <= 0 && NULL == p_httpserve->p_file)
@@ -571,11 +807,15 @@ static int do_recv_klb_httpserve_conn(klb_netconn_t* p_conn, int* p_read_num)
     int idle_len = klb_buf_idle_len(p_buf);
     if (idle_len <= 0)
     {
-        int ret_parse = parser_klb_httpserve_conn(p_conn);
-        if (0 != ret_parse)
+        if (!p_httpserve->upgrade_hold)
         {
-            push_netcode_klb_httpserve_conn(p_conn, KLB_SOCKET_ERR_PROTOCOL);
-            return -1;
+            int ret_parse = parser_klb_httpserve_conn(p_conn);
+            if (0 != ret_parse)
+            {
+                push_netcode_klb_httpserve_conn(p_conn,
+                    p_httpserve->body_too_large ? KLB_NETCODE_PROTO_TOO_LARGE : KLB_SOCKET_ERR_PROTOCOL);
+                return -1;
+            }
         }
 
         idle_len = klb_buf_idle_len(p_buf);
@@ -587,33 +827,40 @@ static int do_recv_klb_httpserve_conn(klb_netconn_t* p_conn, int* p_read_num)
     }
 
     int recv_len = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), idle_len);
-    if (recv_len < 0)
-    {
-        return -1;
-    }
-    else if (0 < recv_len)
+    int judge = 0;
+    int close_status = KLB_SOCKET_DISCONNECT;
+
+    if (0 < recv_len)
     {
         p_buf->end += recv_len;
         *p_read_num += recv_len;
     }
     else
     {
-        if (p_buf->end <= p_buf->start)
+        judge = klb_socket_recv_judge(p_socket, recv_len, &close_status);
+        if (KLB_SOCKET_RECV_AGAIN == judge)
         {
             return 1;
         }
+        /* EOF/ERROR: parse residual then close after parser below */
     }
 
-    int ret_parse = parser_klb_httpserve_conn(p_conn);
-    if (0 != ret_parse)
+    if (!p_httpserve->upgrade_hold)
     {
-        push_netcode_klb_httpserve_conn(p_conn, KLB_SOCKET_ERR_PROTOCOL);
+        int ret_parse = parser_klb_httpserve_conn(p_conn);
+        if (0 != ret_parse)
+        {
+            push_netcode_klb_httpserve_conn(p_conn,
+                p_httpserve->body_too_large ? KLB_NETCODE_PROTO_TOO_LARGE : KLB_SOCKET_ERR_PROTOCOL);
+            return -1;
+        }
+    }
+
+    if (0 >= recv_len && KLB_SOCKET_RECV_AGAIN != judge)
+    {
+        klb_socket_recv_closed(p_socket, close_status);
+        push_netcode_klb_httpserve_conn(p_conn, close_status);
         return -1;
-    }
-
-    if (0 == recv_len)
-    {
-        return 1;
     }
 
     return 0;
@@ -753,6 +1000,96 @@ bool klb_httpserve_wbuf_is_empty(klb_netconn_t* p_conn)
 }
 
 
+/// @brief 设置读/写/idle 超时(毫秒; 负值钳为 0)
+void klb_httpserve_conn_set_timeout(klb_netconn_t* p_conn, int read_ms, int write_ms, int idle_ms)
+{
+    klb_httpserve_conn_t* p_httpserve = NULL;
+
+    assert(NULL != p_conn);
+    p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
+
+    p_httpserve->read_timeout_ms = (0 < read_ms) ? read_ms : 0;
+    p_httpserve->write_timeout_ms = (0 < write_ms) ? write_ms : 0;
+    p_httpserve->idle_timeout_ms = (0 < idle_ms) ? idle_ms : 0;
+}
+
+
+/// @brief 设置请求体上限(字节; 负值钳为 0=不限)
+void klb_httpserve_conn_set_max_body(klb_netconn_t* p_conn, int64_t max_body)
+{
+    klb_httpserve_conn_t* p_httpserve = NULL;
+
+    assert(NULL != p_conn);
+    p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
+
+    p_httpserve->max_body = (0 < max_body) ? max_body : 0;
+}
+
+
+/// @brief 复制读缓冲中尚未解析的尾部
+static klb_buf_t* copy_tail_klb_httpserve_conn(klb_httpserve_conn_t* p_httpserve)
+{
+    klb_buf_t* p_buf = p_httpserve->p_read_buf;
+
+    if (NULL == p_buf || p_buf->end <= p_buf->start)
+    {
+        return NULL;
+    }
+
+    int n = p_buf->end - p_buf->start;
+    klb_buf_t* p_tail = klb_buf_malloc(n, false);
+    memcpy(p_tail->p_buf, p_buf->p_buf + p_buf->start, (size_t)n);
+    p_tail->start = 0;
+    p_tail->end = n;
+    return p_tail;
+}
+
+
+/// @brief 摘出 socket 与握手后剩余字节, 并销毁 HTTP 连接
+int klb_httpserve_conn_take(klb_netconn_t* p_conn, klb_socket_t** pp_socket, klb_buf_t** pp_tail)
+{
+    klb_httpserve_conn_t* p_httpserve = NULL;
+
+    if (NULL == p_conn || NULL == pp_socket || NULL == pp_tail)
+    {
+        return KLB_NETCODE_INVAL;
+    }
+
+    p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
+
+    *pp_socket = NULL;
+    *pp_tail = NULL;
+
+    if (!p_httpserve->upgrade_hold)
+    {
+        return KLB_NETCODE_PROTO_UNEXPECTED;
+    }
+
+    if (!klb_httpserve_wbuf_is_empty(p_conn))
+    {
+        return KLB_NETCODE_BUSY;
+    }
+
+    if (0 != klb_netmulti_remove(p_httpserve->p_netmulti, p_conn))
+    {
+        return KLB_NETCODE_ERR;
+    }
+
+    klb_buf_t* p_tail = copy_tail_klb_httpserve_conn(p_httpserve);
+    klb_socket_t* p_socket = p_conn->p_socket;
+    p_conn->p_socket = NULL;
+    p_httpserve->p_netmulti = NULL;
+
+    klb_netconn_bind_recv_data(p_conn, NULL);
+    klb_netconn_set_udata(p_conn, NULL);
+    klb_httpserve_conn_destroy(p_conn);
+
+    *pp_socket = p_socket;
+    *pp_tail = p_tail;
+    return 0;
+}
+
+
 /// @brief 发送HTTP响应头 + 本地文件体
 int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, int head_len,
     const char* p_path, int64_t offset, int64_t length)
@@ -762,12 +1099,12 @@ int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, i
 
     if (NULL == p_path || 0 == p_path[0] || offset < 0 || length < 0)
     {
-        return 1;
+        return KLB_NETCODE_INVAL;
     }
 
     if (NULL != p_httpserve->p_file)
     {
-        return 1;
+        return KLB_NETCODE_BUSY;
     }
 
     FILE* p_file = NULL;
@@ -776,7 +1113,7 @@ int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, i
         p_file = fopen(p_path, "rb");
         if (NULL == p_file)
         {
-            return 1;
+            return KLB_NETCODE_NOENT;
         }
 
         if (0 < offset)
@@ -784,7 +1121,7 @@ int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, i
             if (0 != seek_file_klb_httpserve_conn(p_file, offset))
             {
                 fclose(p_file);
-                return 1;
+                return KLB_NETCODE_IO;
             }
         }
     }
@@ -842,10 +1179,16 @@ static int klb_httpserve_conn_init(klb_netconn_t* p_conn)
 
     p_httpserve->parser_status = KLB_HTTPSERVE_PARSER;
     p_httpserve->req_line_crlf = false;
+    p_httpserve->upgrade_hold = false;
     p_httpserve->header = NULL;
     p_httpserve->p_body = NULL;
     p_httpserve->p_file = NULL;
     p_httpserve->file_remain = 0;
+    p_httpserve->read_timeout_ms = 0;
+    p_httpserve->write_timeout_ms = 0;
+    p_httpserve->idle_timeout_ms = 0;
+    p_httpserve->max_body = 0;
+    p_httpserve->body_too_large = false;
 
     return 0;
 }

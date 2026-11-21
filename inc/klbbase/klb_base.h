@@ -21,15 +21,16 @@ extern "C" {
 
 
 /// @brief KLB库版本字符串
-#define KLB_VERSION             "1.1.1.20251018"
-#define KLB_VERSION_DATE        20251018
+#define KLB_VERSION             "1.1.78.202611"
+#define KLB_VERSION_DATE        202611
 
 
 /// @brief KLB库版本 数值
-///    主版本(3位): 001
-///    子版本(3位): 001
-///    三版本(3位): 000
-#define KLB_VERSION_NUMBER      1001001
+///    编码: 主*10000000 + 子*10000 + 修订 (int32)
+///    主版本: 3 位, 0-214
+///    子版本: 3 位, 0-999
+///    修订:   4 位, 0-9999
+#define KLB_VERSION_NUMBER      10010078
 
 
 /// @brief KLB库初始化

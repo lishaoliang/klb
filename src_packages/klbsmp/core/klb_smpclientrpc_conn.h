@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_smpclientrpc_conn.h
@@ -30,7 +31,9 @@ klb_netconn_t* klb_smpclientrpc_conn_create(klb_netmulti_t* p_netmulti, klb_sock
 
 
 /// @brief SMP-RPC连接目标
-klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port);
+/// @param [in]  tls              true 时 TLS 封装(smprpcs)
+/// @param [out] *p_code          可选; 失败时 klb_netcode_e; 成功为 0
+klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port, bool tls, int* p_code);
 
 
 /// @brief 释放连接
@@ -54,4 +57,5 @@ bool klb_smpclientrpc_wbuf_is_empty(klb_netconn_t* p_conn);
 #endif
 
 #endif // __KLB_SMPCLIENTRPC_CONN_H__
-//end
+
+// end

@@ -1,5 +1,7 @@
 ﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbhttp/core/klb_httpclient_conn.h"
+#include "klbnet/klb_socket_tls.h"
+#include "klbnet/klb_netcode.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf.h"
 #include "klbmem/klb_buffer.h"
@@ -41,11 +43,22 @@ typedef struct klb_httpclient_conn_t_
         http_parser_settings        settings;           ///< 解析器设置
         bool                        status_prefix;      ///< 是否已写 HTTP/x.x code 前缀
         bool                        status_crlf;        ///< 状态行是否已补 CRLF
+        bool                        header_value_open;  ///< 头字段值是否处于未闭合状态 (分片回调)
 
         klb_buf_t*                  p_read_buf;         ///< 读取缓存
 
         sds                         header;             ///< 已解析的响应头
         klb_buffer_t*               p_body;             ///< 已解析的响应体
+    };
+
+    // 超时 / 体上限 (0=关闭)
+    struct
+    {
+        int                         read_timeout_ms;    ///< 读超时
+        int                         write_timeout_ms;   ///< 写超时
+        int                         idle_timeout_ms;    ///< 空闲超时
+        int64_t                     max_body;           ///< 响应体上限; 0=不限
+        bool                        body_too_large;     ///< 体超限标记
     };
 }klb_httpclient_conn_t;
 
@@ -82,10 +95,9 @@ static void push_netcode_klb_httpclient_conn(klb_netconn_t* p_conn, int code)
 {
     assert(KLB_NETCODE_OK != code);
 
-    if ((KLB_SOCKET_OK < code && code <= KLB_SOCKET_ERR_MAX) ||
-        KLB_SOCKET_CLOSEING == code)
+    // 断联/超时/协议错/RBUF_FULL 等均须移出 select; 仅 WBUF_EMPTY/CONNECT 保持读写标记
+    if (KLB_NETCODE_WBUF_EMPTY != code && KLB_SOCKET_CONNECT != code)
     {
-        // 关闭 socket 读写
         klb_socket_set_reading(p_conn->p_socket, false);
         klb_socket_set_writing(p_conn->p_socket, false);
     }
@@ -96,19 +108,105 @@ static void push_netcode_klb_httpclient_conn(klb_netconn_t* p_conn, int code)
     }
 }
 
+/// @brief 头字段名是否匹配(大小写不敏感; 后接 ':')
+static bool header_name_eq_klb_httpclient_conn(const char* p, int line_len, const char* name, int name_len)
+{
+    int i = 0;
+
+    if (line_len <= name_len || ':' != p[name_len])
+    {
+        return false;
+    }
+
+    for (i = 0; i < name_len; i++)
+    {
+        char a = p[i];
+        char b = name[i];
+
+        if ('A' <= a && 'Z' >= a)
+        {
+            a = (char)(a - 'A' + 'a');
+        }
+
+        if (a != b)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/// @brief chunked 已解码时改写头: 去掉 Transfer-Encoding, 写 Content-Length=body_len
+static void rewrite_decoded_header_klb_httpclient_conn(klb_httpclient_conn_t* p_httpclient, int body_len)
+{
+    sds old = NULL;
+    sds neu = NULL;
+    const char* p = NULL;
+    const char* end = NULL;
+
+    if (NULL == p_httpclient || NULL == p_httpclient->header)
+    {
+        return;
+    }
+
+    if (0 == (p_httpclient->parser.flags & F_CHUNKED))
+    {
+        return;
+    }
+
+    old = p_httpclient->header;
+    neu = sdsnew("");
+    p = old;
+    end = old + (int)sdslen(old);
+
+    while (p < end)
+    {
+        const char* line_end = p;
+        int line_len = 0;
+
+        while (line_end + 1 < end && !('\r' == line_end[0] && '\n' == line_end[1]))
+        {
+            line_end++;
+        }
+
+        if (line_end + 1 >= end)
+        {
+            break;
+        }
+
+        line_len = (int)(line_end - p);
+        if (0 == line_len)
+        {
+            break;
+        }
+
+        if (header_name_eq_klb_httpclient_conn(p, line_len, "transfer-encoding", 17)
+            || header_name_eq_klb_httpclient_conn(p, line_len, "content-length", 14))
+        {
+            p = line_end + 2;
+            continue;
+        }
+
+        neu = sdscatlen(neu, p, (size_t)(line_len + 2));
+        p = line_end + 2;
+    }
+
+    neu = sdscatfmt(neu, "Content-Length: %i\r\n\r\n", body_len);
+    sdsfree(old);
+    p_httpclient->header = neu;
+}
+
 /// @brief 组装完整HTTP响应, 按 TEXT 包上送
 static void push_pack_klb_httpclient_conn(klb_netconn_t* p_conn)
 {
     klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
 
     int head_len = 0;
-    if (NULL != p_httpclient->header)
-    {
-        head_len = (int)sdslen(p_httpclient->header);
-    }
-
     int body_len = 0;
     klb_buf_t* p_body_part = NULL;
+    int total = 0;
+
     if (NULL != p_httpclient->p_body && 0 < klb_buffer_datalen(p_httpclient->p_body))
     {
         p_body_part = klb_buffer_join(p_httpclient->p_body, NULL, NULL);
@@ -116,7 +214,15 @@ static void push_pack_klb_httpclient_conn(klb_netconn_t* p_conn)
         klb_buffer_reset(p_httpclient->p_body);
     }
 
-    int total = (int)sizeof(klb_mnp_text_t) + head_len + body_len;
+    // chunked 体已由 parser 解码; 头须与解码后长度一致
+    rewrite_decoded_header_klb_httpclient_conn(p_httpclient, body_len);
+
+    if (NULL != p_httpclient->header)
+    {
+        head_len = (int)sdslen(p_httpclient->header);
+    }
+
+    total = (int)sizeof(klb_mnp_text_t) + head_len + body_len;
     klb_buf_t* p_data = klb_buf_malloc(total, false);
 
     klb_mnp_text_t com = { 0 };
@@ -155,10 +261,44 @@ static void on_connected_timeout_klb_httpclient_conn(klb_netconn_t* p_conn, int6
     push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_CONNECT);
 }
 
-/// @brief ticker 定时器消息
+/// @brief ticker 定时器消息: 读/写/idle 超时
 static void on_ticker_klb_httpclient_conn(klb_netconn_t* p_conn, int64_t now)
 {
+    klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
+    bool writing = false;
+    bool reading = false;
 
+    if (NULL == p_socket || KLB_SOCKET_OK != klb_socket_get_status(p_socket))
+    {
+        return;
+    }
+
+    writing = (0 < klb_nlist_size(p_httpclient->p_write_nlist)) || (NULL != p_httpclient->p_file);
+    reading = (NULL != p_httpclient->header)
+        || (NULL != p_httpclient->p_body && 0 < klb_buffer_datalen(p_httpclient->p_body))
+        || (p_httpclient->p_read_buf->start < p_httpclient->p_read_buf->end);
+
+    if (writing && 0 < p_httpclient->write_timeout_ms
+        && (int64_t)p_httpclient->write_timeout_ms <= ABS_SUB(now, p_socket->last_send_tc))
+    {
+        push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_TIMEOUT);
+        return;
+    }
+
+    if (reading && 0 < p_httpclient->read_timeout_ms
+        && (int64_t)p_httpclient->read_timeout_ms <= ABS_SUB(now, p_socket->last_recv_tc))
+    {
+        push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_TIMEOUT);
+        return;
+    }
+
+    if (!writing && !reading && 0 < p_httpclient->idle_timeout_ms
+        && (int64_t)p_httpclient->idle_timeout_ms <= ABS_SUB(now, p_socket->last_recv_tc))
+    {
+        push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_TIMEOUT);
+        return;
+    }
 }
 
 
@@ -174,6 +314,7 @@ static int on_message_begin_klb_httpclient_conn(http_parser* p_parser)
     p_httpclient->header = sdsnew("");
     p_httpclient->status_prefix = false;
     p_httpclient->status_crlf = false;
+    p_httpclient->header_value_open = false;
 
     return 0;
 }
@@ -218,6 +359,12 @@ static int on_header_field_klb_httpclient_conn(http_parser* p_parser, const char
         p_httpclient->header = sdsnew("");
     }
 
+    if (p_httpclient->header_value_open)
+    {
+        p_httpclient->header = sdscat(p_httpclient->header, "\r\n");
+        p_httpclient->header_value_open = false;
+    }
+
     if (!p_httpclient->status_crlf)
     {
         p_httpclient->header = sdscat(p_httpclient->header, "\r\n");
@@ -225,7 +372,6 @@ static int on_header_field_klb_httpclient_conn(http_parser* p_parser, const char
     }
 
     p_httpclient->header = sdscatlen(p_httpclient->header, at, length);
-    p_httpclient->header = sdscat(p_httpclient->header, ": ");
 
     return 0;
 }
@@ -235,8 +381,18 @@ static int on_header_value_klb_httpclient_conn(http_parser* p_parser, const char
     klb_netconn_t* p_conn = (klb_netconn_t*)p_parser->data;
     klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
 
+    if (NULL == p_httpclient->header)
+    {
+        p_httpclient->header = sdsnew("");
+    }
+
+    if (!p_httpclient->header_value_open)
+    {
+        p_httpclient->header = sdscat(p_httpclient->header, ": ");
+        p_httpclient->header_value_open = true;
+    }
+
     p_httpclient->header = sdscatlen(p_httpclient->header, at, length);
-    p_httpclient->header = sdscat(p_httpclient->header, "\r\n");
 
     return 0;
 }
@@ -251,6 +407,12 @@ static int on_headers_complete_klb_httpclient_conn(http_parser* p_parser)
         p_httpclient->header = sdsnew("");
     }
 
+    if (p_httpclient->header_value_open)
+    {
+        p_httpclient->header = sdscat(p_httpclient->header, "\r\n");
+        p_httpclient->header_value_open = false;
+    }
+
     if (!p_httpclient->status_crlf)
     {
         p_httpclient->header = sdscat(p_httpclient->header, "\r\n");
@@ -259,6 +421,14 @@ static int on_headers_complete_klb_httpclient_conn(http_parser* p_parser)
 
     p_httpclient->header = sdscat(p_httpclient->header, "\r\n");
 
+    if (0 < p_httpclient->max_body
+        && 0 < p_parser->content_length
+        && (uint64_t)p_httpclient->max_body < p_parser->content_length)
+    {
+        p_httpclient->body_too_large = true;
+        return -1;
+    }
+
     return 0;
 }
 
@@ -266,6 +436,7 @@ static int on_body_klb_httpclient_conn(http_parser* p_parser, const char* at, si
 {
     klb_netconn_t* p_conn = (klb_netconn_t*)p_parser->data;
     klb_httpclient_conn_t* p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+    int cur = 0;
 
     if (0 >= (int)length)
     {
@@ -275,6 +446,14 @@ static int on_body_klb_httpclient_conn(http_parser* p_parser, const char* at, si
     if (NULL == p_httpclient->p_body)
     {
         p_httpclient->p_body = klb_buffer_create(4096);
+    }
+
+    cur = klb_buffer_datalen(p_httpclient->p_body);
+    if (0 < p_httpclient->max_body
+        && p_httpclient->max_body < (int64_t)cur + (int64_t)length)
+    {
+        p_httpclient->body_too_large = true;
+        return -1;
     }
 
     klb_buffer_write(p_httpclient->p_body, at, (int)length);
@@ -300,6 +479,7 @@ static void reset_msg_klb_httpclient_conn(klb_netconn_t* p_conn)
     p_httpclient->parser_status = KLB_HTTPCLIENT_PARSER;
     p_httpclient->status_prefix = false;
     p_httpclient->status_crlf = false;
+    p_httpclient->body_too_large = false;
 
     KLB_FREE_BY(p_httpclient->header, sdsfree);
     if (NULL != p_httpclient->p_body)
@@ -529,21 +709,25 @@ static int klb_httpclient_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 
         uint8_t* p_data = (uint8_t*)(p_buf->p_buf + p_buf->start);
         int send_num = klb_socket_send(p_socket, p_data, data_len);
+        int judge = 0;
+        int close_status = KLB_SOCKET_DISCONNECT;
 
         if (0 < send_num)
         {
             p_buf->start += send_num;
             write_num += send_num;
+            continue;
         }
-        else if (0 == send_num)
-        {
-            // 无法发送了
-            break;
-        }
-        else
+
+        judge = klb_socket_send_judge(p_socket, send_num, &close_status);
+        if (KLB_SOCKET_SEND_AGAIN == judge)
         {
             break;
         }
+
+        klb_socket_recv_closed(p_socket, close_status);
+        push_netcode_klb_httpclient_conn(p_conn, close_status);
+        return write_num;
     }
 
     // 缓存的数据写完了
@@ -577,7 +761,8 @@ static int do_recv_klb_httpclient_conn(klb_netconn_t* p_conn, int* p_read_num)
         int ret_parse = parser_klb_httpclient_conn(p_conn);
         if (0 != ret_parse)
         {
-            push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_ERR_PROTOCOL);
+            push_netcode_klb_httpclient_conn(p_conn,
+                p_httpclient->body_too_large ? KLB_NETCODE_PROTO_TOO_LARGE : KLB_SOCKET_ERR_PROTOCOL);
             return -1;
         }
 
@@ -590,38 +775,37 @@ static int do_recv_klb_httpclient_conn(klb_netconn_t* p_conn, int* p_read_num)
     }
 
     int recv_len = klb_socket_recv(p_socket, (uint8_t*)(p_buf->p_buf + p_buf->end), idle_len);
-    if (recv_len < 0)
-    {
-        return -1;
-    }
-    else if (0 < recv_len)
+    int judge = 0;
+    int close_status = KLB_SOCKET_DISCONNECT;
+
+    if (0 < recv_len)
     {
         p_buf->end += recv_len;
         *p_read_num += recv_len;
     }
     else
     {
-        if (p_buf->end <= p_buf->start)
+        judge = klb_socket_recv_judge(p_socket, recv_len, &close_status);
+        if (KLB_SOCKET_RECV_AGAIN == judge)
         {
-            return 1; // 无数据可以读
+            return 1;
         }
+        /* EOF/ERROR: parse residual then close after parser below */
     }
 
     int ret_parse = parser_klb_httpclient_conn(p_conn);
     if (0 != ret_parse)
     {
-        push_netcode_klb_httpclient_conn(p_conn, KLB_SOCKET_ERR_PROTOCOL);
+        push_netcode_klb_httpclient_conn(p_conn,
+            p_httpclient->body_too_large ? KLB_NETCODE_PROTO_TOO_LARGE : KLB_SOCKET_ERR_PROTOCOL);
         return -1;
     }
 
-    if (0 == recv_len && p_buf->end <= p_buf->start)
+    if (0 >= recv_len && KLB_SOCKET_RECV_AGAIN != judge)
     {
-        return 1;
-    }
-
-    if (0 == recv_len)
-    {
-        return 1;
+        klb_socket_recv_closed(p_socket, close_status);
+        push_netcode_klb_httpclient_conn(p_conn, close_status);
+        return -1;
     }
 
     return 0;
@@ -762,6 +946,32 @@ bool klb_httpclient_wbuf_is_empty(klb_netconn_t* p_conn)
 }
 
 
+/// @brief 设置读/写/idle 超时(毫秒; 负值钳为 0)
+void klb_httpclient_conn_set_timeout(klb_netconn_t* p_conn, int read_ms, int write_ms, int idle_ms)
+{
+    klb_httpclient_conn_t* p_httpclient = NULL;
+
+    assert(NULL != p_conn);
+    p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+
+    p_httpclient->read_timeout_ms = (0 < read_ms) ? read_ms : 0;
+    p_httpclient->write_timeout_ms = (0 < write_ms) ? write_ms : 0;
+    p_httpclient->idle_timeout_ms = (0 < idle_ms) ? idle_ms : 0;
+}
+
+
+/// @brief 设置响应体上限(字节; 负值钳为 0=不限)
+void klb_httpclient_conn_set_max_body(klb_netconn_t* p_conn, int64_t max_body)
+{
+    klb_httpclient_conn_t* p_httpclient = NULL;
+
+    assert(NULL != p_conn);
+    p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+
+    p_httpclient->max_body = (0 < max_body) ? max_body : 0;
+}
+
+
 /// @brief 发送HTTP请求头 + 本地文件体
 int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, int head_len,
     const char* p_path, int64_t offset, int64_t length)
@@ -771,12 +981,12 @@ int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, 
 
     if (NULL == p_path || 0 == p_path[0] || offset < 0 || length < 0)
     {
-        return 1;
+        return KLB_NETCODE_INVAL;
     }
 
     if (NULL != p_httpclient->p_file)
     {
-        return 1;
+        return KLB_NETCODE_BUSY;
     }
 
     FILE* p_file = NULL;
@@ -785,7 +995,7 @@ int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, 
         p_file = fopen(p_path, "rb");
         if (NULL == p_file)
         {
-            return 1;
+            return KLB_NETCODE_NOENT;
         }
 
         if (0 < offset)
@@ -793,7 +1003,7 @@ int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, 
             if (0 != seek_file_klb_httpclient_conn(p_file, offset))
             {
                 fclose(p_file);
-                return 1;
+                return KLB_NETCODE_IO;
             }
         }
     }
@@ -858,6 +1068,11 @@ static int klb_httpclient_conn_init(klb_netconn_t* p_conn)
     p_httpclient->p_body = NULL;
     p_httpclient->p_file = NULL;
     p_httpclient->file_remain = 0;
+    p_httpclient->read_timeout_ms = 0;
+    p_httpclient->write_timeout_ms = 0;
+    p_httpclient->idle_timeout_ms = 0;
+    p_httpclient->max_body = 0;
+    p_httpclient->body_too_large = false;
 
     return 0;
 }
@@ -886,23 +1101,53 @@ static void klb_httpclient_conn_quit(klb_netconn_t* p_conn)
 /// 连接目标
 
 /// @brief HTTP连接目标
-klb_netconn_t* klb_httpclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port, bool tls)
+klb_netconn_t* klb_httpclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port, bool tls, int* p_code)
 {
+    klb_socket_fd fd = INVALID_SOCKET;
+    klb_socket_t* p_socket = NULL;
+    klb_netconn_t* p_netconn = NULL;
+    int code = 0;
+
+    if (NULL == p_netmulti || NULL == p_host || 0 == p_host[0])
+    {
+        if (NULL != p_code)
+        {
+            *p_code = KLB_NETCODE_INVAL;
+        }
+
+        return NULL;
+    }
+
     // 连接 socket
-    klb_socket_fd fd = klb_socket_connect(p_host, port, 0);
+    fd = klb_socket_connect(p_host, port, 0);
     if (INVALID_SOCKET == fd)
     {
+        code = klb_netcode_last_syserr();
+        if (KLB_NETCODE_IO == code || KLB_NETCODE_ERR == code)
+        {
+            code = KLB_NETCODE_CONNECT_FAIL;
+        }
+
+        if (NULL != p_code)
+        {
+            *p_code = code;
+        }
+
         return NULL;
     }
 
     // 创建 klb_socket_t*; tls 走 mbedtls 封装, 失败不关 fd
-    klb_socket_t* p_socket = NULL;
     if (tls)
     {
         p_socket = klb_socket_async_create_tls(fd);
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
+            if (NULL != p_code)
+            {
+                *p_code = KLB_NETCODE_TLS_HANDSHAKE;
+            }
+
             return NULL;
         }
     }
@@ -912,14 +1157,92 @@ klb_netconn_t* klb_httpclient_connect(klb_netmulti_t* p_netmulti, const char* p_
     }
 
     // 创建 klb_netconn_t*
-    klb_netconn_t* p_netconn = klb_httpclient_conn_create(p_netmulti, p_socket);
+    p_netconn = klb_httpclient_conn_create(p_netmulti, p_socket);
 
     {
         // 放入复用模块
         klb_netmulti_push(p_netmulti, p_netconn);
     }
 
+    if (NULL != p_code)
+    {
+        *p_code = 0;
+    }
+
     return p_netconn;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/// 正向代理隧道
+
+/// @brief 置/清 CONNECT 应答模式
+/// @note 响应解析器无请求行, method 恒为初值; 置 HTTP_CONNECT 令 2xx 应答按无体收尾
+int klb_httpclient_conn_set_connect(klb_netconn_t* p_conn, bool connect)
+{
+    klb_httpclient_conn_t* p_httpclient = NULL;
+
+    if (NULL == p_conn)
+    {
+        return KLB_NETCODE_INVAL;
+    }
+
+    p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+    p_httpclient->parser.method = connect ? HTTP_CONNECT : 0;
+
+    return 0;
+}
+
+
+/// @brief 明文连接就地升级为 TLS
+int klb_httpclient_conn_tls_upgrade(klb_netconn_t* p_conn)
+{
+    klb_httpclient_conn_t* p_httpclient = NULL;
+    klb_socket_t* p_old = NULL;
+    klb_socket_fd fd = INVALID_SOCKET;
+    klb_socket_t* p_socket = NULL;
+
+    if (NULL == p_conn)
+    {
+        return KLB_NETCODE_INVAL;
+    }
+
+    p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
+    p_old = p_conn->p_socket;
+
+    if (NULL == p_old || klb_socket_is_tls(p_old))
+    {
+        return KLB_NETCODE_INVAL;
+    }
+
+    // 读缓存须已空: 隧道后余量为下一协议数据, 无法在此接管
+    if (p_httpclient->p_read_buf->start < p_httpclient->p_read_buf->end)
+    {
+        return KLB_NETCODE_PROTO_UNEXPECTED;
+    }
+
+    // step1. 分离 fd 并销毁明文 socket; fd 已分离故不关闭
+    fd = klb_socket_detach_fd(p_old);
+    klb_socket_destroy(p_old);
+
+    // step2. 同一 fd 换 TLS socket
+    p_socket = klb_socket_async_create_tls(fd);
+    if (NULL == p_socket)
+    {
+        // 失败: 以明文 socket 收回同 fd, 连接仍可正常关闭
+        p_conn->p_socket = klb_socket_async_create(fd);
+        return KLB_NETCODE_TLS_HANDSHAKE;
+    }
+
+    klb_socket_set_connected(p_socket, true);
+    p_conn->p_socket = p_socket;
+
+    // step3. 隧道后为全新协议流: 复位解析器与 method
+    http_parser_init(&p_httpclient->parser, HTTP_RESPONSE);
+    p_httpclient->parser.data = p_conn;
+    p_httpclient->parser_status = KLB_HTTPCLIENT_PARSER;
+
+    return 0;
 }
 
 

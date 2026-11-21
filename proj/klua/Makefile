@@ -73,6 +73,13 @@ MY_TARGET_EXE := $(MY_OUT_DIR)/$(MY_TARGET_NAME)
 # mingw 覆盖编译/链接/产物 (Linux 时无操作)
 include ../../mingw.mk
 
+# 运行时库搜索路径 (Linux): 产物同级 + 安装树 bin 的 ../lib; 免 ldconfig 刷新
+ifeq ($(MY_HOST),mingw)
+MY_RPATH :=
+else
+MY_RPATH := -Wl,-rpath,'$$ORIGIN' -Wl,-rpath,'$$ORIGIN/../lib'
+endif
+
 # 所有编译文件
 MY_FIND_FILES_C = $(wildcard $(dir)/*.c)
 MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
@@ -118,7 +125,7 @@ $(MY_TARGET_SO): $(MY_LIB_A_OBJS)
 $(MY_TARGET_EXE): $(MY_LIB_A_OBJS)
 	$(my_tip)
 	@mkdir -p $(dir $@)
-	$(CXX) -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI)
+	$(CXX) -o $@ $(MY_LIB_A_OBJS) $(MY_A_PARAMS) $(MY_LINK_MINI) $(MY_RPATH)
 
 strip:
 	$(CSTRIP) $(MY_TARGET_EXE)

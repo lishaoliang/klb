@@ -29,4 +29,20 @@ klbrtsp.new_listen = function (cfg)
 end
 
 
+-- @brief 开始监听模块
+-- @param [in]      port[number(int)]	端口
+-- @param [in]      cfg[table]			[可选]监听模块配置
+-- @return [table]	监听模块; 失败为 nil
+-- @return [number]	失败时 klb_netcode_e
+klbrtsp.listen = function (port, cfg)
+	local l = rtsplistener.new(cfg)
+	local ok, code = l:open(port)
+	if not ok then
+		return nil, code
+	end
+
+	return l
+end
+
+
 return klbrtsp

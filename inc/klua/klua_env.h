@@ -3,7 +3,7 @@
 //
 /// @file    klua_env.h
 /// @brief   lua_State简易封装
-/// @version 0.1
+/// @version 0.2
 /// @history 修改历史
 ///  \n 2019 0.1 创建文件
 ///  \n 2025 0.2 注意: 在klua_env_create函数, 不再初始化 lua 环境
@@ -162,16 +162,31 @@ typedef struct klua_msg_t_
 KLB_API void klua_msg_free(klua_msg_t* p_msg);
 
 
+/// @brief 设置是否由 C 侧主循环泵送 loop_once (仅 C; Lua 禁写)
+/// @param [in] *p_env              lua环境
+/// @param [in] has_loop_c          true=C 侧 while 泵送; false=须上层 Lua/kthread 自行泵送
+/// @return 无
+/// @note  由 klb_app_main / kthread 等 C 入口写入; Lua 仅 kenv.has_loop_c() 只读
+KLB_API void klua_env_set_has_loop_c(klua_env_t* p_env, bool has_loop_c);
+
+
+/// @brief 获取是否由 C 侧主循环泵送 loop_once
+/// @param [in] *p_env              lua环境
+/// @return bool true=C 侧泵送; false=须上层自行泵送
+KLB_API bool klua_env_has_loop_c(klua_env_t* p_env);
+
+
 /// @brief 调用一次lua环境; 需要定期调用
 /// @param [in] *p_env              lua环境
-/// @return int 0
+/// @return int 建议剩余休眠毫秒 (loop_sleep - 本轮忙时; 调用方 >0 则 sleep, 否则 floor 1ms)
 KLB_API int klua_env_loop_once(klua_env_t* p_env);
 
 
 /// @brief 设置 loop 函数流程 休眠的最大时间(单位毫秒)
 /// @param [in] *p_env              lua环境
-/// @param [in] sleep_max           单次循环 sleep 休眠最大时间(单位毫秒)
+/// @param [in] sleep_max           单次循环 sleep 休眠最大时间(单位毫秒; <1 钳到 1)
 /// @return void
+/// @note  编译默认: PC=5ms, 嵌入式等=10ms; 可 -DKLUA_ENV_LOOP_SLEEP 或本接口覆盖
 KLB_API void klua_env_set_loop_sleep(klua_env_t* p_env, int sleep_max);
 
 
@@ -191,6 +206,13 @@ KLB_API bool klua_env_is_exit(klua_env_t* p_env);
 /// @param [in] *p_env              lua环境
 /// @return 无
 KLB_API void klua_env_exit(klua_env_t* p_env);
+
+
+/// @brief 安装 SIGTERM 优雅退出处理 (置位后 is_exit / loop_once 视为退出)
+/// @return 无
+/// @note  仅非 Windows; 供 klb_app_main / klua_main 在进入主循环前调用
+/// @note  处理函数会 close(stdin) 以解除阻塞读 (如 alua mcp serve)
+KLB_API void klua_env_install_quit_signal(void);
 
 
 /// @brief 设置名称
@@ -219,8 +241,35 @@ KLB_API const klb_buf_t* klua_env_get_args(klua_env_t* p_env);
 
 /// @brief 放入消息: p_msg 交给
 /// @param [in] *p_env              lua环境
-/// @return sds 名称
-KLB_API void klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg);
+/// @param [in] *p_msg              消息; 成功入队后所有权转入环境
+/// @return bool true.已入队; false.队列或单条大小超限(调用方负责释放)
+KLB_API bool klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg);
+
+
+/// @brief 设置 LPC 队列长度上限 (背压)
+/// @param [in] *p_env              lua环境
+/// @param [in] max                 队列上限; <=0 不限
+/// @return 无
+KLB_API void klua_env_set_lpc_msg_max(klua_env_t* p_env, int max);
+
+
+/// @brief 获取 LPC 队列长度上限
+/// @param [in] *p_env              lua环境
+/// @return int 队列上限; <=0 不限
+KLB_API int klua_env_get_lpc_msg_max(klua_env_t* p_env);
+
+
+/// @brief 设置单条 LPC 消息数据上限 (字节)
+/// @param [in] *p_env              lua环境
+/// @param [in] max                 字节上限; <=0 不限
+/// @return 无
+KLB_API void klua_env_set_lpc_bytes_max(klua_env_t* p_env, int64_t max);
+
+
+/// @brief 获取单条 LPC 消息数据上限
+/// @param [in] *p_env              lua环境
+/// @return int64_t 字节上限; <=0 不限
+KLB_API int64_t klua_env_get_lpc_bytes_max(klua_env_t* p_env);
 
 
 #ifdef __cplusplus

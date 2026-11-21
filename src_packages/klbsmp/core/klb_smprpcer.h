@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klb_smprpcer.h
@@ -37,4 +38,5 @@ const char* klb_smprpcer_to_method_string(klb_mnp_rpc_method_e method);
 #endif
 
 #endif // __KLB_SMPRPCER_H__
-//end
+
+// end

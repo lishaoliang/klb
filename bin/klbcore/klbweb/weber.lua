@@ -10,15 +10,16 @@
 local kco = require("kco")
 local router = require("klbcore.klbweb.router")
 local compile = require("klbcore.klbweb.router.compile")
+local routegroup = require("klbcore.klbweb.router.group")
 local staticer = require("klbcore.klbweb.static")
 local parser = require("klbcore.klbweb.parser")
 local responser = require("klbcore.klbweb.responser")
 local mw = require("klbcore.klbweb.middleware")
-local html = {
-	[404] = require("klbcore.klbweb.html.html404"),
-}
+local html = require("klbcore.klbweb.html")
 local pathex = require("klbcore.util.pathex")
+local stringex = require("klbcore.util.stringex")
 local klbhttp = require("klbcore.klbhttp")
+local ktime = require("ktime")
 local cfger = require("klbcore.klbweb.cfger")
 
 
@@ -26,7 +27,89 @@ local cfger = require("klbcore.klbweb.cfger")
 -- 前置定义
 
 local KLB_SOCKET_CONNECT = 63
-local KLB_NETCODE_WBUF_EMPTY = 70
+local KLB_NETCODE_WBUF_EMPTY = 67536
+
+local klbws_mod = nil
+
+
+local function load_klbws()
+	if nil == klbws_mod then
+		local ok, mod = pcall(require, "klbcore.klbws")
+		if ok then
+			klbws_mod = mod
+		else
+			klbws_mod = false
+		end
+	end
+
+	if klbws_mod then
+		return klbws_mod
+	end
+
+	return nil
+end
+
+
+local function header_token(value, token)
+	value = string.lower(value or "")
+	token = string.lower(token or "")
+	if "" == token then
+		return false
+	end
+
+	for part in string.gmatch(value, "[^,]+") do
+		local item = string.match(part, "^%s*(.-)%s*$") or ""
+		if item == token then
+			return true
+		end
+	end
+
+	return false
+end
+
+
+-- @return kind[string]	"" 非升级; "ok" 可升级; "version" 版本不对; "bad" 其它非法
+local function upgrade_kind(method, ver, headers)
+	if not header_token(headers["connection"], "upgrade") then
+		return ""
+	end
+
+	if "" == (headers["upgrade"] or "") then
+		return ""
+	end
+
+	if not header_token(headers["upgrade"], "websocket") then
+		return "bad"
+	end
+
+	if "GET" ~= method or "HTTP/1.1" ~= ver then
+		return "bad"
+	end
+
+	if "13" ~= (headers["sec-websocket-version"] or "") then
+		return "version"
+	end
+
+	if "" == (headers["sec-websocket-key"] or "") then
+		return "bad"
+	end
+
+	return "ok"
+end
+
+
+local function build_switch(accept, protocol)
+	local head = "HTTP/1.1 101 Switching Protocols\r\n"
+		.. "Upgrade: websocket\r\n"
+		.. "Connection: Upgrade\r\n"
+		.. "Sec-WebSocket-Accept: " .. accept .. "\r\n"
+
+	if "" ~= (protocol or "") then
+		head = head .. "Sec-WebSocket-Protocol: " .. protocol .. "\r\n"
+	end
+
+	return head .. "\r\n"
+end
 
 
 --------------------------------------------------------------------------------------------
@@ -101,6 +184,69 @@ local function max_body_of(app, path)
 end
 
 
+-- @brief C 层硬上限: 取 max_body 与各 path 上限的最大值; 任一项为 0 则不限制
+local function max_body_cap(app)
+	local cap = app._cfg.max_body
+	if nil == cap then
+		cap = cfger.defaults.max_body
+	end
+
+	if 0 == cap then
+		return 0
+	end
+
+	local paths = app._cfg.max_body_paths
+	if "table" == type(paths) then
+		for _, lim in pairs(paths) do
+			if "number" == type(lim) then
+				if 0 == lim then
+					return 0
+				end
+
+				if cap < lim then
+					cap = lim
+				end
+			end
+		end
+	end
+
+	return cap or 0
+end
+
+
+local function apply_conn_limits(app, serve)
+	if not serve then
+		return
+	end
+
+	if serve.set_timeout then
+		local read_ms = app._cfg.read_timeout_ms or 0
+		local write_ms = app._cfg.write_timeout_ms or 0
+		local idle_ms = app._cfg.idle_ms or 0
+		serve:set_timeout(read_ms, write_ms, idle_ms)
+	end
+
+	if serve.set_max_body then
+		serve:set_max_body(max_body_cap(app))
+	end
+end
+
+
+local function fn_nparams(fn)
+	local info = debug.getinfo(fn, "u")
+	if not info then
+		return 0
+	end
+
+	return info.nparams or 0
+end
+
+
+local function is_error_mw(fn)
+	return 4 <= fn_nparams(fn)
+end
+
+
 local function co_recv_until_text(serve)
 	while true do
 		local msg, head, body = serve:co_recv()
@@ -120,9 +266,19 @@ local function co_recv_until_text(serve)
 end
 
 
+-- @brief 直读网络事件; 无 co_recv_net 的会话退回 co_recv
+local function co_recv_net(serve)
+	if serve.co_recv_net then
+		return serve:co_recv_net()
+	end
+
+	return serve:co_recv()
+end
+
+
 local function co_wait_wbuf_empty(serve)
 	while true do
-		local msg, head, body = serve:co_recv()
+		local msg, head, body = co_recv_net(serve)
 		if "error" == msg then
 			local code = tonumber(head) or 0
 			if KLB_NETCODE_WBUF_EMPTY == code then
@@ -149,7 +305,54 @@ local function co_send_part(serve, head, body)
 		return "error", nil, nil
 	end
 
-	return co_wait_wbuf_empty(serve)
+	-- 流水线: 等写缓冲期间可能先收到下一条请求; 栈存后继续等写空
+	while true do
+		local msg, h, b = co_wait_wbuf_empty(serve)
+		if "text" ~= msg then
+			return msg, h, b
+		end
+
+		serve:stash_recv(h, b)
+	end
+end
+
+
+-- @return ws[table|nil]
+-- @return dead[boolean]	true 时已回过 101 或已断开, 不要再写 HTTP
+local function finish_ws(serve, req)
+	local wsmod = load_klbws()
+	if not wsmod then
+		return nil, false
+	end
+
+	local proto = req._ws_protocol or ""
+	if "" ~= proto and not header_token(req.headers["sec-websocket-protocol"], proto) then
+		return nil, false
+	end
+
+	local accept = wsmod.accept_key(req.headers["sec-websocket-key"] or "")
+	if "" == accept then
+		return nil, false
+	end
+
+	if 0 ~= serve:send(build_switch(accept, proto)) then
+		serve:disconnect()
+		return nil, true
+	end
+
+	local msg = co_wait_wbuf_empty(serve)
+	if "ok" ~= msg then
+		serve:disconnect()
+		return nil, true
+	end
+
+	local ws = wsmod.from_http(serve)
+	if not ws then
+		serve:disconnect()
+		return nil, true
+	end
+
+	return ws, true
 end
 
 
@@ -276,20 +479,7 @@ local function make_res(app, serve, keep_alive, omit_body, out)
 			return
 		end
 
-		local msg, h, b = co_wait_wbuf_empty(serve)
-		if "text" == msg then
-			out.alive = true
-			out.pending_head = h
-			out.pending_body = b
-			return
-		end
-
-		if "ok" ~= msg then
-			serve:disconnect()
-			out.alive = false
-			return
-		end
-
+		-- 尾包已由 write 等写空; 此处再等会因空通知已消费而挂住, 导致流水线后续请求无法派发
 		out.alive = true
 	end
 
@@ -332,6 +522,49 @@ local function send_error(app, req, res, code, mime, body)
 end
 
 
+-- @brief 四参错误中间件 `(err, req, res, next)`; 未命中则回落 500
+local function invoke_error_handlers(app, req, res, err, start_idx)
+	if res._sent then
+		return
+	end
+
+	local i = start_idx or 1
+	while i <= #app._stack do
+		local layer = app._stack[i]
+		if "err_mw" == layer.kind and path_prefixed(layer.prefix, req.path or "/") then
+			local proceeded = false
+			local function nxt(next_err)
+				if proceeded or res._sent then
+					return
+				end
+
+				proceeded = true
+				if nil ~= next_err then
+					invoke_error_handlers(app, req, res, next_err, i + 1)
+				end
+			end
+
+			local ok, e2 = pcall(layer.fn, err, req, res, nxt)
+			if not ok then
+				err = e2
+				i = i + 1
+			elseif proceeded then
+				return
+			else
+				return
+			end
+		else
+			i = i + 1
+		end
+	end
+
+	print("middleware error", req.path, err)
+	if not res._sent then
+		send_error(app, req, res, 500, "text/html")
+	end
+end
+
+
 local function apply_extra(res, extra)
 	extra = extra or {}
 	for i = 1, #extra do
@@ -341,13 +574,32 @@ end
 
 
 local function co_run_handler(tag, url_rel, fn, req, res)
-	local ok, err = pcall(fn, req, res)
-	if not ok then
-		print("handler error", tag, url_rel, err)
-		if not res._sent then
-			send_error(req._app, req, res, 500, "text/plain", "handler error")
+	if req._upgrade then
+		local ws, dead = finish_ws(req._serve, req)
+		if not ws then
+			if dead or res._sent then
+				res._sent = true
+				return
+			end
+
+			res._keep_alive = false
+			res:co_status(400, "text/plain", "upgrade failed")
+			return
 		end
 
+		res._sent = true
+		local ok, err = pcall(fn, req, ws)
+		if not ok then
+			print("handler error", tag, url_rel, err)
+			ws:disconnect()
+		end
+
+		return
+	end
+
+	local ok, err = pcall(fn, req, res)
+	if not ok then
+		invoke_error_handlers(req._app, req, res, err, 1)
 		return
 	end
 
@@ -388,11 +640,7 @@ local function co_run_fns(app, tag, url_rel, fns, req, res, idx)
 
 	local ok, err = pcall(fn, req, res, nxt)
 	if not ok then
-		print("middleware error", tag, req.path, err)
-		if not res._sent then
-			send_error(app, req, res, 500, "text/plain", "middleware error")
-		end
-
+		invoke_error_handlers(app, req, res, err, 1)
 		return
 	end
 
@@ -417,7 +665,7 @@ local function match_route_layer(layer, method, path)
 
 		local params = {}
 		for j = 1, #layer.names do
-			params[layer.names[j]] = caps[j] or ""
+			params[layer.names[j]] = stringex.url_decode(caps[j] or "")
 		end
 
 		return layer.fns, params
@@ -486,6 +734,12 @@ local function after_stack(app, req, res, method, url_rel)
 		return
 	end
 
+	if req._upgrade then
+		res._keep_alive = false
+		res:co_status(404, "text/plain", "Not Found")
+		return
+	end
+
 	if "GET" == method or "HEAD" == method then
 		local spa = app._cfg.spa
 		if spa and spa_accepts_html(req.headers) then
@@ -505,7 +759,7 @@ local function after_stack(app, req, res, method, url_rel)
 	local allows = app._router:methods_of(url_rel)
 	if 0 < #allows then
 		res:header("Allow", table.concat(allows, ", "))
-		res:co_status(405, "text/plain", "Method Not Allowed")
+		send_error(app, req, res, 405, "text/html")
 		return
 	end
 
@@ -521,6 +775,11 @@ local function co_run_stack(app, req, res, idx, tag, method, url_rel)
 	local layer = app._stack[idx]
 	if not layer then
 		after_stack(app, req, res, method, url_rel)
+		return
+	end
+
+	if "err_mw" == layer.kind then
+		co_run_stack(app, req, res, idx + 1, tag, method, url_rel)
 		return
 	end
 
@@ -542,11 +801,7 @@ local function co_run_stack(app, req, res, idx, tag, method, url_rel)
 
 		local ok, err = pcall(layer.fn, req, res, nxt)
 		if not ok then
-			print("middleware error", tag, req.path, err)
-			if not res._sent then
-				send_error(app, req, res, 500, "text/plain", "middleware error")
-			end
-
+			invoke_error_handlers(app, req, res, err, idx + 1)
 			return
 		end
 
@@ -565,6 +820,10 @@ local function co_run_stack(app, req, res, idx, tag, method, url_rel)
 		end
 
 		req.params = params or {}
+		if req._upgrade then
+			req._ws_protocol = layer.ws_protocol or ""
+		end
+
 		co_run_fns(app, tag, url_rel, fns, req, res, 1)
 		return
 	end
@@ -624,9 +883,58 @@ local function co_dispatch(app, serve, tag, head, body)
 	end
 
 	local headers = parser.parse_headers(head)
+	local ukind = upgrade_kind(method, ver, headers)
 	local keep_alive = want_keep_alive(app, ver, headers)
+	if "" ~= ukind then
+		keep_alive = false
+	end
+
 	local omit_body = ("HEAD" == method)
 	local res = make_res(app, serve, keep_alive, omit_body, out)
+
+	if "" ~= ukind then
+		if "ok" ~= ukind then
+			local code = 400
+			if "version" == ukind then
+				code = 426
+			end
+
+			res:co_status(code, "text/plain", "upgrade rejected")
+			return out
+		end
+
+		local req = {
+			method = method,
+			path = url_rel,
+			query_string = qs or "",
+			query = parser.parse_query(qs),
+			headers = headers,
+			params = {},
+			json = {},
+			json_error = "",
+			form = {},
+			files = {},
+			cookies = parser.parse_cookies(headers),
+			head = head or "",
+			body = "",
+			tls = ("https" == tag),
+			peer = (serve and serve.peer and serve:peer()) or "",
+			auth_user = "",
+			token = "",
+			session = {},
+			session_id = "",
+			request_id = "",
+			csrf_token = "",
+			_app = app,
+			_upgrade = true,
+			_serve = serve,
+			_ws_protocol = "",
+		}
+
+		co_run_stack(app, req, res, 1, tag, "WS", url_rel)
+		out.alive = false
+		return out
+	end
 
 	local limit = max_body_of(app, url_rel)
 	local cl = tonumber(headers["content-length"] or "") or 0
@@ -650,6 +958,7 @@ local function co_dispatch(app, serve, tag, head, body)
 		head = head or "",
 		body = body or "",
 		tls = ("https" == tag),
+		peer = (serve and serve.peer and serve:peer()) or "",
 		auth_user = "",
 		token = "",
 		session = {},
@@ -732,6 +1041,111 @@ local function co_serve_conn(app, serve, tag)
 end
 
 
+--------------------------------------------------------------------------------------------
+-- 连接闸门 (恶意连接; 只断连, 不回 HTTP)
+
+-- 缺省: 同 IP 10 秒内 accept 超 600 次则短 ban 10 秒; cfg.conn_gate=false 关闭
+local GATE_WIN_MS = 10000
+local GATE_MAX = 600
+local GATE_BAN_MS = 10000
+local GATE_MAX_BUCKETS = 1024
+
+
+-- @brief 读取闸门配置; false 关闭, 缺省用上方常量
+local function gate_conf(app)
+	local g = app and app._cfg and app._cfg.conn_gate
+	if false == g then
+		return nil
+	end
+
+	if "table" == type(g) then
+		return {
+			win = tonumber(g.window_ms) or GATE_WIN_MS,
+			max = tonumber(g.max) or GATE_MAX,
+			ban = tonumber(g.ban_ms) or GATE_BAN_MS,
+		}
+	end
+
+	return { win = GATE_WIN_MS, max = GATE_MAX, ban = GATE_BAN_MS }
+end
+
+
+-- @brief 从 peer ("ip:port") 取 IP
+local function conn_ip(serve)
+	local peer = (serve and serve.peer and serve:peer()) or ""
+	if "string" ~= type(peer) or "" == peer then
+		return ""
+	end
+
+	local ip = string.match(peer, "^(.*):%d+$")
+	return ip or peer
+end
+
+
+local gate_buckets = {}
+local gate_bans = {}
+
+
+-- @brief 桶过多时清扫过期项
+local function gate_sweep(win, now)
+	local n = 0
+	for _ in pairs(gate_buckets) do
+		n = n + 1
+	end
+
+	if GATE_MAX_BUCKETS >= n then
+		return
+	end
+
+	for ip, b in pairs(gate_buckets) do
+		if b.start_ms + win <= now then
+			gate_buckets[ip] = nil
+		end
+	end
+end
+
+
+-- @brief 连接准入; 超限或 ban 中为 false
+local function gate_admit(app, serve)
+	local conf = gate_conf(app)
+	if nil == conf then
+		return true
+	end
+
+	local ip = conn_ip(serve)
+	if "" == ip then
+		return true
+	end
+
+	local now = ktime.tick_count()
+	local unban = gate_bans[ip]
+	if nil ~= unban then
+		if now < unban then
+			return false
+		end
+
+		gate_bans[ip] = nil
+	end
+
+	gate_sweep(conf.win, now)
+
+	local b = gate_buckets[ip]
+	if nil == b or b.start_ms + conf.win <= now then
+		b = { start_ms = now, n = 0 }
+		gate_buckets[ip] = b
+	end
+
+	b.n = b.n + 1
+	if conf.max < b.n then
+		gate_bans[ip] = now + conf.ban
+		gate_buckets[ip] = nil
+		return false
+	end
+
+	return true
+end
+
+
 local function co_accept_loop(app, listener)
 	while true do
 		local serve = listener:co_accept()
@@ -739,9 +1153,14 @@ local function co_accept_loop(app, listener)
 			break
 		end
 
-		kco.fork(function ()
-			co_serve_conn(app, serve, conn_tag(serve))
-		end)
+		if not gate_admit(app, serve) then
+			serve:disconnect()
+		else
+			apply_conn_limits(app, serve)
+			kco.fork(function ()
+				co_serve_conn(app, serve, conn_tag(serve))
+			end)
+		end
 	end
 end
 
@@ -777,6 +1196,18 @@ local function collect_builtin_mw(obj, cfg)
 		list[#list + 1] = {
 			prefix = "/",
 			fn = mw.log({ write = write }),
+		}
+	end
+
+	if cfg.https then
+		local hopt = cfg.https
+		if true == hopt or "table" ~= type(hopt) then
+			hopt = {}
+		end
+
+		list[#list + 1] = {
+			prefix = "/",
+			fn = mw.https(hopt),
 		}
 	end
 
@@ -918,6 +1349,11 @@ end
 
 
 local function listen_has_port(obj, port)
+	-- port=0 为临时口, 不按请求值去重
+	if 0 == port then
+		return false
+	end
+
 	for i = 1, #obj._listeners do
 		if obj._listeners[i].port == port then
 			return true
@@ -944,15 +1380,7 @@ local function bind_listen_specs(obj)
 	for i = 1, #specs do
 		local spec = specs[i]
 		if spec and not listen_has_port(obj, spec.port) then
-			local lcfg = nil
-			if spec.tls or spec.plain or spec.cert or spec.key then
-				lcfg = {
-					tls = spec.tls,
-					plain = spec.plain,
-					cert = spec.cert,
-					key = spec.key,
-				}
-			end
+			local lcfg = cfger.listen_only(spec)
 
 			if not obj:listen(spec.port, lcfg) then
 				ok = false
@@ -1058,15 +1486,60 @@ function W:options(path, ...)
 end
 
 
+-- @brief 注册 WebSocket 路由
+-- @param [in]      path[string]		URL 路径
+-- @param [in]      ...[function|table]	路由级 mw..., 可选 `{ protocol = "..." }`, 末项 `fn(req, ws)`
+-- @return ok[boolean]					true 成功; 参数非法为 false
+-- @note 只匹配 Upgrade 握手. 未命中回纯文本 404 并关闭. 明文且装了 https 跳转时拒绝
+function W:ws(path, ...)
+	local n = select("#", ...)
+	local opts = nil
+	local fns = {}
+
+	for i = 1, n do
+		local item = select(i, ...)
+		if "table" == type(item) and nil == opts then
+			opts = item
+		else
+			fns[#fns + 1] = item
+		end
+	end
+
+	if 0 == #fns then
+		return false
+	end
+
+	if not self:route("WS", path, table.unpack(fns)) then
+		return false
+	end
+
+	local proto = ""
+	if opts and "string" == type(opts.protocol) then
+		proto = opts.protocol
+	end
+
+	path = compile.normalize_path(path)
+	for i = 1, #self._stack do
+		local layer = self._stack[i]
+		if "route" == layer.kind and "WS" == layer.method and layer.path == path then
+			layer.ws_protocol = proto
+		end
+	end
+
+	return true
+end
+
+
 -- @brief 注册中间件
 -- @param [in]      path_or_fn[string|function]		前缀或处理函数
 -- @param [in]      fn[function]					[可选] 前缀形式时的处理函数
 -- @return ok[boolean]								true 成功; 参数非法为 false
--- @note `fn(req, res, next)`; 不调用 next 且未发送则 204; 与 :get/:static 按注册序
+-- @note 三参 `fn(req, res, next)` 为普通中间件; 四参 `fn(err, req, res, next)` 为错误中间件
+--       不调用 next 且未发送则 204; 与 :get/:static 按注册序
 function W:use(path_or_fn, fn)
 	if "function" == type(path_or_fn) then
 		self._stack[#self._stack + 1] = {
-			kind = "mw",
+			kind = is_error_mw(path_or_fn) and "err_mw" or "mw",
 			prefix = "/",
 			fn = path_or_fn,
 		}
@@ -1079,7 +1552,7 @@ function W:use(path_or_fn, fn)
 		end
 
 		self._stack[#self._stack + 1] = {
-			kind = "mw",
+			kind = is_error_mw(fn) and "err_mw" or "mw",
 			prefix = normalize_mw_prefix(path_or_fn),
 			fn = fn,
 		}
@@ -1087,6 +1560,16 @@ function W:use(path_or_fn, fn)
 	end
 
 	return false
+end
+
+
+-- @brief 打开路由组
+-- @param [in]      prefix[string]		URL 前缀; 静态路径, 不含 `:name` / `*`
+-- @return group[table]					组对象; 前缀非法为 false
+-- @note 组内 path 相对前缀, 登记进本站点同一栈. 不 listen, 未命中不产生 404
+--   \n eg. `local api = app:group("/api"); api:get("/v1/:id", fn)` 对外 `/api/v1/:id`
+function W:group(prefix)
+	return routegroup.new(self, prefix)
 end
 
 
@@ -1116,7 +1599,7 @@ end
 -- @brief 汇总站点配置; 可多次; 后写字段覆盖
 -- @param [in]      cfg[table]			[可选] 站点配置; 字段见 cfger.new
 -- @return ok[boolean]					true 成功; 服务中未 stop 或参数非法为 false
--- @note 省略的键不变. cors/log/session/request_id/csrf/healthz 在 serve 时按汇总结果安装; stop 后再 serve 会重装.
+-- @note 省略的键不变. cors/https/log/session/request_id/csrf/healthz 在 serve 时按汇总结果安装; stop 后再 serve 会重装.
 --   \n `listen` 只记规格, 不 bind; serve 时再开端口. 未设且未 :listen 时默认 8000 HTTP.
 function W:setup(cfg)
 	-- cfg.listen = 8000
@@ -1156,55 +1639,111 @@ end
 -- @brief 修改已生效的站点配置
 -- @param [in]      patch[table]		要覆盖的字段; 省略的键不变
 -- @return ok[boolean]					true 成功; 参数非法为 false
--- @note 立即影响后续请求读 `_cfg` 的项. cors/log/session/request_id/csrf/healthz/静态 listing 不重装.
+-- @note 立即影响后续请求读 `_cfg` 的项. cors/https/log/session/request_id/csrf/healthz/静态 listing 不重装.
 function W:apply_cfg(patch)
 	if "table" ~= type(patch) then
 		return false
 	end
 
-	cfger.apply(self._cfg, patch)
+	local _, ok = cfger.apply(self._cfg, patch)
+	if false == ok then
+		return false
+	end
+
 	return true
 end
 
 
 -- @brief 打开监听端口
--- @param [in]      port[number(int)]	端口
+-- @param [in]      port[number(int)]	端口; `0` 为内核分配临时口
 -- @param [in]      cfg[table]			[可选] 监听配置; 见内联 opts 注释
 -- @return ok[boolean]					true 成功; 失败为 false
+-- @return code[number|nil]				失败时下层 klb_netcode_e (若有)
 -- @note 内部使用 klbhttp.listen; 同端口 HTTP+HTTPS 一次调用 (`tls` + `plain`)
---   \n 不同端口可多次; 同一 port 已 bind 则失败
+--   \n 不同端口可多次; 同一 port 已 bind 则失败 (`port=0` 不去重)
 --   \n 只 bind, 不启动 accept 循环; 须再调用 :serve
 --   \n cert/key 可为 PEM 原文或文件路径, 由 klbhttp 解析
---   \n 只把 tls/plain/cert/key 传给 klbhttp; 站点字段见 new/setup
+--   \n bind/socket 字段透传 klbhttp: host/family/max_connect/reuseport/nodelay/keepalive
 function W:listen(port, cfg)
 	-- cfg = {
 	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
 	--   plain[boolean]			[可选] tls 时是否同时收明文 HTTP, 默认 `false`
 	--   cert[string]			tls 时必填, 证书 PEM 原文或文件路径
 	--   key[string]			tls 时必填, 私钥 PEM 原文或文件路径
+	--   host[string]			[可选] 绑定地址; 缺省 INADDR_ANY
+	--   family[string]			[可选] "ipv4"|"ipv6"|"dual"
+	--   max_connect[number]	[可选] backlog
+	--   reuseport[boolean]		[可选]
+	--   nodelay[boolean]		[可选]
+	--   keepalive[boolean]		[可选]
 	-- }
-	if "number" ~= type(port) or port < 1 or 65535 < port then
+	if "number" ~= type(port) or port < 0 or 65535 < port then
+		self._last_code = nil
 		return false
 	end
 
 	if listen_has_port(self, port) then
+		self._last_code = nil
 		return false
 	end
 
-	local listener = klbhttp.listen(port, cfger.listen_only(cfg))
+	local listener, code = klbhttp.listen(port, cfger.listen_only(cfg))
 	if not listener then
-		return false
+		self._last_code = code
+		return false, code
 	end
 
 	apply_site(self)
 
+	local real_port = port
+	if listener.port then
+		real_port = listener:port() or port
+	end
+
 	self._listeners[#self._listeners + 1] = {
 		listener = listener,
-		port = port,
+		port = real_port,
 		forked = false,
 	}
 
+	self._last_code = 0
 	return true
+end
+
+
+-- @brief 回读首个 listener 的本地地址
+-- @return ip[string|nil], port[number|nil]
+function W:local_addr()
+	local slot = self._listeners[1]
+	if not slot or not slot.listener or not slot.listener.local_addr then
+		return nil, nil
+	end
+
+	return slot.listener:local_addr()
+end
+
+
+-- @brief 回读首个 listener 的真实端口 (含 port=0)
+-- @return port[number]
+function W:port()
+	local slot = self._listeners[1]
+	if not slot or not slot.listener or not slot.listener.port then
+		return 0
+	end
+
+	return slot.listener:port()
+end
+
+
+-- @brief 首个 listener 的 native fd
+-- @return fd[number|nil]
+function W:native_fd()
+	local slot = self._listeners[1]
+	if not slot or not slot.listener or not slot.listener.native_fd then
+		return nil
+	end
+
+	return slot.listener:native_fd()
 end
 
 
@@ -1229,9 +1768,71 @@ function W:serve()
 end
 
 
+-- @brief 热换全部 listener 的 TLS 证书 (PEM 原文)
+-- @param [in]      cfg[table]			须含 cert / key (PEM 字符串)
+-- @return ok[boolean]
+-- @note 依赖 klbhttp listen:reload_tls; 无 TLS 的 listener 跳过
+function W:reload_tls(cfg)
+	if "table" ~= type(cfg) then
+		return false
+	end
+
+	if "string" ~= type(cfg.cert) or "" == cfg.cert then
+		return false
+	end
+
+	if "string" ~= type(cfg.key) or "" == cfg.key then
+		return false
+	end
+
+	local any = false
+	for i = 1, #self._listeners do
+		local slot = self._listeners[i]
+		local l = slot and slot.listener
+		if l and "function" == type(l.reload_tls) then
+			any = true
+			if not l:reload_tls({ cert = cfg.cert, key = cfg.key }) then
+				return false
+			end
+		end
+	end
+
+	return any
+end
+
+
+-- @brief 处理一条外部已建立的 HTTP 服务连接 (不 bind)
+-- @param [in]      serve[table]		klbhttp/httpserver 会话 (须 :co_recv/:send; 静态/文件路径另须 :send_file/:disconnect[/tls])
+-- @return ok[boolean]					true 已 fork 处理; serve 非法为 false
+-- @note 须在 kco 可用的 env 内调用; 用于 klblisten / klisten 单端口分发后的 HTTP 投递
+--   \n 会 apply_site; 与 :serve 自管 listen 可并存 (不同来源的连接)
+--   \n 仅实现 :co_recv/:send 的薄对象不可走静态/文件响应路径
+function W:handle(serve)
+	if not serve then
+		return false
+	end
+
+	apply_site(self)
+
+	if not gate_admit(self, serve) then
+		if serve.disconnect then
+			serve:disconnect()
+		end
+
+		return false
+	end
+
+	kco.fork(function()
+		co_serve_conn(self, serve, conn_tag(serve))
+	end)
+
+	return true
+end
+
+
 -- @brief 停止对外服务; 关全部监听, 许可再 setup / serve
 -- @return ok[boolean]					true
--- @note 保留路由 / 静态 / 汇总 cfg 与 listen 规格. cors/log/session/request_id/csrf/healthz 在下次 serve 时按当时汇总重装.
+-- @note 保留路由 / 静态 / 汇总 cfg 与 listen 规格. cors/https/log/session/request_id/csrf/healthz 在下次 serve 时按当时汇总重装.
 function W:stop()
 	for i = 1, #self._listeners do
 		local slot = self._listeners[i]
@@ -1255,7 +1856,7 @@ local weber = {}
 -- @brief 新建一个站点对象
 -- @param [in]      cfg[table]			[可选] 初始站点配置; 字段见 cfger.new
 -- @return [table]	站点对象
--- @note 可用 :setup 继续汇总; cors/log/session/request_id/csrf/healthz 在 serve 时安装, stop 后再 serve 会重装
+-- @note 可用 :setup 继续汇总; cors/https/log/session/request_id/csrf/healthz 在 serve 时安装, stop 后再 serve 会重装
 --   \n cfg.listen 只记规格; 未设则 serve 默认 8000 HTTP
 weber.new = function (cfg)
 	cfg = cfg or {}

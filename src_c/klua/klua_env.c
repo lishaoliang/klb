@@ -13,10 +13,13 @@
 #include "klbplatform/klb_atomic.h"
 #include "klua/extension/klua_extension.h"
 #include "klua/extension/klua_ex_lpc.h"
-#include "klua/klua_util/klua_kobject.h"
 #include "klua/extension/klua_ex_coroutine.h"
 #include "lstate.h"
 #include <assert.h>
+#include <signal.h>
+#if !defined(_WIN32)
+#include <unistd.h>
+#endif
 
 
 #if 0
@@ -26,9 +29,40 @@
 // Lua GC 运行的时间(单位毫秒)
 #define KLUA_ENV_GC_TIME_OUT    30000   ///< 30 * 1000 = 30秒
 
+// LPC 消息背压默认值
+#define KLUA_ENV_LPC_MSG_MAX    4096                        ///< 队列默认上限条数
+#define KLUA_ENV_LPC_BYTES_MAX  ((int64_t)8 * 1024 * 1024)  ///< 单条消息默认上限 8MiB
+
 
 // Lua loop 函数流程 休眠的最大时间(单位毫秒)
-#define KLUA_ENV_LOOP_SLEEP     10
+// 可用编译期 -DKLUA_ENV_LOOP_SLEEP=N 覆盖; 运行期 kenv.set_loop_sleep 再覆盖
+#ifndef KLUA_ENV_LOOP_SLEEP
+#if defined(_WIN32) || defined(__APPLE__) \
+    || defined(__x86_64__) || defined(_M_X64) \
+    || defined(__i386__) || defined(_M_IX86) \
+    || defined(__amd64__)
+#define KLUA_ENV_LOOP_SLEEP     5       ///< PC (Win/macOS/x86): 默认 5ms (降低空转 CPU; 需低延迟时调 1ms)
+#else
+#define KLUA_ENV_LOOP_SLEEP     10      ///< 嵌入式等非 PC 架构: 默认 10ms (可调 1ms)
+#endif
+#endif
+
+
+// SIGTERM 优雅退出标志: 信号处理只置位, 由 is_exit / loop_once 侧转成环境退出
+static volatile sig_atomic_t g_sig_quit = 0;
+
+
+static void on_quit_klua_env(int sig)
+{
+    (void)sig;
+
+    g_sig_quit = 1;
+
+#if !defined(_WIN32)
+    // 解除可能阻塞于 stdin 的读 (mcp serve / stdio); close 为 async-signal-safe
+    (void)close(STDIN_FILENO);
+#endif
+}
 
 
 /// @struct klua_env_extension_activate_t
@@ -53,6 +87,9 @@ typedef struct klua_env_t_
 
         klb_nlist_t*     p_lpc_msg_list; ///< LPC 消息列表
         klb_nlist_t*     p_msg_list;     ///< 待处理消息列表
+
+        int              lpc_msg_max;    ///< LPC 队列长度上限; <=0 不限
+        int64_t          lpc_bytes_max;  ///< 单条 LPC 消息字节上限; <=0 不限
     };
 
     // Lua环境
@@ -87,6 +124,7 @@ typedef struct klua_env_t_
         int64_t         gc_interval;    ///< gc间隔
 
         int             loop_sleep;     ///< loop函数休眠最大时间
+        bool            has_loop_c;     ///< 是否C语言循环处理 (C 写入; Lua 只读)
     };
 
     // 外部指针等
@@ -113,6 +151,9 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
 
     p_env->p_lpc_msg_list = klb_nlist_create();
     p_env->p_msg_list = klb_nlist_create();
+
+    p_env->lpc_msg_max = KLUA_ENV_LPC_MSG_MAX;
+    p_env->lpc_bytes_max = KLUA_ENV_LPC_BYTES_MAX;
     
     p_env->is_exit = false;
 
@@ -122,6 +163,7 @@ klua_env_t* klua_env_create(lua_CFunction cb_pre_load)
     p_env->gc_tc = p_env->tc;
 
     p_env->loop_sleep = KLUA_ENV_LOOP_SLEEP;
+    p_env->has_loop_c = false;
 
     p_env->L = luaL_newstate(); // Lua运行环境
     p_env->cb_pre_load = cb_pre_load;
@@ -432,9 +474,6 @@ static int klua_pmain(lua_State *L)
     //klua_loadlib(L, klua_open_ktime, "ktime");
     //klua_loadlib(L, klua_open_kthread, "kthread");
 
-    // object
-    createmeta_kobject_handle(L);
-
     // 加载自定义库
     if (cb_pre_load) { cb_pre_load(L); }
 
@@ -509,6 +548,7 @@ void klua_msg_free(klua_msg_t* p_msg)
     case KLUA_LPC_POST:
     case KLUA_LPC_REQUEST:
     case KLUA_LPC_RESPONSE:
+    case KLUA_LPC_NOTIFY:
         {
             KLB_FREE(p_msg->p_data);
         }
@@ -640,6 +680,13 @@ static void klua_env_get_msg(klua_env_t* p_env)
 int klua_env_loop_once(klua_env_t* p_env)
 {
     assert(NULL != p_env);
+
+    // step0. SIGTERM: 置环境退出, 主循环下一轮收尾
+    if (0 != g_sig_quit)
+    {
+        p_env->is_exit = true;
+    }
+
     int64_t now = klb_tick_counti64();
 
     // 获取消息
@@ -693,6 +740,12 @@ int klua_env_loop_once(klua_env_t* p_env)
 
 void klua_env_set_loop_sleep(klua_env_t* p_env, int sleep_max)
 {
+    // 下限 1ms: 与 klb_app_main / kthread 在 sleep<=0 时的 floor 一致
+    if (sleep_max < 1)
+    {
+        sleep_max = 1;
+    }
+
     p_env->loop_sleep = sleep_max;
 }
 
@@ -701,14 +754,40 @@ int klua_env_get_loop_sleep(klua_env_t* p_env)
     return p_env->loop_sleep;
 }
 
+void klua_env_set_has_loop_c(klua_env_t* p_env, bool has_loop_c)
+{
+    p_env->has_loop_c = has_loop_c;
+}
+
+bool klua_env_has_loop_c(klua_env_t* p_env)
+{
+    return p_env->has_loop_c;
+}
+
 bool klua_env_is_exit(klua_env_t* p_env)
 {
+    // SIGTERM 后立即反映为退出 (脚本侧 while not kenv.is_exit 得以收尾)
+    if (0 != g_sig_quit)
+    {
+        p_env->is_exit = true;
+    }
+
     return p_env->is_exit;
 }
 
 void klua_env_exit(klua_env_t* p_env)
 {
     p_env->is_exit = true;
+}
+
+/// @brief 安装 SIGTERM 优雅退出处理
+/// @return 无
+/// @note  仅非 Windows; 置位后 is_exit / loop_once 视为退出
+void klua_env_install_quit_signal(void)
+{
+#if !defined(_WIN32)
+    signal(SIGTERM, on_quit_klua_env);
+#endif
 }
 
 /// @brief 设置名称
@@ -757,11 +836,56 @@ const klb_buf_t* klua_env_get_args(klua_env_t* p_env)
     return p_env->p_arg;
 }
 
-void klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg)
+bool klua_env_push_lpc_msg(klua_env_t* p_env, klua_msg_t* p_msg)
 {
+    bool ok = true;
+
     klb_atomic_lock(&p_env->lpc_msg_lock);
-    klb_nlist_push_tail(p_env->p_lpc_msg_list, p_msg);
+
+    if (0 < p_env->lpc_msg_max && p_env->lpc_msg_max <= klb_nlist_size(p_env->p_lpc_msg_list))
+    {
+        ok = false;
+    }
+    else if (0 < p_env->lpc_bytes_max && NULL != p_msg->p_data && p_env->lpc_bytes_max < (int64_t)p_msg->p_data->end)
+    {
+        ok = false;
+    }
+    else
+    {
+        klb_nlist_push_tail(p_env->p_lpc_msg_list, p_msg);
+    }
+
     klb_atomic_unlock(&p_env->lpc_msg_lock);
 
+    if (!ok)
+    {
+        return false;
+    }
+
     klb_atomic_set_value(&p_env->is_get_lpc_msg, 1);
+    return true;
+}
+
+
+void klua_env_set_lpc_msg_max(klua_env_t* p_env, int max)
+{
+    p_env->lpc_msg_max = max;
+}
+
+
+int klua_env_get_lpc_msg_max(klua_env_t* p_env)
+{
+    return p_env->lpc_msg_max;
+}
+
+
+void klua_env_set_lpc_bytes_max(klua_env_t* p_env, int64_t max)
+{
+    p_env->lpc_bytes_max = max;
+}
+
+
+int64_t klua_env_get_lpc_bytes_max(klua_env_t* p_env)
+{
+    return p_env->lpc_bytes_max;
 }

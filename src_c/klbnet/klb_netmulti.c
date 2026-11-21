@@ -63,4 +63,21 @@ int klb_netmulti_loop_once(klb_netmulti_t* p_multi, int64_t now)
     return p_multi->ops.loop_once(p_multi, now);
 }
 
+
+static klb_netmulti_ws_adopt_fn s_ws_adopt_klb_netmulti = NULL;
+
+
+/// @brief 注册 WS 接管
+void klb_netmulti_set_ws_adopt(klb_netmulti_ws_adopt_fn fn)
+{
+    s_ws_adopt_klb_netmulti = fn;
+}
+
+
+/// @brief 取得 WS 接管
+klb_netmulti_ws_adopt_fn klb_netmulti_get_ws_adopt(void)
+{
+    return s_ws_adopt_klb_netmulti;
+}
+
 //end

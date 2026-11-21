@@ -203,6 +203,73 @@ typedef struct klb_mnp_rpcex_t_
 
 
 //////////////////////////////////////////////////////////////////////////
+// OPTIONS 协议探测/查询/交换密钥等
+
+
+/// @struct klb_mnp_options_t
+///   包格式: [klb_mnp_options_t] + [数据头] + [数据体]
+///   
+typedef struct klb_mnp_options_t_
+{
+    uint32_t    size : 27;          ///< 完整数据长度(data size, 包含本结构体); max=2^27=128M
+    uint32_t    options_type : 5;   ///< OPT类型
+
+    uint32_t    sequence : 20;      ///< 序号
+    uint32_t    encode : 3;         ///< 编码方式(klb_mnp_encode_e)
+    uint32_t    rsv2 : 9;           ///< 
+
+    uint32_t    head_size : 22;     ///< 数据头部长度(max=2^22=4M): 正式数据body长度 = size - head_size - sizeof(klb_mnp_options_t)
+    uint32_t    rsv3 : 10;
+    // - 4 + 4 + 4 = 12 字节
+}klb_mnp_options_t;
+
+/// @enum klb_mnp_options_type_e
+///     klb_mnp_options_t.options_type
+typedef enum klb_mnp_options_type_e_
+{
+    KLB_MNP_OPTIONS_NULL        = 0,
+
+    /// 固定密钥(PSK), 无握手; 给出方案 + 密钥材料; 须单帧 FULL 且整帧 <32K; 无需回应
+    /// \n 不必须首帧; 发送/接收分方向各一套状态; 默认 CRYPTO_NULL; 仅 NULL->加密或更换, 不可回 NULL
+    /// \n 本包校验失败则对端维持原 crypto 状态
+    KLB_MNP_OPTIONS_CRYPTO_PSK  = 0x10,
+
+    KLB_MNP_OPTIONS_MAX         = 0x1F,     ///< 保留, 勿使用; MAX = 2^5 = 32
+}klb_mnp_options_type_e;
+
+
+/// @struct klb_mnp_crypto_t
+/// @brief  CRYPTO_PSK 数据头; 后接密钥材料(长度 = options.size - head_size - sizeof(options_t))
+/// @note   本 OPTIONS 须单帧完成; MNP: opt=FULL 且整帧<=32K; encode 须为 NULL
+/// \n      body 布局由 format 约定(XOR 为纯密钥; AES/ChaCha 等可为 key[+iv/nonce])
+/// \n      同连接可更换 format, 或同 format 下更换密钥内容与 key_size
+typedef struct klb_mnp_crypto_t_
+{
+    uint32_t    format;     ///< klb_mnp_crypto_e; eg. XOR / AES_CTR
+    uint32_t    key_size;   ///< 密钥材料字节数; 须与 body 实际长度一致
+}klb_mnp_crypto_t;
+
+
+/// @enum klb_mnp_crypto_e
+/// @brief  帧内固定加码方案(CRYPTO_PSK.format); 连接每方向至多一种生效
+/// @note   合法方案取值高字节为 0x10(与 OPTIONS_CRYPTO_PSK 呼应); 低 3 字节无规律且互不冲突; NULL=0 为无加码
+/// \n      受控: TEXT/BINARY/MEDIA/RPC_*/USER_* 子头之后; 不受控: PING/PONG/OPTIONS(永不加解密)
+/// \n      实现次序建议: XOR -> AES_CTR -> 其余按下列定义序
+typedef enum klb_mnp_crypto_e_
+{
+    KLB_MNP_CRYPTO_NULL     = 0,            ///< 无加码(默认)
+
+    // KLB_MNP_OPTIONS_CRYPTO_PSK
+    KLB_MNP_CRYPTO_XOR      = 0x10DE5865,   ///< 循环异或(先试装)
+    KLB_MNP_CRYPTO_AES_CTR  = 0x10A7C203,   ///< AES-CTR(次之)
+    KLB_MNP_CRYPTO_AES_OFB  = 0x10B4E91A,   ///< AES-OFB
+    KLB_MNP_CRYPTO_AES_ECB  = 0x10C62F8D,   ///< AES-ECB(不推荐新设计)
+    KLB_MNP_CRYPTO_CHACHA20 = 0x10D19B47,   ///< ChaCha20
+    KLB_MNP_CRYPTO_AES_CBC  = 0x10E83A5C,   ///< AES-CBC
+}klb_mnp_crypto_e;
+
+
+//////////////////////////////////////////////////////////////////////////
 // 用户自定义扩展 [KLB_MNP_PACKTYPE_USER_B, KLB_MNP_PACKTYPE_USER_E]
 // 用于扩展私有数据包
 
@@ -368,4 +435,5 @@ typedef struct klb_mnp_audio_t_
 #endif
 
 #endif // __KLB_MNP_H__
-//end
+
+// end

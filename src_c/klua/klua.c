@@ -15,8 +15,38 @@
 #if !defined(__KLB_NO_RTSP__)
 #include "klbrtsp/klbrtsp.h"
 #endif
+#if !defined(__KLB_NO_ONVIF__)
+#include "klbonvif/klbonvif.h"
+#endif
 #if !defined(__KLB_NO_MNP__)
 #include "klbmnp/klbmnp.h"
+#endif
+#if !defined(__KLB_NO_MP4__)
+#include "klbmp4/klbmp4.h"
+#endif
+#if !defined(__KLB_NO_TAR__)
+#include "klbtar/klbtar.h"
+#endif
+#if !defined(__KLB_NO_SOCKS5__)
+#include "klbsocks5/klbsocks5.h"
+#endif
+#if !defined(__KLB_NO_TUNNEL__)
+#include "klbtunnel/klbtunnel.h"
+#endif
+#if !defined(__KLB_NO_STORE__)
+#include "klbstore/klbstore.h"
+#endif
+#if !defined(__KLB_NO_ICE__)
+#include "klbice/klbice.h"
+#endif
+#if !defined(__KLB_NO_SRTP__)
+#include "klbsrtp/klbsrtp.h"
+#endif
+#if !defined(__KLB_NO_RTP__)
+#include "klbrtp/klbrtp.h"
+#endif
+#if !defined(__KLB_NO_WEBRTC__)
+#include "klbwebrtc/klbwebrtc.h"
 #endif
 
 
@@ -328,18 +358,27 @@ int klua_loadlib_all(lua_State* L)
         klua_loadlib(L, klua_open_ksys, "ksys");
         klua_loadlib(L, klua_open_kenv, "kenv");
         klua_loadlib(L, klua_open_krand, "krand");
+        klua_loadlib(L, klua_open_kcrypto, "kcrypto");
         klua_loadlib(L, klua_open_ktime, "ktime");
+        klua_loadlib(L, klua_open_kuart, "kuart");
         klua_loadlib(L, klua_open_kmcache, "kmcache");
         klua_loadlib(L, klua_open_klist, "klist");
+        klua_loadlib(L, klua_open_kmuxlist, "kmuxlist");
         klua_loadlib(L, klua_open_kthread, "kthread");
         klua_loadlib(L, klua_open_kkpa, "kkpa");
         klua_loadlib(L, klua_open_klpc, "klpc");
+        klua_loadlib(L, klua_open_kxpc, "kxpc");
 
 #if !defined(__KLB_NO_GUI__)
         klua_loadlib(L, klua_open_kgui, "kgui");
 #endif
 
         klua_loadlib(L, klua_open_kurl, "kurl");
+        klua_loadlib(L, klua_open_knetcode, "knetcode");
+        klua_loadlib(L, klua_open_kbasecode, "kbasecode");
+        klua_loadlib(L, klua_open_klisten, "klisten");
+        klua_loadlib(L, klua_open_ktls, "ktls");
+        klua_loadlib(L, klua_open_kproxy, "kproxy");
 
 #if !defined(__KLB_NO_HTTP__)
         klua_loadlib(L, klua_open_khttp, "khttp");
@@ -359,6 +398,46 @@ int klua_loadlib_all(lua_State* L)
 
 #if !defined(__KLB_NO_RTSP__)
         klua_loadlib(L, klua_open_krtsp, "krtsp");
+#endif
+
+#if !defined(__KLB_NO_ONVIF__)
+        klua_loadlib(L, klua_open_konvif, "konvif");
+#endif
+
+#if !defined(__KLB_NO_MP4__)
+        klua_loadlib(L, klua_open_kmp4, "kmp4");
+#endif
+
+#if !defined(__KLB_NO_TAR__)
+        klua_loadlib(L, klua_open_ktar, "ktar");
+#endif
+
+#if !defined(__KLB_NO_SOCKS5__)
+        klua_loadlib(L, klua_open_ksocks5, "ksocks5");
+#endif
+
+#if !defined(__KLB_NO_TUNNEL__)
+        klua_loadlib(L, klua_open_ktunnel, "ktunnel");
+#endif
+
+#if !defined(__KLB_NO_STORE__)
+        klua_loadlib(L, klua_open_kstore, "kstore");
+#endif
+
+#if !defined(__KLB_NO_ICE__)
+        klua_loadlib(L, klua_open_kice, "kice");
+#endif
+
+#if !defined(__KLB_NO_SRTP__)
+        klua_loadlib(L, klua_open_ksrtp, "ksrtp");
+#endif
+
+#if !defined(__KLB_NO_RTP__)
+        klua_loadlib(L, klua_open_krtp, "krtp");
+#endif
+
+#if !defined(__KLB_NO_WEBRTC__)
+        klua_loadlib(L, klua_open_kwebrtc, "kwebrtc");
 #endif
 
 #if !defined(__KLB_NO_FORMAT__)

@@ -3,7 +3,7 @@
 //
 /// @file    klua_coroutine.h
 /// @brief   Lua协程扩展: 标准扩展协程导出函数
-/// @version 0.1
+/// @version 0.3
 /// @history 修改历史
 ///   \n [2025-10] 提供协程调用接口; 添加调试接口
 /// @warning 没有警告
@@ -62,6 +62,26 @@ KLB_API int klua_coroutine_yield(klua_ex_coroutine_t* p_ex, lua_State* p_co, klu
 
 /// @brief 调试校验 协程是否存在
 KLB_API int klua_coroutine_debug_check(klua_ex_coroutine_t* p_ex, lua_State* p_co);
+
+
+/// @brief 获取当前协程数目
+/// @param [in]  *p_ex          协程扩展
+/// @return int                 已登记协程数; p_ex 为 NULL 时为 0
+KLB_API int klua_coroutine_count(klua_ex_coroutine_t* p_ex);
+
+
+/// @brief 关闭所有协程
+/// @param [in]  *p_ex          协程扩展
+/// @return int 0
+/// @note quit + 丢弃计时/排空唤醒后, 强制收尸 hlist 残留 (含 co_sleep 僵尸); p_ex 为 NULL 时为 0
+KLB_API int klua_coroutine_close_all(klua_ex_coroutine_t* p_ex);
+
+
+/// @brief 协程快照压栈
+/// @param [in]  *p_ex          协程扩展
+/// @param [in]  *L             调用方 lua_State
+/// @return int 1 (栈顶 table: count/list)
+KLB_API int klua_coroutine_snapshot(klua_ex_coroutine_t* p_ex, lua_State* L);
 
 
 #ifdef __cplusplus

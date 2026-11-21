@@ -31,6 +31,24 @@ extern "C" {
 klb_netconn_t* klb_wsserve_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t* p_socket);
 
 
+/// @brief 设置服务端路径与子协议过滤
+/// @param [in] *p_conn           连接对象
+/// @param [in] *p_path           请求路径; NULL 或空串表示任意
+/// @param [in] *p_protocol       选定的子协议; NULL 或空串表示不协商
+/// @return 无
+/// @note 须在读到握手之前调用
+void klb_wsserve_conn_set_filter(klb_netconn_t* p_conn, const char* p_path, const char* p_protocol);
+
+
+/// @brief 设置服务端主动心跳
+/// @param [in] *p_conn           连接对象
+/// @param [in] interval_ms       Ping 间隔; 默认 30000; 0=关闭; 负值回落默认
+/// @param [in] timeout_ms        等 Pong 超时; 默认 10000; <=0 且 interval>0 时用默认
+/// @return 无
+/// @note Lua 不感知 Ping/Pong; 超时拆连后脚本仅见断连
+void klb_wsserve_conn_set_ping(klb_netconn_t* p_conn, int interval_ms, int timeout_ms);
+
+
 /// @brief 释放连接
 /// @param [in] *p_conn           连接对象
 /// @return 无
@@ -59,6 +77,20 @@ int klb_wsserve_conn_send_buf(klb_netconn_t* p_conn, klb_buf_t* p_data);
 /// @param [in] *p_conn           连接对象
 /// @return bool true.空; false.还有数据
 bool klb_wsserve_wbuf_is_empty(klb_netconn_t* p_conn);
+
+
+/// @brief 写缓存 未发送字节数
+/// @param [in] *p_conn           连接对象
+/// @return int64_t 待发送字节数; 0 表示已排空
+int64_t klb_wsserve_wbuf_size(klb_netconn_t* p_conn);
+
+
+/// @brief HTTP 已回 101 后, 进入 WS 帧解析
+/// @param [in] *p_conn           连接对象; Lua 收包回调须已绑定
+/// @param [in] *p_tail           握手后剩余字节; 可为 NULL; 本函数释放
+/// @return 无
+/// @note 先上送 open, 再解析剩余字节
+void klb_wsserve_conn_adopt_tail(klb_netconn_t* p_conn, klb_buf_t* p_tail);
 
 
 #ifdef __cplusplus

@@ -5,7 +5,6 @@ klb 是面向嵌入式的 Lua 编程方案 (klua): 设备上的应用用 Lua 写
 
 * C, Lua, 嵌入式, GUI, 流媒体
 * 开源仓库：<https://gitee.com/klua/klb>
-* 镜像：<https://github.com/lishaoliang/klb>
 * 许可：[LGPL-3.0](LICENSE)
 * 文档：<https://gitee.com/klua/klua_doc>
 * 组织：<https://gitee.com/klua>
@@ -46,7 +45,7 @@ Lua API 文档: <https://gitee.com/klua/klua_doc> (`lua/klua/`, `lua/klbcore/`)
  ->src_packages  ----------- 扩展包
    ->klbwui  --------------- GUI控件包
 
- ->src_vendor  ------------- 第三方开源可裁剪库
+ ->src_3rdparty  ----------- 第三方开源可裁剪库
 
  ->proj/klua  -------------- klua可执行入口
  ->proj  ------------------- 工程文件 (VS2015)

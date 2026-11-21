@@ -330,8 +330,8 @@ struct lua_State {
   int hookcount;
   volatile l_signalT hookmask;
 
-  char uname[16]; /* public user name, for key, add by lsl[2025] */
-  void *udata; /* public user data, for extension, add by lsl[2021] */
+  char uname[16]; /* public user name, for key, add by klua[2025] */
+  void *udata; /* public user data, for extension, add by klua[2021] */
 };
 
 

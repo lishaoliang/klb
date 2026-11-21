@@ -18,6 +18,8 @@ local kthread = {}
 -- @param [in] [...]					[可选]线程启动附加全局参数: 在目标线程中使用 ksys.get_arg() 获取得到
 -- @return [string] 返回线程名称
 -- @note eg. local name = kthread.start('aaa.bbb', true, -1, '111', {a=1})
+-- @note has_loop_c 由 C 从 klb_app_has_loop_c 写入本 env (Lua 只读)
+--   \n has_loop_c=true: C 在入口返回后泵送 loop_once; false: 须脚本 main_loop (或等价) 自泵
 kthread.start = function (entry, wait, cpu, ...)
 	return ''
 end
@@ -31,6 +33,13 @@ kthread.stop = function (name)
 end
 
 
+-- @brief 停止所有本模块管理的线程: 先发退出信号, 再集中等待退出完成
+-- @return 无
+kthread.stop_all = function ()
+	return
+end
+
+
 -- @brief 批量等待线程启动完成
 -- @param [in] [...]			线程名称(string)
 -- @return 无
@@ -38,6 +47,13 @@ end
 --		2. kthread.wait({'aaa', 'bbb', 'ccc'})		将名称组成table, 合为一个参数
 kthread.wait = function (...)
 	return 
+end
+
+
+-- @brief 等待所有本模块管理的线程启动完成
+-- @return 无
+kthread.wait_all = function ()
+	return
 end
 
 return kthread

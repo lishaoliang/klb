@@ -1,6 +1,6 @@
 ﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 // TLS socket 封装 (mbedtls); 非阻塞 handshake + set_bio
-#include "klbnet/klb_socket.h"
+#include "klbnet/klb_socket_tls.h"
 #include "klbmem/klb_mem.h"
 #include <assert.h>
 
@@ -11,6 +11,9 @@
 #include "mbedtls/ctr_drbg.h"
 #include "mbedtls/x509_crt.h"
 #include "mbedtls/pk.h"
+#include "mbedtls/sha256.h"
+#include <string.h>
+#include <ctype.h>
 
 #ifndef _WIN32
 #include <errno.h>
@@ -35,6 +38,12 @@ typedef struct klb_socket_tls_t_
     bool                        handshake_done;
     bool                        is_server;
     klb_socket_tls_server_ctx_t* p_server_ctx;
+    mbedtls_x509_crt            ca;             ///< 客户端 CA 链 (可选)
+    bool                        ca_loaded;
+    char*                       p_alpn_buf;     ///< ALPN 协议名存储
+    const char**                p_alpn_list;    ///< 指向 p_alpn_buf 的指针表
+    int                         alpn_count;
+    char                        pin_sha256[65]; ///< 对端证书 SHA256 hex; 空=不校验
 }klb_socket_tls_t;
 
 //////////////////////////////////////////////////////////////////////////
@@ -169,6 +178,27 @@ static void quit_klb_socket_tls(klb_socket_tls_t* p_tls)
     mbedtls_ssl_config_free(&p_tls->conf);
     mbedtls_ctr_drbg_free(&p_tls->ctr_drbg);
     mbedtls_entropy_free(&p_tls->entropy);
+
+    if (p_tls->ca_loaded)
+    {
+        mbedtls_x509_crt_free(&p_tls->ca);
+        p_tls->ca_loaded = false;
+    }
+
+    if (NULL != p_tls->p_alpn_list)
+    {
+        KLB_FREE(p_tls->p_alpn_list);
+        p_tls->p_alpn_list = NULL;
+    }
+
+    if (NULL != p_tls->p_alpn_buf)
+    {
+        KLB_FREE(p_tls->p_alpn_buf);
+        p_tls->p_alpn_buf = NULL;
+    }
+
+    p_tls->alpn_count = 0;
+    p_tls->pin_sha256[0] = '\0';
 }
 
 static void quit_klb_socket_tls_server_ctx(klb_socket_tls_server_ctx_t* p_ctx)
@@ -368,6 +398,374 @@ static int recvfrom_klb_socket_tls(klb_socket_t* p_socket, uint8_t* p_buf, int b
     return -1;
 }
 
+int klb_socket_tls_handshake(klb_socket_t* p_socket)
+{
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return -1;
+    }
+
+    return handshake_klb_socket_tls(p_socket);
+}
+
+
+int klb_socket_tls_set_hostname(klb_socket_t* p_socket, const char* p_hostname)
+{
+    klb_socket_tls_t* p_tls = NULL;
+    int ret = 0;
+
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return 1;
+    }
+
+    p_tls = (klb_socket_tls_t*)p_socket->extra;
+    if (NULL == p_tls || p_tls->is_server || p_tls->handshake_done)
+    {
+        return 1;
+    }
+
+    if (NULL == p_hostname || '\0' == p_hostname[0])
+    {
+        ret = mbedtls_ssl_set_hostname(&p_tls->ssl, NULL);
+    }
+    else
+    {
+        ret = mbedtls_ssl_set_hostname(&p_tls->ssl, p_hostname);
+    }
+
+    return (0 == ret) ? 0 : 1;
+}
+
+
+int klb_socket_tls_set_verify(klb_socket_t* p_socket, int verify)
+{
+    klb_socket_tls_t* p_tls = NULL;
+    int mode = MBEDTLS_SSL_VERIFY_NONE;
+
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return 1;
+    }
+
+    p_tls = (klb_socket_tls_t*)p_socket->extra;
+    if (NULL == p_tls || p_tls->is_server || p_tls->handshake_done)
+    {
+        return 1;
+    }
+
+    if (1 == verify)
+    {
+        mode = MBEDTLS_SSL_VERIFY_OPTIONAL;
+    }
+    else if (2 <= verify)
+    {
+        mode = MBEDTLS_SSL_VERIFY_REQUIRED;
+    }
+    else
+    {
+        mode = MBEDTLS_SSL_VERIFY_NONE;
+    }
+
+    mbedtls_ssl_conf_authmode(&p_tls->conf, mode);
+    return 0;
+}
+
+
+int klb_socket_tls_set_ca_pem(klb_socket_t* p_socket, const char* p_ca_pem, int ca_len)
+{
+    klb_socket_tls_t* p_tls = NULL;
+    size_t buflen = 0;
+    int ret = 0;
+
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return 1;
+    }
+
+    p_tls = (klb_socket_tls_t*)p_socket->extra;
+    if (NULL == p_tls || p_tls->is_server || p_tls->handshake_done)
+    {
+        return 1;
+    }
+
+    if (NULL == p_ca_pem || 0 >= ca_len)
+    {
+        return 1;
+    }
+
+    if (p_tls->ca_loaded)
+    {
+        mbedtls_x509_crt_free(&p_tls->ca);
+        p_tls->ca_loaded = false;
+    }
+
+    mbedtls_x509_crt_init(&p_tls->ca);
+    buflen = pem_buflen_klb_socket_tls(p_ca_pem, ca_len);
+    ret = mbedtls_x509_crt_parse(&p_tls->ca, (const unsigned char*)p_ca_pem, buflen);
+    if (0 != ret)
+    {
+        mbedtls_x509_crt_free(&p_tls->ca);
+        return 1;
+    }
+
+    mbedtls_ssl_conf_ca_chain(&p_tls->conf, &p_tls->ca, NULL);
+    p_tls->ca_loaded = true;
+    return 0;
+}
+
+
+int klb_socket_tls_set_alpn(klb_socket_t* p_socket, const char* p_alpn_csv)
+{
+    klb_socket_tls_t* p_tls = NULL;
+    char* p_buf = NULL;
+    const char** p_list = NULL;
+    int count = 0;
+    int i = 0;
+    size_t len = 0;
+    char* p = NULL;
+    char* p_tok = NULL;
+
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return 1;
+    }
+
+    p_tls = (klb_socket_tls_t*)p_socket->extra;
+    if (NULL == p_tls || p_tls->is_server || p_tls->handshake_done)
+    {
+        return 1;
+    }
+
+    if (NULL != p_tls->p_alpn_list)
+    {
+        KLB_FREE(p_tls->p_alpn_list);
+        p_tls->p_alpn_list = NULL;
+    }
+
+    if (NULL != p_tls->p_alpn_buf)
+    {
+        KLB_FREE(p_tls->p_alpn_buf);
+        p_tls->p_alpn_buf = NULL;
+    }
+
+    p_tls->alpn_count = 0;
+
+    if (NULL == p_alpn_csv || '\0' == p_alpn_csv[0])
+    {
+        return 0;
+    }
+
+    len = strlen(p_alpn_csv);
+    p_buf = KLB_MALLOC(char, len + 1, 0);
+    if (NULL == p_buf)
+    {
+        return 1;
+    }
+
+    memcpy(p_buf, p_alpn_csv, len + 1);
+
+    // 计段: 非空 token
+    p = p_buf;
+    while ('\0' != *p)
+    {
+        while (',' == *p || isspace((unsigned char)*p))
+        {
+            p++;
+        }
+
+        if ('\0' == *p)
+        {
+            break;
+        }
+
+        count++;
+        while ('\0' != *p && ',' != *p)
+        {
+            p++;
+        }
+
+        if (',' == *p)
+        {
+            p++;
+        }
+    }
+
+    if (0 >= count)
+    {
+        KLB_FREE(p_buf);
+        return 0;
+    }
+
+    // +1 NULL 终结 (mbedtls 要求)
+    p_list = (const char**)KLB_MALLOC(char*, (size_t)count + 1, 0);
+    if (NULL == p_list)
+    {
+        KLB_FREE(p_buf);
+        return 1;
+    }
+
+    memcpy(p_buf, p_alpn_csv, len + 1);
+    i = 0;
+    p_tok = p_buf;
+    while ('\0' != *p_tok && i < count)
+    {
+        while (',' == *p_tok || isspace((unsigned char)*p_tok))
+        {
+            p_tok++;
+        }
+
+        if ('\0' == *p_tok)
+        {
+            break;
+        }
+
+        p_list[i] = p_tok;
+        i++;
+        while ('\0' != *p_tok && ',' != *p_tok)
+        {
+            p_tok++;
+        }
+
+        if (',' == *p_tok)
+        {
+            *p_tok = '\0';
+            p_tok++;
+        }
+
+        // trim trailing space in token
+        {
+            size_t tlen = strlen(p_list[i - 1]);
+            while (0 < tlen && isspace((unsigned char)p_list[i - 1][tlen - 1]))
+            {
+                ((char*)p_list[i - 1])[tlen - 1] = '\0';
+                tlen--;
+            }
+        }
+    }
+
+    p_list[i] = NULL;
+    if (0 != mbedtls_ssl_conf_alpn_protocols(&p_tls->conf, p_list))
+    {
+        KLB_FREE(p_list);
+        KLB_FREE(p_buf);
+        return 1;
+    }
+
+    p_tls->p_alpn_buf = p_buf;
+    p_tls->p_alpn_list = p_list;
+    p_tls->alpn_count = i;
+    return 0;
+}
+
+
+int klb_socket_tls_set_pin_sha256(klb_socket_t* p_socket, const char* p_hex)
+{
+    klb_socket_tls_t* p_tls = NULL;
+    size_t n = 0;
+    size_t i = 0;
+
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return 1;
+    }
+
+    p_tls = (klb_socket_tls_t*)p_socket->extra;
+    if (NULL == p_tls || p_tls->is_server)
+    {
+        return 1;
+    }
+
+    p_tls->pin_sha256[0] = '\0';
+    if (NULL == p_hex || '\0' == p_hex[0])
+    {
+        return 0;
+    }
+
+    n = strlen(p_hex);
+    if (64 != n)
+    {
+        return 1;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        char c = p_hex[i];
+        if (!isxdigit((unsigned char)c))
+        {
+            return 1;
+        }
+
+        if ('A' <= c && 'F' >= c)
+        {
+            c = (char)(c - 'A' + 'a');
+        }
+
+        p_tls->pin_sha256[i] = c;
+    }
+
+    p_tls->pin_sha256[64] = '\0';
+    return 0;
+}
+
+
+int klb_socket_tls_check_pin(klb_socket_t* p_socket)
+{
+    klb_socket_tls_t* p_tls = NULL;
+    const mbedtls_x509_crt* p_crt = NULL;
+    unsigned char hash[32];
+    char hex[65];
+    size_t i = 0;
+    static const char* hexdig = "0123456789abcdef";
+
+    if (NULL == p_socket || !klb_socket_is_tls(p_socket))
+    {
+        return 1;
+    }
+
+    p_tls = (klb_socket_tls_t*)p_socket->extra;
+    if (NULL == p_tls || p_tls->is_server)
+    {
+        return 1;
+    }
+
+    if ('\0' == p_tls->pin_sha256[0])
+    {
+        return 0;
+    }
+
+    if (!p_tls->handshake_done)
+    {
+        return 1;
+    }
+
+    p_crt = mbedtls_ssl_get_peer_cert(&p_tls->ssl);
+    if (NULL == p_crt || NULL == p_crt->raw.p || 0 == p_crt->raw.len)
+    {
+        return 1;
+    }
+
+    if (0 != mbedtls_sha256(p_crt->raw.p, p_crt->raw.len, hash, 0))
+    {
+        return 1;
+    }
+
+    for (i = 0; i < 32; i++)
+    {
+        hex[i * 2] = hexdig[(hash[i] >> 4) & 0x0F];
+        hex[i * 2 + 1] = hexdig[hash[i] & 0x0F];
+    }
+
+    hex[64] = '\0';
+    if (0 != strcmp(hex, p_tls->pin_sha256))
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+
 klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd)
 {
     assert(INVALID_SOCKET != fd);
@@ -545,6 +943,54 @@ klb_socket_t* klb_socket_async_create_tls(klb_socket_fd fd)
 {
     (void)fd;
     return NULL;
+}
+
+int klb_socket_tls_handshake(klb_socket_t* p_socket)
+{
+    (void)p_socket;
+    return -1;
+}
+
+int klb_socket_tls_set_hostname(klb_socket_t* p_socket, const char* p_hostname)
+{
+    (void)p_socket;
+    (void)p_hostname;
+    return 1;
+}
+
+int klb_socket_tls_set_verify(klb_socket_t* p_socket, int verify)
+{
+    (void)p_socket;
+    (void)verify;
+    return 1;
+}
+
+int klb_socket_tls_set_ca_pem(klb_socket_t* p_socket, const char* p_ca_pem, int ca_len)
+{
+    (void)p_socket;
+    (void)p_ca_pem;
+    (void)ca_len;
+    return 1;
+}
+
+int klb_socket_tls_set_alpn(klb_socket_t* p_socket, const char* p_alpn_csv)
+{
+    (void)p_socket;
+    (void)p_alpn_csv;
+    return 1;
+}
+
+int klb_socket_tls_set_pin_sha256(klb_socket_t* p_socket, const char* p_hex)
+{
+    (void)p_socket;
+    (void)p_hex;
+    return 1;
+}
+
+int klb_socket_tls_check_pin(klb_socket_t* p_socket)
+{
+    (void)p_socket;
+    return 1;
 }
 
 klb_socket_tls_server_ctx_t* klb_socket_tls_server_ctx_create(const char* p_cert_pem, int cert_len, const char* p_key_pem, int key_len)

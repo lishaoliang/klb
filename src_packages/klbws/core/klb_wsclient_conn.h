@@ -36,7 +36,22 @@ klb_netconn_t* klb_wsclient_conn_create(klb_netmulti_t* p_netmulti, klb_socket_t
 /// @param [in] port              端口
 /// @param [in] tls               是否 TLS; false.明文; true.TLS
 /// @return klb_netconn_t* 连接对象; 失败为 NULL
-klb_netconn_t* klb_wsclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port, bool tls);
+/// @param [out] *p_code          可选; 失败时 klb_netcode_e; 成功为 0
+klb_netconn_t* klb_wsclient_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port, bool tls, int* p_code);
+
+
+/// @brief 记录本次握手的 Sec-WebSocket-Key, 供校验 Accept
+/// @param [in] *p_conn           连接对象
+/// @param [in] *p_key            Sec-WebSocket-Key
+/// @return 无
+void klb_wsclient_conn_set_key(klb_netconn_t* p_conn, const char* p_key);
+
+
+/// @brief 记录客户端请求的子协议
+/// @param [in] *p_conn           连接对象
+/// @param [in] *p_protocol       子协议; NULL 或空串表示不协商
+/// @return 无
+void klb_wsclient_conn_set_protocol(klb_netconn_t* p_conn, const char* p_protocol);
 
 
 /// @brief 释放连接
@@ -68,6 +83,16 @@ int klb_wsclient_conn_send_buf(klb_netconn_t* p_conn, klb_buf_t* p_data);
 /// @return bool true.空; false.还有数据
 bool klb_wsclient_wbuf_is_empty(klb_netconn_t* p_conn);
 
+
+/// @brief 写缓存 未发送字节数
+/// @param [in] *p_conn           连接对象
+/// @return int64_t 待发送字节数; 0 表示已排空
+int64_t klb_wsclient_wbuf_size(klb_netconn_t* p_conn);
+
+
+
+void klb_wsclient_conn_set_timeout(klb_netconn_t* p_conn, int read_ms, int write_ms, int idle_ms);
+void klb_wsclient_conn_set_max_payload(klb_netconn_t* p_conn, int64_t max_payload);
 
 #ifdef __cplusplus
 }

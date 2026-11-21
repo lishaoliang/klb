@@ -2,6 +2,7 @@
 #include "klua/klua_thread.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
+#include "klbapp/klb_app.h"
 #include "klbplatform/klb_mutex.h"
 #include "klbutil/klb_rand.h"
 #include "klbutil/klb_hlist.h"
@@ -96,6 +97,17 @@ void klua_kthread_quit()
     }
     klb_mutex_unlock(g_klua_kthread->p_thread_mutex);
 
+    // 清空 LPC / 模块表: 元素为 klua_env_t* (非本模块所有), 错误退出路径可能残留
+    while (0 < klb_hlist_size(g_klua_kthread->p_lpc_hlist))
+    {
+        klb_hlist_pop_head(g_klua_kthread->p_lpc_hlist);
+    }
+
+    while (0 < klb_hlist_size(g_klua_kthread->p_module_hlist))
+    {
+        klb_hlist_pop_head(g_klua_kthread->p_module_hlist);
+    }
+
     // 销毁
     KLB_FREE_BY(g_klua_kthread->p_thread_hlist, klb_hlist_destroy);
     KLB_FREE_BY(g_klua_kthread->p_lpc_hlist, klb_hlist_destroy);
@@ -112,6 +124,9 @@ static int cb_thread_klua_kthread(void* p_obj, volatile int* p_run)
     klua_kthread_item_t* p_item = (klua_kthread_item_t*)p_obj;
     klua_env_t* p_env = p_item->p_env;
 
+    bool has_loop = klb_app_has_loop_c();
+    klua_env_set_has_loop_c(p_env, has_loop);
+
     // 初始化 lua 环境
     klua_env_doinit(p_env);
 
@@ -126,7 +141,8 @@ static int cb_thread_klua_kthread(void* p_obj, volatile int* p_run)
     // 即将 线程入口脚本 完全加载完成
     p_item->wait = false;
 
-    while (*p_run && !klua_env_is_exit(p_env))
+    // 与主 env 一致: has_loop_c=true 才由 C 泵送; false 时由脚本 main_loop 泵送
+    while (has_loop && *p_run && !klua_env_is_exit(p_env))
     {
         int sleep = klua_env_loop_once(p_env);
 
@@ -229,7 +245,6 @@ static void wait_klua_kthread(klua_kthread_t* p_kthread, char* p_names[], int nu
 static sds klua_kthread_create(klua_kthread_t* p_kthread, const char* p_entry, bool wait, int cpu_idx, const char* p_arg, int arg_size)
 {
     sds ret = NULL;
-    klb_thread_t* p_thread = NULL;
 
     klb_mutex_lock(p_kthread->p_thread_mutex);
 
@@ -295,6 +310,93 @@ static int klua_kthread_destroy(klua_kthread_t* p_kthread, const char* p_name, s
 
     klb_mutex_unlock(p_kthread->p_thread_mutex);
     return ret;
+}
+
+static void klua_kthread_stop_all(klua_kthread_t* p_kthread)
+{
+    klb_mutex_lock(p_kthread->p_thread_mutex);
+
+    // step1. 先给所有本模块管理的线程发退出信号
+    klb_hlist_iter_t* p_iter = klb_hlist_begin(p_kthread->p_thread_hlist);
+    while (NULL != p_iter)
+    {
+        klua_kthread_item_t* p_item = (klua_kthread_item_t*)klb_hlist_data(p_iter);
+
+        if (KLUA_KTHREAD_OWNER == p_item->flag)
+        {
+            klua_env_exit(p_item->p_env);
+        }
+
+        p_iter = klb_hlist_next(p_iter);
+    }
+
+    // step2. 集中等待所有本模块管理的线程退出, 并清理
+    while (true)
+    {
+        klb_hlist_iter_t* p_owner_iter = NULL;
+        klua_kthread_item_t* p_owner = NULL;
+
+        p_iter = klb_hlist_begin(p_kthread->p_thread_hlist);
+        while (NULL != p_iter)
+        {
+            klua_kthread_item_t* p_item = (klua_kthread_item_t*)klb_hlist_data(p_iter);
+
+            if (KLUA_KTHREAD_OWNER == p_item->flag)
+            {
+                p_owner_iter = p_iter;
+                p_owner = p_item;
+                break;
+            }
+
+            p_iter = klb_hlist_next(p_iter);
+        }
+
+        if (NULL == p_owner)
+        {
+            break;
+        }
+
+        KLB_FREE_BY(p_owner->p_thread, klb_thread_destroy);
+        klb_hlist_remove(p_kthread->p_thread_hlist, p_owner_iter);
+        KLB_FREE_BY(p_owner, klua_kthread_item_destroy);
+    }
+
+    klb_mutex_unlock(p_kthread->p_thread_mutex);
+}
+
+static void wait_all_klua_kthread(klua_kthread_t* p_kthread)
+{
+    while (true)
+    {
+        bool wait = false;
+
+        klb_mutex_lock(p_kthread->p_thread_mutex);
+
+        klb_hlist_iter_t* p_iter = klb_hlist_begin(p_kthread->p_thread_hlist);
+        while (NULL != p_iter)
+        {
+            klua_kthread_item_t* p_item = (klua_kthread_item_t*)klb_hlist_data(p_iter);
+
+            if (0 != p_item->wait)
+            {
+                wait = true;
+                break;
+            }
+
+            p_iter = klb_hlist_next(p_iter);
+        }
+
+        klb_mutex_unlock(p_kthread->p_thread_mutex);
+
+        if (wait)
+        {
+            klb_sleep(1);
+        }
+        else
+        {
+            break;
+        }
+    }
 }
 
 
@@ -438,8 +540,10 @@ int klua_thread_push_lpc_msg(const char* p_name, klua_msg_t* p_msg)
         klua_env_t* p_env = (klua_env_t*)klb_hlist_find(p_kthread->p_module_hlist, p_name, strlen(p_name));
         if (NULL != p_env)
         {
-            klua_env_push_lpc_msg(p_env, p_msg);
-            ret = 0;
+            if (klua_env_push_lpc_msg(p_env, p_msg))
+            {
+                ret = 0;
+            }
         }
         klb_atomic_unlock(&p_kthread->module_lock);
     }
@@ -449,8 +553,10 @@ int klua_thread_push_lpc_msg(const char* p_name, klua_msg_t* p_msg)
         klua_env_t* p_env = (klua_env_t*)klb_hlist_find(p_kthread->p_lpc_hlist, p_name, strlen(p_name));
         if (NULL != p_env)
         {
-            klua_env_push_lpc_msg(p_env, p_msg);
-            ret = 0;
+            if (klua_env_push_lpc_msg(p_env, p_msg))
+            {
+                ret = 0;
+            }
         }
         klb_atomic_unlock(&p_kthread->lpc_lock);
     }
@@ -543,6 +649,20 @@ static int lib_klua_kthread_wait(lua_State* L)
     return 0;
 }
 
+/// @brief 停止所有本模块管理的线程: 先发退出信号, 再集中等待退出
+static int lib_klua_kthread_stop_all(lua_State* L)
+{
+    klua_kthread_stop_all(g_klua_kthread);
+    return 0;
+}
+
+/// @brief 等待所有线程(Lua)启动完成
+static int lib_klua_kthread_wait_all(lua_State* L)
+{
+    wait_all_klua_kthread(g_klua_kthread);
+    return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Lua导出库
 
@@ -551,9 +671,12 @@ int klua_open_kthread(lua_State* L)
     static luaL_Reg lib[] =
     {
         { "start",      lib_klua_kthread_start },
+        
         { "stop",       lib_klua_kthread_stop },
+        { "stop_all",   lib_klua_kthread_stop_all },
 
         { "wait",       lib_klua_kthread_wait },
+        { "wait_all",   lib_klua_kthread_wait_all },
 
         { NULL,         NULL }
     };
@@ -563,3 +686,5 @@ int klua_open_kthread(lua_State* L)
 
     return 1;
 }
+
+// end

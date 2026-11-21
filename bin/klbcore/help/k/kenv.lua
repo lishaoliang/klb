@@ -6,7 +6,7 @@
 --   \n require("kenv")
 --   \n C导出文件: ./klb/src_c/klua/klua_util/klua_kenv.c
 --   \n klua_env_t 环境相关 API
--- @version 0.1
+-- @version 0.2
 --]]
 
 local kenv = {}
@@ -73,11 +73,28 @@ kenv.update_tick_count = function ()
 end
 
 
--- @brief 设置 loop_once 单次 sleep 上限 (毫秒)
+-- @brief 设置 loop_once 单次 sleep 上限 (毫秒; <1 钳到 1)
 -- @param [in]	ms[number(int)]
 -- @return 无
+-- @note 编译默认 PC=5 / 嵌入式=10; alua 另见 runtime.json loop_sleep_ms (默认 5)
 kenv.set_loop_sleep = function (ms)
 	return
+end
+
+
+-- @brief 驱动一次 env 事件循环 (net/kco 等)
+-- @return [number(int)] 建议剩余休眠毫秒
+-- @note 同步工具可在主线程泵送短生命周期请求; eg. alua net.http_*
+kenv.loop_once = function ()
+	return 0
+end
+
+
+-- @brief 是否由 C 侧主循环泵送 loop_once (只读; 无 Lua set)
+-- @return [boolean] true=C 侧 while 泵送; false=须上层 Lua/kthread 自行泵送
+-- @note C: klb_app_main / kthread → klua_env_set_has_loop_c; Lua 仅本查询; 默认 false
+kenv.has_loop_c = function ()
+	return false
 end
 
 
@@ -85,6 +102,24 @@ end
 -- @return [number(int)]
 kenv.get_loop_sleep = function ()
 	return 0
+end
+
+
+-- @brief 设置 LPC 队列长度上限 (背压; 单位: 条)
+-- @param [in]	max[number(int)]	上限条数
+-- @return 无
+-- @note 超限丢消息; 见 klua_env_set_lpc_msg_max
+kenv.set_lpc_max = function (max)
+	return
+end
+
+
+-- @brief 设置单条 LPC 消息字节上限 (背压)
+-- @param [in]	max[number(int)]	上限字节数
+-- @return 无
+-- @note 见 klua_env_set_lpc_bytes_max
+kenv.set_lpc_bytes_max = function (max)
+	return
 end
 
 

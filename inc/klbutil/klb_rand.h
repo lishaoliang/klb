@@ -34,6 +34,14 @@ KLB_API char* klb_rand_string(char* p_dest, int str_len, bool set_end);
 KLB_API char* klb_rand_integer(char* p_dest, int str_len, bool set_end);
 
 
+/// @brief CSPRNG(密码学安全)随机字节
+/// @param [out] *p_dest
+/// @param [in]  len     字节数
+/// @return true.成功; false.失败(p_dest为NULL || 0==len || 系统熵源不可用)
+/// @note linux/uClibc 读 /dev/urandom; windows 用 rand_s (fail-closed)
+KLB_API bool klb_rand_secure(void* p_dest, uint32_t len);
+
+
 #ifdef __cplusplus
 }
 #endif

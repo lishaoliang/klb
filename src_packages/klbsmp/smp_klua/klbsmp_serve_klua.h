@@ -1,4 +1,5 @@
-﻿///////////////////////////////////////////////////////////////////////////
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+///////////////////////////////////////////////////////////////////////////
 //  Copyright(c) 2025, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 //
 /// @file    klbsmp_serve_klua.h
@@ -31,6 +32,10 @@ void klua_ksmpserve_listen_createmeta(lua_State* L);
 /// @brief SMP 服务监听
 int klua_ksmpserve_listen(lua_State* L);
 
+/// @brief 由已探测 sock 创建 SMP 服务连接 (供 klisten / klblisten mux)
+/// @note 参数1 lightuserdata=klb_netlisten_socket_t* / klb_netmux_socket_t*; 取得 fd 并释放该结构
+int klua_ksmpserve_new_serve(lua_State* L);
+
 
 /// @brief SMP-RPC 服务 meta
 void klua_ksmpserverpc_createmeta(lua_State* L);
@@ -41,6 +46,9 @@ void klua_ksmpserverpc_listen_createmeta(lua_State* L);
 /// @brief SMP-RPC 服务监听
 int klua_ksmpserverpc_listen(lua_State* L);
 
+/// @brief 由已探测 sock 创建 SMP-RPC 服务连接 (供 klisten / klblisten mux)
+/// @note 参数1 lightuserdata=klb_netlisten_socket_t* / klb_netmux_socket_t*; 取得 fd 并释放该结构
+int klua_ksmpserverpc_new_serve(lua_State* L);
 
 
 #ifdef __cplusplus
@@ -48,4 +56,5 @@ int klua_ksmpserverpc_listen(lua_State* L);
 #endif
 
 #endif // __KLBSMP_SERVE_KLUA_H__
-//end
+
+// end

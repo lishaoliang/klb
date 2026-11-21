@@ -175,28 +175,54 @@ int klb_netprobe_check(const uint8_t* p_buf, int len, bool* p_tls, int* p_protoc
     uint32_t magic = load_u32_klb_netprobe(p_buf);
     if (KLB_MNP_MAGIC == magic)
     {
-        *p_protocol = KLB_PROTOCOL_MNP;
-
-        if (sizeof(klb_mnp_t) <= (size_t)len)
+        // 须完整头才能区分明文 MNP 与首包 RPC
+        if (sizeof(klb_mnp_t) > (size_t)len)
         {
-            klb_mnp_t mnp;
-            memcpy(&mnp, p_buf, sizeof(mnp));
+            return KLB_NETPROBE_NEED_MORE;
+        }
 
-            if (KLB_MNP_RPC_LUA == mnp.packtype)
-            {
-                *p_protocol = KLB_PROTOCOL_RPC_MNP_LUA;
-            }
-            else if (KLB_MNP_RPC_JSON == mnp.packtype)
-            {
-                *p_protocol = KLB_PROTOCOL_RPC_MNP_JSON;
-            }
+        klb_mnp_t mnp;
+        memcpy(&mnp, p_buf, sizeof(mnp));
+
+        if (KLB_MNP_RPC_LUA == mnp.packtype)
+        {
+            *p_protocol = KLB_PROTOCOL_RPC_MNP_LUA;
+        }
+        else if (KLB_MNP_RPC_JSON == mnp.packtype)
+        {
+            *p_protocol = KLB_PROTOCOL_RPC_MNP_JSON;
+        }
+        else
+        {
+            *p_protocol = KLB_PROTOCOL_MNP;
         }
 
         return KLB_NETPROBE_OK;
     }
     else if (KLB_SMP_MAGIC == magic)
     {
-        *p_protocol = KLB_PROTOCOL_SMP;
+        // 须完整头才能区分明文 SMP 与首包 RPC
+        if (sizeof(klb_smp_t) > (size_t)len)
+        {
+            return KLB_NETPROBE_NEED_MORE;
+        }
+
+        klb_smp_t smp;
+        memcpy(&smp, p_buf, sizeof(smp));
+
+        if (KLB_MNP_RPC_LUA == smp.packtype)
+        {
+            *p_protocol = KLB_PROTOCOL_RPC_SMP_LUA;
+        }
+        else if (KLB_MNP_RPC_JSON == smp.packtype)
+        {
+            *p_protocol = KLB_PROTOCOL_RPC_SMP_JSON;
+        }
+        else
+        {
+            *p_protocol = KLB_PROTOCOL_SMP;
+        }
+
         return KLB_NETPROBE_OK;
     }
 

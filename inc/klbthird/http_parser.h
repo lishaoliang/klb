@@ -203,6 +203,10 @@ enum http_status
   XX(32, UNLINK,      UNLINK)       \
   /* icecast */                     \
   XX(33, SOURCE,      SOURCE)       \
+  /* DeltaV (RFC 3253) 经典方法: 仅解析, DAV 层回 501 */ \
+  XX(34, LABEL,       LABEL)         \
+  XX(35, UPDATE,      UPDATE)        \
+  XX(36, BASELINE_CONTROL, BASELINE-CONTROL) \
 
 enum http_method
   {

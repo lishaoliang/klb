@@ -5,8 +5,7 @@
 -- @brief  样式, 一般 样式与图片资源是对应的
 -- @note   与 klbcore.klbui.csser (parse 管线) 不同; 启动前须 res.configure({ css_dirs = {...} })
 -- @history 修改历史
---  \n [2026] 创建文件
---  \n [2026] load_css 按 S/M/L 写入字号阶梯, 供 S000_css 等通过 getter 读取
+--  \n [2026] 创建文件; load_css 按 S/M/L 写入字号阶梯, 供 S000_css 等通过 getter 读取
 --]]
 local lfs = require("lfs")
 local klbui = require("klbcore.klbui")

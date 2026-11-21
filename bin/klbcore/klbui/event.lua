@@ -15,7 +15,7 @@ event.MOUSE_left = 1		-- KLBUI_MOUSE_left, 鼠标左键
 event.MOUSE_middle = 2		-- KLBUI_MOUSE_middle, 鼠标中键
 event.MOUSE_right = 3		-- KLBUI_MOUSE_right, 鼠标右键
 event.MOUSE_x1 = 4			-- KLBUI_MOUSE_x1, 扩展x1
-event.MOUSE_x2 = 4			-- KLBUI_MOUSE_x2, 扩展x2
+event.MOUSE_x2 = 5			-- KLBUI_MOUSE_x2, 扩展x2
 
 
 -- 鼠标拖拽事件

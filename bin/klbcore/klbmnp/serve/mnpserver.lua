@@ -64,15 +64,24 @@ end
 
 -- @brief 接收 MNP 包
 -- @return msg[string]					"text" / "binary" / "media" / "error" / "exit"
--- @return head[string|number|userdata]	text/binary 时为 head; media 时为 buf; error 时为 code
--- @return body[string]					text/binary 时为 body
--- @note 须在 kco 协程内; media 须随后 free_media
+-- @return head[string|number|userdata]	text/binary 时为 head; media 时为 buf; error 时为 code; 其余为 ""
+-- @return body[string]					text/binary/exit 时为 body; media/error 时为 ""
+-- @note 须在 kco 协程内; 恒 3 值; media 须随后 free_media
 function mnpserve:co_recv()
 	if not self._serve then
-		return "error", 1
+		return "error", 1, ""
 	end
 
-	return self._serve:co_recv()
+	local msg, head, body = self._serve:co_recv()
+	if "error" == msg then
+		return "error", head or 1, ""
+	end
+
+	if "media" == msg then
+		return "media", head, ""
+	end
+
+	return msg, head or "", body or ""
 end
 
 
@@ -85,6 +94,17 @@ function mnpserve:free_media(media)
 	end
 
 	self._serve:free_media(media)
+end
+
+
+-- @brief 对端地址 "ip:port"
+-- @return peer[string]					空串表示未知
+function mnpserve:peer()
+	if not self._serve or not self._serve.peer then
+		return ""
+	end
+
+	return self._serve:peer()
 end
 
 

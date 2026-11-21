@@ -3,25 +3,40 @@
 #include "klbhttp/klbhttp.h"
 #include "klbhttp/core/klb_httpclient_conn.h"
 #include "klbhttp/core/klb_httpserve_conn.h"
+#include "klbhttp/http_klua/klbhttp_rpc_klua.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_buf.h"
 #include "klbutil/klb_nlist.h"
 #include "klbbase/klb_mnp.h"
 #include "klbnet/klb_socket.h"
+#include "klbnet/klb_socket_tls.h"
 #include "klbnet/klb_netmulti.h"
+#include "klbnet/klb_netcode.h"
 #include "klbnet/klblisten/klb_netlisten_conn.h"
 #include "klbnet/klblisten/klb_netprobe_conn.h"
 #include "klua/klua.h"
 #include "klua/klua_env.h"
 #include "klua/klua_netmulti.h"
+#include "klua/klua_netlisten_opts.h"
 #include "klua/klua_coroutine.h"
 #include <assert.h>
+#include <stdio.h>
+#include <string.h>
 
 
 //////////////////////////////////////////////////////////////////////////
 // khttp 连接 (client / serve 共用 userdata)
 
 #define KLUA_KHTTP_HANDLE               "KHTTP_HANDLE*"             ///< Lua meta标示
+
+
+/// @brief 失败: 压入 nil, code; 描述串由脚本 knetcode.strerror 查询
+static int push_err_klua_khttp(lua_State* L, int code)
+{
+    lua_pushnil(L);
+    lua_pushinteger(L, code);
+    return 2;
+}
 
 
 /// @struct klua_khttp_t
@@ -51,6 +66,7 @@ typedef struct klua_khttp_t_
     {
         klb_nlist_t*            p_text_nlist;   ///< 待读取的 HTTP 文本; 存储 klb_buf_t*
         int                     recv_code;      ///< 最近一次非0网络码; 0.无
+        char                    peer[128];      ///< 对端 "ip:port"
     };
 }klua_khttp_t;
 
@@ -133,7 +149,8 @@ static int push_http_text_klua_khttp(lua_State* L, klb_buf_t* p_data)
     klb_mnp_text_t* p_txt = (klb_mnp_text_t*)(p_data->p_buf + p_data->start);
     const char* p_head = (const char*)(p_txt + 1);
     int head_len = (int)p_txt->head_size;
-    int body_len = (int)p_txt->size - head_len - (int)sizeof(klb_mnp_text_t);
+    // size 为 27 位位域, 超过 128MiB 的请求体会回绕; 本进程内缓冲长度为真源
+    int body_len = data_len - head_len - (int)sizeof(klb_mnp_text_t);
     if (body_len < 0)
     {
         body_len = 0;
@@ -179,9 +196,10 @@ static int call_co_recv_klua_khttp(klua_khttp_t* p_http)
     }
     else
     {
-        lua_pushstring(L, "error");
-        lua_pushinteger(L, p_http->recv_code);
+        int code = p_http->recv_code;
         p_http->recv_code = 0;
+        lua_pushstring(L, "error");
+        lua_pushinteger(L, code);
         nargs = 2;
     }
 
@@ -339,6 +357,37 @@ static int klua_khttp_send_file(lua_State* L)
     return 1;
 }
 
+/// @brief khttp:set_connect(bool); 客户端 CONNECT 应答模式
+static int klua_khttp_set_connect(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+    bool connect = klua_check_option_boolean(L, 2, false);
+
+    int ret = KLB_NETCODE_INVAL;
+    if (p_http->is_client && NULL != p_http->p_conn)
+    {
+        ret = klb_httpclient_conn_set_connect(p_http->p_conn, connect);
+    }
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
+/// @brief khttp:upgrade_tls(); 客户端明文连接就地升级 TLS
+static int klua_khttp_upgrade_tls(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+
+    int ret = KLB_NETCODE_INVAL;
+    if (p_http->is_client && NULL != p_http->p_conn)
+    {
+        ret = klb_httpclient_conn_tls_upgrade(p_http->p_conn);
+    }
+
+    lua_pushinteger(L, ret);
+    return 1;
+}
+
 static int on_yield_recv_klua_khttp(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
 {
     klua_khttp_t* p_http = (klua_khttp_t*)ptr;
@@ -362,6 +411,86 @@ static int klua_khttp_tls(lua_State* L)
     }
 
     lua_pushboolean(L, tls);
+    return 1;
+}
+
+static int klua_khttp_peer(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+    lua_pushstring(L, p_http->peer);
+    return 1;
+}
+
+/// @brief khttp:set_timeout(read_ms[, write_ms[, idle_ms]]) 或 set_timeout({read=,write=,idle=})
+static int klua_khttp_set_timeout(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+    int read_ms = 0;
+    int write_ms = 0;
+    int idle_ms = 0;
+
+    if (NULL == p_http->p_conn)
+    {
+        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        return 1;
+    }
+
+    if (klua_is_table(L, 2))
+    {
+        lua_getfield(L, 2, "read");
+        read_ms = (int)klua_check_option_integer(L, -1, 0);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "write");
+        write_ms = (int)klua_check_option_integer(L, -1, 0);
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "idle");
+        idle_ms = (int)klua_check_option_integer(L, -1, 0);
+        lua_pop(L, 1);
+    }
+    else
+    {
+        read_ms = (int)luaL_optinteger(L, 2, 0);
+        write_ms = (int)luaL_optinteger(L, 3, 0);
+        idle_ms = (int)luaL_optinteger(L, 4, 0);
+    }
+
+    if (p_http->is_client)
+    {
+        klb_httpclient_conn_set_timeout(p_http->p_conn, read_ms, write_ms, idle_ms);
+    }
+    else
+    {
+        klb_httpserve_conn_set_timeout(p_http->p_conn, read_ms, write_ms, idle_ms);
+    }
+
+    lua_pushinteger(L, 0);
+    return 1;
+}
+
+/// @brief khttp:set_max_body(max_body); 0=不限制
+static int klua_khttp_set_max_body(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+    int64_t max_body = (int64_t)luaL_optinteger(L, 2, 0);
+
+    if (NULL == p_http->p_conn)
+    {
+        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        return 1;
+    }
+
+    if (p_http->is_client)
+    {
+        klb_httpclient_conn_set_max_body(p_http->p_conn, max_body);
+    }
+    else
+    {
+        klb_httpserve_conn_set_max_body(p_http->p_conn, max_body);
+    }
+
+    lua_pushinteger(L, 0);
     return 1;
 }
 
@@ -394,6 +523,48 @@ static int klua_khttp_co_recv(lua_State* L)
     return klua_coroutine_yield(p_http->p_coex, L, on_yield_recv_klua_khttp, p_http);
 }
 
+static int klua_khttp_upgrade(lua_State* L)
+{
+    klua_khttp_t* p_http = to_klua_khttp(L, 1);
+
+    if (p_http->is_client || NULL == p_http->p_conn)
+    {
+        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+    }
+
+    if (!klb_httpserve_wbuf_is_empty(p_http->p_conn))
+    {
+        return push_err_klua_khttp(L, KLB_NETCODE_BUSY);
+    }
+
+    klb_netmulti_ws_adopt_fn adopt = klb_netmulti_get_ws_adopt();
+    if (NULL == adopt)
+    {
+        return push_err_klua_khttp(L, KLB_NETCODE_NOTSUP);
+    }
+
+    klb_netconn_t* p_conn = p_http->p_conn;
+    char peer[128];
+    klb_socket_t* p_socket = NULL;
+    klb_buf_t* p_tail = NULL;
+    int ret = 0;
+
+    memcpy(peer, p_http->peer, sizeof(peer));
+    klb_netconn_bind_recv_data(p_conn, NULL);
+    klb_netconn_set_udata(p_conn, NULL);
+
+    ret = klb_httpserve_conn_take(p_conn, &p_socket, &p_tail);
+    if (0 != ret)
+    {
+        klb_netconn_set_udata(p_conn, p_http);
+        klb_netconn_bind_recv_data(p_conn, on_recv_data_klua_khttp);
+        return push_err_klua_khttp(L, ret);
+    }
+
+    p_http->p_conn = NULL;
+    return adopt(L, p_http->p_netmulti, p_socket, p_tail, peer);
+}
+
 static void klua_khttp_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
@@ -405,6 +576,15 @@ static void klua_khttp_createmeta(lua_State* L)
         { "co_recv",        klua_khttp_co_recv },
 
         { "tls",            klua_khttp_tls },
+        { "peer",           klua_khttp_peer },
+
+        { "set_timeout",    klua_khttp_set_timeout },
+        { "set_max_body",   klua_khttp_set_max_body },
+
+        { "set_connect",    klua_khttp_set_connect },
+        { "upgrade_tls",    klua_khttp_upgrade_tls },
+
+        { "upgrade",        klua_khttp_upgrade },
 
         { NULL,             NULL }
     };
@@ -432,8 +612,12 @@ static int klua_khttp_connect(lua_State* L)
 {
     const char* p_host = luaL_checkstring(L, 1);
     int port = (int)luaL_checkinteger(L, 2);
-
+    int code = 0;
     bool tls = false;
+    klua_env_t* p_env = NULL;
+    klb_netmulti_t* p_netmulti = NULL;
+    klb_netconn_t* p_conn = NULL;
+
     if (klua_is_table(L, 3))
     {
         lua_getfield(L, 3, "tls");
@@ -441,20 +625,21 @@ static int klua_khttp_connect(lua_State* L)
         lua_pop(L, 1);
     }
 
-    klua_env_t* p_env = klua_env_get_by_L(L);
-    klb_netmulti_t* p_netmulti = klua_netmulti_get(p_env);
-    klb_netconn_t* p_conn = klb_httpclient_connect(p_netmulti, p_host, port, tls);
+    p_env = klua_env_get_by_L(L);
+    p_netmulti = klua_netmulti_get(p_env);
+    if (NULL == p_netmulti)
+    {
+        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+    }
 
+    p_conn = klb_httpclient_connect(p_netmulti, p_host, port, tls, &code);
     if (NULL == p_conn)
     {
-        lua_pushnil(L);
-    }
-    else
-    {
-        klua_khttp_t* p_http = new_klua_khttp(L);
-        setup_klua_khttp(p_http, L, p_conn, true);
+        return push_err_klua_khttp(L, (0 != code) ? code : KLB_NETCODE_CONNECT_FAIL);
     }
 
+    klua_khttp_t* p_http = new_klua_khttp(L);
+    setup_klua_khttp(p_http, L, p_conn, true);
     return 1;
 }
 
@@ -601,6 +786,11 @@ static int klua_khttp_listen_close(lua_State* L)
     return 0;
 }
 
+static void format_peer_klua_khttp(char* p_dst, int cap, const struct sockaddr_in* p_addr)
+{
+    klua_netlisten_format_peer_in(p_dst, cap, p_addr);
+}
+
 static klua_khttp_t* new_klua_khttp_by_socket(lua_State* L, klua_khttp_listen_t* p_listen, klb_netlisten_socket_t* p_listen_socket)
 {
     klb_socket_t* p_socket = NULL;
@@ -624,6 +814,7 @@ static klua_khttp_t* new_klua_khttp_by_socket(lua_State* L, klua_khttp_listen_t*
 
     klua_khttp_t* p_http = new_klua_khttp(L);
     setup_klua_khttp(p_http, L, p_conn, false);
+    format_peer_klua_khttp(p_http->peer, (int)sizeof(p_http->peer), &p_listen_socket->addr);
     return p_http;
 }
 
@@ -781,6 +972,86 @@ static int on_yield_accept_klua_khttp_listen(void* ptr, klua_ex_coroutine_t* p_e
     return 0;
 }
 
+/// @brief 热换 TLS 服务端证书 (新 accept 用新 ctx; 旧连接仍持旧 ctx 引用)
+static int klua_khttp_listen_reload_tls(lua_State* L)
+{
+    klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
+    const char* p_cert = NULL;
+    size_t cert_len = 0;
+    const char* p_key = NULL;
+    size_t key_len = 0;
+    klb_socket_tls_server_ctx_t* p_new = NULL;
+
+    if (p_listen->closed)
+    {
+        lua_pushboolean(L, 0);
+        return 1;
+    }
+
+    if (!klua_is_table(L, 2))
+    {
+        return luaL_error(L, "reload_tls need table {cert,key}");
+    }
+
+    lua_getfield(L, 2, "cert");
+    if (klua_is_string(L, -1))
+    {
+        p_cert = lua_tolstring(L, -1, &cert_len);
+    }
+    lua_pop(L, 1);
+
+    lua_getfield(L, 2, "key");
+    if (klua_is_string(L, -1))
+    {
+        p_key = lua_tolstring(L, -1, &key_len);
+    }
+    lua_pop(L, 1);
+
+    if ((NULL == p_cert) || (NULL == p_key) || (cert_len <= 0) || (key_len <= 0))
+    {
+        lua_pushboolean(L, 0);
+        return 1;
+    }
+
+    p_new = klb_socket_tls_server_ctx_create(p_cert, (int)cert_len, p_key, (int)key_len);
+    if (NULL == p_new)
+    {
+        lua_pushboolean(L, 0);
+        return 1;
+    }
+
+    // 旧 ctx 引用计数: 活跃连接仍可用, listen 侧释放持有
+    if (NULL != p_listen->p_tls_ctx)
+    {
+        klb_socket_tls_server_ctx_destroy(p_listen->p_tls_ctx);
+        p_listen->p_tls_ctx = NULL;
+    }
+
+    p_listen->p_tls_ctx = p_new;
+    p_listen->tls = true;
+    lua_pushboolean(L, 1);
+    return 1;
+}
+
+
+static int klua_khttp_listen_port(lua_State* L)
+{
+    klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
+    return klua_netlisten_push_port(L, p_listen->p_listen_conn);
+}
+
+static int klua_khttp_listen_local_addr(lua_State* L)
+{
+    klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
+    return klua_netlisten_push_local_addr(L, p_listen->p_listen_conn);
+}
+
+static int klua_khttp_listen_native_fd(lua_State* L)
+{
+    klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
+    return klua_netlisten_push_native_fd(L, p_listen->p_listen_conn);
+}
+
 static int klua_khttp_listen_co_accept(lua_State* L)
 {
     klua_khttp_listen_t* p_listen = to_klua_khttp_listen(L, 1);
@@ -812,8 +1083,12 @@ static void klua_khttp_listen_createmeta(lua_State* L)
 {
     static luaL_Reg meth[] = {
         { "close",          klua_khttp_listen_close },
+        { "reload_tls",     klua_khttp_listen_reload_tls },
 
         { "co_accept",      klua_khttp_listen_co_accept },
+        { "port",           klua_khttp_listen_port },
+        { "local_addr",     klua_khttp_listen_local_addr },
+        { "native_fd",      klua_khttp_listen_native_fd },
 
         { NULL,             NULL }
     };
@@ -834,16 +1109,124 @@ static void klua_khttp_listen_createmeta(lua_State* L)
     lua_pop(L, 1);
 }
 
+/// @brief 由已探测 socket (klisten / netmux lightuserdata) 创建 HTTP 服务连接
+static int klua_khttp_new_serve(lua_State* L)
+{
+    klb_netlisten_socket_t* p_listen_socket = (klb_netlisten_socket_t*)lua_touserdata(L, 1);
+    bool tls = false;
+    const char* p_cert = NULL;
+    size_t cert_len = 0;
+    const char* p_key = NULL;
+    size_t key_len = 0;
+    klb_socket_fd fd = INVALID_SOCKET;
+    struct sockaddr_in addr;
+    klb_socket_t* p_socket = NULL;
+    klua_env_t* p_env = NULL;
+    klb_netmulti_t* p_netmulti = NULL;
+    klb_netconn_t* p_conn = NULL;
+    klua_khttp_t* p_http = NULL;
+
+    if (NULL == p_listen_socket)
+    {
+        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+    }
+
+    tls = p_listen_socket->tls;
+
+    if (klua_is_table(L, 2))
+    {
+        lua_getfield(L, 2, "tls");
+        if (!lua_isnil(L, -1))
+        {
+            tls = klua_check_option_boolean(L, -1, tls);
+        }
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "cert");
+        if (klua_is_string(L, -1))
+        {
+            p_cert = lua_tolstring(L, -1, &cert_len);
+        }
+        lua_pop(L, 1);
+
+        lua_getfield(L, 2, "key");
+        if (klua_is_string(L, -1))
+        {
+            p_key = lua_tolstring(L, -1, &key_len);
+        }
+        lua_pop(L, 1);
+    }
+
+    fd = p_listen_socket->fd;
+    addr = p_listen_socket->addr;
+    KLB_FREE(p_listen_socket);
+
+    if (tls)
+    {
+        klb_socket_tls_server_ctx_t* p_tls_ctx = klb_socket_tls_server_ctx_create(p_cert, (int)cert_len, p_key, (int)key_len);
+        if (NULL == p_tls_ctx)
+        {
+            KLB_SOCKET_CLOSE(fd);
+            return push_err_klua_khttp(L, KLB_NETCODE_TLS_CERT);
+        }
+
+        p_socket = klb_socket_async_create_tls_server(fd, p_tls_ctx);
+        // 连接持有一份 ref; 释放 create 时的初始 ref
+        klb_socket_tls_server_ctx_destroy(p_tls_ctx);
+
+        if (NULL == p_socket)
+        {
+            KLB_SOCKET_CLOSE(fd);
+            return push_err_klua_khttp(L, KLB_NETCODE_TLS_HANDSHAKE);
+        }
+    }
+    else
+    {
+        p_socket = klb_socket_async_create(fd);
+        if (NULL == p_socket)
+        {
+            KLB_SOCKET_CLOSE(fd);
+            return push_err_klua_khttp(L, KLB_NETCODE_NOMEM);
+        }
+    }
+
+    p_env = klua_env_get_by_L(L);
+    p_netmulti = klua_netmulti_get(p_env);
+    if (NULL == p_netmulti)
+    {
+        KLB_FREE_BY(p_socket, klb_socket_destroy);
+        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+    }
+
+    p_conn = klb_httpserve_conn_create(p_netmulti, p_socket);
+    p_http = new_klua_khttp(L);
+    setup_klua_khttp(p_http, L, p_conn, false);
+    format_peer_klua_khttp(p_http->peer, (int)sizeof(p_http->peer), &addr);
+
+    return 1;
+}
+
+
 static int klua_khttp_listen(lua_State* L)
 {
     int port = (int)luaL_checkinteger(L, 1);
-
     bool tls = false;
     bool plain = false;
     const char* p_cert = NULL;
     size_t cert_len = 0;
     const char* p_key = NULL;
     size_t key_len = 0;
+    klb_socket_tls_server_ctx_t* p_tls_ctx = NULL;
+    klua_env_t* p_env = NULL;
+    klb_netmulti_t* p_netmulti = NULL;
+    klb_netconn_t* p_listen_conn = NULL;
+    int rc = 0;
+    int max_connect = 20;
+    char host[128] = { 0 };
+    klb_netlisten_open_opts_t open_opts = { 0 };
+    klua_khttp_listen_t* p_listen = NULL;
+
+    open_opts.family = AF_INET;
 
     if (klua_is_table(L, 2))
     {
@@ -868,27 +1251,44 @@ static int klua_khttp_listen(lua_State* L)
             p_key = lua_tolstring(L, -1, &key_len);
         }
         lua_pop(L, 1);
+
+        rc = klua_netlisten_parse_bind_cfg(L, 2, host, (int)sizeof(host), &max_connect, &open_opts);
+        if (0 != rc)
+        {
+            return push_err_klua_khttp(L, rc);
+        }
     }
 
-    klb_socket_tls_server_ctx_t* p_tls_ctx = NULL;
     if (tls)
     {
         p_tls_ctx = klb_socket_tls_server_ctx_create(p_cert, (int)cert_len, p_key, (int)key_len);
         if (NULL == p_tls_ctx)
         {
-            lua_pushnil(L);
-            return 1;
+            return push_err_klua_khttp(L, KLB_NETCODE_TLS_CERT);
         }
     }
 
-    klua_env_t* p_env = klua_env_get_by_L(L);
-    klb_netmulti_t* p_netmulti = klua_netmulti_get(p_env);
-    klb_netconn_t* p_listen_conn = klb_netlisten_conn_create(p_netmulti);
+    p_env = klua_env_get_by_L(L);
+    p_netmulti = klua_netmulti_get(p_env);
+    if (NULL == p_netmulti)
+    {
+        KLB_FREE_BY(p_tls_ctx, klb_socket_tls_server_ctx_destroy);
+        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+    }
 
+    p_listen_conn = klb_netlisten_conn_create(p_netmulti);
     klb_netlisten_conn_set_accept(p_listen_conn, on_accept_klua_khttp_listen, NULL);
-    klb_netlisten_conn_open(p_listen_conn, port, 20);
 
-    klua_khttp_listen_t* p_listen = new_klua_khttp_listen(L);
+    rc = klb_netlisten_conn_open_addr_ex(p_listen_conn, ('\0' == host[0]) ? NULL : host,
+        port, max_connect, &open_opts);
+    if (0 != rc)
+    {
+        klb_netlisten_conn_free(p_listen_conn);
+        KLB_FREE_BY(p_tls_ctx, klb_socket_tls_server_ctx_destroy);
+        return push_err_klua_khttp(L, rc);
+    }
+
+    p_listen = new_klua_khttp_listen(L);
 
     p_listen->L = L;
     p_listen->co_accept = NULL;
@@ -916,9 +1316,12 @@ int klua_open_khttp(lua_State* L)
 {
     static luaL_Reg lib[] =
     {
-        { "connect",    klua_khttp_connect },
+        { "connect",        klua_khttp_connect },
+        { "connect_rpc",    klua_khttp_connect_rpc },
 
-        { "listen",     klua_khttp_listen },
+        { "listen",         klua_khttp_listen },
+        { "listen_rpc",     klua_khttp_listen_rpc },
+        { "new_serve",      klua_khttp_new_serve },
 
         { NULL,         NULL }
     };
@@ -927,6 +1330,10 @@ int klua_open_khttp(lua_State* L)
 
     klua_khttp_createmeta(L);
     klua_khttp_listen_createmeta(L);
+
+    klua_khttpclientrpc_createmeta(L);
+    klua_khttpserverpc_createmeta(L);
+    klua_khttpserverpc_listen_createmeta(L);
 
     return 1;
 }

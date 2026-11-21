@@ -34,19 +34,41 @@ int klua_ex_lpc_new_module(klua_ex_lpc_t* p_ex, const sds name, klua_ex_lpc_msg_
 {
     assert(NULL != cb_msg);
 
+    if (NULL == name)
+    {
+        return 1;
+    }
+
+    size_t name_len = sdslen(name);
+    if (0 == name_len || KLUA_LPC_NAME_LEN < name_len)
+    {
+        return 1;
+    }
+
+    if (NULL != klb_hlist_find_iter(p_ex->p_module_hlist, name, name_len))
+    {
+        return 1;
+    }
+
     klua_ex_lpc_module_t* p_mo = KLB_MALLOCZ(klua_ex_lpc_module_t, 1, 0);
     p_mo->module = 1;
     p_mo->name = sdsnew(name);
     p_mo->cb_msg = cb_msg;
     p_mo->ptr = ptr;
 
-    klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_module_hlist, name, sdslen(name), p_mo);
+    klb_hlist_iter_t* p_iter = klb_hlist_push_tail(p_ex->p_module_hlist, name, name_len, p_mo);
     assert(NULL != p_iter);
 
     int ret = klua_thread_register_lpc_module(p_mo->name, p_ex->p_env);
-    assert(0 == ret);
+    if (0 != ret)
+    {
+        klb_hlist_remove_bykey(p_ex->p_module_hlist, name, name_len);
+        KLB_FREE_BY(p_mo->name, sdsfree);
+        KLB_FREE(p_mo);
+        return 1;
+    }
 
-    return ret;
+    return 0;
 }
 
 sds klua_ex_lpc_new_lpc(klua_ex_lpc_t* p_ex, klua_ex_lpc_msg_cb cb_msg, void* ptr)
@@ -110,6 +132,27 @@ static void klua_ex_lpc_destroy(void* ptr)
 {
     klua_ex_lpc_t* p_ex = (klua_ex_lpc_t*)ptr;
     klua_env_t* p_env = p_ex->p_env;
+
+    // 先注销并清空模块表: 全局 kthread 表残留会指向已销毁环境, 并在退出时触发 hmap 断言
+    while (0 < klb_hlist_size(p_ex->p_module_hlist))
+    {
+        klua_ex_lpc_module_t* p_mo = (klua_ex_lpc_module_t*)klb_hlist_pop_head(p_ex->p_module_hlist);
+
+        if (NULL != p_mo)
+        {
+            if (1 == p_mo->module)
+            {
+                klua_thread_unregister_lpc_module(p_mo->name);
+            }
+            else
+            {
+                klua_thread_unregister_lpc(p_mo->name);
+            }
+
+            KLB_FREE_BY(p_mo->name, sdsfree);
+            KLB_FREE(p_mo);
+        }
+    }
 
     KLB_FREE_BY(p_ex->p_module_hlist, klb_hlist_destroy);
     KLB_FREE(p_ex);

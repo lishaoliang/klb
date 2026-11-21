@@ -1,4 +1,4 @@
-﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbsmp/core/klb_smpparser.h"
 #include <string.h>
 
@@ -62,7 +62,17 @@ int klb_smpparser_parse(klb_smpparser_t* p_parser, char* p_data, int data_len)
 
     case KLB_MNP_MEDIA: ///< 媒体数据
         {
+            if (p_smp->size < sizeof(klb_smp_t) + sizeof(klb_mnp_media_t))
+            {
+                return -1; // 协议错误
+            }
 
+            if (data_len < (int)(sizeof(klb_smp_t) + sizeof(klb_mnp_media_t)))
+            {
+                return 1; // 数据长度不足
+            }
+
+            memcpy(&p_parser->media, ptr, sizeof(klb_mnp_media_t));
         }
         break;
 
@@ -81,6 +91,7 @@ int klb_smpparser_parse(klb_smpparser_t* p_parser, char* p_data, int data_len)
             ptr += sizeof(klb_mnp_rpc_t); // 偏移
             pos += sizeof(klb_mnp_rpc_t); // 偏移
         }
+        break;
 
     default:
         break;

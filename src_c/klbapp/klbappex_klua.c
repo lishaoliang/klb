@@ -71,16 +71,28 @@ static int klbappex_klua_control(void* ptr, klb_app_t* p_app, int msg, uint8_t* 
 }
 
 /// @brief 常规调用一次
+/// @note  klua_env_loop_once 返回「建议剩余休眠」; klb_app_loop_once 累加的是「忙时」
+///        此处转换为忙时 = sleep_max - remain, 避免双重「剩余」导致主线程恒 sleep(1)
 static int klbappex_klua_loop_once(void* ptr, klb_app_t* p_app, int64_t now)
 {
     klbappex_klua_t* p_appex = (klbappex_klua_t*)ptr;
+    int sleep_max = 0;
+    int remain = 0;
 
-    if ( NULL == p_appex->p_env || !p_appex->is_load_entry)
+    if (NULL == p_appex->p_env || !p_appex->is_load_entry)
     {
         return 0; // 未加载 入口 lua 脚本
     }
 
-    return klua_env_loop_once(p_appex->p_env);
+    sleep_max = klua_env_get_loop_sleep(p_appex->p_env);
+    remain = klua_env_loop_once(p_appex->p_env);
+
+    if (remain >= sleep_max)
+    {
+        return 0;
+    }
+
+    return sleep_max - remain;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -121,26 +133,40 @@ static int on_preload_klualib_klbappex_klua(lua_State* L)
     return 0;
 }
 
-// 设置 启动初始参数
-static void set_startup_args_klbappex_klua(klua_env_t* p_env, int argc, char** argv)
+// 设置启动初始参数: argv[0] + argv[entry_idx..] (壳选项不进入 Lua get_args)
+static void set_startup_args_klbappex_klua(klua_env_t* p_env, int argc, char** argv, int entry_idx)
 {
     klb_map_t r = { 0 };
+    int out_i = 0;
+
     klb_map_init(&r);
 
-    for (int i = 0; i < argc; i++)
+    if (0 < argc && NULL != argv[0])
     {
-        klb_map_set_idx_string(&r, i, argv[i]);
+        klb_map_set_idx_string(&r, out_i, argv[0]);
+        out_i += 1;
     }
 
-    klb_buf_t* p_args = klb_map_seri_pack(&r);
-    klua_env_set_args(p_env, p_args->p_buf + p_args->start, p_args->end - p_args->start);
+    for (int i = entry_idx; i < argc; ++i)
+    {
+        if (NULL != argv[i])
+        {
+            klb_map_set_idx_string(&r, out_i, argv[i]);
+            out_i += 1;
+        }
+    }
 
-    KLB_FREE(p_args);
+    {
+        klb_buf_t* p_args = klb_map_seri_pack(&r);
+        klua_env_set_args(p_env, p_args->p_buf + p_args->start, p_args->end - p_args->start);
+        KLB_FREE(p_args);
+    }
+
     klb_map_quit(&r);
 }
 
 
-int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv)
+int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv, int entry_idx)
 {
     // 设置所有子线程都使用预加载库
     klua_thread_set_preload(on_preload_klualib_klbappex_klua);
@@ -148,7 +174,7 @@ int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv)
     // 初始化 主lua环境
     {
         // 设置启动参数 args
-        set_startup_args_klbappex_klua(p_appex->p_env, argc, argv);
+        set_startup_args_klbappex_klua(p_appex->p_env, argc, argv, entry_idx);
 
         // 设置主入口线程 预加载库函数
         klua_env_set_preload(p_appex->p_env, on_preload_klualib_klbappex_klua);
@@ -161,21 +187,19 @@ int klbappex_klua_do_preinit(klbappex_klua_t* p_appex, int argc, char** argv)
     klua_thread_register("main", p_appex->p_env);        // main
 
     // 开始加载 lua 入口 脚本
-    if (argc < 2 || NULL == argv[1])
+    if (entry_idx < 0 || entry_idx >= argc || NULL == argv[entry_idx])
     {
         klua_thread_unregister("main");
         return -1;
     }
 
-    if (0 != klua_env_dofile(p_appex->p_env, argv[1]))
+    if (0 != klua_env_dofile(p_appex->p_env, argv[entry_idx]))
     {
         klua_thread_unregister("main");
-    }
-    else
-    {
-        p_appex->is_load_entry = true;
+        return -1;
     }
 
+    p_appex->is_load_entry = true;
     return 0;
 }
 

@@ -60,6 +60,8 @@ ifneq ($(strip $(MY_TARGET_EXE)),)
 	MY_LIB_DYNAMIC := -L $(MY_OUT_DIR) -Bdynamic -lklb
 	MY_LIB_DYNAMIC += -lws2_32 -lwsock32 -lwinmm -lpsapi -lcrypt32 -lbcrypt
 	MY_LIB_DYNAMIC += -lgdi32 -luser32 -ladvapi32 -lshell32 -liphlpapi
+	# 静态链接 libgcc (免 libgcc_s_seh-1.dll 运行时依赖)
+	MY_LIB_DYNAMIC += -static-libgcc
 	MY_LIB_STATIC := -L $(MY_OUT_DIR) -Bstatic
 
 	MY_CFLAGS := $(filter-out -D_GNU_SOURCE -DLUA_USE_LINUX,$(MY_CFLAGS))
@@ -77,8 +79,10 @@ else
 	MY_LIB_DYNAMIC += -lgdi32 -luser32 -ladvapi32 -lshell32 -liphlpapi
 	MY_LIB_STATIC := -L $(MY_OUT_DIR) -Bstatic
 
-	MY_CFLAGS := $(filter-out -D_GNU_SOURCE -DLUA_USE_LINUX -D__KLB_SYMBOL_HIDING__ -fvisibility=hidden,$(MY_CFLAGS))
+	MY_CFLAGS := $(filter-out -D_GNU_SOURCE -DLUA_USE_LINUX,$(MY_CFLAGS))
 	MY_LDFLAGS := $(filter-out -rdynamic,$(MY_LDFLAGS))
+	# 静态链接 libgcc (免 libgcc_s_seh-1.dll 运行时依赖)
+	MY_LDFLAGS += -static-libgcc
 	MY_CFLAGS += -D__KLB_BUILD_DLL__ -DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=0x0601
 	MY_CFLAGS += -DPCRE2_STATIC -fgnu89-inline
 

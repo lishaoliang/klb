@@ -1,10 +1,40 @@
-﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
 #include "klbsmp/core/klb_smpclientrpc_conn.h"
+#include "klbnet/klb_socket_tls.h"
+#include "klbnet/klb_netcode.h"
 #include "klbmem/klb_mem.h"
 #include "klbmem/klb_rbuf.h"
 #include "klbutil/klb_nlist.h"
 #include "klbsmp/core/klb_smpparser.h"
 #include <assert.h>
+
+#ifdef _WIN32
+#include <ws2tcpip.h>
+#else
+#include <errno.h>
+#endif
+
+
+/// @brief 非阻塞套接字无数据时 recv 返回负值, 不是断线
+static bool recv_would_block_klb_smpclientrpc_conn(void)
+{
+#ifdef _WIN32
+    int err = WSAGetLastError();
+
+    if (WSAEWOULDBLOCK == err || WSAEINTR == err)
+    {
+        return true;
+    }
+#else
+    if (EAGAIN == errno || EWOULDBLOCK == errno || EINTR == errno)
+    {
+        return true;
+    }
+#endif
+
+    return false;
+}
+
 
 /// @struct klb_smpclientrpc_conn_t
 /// @brief  SMP客户端RPC连接(SMP client RPC connect)
@@ -64,10 +94,9 @@ static void push_netcode_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int code)
 {
     assert(KLB_NETCODE_OK != code);
 
-    if ((KLB_SOCKET_OK < code && code <= KLB_SOCKET_ERR_MAX) ||
-        KLB_SOCKET_CLOSEING == code)
+    // 断联/超时/协议错/RBUF_FULL 等均须移出 select; 仅 WBUF_EMPTY/CONNECT 保持读写标记
+    if (KLB_NETCODE_WBUF_EMPTY != code && KLB_SOCKET_CONNECT != code)
     {
-        // 关闭 socket 读写
         klb_socket_set_reading(p_conn->p_socket, false);
         klb_socket_set_writing(p_conn->p_socket, false);
     }
@@ -88,6 +117,23 @@ static void on_connect_timeout_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int6
 static void on_connected_timeout_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int64_t now)
 {
     push_netcode_klb_smpclientrpc_conn(p_conn, KLB_SOCKET_CONNECT);
+}
+
+static void enqueue_ctrl_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int packtype)
+{
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
+    klb_socket_t* p_socket = p_conn->p_socket;
+    klb_smp_t smp = { 0 };
+    klb_buf_t* p_buf = NULL;
+
+    smp.magic = KLB_SMP_MAGIC;
+    smp.size = (uint32_t)sizeof(klb_smp_t);
+    smp.packtype = (uint32_t)packtype;
+
+    p_buf = klb_buf_malloc((int)sizeof(klb_smp_t), false);
+    klb_buf_write(p_buf, (const char*)&smp, (int)sizeof(smp));
+    klb_nlist_push_tail(p_smpclient->p_write_nlist, p_buf);
+    klb_socket_set_writing(p_socket, true);
 }
 
 /// @brief ticker 定时器消息
@@ -171,22 +217,25 @@ static int klb_smpclientrpc_conn_on_send(klb_netconn_t* p_conn, int64_t now)
 
         uint8_t* p_data = p_buf->p_buf + p_buf->start;
         int send_num = klb_socket_send(p_socket, p_data, data_len);
+        int judge = 0;
+        int close_status = KLB_SOCKET_DISCONNECT;
 
         if (0 < send_num)
         {
             p_buf->start += send_num;
             write_num += send_num;
+            continue;
         }
-        else if (0 == send_num)
+
+        judge = klb_socket_send_judge(p_socket, send_num, &close_status);
+        if (KLB_SOCKET_SEND_AGAIN == judge)
         {
-            // 无法发送了
             break;
         }
-        else
-        {
-            // 
-            break;
-        }
+
+        klb_socket_recv_closed(p_socket, close_status);
+        push_netcode_klb_smpclientrpc_conn(p_conn, close_status);
+        return write_num;
     }
 
     // 缓存的数据写完了
@@ -199,6 +248,49 @@ static int klb_smpclientrpc_conn_on_send(klb_netconn_t* p_conn, int64_t now)
     }
 
     return write_num;
+}
+
+static bool is_rpc_pack_klb_smpclientrpc_conn(int packtype)
+{
+    if (KLB_MNP_RPC_LUA == packtype || KLB_MNP_RPC_JSON == packtype)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+static void skip_body_klb_smpclientrpc_conn(klb_netconn_t* p_conn, klb_smpparser_t* p_parser, klb_rbuf_t* p_head)
+{
+    klb_smpclientrpc_conn_t* p_smpclient = (klb_smpclientrpc_conn_t*)p_conn->extra;
+    int body_need = p_parser->pack_len - p_parser->head_len;
+
+    if (0 > body_need)
+    {
+        body_need = 0;
+    }
+
+    int body_len = 0;
+    klb_rbuf_data(p_head, &body_len);
+
+    int cp_len = MIN(body_need, body_len);
+    if (0 < cp_len)
+    {
+        klb_rbuf_use(p_head, cp_len);
+        body_need -= cp_len;
+    }
+
+    if (0 < body_need)
+    {
+        p_smpclient->p_read_body = klb_buf_malloc(body_need, false);
+        p_smpclient->reading_len = body_need;
+        p_smpclient->parser = *p_parser;
+        p_smpclient->parser_status = KLB_SMPPARSER_body;
+    }
+    else
+    {
+        p_smpclient->parser_status = KLB_SMPPARSER_head;
+    }
 }
 
 /// @brief 接收网络数据
@@ -221,13 +313,15 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
             klb_rbuf_cat_end(p_head, recv_len);
             *p_read_num += recv_len;
         }
-        else if (0 == recv_len)
-        {
-            return 1; // 无数据可以读
-        }
         else
         {
-            // 连接断开等错误
+            int close_status = KLB_SOCKET_DISCONNECT;
+            int judge = klb_socket_recv_judge(p_socket, recv_len, &close_status);
+            if (KLB_SOCKET_RECV_AGAIN == judge)
+            {
+                return 1;
+            }
+            klb_socket_recv_closed(p_socket, close_status);
             return -1;
         }
 
@@ -243,10 +337,17 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
             klb_rbuf_use(p_head, parser.head_len);
 
             // 解析成功
-            if (KLB_MNP_PONG == parser.packtype ||
-                KLB_MNP_PING == parser.packtype)
+            if (KLB_MNP_PING == parser.packtype)
             {
+                enqueue_ctrl_klb_smpclientrpc_conn(p_conn, KLB_MNP_PONG);
                 p_smpclient->parser_status = KLB_SMPPARSER_head;
+                klb_rbuf_memmove(p_head);
+            }
+            else if (KLB_MNP_PONG == parser.packtype)
+            {
+                // C 层吞掉 Pong; 不推 Lua
+                p_smpclient->parser_status = KLB_SMPPARSER_head;
+                klb_rbuf_memmove(p_head);
             }
             else if (KLB_MNP_RPC_LUA == parser.packtype ||
                 KLB_MNP_RPC_JSON == parser.packtype)
@@ -272,23 +373,23 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
 
                     p_smpclient->parser = parser;
                     p_smpclient->parser_status = KLB_SMPPARSER_body;
+                    klb_rbuf_memmove(p_head);
                 }
                 else
                 {
                     // 完整的数据包
                     p_smpclient->parser_status = KLB_SMPPARSER_head;
 
-                    // 完整数据
+                    // 先整理 rbuf, 再回调; 避免 Lua disconnect 后 memmove 悬空
+                    klb_rbuf_memmove(p_head);
                     push_data_klb_smpclientrpc_conn(p_conn, parser.packtype, p_buf);
                 }
             }
             else
             {
-                // 不支持
-                p_smpclient->parser_status = KLB_SMPPARSER_null;
+                skip_body_klb_smpclientrpc_conn(p_conn, &parser, p_head);
+                klb_rbuf_memmove(p_head);
             }
-
-            klb_rbuf_memmove(p_head);
         }
         else if (0 < ret_parse)
         {
@@ -298,7 +399,7 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
         else
         {
             // 协议错误
-            return -1;
+            return -2;
         }
     }
     else if (KLB_SMPPARSER_body == p_smpclient->parser_status)
@@ -319,18 +420,26 @@ static int do_recv_klb_smpclientrpc_conn(klb_netconn_t* p_conn, int* p_read_num)
                 p_smpclient->p_read_body = NULL;
                 p_smpclient->parser_status = KLB_SMPPARSER_head;
 
-                // 完整数据
-                push_data_klb_smpclientrpc_conn(p_conn, p_smpclient->parser.packtype, p_buf);
+                if (is_rpc_pack_klb_smpclientrpc_conn(p_smpclient->parser.packtype))
+                {
+                    push_data_klb_smpclientrpc_conn(p_conn, p_smpclient->parser.packtype, p_buf);
+                }
+                else
+                {
+                    KLB_FREE_BY(p_buf, klb_buf_unref);
+                }
             }
-        }
-        else if(0 == recv_len)
-        {
-            // 无数据可读
-            return 1;
         }
         else
         {
-            // 连接错误
+            int close_status = KLB_SOCKET_DISCONNECT;
+            int judge = klb_socket_recv_judge(p_socket, recv_len, &close_status);
+            if (KLB_SOCKET_RECV_AGAIN == judge)
+            {
+                return 1;
+            }
+
+            klb_socket_recv_closed(p_socket, close_status);
             return -1;
         }
     }
@@ -355,6 +464,25 @@ static int klb_smpclientrpc_conn_on_recv(klb_netconn_t* p_conn, int64_t now)
     while (true)
     {
         int ret = do_recv_klb_smpclientrpc_conn(p_conn, &read_num);
+
+        if (0 > ret)
+        {
+            int code = (int)klb_socket_get_status(p_socket);
+
+            if (-2 == ret)
+            {
+                code = KLB_SOCKET_ERR_PROTOCOL;
+                klb_socket_recv_closed(p_socket, code);
+            }
+            else if (KLB_SOCKET_OK == code)
+            {
+                code = KLB_SOCKET_DISCONNECT;
+                klb_socket_recv_closed(p_socket, code);
+            }
+
+            push_netcode_klb_smpclientrpc_conn(p_conn, code);
+            break;
+        }
 
         if (0 != ret)
         {
@@ -535,24 +663,66 @@ static void klb_smpclientrpc_conn_quit(klb_netconn_t* p_conn)
 /// 连接目标
 
 /// @brief SMP连接目标
-klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port)
+klb_netconn_t* klb_smpclientrpc_connect(klb_netmulti_t* p_netmulti, const char* p_host, int port, bool tls, int* p_code)
 {
-    // 连接 socket
-    klb_socket_fd fd = klb_socket_connect(p_host, port, 0);
-    if (INVALID_SOCKET == fd)
+    klb_socket_fd fd = INVALID_SOCKET;
+    klb_socket_t* p_socket = NULL;
+    klb_netconn_t* p_netconn = NULL;
+    int code = 0;
+
+    if (NULL == p_netmulti || NULL == p_host || 0 == p_host[0])
     {
+        if (NULL != p_code)
+        {
+            *p_code = KLB_NETCODE_INVAL;
+        }
+
         return NULL;
     }
 
-    // 创建 klb_socket_t*
-    klb_socket_t* p_socket = klb_socket_async_create(fd);
-
-    // 创建 klb_netconn_t*
-    klb_netconn_t* p_netconn = klb_smpclientrpc_conn_create(p_netmulti, p_socket);
-
+    fd = klb_socket_connect(p_host, port, 0);
+    if (INVALID_SOCKET == fd)
     {
-        // 放入复用模块
-        klb_netmulti_push(p_netmulti, p_netconn);
+        code = klb_netcode_last_syserr();
+        if (KLB_NETCODE_IO == code || KLB_NETCODE_ERR == code)
+        {
+            code = KLB_NETCODE_CONNECT_FAIL;
+        }
+
+        if (NULL != p_code)
+        {
+            *p_code = code;
+        }
+
+        return NULL;
+    }
+
+    // step1. 明文或 TLS 封装
+    if (tls)
+    {
+        p_socket = klb_socket_async_create_tls(fd);
+        if (NULL == p_socket)
+        {
+            KLB_SOCKET_CLOSE(fd);
+            if (NULL != p_code)
+            {
+                *p_code = KLB_NETCODE_TLS_HANDSHAKE;
+            }
+
+            return NULL;
+        }
+    }
+    else
+    {
+        p_socket = klb_socket_async_create(fd);
+    }
+
+    p_netconn = klb_smpclientrpc_conn_create(p_netmulti, p_socket);
+    klb_netmulti_push(p_netmulti, p_netconn);
+
+    if (NULL != p_code)
+    {
+        *p_code = 0;
     }
 
     return p_netconn;

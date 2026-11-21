@@ -132,12 +132,30 @@ static int klb_flv_demux_on_avc_sps_pps(klb_flv_demux_t* p_flv_demux, klb_flv_vi
 
     bool b_update_sps = true, b_update_pps = true;
 
+    // Fixed Bug.2026-18-klb: bound checks with spare_len
+    if (spare_len < 1)
+    {
+        return -1;
+    }
+
     // SPS
     uint8_t num_of_sps = *ptr;                  ptr += 1;   // numOfSequenceParameterSets
+    spare_len -= 1;
     uint8_t sps_count = num_of_sps & 0x1F;
     for (int i = 0; i < sps_count; i++)
     {
+        if (spare_len < 2)
+        {
+            return -1;
+        }
+
         uint16_t sps_len = KLB_RB16(ptr);  ptr += 2;   // sequenceParameterSetLength
+        spare_len -= 2;
+        if (spare_len < (int)sps_len)
+        {
+            return -1;
+        }
+
         if (0 == sps_len)
         {
             continue;
@@ -151,13 +169,31 @@ static int klb_flv_demux_on_avc_sps_pps(klb_flv_demux_t* p_flv_demux, klb_flv_vi
 
         //KLB_LOG("flv parser sps len:[%d]", sps_len);
         ptr += sps_len;
+        spare_len -= (int)sps_len;
     }
 
     // PPS
+    if (spare_len < 1)
+    {
+        return -1;
+    }
+
     uint8_t pps_count = *ptr;                   ptr += 1;   // numOfPictureParameterSets
+    spare_len -= 1;
     for (int i = 0; i < pps_count; i++)
     {
+        if (spare_len < 2)
+        {
+            return -1;
+        }
+
         uint16_t pps_len = KLB_RB16(ptr);  ptr += 2;   // pictureParameterSetLength
+        spare_len -= 2;
+        if (spare_len < (int)pps_len)
+        {
+            return -1;
+        }
+
         if (0 == pps_len)
         {
             continue;
@@ -166,11 +202,12 @@ static int klb_flv_demux_on_avc_sps_pps(klb_flv_demux_t* p_flv_demux, klb_flv_vi
         if (b_update_pps)
         {
             klb_flv_demux_update_pps(p_flv_demux, ptr, pps_len);
-            b_update_sps = false;
+            b_update_pps = false; // Fixed Bug.2026-19-klb
         }
 
         //KLB_LOG("flv parser pps len:[%d]", pps_len);
         ptr += pps_len;
+        spare_len -= (int)pps_len;
     }
 
     return 0;
@@ -184,12 +221,30 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
 
     bool b_update_vps = true, b_update_sps = true, b_update_pps = true;
 
+    // Fixed Bug.2026-18-klb: bound checks with spare_len
+    if (spare_len < 1)
+    {
+        return -1;
+    }
+
     // VPS
     uint8_t num_of_vps = *ptr;                  ptr += 1;   // numOfSequenceParameterSets
+    spare_len -= 1;
     uint8_t vps_count = num_of_vps & 0x1F;
     for (int i = 0; i < vps_count; i++)
     {
+        if (spare_len < 2)
+        {
+            return -1;
+        }
+
         uint16_t vps_len = KLB_RB16(ptr);  ptr += 2;   // sequenceParameterSetLength
+        spare_len -= 2;
+        if (spare_len < (int)vps_len)
+        {
+            return -1;
+        }
+
         if (0 == vps_len)
         {
             continue;
@@ -203,15 +258,33 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
 
         //KLB_LOG("C flv parser vps len:[%d]", vps_len);
         ptr += vps_len;
+        spare_len -= (int)vps_len;
     }
 
 
     // SPS
+    if (spare_len < 1)
+    {
+        return -1;
+    }
+
     uint8_t num_of_sps = *ptr;                  ptr += 1;   // numOfSequenceParameterSets
+    spare_len -= 1;
     uint8_t sps_count = num_of_sps & 0x1F;
     for (int i = 0; i < sps_count; i++)
     {
+        if (spare_len < 2)
+        {
+            return -1;
+        }
+
         uint16_t sps_len = KLB_RB16(ptr);  ptr += 2;   // sequenceParameterSetLength
+        spare_len -= 2;
+        if (spare_len < (int)sps_len)
+        {
+            return -1;
+        }
+
         if (0 == sps_len)
         {
             continue;
@@ -225,13 +298,31 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
 
         //KLB_LOG("flv parser sps len:[%d]", sps_len);
         ptr += sps_len;
+        spare_len -= (int)sps_len;
     }
 
     // PPS
+    if (spare_len < 1)
+    {
+        return -1;
+    }
+
     uint8_t pps_count = *ptr;                   ptr += 1;   // numOfPictureParameterSets
+    spare_len -= 1;
     for (int i = 0; i < pps_count; i++)
     {
+        if (spare_len < 2)
+        {
+            return -1;
+        }
+
         uint16_t pps_len = KLB_RB16(ptr);  ptr += 2;   // pictureParameterSetLength
+        spare_len -= 2;
+        if (spare_len < (int)pps_len)
+        {
+            return -1;
+        }
+
         if (0 == pps_len)
         {
             continue;
@@ -240,11 +331,12 @@ static int klb_flv_demux_on_avc_vps_sps_pps_h265(klb_flv_demux_t* p_flv_demux, k
         if (b_update_pps)
         {
             klb_flv_demux_update_pps(p_flv_demux, ptr, pps_len);
-            b_update_sps = false;
+            b_update_pps = false; // Fixed Bug.2026-19-klb
         }
 
         //KLB_LOG("flv parser pps len:[%d]", pps_len);
         ptr += pps_len;
+        spare_len -= (int)pps_len;
     }
 
     return 0;
@@ -292,7 +384,8 @@ static int klb_flv_demux_on_avc_nalu(klb_flv_demux_t* p_flv_demux, klb_flv_video
                 ptr += 4;
             }
 
-            if (nalu_len <= (int)nalu_size)
+            // Fixed Bug.2026-16-klb: remaining after length prefix, not total nalu_len
+            if (nalu_len - offset - size_minus_one < (int)nalu_size)
             {
                 assert(false);
                 return -1;
@@ -374,7 +467,8 @@ static int klb_flv_demux_on_avc_nalu_h265(klb_flv_demux_t* p_flv_demux, klb_flv_
                 ptr += 4;
             }
 
-            if (nalu_len <= (int)nalu_size)
+            // Fixed Bug.2026-16-klb: remaining after length prefix, not total nalu_len
+            if (nalu_len - offset - size_minus_one < (int)nalu_size)
             {
                 assert(false);
                 return -1;

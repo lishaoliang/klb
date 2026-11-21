@@ -207,6 +207,78 @@ int klb_rtspparser_parse(klb_rtspparser_t* p_parser, char* p_data, int data_len)
     return 1; // 数据长度不足
 }
 
+
+int klb_rtspparser_parse_rtp(klb_rtspparser_t* p_parser, char* p_data, int data_len)
+{
+    uint8_t* ptr = (uint8_t*)p_data;
+    int length = data_len;
+    int pos = 12;
+    int padding_len = 0;
+
+    if (NULL == p_parser || NULL == p_data || length < 12)
+    {
+        return -1;
+    }
+
+    if (2 != ((ptr[0] >> 6) & 0x3))
+    {
+        return -1;
+    }
+
+    p_parser->rtp_head.version = (ptr[0] >> 6) & 0x3;
+    p_parser->rtp_head.padding = (ptr[0] >> 5) & 0x1;
+    p_parser->rtp_head.extension = (ptr[0] >> 4) & 0x1;
+    p_parser->rtp_head.csrc_count = ptr[0] & 0xF;
+
+    p_parser->rtp_head.marker = (ptr[1] >> 7) & 0x1;
+    p_parser->rtp_head.payload_type = ptr[1] & 0x7F;
+
+    p_parser->rtp_head.sequence = KLB_RB16(ptr + 2);
+    p_parser->rtp_head.timestamp = KLB_RB32(ptr + 4);
+    p_parser->rtp_head.ssrc = KLB_RB32(ptr + 8);
+
+    padding_len = (0 == p_parser->rtp_head.padding) ? 0 : (int)ptr[length - 1];
+
+    if (0 < p_parser->rtp_head.csrc_count)
+    {
+        pos += p_parser->rtp_head.csrc_count * 4;
+    }
+
+    if (0 != p_parser->rtp_head.extension)
+    {
+        klb_rtp_headex_t ex = { 0 };
+
+        if (length < pos + (int)sizeof(klb_rtp_headex_t))
+        {
+            return -1;
+        }
+
+        ex.profile_id = KLB_RB16(ptr + pos);
+        ex.length = KLB_RB16(ptr + pos + 2);
+
+        pos += (int)sizeof(klb_rtp_headex_t);
+        pos += (int)ex.length * 4;
+    }
+
+    if (length < pos + padding_len)
+    {
+        return -1;
+    }
+
+    p_parser->rtsptype = KLB_RTSPTYPE_rtp;
+    p_parser->pack_len = length;
+    p_parser->nalu_pos = pos;
+    p_parser->nalu_len = length - pos - padding_len;
+
+    if (0 > p_parser->nalu_len)
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+
 int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int nalu_len)
 {
     // 初始化解析结果值
@@ -222,6 +294,12 @@ int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int 
     uint8_t* ptr = (uint8_t*)p_nalu;
     int pos = 0;
 
+    // Fixed Bug.2026-15-klb: need at least 1-byte NALU header
+    if (nalu_len < 1)
+    {
+        return 1;
+    }
+
     // nalu head
     klb_rtp_nalu_h264_t nalu = { 0 };
     nalu.nalu_type = ptr[pos] & 0x1F;
@@ -235,6 +313,12 @@ int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int 
     }
     else if (KLB_RTP_NALU_FU_A == nalu.nalu_type)
     {
+        // FU-A: NALU hdr(1) + FU hdr(1) + payload
+        if (nalu_len < pos + 1)
+        {
+            return 1;
+        }
+
         // 当进行 FU 分片时, 原始 NALU 头部的 F 和 NRI 会被提取出来, 作为所有分片的公共标识(复用在每个分片的 RTP 载荷前缀中)
         // FU 前缀(前一个字节) = (F << 7) | (NRI << 5) | 0x1C
         klb_rtp_nalu_fu_t fu = { 0 };
@@ -275,6 +359,12 @@ int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int 
     }
     else if(KLB_RTP_NALU_FU_B == nalu.nalu_type)
     {
+        // Fixed Bug.2026-15-klb: FU-B needs FU hdr(1) + DON(2)
+        if (nalu_len < pos + 3)
+        {
+            return 1;
+        }
+
         // 当进行 FU 分片时, 原始 NALU 头部的 F 和 NRI 会被提取出来, 作为所有分片的公共标识(复用在每个分片的 RTP 载荷前缀中)
         // FU 前缀 = (F << 7) | (NRI << 5) | 0x1C
         klb_rtp_nalu_fu_t fu = { 0 };
@@ -282,7 +372,8 @@ int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int 
         fu.end = (ptr[pos] >> 6) & 0x1;
         fu.nalu_type = (ptr[pos]) & 0x1F;
 
-        uint16_t done = KLB_RB16(ptr + 1);
+        uint16_t done = KLB_RB16(ptr + pos + 1);
+        (void)done;
 
         pos += 3;
 
@@ -337,4 +428,122 @@ int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int 
     return 0;
 }
 
-//end
+
+static int parse_stap_a_klb_rtspparser(klb_rtspparser_t* p_parser, char* p_nalu, int nalu_len, int* p_pos)
+{
+    uint8_t* ptr = (uint8_t*)p_nalu;
+    int pos = *p_pos;
+
+    p_parser->opt = KLB_MNP_FULL;
+    p_parser->nalu_value = 0;
+    p_parser->p_data = NULL;
+    p_parser->data_len = 0;
+
+    if (0 == pos)
+    {
+        pos = 1;
+    }
+
+    if (pos + 2 > nalu_len)
+    {
+        return 1;
+    }
+
+    int nalu_size = (int)KLB_RB16(ptr + pos);
+    pos += 2;
+
+    if (nalu_size <= 0 || pos + nalu_size > nalu_len)
+    {
+        return -1;
+    }
+
+    p_parser->nalu_value = ptr[pos];
+
+    if (1 < nalu_size)
+    {
+        p_parser->p_data = ptr + pos + 1;
+        p_parser->data_len = nalu_size - 1;
+    }
+
+    *p_pos = pos + nalu_size;
+    return 0;
+}
+
+
+int klb_rtspparser_parse_rtp_h264_step(klb_rtspparser_t* p_parser, char* p_nalu, int nalu_len, int* p_pos)
+{
+    if (NULL == p_parser || NULL == p_nalu || NULL == p_pos || nalu_len <= 0)
+    {
+        return 1;
+    }
+
+    if (*p_pos < 0 || *p_pos >= nalu_len)
+    {
+        return 1;
+    }
+
+    uint8_t head_type = ((uint8_t*)p_nalu)[0] & 0x1F;
+
+    if (KLB_RTP_NALU_STAP_A == head_type)
+    {
+        return parse_stap_a_klb_rtspparser(p_parser, p_nalu, nalu_len, p_pos);
+    }
+
+    if (0 != *p_pos)
+    {
+        return 1;
+    }
+
+    int ret = klb_rtspparser_parse_rtp_h264(p_parser, p_nalu, nalu_len);
+
+    if (0 == ret)
+    {
+        *p_pos = nalu_len;
+    }
+
+    return ret;
+}
+
+
+int klb_rtspparser_parse_rtp_aac(klb_rtspparser_t* p_parser, char* p_payload, int payload_len)
+{
+    uint8_t* ptr = NULL;
+    int au_hdr_bits = 0;
+    int au_hdr_bytes = 0;
+    int au_size = 0;
+    int pos = 0;
+
+    if (NULL == p_parser || NULL == p_payload || payload_len < 4)
+    {
+        return -1;
+    }
+
+    p_parser->opt = KLB_MNP_FULL;
+    p_parser->nalu_value = 0;
+    p_parser->p_data = NULL;
+    p_parser->data_len = 0;
+
+    ptr = (uint8_t*)p_payload;
+    au_hdr_bits = (int)KLB_RB16(ptr);
+    au_hdr_bytes = (au_hdr_bits + 7) / 8;
+    pos = 2 + au_hdr_bytes;
+
+    if (au_hdr_bits < 16 || au_hdr_bytes < 2 || pos > payload_len)
+    {
+        return -1;
+    }
+
+    // AAC-hbr: first AU header = 13bit size + 3bit index
+    au_size = (int)((KLB_RB16(ptr + 2) >> 3) & 0x1FFF);
+
+    if (au_size <= 0 || pos + au_size > payload_len)
+    {
+        return -1;
+    }
+
+    p_parser->p_data = ptr + pos;
+    p_parser->data_len = au_size;
+    return 0;
+}
+
+// end

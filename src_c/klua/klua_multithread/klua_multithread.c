@@ -13,6 +13,11 @@ extern int klua_klist_init();
 extern void klua_klist_quit();
 
 
+// from ./klua/klua_multithread/klua_kmuxlist.c
+extern int klua_kmuxlist_init();
+extern void klua_kmuxlist_quit();
+
+
 // from ./klua/klua_multithread/klua_kthread.c
 extern int klua_kthread_init();
 extern void klua_kthread_quit();
@@ -26,6 +31,9 @@ int klua_multithread_init()
     // kstore, 线程间共享缓存数据, 单次存取
     klua_klist_init();
 
+    // kmuxlist, 专用 netmux sock 跨线程队列
+    klua_kmuxlist_init();
+
     // kthread, 多线程模块初始化
     klua_kthread_init();
 
@@ -36,6 +44,9 @@ void klua_multithread_quit()
 {
     // kthread, 多线程模块
     klua_kthread_quit();
+
+    // kmuxlist, 专用 netmux sock 跨线程队列
+    klua_kmuxlist_quit();
 
     // kstore, 线程间共享缓存数据, 单次存取
     klua_klist_quit();

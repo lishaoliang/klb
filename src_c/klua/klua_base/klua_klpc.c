@@ -7,6 +7,7 @@
 #include "klua/klua_util/klua_seri_map.h"
 #include "klbmem/klb_mem.h"
 #include "klbutil/klb_nlist.h"
+#include "klbnet/klb_netcode.h"
 #include "klbthird/sds.h"
 #include <assert.h>
 
@@ -148,7 +149,8 @@ static int klua_klpc_module_status(lua_State* L)
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
 
     lua_pushboolean(L, p_mo->run);
-    return 1;
+    lua_pushinteger(L, p_mo->run ? 0 : KLB_NETCODE_NOTCONN);
+    return 2;
 }
 
 static int on_yield_klua_klpc_module_co_recv(void* ptr, klua_ex_coroutine_t* p_ex, lua_State* p_co, int opt)
@@ -321,7 +323,15 @@ static void klua_klpc_module_createmeta(lua_State* L)
 
 static int lib_klua_klpc_new_module(lua_State* L)
 {
-    const char* p_name = luaL_checkstring(L, 1);
+    size_t name_len = 0;
+    const char* p_name = luaL_checklstring(L, 1, &name_len);
+
+    if (0 == name_len || KLUA_LPC_NAME_LEN < name_len)
+    {
+        lua_pushnil(L);
+        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        return 2;
+    }
 
     klua_klpc_module_t* p_mo = new_klua_klpc_module(L);
 
@@ -329,14 +339,26 @@ static int lib_klua_klpc_new_module(lua_State* L)
     p_mo->L = L;
     p_mo->p_lpc = klua_ex_get_lpc(p_mo->p_env);
     p_mo->p_ex_coroutine = klua_ex_get_coroutine(p_mo->p_env);
-    p_mo->name = sdsnew(p_name);
+    p_mo->name = sdsnewlen(p_name, name_len);
 
     p_mo->p_msg_list = klb_nlist_create();
+    p_mo->run = false;
+
+    int rc = klua_ex_lpc_new_module(p_mo->p_lpc, p_mo->name, cb_msg_klua_klpc_module, p_mo);
+    if (0 != rc)
+    {
+        KLB_FREE_BY(p_mo->p_msg_list, klb_nlist_destroy);
+        KLB_FREE_BY(p_mo->name, sdsfree);
+        p_mo->p_msg_list = NULL;
+        p_mo->name = NULL;
+
+        lua_pop(L, 1);
+        lua_pushnil(L);
+        lua_pushinteger(L, KLB_NETCODE_EXIST);
+        return 2;
+    }
 
     p_mo->run = true;
-
-    klua_ex_lpc_new_module(p_mo->p_lpc, p_mo->name, cb_msg_klua_klpc_module, p_mo);
-
     return 1;
 }
 
@@ -482,8 +504,11 @@ static int klua_klpc_close(lua_State* L)
 
 static int klua_klpc_status(lua_State* L)
 {
-    lua_pushboolean(L, true);
-    lua_pushinteger(L, 0);
+    klua_klpc_t* p_klpc = to_klua_klpc(L, 1);
+    bool ok = (NULL != p_klpc->name);
+
+    lua_pushboolean(L, ok);
+    lua_pushinteger(L, ok ? 0 : KLB_NETCODE_NOTCONN);
     return 2;
 }
 
@@ -542,13 +567,14 @@ static int klua_klpc_co_call(lua_State* L)
         p_klpc->co_recv = L;
 
         return klua_ex_coroutine_yield(p_klpc->p_ex_coroutine, L, on_yield_klua_klpc_co_call, p_klpc);
-        //return lua_yield(L, lua_gettop(L));
     }
     else
     {
         // 目标不存在
         klua_msg_free(ptr);
-        return 0;
+        lua_pushnil(L);
+        lua_pushinteger(L, KLB_NETCODE_NOENT);
+        return 2;
     }
 }
 
@@ -563,13 +589,13 @@ static int on_yield_klua_klpc_co_recv_notify(void* ptr, klua_ex_coroutine_t* p_e
 
 static int klua_klpc_co_recv_notify(lua_State* L)
 {
-    klua_check_coroutine(L, "klpc.new():co_recv_notify() must in coroutine!"); 
+    klua_check_coroutine(L, "klpc.new():co_recv_notify() must in coroutine!");
     klua_klpc_t* p_klpc = to_klua_klpc(L, 1);           ///< @1. KLUA_KLPC_HANDLE
 
     assert(NULL == p_klpc->co_recv_notify);
     p_klpc->co_recv_notify = L;
 
-    return lua_yield(L, lua_gettop(L));
+    return klua_ex_coroutine_yield(p_klpc->p_ex_coroutine, L, on_yield_klua_klpc_co_recv_notify, p_klpc);
 }
 
 //////////////////////////////////////////////////////////////////////////

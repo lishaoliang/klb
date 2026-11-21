@@ -1,6 +1,12 @@
 ﻿// Doc-Encode UTF8-BOM, Space(4), Unix(LF)
+#if defined(_WIN32)
+#ifndef _CRT_RAND_S
+#define _CRT_RAND_S
+#endif
+#endif
 #include "klbutil/klb_rand.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 
 /// @brief 伪随机字符串
@@ -72,6 +78,66 @@ char* klb_rand_integer(char* p_dest, int str_len, bool set_end)
     }
 
     return p_dest;
+}
+
+/// @brief CSPRNG(密码学安全)随机字节
+/// @param [out] *p_dest
+/// @param [in]  len     字节数
+/// @return true.成功; false.失败
+bool klb_rand_secure(void* p_dest, uint32_t len)
+{
+    uint32_t done = 0;
+
+    if (NULL == p_dest || 0 == len)
+    {
+        return false;
+    }
+
+#if defined(_WIN32)
+    // windows: rand_s 每次 4B CSPRNG
+    while (done < len)
+    {
+        unsigned int r = 0;
+        uint32_t n = len - done;
+        uint32_t k = 0;
+
+        if (0 != rand_s(&r))
+        {
+            return false;
+        }
+
+        if (4 < n)
+        {
+            n = 4;
+        }
+
+        for (k = 0; k < n; k++)
+        {
+            ((uint8_t*)p_dest)[done + k] = (uint8_t)(r >> (8 * k));
+        }
+
+        done += n;
+    }
+#else
+    {
+        // linux/uClibc: /dev/urandom (不可用则 fail-closed)
+        FILE* fp = fopen("/dev/urandom", "rb");
+        if (NULL == fp)
+        {
+            return false;
+        }
+
+        done = (uint32_t)fread(p_dest, 1, len, fp);
+        fclose(fp);
+
+        if (done != len)
+        {
+            return false;
+        }
+    }
+#endif
+
+    return (done == len);
 }
 
 //end

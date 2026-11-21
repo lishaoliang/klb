@@ -105,21 +105,45 @@ int klb_vector_type(klb_vector_t* p_vector, int idx)
 
 int64_t klb_vector_to_int64(klb_vector_t* p_vector, int idx)
 {
+    // Fixed Bug.2026-4-klb
+    klb_adt_t* p_adt = find_adt_klb_vector(p_vector, idx);
+    if (NULL != p_adt)
+    {
+        return klb_adt_to_int64(p_adt);
+    }
+
     return 0;
 }
 
 const klb_adt_t* klb_vector_to_adt(klb_vector_t* p_vector, int idx)
 {
-    return NULL;
+    // Fixed Bug.2026-4-klb
+    return find_adt_klb_vector(p_vector, idx);
 }
 
 bool klb_vector_remove(klb_vector_t* p_vector, int idx)
 {
+    // Fixed Bug.2026-4-klb
+    klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_remove(p_vector->p_nvector, idx);
+    if (NULL != p_adt)
+    {
+        klb_adt_destroy(p_adt);
+        return true;
+    }
+
     return false;
 }
 
 bool klb_vector_remove_tail(klb_vector_t* p_vector)
 {
+    // Fixed Bug.2026-4-klb
+    klb_adt_t* p_adt = (klb_adt_t*)klb_nvector_pop_tail(p_vector->p_nvector);
+    if (NULL != p_adt)
+    {
+        klb_adt_destroy(p_adt);
+        return true;
+    }
+
     return false;
 }
 

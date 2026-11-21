@@ -35,9 +35,26 @@ head.parse_request = function (head)
 end
 
 
+-- @brief 合并同名请求头
+-- @note Cookie 用 `"; "`; 其余用 `", "`
+local function merge_header(headers, k, v)
+	local old = headers[k]
+	if not old or "" == old then
+		headers[k] = v
+		return
+	end
+
+	if "cookie" == k then
+		headers[k] = old .. "; " .. v
+	else
+		headers[k] = old .. ", " .. v
+	end
+end
+
+
 -- @brief 解析请求头
 -- @param [in]      head[string]		原始 HTTP 头
--- @return headers[table]				小写键; 同名后写覆盖
+-- @return headers[table]				小写键; 同名合并(Cookie 分号, 其余逗号)
 head.parse_headers = function (head)
 	local headers = {}
 	local skip = true
@@ -49,7 +66,7 @@ head.parse_headers = function (head)
 			local k, v = string.match(line, "^([^:]+):%s*(.*)$")
 			if k then
 				k = string.lower(stringex.trim(k))
-				headers[k] = stringex.trim(v or "")
+				merge_header(headers, k, stringex.trim(v or ""))
 			end
 		end
 	end

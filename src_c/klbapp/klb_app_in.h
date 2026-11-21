@@ -71,6 +71,12 @@ typedef struct klb_app_t_
         klbappex_klua_t*        p_klua;                 ///< klua 环境扩展
         klbappex_plugins_t*     p_plugins;              ///< plugins 插件管理 的扩展
     };
+
+    // 其他
+    struct
+    {
+        bool volatile           has_loop_c;             ///< 是否由C泵送loop, 否则由脚本main_loop泵送
+    };
 }klb_app_t;
 
 

@@ -76,6 +76,9 @@
 #define DEFAULT_ENCODE_KEEP_BUFFER 1
 #define DEFAULT_ENCODE_NUMBER_PRECISION 14
 
+/* Sentinel for cjson.empty_array (OpenResty-compatible lightuserdata -> "[]") */
+static char json_empty_array_sentinel;
+
 #ifdef DISABLE_INVALID_NUMBERS
 #undef DEFAULT_DECODE_INVALID_NUMBERS
 #define DEFAULT_DECODE_INVALID_NUMBERS 0
@@ -697,6 +700,11 @@ static void json_append_data(lua_State *l, json_config_t *cfg,
             strbuf_append_mem(json, "null", 4);
             break;
         }
+        if (lua_touserdata(l, -1) == (void *)&json_empty_array_sentinel) {
+            strbuf_append_mem(json, "[]", 2);
+            break;
+        }
+        /* fallthrough */
     default:
         /* Remaining types (LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD,
          * and LUA_TLIGHTUSERDATA) cannot be serialised */
@@ -1375,6 +1383,10 @@ static int lua_cjson_new(lua_State *l)
     /* Set cjson.null */
     lua_pushlightuserdata(l, NULL);
     lua_setfield(l, -2, "null");
+
+    /* Set cjson.empty_array (encode as []) */
+    lua_pushlightuserdata(l, (void *)&json_empty_array_sentinel);
+    lua_setfield(l, -2, "empty_array");
 
     /* Set module name / version fields */
     lua_pushliteral(l, CJSON_MODNAME);

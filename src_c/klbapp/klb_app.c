@@ -1,31 +1,330 @@
-﻿#include "klbapp/klb_app.h"
+﻿// Doc Encode : UTF-8 BOM, Unix(LF)
+#include "klbapp/klb_app.h"
 #include "klbapp/klb_app_in.h"
+#include "klbbase/klb_base.h"
 #include "klbmem/klb_mem.h"
 #include "klbplatform/klb_thread.h"
 #include "klbplatform/klb_time.h"
+#include "klbthird/klb_getopt.h"
 #include "klbutil/klb_log.h"
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <limits.h>
+#if !defined(_WIN32) && !defined(WIN32)
+#include <unistd.h>
+#else
+#include <windows.h>
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////
 static klb_app_t* g_klb_app = NULL;
+
+#define KLUA_CORE_VER_REL       "klbcore/VERSION"
+#define KLUA_SHARE_DEFAULT      "/usr/local/share/klua"
+#define KLUA_ENV_SHARE          "KLUA_SHARE_KLUA"
+#define KLUA_VER_FALLBACK       "0.0.0.000000"
 
 
 //////////////////////////////////////////////////////////////////////////
 static void on_preload_klb_app(klb_app_t* p_app);
 
 
-int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load)
+/// @brief 打印用法
+static void print_usage_klb_app(const char* p_prog)
+{
+    const char* name = (NULL != p_prog && '\0' != p_prog[0]) ? p_prog : "klua";
+
+    fprintf(stdout,
+        "Usage: %s [options] <entry.lua> [args...]\n"
+        "Options:\n"
+        "  -h, --help             Show this help\n"
+        "  -v, --version          Show version\n"
+        "  -p, --plugins PATH     Enable plugins and add search path (repeatable)\n",
+        name);
+}
+
+
+/// @brief 取可执行文件名 (无路径)
+static const char* prog_basename_klb_app(const char* p_prog)
+{
+    const char* p = p_prog;
+    const char* slash = NULL;
+
+    if (NULL == p || '\0' == p[0])
+    {
+        return "klua";
+    }
+
+#if defined(_WIN32) || defined(WIN32)
+    slash = strrchr(p, '\\');
+    if (NULL != slash)
+    {
+        p = slash + 1;
+    }
+#endif
+    slash = strrchr(p, '/');
+    if (NULL != slash)
+    {
+        p = slash + 1;
+    }
+
+    return (NULL != p && '\0' != p[0]) ? p : "klua";
+}
+
+
+/// @brief 读一行 VERSION 文件到 out
+static bool read_version_file_klb_app(const char* path, char* out, size_t out_size)
+{
+    FILE* fp = NULL;
+    size_t n = 0;
+
+    if (NULL == path || NULL == out || 0 == out_size)
+    {
+        return false;
+    }
+
+    out[0] = '\0';
+    fp = fopen(path, "rb");
+    if (NULL == fp)
+    {
+        return false;
+    }
+
+    if (NULL == fgets(out, (int)out_size, fp))
+    {
+        fclose(fp);
+        return false;
+    }
+
+    fclose(fp);
+
+    n = strlen(out);
+    while (0 < n && ('\n' == out[n - 1] || '\r' == out[n - 1] || ' ' == out[n - 1] || '\t' == out[n - 1]))
+    {
+        out[n - 1] = '\0';
+        n -= 1;
+    }
+
+    return (0 < n);
+}
+
+
+/// @brief 解析 klbcore 脚本根并读 VERSION (base.YYYYMM)
+static void read_klbcore_version_klb_app(const char* argv0, char* out, size_t out_size)
+{
+    char path[PATH_MAX];
+    const char* env_share = getenv(KLUA_ENV_SHARE);
+    const char* share = (NULL != env_share && '\0' != env_share[0]) ? env_share : KLUA_SHARE_DEFAULT;
+
+    if (NULL == out || 0 == out_size)
+    {
+        return;
+    }
+
+    // step1. 安装 share/klua/klbcore/VERSION
+    snprintf(path, sizeof(path), "%s/%s", share, KLUA_CORE_VER_REL);
+    if (read_version_file_klb_app(path, out, out_size))
+    {
+        return;
+    }
+
+#if !defined(_WIN32) && !defined(WIN32)
+    // step2. 源树: lib/klua -> ../bin/klbcore/VERSION
+    {
+        char exe_dir[PATH_MAX];
+        char* slash = NULL;
+        ssize_t n = readlink("/proc/self/exe", exe_dir, sizeof(exe_dir) - 1);
+
+        if (0 <= n)
+        {
+            exe_dir[n] = '\0';
+            slash = strrchr(exe_dir, '/');
+            if (NULL != slash)
+            {
+                *slash = '\0';
+            }
+
+            snprintf(path, sizeof(path), "%s/../bin/%s", exe_dir, KLUA_CORE_VER_REL);
+            if (read_version_file_klb_app(path, out, out_size))
+            {
+                return;
+            }
+
+            // step3. debug 树: klua 旁 klbcore/VERSION
+            snprintf(path, sizeof(path), "%s/%s", exe_dir, KLUA_CORE_VER_REL);
+            if (read_version_file_klb_app(path, out, out_size))
+            {
+                return;
+            }
+        }
+        else if (NULL != argv0 && '\0' != argv0[0])
+        {
+            (void)argv0;
+        }
+    }
+#else
+    // Win32: 与 Linux 分支对称, 经 GetModuleFileNameA 解析 exe 目录
+    {
+        char exe_path[PATH_MAX];
+        char exe_dir[PATH_MAX];
+        char* slash = NULL;
+        DWORD n = GetModuleFileNameA(NULL, exe_path, (DWORD)sizeof(exe_path));
+
+        (void)argv0;
+
+        if (0 < n && n < (DWORD)sizeof(exe_path))
+        {
+            snprintf(exe_dir, sizeof(exe_dir), "%s", exe_path);
+            slash = strrchr(exe_dir, '\\');
+            if (NULL == slash)
+            {
+                slash = strrchr(exe_dir, '/');
+            }
+            if (NULL != slash)
+            {
+                *slash = '\0';
+            }
+
+            // step2. release 平铺/debug: klua.exe 旁 klbcore/VERSION
+            snprintf(path, sizeof(path), "%s/%s", exe_dir, KLUA_CORE_VER_REL);
+            if (read_version_file_klb_app(path, out, out_size))
+            {
+                return;
+            }
+
+            // step3. 源树: lib/mingw/klua.exe -> ../../bin/klbcore/VERSION
+            snprintf(path, sizeof(path), "%s/../../bin/%s", exe_dir, KLUA_CORE_VER_REL);
+            if (read_version_file_klb_app(path, out, out_size))
+            {
+                return;
+            }
+        }
+
+        // step4. cwd 源树根: .\bin\klbcore\VERSION (历史行为)
+        snprintf(path, sizeof(path), ".\\bin\\%s", KLUA_CORE_VER_REL);
+        if (read_version_file_klb_app(path, out, out_size))
+        {
+            return;
+        }
+    }
+#endif
+
+    snprintf(out, out_size, "%s", KLUA_VER_FALLBACK);
+}
+
+
+/// @brief 打印: <prog> <脚本版本> (klb <核心版本>); 脚本版本来自 klbcore/VERSION
+static void print_version_klb_app(const char* p_prog)
+{
+    char script_ver[64];
+    const char* name = prog_basename_klb_app(p_prog);
+
+    read_klbcore_version_klb_app(p_prog, script_ver, sizeof(script_ver));
+    fprintf(stdout, "%s %s (klb %s)\n", name, script_ver, klb_version());
+}
+
+
+/// @brief 解析壳层命令行; 须在 plugins_preload 之前调用
+/// @param [in]  argc           参数个数
+/// @param [in]  **argv         参数数组 (getopt 可能重排)
+/// @param [out] *p_entry_idx   入口脚本下标 (klb_optind)
+/// @return int 0.继续主流程; 1.已处理(help/version)应返回0; -1.失败应返回非0
+static int parse_args_klb_app(int argc, char** argv, int* p_entry_idx)
+{
+    static const klb_option_t long_opts[] =
+    {
+        { "help",    KLB_no_argument,       NULL, 'h' },
+        { "version", KLB_no_argument,       NULL, 'v' },
+        { "plugins", KLB_required_argument, NULL, 'p' },
+        { NULL, 0, NULL, 0 }
+    };
+
+    const char* p_prog = (0 < argc) ? argv[0] : "klua";
+    int opt = 0;
+
+    klb_optind = 1;
+    klb_opterr = 1;
+
+    while (true)
+    {
+        opt = klb_getopt_long(argc, argv, "hvp:", long_opts, NULL);
+        if (-1 == opt)
+        {
+            break;
+        }
+
+        if ('h' == opt)
+        {
+            print_usage_klb_app(p_prog);
+            return 1;
+        }
+        else if ('v' == opt)
+        {
+            print_version_klb_app(p_prog);
+            return 1;
+        }
+        else if ('p' == opt)
+        {
+            klb_app_enable_plugins(true);
+            klb_app_push_plugins_path(klb_optarg);
+        }
+        else
+        {
+            // '?' 等非法选项
+            print_usage_klb_app(p_prog);
+            return -1;
+        }
+    }
+
+    if (klb_optind >= argc || NULL == argv[klb_optind] || '\0' == argv[klb_optind][0])
+    {
+        fprintf(stderr, "%s: missing entry script\n", p_prog);
+        print_usage_klb_app(p_prog);
+        return -1;
+    }
+
+    *p_entry_idx = klb_optind;
+    return 0;
+}
+
+
+int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load, bool has_loop)
 {
     // init
     //klb_base_init(NULL);    // klb base
 
     // step1. app instance
     klb_app_t* p_app = klb_app_instance();
+    p_app->has_loop_c = has_loop;
+
     klbappex_plugins_t* p_appex_plugins = p_app->p_plugins;
     klbappex_klua_t* p_appex_klua = p_app->p_klua;
+    int entry_idx = 1;
+    int parse_rc = 0;
 
     klua_env_t* p_klua_env = klbappex_klua_get_klua_env(p_appex_klua);
+    klua_env_set_has_loop_c(p_klua_env, has_loop);
+
+    // step1.1 解析壳层参数 (-h/-v/-p); 须在 plugins_preload 之前
+    {
+        parse_rc = parse_args_klb_app(argc, argv, &entry_idx);
+        if (1 == parse_rc)
+        {
+            return 0;
+        }
+
+        if (0 != parse_rc)
+        {
+            return 1;
+        }
+    }
 
     // step2. 初始化 klua 预加载库
     {
@@ -42,14 +341,21 @@ int klb_app_main(int argc, char** argv, lua_CFunction cb_pre_load)
         klbappex_plugins_preload(p_appex_plugins);
     }
 
+    // step3.5 优雅退出: 须在脚本 dofile 之前装上
+    // 脚本内长循环(如 alua_web serve)即主循环, 装晚了永远到不了
+    klua_env_install_quit_signal();
+
     // step4. 初始化完成之后, 为 lua 启动做初始等流程
     // 准备完成之后
     {
-        klbappex_klua_do_preinit(p_appex_klua, argc, argv);
+        if (0 != klbappex_klua_do_preinit(p_appex_klua, argc, argv, entry_idx))
+        {
+            return 1;
+        }
     }
 
-    // step5. loop
-    while (0 == p_app->run_status && !klua_env_is_exit(p_klua_env))
+    // step5. loop, has_loop == true 才 loop
+    while (has_loop && 0 == p_app->run_status && !klua_env_is_exit(p_klua_env))
     {
         int sleep = klb_app_loop_once();
 
@@ -78,6 +384,16 @@ klb_app_t* klb_app_instance()
 {
     assert(NULL != g_klb_app);
     return g_klb_app;
+}
+
+bool klb_app_has_loop_c()
+{
+    if (NULL == g_klb_app)
+    {
+        return false;
+    }
+
+    return g_klb_app->has_loop_c;
 }
 
 int klb_app_init()

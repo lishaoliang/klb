@@ -40,28 +40,29 @@ typedef struct klb_netconn_t_ klb_netconn_t;
 typedef enum klb_protocol_e_
 {
     KLB_PROTOCOL_UNKOWN         = 0,        ///< unkown
-    KLB_PROTOCOL_MNP            = 1,        ///< mnp 协议
-    KLB_PROTOCOL_RTMP           = 2,        ///< rtmp 协议
+    KLB_PROTOCOL_HTTP           = 1,        ///< http 协议
+    KLB_PROTOCOL_WS             = 2,        ///< websocket 协议
     KLB_PROTOCOL_RTSP           = 3,        ///< rtsp 协议
+    KLB_PROTOCOL_RTMP           = 4,        ///< rtmp 协议
 
-    KLB_PROTOCOL_HTTP_MNP       = 4,        ///< http mnp 协议
-    KLB_PROTOCOL_HTTP_FLV       = 5,        ///< http flv 协议
-    KLB_PROTOCOL_WS_MNP         = 6,        ///< websocket mnp 协议
-    KLB_PROTOCOL_WS_FLV         = 7,        ///< websocket flv 协议
+    KLB_PROTOCOL_MNP            = 31,       ///< mnp 协议
+    KLB_PROTOCOL_SMP            = 32,       ///< smp 协议
 
-    KLB_PROTOCOL_HTTP           = 8,        ///< http 协议
-    KLB_PROTOCOL_WS             = 9,        ///< websocket 协议
+    KLB_PROTOCOL_HTTP_FLV       = 51,       ///< http flv 协议
+    KLB_PROTOCOL_HTTP_MNP       = 52,       ///< http mnp 协议
+    KLB_PROTOCOL_HTTP_SMP       = 53,       ///< http mnp 协议
+    KLB_PROTOCOL_WS_MNP         = 54,       ///< websocket mnp 协议
+    KLB_PROTOCOL_WS_SMP         = 55,       ///< websocket smp 协议
 
-    KLB_PROTOCOL_RPC_MNP_LUA    = 10,       ///< RPC mnp-lua
-    KLB_PROTOCOL_RPC_MNP_JSON   = 11,       ///< RPC mnp-json
 
-    KLB_PROTOCOL_RPC_HTTP_LUA   = 12,       ///< RPC http-lua
-    KLB_PROTOCOL_RPC_HTTP_JSON  = 13,       ///< RPC http-json
-
-    KLB_PROTOCOL_RPC_WS_LUA     = 14,       ///< RPC ws-lua
-    KLB_PROTOCOL_RPC_WS_JSON    = 15,       ///< RPC ws-json
-
-    KLB_PROTOCOL_SMP            = 16,       ///< smp 协议
+    KLB_PROTOCOL_RPC_MNP_LUA    = 81,       ///< RPC mnp-lua
+    KLB_PROTOCOL_RPC_MNP_JSON   = 82,       ///< RPC mnp-json
+    KLB_PROTOCOL_RPC_SMP_LUA    = 83,       ///< RPC smp-lua
+    KLB_PROTOCOL_RPC_SMP_JSON   = 84,       ///< RPC smp-json
+    KLB_PROTOCOL_RPC_HTTP_LUA   = 85,       ///< RPC http-lua
+    KLB_PROTOCOL_RPC_HTTP_JSON  = 86,       ///< RPC http-json
+    KLB_PROTOCOL_RPC_WS_LUA     = 87,       ///< RPC ws-lua
+    KLB_PROTOCOL_RPC_WS_JSON    = 88,       ///< RPC ws-json
 
     KLB_PROTOCOL_MAX,
 
@@ -102,28 +103,29 @@ typedef void(*klb_netconn_destroy_cb)(klb_netconn_t* p_conn);
 typedef int(*klb_netconn_recv_data_cb)(klb_netconn_t* p_conn, int code, int packtype, klb_buf_t* p_data);
 
 /// @brief 对连接进行控制操作: get/set,etc.
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netconn_ioctrl_cb)(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out);
 
 /// @brief 发送常规数据包
 /// @param [in] packtype      数包类型: klb_mnp_packtype_e
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netconn_send_normal_cb)(klb_netconn_t* p_conn, int packtype, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 /// @brief 发送媒体数据包
-/// @return int
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netconn_send_media_cb)(klb_netconn_t* p_conn, klb_buf_t* p_data);
 
 /// @brief 当网络上可以发送数据时
-/// @return int
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netconn_on_send_cb)(klb_netconn_t* p_conn, int64_t now);
 
 /// @brief 当网络上可以接收数据时
-/// @return int
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netconn_on_recv_cb)(klb_netconn_t* p_conn, int64_t now);
 
 /// @brief 当网络上有消息传来时
 /// @param [in] msg             消息类型: klb_netconn_msg_e
-/// @return int
+/// @return int 0.成功; 非0.klb_netcode_e
 typedef int(*klb_netconn_on_msg_cb)(klb_netconn_t* p_conn, int msg, int64_t now);
 
 /// @struct klb_netconn_vtable_t
@@ -177,6 +179,11 @@ typedef struct klb_netconn_t_
     // socket
     klb_socket_t*               p_socket;       ///< socket
 
+    // 临时缓存: 仅用于 klb_netconn_t* 在不同模块 交换时使用
+    // 在模块之间交换时若还有已经接收/待发送的少量数据可通过此处短暂缓存
+    klb_buf_t*                  p_tmp_recv_buf; ///< 模块交换时携带的已读残留数据: 禁止长时间使用
+    klb_buf_t*                  p_tmp_send_buf; ///< 模块交换时携带的待写入系统发送缓冲的数据: 禁止长时间使用
+
     // 协议相关
     int                         protocol;       ///< 协议号: klb_protocol_e
     int                         id;             ///< 连接ID
@@ -202,6 +209,28 @@ KLB_API void klb_netconn_destroy(klb_netconn_t* p_conn);
 KLB_API int klb_netconn_bind_recv_data(klb_netconn_t* p_conn, klb_netconn_recv_data_cb cb_recv);
 
 
+/// @brief 设置模块交换用已读残留缓冲
+/// @param [in] *p_buf  缓冲; 可为 NULL; 本函数接管所有权; 原缓冲会被 unref
+/// @note 仅模块交换短时使用, 禁止长时间持有
+KLB_API void klb_netconn_set_tmp_recv_buf(klb_netconn_t* p_conn, klb_buf_t* p_buf);
+
+
+/// @brief 获取模块交换用已读残留缓冲
+/// @return klb_buf_t* 可为 NULL; 所有权仍属 p_conn
+KLB_API klb_buf_t* klb_netconn_get_tmp_recv_buf(klb_netconn_t* p_conn);
+
+
+/// @brief 设置模块交换用待发送缓冲
+/// @param [in] *p_buf  缓冲; 可为 NULL; 本函数接管所有权; 原缓冲会被 unref
+/// @note 仅模块交换短时使用, 禁止长时间持有
+KLB_API void klb_netconn_set_tmp_send_buf(klb_netconn_t* p_conn, klb_buf_t* p_buf);
+
+
+/// @brief 获取模块交换用待发送缓冲
+/// @return klb_buf_t* 可为 NULL; 所有权仍属 p_conn
+KLB_API klb_buf_t* klb_netconn_get_tmp_send_buf(klb_netconn_t* p_conn);
+
+
 /// @brief 设置连接名称
 KLB_API void klb_netconn_set_name(klb_netconn_t* p_conn, const char* p_name);
 
@@ -211,22 +240,22 @@ KLB_API const char* klb_netconn_get_name(klb_netconn_t* p_conn);
 
 
 /// @brief 发送文本数据
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 KLB_API int klb_netconn_send_text(klb_netconn_t* p_conn, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 发送二进制数据
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 KLB_API int klb_netconn_send_binary(klb_netconn_t* p_conn, int sequence, const uint8_t* p_head, int head_len, const uint8_t* p_body, int body_len);
 
 
 /// @brief 发送媒体数据
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 KLB_API int klb_netconn_send_media(klb_netconn_t* p_conn, klb_buf_t* p_data);
 
 
 /// @brief 对某个连接进行控制操作: get/set,etc.
-/// @return int 0.成功; 非0.失败
+/// @return int 0.成功; 非0.klb_netcode_e
 KLB_API int klb_netconn_ioctrl(klb_netconn_t* p_conn, const klb_map_t* p_in, klb_map_t* p_out);
 
 
@@ -241,4 +270,5 @@ KLB_API void klb_netconn_set_wparam(klb_netconn_t* p_conn, void* p_wparam);
 #endif
 
 #endif // __KLB_NETCONN_H__
-//end
+
+// end

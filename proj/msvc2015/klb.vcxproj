@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -93,8 +93,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;__KLB_NO_PACKAGES__;__KLB_MBEDTLS__;MBEDTLS_USER_CONFIG_FILE=&quot;klbnet/klb_mbedtls_user_config.h&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_vendor\mbedtls-3.6.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STATIC_GETOPT;__KLB_GETOPT__;WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;__KLB_MBEDTLS__;MBEDTLS_USER_CONFIG_FILE=&quot;klbnet/klb_mbedtls_user_config.h&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Visual Leak Detector\include;..\..\inc;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_3rdparty\mbedtls-3.6.7\include;..\..\src_3rdparty\getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>4133;4013;4047</TreatSpecificWarningsAsErrors>
     </ClCompile>
@@ -119,7 +119,7 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;KLB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STATIC_GETOPT;__KLB_GETOPT__;_DEBUG;_WINDOWS;_USRDLL;KLB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -135,8 +135,8 @@ xcopy /Y "..\Visual Leak Detector\bin\Win32\Microsoft.DTfW.DHL.manifest" ..\..\b
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;__KLB_NO_PACKAGES__;__KLB_MBEDTLS__;MBEDTLS_USER_CONFIG_FILE=&quot;klbnet/klb_mbedtls_user_config.h&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_vendor\mbedtls-3.6.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>STATIC_GETOPT;__KLB_GETOPT__;WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;ZLIB_DLL;LUA_BUILD_AS_DLL;__KLB_BUILD_DLL__;__KLB_MBEDTLS__;MBEDTLS_USER_CONFIG_FILE=&quot;klbnet/klb_mbedtls_user_config.h&quot;;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\inc;..\..\inc\klbthird;..\..\src_c;..\..\src_c\klua\lua-5.4.6\src;..\..\src_c\klbthird\pcre2\src;..\..\src_c\qrencode-4.1.1;..\..\src_packages;..\..\src_3rdparty\mbedtls-3.6.7\include;..\..\src_3rdparty\getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4200</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>4133</TreatSpecificWarningsAsErrors>
@@ -163,7 +163,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;KLB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STATIC_GETOPT;__KLB_GETOPT__;NDEBUG;_WINDOWS;_USRDLL;KLB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -174,10 +174,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\inc\klbapp\klbappex_klua.h" />
-    <ClInclude Include="..\..\inc\klbapp\klbappex_plugins.h" />
+    <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klbapp\klb_app.h" />
     <ClInclude Include="..\..\inc\klbapp\klb_app_extension.h" />
+    <ClInclude Include="..\..\inc\klbapp\klbappex_klua.h" />
+    <ClInclude Include="..\..\inc\klbapp\klbappex_plugins.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_base.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_mnp.h" />
     <ClInclude Include="..\..\inc\klbbase\klb_package.h" />
@@ -187,6 +188,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbformat\klb_flv.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_flv_demux.h" />
     <ClInclude Include="..\..\inc\klbformat\klb_png.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd_ex.h" />
+    <ClInclude Include="..\..\inc\klbgui\klb_wnd_flex.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_css.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_css_ex.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_datetime.h" />
@@ -195,47 +201,24 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbgui\klbui_extension.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_layer.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_shwnd.h" />
-    <ClInclude Include="..\..\inc\klbgui\klbui_timer.h" />
     <ClInclude Include="..\..\inc\klbgui\klbui_util.h" />
-    <ClInclude Include="..\..\inc\klbgui\klb_gui.h" />
-    <ClInclude Include="..\..\inc\klbgui\klb_msg.h" />
-    <ClInclude Include="..\..\inc\klbgui\klb_wnd.h" />
-    <ClInclude Include="..\..\inc\klbgui\klb_wnd_ex.h" />
-    <ClInclude Include="..\..\inc\klbgui\klb_wnd_flex.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buf.h" />
+    <ClInclude Include="..\..\inc\klbmem\klb_buf_atom.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_buffer.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_bufpoolfix.h" />
-    <ClInclude Include="..\..\inc\klbmem\klb_buf_atom.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_fpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mem.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_mpool.h" />
     <ClInclude Include="..\..\inc\klbmem\klb_rbuf.h" />
-    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netprobe_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.h" />
-    <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
-    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspparser.h" />
-    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspserve_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpclientrpc_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpclient_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpserverpc_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpserve_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsclient_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsserve_conn.h" />
-    <ClInclude Include="..\..\src_packages\klbhttp\klbhttp.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netcode.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netconn.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_netmulti.h" />
     <ClInclude Include="..\..\inc\klbnet\klb_socket.h" />
-    <ClInclude Include="..\..\src_packages\klbws\klbws.h" />
-    <ClInclude Include="..\..\src_packages\klbmnp\klbmnp.h" />
-    <ClInclude Include="..\..\src_packages\klbrtsp\klbrtsp.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\klbsmp.h" />
-    <ClInclude Include="..\..\src_packages\klbws\core\klb_websocket.h" />
+    <ClInclude Include="..\..\inc\klbnet\klb_tls_cert.h" />
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netlisten_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netmux.h" />
+    <ClInclude Include="..\..\inc\klbnet\klblisten\klb_netprobe_conn.h" />
+    <ClInclude Include="..\..\inc\klbnet\klbrtp\klb_rtp.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_atomic.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_cond.h" />
     <ClInclude Include="..\..\inc\klbplatform\klb_dynamic_link.h" />
@@ -250,6 +233,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbplatform\klb_time.h" />
     <ClInclude Include="..\..\inc\klbthird\cJSON.h" />
     <ClInclude Include="..\..\inc\klbthird\http_parser.h" />
+    <ClInclude Include="..\..\inc\klbthird\klb_getopt.h" />
+    <ClInclude Include="..\..\src_3rdparty\getopt\getopt.h" />
     <ClInclude Include="..\..\inc\klbthird\pcre2.h" />
     <ClInclude Include="..\..\inc\klbthird\pcre2posix.h" />
     <ClInclude Include="..\..\inc\klbthird\sds.h" />
@@ -278,7 +263,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klbutil\klb_sds.h" />
     <ClInclude Include="..\..\inc\klbutil\klb_vector.h" />
     <ClInclude Include="..\..\inc\klbutil\list.h" />
-    <ClInclude Include="..\..\inc\klb_type.h" />
     <ClInclude Include="..\..\inc\klua\klua.h" />
     <ClInclude Include="..\..\inc\klua\klua_buffer.h" />
     <ClInclude Include="..\..\inc\klua\klua_coroutine.h" />
@@ -286,7 +270,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\klua\klua_env_extension.h" />
     <ClInclude Include="..\..\inc\klua\klua_gui.h" />
     <ClInclude Include="..\..\inc\klua\klua_netmulti.h" />
-    <ClInclude Include="..\..\inc\klua\klua_object.h" />
     <ClInclude Include="..\..\inc\klua\klua_seri.h" />
     <ClInclude Include="..\..\inc\klua\klua_thread.h" />
     <ClInclude Include="..\..\inc\lauxlib.h" />
@@ -294,74 +277,15 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\inc\lua.hpp" />
     <ClInclude Include="..\..\inc\luaconf.h" />
     <ClInclude Include="..\..\inc\lualib.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_widgets.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_calendar_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_messagebox.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_combo_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu_ip.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_edit_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_btn.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_days.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_months.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_years.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_combo_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu_ip.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex_paint.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_check.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_combo.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_date.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_div.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_edit.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_group.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_hscrollbar.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ip.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_line.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex_row.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list_row.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_2rd.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_item.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_num.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_password.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_progress.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_radio.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_richtext.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_slider.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_spin.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab_btn.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ticker.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_animation.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_dialog.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_qrcode.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_time.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vscrollbar.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vslider.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\klbwui.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_extension.h" />
-    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_css.h" />
     <ClInclude Include="..\..\src_c\compat\os2threads.h" />
     <ClInclude Include="..\..\src_c\compat\va_copy.h" />
     <ClInclude Include="..\..\src_c\compat\w32dlfcn.h" />
     <ClInclude Include="..\..\src_c\compat\w32pthreads.h" />
     <ClInclude Include="..\..\src_c\config.h" />
     <ClInclude Include="..\..\src_c\cpu.h" />
+    <ClInclude Include="..\..\src_c\klbapp\klb_app_in.h" />
     <ClInclude Include="..\..\src_c\klbapp\klbappex_klua_in.h" />
     <ClInclude Include="..\..\src_c\klbapp\klbappex_plugins_in.h" />
-    <ClInclude Include="..\..\src_c\klbapp\klb_app_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_default.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_extensions.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_flex.h" />
@@ -374,14 +298,14 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.h" />
     <ClInclude Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.h" />
-    <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_gui_in.h" />
     <ClInclude Include="..\..\src_c\klbgui\klb_wnd_in.h" />
+    <ClInclude Include="..\..\src_c\klbgui\klbui_widgets.h" />
     <ClInclude Include="..\..\src_c\klbgui\shwnd\klbshw_tip.h" />
     <ClInclude Include="..\..\src_c\klbgui\subviews\klbwnd_tip.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpparser.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smprpcer.h" />
     <ClInclude Include="..\..\src_c\klbnet\klb_iopoll_in.h" />
+    <ClInclude Include="..\..\src_c\klbnet\klb_mbedtls_user_config.h" />
+    <ClInclude Include="..\..\src_c\klbplatform\klb_mutex_in.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_config.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_internal.h" />
     <ClInclude Include="..\..\src_c\klbthird\pcre2\src\pcre2_intmodedep.h" />
@@ -391,7 +315,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klbthird\sds\sdsalloc.h" />
     <ClInclude Include="..\..\src_c\klbthird\sds\testhelp.h" />
     <ClInclude Include="..\..\src_c\klbutil\klb_canvas_in.h" />
-    <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_bufagent.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_coroutine.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_gui.h" />
@@ -399,11 +322,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_netmulti.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_object.h" />
     <ClInclude Include="..\..\src_c\klua\extension\klua_ex_time.h" />
+    <ClInclude Include="..\..\src_c\klua\extension\klua_extension.h" />
     <ClInclude Include="..\..\src_c\klua\klua_help.h" />
     <ClInclude Include="..\..\src_c\klua\klua_multithread\klua_multithread.h" />
-    <ClInclude Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_serve_klua.h" />
-    <ClInclude Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_serve_klua.h" />
-    <ClInclude Include="..\..\src_c\klua\klua_util\klua_kobject.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_json.h" />
     <ClInclude Include="..\..\src_c\klua\klua_util\klua_seri_map.h" />
     <ClInclude Include="..\..\src_c\klua\lpeg-1.0.2\lpcap.h" />
@@ -443,14 +364,14 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\klua\lua-5.4.6\src\lzio.h" />
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.h" />
     <ClInclude Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.h" />
-    <ClInclude Include="..\..\src_c\klua\lua-skynet\lua-seri.h" />
     <ClInclude Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.h" />
-    <ClInclude Include="..\..\src_c\libavutil\av_adler32.h" />
+    <ClInclude Include="..\..\src_c\klua\lua-skynet\lua-seri.h" />
     <ClInclude Include="..\..\src_c\libavutil\aes.h" />
     <ClInclude Include="..\..\src_c\libavutil\aes_ctr.h" />
     <ClInclude Include="..\..\src_c\libavutil\aes_internal.h" />
     <ClInclude Include="..\..\src_c\libavutil\attributes.h" />
     <ClInclude Include="..\..\src_c\libavutil\audio_fifo.h" />
+    <ClInclude Include="..\..\src_c\libavutil\av_adler32.h" />
     <ClInclude Include="..\..\src_c\libavutil\avassert.h" />
     <ClInclude Include="..\..\src_c\libavutil\avconfig.h" />
     <ClInclude Include="..\..\src_c\libavutil\avstring.h" />
@@ -462,8 +383,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\libavutil\camellia.h" />
     <ClInclude Include="..\..\src_c\libavutil\cast5.h" />
     <ClInclude Include="..\..\src_c\libavutil\channel_layout.h" />
-    <ClInclude Include="..\..\src_c\libavutil\colorspace.h" />
     <ClInclude Include="..\..\src_c\libavutil\color_utils.h" />
+    <ClInclude Include="..\..\src_c\libavutil\colorspace.h" />
     <ClInclude Include="..\..\src_c\libavutil\common.h" />
     <ClInclude Include="..\..\src_c\libavutil\crc.h" />
     <ClInclude Include="..\..\src_c\libavutil\des.h" />
@@ -518,10 +439,10 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\libavutil\thread.h" />
     <ClInclude Include="..\..\src_c\libavutil\threadmessage.h" />
     <ClInclude Include="..\..\src_c\libavutil\time.h" />
+    <ClInclude Include="..\..\src_c\libavutil\time_internal.h" />
     <ClInclude Include="..\..\src_c\libavutil\timecode.h" />
     <ClInclude Include="..\..\src_c\libavutil\timer.h" />
     <ClInclude Include="..\..\src_c\libavutil\timestamp.h" />
-    <ClInclude Include="..\..\src_c\libavutil\time_internal.h" />
     <ClInclude Include="..\..\src_c\libavutil\tree.h" />
     <ClInclude Include="..\..\src_c\libavutil\twofish.h" />
     <ClInclude Include="..\..\src_c\libavutil\version.h" />
@@ -548,185 +469,280 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zconf.h" />
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zlib.h" />
     <ClInclude Include="..\..\src_c\zlib-1.2.11\zutil.h" />
+    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbhttp\core\klb_httprpcer.h" />
+    <ClInclude Include="..\..\src_packages\klbhttp\http_klua\klbhttp_rpc_klua.h" />
+    <ClInclude Include="..\..\src_packages\klbhttp\klbhttp.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpclientrpc_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnprpcer.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\core\klb_mnpserverpc_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\klbmnp.h" />
+    <ClInclude Include="..\..\src_packages\klbmnp\mnp_klua\klbmnp_rpc_klua.h" />
+    <ClInclude Include="..\..\src_packages\klbmp4\klbmp4.h" />
+    <ClInclude Include="..\..\src_packages\klbonvif\core\klb_onvif_client.h" />
+    <ClInclude Include="..\..\src_packages\klbonvif\core\klb_onvif_discovery.h" />
+    <ClInclude Include="..\..\src_packages\klbonvif\core\klb_onvif_serve.h" />
+    <ClInclude Include="..\..\src_packages\klbonvif\klbonvif.h" />
+    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspparser.h" />
+    <ClInclude Include="..\..\src_packages\klbrtsp\core\klb_rtspserve_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbrtsp\klbrtsp.h" />
+    <ClInclude Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_serve_klua.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpclient_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpclientrpc_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpparser.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smprpcer.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpserve_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\core\klb_smpserverpc_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\klbsmp.h" />
+    <ClInclude Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_serve_klua.h" />
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_websocket.h" />
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsclient_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsserve_conn.h" />
+    <ClInclude Include="..\..\src_packages\klbws\core\klb_wsrpcer.h" />
+    <ClInclude Include="..\..\src_packages\klbws\ws_klua\klbws_rpc_klua.h" />
+    <ClInclude Include="..\..\src_packages\klbws\klbws.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_css.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_extension.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\core\klbwui_widgets.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_calendar_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_combo_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu_ip.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_edit_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_btn.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_days.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_months.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_years.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_combo_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu_ip.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_messagebox.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_animation.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex_paint.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_check.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_combo.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_date.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_dialog.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_div.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_edit.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_group.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_hscrollbar.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ip.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_line.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list_row.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex_row.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_2rd.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_item.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_num.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_password.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_progress.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_qrcode.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_radio.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_richtext.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_slider.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_spin.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_static.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab_btn.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ticker.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_time.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vscrollbar.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vslider.h" />
+    <ClInclude Include="..\..\src_packages\klbwui\klbwui.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\aes.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\aria.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\asn1.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\asn1write.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\base64.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\bignum.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\block_cipher.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\build_info.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\camellia.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ccm.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\chacha20.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\chachapoly.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\check_config.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\cipher.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\cmac.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\compat-2.x.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_adjust_legacy_crypto.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_adjust_legacy_from_psa.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_adjust_psa_from_legacy.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_adjust_psa_superset_legacy.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_adjust_ssl.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_adjust_x509.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\config_psa.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\constant_time.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ctr_drbg.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\debug.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\des.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\dhm.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ecdh.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ecdsa.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ecjpake.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ecp.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\entropy.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\error.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\gcm.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\hkdf.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\hmac_drbg.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\lms.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\mbedtls_config.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\md.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\md5.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\memory_buffer_alloc.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\net_sockets.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\nist_kw.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\oid.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\pem.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\pk.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\pkcs12.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\pkcs5.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\pkcs7.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\platform.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\platform_time.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\platform_util.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\poly1305.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\private_access.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\psa_util.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ripemd160.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\rsa.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\sha1.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\sha256.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\sha3.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\sha512.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ssl.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ssl_cache.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ssl_ciphersuites.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ssl_cookie.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\ssl_ticket.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\threading.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\timing.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\version.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\x509.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\x509_crl.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\x509_crt.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\mbedtls\x509_csr.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\build_info.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_adjust_auto_enabled.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_adjust_config_dependencies.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_adjust_config_key_pair_types.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_adjust_config_synonyms.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_builtin_composites.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_builtin_key_derivation.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_builtin_primitives.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_compat.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_config.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_driver_common.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_driver_contexts_composites.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_driver_contexts_key_derivation.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_driver_contexts_primitives.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_extra.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_legacy.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_platform.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_se_driver.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_sizes.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_struct.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_types.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\include\psa\crypto_values.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\aesce.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\aesni.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\alignment.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\base64_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_core.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_core_invasive.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_mod.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_mod_raw.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_mod_raw_invasive.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\block_cipher_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bn_mul.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\chacha20_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\check_crypto_config.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\cipher_invasive.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\cipher_wrap.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\common.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\constant_time_impl.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\constant_time_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ctr.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\debug_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecp_internal_alt.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecp_invasive.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\entropy_poll.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\lmots.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\md_psa.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\md_wrap.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\mps_common.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\mps_error.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\mps_reader.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\mps_trace.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\padlock.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pk_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pk_wrap.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pkwrite.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_aead.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_cipher.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_core.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_core_common.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_driver_wrappers.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_driver_wrappers_no_static.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_ecp.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_ffdh.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_hash.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_invasive.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_its.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_mac.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_pake.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_random.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_random_impl.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_rsa.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_se.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_slot_management.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_storage.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_util_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\rsa_alt_helpers.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\rsa_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_ciphersuites_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_client.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_debug_helpers.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_misc.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls13_invasive.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls13_keys.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\threading_internal.h" />
+    <ClInclude Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509_internal.h" />
     <ClInclude Include="..\Visual Leak Detector\include\vld.h" />
     <ClInclude Include="..\Visual Leak Detector\include\vld_def.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\aes.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\aria.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\asn1.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\asn1write.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\base64.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\bignum.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\block_cipher.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\build_info.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\camellia.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ccm.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\chacha20.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\chachapoly.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\check_config.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\cipher.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\cmac.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\compat-2.x.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_legacy_crypto.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_legacy_from_psa.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_psa_from_legacy.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_psa_superset_legacy.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_ssl.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_adjust_x509.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\config_psa.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\constant_time.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ctr_drbg.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\debug.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\des.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\dhm.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecdh.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecdsa.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecjpake.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ecp.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\entropy.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\error.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\gcm.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\hkdf.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\hmac_drbg.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\lms.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\mbedtls_config.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\md.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\md5.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\memory_buffer_alloc.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\net_sockets.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\nist_kw.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\oid.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pem.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pk.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pkcs12.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pkcs5.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\pkcs7.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\platform.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\platform_time.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\platform_util.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\poly1305.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\private_access.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\psa_util.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ripemd160.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\rsa.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha1.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha256.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha3.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\sha512.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_cache.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_ciphersuites.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_cookie.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\ssl_ticket.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\threading.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\timing.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\version.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509_crl.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509_crt.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\mbedtls\x509_csr.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\build_info.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_auto_enabled.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_config_dependencies.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_config_key_pair_types.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_adjust_config_synonyms.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_builtin_composites.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_builtin_key_derivation.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_builtin_primitives.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_compat.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_config.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_common.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_contexts_composites.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_contexts_key_derivation.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_driver_contexts_primitives.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_extra.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_legacy.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_platform.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_se_driver.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_sizes.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_struct.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_types.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\include\psa\crypto_values.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\aesce.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\aesni.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\alignment.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\base64_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_core.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_core_invasive.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod_raw.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod_raw_invasive.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\block_cipher_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\bn_mul.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\chacha20_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\check_crypto_config.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher_invasive.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher_wrap.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\common.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\constant_time_impl.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\constant_time_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ctr.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\debug_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_internal_alt.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_invasive.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\entropy_poll.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\lmots.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\md_psa.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\md_wrap.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_common.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_error.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_reader.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_trace.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\padlock.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_wrap.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\pkwrite.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_aead.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_cipher.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_core.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_core_common.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_driver_wrappers.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_driver_wrappers_no_static.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ecp.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ffdh.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_hash.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_invasive.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_its.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_mac.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_pake.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_random.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_random_impl.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_rsa.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_se.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_slot_management.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_storage.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_util_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa_alt_helpers.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_ciphersuites_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_client.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_debug_helpers.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_misc.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_invasive.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_keys.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\threading_internal.h" />
-    <ClInclude Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_internal.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\build\linux\Makefile" />
     <None Include="..\..\src_c\libavutil\libavutil.v" />
     <None Include="..\..\src_c\libavutil\Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_extension.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_css.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_register.c" />
     <ClCompile Include="..\..\src_c\compat\getopt.c" />
+    <ClCompile Include="..\..\src_c\klbthird\klb_getopt.c" />
+    <ClCompile Include="..\..\src_3rdparty\getopt\getopt.c">
+      <ObjectFileName>$(IntDir)getopt3rd\%(Filename).obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\..\src_c\compat\strtod.c" />
+    <ClCompile Include="..\..\src_c\klbapp\klb_app.c" />
     <ClCompile Include="..\..\src_c\klbapp\klbappex_klua.c" />
     <ClCompile Include="..\..\src_c\klbapp\klbappex_plugins.c" />
-    <ClCompile Include="..\..\src_c\klbapp\klb_app.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_base.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_package.c" />
     <ClCompile Include="..\..\src_c\klbbase\klb_string.c" />
@@ -745,54 +761,38 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_waitlayer.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndhash.c" />
     <ClCompile Include="..\..\src_c\klbgui\extensions\klbuiex_wndticker.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klb_gui_in.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
+    <ClCompile Include="..\..\src_c\klbgui\klb_wnd_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_css_std_function.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_datetime.c" />
     <ClCompile Include="..\..\src_c\klbgui\klbui_util.c" />
-    <ClCompile Include="..\..\src_c\klbgui\klb_gui.c" />
-    <ClCompile Include="..\..\src_c\klbgui\klb_gui_in.c" />
-    <ClCompile Include="..\..\src_c\klbgui\klb_wnd.c" />
-    <ClCompile Include="..\..\src_c\klbgui\klb_wnd_ex.c" />
     <ClCompile Include="..\..\src_c\klbgui\shwnd\klbshw_tip.c" />
     <ClCompile Include="..\..\src_c\klbgui\subviews\klbwnd_tip.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buf.c" />
+    <ClCompile Include="..\..\src_c\klbmem\klb_buf_atom.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_buffer.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_bufpoolfix.c" />
-    <ClCompile Include="..\..\src_c\klbmem\klb_buf_atom.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_fpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mem.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_mpool.c" />
     <ClCompile Include="..\..\src_c\klbmem\klb_rbuf.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_netconn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_netmulti.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_tls_cert.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_epoll.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_iocp.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_poll.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_select.c" />
     <ClCompile Include="..\..\src_c\klbnet\klbiopoll\klb_iopoll_wsapoll.c" />
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netlisten_conn.c" />
+    <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netmux.c" />
     <ClCompile Include="..\..\src_c\klbnet\klblisten\klb_netprobe_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspparser.c" />
-    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspserve_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpclientrpc_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpclient_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpparser.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smprpcer.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpserverpc_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpserve_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.c" />
-      <ClCompile Include="..\..\src_packages\klbhttp\http_klua\klbhttp_klua.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_netconn.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_netmulti.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_socket.c" />
-    <ClCompile Include="..\..\src_c\klbnet\klb_socket_tls.c" />
-    <ClCompile Include="..\..\src_packages\klbws\core\klb_websocket.c" />
-    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsclient_conn.c" />
-    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsserve_conn.c" />
-      <ClCompile Include="..\..\src_packages\klbws\ws_klua\klbws_klua.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_atomic.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_cond.c" />
     <ClCompile Include="..\..\src_c\klbplatform\klb_dynamic_link.c" />
@@ -807,8 +807,6 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbplatform\klb_time.c" />
     <ClCompile Include="..\..\src_c\klbthird\cJSON.c" />
     <ClCompile Include="..\..\src_c\klbthird\http_parser.c" />
-    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2grep.c" />
-    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2posix.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_auto_possess.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_chartables.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_compile.c" />
@@ -816,11 +814,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_context.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_convert.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_dfa_match.c" />
-    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_dftables.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_error.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_extuni.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_find_bracket.c" />
-    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_fuzzsupport.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_jit_compile.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_maketables.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_match.c" />
@@ -838,11 +834,13 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_ucd.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_valid_utf.c" />
     <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2_xclass.c" />
+    <ClCompile Include="..\..\src_c\klbthird\pcre2\src\pcre2posix.c" />
     <ClCompile Include="..\..\src_c\klbthird\sds\sds.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_adt.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_canvas_argb8888.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_color.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_h26x.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_hash.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_hash_dx.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_hash_hgsmi.c" />
@@ -854,12 +852,11 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klbutil\klb_map_serialize.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_nlist.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_nvector.c" />
+    <ClCompile Include="..\..\src_c\klbutil\klb_obj.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rand.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_rect.c" />
-    <ClCompile Include="..\..\src_c\klbutil\klb_h26x.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_sds.c" />
     <ClCompile Include="..\..\src_c\klbutil\klb_vector.c" />
-    <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_bufagent.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_coroutine.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_gui.c" />
@@ -867,6 +864,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_netmulti.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_object.c" />
     <ClCompile Include="..\..\src_c\klua\extension\klua_ex_time.c" />
+    <ClCompile Include="..\..\src_c\klua\extension\klua_extension.c" />
     <ClCompile Include="..\..\src_c\klua\klua.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kcoro.c" />
     <ClCompile Include="..\..\src_c\klua\klua_base\klua_kgui.c" />
@@ -880,16 +878,12 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kmcache.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_kthread.c" />
     <ClCompile Include="..\..\src_c\klua\klua_multithread\klua_multithread.c" />
-    <ClCompile Include="..\..\src_packages\klbmnp\mnp_klua\klbmnp_klua.c" />
-    <ClCompile Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_klua.c" />
-    <ClCompile Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_serve_klua.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_klua.c" />
-    <ClCompile Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_serve_klua.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_klisten.c" />
+    <ClCompile Include="..\..\src_c\klua\klua_net\klua_ktls.c" />
     <ClCompile Include="..\..\src_c\klua\klua_net\klua_kurl.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_kos.c" />
     <ClCompile Include="..\..\src_c\klua\klua_platform\klua_ktime.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_kenv.c" />
-    <ClCompile Include="..\..\src_c\klua\klua_util\klua_kobject.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_krand.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_ksys.c" />
     <ClCompile Include="..\..\src_c\klua\klua_util\klua_seri_json.c" />
@@ -901,6 +895,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\lpeg-1.0.2\lpvm.c" />
     <ClCompile Include="..\..\src_c\klua\lsqlite3\lsqlite3.c" />
     <ClCompile Include="..\..\src_c\klua\lsqlite3\sqlite3.c" />
+    <ClCompile Include="..\..\src_c\klua\lua.c" />
     <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lapi.c" />
     <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lauxlib.c" />
     <ClCompile Include="..\..\src_c\klua\lua-5.4.6\src\lbaselib.c" />
@@ -938,15 +933,14 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\fpconv.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\lua_cjson.c" />
     <ClCompile Include="..\..\src_c\klua\lua-cjson-2.1.0\strbuf.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-skynet\lua-seri.c" />
-    <ClCompile Include="..\..\src_c\klua\lua-zlib-1.3\lua_zlib.c" />
-    <ClCompile Include="..\..\src_c\klua\lua.c" />
     <ClCompile Include="..\..\src_c\klua\luafilesystem-2.0\src\lfs.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-skynet\lua-seri.c" />
     <ClCompile Include="..\..\src_c\klua\LuaXML_130610\LuaXML_lib.c" />
-    <ClCompile Include="..\..\src_c\libavutil\av_adler32.c" />
+    <ClCompile Include="..\..\src_c\klua\lua-zlib-1.3\lua_zlib.c" />
     <ClCompile Include="..\..\src_c\libavutil\aes.c" />
     <ClCompile Include="..\..\src_c\libavutil\aes_ctr.c" />
     <ClCompile Include="..\..\src_c\libavutil\audio_fifo.c" />
+    <ClCompile Include="..\..\src_c\libavutil\av_adler32.c" />
     <ClCompile Include="..\..\src_c\libavutil\avsscanf.c" />
     <ClCompile Include="..\..\src_c\libavutil\avstring.c" />
     <ClCompile Include="..\..\src_c\libavutil\base64.c" />
@@ -1021,13 +1015,51 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_c\zlib-1.2.11\trees.c" />
     <ClCompile Include="..\..\src_c\zlib-1.2.11\uncompr.c" />
     <ClCompile Include="..\..\src_c\zlib-1.2.11\zutil.c" />
+    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httpclient_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httpserve_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbhttp\core\klb_httprpcer.c" />
+      <ClCompile Include="..\..\src_packages\klbhttp\http_klua\klbhttp_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbhttp\http_klua\klbhttp_rpc_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpclient_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpclientrpc_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnprpcer.c" />
+    <ClCompile Include="..\..\src_packages\klbmnp\core\klb_mnpserve_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbmnp\mnp_klua\klbmnp_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbmnp\mnp_klua\klbmnp_rpc_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbmp4\core\klb_mp4.c" />
+    <ClCompile Include="..\..\src_packages\klbmp4\mp4_klua\klbmp4_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbonvif\core\klb_onvif_client.c" />
+    <ClCompile Include="..\..\src_packages\klbonvif\core\klb_onvif_discovery.c" />
+    <ClCompile Include="..\..\src_packages\klbonvif\core\klb_onvif_serve.c" />
+    <ClCompile Include="..\..\src_packages\klbonvif\onvif_klua\klbonvif_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspclient_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspparser.c" />
+    <ClCompile Include="..\..\src_packages\klbrtsp\core\klb_rtspserve_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbrtsp\rtsp_klua\klbrtsp_serve_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpclient_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpclientrpc_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpparser.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smprpcer.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpserve_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\core\klb_smpserverpc_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbsmp\smp_klua\klbsmp_serve_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_websocket.c" />
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsclient_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsserve_conn.c" />
+    <ClCompile Include="..\..\src_packages\klbws\core\klb_wsrpcer.c" />
+      <ClCompile Include="..\..\src_packages\klbws\ws_klua\klbws_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbws\ws_klua\klbws_rpc_klua.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_css.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_extension.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\core\klbwui_register.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_calendar_menu.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_messagebox.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_combo_menu.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_decimal_menu_ip.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_edit_menu.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbshw_messagebox.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_btn.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_calendar_days.c" />
@@ -1037,6 +1069,8 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_decimal_menu_ip.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_edit_menu.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_shwnd\klbwnd_messagebox.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_animation.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_btnex.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_button.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_calendar.c" />
@@ -1044,15 +1078,13 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_combo.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_date.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_demo.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_dialog.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_div.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_edit.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_group.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_hscrollbar.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_ip.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_line.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_animation.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_dialog.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_qrcode.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_list.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_listex.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_menu.c" />
@@ -1060,6 +1092,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_password.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_picture.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_progress.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_qrcode.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_radio.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_richtext.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_slider.c" />
@@ -1071,6 +1104,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_view.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_vscrollbar.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_widgets\klbui_vslider.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_animation.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_btnex_paint.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_button.c" />
@@ -1078,6 +1112,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_combo.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_date.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_demo.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_dialog.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_div.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_edit.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_group.c" />
@@ -1085,9 +1120,9 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ip.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_line.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list_row.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_listex_row.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_list_row.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_2rd.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_menu_item.c" />
@@ -1095,6 +1130,7 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_password.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_picture.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_progress.c" />
+    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_qrcode.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_radio.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_richtext.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_slider.c" />
@@ -1103,343 +1139,339 @@ xcopy /Y $(ProjectName)_$(Configuration)\libklb.lib ..\..\lib</Command>
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_tab_btn.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_ticker.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_animation.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_dialog.c" />
-    <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_qrcode.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_time.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_view.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vscrollbar.c" />
     <ClCompile Include="..\..\src_packages\klbwui\embed_wnd\klbwnd_vslider.c" />
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aes.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\aes.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aesce.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\aesce.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aesni.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\aesni.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\aria.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\aria.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\asn1parse.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\asn1parse.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\asn1write.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\asn1write.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\base64.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\base64.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_core.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_core.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_mod.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\bignum_mod_raw.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\bignum_mod_raw.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\block_cipher.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\block_cipher.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\camellia.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\camellia.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ccm.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ccm.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\chacha20.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\chacha20.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\chachapoly.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\chachapoly.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\cipher.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\cipher_wrap.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\cipher_wrap.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\cmac.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\cmac.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\constant_time.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\constant_time.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ctr_drbg.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ctr_drbg.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\debug.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\debug.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\des.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\des.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\dhm.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\dhm.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecdh.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecdh.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecdsa.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecdsa.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecjpake.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecjpake.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecp.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_curves.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecp_curves.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ecp_curves_new.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ecp_curves_new.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\entropy.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\entropy.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\entropy_poll.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\entropy_poll.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\error.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\error.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\gcm.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\gcm.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\hkdf.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\hkdf.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\hmac_drbg.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\hmac_drbg.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\lmots.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\lmots.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\lms.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\lms.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\md.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\md.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\md5.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\md5.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\memory_buffer_alloc.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\memory_buffer_alloc.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_reader.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\mps_reader.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\mps_trace.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\mps_trace.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\net_sockets.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\net_sockets.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\nist_kw.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\nist_kw.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\oid.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\oid.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\padlock.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\padlock.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pem.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pem.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pk.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pk.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_ecc.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pk_ecc.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pk_wrap.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pk_wrap.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkcs12.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pkcs12.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkcs5.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pkcs5.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkcs7.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pkcs7.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkparse.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pkparse.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\pkwrite.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\pkwrite.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\platform.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\platform.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\platform_util.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\platform_util.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\poly1305.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\poly1305.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_aead.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_aead.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_cipher.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_cipher.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_client.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_client.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_driver_wrappers_no_static.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_driver_wrappers_no_static.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ecp.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_ecp.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_ffdh.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_ffdh.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_hash.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_hash.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_mac.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_mac.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_pake.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_pake.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_random.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_random.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_rsa.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_rsa.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_se.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_se.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_slot_management.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_slot_management.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_crypto_storage.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_crypto_storage.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_its_file.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_its_file.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\psa_util.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\psa_util.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ripemd160.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ripemd160.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\rsa.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\rsa_alt_helpers.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\rsa_alt_helpers.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha1.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\sha1.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha256.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\sha256.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha3.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\sha3.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\sha512.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\sha512.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_cache.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_cache.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_ciphersuites.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_ciphersuites.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_client.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_client.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_cookie.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_cookie.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_debug_helpers_generated.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_debug_helpers_generated.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_msg.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_msg.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_ticket.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_ticket.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls12_client.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls12_client.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls12_server.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls12_server.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_client.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls13_client.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_generic.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls13_generic.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_keys.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls13_keys.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\ssl_tls13_server.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\ssl_tls13_server.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\threading.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\threading.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\timing.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\timing.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\version.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\version.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\version_features.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\version_features.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_create.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509_create.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_crl.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509_crl.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_crt.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509_crt.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509_csr.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509_csr.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509write.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509write.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509write_crt.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509write_crt.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
-    <ClCompile Include="..\..\src_vendor\mbedtls-3.6.7\library\x509write_csr.c">
+    <ClCompile Include="..\..\src_3rdparty\mbedtls-3.6.7\library\x509write_csr.c">
       <ObjectFileName>$(IntDir)mbedtls\%(Filename).obj</ObjectFileName>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\src_packages\klbsmp\core\klbsmp.txt" />
     <Text Include="..\..\src_packages\klbmnp\core\klbmnp.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

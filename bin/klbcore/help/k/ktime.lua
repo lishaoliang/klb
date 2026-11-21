@@ -17,6 +17,7 @@ local ktime = {}
 -- @param [in]  	ms[number(int)]	休眠毫秒
 -- @return 无
 -- @note 直接休眠C线程
+--  \n 仅非协程使用
 ktime.sleep = function (ms)
 	return
 end
@@ -26,6 +27,7 @@ end
 -- @param [in]  	ns[number(int)]	休眠纳秒
 -- @return 无
 -- @note 直接休眠C线程
+--  \n 仅非协程使用
 ktime.sleep_ns = function (ns)
 	return
 end
@@ -33,6 +35,8 @@ end
 
 -- @brief 获取系统滴答数(毫秒)
 -- @return [number(int)] 系统滴答数
+-- @note 精度要求不高时, 可使用 kenv.tick_count 替代
+--  \n 滴答数可能反转(wrap), 求差值时须取 abs 值
 ktime.tick_count = function ()
 	return 123456
 end

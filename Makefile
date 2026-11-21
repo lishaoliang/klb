@@ -49,6 +49,9 @@ CP_RF	:= -cp -rf
 # 硬核心 + 运行最小集 (klbapp / klua / socket+iopoll; 可选模块见 clip.mk)
 MY_DIRS := ./src_c/klbplatform ./src_c/klbmem ./src_c/klbutil ./src_c/klbbase
 
+# klbrt — runtime 支撑(组装 platform/base 向上提供; 现行 xpc)
+MY_DIRS += ./src_c/klbrt
+
 # klbnet — socket / iopoll / netconn / netmulti (协议包见 clip.mk no-smp/no-rtsp/no-mnp/no-http/no-ws)
 MY_DIRS += ./src_c/klbnet ./src_c/klbnet/klbiopoll ./src_c/klbnet/klblisten
 
@@ -64,7 +67,7 @@ MY_DIRS += ./src_c/klbapp
 MY_DIRS += ./src_c/compat ./src_c/libavutil
 MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
 
-# src_vendor: 第三方开源可裁剪库 (clip.mk; mbedtls-3.6.7 / no-ssl)
+# src_3rdparty: 第三方开源可裁剪库 (clip.mk; mbedtls-3.6.7 / no-ssl; getopt 常开)
 
 ###########################################################
 # 头文件目录
@@ -187,7 +190,7 @@ include ./install.mk
 ###########################################################
 # .PHONY
 
-.PHONY: all linux clean strip klua install mingw
+.PHONY: all linux clean strip klua alua install mingw
 
 linux: all
 all: lib so
@@ -224,6 +227,7 @@ clean:
 	@echo "+++++++++++++++++++++++++"
 
 	if [ -f ./proj/klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/klua/ clean; fi
+	if [ -f ./proj/alua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/alua/ clean; fi
 
 strip:
 	#$(CSTRIP) $(MY_TARGET_A)
@@ -232,7 +236,10 @@ strip:
 klua: all
 	if [ -f ./proj/klua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/klua/; fi
 
-install: klua
+alua: all
+	if [ -f ./proj/alua/Makefile ]; then $(MAKE) $(MK_PARAMS) -C ./proj/alua/; fi
+
+install: klua alua
 	$(DO_host_install)
 
 local:

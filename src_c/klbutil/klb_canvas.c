@@ -53,11 +53,14 @@ klb_canvas_t* klb_canvas_create(int w, int h, int color_fmt)
             p_canvas->pitch = pitch;
             p_canvas->mem_len = pitch * h;
             p_canvas->p_addr = KLB_MALLOC(uint8_t, (size_t)p_canvas->mem_len, 0);
+            klb_canvas_vtable_init_argb8888(p_canvas); // Fixed Bug.2026-9-klb
         }
         break;
     default:
+        // Fixed Bug.2026-6-klb: unknown color_fmt must not return canvas with NULL p_addr
         assert(false);
-        break;
+        KLB_FREE(p_canvas);
+        return NULL;
     }
 
     return p_canvas;

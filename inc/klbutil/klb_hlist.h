@@ -210,7 +210,7 @@ KLB_API void* klb_hlist_remove_bykey(klb_hlist_t* p_list, const void* p_key, int
 /// @param [in] *p_list      hlist对象
 /// @return 无
 /// @note 1. 按 key_len 升序, 同长则 memcmp 升序; 使用 libavutil/AV_QSORT, 不依赖 libc qsort/qsort_s
-///  \n   2. uClibc 等精简 libc 无 qsort_s; 见 coding-libc-portability / libc-portability
+///  \n   2. uClibc 等精简 libc 无 qsort_s; 改用 libavutil/AV_QSORT
 KLB_API void klb_hlist_qsort(klb_hlist_t* p_list);
 
 

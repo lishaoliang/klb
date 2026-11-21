@@ -32,6 +32,8 @@ typedef struct klb_ioselect_t_
         int64_t             now_tc;             ///< 计时: 当前时间
         int64_t             last_tc;            ///< 上一次定时器时间
     };
+
+    int                     loop_depth;         ///< loop_once 重入深度; 0=最外层
 }klb_ioselect_t;
 
 
@@ -50,6 +52,7 @@ static klb_netmulti_t* klb_ioselect_create(int64_t tc)
 
     p_io->now_tc = tc;       ///< 计时: 当前时间
     p_io->last_tc = tc;
+    p_io->loop_depth = 0;
 
     return p_multi;
 }
@@ -153,6 +156,40 @@ static int klb_ioselect_closing(klb_netmulti_t* p_multi, klb_netconn_t* p_conn)
     return 0;
 }
 
+/// @brief 校验非阻塞 connect 的真实结果并通知上层
+/// @note  可写仅表示 connect 有结果; 须以 SO_ERROR 判定成功或失败
+/// @return bool true.已连接; false.连接失败
+static bool klb_ioselect_conn_connected(klb_netconn_t* p_conn, int64_t now)
+{
+    klb_socket_t* p_socket = p_conn->p_socket;
+
+    int error = 0;
+    socklen_t error_len = sizeof(error);
+
+    if (0 != getsockopt(p_socket->fd, SOL_SOCKET, SO_ERROR, (char*)&error, &error_len)
+        || 0 != error)
+    {
+        // 连接失败: 关闭 socket 并唤醒 co_connect 返回 nil
+        klb_socket_closing(p_socket);
+
+        if (NULL != p_conn->vtable.on_msg)
+        {
+            p_conn->vtable.on_msg(p_conn, KLB_NETCONN_MSG_connect_timeout, now);
+        }
+
+        return false;
+    }
+
+    klb_socket_set_connected(p_socket, true);
+
+    if (NULL != p_conn->vtable.on_msg)
+    {
+        p_conn->vtable.on_msg(p_conn, KLB_NETCONN_MSG_connected, now); // 连接握手完成
+    }
+
+    return true;
+}
+
 static int klb_ioselect_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
 {
     klb_ioselect_t* p_io = (klb_ioselect_t*)p_multi->extra;
@@ -225,6 +262,7 @@ static int klb_ioselect_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
         p_iter = klb_hlist_begin(p_io->p_conn_hlist);
         while (NULL != p_iter)
         {
+            klb_hlist_iter_t* p_next = klb_hlist_next(p_iter);
             klb_netconn_t* p_item = (klb_netconn_t*)klb_hlist_data(p_iter);
             klb_socket_t* p_socket = p_item->p_socket;
 
@@ -233,18 +271,15 @@ static int klb_ioselect_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
                 // 正常的连接
                 if (p_socket->reading && FD_ISSET(p_socket->fd, &r_fds))
                 {
+                    bool conn_ok = true;
+
                     if (0 == p_socket->connected)
                     {
-                        klb_socket_set_connected(p_socket, true);
-
-                        if (NULL != p_item->vtable.on_msg)
-                        {
-                            p_item->vtable.on_msg(p_item, KLB_NETCONN_MSG_connected, now); // 连接握手完成
-                        }
+                        conn_ok = klb_ioselect_conn_connected(p_item, now);
                     }
 
                     // 注意读取数据前, 须把缓存中的数据处理完毕
-                    if (NULL != p_item->vtable.on_recv)
+                    if (conn_ok && NULL != p_item->vtable.on_recv)
                     {
                         int recv_num = p_item->vtable.on_recv(p_item, now);
                         if (0 < recv_num)
@@ -256,17 +291,14 @@ static int klb_ioselect_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
 
                 if (p_socket->writing && FD_ISSET(p_socket->fd, &w_fds))
                 {
+                    bool conn_ok = true;
+
                     if (0 == p_socket->connected)
                     {
-                        klb_socket_set_connected(p_socket, true);
-
-                        if (NULL != p_item->vtable.on_msg)
-                        {
-                            p_item->vtable.on_msg(p_item, KLB_NETCONN_MSG_connected, now); // 连接握手完成
-                        }
+                        conn_ok = klb_ioselect_conn_connected(p_item, now);
                     }
 
-                    if (NULL != p_item->vtable.on_send)
+                    if (conn_ok && NULL != p_item->vtable.on_send)
                     {
                         int send_num = p_item->vtable.on_send(p_item, now);
                         if (0 < send_num)
@@ -277,16 +309,11 @@ static int klb_ioselect_loop_once_do(klb_netmulti_t* p_multi, int64_t now)
                 }
                 else if (0 == p_socket->connected && 0 != p_socket->reading && FD_ISSET(p_socket->fd, &w_fds))
                 {
-                    klb_socket_set_connected(p_socket, true);
-
-                    if (NULL != p_item->vtable.on_msg)
-                    {
-                        p_item->vtable.on_msg(p_item, KLB_NETCONN_MSG_connected, now); // 连接握手完成
-                    }
+                    klb_ioselect_conn_connected(p_item, now);
                 }
             }
 
-            p_iter = klb_hlist_next(p_iter);
+            p_iter = p_next;
         }
 
     }
@@ -352,6 +379,8 @@ static int klb_ioselect_loop_once_onticker(klb_netmulti_t* p_multi, int64_t now)
 }
 
 /// @brief 调用一次; 需要定期调用
+/// @note  支持重入 (回调内再次泵送): 仅最外层摘链/销毁连接与跑定时器,
+/// \n      避免内层释放 hlist 节点使外层迭代器悬垂 (SEGV)
 static int klb_ioselect_loop_once(klb_netmulti_t* p_multi, int64_t now)
 {
     klb_ioselect_t* p_io = (klb_ioselect_t*)p_multi->extra;
@@ -359,11 +388,27 @@ static int klb_ioselect_loop_once(klb_netmulti_t* p_multi, int64_t now)
     // 更新计时
     p_io->now_tc = now;
 
+    // 重入: 只推进 IO, 不摘链/销毁, 不跑定时器
+    if (0 != p_io->loop_depth)
+    {
+        p_io->loop_depth++;
+
+        int ret_re = klb_ioselect_loop_once_do(p_multi, now);
+
+        p_io->loop_depth--;
+
+        return ret_re;
+    }
+
     // 尝试关闭连接
     klb_ioselect_loop_once_do_closing(p_multi);
 
     // 执行主体业务
+    p_io->loop_depth++;
+
     int ret = klb_ioselect_loop_once_do(p_multi, now);
+
+    p_io->loop_depth--;
 
     // 关闭连接; 执行 klb_ioselect_loop_once_do 之后, 也可能有连接被标记为 关闭
     // 这里再次 尝试关闭连接

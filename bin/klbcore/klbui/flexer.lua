@@ -708,7 +708,20 @@ flexer.parse_wnd_layout = function(wnd, parent_path)
 	local pos = wnd['pos']
 
 	-- 高阶 pos 声明串: ';' 分段解析
+	-- 纯绝对坐标串 'x,y,w,h' 与表 {x,y,w,h} 同义 (不走 flex)
 	if 'string' == type(pos) then
+		local ax, ay, aw, ah = string.match(TrimString(pos), '^(%-?%d+)%s*,%s*(%-?%d+)%s*,%s*(%-?%d+)%s*,%s*(%-?%d+)%s*$')
+
+		if ax then
+			local x1, y1, w1, h1 = AutoRect(parent_path, tonumber(ax), tonumber(ay), tonumber(aw), tonumber(ah))
+
+			return	false,
+					x1, y1, w1, h1,
+					0,
+					CONST_flex_algo_none,
+					z_index
+		end
+
 		local is_flex, x1, y1, w1, h1, style, layout_algo, z_ctx = ParsePosDeclString(pos, parent_path)
 
 		if nil == z_index then

@@ -66,8 +66,25 @@ typedef struct klb_rtspparser_t_
 int klb_rtspparser_parse(klb_rtspparser_t* p_parser, char* p_data, int data_len);
 
 
+/// @brief 解析 UDP 上的单个 RTP 包. 缓冲从 RTP 头开始, 不含 '$' 交织头
+/// @return int 0.成功; 非0.错误
+int klb_rtspparser_parse_rtp(klb_rtspparser_t* p_parser, char* p_data, int data_len);
+
+
 /// @brief 解析 RTP H264
 int klb_rtspparser_parse_rtp_h264(klb_rtspparser_t* p_parser, char* p_nalu, int nalu_len);
+
+
+/// @brief 逐步解析 RTP H264. STAP-A 可依次产出多个 NALU
+/// @param [in,out] *p_pos  首次传入 0, 成功后为下一偏移
+/// @return int 0.产出一个 NALU; 1.没有更多; 负数.错误
+int klb_rtspparser_parse_rtp_h264_step(klb_rtspparser_t* p_parser, char* p_nalu, int nalu_len, int* p_pos);
+
+
+/// @brief 解析 RTP AAC (RFC3640 mpeg4-generic AAC-hbr, sizelength=13)
+/// @note  产出首个 AU; p_data/data_len 指向裸 AAC 帧; opt=KLB_MNP_FULL
+/// @return int 0.成功; 非0.失败
+int klb_rtspparser_parse_rtp_aac(klb_rtspparser_t* p_parser, char* p_payload, int payload_len);
 
 
 #if defined(__cplusplus)

@@ -9,7 +9,9 @@
 #include "libavutil/md5.h"
 #include "libavutil/mem.h"
 
+#include <limits.h>
 #include <stdio.h>
+#include <string.h>
 
 
 /// @def   KLB_PACKAGE_MD5_MAX
@@ -89,6 +91,15 @@ typedef struct klb_package_idx_t_
 
 //////////////////////////////////////////////////////////////////////////
 // 写
+
+/// signed 16-bit bitfield max for key_len
+#define KLB_PACKAGE_KEY_LEN_MAX     0x7FFF
+
+static bool check_key_len_klb_package(int key_len)
+{
+    // Fixed Bug.2026-12-klb
+    return (0 <= key_len && key_len <= KLB_PACKAGE_KEY_LEN_MAX);
+}
 
 /// @struct klb_package_w_t
 /// @brief  写包
@@ -225,6 +236,11 @@ int klb_package_w_write(klb_package_w_t* p_kpa, const char* p_key, int key_len, 
     assert(NULL != p_kpa);
     assert(NULL != p_kpa->pf);
 
+    if (!check_key_len_klb_package(key_len))
+    {
+        return 3; // key_len out of range
+    }
+
     if (NULL != klb_hlist_find_iter(p_kpa->p_idx_hlist, p_key, key_len))
     {
         return 1; // 已有key
@@ -295,6 +311,11 @@ static int klb_package_w_write_file_dump(klb_package_w_t* p_kpa, const char* p_k
 
 int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, int key_len, const char* p_path)
 {
+    if (!check_key_len_klb_package(key_len))
+    {
+        return 3; // key_len out of range
+    }
+
     if (NULL != klb_hlist_find_iter(p_kpa->p_idx_hlist, p_key, key_len))
     {
         return 1; // 已有key
@@ -311,12 +332,22 @@ int klb_package_w_write_file(klb_package_w_t* p_kpa, const char* p_key, int key_
     fseek(pf, 0, SEEK_END);
     long filelen = ftell(pf);
 
+    // Fixed Bug.2026-13-klb: ftell failure / negative length
+    if (filelen < 0)
+    {
+        fclose(pf);
+        return 4;
+    }
+
     if (filelen <= KLB_PACKAGE_BUF_MAX)
     {
         fseek(pf, 0, SEEK_SET);
 
         uint8_t buf[KLB_PACKAGE_BUF_MAX];
-        fread(buf, (size_t)filelen, 1, pf);
+        if (0 < filelen)
+        {
+            fread(buf, (size_t)filelen, 1, pf);
+        }
 
         ret = klb_package_w_write_buf(p_kpa, p_key, key_len, (const char*)buf, (int)filelen);
     }
@@ -340,6 +371,7 @@ typedef struct klb_package_r_t_
 {
     FILE*               pf;             ///< 文件指针
     int64_t             offset;         ///< 文件头偏移
+    int64_t             file_len;       ///< 文件总长度
 
     klb_package_head_t  head;           ///< 文件头参数
 
@@ -347,29 +379,68 @@ typedef struct klb_package_r_t_
     klb_package_idx_t*  p_index;        ///< 索引
 }klb_package_r_t;
 
-
-static bool read_head_klb_package_r(FILE* pf, int64_t offset, klb_package_head_t* p_head)
+static bool read_head_klb_package_r(FILE* pf, int64_t offset, klb_package_head_t* p_head, int64_t* p_file_len)
 {
+    // Fixed Bug.2026-10-klb: validate magic / file length / idx range
     fseek(pf, 0, SEEK_END);
     long filelen = ftell(pf);
+    if (filelen < 0)
+    {
+        return false;
+    }
+
+    *p_file_len = (int64_t)filelen;
+
+    if (*p_file_len < offset + (int64_t)sizeof(klb_package_head_t))
+    {
+        return false;
+    }
 
     fseek(pf, (long)offset, SEEK_SET);
-    fread(p_head, sizeof(klb_package_head_t), 1, pf);
+    if (1 != fread(p_head, sizeof(klb_package_head_t), 1, pf))
+    {
+        return false;
+    }
+
+    if (0 != memcmp(p_head->magic, KLB_PACKAGE_MAGIC, strlen(KLB_PACKAGE_MAGIC)))
+    {
+        return false;
+    }
+
+    if (p_head->idx_len < 0 || p_head->idx_pos < 0)
+    {
+        return false;
+    }
+
+    if (0 != (p_head->idx_len % (int64_t)sizeof(klb_package_idx_t)))
+    {
+        return false;
+    }
+
+    if (offset + p_head->idx_pos + p_head->idx_len > *p_file_len)
+    {
+        return false;
+    }
 
     return true;
 }
 
-static void read_idx_klb_package_r(klb_package_r_t* p_kpa)
+static bool read_idx_klb_package_r(klb_package_r_t* p_kpa)
 {
     if (p_kpa->idx_count <= 0)
     {
-        return;
+        return true;
     }
 
-    int64_t idx_len = p_kpa->idx_count * sizeof(klb_package_idx_t);
+    int64_t idx_len = p_kpa->idx_count * (int64_t)sizeof(klb_package_idx_t);
 
     fseek(p_kpa->pf, (long)(p_kpa->offset + p_kpa->head.idx_pos), SEEK_SET);
-    fread(p_kpa->p_index, (size_t)idx_len, 1, p_kpa->pf);
+    if (1 != fread(p_kpa->p_index, (size_t)idx_len, 1, p_kpa->pf))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 klb_package_r_t* klb_package_r_open(const char* p_path)
@@ -382,8 +453,9 @@ klb_package_r_t* klb_package_r_open(const char* p_path)
 
     klb_package_head_t head = { 0 };
     int64_t offset = 0;
+    int64_t file_len = 0;
 
-    if (!read_head_klb_package_r(pf, offset, &head))
+    if (!read_head_klb_package_r(pf, offset, &head, &file_len))
     {
         fclose(pf);
         return NULL;
@@ -393,12 +465,22 @@ klb_package_r_t* klb_package_r_open(const char* p_path)
     p_kpa->pf = pf;
 
     p_kpa->offset = offset;
+    p_kpa->file_len = file_len;
     memcpy(&p_kpa->head, &head, sizeof(klb_package_head_t));
 
-    p_kpa->idx_count = head.idx_len / sizeof(klb_package_idx_t);
-    p_kpa->p_index = KLB_MALLOC(klb_package_idx_t, (size_t)p_kpa->idx_count, 4);
+    p_kpa->idx_count = head.idx_len / (int64_t)sizeof(klb_package_idx_t);
+    if (0 < p_kpa->idx_count)
+    {
+        p_kpa->p_index = KLB_MALLOC(klb_package_idx_t, (size_t)p_kpa->idx_count, 4);
 
-    read_idx_klb_package_r(p_kpa);
+        if (!read_idx_klb_package_r(p_kpa))
+        {
+            KLB_FREE(p_kpa->p_index);
+            KLB_FREE_BY(p_kpa->pf, fclose);
+            KLB_FREE(p_kpa);
+            return NULL;
+        }
+    }
 
     return p_kpa;
 }
@@ -427,12 +509,28 @@ int klb_package_r_read(klb_package_r_t* p_kpa, int64_t idx, char** p_key, klb_bu
 
     klb_package_idx_t* p_info = &p_kpa->p_index[idx];
 
+    // Fixed Bug.2026-11-klb: reject index ranges outside file
+    if (p_info->key_len < 0 || p_info->value_len < 0
+        || p_info->key_pos < 0 || p_info->value_pos < 0)
+    {
+        return 2;
+    }
+
     if (0 < p_info->key_len)
     {
+        if (p_kpa->offset + p_info->key_pos + p_info->key_len > p_kpa->file_len)
+        {
+            return 2;
+        }
+
         char* ptr = KLB_MALLOC(char, (size_t)p_info->key_len, 4);
 
         fseek(p_kpa->pf, (long)(p_kpa->offset + p_info->key_pos), SEEK_SET);
-        fread(ptr, (size_t)p_info->key_len, 1, p_kpa->pf);
+        if (1 != fread(ptr, (size_t)p_info->key_len, 1, p_kpa->pf))
+        {
+            KLB_FREE(ptr);
+            return 2;
+        }
 
         ptr[p_info->key_len] = 0;
         *p_key = ptr;
@@ -444,10 +542,30 @@ int klb_package_r_read(klb_package_r_t* p_kpa, int64_t idx, char** p_key, klb_bu
 
     if (0 < p_info->value_len)
     {
+        if (p_kpa->offset + p_info->value_pos + p_info->value_len > p_kpa->file_len)
+        {
+            KLB_FREE(*p_key);
+            *p_key = NULL;
+            return 2;
+        }
+
+        if (p_info->value_len > (int64_t)INT_MAX)
+        {
+            KLB_FREE(*p_key);
+            *p_key = NULL;
+            return 2;
+        }
+
         klb_buf_t* p_tmp = klb_buf_malloc((int)p_info->value_len, false);
 
-        fseek(p_kpa->pf, (size_t)(p_kpa->offset + p_info->value_pos), SEEK_SET);
-        fread(p_tmp->p_buf, (size_t)p_info->value_len, 1, p_kpa->pf);
+        fseek(p_kpa->pf, (long)(p_kpa->offset + p_info->value_pos), SEEK_SET);
+        if (1 != fread(p_tmp->p_buf, (size_t)p_info->value_len, 1, p_kpa->pf))
+        {
+            KLB_FREE(*p_key);
+            *p_key = NULL;
+            klb_buf_unref(p_tmp);
+            return 2;
+        }
 
         p_tmp->end = (int)p_info->value_len;
 

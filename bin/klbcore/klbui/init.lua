@@ -256,7 +256,7 @@ end
 -- @brief 模态显示窗口
 -- @param [in] path[string]			窗口虚拟路径; eg. '/home'
 -- @return [number(int)] 	0.成功; 非0.失败
---   废弃(拼写错误)
+-- @deprecated 拼写错误别名; 请用 `klbui.modal`
 klbui.model = function (path)
 	return kgui.modal(path)
 end
@@ -265,7 +265,7 @@ end
 -- @param [in] all[boolean]			是否关闭全部popup: 默认true
 -- @param [in] path[string]			窗口路径(类unix): 默认nil
 -- @return [number(int)] 	0.成功; 非0.失败
---   废弃(拼写错误)
+-- @deprecated 拼写错误别名; 请用 `klbui.modal_end`
 klbui.model_end = function (all, path)
 	return kgui.modal_end(all, path)
 end

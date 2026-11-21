@@ -5,7 +5,7 @@
 -- @brief  C krand
 --   \n require("krand")
 --   \n C导出文件: ./klb/src_c/klua/klua_util/klua_krand.c
--- @version 0.1
+-- @version 0.2
 --]]
 
 local krand = {}
@@ -36,6 +36,16 @@ end
 -- @return [number(int)] 整型数值
 krand.rand_integer = function (len)
 	return 123456
+end
+
+
+-- @brief 随机字节串 (CSPRNG)
+-- @param [in]  	len[number(int)]	[可选] 字节数; 缺省内部默认; 0 返回空串
+-- @return [string] 随机字节(二进制)
+-- @return nil, err[string] 熵源不可用: "csprng unavailable" (禁伪随机回退)
+-- @note 输出为二进制, 可能含 '\0'; eg. local s = krand.rand_bytes(16)
+krand.rand_bytes = function (len)
+	return ''
 end
 
 

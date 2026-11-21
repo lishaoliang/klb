@@ -26,7 +26,7 @@ assert(false)
 -- @author  xxx
 -- @version 0.1
 -- @history 修改历史
---  \n 2019/8/10 0.1 创建文件
+--  \n 2019-08 0.1 创建文件
 -- @warning 没有警告
 --]]
 
