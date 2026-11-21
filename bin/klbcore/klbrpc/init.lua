@@ -4,6 +4,7 @@
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klbrpc init.lua
 -- @note   RPC 业务流程; 服务在 serve/; 客户端在 client/; 连接在协议包
+--   \n 返回码: 直接用 klbcore.klbcode.base / net; 不本地再映射 E_*
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]

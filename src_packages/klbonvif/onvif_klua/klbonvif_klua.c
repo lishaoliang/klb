@@ -30,13 +30,13 @@ static int push_err_klua_konvif(lua_State* L, int code)
 
 static int klua_konvif_connect(lua_State* L)
 {
-    return push_err_klua_konvif(L, KLB_NETCODE_NOTSUP);
+    return push_err_klua_konvif(L, KLB_NETCODE_EOPNOTSUPP);
 }
 
 
 static int klua_konvif_listen(lua_State* L)
 {
-    return push_err_klua_konvif(L, KLB_NETCODE_NOTSUP);
+    return push_err_klua_konvif(L, KLB_NETCODE_EOPNOTSUPP);
 }
 
 
@@ -391,7 +391,7 @@ static int open_discovery_klua_konvif(lua_State* L, int role, uint16_t port)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_konvif(L, KLB_NETCODE_INVAL);
+        return push_err_klua_konvif(L, KLB_NETCODE_EINVAL);
     }
 
     p_conn = klb_onvif_discovery_open(p_netmulti, role, port, &code);

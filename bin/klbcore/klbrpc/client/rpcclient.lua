@@ -8,8 +8,9 @@
 --		[2026-10] 创建文件
 --]]
 local kurl = require("kurl")
-local net = require("klbcore.klbcode.netcode")
-local errcode = require("klbcore.klbrpc.errcode")
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
 local deadline = require("klbcore.klbrpc.deadline")
 local cfger = require("klbcore.klbrpc.cfger")
 
@@ -105,14 +106,14 @@ local function Authenticate(client, auth)
 
 	local rets = capture(client:co_call("__auth", token))
 	if 0 == rets.n then
-		return false, errcode.E_AUTH, "auth failed"
+		return false, base.ACCES, "auth failed"
 	end
 
 	if nil ~= rets[1] and false ~= rets[1] then
 		return true
 	end
 
-	return false, rets[2] or errcode.E_AUTH, tostring(rets[3] or "auth failed")
+	return false, rets[2] or base.ACCES, tostring(rets[3] or "auth failed")
 end
 
 
@@ -137,7 +138,7 @@ local function OneShot(api, url, spec, name, ...)
 	if not client or "function" ~= type(client[name]) then
 		local fn = api["co_" .. name .. "_rpc"]
 		if "function" ~= type(fn) then
-			return nil, errcode.E_ARG, "unsupported rpc schema"
+			return nil, base.INVAL, "unsupported rpc schema"
 		end
 
 		return fn(url, ...)
@@ -174,7 +175,7 @@ local function OneShot(api, url, spec, name, ...)
 	local expired = deadline.finish(state)
 
 	if expired then
-		return nil, errcode.E_TIMEOUT, "timeout"
+		return nil, net.TIMEOUT, "timeout"
 	end
 
 	if "call" == name then

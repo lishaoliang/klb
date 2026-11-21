@@ -37,7 +37,7 @@ export MY_CLIP_SOURCES_EXCLUDE :=
 # 记名: no-* 同 --disable-*; use-* 同 --enable-*; no-all 同 min-core
 
 # 全集 (min-core 基准; 不含 no-wui-sim)
-KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto no-http no-ws no-smp no-rtsp no-mnp no-mp4 no-tar no-socks5 no-tunnel no-store no-onvif no-ice no-srtp no-rtp no-webrtc no-ssl
+KLB_CLIP_ALL_NO := no-pcre2 no-lpeg no-sqlite no-zlib no-wui no-cpp no-gui no-format no-qrencode no-net-proto no-http no-ws no-smp no-rtsp no-mnp no-mp4 no-tar no-socks5 no-tunnel no-store no-onvif no-ice no-srtp no-rtp no-webrtc no-ssl no-pfs
 
 # --disable-X -> no-X; --enable-X -> use-X; no-all -> min-core
 define KLB_CLIP_MAP_WORD
@@ -76,11 +76,12 @@ endif
 # 分别处理
 
 # 可裁剪参数: MY_CLIP = no-pcre2
+# pcre2: src_3rdparty/pcre2 (自 src_c/klbthird 迁入; 10.36)
 # exclude pcre2 tool sources: grep/dftables/fuzz (contain main or CLI-only code)
 ifeq ($(filter no-pcre2, $(MY_CLIP_TAG)), )
-	MY_PCRE2_SKIP := ./src_c/klbthird/pcre2/src/pcre2grep.c ./src_c/klbthird/pcre2/src/pcre2_dftables.c ./src_c/klbthird/pcre2/src/pcre2_fuzzsupport.c
-	MY_CLIP_SOURCES += $(filter-out $(MY_PCRE2_SKIP),$(wildcard ./src_c/klbthird/pcre2/src/*.c))
-	MY_CLIP_INC += -I ./src_c/klbthird/pcre2/src
+	MY_PCRE2_SKIP := ./src_3rdparty/pcre2/src/pcre2grep.c ./src_3rdparty/pcre2/src/pcre2_dftables.c ./src_3rdparty/pcre2/src/pcre2_fuzzsupport.c
+	MY_CLIP_SOURCES += $(filter-out $(MY_PCRE2_SKIP),$(wildcard ./src_3rdparty/pcre2/src/*.c))
+	MY_CLIP_INC += -I ./src_3rdparty/pcre2/src
 	MY_CLIP_FLAGS += -DHAVE_CONFIG_H
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_PCRE2__
@@ -105,11 +106,12 @@ endif
 
 
 # 可裁剪参数: MY_CLIP = no-zlib
+# zlib: src_3rdparty/zlib-1.3.2 (自 klbpfs/mtd 与旧 src_c/zlib-1.2.11 收敛)
 ifeq ($(filter no-zlib, $(MY_CLIP_TAG)), )
-	MY_CLIP_DIRS += ./src_c/zlib-1.2.11
+	MY_CLIP_DIRS += ./src_3rdparty/zlib-1.3.2
 	MY_CLIP_DIRS += ./src_c/klua/lua-zlib-1.3
 
-	MY_CLIP_INC += -I ./src_c/zlib-1.2.11
+	MY_CLIP_INC += -I ./src_3rdparty/zlib-1.3.2
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_ZLIB__
 endif
@@ -143,9 +145,10 @@ endif
 
 
 # 可裁剪参数: MY_CLIP = no-qrencode
+# qrencode: src_3rdparty/qrencode-4.1.1 (自 src_c 迁入)
 ifeq ($(filter no-qrencode, $(MY_CLIP_TAG)), )
-	MY_CLIP_DIRS += ./src_c/qrencode-4.1.1
-	MY_CLIP_INC += -I ./src_c/qrencode-4.1.1
+	MY_CLIP_DIRS += ./src_3rdparty/qrencode-4.1.1
+	MY_CLIP_INC += -I ./src_3rdparty/qrencode-4.1.1
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_QRENCODE__
 endif
@@ -348,6 +351,53 @@ ifeq ($(filter no-webrtc, $(MY_CLIP_TAG)), )
 	MY_CLIP_INC += -I ./src_packages
 else
 	MY_CLIP_FLAGS += -D__KLB_NO_WEBRTC__
+endif
+
+
+# 可裁剪参数: MY_CLIP = no-pfs
+# 正向: MY_CLIP = use-pfs / --enable-pfs
+# klbpfs: 自 portfs 迁入; 编进 libklb; 对外暂 pfs_* / kpfs; 不含 pfs/pfs_test CLI
+ifeq ($(filter no-pfs, $(MY_CLIP_TAG)), )
+	MY_CLIP_DIRS += ./src_packages/klbpfs/base
+	MY_CLIP_DIRS += ./src_packages/klbpfs/vfs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/partitions
+	MY_CLIP_DIRS += ./src_packages/klbpfs/fat
+	MY_CLIP_DIRS += ./src_packages/klbpfs/exfat
+	MY_CLIP_DIRS += ./src_packages/klbpfs/ntfs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/isofs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/udf
+	MY_CLIP_DIRS += ./src_packages/klbpfs/ext4
+	MY_CLIP_DIRS += ./src_packages/klbpfs/blkio_vhd
+	MY_CLIP_DIRS += ./src_packages/klbpfs/blkio_vhdx
+	MY_CLIP_DIRS += ./src_packages/klbpfs/blkio_qcow2
+	MY_CLIP_DIRS += ./src_packages/klbpfs/blkio_vmdk
+	MY_CLIP_DIRS += ./src_packages/klbpfs/blkio_vdi
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/base
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/mtd
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/squashfs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/erofs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/cramfs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/romfs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/ubifs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/jffs2
+	MY_CLIP_DIRS += ./src_packages/klbpfs/mtd/yaffs
+	MY_CLIP_DIRS += ./src_packages/klbpfs/pfs_klua
+	MY_CLIP_INC += -I ./src_packages
+	MY_CLIP_INC += -I ./src_packages/klbpfs
+	MY_CLIP_INC += -I ./src_packages/klbpfs/mtd
+	MY_CLIP_INC += -I ./src_packages/klbpfs/pfs_klua
+	MY_CLIP_SOURCES_EXCLUDE += ./src_packages/klbpfs/fat/pfs_fat_mkfs.c
+	MY_CLIP_SOURCES_EXCLUDE += ./src_packages/klbpfs/pfs_klua/pfs_klua_plugin.c
+ifeq ($(filter no-zlib, $(MY_CLIP_TAG)), )
+	# 复用 src_3rdparty/zlib-1.3.2 (-I 已由 no-zlib 段提供)
+else
+	# 仅 no-zlib 且保留 pfs: 编入 zlib 子集供 mtd 压缩 (无 lua-zlib)
+	MY_CLIP_SOURCES += $(filter-out ./src_3rdparty/zlib-1.3.2/gzclose.c ./src_3rdparty/zlib-1.3.2/gzread.c ./src_3rdparty/zlib-1.3.2/gzwrite.c ./src_3rdparty/zlib-1.3.2/gzlib.c ./src_3rdparty/zlib-1.3.2/infback.c,$(wildcard ./src_3rdparty/zlib-1.3.2/*.c))
+	MY_CLIP_INC += -I ./src_3rdparty/zlib-1.3.2
+	MY_CLIP_FLAGS += -DNO_GZIP
+endif
+else
+	MY_CLIP_FLAGS += -D__KLB_NO_PFS__
 endif
 
 

@@ -7,8 +7,10 @@
 -- @history 修改历史
 --		[2026-09] 创建文件; 对接 klbhttp
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
 local klbhttp = require("klbcore.klbhttp")
-local errcode = require("klbcore.klbonvif.errcode")
 local onvifserver = require("klbcore.klbonvif.serve.onvifserver")
 
 
@@ -41,7 +43,7 @@ end
 -- @return [string|nil] err				失败描述
 function onviflisten:open(port, opts)
 	if "number" ~= type(port) or 0 >= port then
-		return nil, errcode.E_ARG, "invalid port"
+		return nil, base.INVAL, "invalid port"
 	end
 
 	self:close()
@@ -56,7 +58,7 @@ function onviflisten:open(port, opts)
 	if not ok then
 		self._last_code = code
 		E.last_err = "klbhttp listen open failed"
-		return nil, code or errcode.E_IO, E.last_err
+		return nil, code or base.IO, E.last_err
 	end
 
 	self._listen = l
@@ -73,12 +75,12 @@ end
 -- @note 须在 kco 协程内
 function onviflisten:co_accept()
 	if nil == self._listen then
-		return nil, errcode.E_STATE, "not open"
+		return nil, base.STATE, "not open"
 	end
 
 	local http_conn = self._listen:co_accept()
 	if nil == http_conn then
-		return nil, errcode.E_CLOSED, "accept nil"
+		return nil, net.CLOSED, "accept nil"
 	end
 
 	return onvifserver.new(http_conn, self._cfg)

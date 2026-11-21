@@ -123,21 +123,21 @@ static int klb_netlisten_conn_do_accept(klb_netconn_t* p_conn)
             int code = klb_netcode_last_syserr();
 
             // 非阻塞耗尽 / 中断: 正常结束本轮
-            if (KLB_NETCODE_AGAIN == code
-                || KLB_NETCODE_INTR == code
-                || KLB_NETCODE_INPROGRESS == code)
+            if (KLB_NETCODE_EAGAIN == code
+                || KLB_NETCODE_EINTR == code
+                || KLB_NETCODE_EINPROGRESS == code)
             {
                 break;
             }
 
             // 内存类错误 fail-fast
-            assert(KLB_NETCODE_NOMEM != code);
+            assert(KLB_NETCODE_ENOMEM != code);
 
             if (p_listen->cb_accept_err)
             {
                 int report = code;
 
-                if (KLB_NETCODE_IO == report || KLB_NETCODE_ERR == report)
+                if (KLB_NETCODE_EIO == report || KLB_NETCODE_EPERM == report)
                 {
                     report = KLB_NETCODE_ACCEPT_FAIL;
                 }
@@ -330,12 +330,12 @@ int klb_netlisten_conn_open_addr_ex(klb_netconn_t* p_conn, const char* p_host, i
 
     if (NULL == p_conn || NULL == p_listen || NULL == p_listen->p_netmulti)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (p_listen->is_open)
     {
-        return KLB_NETCODE_BUSY;
+        return KLB_NETCODE_EBUSY;
     }
 
     if (NULL != p_opts)
@@ -351,7 +351,7 @@ int klb_netlisten_conn_open_addr_ex(klb_netconn_t* p_conn, const char* p_host, i
         }
         else if (AF_INET != family && AF_INET6 != family && AF_UNSPEC != family)
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
     }
 
@@ -368,7 +368,7 @@ int klb_netlisten_conn_open_addr_ex(klb_netconn_t* p_conn, const char* p_host, i
     // 解析绑定地址 (host 非法时 fail-fast)
     if (0 != klb_socket_resolve_sa(p_host, port, family, &addr, &addr_len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // 创建 socket
@@ -376,7 +376,7 @@ int klb_netlisten_conn_open_addr_ex(klb_netconn_t* p_conn, const char* p_host, i
     if (INVALID_SOCKET == fd)
     {
         code = klb_netcode_last_syserr();
-        if (KLB_NETCODE_IO == code || KLB_NETCODE_ERR == code)
+        if (KLB_NETCODE_EIO == code || KLB_NETCODE_EPERM == code)
         {
             code = KLB_NETCODE_LISTEN_FAIL;
         }

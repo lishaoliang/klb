@@ -16,7 +16,7 @@ local kmp4 = {}
 -- @brief 打开 MP4 只读
 -- @param [in]	path[string]				mp4 文件路径
 -- @return 	mp4[userdata|nil]			成功为对象; 失败 nil
---			code[number(int)]			成功为 0; 失败为错误码 (见 klbmp4_errcode_e)
+--			code[number(int)]			成功为 0; 失败为错误码 (见 klb_basecode_e)
 --			err[string|nil]				失败时错误信息
 kmp4.open_read = function (path)
 	local mp4 = {}
@@ -78,7 +78,7 @@ end
 -- @brief 打开 MP4 只写
 -- @param [in]	path[string]				mp4 文件路径
 -- @return 	mp4[userdata|nil]			成功为对象; 失败 nil
---			code[number(int)]			成功为 0; 失败为错误码 (见 klbmp4_errcode_e)
+--			code[number(int)]			成功为 0; 失败为错误码 (见 klb_basecode_e)
 --			err[string|nil]				失败时错误信息
 -- @note 关闭时写出 ftyp + mdat + moov
 kmp4.open_write = function (path)

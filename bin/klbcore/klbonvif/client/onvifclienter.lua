@@ -7,9 +7,12 @@
 -- @history 修改历史
 --		[2026-09] 创建文件; 补充 Device/Media 主路径
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
+
 local klbhttp = require("klbcore.klbhttp")
 local kurl = require("kurl")
-local errcode = require("klbcore.klbonvif.errcode")
 local soap_util = require("klbcore.klbonvif.client.soap_util")
 local device_soap = require("klbcore.klbonvif.client.device_soap")
 local media_soap = require("klbcore.klbonvif.client.media_soap")
@@ -120,7 +123,7 @@ function onvifclient:connect(xaddr, opts)
 	--   tls[boolean]			[可选] 是否 TLS, 默认按 URL
 	-- }
 	if "string" ~= type(xaddr) or "" == xaddr then
-		return nil, errcode.E_ARG, "invalid xaddr"
+		return nil, base.INVAL, "invalid xaddr"
 	end
 
 	self._xaddr = xaddr
@@ -144,16 +147,16 @@ function onvifclient:call(action, body_inner, opts)
 	opts = opts or {}
 
 	if "string" ~= type(action) or "" == action then
-		return nil, errcode.E_ARG, "invalid action"
+		return nil, base.INVAL, "invalid action"
 	end
 
 	if self._closed then
-		return nil, errcode.E_CLOSED, "closed"
+		return nil, net.CLOSED, "closed"
 	end
 
 	local url = opts.xaddr or self._xaddr
 	if "string" ~= type(url) or "" == url then
-		return nil, errcode.E_ARG, "no xaddr"
+		return nil, base.INVAL, "no xaddr"
 	end
 
 	local auth = auth_opts(self, opts)
@@ -175,7 +178,7 @@ function onvifclient:call(action, body_inner, opts)
 
 	if "text" ~= msg then
 		E.last_err = "http " .. tostring(msg) .. " " .. tostring(head)
-		return nil, errcode.of(E.last_err), E.last_err
+		return nil, ((("number" == type(E.last_err)) and E.last_err) or base.IO), E.last_err
 	end
 
 	local fault = soap_util.fault_of(body)
@@ -188,7 +191,7 @@ function onvifclient:call(action, body_inner, opts)
 		if "" == reason then
 			reason = "soap fault"
 		end
-		return nil, errcode.E_PEER, reason
+		return nil, base.MNP_PEER, reason
 	end
 
 	self._last_fault = nil
@@ -271,7 +274,7 @@ end
 -- @return info[table|nil], err[string|nil]		info.uri 为 RTSP URL
 function onvifclient:co_get_stream_uri(profile_token, opts)
 	if "string" ~= type(profile_token) or "" == profile_token then
-		return nil, errcode.E_ARG, "invalid profile_token"
+		return nil, base.INVAL, "invalid profile_token"
 	end
 
 	opts = opts or {}
@@ -292,7 +295,7 @@ function onvifclient:co_get_stream_uri(profile_token, opts)
 
 	local info = media_soap.parse_stream_uri(xml)
 	if nil == info then
-		return nil, errcode.E_NOENT, "no Uri"
+		return nil, base.NOENT, "no Uri"
 	end
 
 	return info

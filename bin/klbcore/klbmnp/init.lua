@@ -4,6 +4,7 @@
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klbmnp init.lua
 -- @note   MNP 协议脚本封装; 内部使用 kmnp
+--   \n 返回码: 直接用 klbcore.klbcode.base / net; 不本地再映射 E_*
 -- @history 修改历史
 --		[2026-09] 创建文件
 --		[2026-10] adopt / MAGIC 魔数分类 (proxy L0-1/2)

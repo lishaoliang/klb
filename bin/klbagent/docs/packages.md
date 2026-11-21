@@ -136,7 +136,7 @@ Optional **lib** package (listable): MCP (Model Context Protocol) interop. Publi
 | client (consume external MCP tools) | `alua mcp probe --url URL` / `alua mcp list --url URL [--token T]` / `alua mcp call --url URL --tool NAME [--args JSON]` / `alua mcp listen --url URL` (GET SSE) / `alua mcp close --url URL` (DELETE) | Streamable HTTP (POST + GET SSE + DELETE; JSON or multi-frame SSE; `Mcp-Session-Id`) |
 
 **AI help (docs.read):** `tools/mcp.md` (L3) · L2 `skills/mcp/SKILL.md` — Cursor / CodeBuddy / Trae / VS Code / Claude / Windsurf host JSON.  
-Package docs (in-tree, not via `docs.read`): [`DESIGN.md`](../packages/mcp/DESIGN.md) · [`PROTOCOL.md`](../packages/mcp/PROTOCOL.md) · [`CLIENTS.md`](../packages/mcp/CLIENTS.md). AI host standard names (`host_tool=mcp-xx`, unknown=`mcp-unknown`) → `tools/mcp.md` / `CLIENTS.md` 0.1 节.
+AI host standard names (`host_tool=mcp-xx`, unknown=`mcp-unknown`) → `tools/mcp.md`.
 
 Server methods: `initialize` / `ping` / `tools/list` / `tools/call` / `resources/list|read` / `resources/templates/list` / `prompts/list|get` / `logging/setLevel`; also `notifications/cancelled` / `notifications/progress` and `roots/list` (server→client). Resources use `alua://docs/<rel>` (via `docs.*`); prompts include built-in `alua-ai-bootstrap` / `alua-mcp-overview`. HTTP face: `alua serve` `POST|GET|DELETE /mcp` (Bearer / `X-Alua-Token` + optional `X-Alua-Ssid`; POST = JSON or multi-frame SSE, GET = SSE listen, DELETE = end session; loopback Host may use raw token, non-loopback plaintext → 401). Tool `inputSchema` from `catalog.args_schema` via `packages/mcp/schema/`. Handshake binds `core.session` attrs and `ssid` (XPC client); `ssid.whoami` echoes `host_tool` / session fingerprint.
 

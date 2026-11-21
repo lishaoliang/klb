@@ -493,7 +493,7 @@ static int klua_kmnp_set_timeout(lua_State* L)
 
     if (NULL == p_mnp->p_conn)
     {
-        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        lua_pushinteger(L, KLB_NETCODE_EINVAL);
         return 1;
     }
 
@@ -537,7 +537,7 @@ static int klua_kmnp_set_max_msg(lua_State* L)
 
     if (NULL == p_mnp->p_conn)
     {
-        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        lua_pushinteger(L, KLB_NETCODE_EINVAL);
         return 1;
     }
 
@@ -762,7 +762,7 @@ static int klua_kmnp_connect(lua_State* L)
         if (0 != parse_opts_crypto_klua_kmnp(L, 3, &crypto_want, &crypto_format,
             &crypto_key_size, &p_crypto_key, &crypto_rekey_after))
         {
-            return push_err_klua_kmnp(L, KLB_NETCODE_INVAL);
+            return push_err_klua_kmnp(L, KLB_NETCODE_EINVAL);
         }
     }
 
@@ -770,7 +770,7 @@ static int klua_kmnp_connect(lua_State* L)
     p_netmulti = klua_netmulti_get(p_env);
     if (NULL == p_netmulti)
     {
-        return push_err_klua_kmnp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kmnp(L, KLB_NETCODE_EINVAL);
     }
 
     p_conn = klb_mnpclient_connect(p_netmulti, p_host, port, tls, &code);
@@ -785,7 +785,7 @@ static int klua_kmnp_connect(lua_State* L)
             p_crypto_key, crypto_key_size, crypto_rekey_after))
         {
             klb_mnpclient_conn_free(p_conn);
-            return push_err_klua_kmnp(L, KLB_NETCODE_INVAL);
+            return push_err_klua_kmnp(L, KLB_NETCODE_EINVAL);
         }
     }
 
@@ -895,7 +895,7 @@ static int klua_kmnp_new_serve(lua_State* L)
 
     if (NULL == p_listen_socket)
     {
-        return push_err_klua_kmnp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kmnp(L, KLB_NETCODE_EINVAL);
     }
 
     bool tls = p_listen_socket->tls;
@@ -981,7 +981,7 @@ static int klua_kmnp_new_serve(lua_State* L)
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
-            return push_err_klua_kmnp(L, KLB_NETCODE_NOMEM);
+            return push_err_klua_kmnp(L, KLB_NETCODE_ENOMEM);
         }
     }
 
@@ -1178,7 +1178,7 @@ static int klua_kmnp_listen(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_kmnp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kmnp(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);

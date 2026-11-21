@@ -144,7 +144,7 @@ static int ctr_xor_klb_srtp(mbedtls_aes_context* p_aes, const uint8_t p_iv[KLB_S
         int ret = mbedtls_aes_crypt_ecb(p_aes, MBEDTLS_AES_ENCRYPT, iv, block);
         if (0 != ret)
         {
-            return KLB_NETCODE_IO;
+            return KLB_NETCODE_EIO;
         }
 
         int n = len - off;
@@ -234,13 +234,13 @@ static int hmac_calc_klb_srtp(klb_srtp_ctx_t* p_ctx, const uint8_t* p_pkt, int l
     int ret = mbedtls_md_hmac_reset(&p_ctx->hmac);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     ret = mbedtls_md_hmac_update(&p_ctx->hmac, p_pkt, (size_t)len);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     if (NULL != p_tail && tail_len > 0)
@@ -248,14 +248,14 @@ static int hmac_calc_klb_srtp(klb_srtp_ctx_t* p_ctx, const uint8_t* p_pkt, int l
         ret = mbedtls_md_hmac_update(&p_ctx->hmac, p_tail, (size_t)tail_len);
         if (0 != ret)
         {
-            return KLB_NETCODE_IO;
+            return KLB_NETCODE_EIO;
         }
     }
 
     ret = mbedtls_md_hmac_finish(&p_ctx->hmac, p_tag);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     return 0;
@@ -488,7 +488,7 @@ static int protect_rtp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len, 
 
     if (cap < len || (cap - len) < (KLB_SRTP_AUTH_TAG_LEN + p_ctx->mki_len))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     uint16_t seq = KLB_RB16(p_pkt + 2);
@@ -579,7 +579,7 @@ static int protect_rtcp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len,
     int need = KLB_SRTP_SRTCP_TRAILER_LEN + p_ctx->mki_len + KLB_SRTP_AUTH_TAG_LEN;
     if (cap < len || (cap - len) < need)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     uint32_t ssrc = KLB_RB32(p_pkt + 4);
@@ -651,7 +651,7 @@ static int unprotect_rtp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len
     {
         if (0 != memcmp(p_pkt + body_len, p_ctx->mki, (size_t)p_ctx->mki_len))
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
     }
 
@@ -702,7 +702,7 @@ static int unprotect_rtp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len
     {
         if (0 == roc)
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
 
         roc--;
@@ -716,14 +716,14 @@ static int unprotect_rtp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len
 
         if (!tag_equal_klb_srtp(tag, p_tag, KLB_SRTP_AUTH_TAG_LEN))
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
     }
 
     // step3. 重放窗口
     if (!replay_accept_klb_srtp(p_ctx, p_stream, roc, seq))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step4. 解密 payload
@@ -768,7 +768,7 @@ static int unprotect_rtcp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int le
     uint32_t word = KLB_RB32(p_pkt + body_len);
     if (0 == (word & KLB_SRTP_SRTCP_E_FLAG))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     uint32_t srtcp_index = word & KLB_SRTP_SRTCP_INDEX_MASK;
@@ -785,7 +785,7 @@ static int unprotect_rtcp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int le
         if (0 != memcmp(p_pkt + body_len + KLB_SRTP_SRTCP_TRAILER_LEN,
                 p_ctx->mki, (size_t)p_ctx->mki_len))
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
     }
 
@@ -800,13 +800,13 @@ static int unprotect_rtcp_klb_srtp(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int le
 
     if (!tag_equal_klb_srtp(tag, p_pkt + sign_len, KLB_SRTP_AUTH_TAG_LEN))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step4. 重放窗口
     if (!replay_accept_srtcp_klb_srtp(p_stream, srtcp_index))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step5. 解密第 8 字节起的 payload
@@ -832,7 +832,7 @@ klb_srtp_ctx_t* klb_srtp_create(int profile, int* p_code)
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOTSUP;
+            *p_code = KLB_NETCODE_EOPNOTSUPP;
         }
 
         return NULL;
@@ -851,7 +851,7 @@ klb_srtp_ctx_t* klb_srtp_create(int profile, int* p_code)
         klb_srtp_destroy(p_ctx);
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOTSUP;
+            *p_code = KLB_NETCODE_EOPNOTSUPP;
         }
 
         return NULL;
@@ -863,7 +863,7 @@ klb_srtp_ctx_t* klb_srtp_create(int profile, int* p_code)
         klb_srtp_destroy(p_ctx);
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOMEM;
+            *p_code = KLB_NETCODE_ENOMEM;
         }
 
         return NULL;
@@ -896,12 +896,12 @@ int klb_srtp_set_key(klb_srtp_ctx_t* p_ctx, const uint8_t* p_key, int key_len,
 {
     if (NULL == p_ctx || NULL == p_key || NULL == p_salt)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_SRTP_MASTER_KEY_MAX != key_len || KLB_SRTP_MASTER_SALT_MAX != salt_len)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     KLB_MEMSET(p_ctx->master_key, 0, sizeof(p_ctx->master_key));
@@ -914,7 +914,7 @@ int klb_srtp_set_key(klb_srtp_ctx_t* p_ctx, const uint8_t* p_key, int key_len,
     if (0 != ret)
     {
         p_ctx->key_set = false;
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step2. RFC 3711 4.3 节 KDF: 加密密钥 / 认证密钥 / 会话盐
@@ -947,14 +947,14 @@ int klb_srtp_set_key(klb_srtp_ctx_t* p_ctx, const uint8_t* p_key, int key_len,
     if (0 != ret)
     {
         p_ctx->key_set = false;
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     ret = mbedtls_md_hmac_starts(&p_ctx->hmac, p_ctx->auth_key, KLB_SRTP_AUTH_KEY_LEN);
     if (0 != ret)
     {
         p_ctx->key_set = false;
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     // step4. 复位所有 SSRC 状态
@@ -970,17 +970,17 @@ int klb_srtp_set_mki(klb_srtp_ctx_t* p_ctx, const uint8_t* p_mki, int mki_len)
 {
     if (NULL == p_ctx)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 > mki_len) || (KLB_SRTP_MKI_MAX < mki_len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 < mki_len) && (NULL == p_mki))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     KLB_MEMSET(p_ctx->mki, 0, sizeof(p_ctx->mki));
@@ -999,7 +999,7 @@ int klb_srtp_set_repeat(klb_srtp_ctx_t* p_ctx, int enable)
 {
     if (NULL == p_ctx)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     p_ctx->repeat_tx = (0 != enable) ? true : false;
@@ -1012,12 +1012,12 @@ int klb_srtp_protect(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len, int cap, in
 {
     if (NULL == p_ctx || NULL == p_pkt || NULL == p_out_len || len < 0 || cap < 0)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_ctx->key_set)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (len < 2)
@@ -1040,12 +1040,12 @@ int klb_srtp_unprotect(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len, int* p_ou
 {
     if (NULL == p_ctx || NULL == p_pkt || NULL == p_out_len || len < 0)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_ctx->key_set)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (len < 2)
@@ -1071,7 +1071,7 @@ klb_srtp_ctx_t* klb_srtp_create(int profile, int* p_code)
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
     return NULL;
@@ -1093,7 +1093,7 @@ int klb_srtp_set_key(klb_srtp_ctx_t* p_ctx, const uint8_t* p_key, int key_len,
     (void)p_salt;
     (void)salt_len;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -1103,7 +1103,7 @@ int klb_srtp_set_mki(klb_srtp_ctx_t* p_ctx, const uint8_t* p_mki, int mki_len)
     (void)p_mki;
     (void)mki_len;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -1112,7 +1112,7 @@ int klb_srtp_set_repeat(klb_srtp_ctx_t* p_ctx, int enable)
     (void)p_ctx;
     (void)enable;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -1124,7 +1124,7 @@ int klb_srtp_protect(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len, int cap, in
     (void)cap;
     (void)p_out_len;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -1135,7 +1135,7 @@ int klb_srtp_unprotect(klb_srtp_ctx_t* p_ctx, uint8_t* p_pkt, int len, int* p_ou
     (void)len;
     (void)p_out_len;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 #endif // __KLB_MBEDTLS__

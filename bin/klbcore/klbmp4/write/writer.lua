@@ -32,7 +32,7 @@ writer.new = function (mp4, path, tmp)
 
 	-- @brief 写一帧
 	-- @param [in]  cobj[lightuserdata]	klb_buf_t* ([klb_mnp_media_t][Annex-B])
-	-- @return code[number(int)]			0 成功; E_ARG 参数非法; E_WRITE 写入失败
+	-- @return code[number(int)]			0 成功; base.INVAL 参数非法; base.PACKAGE_IO 写入失败
 	-- @return errstr[string]				描述; 成功为 ""
 	-- @note 首帧须带 SPS 与 PPS; 帧由调用方释放, 本层不接管
 	function obj:write(cobj)
@@ -74,7 +74,7 @@ writer.new = function (mp4, path, tmp)
 	end
 
 	-- @brief 关闭并写出 moov, 成功后将临时文件改名为目标 (幂等)
-	-- @return code[number(int)]			0 成功; E_WRITE 落盘失败; E_IO 改名失败
+	-- @return code[number(int)]			0 成功; base.PACKAGE_IO 落盘失败; base.IO 改名失败
 	-- @return errstr[string]				描述; 成功为 ""
 	-- @note 落盘失败时删除临时文件, 原目标保持不变; 改名失败时保留临时文件供排查
 	function obj:close()

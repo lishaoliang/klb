@@ -1,7 +1,7 @@
 ﻿# mcp host config (AI L3)
 
 Audience: **any AI** helping configure or verify alua as an MCP server in a host IDE.  
-Package true source (dev): `packages/mcp/CLIENTS.md`. Protocol: `packages/mcp/PROTOCOL.md`.  
+This file is the AI help face for host MCP config (via `docs.read`).  
 Entry: `alua mcp serve [--profile P]` (stdio JSON-RPC; default profile `readonly`). Client direction: `alua mcp probe|list|call|listen|close --url URL [--token T] [--timeout S] [--json]` (Streamable HTTP).
 
 ```
@@ -29,7 +29,7 @@ Before business tools: `runtime.ai_bootstrap` → `runtime.ai_load_ack`.
 | `command` | No spaces inside `command`; put flags in `args` |
 | PATH | Prefer `alua` on PATH; else absolute `<ALUA>` placeholder (never paste private home paths into shared docs) |
 | Privacy | No private absolute paths / tokens / dates in examples |
-| Transport | Preferred **stdio** `alua mcp serve`; HTTP face on **`alua serve`** `POST|GET|DELETE /mcp` (Bearer / `X-Alua-Token`, optional `X-Alua-Ssid`; POST = JSON or multi-frame SSE, GET = SSE listen, DELETE = end session; loopback raw token allowed, non-loopback plaintext → `401`; see CLIENTS.md) |
+| Transport | Preferred **stdio** `alua mcp serve`; HTTP face on **`alua serve`** `POST|GET|DELETE /mcp` (Bearer / `X-Alua-Token`, optional `X-Alua-Ssid`; POST = JSON or multi-frame SSE, GET = SSE listen, DELETE = end session; loopback raw token allowed, non-loopback plaintext → `401`; host JSON examples in this file) |
 
 Optional label env: `ALUA_CALLER_NAME=mcp-cursor` (or codebuddy/trae/…).
 
@@ -288,7 +288,7 @@ No dedicated section: copy § Default. Still connectable; do not invent host-spe
 3. Common fails: space in `command`; `alua` not on PATH; **mcp package omitted**; wrong top key; Trae project MCP switch off; logs on stdout.
 4. Prefer the **After standard install** checklist when first wiring a host.
 
-Deep package notes: `packages/mcp/CLIENTS.md` / `DESIGN.md` / `PROTOCOL.md` (source tree; not via `docs.read`).
+Deep private design/protocol notes live outside this tree (not via `docs.read`); AI host wiring stays in this file + L2 `skills/mcp/SKILL.md`.
 
 ## SSID / token flow (label only)
 

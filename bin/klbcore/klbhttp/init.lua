@@ -2,8 +2,13 @@
 -- Copyright (c) 2026, GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 -- @file   init.lua
 -- @author 随风(https://gitee.com/klua/klb)
--- @brief  klbhttp init.lua
--- @note   HTTP 协议脚本封装; 内部使用 khttp
+-- @brief  klbhttp: HTTP 协议脚本封装 (对外入口)
+-- @stability stable
+-- @impl mature
+-- @attention
+--   \n @stability stable: AI 禁止擅自添加/删除/变更本文件对外接口 (含导出名, 参数, 返回与已文档含义); 须用户点名
+--   \n @impl mature: 实现倾向冻结; 重构须同等谨慎, 不得破坏本文件导出签名与可观察语义
+-- @note   require("klbcore.klbhttp"); 契约见本文件导出; 内部使用 khttp
 -- @history 修改历史
 --		[2026-09] 创建文件
 --		[2026-10] proxy_connect / is_request_byte (proxy L0-2/3)
@@ -16,61 +21,15 @@ local httpclient_post = require("klbcore.klbhttp.client.httpclient_post")
 local httplistener = require("klbcore.klbhttp.serve.httplistener")
 local proxy_connect_client = require("klbcore.klbhttp.proxy_connect.client")
 local proxy_connect_server = require("klbcore.klbhttp.proxy_connect.server")
-local http_status = require("klbcore.klbhttp.status")
 
 
 local klbhttp = {}
 
 
 --------------------------------------------------------------------------------------------
--- HTTP 状态码 (供其他模块; 真源 status.lua)
-
--- 1xx
-klbhttp.STATUS_CONTINUE = http_status.CONTINUE
-klbhttp.STATUS_SWITCHING_PROTOCOLS = http_status.SWITCHING_PROTOCOLS
-
--- 2xx
-klbhttp.STATUS_OK = http_status.OK
-klbhttp.STATUS_CREATED = http_status.CREATED
-klbhttp.STATUS_ACCEPTED = http_status.ACCEPTED
-klbhttp.STATUS_NO_CONTENT = http_status.NO_CONTENT
-klbhttp.STATUS_PARTIAL_CONTENT = http_status.PARTIAL_CONTENT
-
--- 3xx
-klbhttp.STATUS_MOVED_PERMANENTLY = http_status.MOVED_PERMANENTLY
-klbhttp.STATUS_FOUND = http_status.FOUND
-klbhttp.STATUS_SEE_OTHER = http_status.SEE_OTHER
-klbhttp.STATUS_NOT_MODIFIED = http_status.NOT_MODIFIED
-klbhttp.STATUS_TEMPORARY_REDIRECT = http_status.TEMPORARY_REDIRECT
-klbhttp.STATUS_PERMANENT_REDIRECT = http_status.PERMANENT_REDIRECT
-
--- 4xx
-klbhttp.STATUS_BAD_REQUEST = http_status.BAD_REQUEST
-klbhttp.STATUS_UNAUTHORIZED = http_status.UNAUTHORIZED
-klbhttp.STATUS_FORBIDDEN = http_status.FORBIDDEN
-klbhttp.STATUS_NOT_FOUND = http_status.NOT_FOUND
-klbhttp.STATUS_METHOD_NOT_ALLOWED = http_status.METHOD_NOT_ALLOWED
-klbhttp.STATUS_PROXY_AUTH_REQUIRED = http_status.PROXY_AUTH_REQUIRED
-klbhttp.STATUS_REQUEST_TIMEOUT = http_status.REQUEST_TIMEOUT
-klbhttp.STATUS_CONFLICT = http_status.CONFLICT
-klbhttp.STATUS_GONE = http_status.GONE
-klbhttp.STATUS_CONTENT_TOO_LARGE = http_status.CONTENT_TOO_LARGE
-klbhttp.STATUS_UNSUPPORTED_MEDIA_TYPE = http_status.UNSUPPORTED_MEDIA_TYPE
-klbhttp.STATUS_RANGE_NOT_SATISFIABLE = http_status.RANGE_NOT_SATISFIABLE
-klbhttp.STATUS_TOO_MANY_REQUESTS = http_status.TOO_MANY_REQUESTS
-
--- 5xx
-klbhttp.STATUS_INTERNAL_SERVER_ERROR = http_status.INTERNAL_SERVER_ERROR
-klbhttp.STATUS_NOT_IMPLEMENTED = http_status.NOT_IMPLEMENTED
-klbhttp.STATUS_BAD_GATEWAY = http_status.BAD_GATEWAY
-klbhttp.STATUS_SERVICE_UNAVAILABLE = http_status.SERVICE_UNAVAILABLE
-klbhttp.STATUS_GATEWAY_TIMEOUT = http_status.GATEWAY_TIMEOUT
-
-klbhttp.status = http_status
-
-
---------------------------------------------------------------------------------------------
 -- 正向代理 CONNECT (脚本库; 供 alua proxy / 探活)
+-- @stability stable
+-- @note HTTP 状态码真源: require("klbcore.klbcode").net.HTTP_* (或 klbcode.netcode)
 
 klbhttp.proxy_connect = {
 	client = proxy_connect_client,
@@ -84,6 +43,7 @@ klbhttp.proxy_connect = {
 -- @brief 新建一个客户端
 -- @param [in]      cfg[table]			客户端配置
 -- @return [table]	客户端模块
+-- @stability stable
 klbhttp.new_client = function (cfg)
 	return httpclienter.new(cfg)
 end
@@ -95,6 +55,7 @@ end
 -- @param [in]      opts[table]			[可选] 连接选项; 见内联 opts 注释
 -- @return [table]	客户端模块; 失败为 nil
 -- @return [number]	失败时 klb_netcode_e; 描述串用 knetcode.strerror(code)
+-- @stability stable
 klbhttp.connect = function (host, port, opts)
 	-- opts = {
 	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
@@ -115,6 +76,7 @@ end
 -- @return msg[string]					"text" / "error" / "exit"
 -- @return head[string|number]			text 时为 head; error 时为 code
 -- @return body[string]					text 时为 body; 失败时为 ""
+-- @stability stable
 -- @note 须在 kco 协程内; https 走 TLS (默认端口 443), http 明文 (默认端口 80)
 klbhttp.co_get = function (url, opts)
 	-- opts = {
@@ -132,6 +94,7 @@ end
 -- @return msg[string]					"text" / "error" / "exit"
 -- @return head[string|number]			text 时为 head; error 时为 code
 -- @return body[string]					text 时为 body; 失败时为 ""
+-- @stability stable
 -- @note 须在 kco 协程内; https 走 TLS (默认端口 443), http 明文 (默认端口 80)
 klbhttp.co_post = function (url, data, opts)
 	-- opts = {
@@ -152,6 +115,7 @@ end
 -- @return msg[string]					"text" / "error" / "exit"
 -- @return head[string|number]			text 时为 head; error 时为 code
 -- @return body[string]					text 时为 body; 失败时为 ""
+-- @stability stable
 -- @note 须在 kco 协程内. 服务端读 req.query. 非法字段不发请求
 klbhttp.co_get_form = function (url, form, opts)
 	-- opts = {
@@ -168,6 +132,7 @@ end
 -- @return msg[string]					"text" / "error" / "exit"
 -- @return head[string|number]			text 时为 head; error 时为 code
 -- @return body[string]					text 时为 body; 失败时为 ""
+-- @stability stable
 -- @note 须在 kco 协程内. Content-Type 默认 application/x-www-form-urlencoded. 服务端读 req.form
 klbhttp.co_post_form = function (url, form, opts)
 	-- opts = {
@@ -188,6 +153,7 @@ end
 -- @return body[string]					原始回应体; 失败时为 ""
 -- @return obj[table]					解码结果; 失败为 {}
 -- @return err[string]					解码失败时为 "invalid json"; 否则 ""
+-- @stability stable
 -- @note 须在 kco 协程内. 传输失败时 err 为 ""
 klbhttp.co_get_json = function (url, opts)
 	-- opts = {
@@ -206,6 +172,7 @@ end
 -- @return body[string]					原始回应体; 失败时为 ""
 -- @return obj[table]					回应解码结果; 失败为 {}
 -- @return err[string]					编码或解码失败时为 "invalid json"; 否则 ""
+-- @stability stable
 -- @note 须在 kco 协程内. Content-Type 默认 application/json
 klbhttp.co_post_json = function (url, obj, opts)
 	-- opts = {
@@ -227,6 +194,7 @@ end
 -- @return body[string]					原始回应体; 失败时为 ""
 -- @return obj[table]					解码结果; 失败为 {}
 -- @return err[string]					解码失败时为 "invalid xml"; 否则 ""
+-- @stability stable
 -- @note 须在 kco 协程内. 仅适合近似 JSON 的 XML
 klbhttp.co_get_xml = function (url, opts)
 	-- opts = {
@@ -245,6 +213,7 @@ end
 -- @return body[string]					原始回应体; 失败时为 ""
 -- @return obj[table]					回应解码结果; 失败为 {}
 -- @return err[string]					编码或解码失败时为 "invalid xml"; 否则 ""
+-- @stability stable
 -- @note 须在 kco 协程内. Content-Type 默认 application/xml. 仅适合近似 JSON 的 XML
 klbhttp.co_post_xml = function (url, obj, opts)
 	-- opts = {
@@ -261,6 +230,7 @@ end
 -- @brief 新建一个监听模块
 -- @param [in]      cfg[table]			监听模块配置
 -- @return [table]	监听模块
+-- @stability stable
 klbhttp.new_listen = function (cfg)
 	return httplistener.new(cfg)
 end
@@ -271,6 +241,7 @@ end
 -- @param [in]      cfg[table]			[可选]监听模块配置; 见内联 opts 注释
 -- @return [table]	监听模块; 失败为 nil
 -- @return [number]	失败时 klb_netcode_e; 描述串用 knetcode.strerror(code)
+-- @stability stable
 klbhttp.listen = function (port, cfg)
 	-- cfg = {
 	--   tls[boolean]			[可选] 是否 TLS, 默认 `false`
@@ -295,6 +266,7 @@ end
 -- @brief 新建一个RPC客户端
 -- @param [in]      cfg[table]			客户端配置
 -- @return [table]	客户端模块
+-- @stability stable
 klbhttp.new_client_rpc = function (cfg)
 	return httpclientrpcer.new_rpc(cfg)
 end
@@ -305,6 +277,7 @@ end
 -- @param [in]      opts[table]			[可选] `{ tls }`
 -- @return [table]	客户端模块; 失败为 nil
 -- @return [number]	失败时 klb_netcode_e; 描述串用 knetcode.strerror(code)
+-- @stability stable
 klbhttp.connect_rpc = function (host, port, opts)
 	local client = httpclientrpcer.new_rpc()
 	local rc = client:connect_rpc(host, port, opts)
@@ -324,6 +297,7 @@ end
 -- @return [string]						成功为 'success'
 -- @return [number]						失败时 code (首值为 nil)
 -- @return [string]						失败时 knetcode.strerror(code)
+-- @stability stable
 klbhttp.co_post_rpc = function (url, ...)
 	local r = httpclientrpcer.new_rpc()
 	local rc = r:connect(url)
@@ -345,6 +319,7 @@ end
 -- @return [string]						成功为 'success'
 -- @return [number]						失败时 code (首值为 nil)
 -- @return [string]						失败时 knetcode.strerror(code)
+-- @stability stable
 klbhttp.co_notify_rpc = function (url, ...)
 	local r = httpclientrpcer.new_rpc()
 	local rc = r:connect(url)
@@ -365,6 +340,7 @@ end
 -- @param [in]      url[string]			目标, eg. 'httprpc://127.0.0.1:3458'
 -- @return [string]						成功为 'success'
 -- @return [...]						成功时回应数据; 失败时 code, errstr (首值为 nil)
+-- @stability stable
 -- @note 须在 kco 协程内
 klbhttp.co_call_rpc = function (url, ...)
 	local ReturnCoCall = function (r, ...)
@@ -388,6 +364,7 @@ end
 -- @brief 新建一个监听模块
 -- @param [in]      cfg[table]			监听模块配置
 -- @return [table]	监听模块
+-- @stability stable
 klbhttp.new_listen_rpc = function (cfg)
 	return httplistener.new_rpc(cfg)
 end
@@ -398,6 +375,7 @@ end
 -- @param [in]      cfg[table]			[可选]监听模块配置; tls/plain/cert/key/rpctype
 -- @return [table]	监听模块; 失败为 nil
 -- @return [number]	失败时 klb_netcode_e; 描述串用 knetcode.strerror(code)
+-- @stability stable
 klbhttp.listen_rpc = function (port, cfg)
 	local l = httplistener.new_rpc(cfg)
 
@@ -411,6 +389,7 @@ end
 
 --------------------------------------------------------------------------------------------
 -- 一些常量
+-- @stability stable
 
 -------------------------------------------------------
 -- 数据组织方式
@@ -427,3 +406,5 @@ klbhttp.RPC_RESPONSE 	= 'RESPONSE'
 
 
 return klbhttp
+
+-- end

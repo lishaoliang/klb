@@ -82,7 +82,7 @@ M.main_loop = function()
     return main_loop(M.loop_run, M.first_run, M.end_run)
 end
 
--- 主循环 (协程托管)
+-- 主循环 (协程托管); 推荐默认使用
 M.co_main_loop = function()
     return co_main_loop(M.loop_run, M.first_run, M.end_run)
 end

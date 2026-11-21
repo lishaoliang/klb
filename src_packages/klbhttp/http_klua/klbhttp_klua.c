@@ -363,7 +363,7 @@ static int klua_khttp_set_connect(lua_State* L)
     klua_khttp_t* p_http = to_klua_khttp(L, 1);
     bool connect = klua_check_option_boolean(L, 2, false);
 
-    int ret = KLB_NETCODE_INVAL;
+    int ret = KLB_NETCODE_EINVAL;
     if (p_http->is_client && NULL != p_http->p_conn)
     {
         ret = klb_httpclient_conn_set_connect(p_http->p_conn, connect);
@@ -378,7 +378,7 @@ static int klua_khttp_upgrade_tls(lua_State* L)
 {
     klua_khttp_t* p_http = to_klua_khttp(L, 1);
 
-    int ret = KLB_NETCODE_INVAL;
+    int ret = KLB_NETCODE_EINVAL;
     if (p_http->is_client && NULL != p_http->p_conn)
     {
         ret = klb_httpclient_conn_tls_upgrade(p_http->p_conn);
@@ -431,7 +431,7 @@ static int klua_khttp_set_timeout(lua_State* L)
 
     if (NULL == p_http->p_conn)
     {
-        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        lua_pushinteger(L, KLB_NETCODE_EINVAL);
         return 1;
     }
 
@@ -477,7 +477,7 @@ static int klua_khttp_set_max_body(lua_State* L)
 
     if (NULL == p_http->p_conn)
     {
-        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        lua_pushinteger(L, KLB_NETCODE_EINVAL);
         return 1;
     }
 
@@ -529,18 +529,18 @@ static int klua_khttp_upgrade(lua_State* L)
 
     if (p_http->is_client || NULL == p_http->p_conn)
     {
-        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttp(L, KLB_NETCODE_EINVAL);
     }
 
     if (!klb_httpserve_wbuf_is_empty(p_http->p_conn))
     {
-        return push_err_klua_khttp(L, KLB_NETCODE_BUSY);
+        return push_err_klua_khttp(L, KLB_NETCODE_EBUSY);
     }
 
     klb_netmulti_ws_adopt_fn adopt = klb_netmulti_get_ws_adopt();
     if (NULL == adopt)
     {
-        return push_err_klua_khttp(L, KLB_NETCODE_NOTSUP);
+        return push_err_klua_khttp(L, KLB_NETCODE_EOPNOTSUPP);
     }
 
     klb_netconn_t* p_conn = p_http->p_conn;
@@ -629,7 +629,7 @@ static int klua_khttp_connect(lua_State* L)
     p_netmulti = klua_netmulti_get(p_env);
     if (NULL == p_netmulti)
     {
-        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttp(L, KLB_NETCODE_EINVAL);
     }
 
     p_conn = klb_httpclient_connect(p_netmulti, p_host, port, tls, &code);
@@ -1128,7 +1128,7 @@ static int klua_khttp_new_serve(lua_State* L)
 
     if (NULL == p_listen_socket)
     {
-        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttp(L, KLB_NETCODE_EINVAL);
     }
 
     tls = p_listen_socket->tls;
@@ -1186,7 +1186,7 @@ static int klua_khttp_new_serve(lua_State* L)
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
-            return push_err_klua_khttp(L, KLB_NETCODE_NOMEM);
+            return push_err_klua_khttp(L, KLB_NETCODE_ENOMEM);
         }
     }
 
@@ -1195,7 +1195,7 @@ static int klua_khttp_new_serve(lua_State* L)
     if (NULL == p_netmulti)
     {
         KLB_FREE_BY(p_socket, klb_socket_destroy);
-        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttp(L, KLB_NETCODE_EINVAL);
     }
 
     p_conn = klb_httpserve_conn_create(p_netmulti, p_socket);
@@ -1273,7 +1273,7 @@ static int klua_khttp_listen(lua_State* L)
     if (NULL == p_netmulti)
     {
         KLB_FREE_BY(p_tls_ctx, klb_socket_tls_server_ctx_destroy);
-        return push_err_klua_khttp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttp(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);

@@ -14,8 +14,6 @@
 --]]
 
 
-local klbcode = require("klbcore.klbcode")
-local base = klbcode.base
 local id = require("klbcore.klbstore.id")
 local index = require("klbcore.klbstore.index")
 local storage = require("klbcore.klbstore.storage")
@@ -30,21 +28,8 @@ local klbstore = {}
 
 
 --------------------------------------------------------------------------------------------
--- 返回码 (真源 klbcore.klbcode)
-
-klbstore.OK = klbcode.OK
-klbstore.E_ARG = base.INVAL
-klbstore.E_NOENT = base.NOENT
-klbstore.E_IO = base.IO
-klbstore.E_NOSPC = base.NOSPC
-klbstore.E_BUSY = base.BUSY
-klbstore.E_NOTIMPL = base.NOTIMPL
-klbstore.E_AUTH = base.ACCES
-klbstore.E_RANGE = base.RANGE
-
-
---------------------------------------------------------------------------------------------
 -- 子模块
+-- @note 返回码真源 klbcore.klbcode.base; 不本地再映射 E_*
 
 klbstore.id = id
 klbstore.index = index

@@ -10,7 +10,7 @@
 
 
 local kproxy_io = require("klbcore.klbproxy.io")
-local http_status = require("klbcore.klbhttp.status")
+local net = require("klbcore.klbcode.netcode")
 
 local M = {}
 
@@ -439,7 +439,7 @@ M.serve_conn = function (sock, opts)
 				}
 			end
 		end
-		M.reply(sock, http_status.PROXY_AUTH_REQUIRED, "Proxy Authentication Required", {
+		M.reply(sock, net.HTTP_PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required", {
 			authenticate = challenges,
 		})
 		return false, err_auth or "auth fail"
@@ -450,7 +450,7 @@ M.serve_conn = function (sock, opts)
 	if method == "CONNECT" then
 		local host, port, err_a = _parse_authority(target, 443)
 		if host == nil then
-			M.reply(sock, http_status.BAD_REQUEST, "Bad Request")
+			M.reply(sock, net.HTTP_BAD_REQUEST, "Bad Request")
 			return false, err_a or "bad target"
 		end
 
@@ -467,14 +467,14 @@ M.serve_conn = function (sock, opts)
 	local host, port, path, err_u = _parse_absolute_url(target)
 	if host == nil then
 		if err_u == "https absolute use CONNECT" then
-			M.reply(sock, http_status.NOT_IMPLEMENTED, "Not Implemented")
+			M.reply(sock, net.HTTP_NOT_IMPLEMENTED, "Not Implemented")
 			return false, err_u
 		end
 		if err_u == "not absolute" then
-			M.reply(sock, http_status.BAD_REQUEST, "Bad Request")
+			M.reply(sock, net.HTTP_BAD_REQUEST, "Bad Request")
 			return false, "need absolute-form uri"
 		end
-		M.reply(sock, http_status.BAD_REQUEST, "Bad Request")
+		M.reply(sock, net.HTTP_BAD_REQUEST, "Bad Request")
 		return false, err_u or "bad url"
 	end
 
@@ -504,9 +504,9 @@ M.reply = function (sock, code, reason, opts)
 		return false, "need sock"
 	end
 
-	code = tonumber(code) or http_status.OK
+	code = tonumber(code) or net.HTTP_OK
 	if type(reason) ~= "string" or reason == "" then
-		if code == http_status.OK then
+		if code == net.HTTP_OK then
 			reason = "Connection Established"
 		else
 			reason = "Error"
@@ -517,7 +517,7 @@ M.reply = function (sock, code, reason, opts)
 		string.format("HTTP/1.1 %d %s", code, reason),
 		"Proxy-Agent: alua-proxy",
 	}
-	if code == http_status.PROXY_AUTH_REQUIRED then
+	if code == net.HTTP_PROXY_AUTHENTICATION_REQUIRED then
 		local auths = nil
 		if type(opts) == "table" and type(opts.authenticate) == "table" then
 			auths = opts.authenticate

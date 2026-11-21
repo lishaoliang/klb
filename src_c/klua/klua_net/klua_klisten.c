@@ -417,7 +417,7 @@ static int klua_klisten_rebind(lua_State* L)
 
     if (p_listen->closed || NULL == p_listen->p_mux)
     {
-        return push_err_klua_klisten(L, KLB_NETCODE_INVAL);
+        return push_err_klua_klisten(L, KLB_NETCODE_EINVAL);
     }
 
     if (!lua_isnoneornil(L, 2))
@@ -689,12 +689,12 @@ static int klua_klisten_set_mux_opts(lua_State* L)
 
     if (p_listen->closed || NULL == p_listen->p_mux)
     {
-        return push_err_klua_klisten(L, KLB_NETCODE_INVAL);
+        return push_err_klua_klisten(L, KLB_NETCODE_EINVAL);
     }
 
     if (!klua_is_table(L, 2))
     {
-        return push_err_klua_klisten(L, KLB_NETCODE_INVAL);
+        return push_err_klua_klisten(L, KLB_NETCODE_EINVAL);
     }
 
     lua_getfield(L, 2, "tls_as_http");
@@ -775,13 +775,13 @@ static int klua_klisten_listen(lua_State* L)
     klb_netmulti_t* p_netmulti = klua_netmulti_get(p_env);
     if (NULL == p_netmulti)
     {
-        return push_err_klua_klisten(L, KLB_NETCODE_INVAL);
+        return push_err_klua_klisten(L, KLB_NETCODE_EINVAL);
     }
 
     klb_netmux_t* p_mux = klb_netmux_create(p_netmulti);
     if (NULL == p_mux)
     {
-        return push_err_klua_klisten(L, KLB_NETCODE_NOMEM);
+        return push_err_klua_klisten(L, KLB_NETCODE_ENOMEM);
     }
 
     klb_netmux_set_tls_as_http(p_mux, tls_as_http);

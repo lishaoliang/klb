@@ -981,12 +981,12 @@ int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, 
 
     if (NULL == p_path || 0 == p_path[0] || offset < 0 || length < 0)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_httpclient->p_file)
     {
-        return KLB_NETCODE_BUSY;
+        return KLB_NETCODE_EBUSY;
     }
 
     FILE* p_file = NULL;
@@ -995,7 +995,7 @@ int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, 
         p_file = fopen(p_path, "rb");
         if (NULL == p_file)
         {
-            return KLB_NETCODE_NOENT;
+            return KLB_NETCODE_ENOENT;
         }
 
         if (0 < offset)
@@ -1003,7 +1003,7 @@ int klb_httpclient_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, 
             if (0 != seek_file_klb_httpclient_conn(p_file, offset))
             {
                 fclose(p_file);
-                return KLB_NETCODE_IO;
+                return KLB_NETCODE_EIO;
             }
         }
     }
@@ -1112,7 +1112,7 @@ klb_netconn_t* klb_httpclient_connect(klb_netmulti_t* p_netmulti, const char* p_
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -1123,7 +1123,7 @@ klb_netconn_t* klb_httpclient_connect(klb_netmulti_t* p_netmulti, const char* p_
     if (INVALID_SOCKET == fd)
     {
         code = klb_netcode_last_syserr();
-        if (KLB_NETCODE_IO == code || KLB_NETCODE_ERR == code)
+        if (KLB_NETCODE_EIO == code || KLB_NETCODE_EPERM == code)
         {
             code = KLB_NETCODE_CONNECT_FAIL;
         }
@@ -1184,7 +1184,7 @@ int klb_httpclient_conn_set_connect(klb_netconn_t* p_conn, bool connect)
 
     if (NULL == p_conn)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
@@ -1204,7 +1204,7 @@ int klb_httpclient_conn_tls_upgrade(klb_netconn_t* p_conn)
 
     if (NULL == p_conn)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     p_httpclient = (klb_httpclient_conn_t*)p_conn->extra;
@@ -1212,7 +1212,7 @@ int klb_httpclient_conn_tls_upgrade(klb_netconn_t* p_conn)
 
     if (NULL == p_old || klb_socket_is_tls(p_old))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // 读缓存须已空: 隧道后余量为下一协议数据, 无法在此接管

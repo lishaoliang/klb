@@ -20,6 +20,8 @@
 local kco = require("kco")
 local klbrtsp = require("klbcore.klbrtsp")
 local klbmp4 = require("klbcore.klbmp4")
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 
 
 local record_rtsp = {}
@@ -37,11 +39,11 @@ local record_rtsp = {}
 --   \n 写失败时已写帧仍会落盘, 该 MP4 可能不完整
 record_rtsp.record = function (url, path, opts)
 	if 'string' ~= type(url) or '' == url then
-		return nil, klbmp4.E_ARG, 'url expected'
+		return nil, base.INVAL, 'url expected'
 	end
 
 	if 'string' ~= type(path) or '' == path then
-		return nil, klbmp4.E_ARG, 'path expected'
+		return nil, base.INVAL, 'path expected'
 	end
 
 	opts = ('table' == type(opts)) and opts or {}

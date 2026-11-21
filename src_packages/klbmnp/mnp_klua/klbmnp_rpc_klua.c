@@ -764,7 +764,7 @@ int klua_kmnpclient_connect_rpc(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_kmnprpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kmnprpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_client_conn = klb_mnpclientrpc_connect(p_netmulti, p_host, port, tls, &code);
@@ -1454,7 +1454,7 @@ int klua_kmnpserverpc_listen(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_kmnprpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kmnprpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);
@@ -1490,7 +1490,7 @@ int klua_kmnpserverpc_new_serve(lua_State* L)
 
     if (NULL == p_listen_socket)
     {
-        return push_err_klua_kmnprpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kmnprpc(L, KLB_NETCODE_EINVAL);
     }
 
     tls = p_listen_socket->tls;
@@ -1549,7 +1549,7 @@ int klua_kmnpserverpc_new_serve(lua_State* L)
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
-            return push_err_klua_kmnprpc(L, KLB_NETCODE_NOMEM);
+            return push_err_klua_kmnprpc(L, KLB_NETCODE_ENOMEM);
         }
     }
 

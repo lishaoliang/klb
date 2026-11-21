@@ -14,7 +14,7 @@ local konvif = {}
 
 -- @brief ONVIF 客户端连接 (未实现)
 -- @param [in] ...	[任意]	当前桩实现忽略入参
--- @return nil, code[number(int)]	恒为 nil, -95 (KLB_NETCODE_NOTSUP)
+-- @return nil, code[number(int)]	恒为 nil, -95 (KLB_NETCODE_EOPNOTSUPP)
 konvif.connect = function (...)
 	return nil, -95
 end
@@ -22,7 +22,7 @@ end
 
 -- @brief ONVIF 服务端监听 (未实现)
 -- @param [in] ...	[任意]	当前桩实现忽略入参
--- @return nil, code[number(int)]	恒为 nil, -95 (KLB_NETCODE_NOTSUP)
+-- @return nil, code[number(int)]	恒为 nil, -95 (KLB_NETCODE_EOPNOTSUPP)
 konvif.listen = function (...)
 	-- 返回的句柄对象方法: close / send / co_recv
 	return nil, -95

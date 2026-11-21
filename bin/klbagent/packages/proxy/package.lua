@@ -15,7 +15,7 @@
 
 return {
 	name = "proxy",
-	version = "0.1.71",
+	version = "0.1.72",
 	tier = "optional",
 	kind = "daemon",
 	summary = "Local SOCKS5/HTTP CONNECT/forward/direct + pump/chain/PAC; alua-tunnel PSK; same-port demux",

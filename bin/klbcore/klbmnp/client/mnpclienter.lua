@@ -7,8 +7,9 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kmnp = require("kmnp")
-local errcode = require("klbcore.klbmnp.errcode")
 
 
 --------------------------------------------------------------------------------------------
@@ -48,7 +49,7 @@ function mnpclient:connect(host, port, opts)
 	local client, code = kmnp.connect(tostring(host), tonumber(port), opts)
 	if not client then
 		self._last_code = code or 1
-		self._last_error = errcode.str(code or errcode.E_UNKNOWN)
+		self._last_error = klbcode.strerror(code or base.ERR)
 		return self._last_code
 	end
 
@@ -116,7 +117,7 @@ function mnpclient:co_recv()
 	local msg, head, body = self._client:co_recv()
 	if "error" == msg then
 		self._last_code = head or 1
-		self._last_error = errcode.str(errcode.E_IO)
+		self._last_error = klbcode.strerror(base.IO)
 		return "error", self._last_code, self._last_error
 	end
 

@@ -15,7 +15,7 @@ static int push_err_klua_krtp(lua_State* L, int code)
 
 static int klua_krtp_packetize(lua_State* L)
 {
-    return push_err_klua_krtp(L, KLB_NETCODE_NOTSUP);
+    return push_err_klua_krtp(L, KLB_NETCODE_EOPNOTSUPP);
 }
 
 

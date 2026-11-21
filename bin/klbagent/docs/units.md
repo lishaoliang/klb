@@ -56,7 +56,7 @@ ExecStart=/usr/local/bin/alua pkg run svn_https 8443
 Restart=on-failure
 RestartSec=3
 Environment=ALUA_SVN_SVNSERVE=127.0.0.1:3690
-Environment=ALUA_SVN_REPO_ROOT=/work/svn/repos
+Environment=ALUA_SVN_REPO_ROOT=~/svn/repos
 
 [Install]
 WantedBy=default.target

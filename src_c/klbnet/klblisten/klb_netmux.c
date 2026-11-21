@@ -401,7 +401,7 @@ static int do_open_klb_netmux(klb_netmux_t* p_mux, const char* p_host, int port,
 
     if (NULL != p_host && '\0' != p_host[0] && strlen(p_host) >= sizeof(p_mux->host))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     opts.family = AF_INET;
@@ -464,17 +464,17 @@ int klb_netmux_open_addr_ex(klb_netmux_t* p_mux, const char* p_host, int port, i
 
     if (NULL == p_mux)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (p_mux->is_open || p_mux->closed)
     {
-        return KLB_NETCODE_BUSY;
+        return KLB_NETCODE_EBUSY;
     }
 
     if (NULL == p_mux->p_netmulti)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     return do_open_klb_netmux(p_mux, p_host, port, max_connect, p_opts);
@@ -498,17 +498,17 @@ int klb_netmux_rebind_ex(klb_netmux_t* p_mux, const char* p_host, const klb_netl
 
     if (NULL == p_mux)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_mux->is_open || p_mux->closed)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_host && '\0' != p_host[0] && strlen(p_host) >= sizeof(p_mux->host))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // 回读 实际端口 (port=0 时端口由内核分配)

@@ -6,7 +6,7 @@
 -- @stability internal
 -- @impl evolving
 -- @note   仅作 material / 标签; 不当鉴权; 路径只存 hash
---   \n 对齐 packages/mcp/DESIGN.md 第 3 节
+--   \n 对齐 mcp 指纹设计第 3 节（设计笔记已迁出包内）
 --   \n require("klbagent.core.ssid.base.fingerprint")
 -- @history 修改历史
 --  \n [2026-11] 创建文件 (桩); M3 采集/分类/material

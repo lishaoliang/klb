@@ -140,14 +140,14 @@ static int klua_kwebrtc_peer_create(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_kwebrtc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwebrtc(L, KLB_NETCODE_EINVAL);
     }
 
     int code = 0;
     klb_webrtc_peer_t* p_peer = klb_webrtc_peer_create(p_netmulti, role, &code);
     if (NULL == p_peer)
     {
-        return push_err_klua_kwebrtc(L, (0 != code) ? code : KLB_NETCODE_ERR);
+        return push_err_klua_kwebrtc(L, (0 != code) ? code : KLB_NETCODE_EPERM);
     }
 
     klua_kwebrtc_t* p_kwebrtc = new_klua_kwebrtc(L);
@@ -166,7 +166,7 @@ static int klua_kwebrtc_create_offer(lua_State* L)
     int ret = klb_webrtc_peer_create_offer(p_kwebrtc->p_peer, sdp, (int)sizeof(sdp));
     if (0 >= ret)
     {
-        return push_err_klua_kwebrtc(L, (0 > ret) ? ret : KLB_NETCODE_ERR);
+        return push_err_klua_kwebrtc(L, (0 > ret) ? ret : KLB_NETCODE_EPERM);
     }
 
     lua_pushlstring(L, sdp, (size_t)ret);
@@ -183,7 +183,7 @@ static int klua_kwebrtc_create_answer(lua_State* L)
     int ret = klb_webrtc_peer_create_answer(p_kwebrtc->p_peer, p_remote, sdp, (int)sizeof(sdp));
     if (0 >= ret)
     {
-        return push_err_klua_kwebrtc(L, (0 > ret) ? ret : KLB_NETCODE_ERR);
+        return push_err_klua_kwebrtc(L, (0 > ret) ? ret : KLB_NETCODE_EPERM);
     }
 
     lua_pushlstring(L, sdp, (size_t)ret);
@@ -282,7 +282,7 @@ static int klua_kwebrtc_recv(lua_State* L)
     int ret = klb_webrtc_peer_recv(p_kwebrtc->p_peer, buf, cap, &code);
     if (0 > ret)
     {
-        if (KLB_NETCODE_AGAIN == code)
+        if (KLB_NETCODE_EAGAIN == code)
         {
             lua_pushnil(L);
             lua_pushinteger(L, code);
@@ -498,7 +498,7 @@ static int klua_kwebrtc_dc_recv(lua_State* L)
     if (0 == ret)
     {
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_NETCODE_AGAIN);
+        lua_pushinteger(L, KLB_NETCODE_EAGAIN);
         return 2;
     }
 
@@ -520,7 +520,7 @@ static int recv_media_klua_kwebrtc(lua_State* L, bool is_h264)
     uint8_t* p_buf = KLB_MALLOC(uint8_t, cap, 0);
     if (NULL == p_buf)
     {
-        return push_err_klua_kwebrtc(L, KLB_NETCODE_NOMEM);
+        return push_err_klua_kwebrtc(L, KLB_NETCODE_ENOMEM);
     }
 
     int code = 0;
@@ -538,7 +538,7 @@ static int recv_media_klua_kwebrtc(lua_State* L, bool is_h264)
     {
         KLB_FREE(p_buf);
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_NETCODE_AGAIN);
+        lua_pushinteger(L, KLB_NETCODE_EAGAIN);
         return 2;
     }
 
@@ -605,7 +605,7 @@ static int klua_kwebrtc_nack_send(lua_State* L)
     int num = (int)lua_rawlen(L, 2);
     if ((0 >= num) || (KLB_WEBRTC_NACK_MAX < num))
     {
-        return push_err_klua_kwebrtc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwebrtc(L, KLB_NETCODE_EINVAL);
     }
 
     uint16_t seqs[KLB_WEBRTC_NACK_MAX];
@@ -636,7 +636,7 @@ static int klua_kwebrtc_event_poll(lua_State* L)
     if (0 == ret)
     {
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_NETCODE_AGAIN);
+        lua_pushinteger(L, KLB_NETCODE_EAGAIN);
         return 2;
     }
 
@@ -669,7 +669,7 @@ static int klua_kwebrtc_add_media(lua_State* L)
     int num = (int)lua_rawlen(L, 3);
     if ((0 >= num) || (KLB_WEBRTC_CODEC_MAX < num))
     {
-        return push_err_klua_kwebrtc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwebrtc(L, KLB_NETCODE_EINVAL);
     }
 
     klb_webrtc_codec_t codecs[KLB_WEBRTC_CODEC_MAX];
@@ -681,7 +681,7 @@ static int klua_kwebrtc_add_media(lua_State* L)
         if (!lua_istable(L, -1))
         {
             lua_pop(L, 1);
-            return push_err_klua_kwebrtc(L, KLB_NETCODE_INVAL);
+            return push_err_klua_kwebrtc(L, KLB_NETCODE_EINVAL);
         }
 
         lua_getfield(L, -1, "pt");
@@ -751,7 +751,7 @@ static int klua_kwebrtc_twcc_send(lua_State* L)
     int num = (int)lua_rawlen(L, 2);
     if ((0 >= num) || (KLB_WEBRTC_TWCC_MAX < num))
     {
-        return push_err_klua_kwebrtc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwebrtc(L, KLB_NETCODE_EINVAL);
     }
 
     uint8_t status[KLB_WEBRTC_TWCC_MAX];

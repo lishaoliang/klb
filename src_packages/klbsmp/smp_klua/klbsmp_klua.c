@@ -442,7 +442,7 @@ static int klua_ksmpclient_set_timeout(lua_State* L)
     int r = (int)luaL_optinteger(L, 2, 0);
     int w = (int)luaL_optinteger(L, 3, 0);
     int i = (int)luaL_optinteger(L, 4, 0);
-    if (NULL == p->p_smp_conn) { lua_pushinteger(L, KLB_NETCODE_INVAL); return 1; }
+    if (NULL == p->p_smp_conn) { lua_pushinteger(L, KLB_NETCODE_EINVAL); return 1; }
     klb_smpclient_conn_set_timeout(p->p_smp_conn, r, w, i);
     lua_pushinteger(L, 0);
     return 1;
@@ -452,7 +452,7 @@ static int klua_ksmpclient_set_max_msg(lua_State* L)
 {
     klua_ksmpclient_t* p = to_klua_ksmpclient(L, 1);
     int64_t m = (int64_t)luaL_optinteger(L, 2, 0);
-    if (NULL == p->p_smp_conn) { lua_pushinteger(L, KLB_NETCODE_INVAL); return 1; }
+    if (NULL == p->p_smp_conn) { lua_pushinteger(L, KLB_NETCODE_EINVAL); return 1; }
     klb_smpclient_conn_set_max_msg(p->p_smp_conn, m);
     lua_pushinteger(L, 0);
     return 1;
@@ -670,7 +670,7 @@ static int klua_ksmpclient_connect(lua_State* L)
         if (0 != parse_opts_crypto_klua_ksmpclient(L, 3, &crypto_want, &crypto_format,
             &crypto_key_size, &p_crypto_key, &crypto_rekey_after))
         {
-            return push_err_klua_ksmp(L, KLB_NETCODE_INVAL);
+            return push_err_klua_ksmp(L, KLB_NETCODE_EINVAL);
         }
     }
 
@@ -678,7 +678,7 @@ static int klua_ksmpclient_connect(lua_State* L)
     p_netmulti = klua_netmulti_get(p_env);
     if (NULL == p_netmulti)
     {
-        return push_err_klua_ksmp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_ksmp(L, KLB_NETCODE_EINVAL);
     }
 
     p_smp_conn = klb_smpclient_connect(p_netmulti, p_host, port, tls, &code);
@@ -693,7 +693,7 @@ static int klua_ksmpclient_connect(lua_State* L)
             p_crypto_key, crypto_key_size, crypto_rekey_after))
         {
             klb_smpclient_conn_free(p_smp_conn);
-            return push_err_klua_ksmp(L, KLB_NETCODE_INVAL);
+            return push_err_klua_ksmp(L, KLB_NETCODE_EINVAL);
         }
     }
 
@@ -1347,7 +1347,7 @@ static int klua_ksmpclient_connect_rpc(lua_State* L)
     p_netmulti = klua_netmulti_get(p_env);
     if (NULL == p_netmulti)
     {
-        return push_err_klua_ksmp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_ksmp(L, KLB_NETCODE_EINVAL);
     }
 
     p_client_conn = klb_smpclientrpc_connect(p_netmulti, p_host, port, tls, &code);

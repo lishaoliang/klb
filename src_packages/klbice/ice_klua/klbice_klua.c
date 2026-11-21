@@ -116,13 +116,13 @@ static int klua_kice_create(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_kice(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kice(L, KLB_NETCODE_EINVAL);
     }
 
     klb_ice_agent_t* p_agent = klb_ice_agent_create(p_netmulti, role, &code);
     if (NULL == p_agent)
     {
-        return push_err_klua_kice(L, (0 != code) ? code : KLB_NETCODE_ERR);
+        return push_err_klua_kice(L, (0 != code) ? code : KLB_NETCODE_EPERM);
     }
 
     klua_kice_t* p_kice = new_klua_kice(L);

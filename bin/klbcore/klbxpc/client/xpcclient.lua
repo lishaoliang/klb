@@ -6,8 +6,9 @@
 -- @history 修改历史
 --		[2026-11] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kxpc = require("kxpc")
-local errcode = require("klbcore.klbxpc.errcode")
 
 
 local xpcclient_co = {}
@@ -77,12 +78,12 @@ end
 
 xpcclient_co.post = function (mo_name, ...)
 	if "string" ~= type(mo_name) or "" == mo_name then
-		return false, errcode.E_ARG
+		return false, base.INVAL
 	end
 
 	local cli = open_peer(mo_name, nil)
 	if not cli then
-		return false, errcode.E_IO
+		return false, base.IO
 	end
 
 	local ok = cli:post(mo_name, ...)
@@ -91,19 +92,19 @@ xpcclient_co.post = function (mo_name, ...)
 		return true
 	end
 
-	return false, errcode.E_IO
+	return false, base.IO
 end
 
 
 --- post_ex(mo_name, opts, ...)
 xpcclient_co.post_ex = function (mo_name, opts, ...)
 	if "string" ~= type(mo_name) or "" == mo_name then
-		return false, errcode.E_ARG
+		return false, base.INVAL
 	end
 
 	local cli = open_peer(mo_name, opts)
 	if not cli then
-		return false, errcode.E_IO
+		return false, base.IO
 	end
 
 	local ok = cli:post(mo_name, ...)
@@ -112,7 +113,7 @@ xpcclient_co.post_ex = function (mo_name, opts, ...)
 		return true
 	end
 
-	return false, errcode.E_IO
+	return false, base.IO
 end
 
 
@@ -123,7 +124,7 @@ end
 
 xpcclient_co.co_call_timed = function (ms, mo_name, ...)
 	if "string" ~= type(mo_name) or "" == mo_name then
-		return nil, errcode.E_ARG, "invalid mo_name"
+		return nil, base.INVAL, "invalid mo_name"
 	end
 
 	local timeout = tonumber(ms) or default_timeout_ms
@@ -133,7 +134,7 @@ xpcclient_co.co_call_timed = function (ms, mo_name, ...)
 
 	local cli = open_peer(mo_name, nil)
 	if not cli then
-		return nil, errcode.E_IO, "open failed"
+		return nil, base.IO, "open failed"
 	end
 
 	local cap = capture(cli:request(mo_name, timeout, ...))
@@ -141,7 +142,7 @@ xpcclient_co.co_call_timed = function (ms, mo_name, ...)
 
 	if 0 == cap.n or nil == cap[1] and 1 < cap.n then
 		-- request 失败时返回 nil, "failed"
-		return nil, errcode.E_IO, tostring(cap[2] or "failed")
+		return nil, base.IO, tostring(cap[2] or "failed")
 	end
 
 	return table.unpack(cap, 1, cap.n)
@@ -151,7 +152,7 @@ end
 --- co_call_ex(mo_name, opts, ms, ...)
 xpcclient_co.co_call_ex = function (mo_name, opts, ms, ...)
 	if "string" ~= type(mo_name) or "" == mo_name then
-		return nil, errcode.E_ARG, "invalid mo_name"
+		return nil, base.INVAL, "invalid mo_name"
 	end
 
 	local timeout = tonumber(ms) or default_timeout_ms
@@ -161,14 +162,14 @@ xpcclient_co.co_call_ex = function (mo_name, opts, ms, ...)
 
 	local cli = open_peer(mo_name, opts)
 	if not cli then
-		return nil, errcode.E_IO, "open failed"
+		return nil, base.IO, "open failed"
 	end
 
 	local cap = capture(cli:request(mo_name, timeout, ...))
 	cli:close()
 
 	if 0 == cap.n or nil == cap[1] and 1 < cap.n then
-		return nil, errcode.E_IO, tostring(cap[2] or "failed")
+		return nil, base.IO, tostring(cap[2] or "failed")
 	end
 
 	return table.unpack(cap, 1, cap.n)

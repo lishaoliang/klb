@@ -3,12 +3,15 @@
 -- @file   basecode.lua
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  脚本层基础错码册 (明面导出 C klb_basecode_e 短键)
+-- @stability stable
+-- @impl mature
+-- @attention
+--   \n @stability stable: AI 禁止擅自添加/删除/变更本文件对外接口 (含导出名, 参数, 返回与已文档含义); 须用户点名
+--   \n @impl mature: 实现倾向冻结; 重构须同等谨慎, 不得破坏本文件导出签名与可观察语义
 -- @note   真源: klb/inc/klbbase/klb_basecode.h; 数值须与 C 枚举保持一致
 --   \n 只做常量的集中导出, 不依赖 C 模块; 描述串用 kbasecode.strerror(code)
 --   \n 与 alua core/code.lua 无关: 本表为 klbbase C 码镜像, 非 alua 业务域码
 --   \n require("klbcore.klbcode.basecode"); 门面 require("klbcore.klbcode")
--- @stability experimental
--- @impl evolving
 -- @history 修改历史
 --]]
 
@@ -102,6 +105,7 @@ end
 -- @brief 错误码转短键名
 -- @param [in]  code[number]	错误码
 -- @return [string]			短键名; 未知为 "basecode-<n>"
+-- @stability stable
 basecode.str = function (code)
 	local s = NAME[code]
 	if nil ~= s then

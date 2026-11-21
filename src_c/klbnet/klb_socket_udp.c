@@ -53,19 +53,19 @@ static int netcode_from_err_klb_socket_udp(int err)
 #ifdef _WIN32
     if (WSAEWOULDBLOCK == err)
     {
-        return KLB_NETCODE_AGAIN;
+        return KLB_NETCODE_EAGAIN;
     }
     else if (WSAEINTR == err)
     {
-        return KLB_NETCODE_INTR;
+        return KLB_NETCODE_EINTR;
     }
     else if (WSAEMSGSIZE == err)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
     else if (WSAEACCES == err)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
     else if (WSAEADDRINUSE == err)
     {
@@ -77,54 +77,54 @@ static int netcode_from_err_klb_socket_udp(int err)
     }
     else if (WSAENETUNREACH == err)
     {
-        return KLB_NETCODE_NETUNREACH;
+        return KLB_NETCODE_ENETUNREACH;
     }
     else if (WSAEHOSTUNREACH == err)
     {
-        return KLB_NETCODE_HOSTUNREACH;
+        return KLB_NETCODE_EHOSTUNREACH;
     }
     else if (WSAECONNREFUSED == err)
     {
-        return KLB_NETCODE_CONNREFUSED;
+        return KLB_NETCODE_ECONNREFUSED;
     }
     else if (WSAECONNRESET == err)
     {
-        return KLB_NETCODE_CONNRESET;
+        return KLB_NETCODE_ECONNRESET;
     }
     else if (WSAEINVAL == err)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
     else if (WSAEAFNOSUPPORT == err)
     {
-        return KLB_NETCODE_AFNOSUPPORT;
+        return KLB_NETCODE_EAFNOSUPPORT;
     }
     else if (WSAENOBUFS == err)
     {
-        return KLB_NETCODE_NOBUFS;
+        return KLB_NETCODE_ENOBUFS;
     }
     else if (WSAENOTSOCK == err)
     {
-        return KLB_NETCODE_BADF;
+        return KLB_NETCODE_EBADF;
     }
 
-    return KLB_NETCODE_ERR;
+    return KLB_NETCODE_EPERM;
 #else
     if (EAGAIN == err)
     {
-        return KLB_NETCODE_AGAIN;
+        return KLB_NETCODE_EAGAIN;
     }
     else if (EINTR == err)
     {
-        return KLB_NETCODE_INTR;
+        return KLB_NETCODE_EINTR;
     }
     else if (EMSGSIZE == err)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
     else if (EACCES == err)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
     else if (EADDRINUSE == err)
     {
@@ -136,38 +136,38 @@ static int netcode_from_err_klb_socket_udp(int err)
     }
     else if (ENETUNREACH == err)
     {
-        return KLB_NETCODE_NETUNREACH;
+        return KLB_NETCODE_ENETUNREACH;
     }
     else if (EHOSTUNREACH == err)
     {
-        return KLB_NETCODE_HOSTUNREACH;
+        return KLB_NETCODE_EHOSTUNREACH;
     }
     else if (ECONNREFUSED == err)
     {
-        return KLB_NETCODE_CONNREFUSED;
+        return KLB_NETCODE_ECONNREFUSED;
     }
     else if (ECONNRESET == err)
     {
-        return KLB_NETCODE_CONNRESET;
+        return KLB_NETCODE_ECONNRESET;
     }
     else if (EINVAL == err)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
     else if (EAFNOSUPPORT == err)
     {
-        return KLB_NETCODE_AFNOSUPPORT;
+        return KLB_NETCODE_EAFNOSUPPORT;
     }
     else if (ENOBUFS == err)
     {
-        return KLB_NETCODE_NOBUFS;
+        return KLB_NETCODE_ENOBUFS;
     }
     else if (EBADF == err)
     {
-        return KLB_NETCODE_BADF;
+        return KLB_NETCODE_EBADF;
     }
 
-    return KLB_NETCODE_ERR;
+    return KLB_NETCODE_EPERM;
 #endif
 }
 
@@ -388,12 +388,12 @@ int klb_socket_udp_bind(klb_socket_t* p_socket, const char* p_host, int port, ui
 
     if ((0 > port) || (65535 < port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (0 != (flags & ~KLB_SOCKET_UDP_FLAGS_ALL))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // 已有本端端口视为已绑定
@@ -435,7 +435,7 @@ int klb_socket_udp_connect(klb_socket_t* p_socket, const char* p_host, int port)
 
     if ((0 > port) || (65535 < port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int af = af_from_family_klb_socket_udp((int)p_socket->family);
@@ -456,7 +456,7 @@ int klb_socket_udp_connect_sa(klb_socket_t* p_socket,
 
     if (0 >= addr_len)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (0 != connect(p_socket->fd, p_addr, (socklen_t)addr_len))
@@ -487,7 +487,7 @@ int klb_socket_udp_sendto(klb_socket_t* p_socket, const uint8_t* p_data, int len
     }
     else if (ret != len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     set_peer_klb_socket_udp(p_socket, p_addr, (socklen_t)addr_len);
@@ -511,7 +511,7 @@ int klb_socket_udp_sendto_host(klb_socket_t* p_socket, const uint8_t* p_data, in
 
     if ((0 > port) || (65535 < port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int af = af_from_family_klb_socket_udp((int)p_socket->family);
@@ -533,7 +533,7 @@ int klb_socket_udp_send(klb_socket_t* p_socket, const uint8_t* p_data, int len)
 
     if (0 == p_socket->connected)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     int ret = p_socket->vtable.cb_send(p_socket, p_data, len);
@@ -543,7 +543,7 @@ int klb_socket_udp_send(klb_socket_t* p_socket, const uint8_t* p_data, int len)
     }
     else if (ret != len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     return 0;
@@ -604,7 +604,7 @@ int klb_socket_udp_recv_judge(klb_socket_t* p_socket, int n, int cap, bool* p_tr
 
         return KLB_SOCKET_UDP_RECV_DATA;
     }
-    else if (KLB_NETCODE_AGAIN == n)
+    else if (KLB_NETCODE_EAGAIN == n)
     {
         return KLB_SOCKET_UDP_RECV_AGAIN;
     }
@@ -620,7 +620,7 @@ int klb_socket_udp_set_broadcast(klb_socket_t* p_socket, bool enable)
 
     if (KLB_SOCKET_FAMILY_V6 == p_socket->family)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     if (0 != setsockopt(p_socket->fd, SOL_SOCKET, SO_BROADCAST,
@@ -645,7 +645,7 @@ static int mcast_mreq_klb_socket_udp(const char* p_group, const char* p_if_ip,
 
     if (1 != inet_pton(AF_INET, p_group, &p_mreq->imr_multiaddr))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((NULL == p_if_ip) || ('\0' == p_if_ip[0]))
@@ -654,7 +654,7 @@ static int mcast_mreq_klb_socket_udp(const char* p_group, const char* p_if_ip,
     }
     else if (1 != inet_pton(AF_INET, p_if_ip, &p_mreq->imr_interface))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     return 0;
@@ -717,7 +717,7 @@ static int mcast_mreq6_klb_socket_udp(const char* p_group, unsigned int ifindex,
 
     if (1 != inet_pton(AF_INET6, p_group, &p_mreq->ipv6mr_multiaddr))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     p_mreq->ipv6mr_interface = ifindex;
@@ -735,11 +735,11 @@ int klb_socket_udp_join_v6(klb_socket_t* p_socket, const char* p_group, unsigned
 #ifndef KLB_SOCKET_UDP_IPV6_JOIN
     (void)ifindex;
     (void)mreq;
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 #else
     if (KLB_SOCKET_FAMILY_V6 != p_socket->family)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = mcast_mreq6_klb_socket_udp(p_group, ifindex, &mreq);
@@ -770,11 +770,11 @@ int klb_socket_udp_leave_v6(klb_socket_t* p_socket, const char* p_group, unsigne
 #ifndef KLB_SOCKET_UDP_IPV6_JOIN
     (void)ifindex;
     (void)mreq;
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 #else
     if (KLB_SOCKET_FAMILY_V6 != p_socket->family)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = mcast_mreq6_klb_socket_udp(p_group, ifindex, &mreq);
@@ -803,7 +803,7 @@ int klb_socket_udp_set_mcast_ttl(klb_socket_t* p_socket, int ttl)
 
     if ((0 > ttl) || (255 < ttl))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_SOCKET_FAMILY_V6 == p_socket->family)
@@ -817,7 +817,7 @@ int klb_socket_udp_set_mcast_ttl(klb_socket_t* p_socket, int ttl)
 
         return 0;
 #else
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
 #endif
     }
     else if (KLB_SOCKET_FAMILY_V4 == p_socket->family)
@@ -831,7 +831,7 @@ int klb_socket_udp_set_mcast_ttl(klb_socket_t* p_socket, int ttl)
         return 0;
     }
 
-    return KLB_NETCODE_INVAL;
+    return KLB_NETCODE_EINVAL;
 }
 
 int klb_socket_udp_set_mcast_loop(klb_socket_t* p_socket, bool enable)
@@ -851,7 +851,7 @@ int klb_socket_udp_set_mcast_loop(klb_socket_t* p_socket, bool enable)
 
         return 0;
 #else
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
 #endif
     }
     else if (KLB_SOCKET_FAMILY_V4 == p_socket->family)
@@ -865,7 +865,7 @@ int klb_socket_udp_set_mcast_loop(klb_socket_t* p_socket, bool enable)
         return 0;
     }
 
-    return KLB_NETCODE_INVAL;
+    return KLB_NETCODE_EINVAL;
 }
 
 int klb_socket_udp_set_mcast_if(klb_socket_t* p_socket, const char* p_if)
@@ -884,7 +884,7 @@ int klb_socket_udp_set_mcast_if(klb_socket_t* p_socket, const char* p_if)
         }
         else if (1 != inet_pton(AF_INET, p_if, &if_addr))
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
 
         if (0 != setsockopt(p_socket->fd, IPPROTO_IP, IP_MULTICAST_IF,
@@ -907,7 +907,7 @@ int klb_socket_udp_set_mcast_if(klb_socket_t* p_socket, const char* p_if)
 
             if ((NULL == p_end) || ('\0' != *p_end) || (0xFFFFFFFFUL < parsed))
             {
-                return KLB_NETCODE_INVAL;
+                return KLB_NETCODE_EINVAL;
             }
 
             ifindex = (unsigned int)parsed;
@@ -922,11 +922,11 @@ int klb_socket_udp_set_mcast_if(klb_socket_t* p_socket, const char* p_if)
         return 0;
 #else
         (void)p_if;
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
 #endif
     }
 
-    return KLB_NETCODE_INVAL;
+    return KLB_NETCODE_EINVAL;
 }
 
 // end

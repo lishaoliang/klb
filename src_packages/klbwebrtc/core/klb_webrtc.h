@@ -416,7 +416,7 @@ KLB_API int klb_webrtc_peer_stats(klb_webrtc_peer_t* p_peer, klb_webrtc_stats_t*
 
 /// @brief 打开 DataChannel (须 DTLS 已就绪)
 /// @param [in] *p_peer         会话
-/// @return int 0.成功; 小于 0.klb_netcode_e; KLB_NETCODE_NOTCONN 表尚未连通
+/// @return int 0.成功; 小于 0.klb_netcode_e; KLB_NETCODE_ENOTCONN 表尚未连通
 /// @note 客户端在此发出 SCTP INIT; 服务端等待对端 INIT
 KLB_API int klb_webrtc_peer_dc_open(klb_webrtc_peer_t* p_peer);
 

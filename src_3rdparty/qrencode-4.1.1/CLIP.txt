@@ -1,0 +1,3 @@
+klb src_3rdparty/qrencode-4.1.1
+
+Full tree for libklb (clip no-qrencode).

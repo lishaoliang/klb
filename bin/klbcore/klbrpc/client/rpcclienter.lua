@@ -8,8 +8,9 @@
 --		[2026-10] 创建文件
 --]]
 local kurl = require("kurl")
-local net = require("klbcore.klbcode.netcode")
-local errcode = require("klbcore.klbrpc.errcode")
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
 local deadline = require("klbcore.klbrpc.deadline")
 
 
@@ -121,14 +122,14 @@ local function Authenticate(client, auth)
 
 	local rets = capture(client:co_call("__auth", token))
 	if 0 == rets.n then
-		return false, errcode.E_AUTH, "auth failed"
+		return false, base.ACCES, "auth failed"
 	end
 
 	if nil ~= rets[1] and false ~= rets[1] then
 		return true
 	end
 
-	return false, rets[2] or errcode.E_AUTH, tostring(rets[3] or "auth failed")
+	return false, rets[2] or base.ACCES, tostring(rets[3] or "auth failed")
 end
 
 
@@ -146,7 +147,7 @@ local function ConnectWithDeadline(client, url, timeout_ms)
 
 	local rc = client:connect(url)
 	if deadline.finish(state) then
-		return errcode.E_TIMEOUT
+		return net.TIMEOUT
 	end
 
 	return rc
@@ -157,7 +158,7 @@ end
 -- @param [in,out]  client[table]			协议包 RPC 客户端
 -- @param [in]      timeout_ms[number|nil]	毫秒; nil 或 <=0 不限
 -- @return [table]							原 client
--- @note 到期以 disconnect 唤醒阻塞的 co_call; 之后返回 `nil, E_TIMEOUT`
+-- @note 到期以 disconnect 唤醒阻塞的 co_call; 之后返回 `nil, net.TIMEOUT`
 local function AttachControl(client, timeout_ms)
 	local raw_call = client.co_call
 	if "function" ~= type(raw_call) then
@@ -181,7 +182,7 @@ local function AttachControl(client, timeout_ms)
 
 	client.co_call = function (self, ...)
 		if self._cancelled then
-			return nil, errcode.E_CANCEL, "cancelled"
+			return nil, base.CANCELED, "cancelled"
 		end
 
 		local state = deadline.arm(self._timeout_ms, function ()
@@ -194,11 +195,11 @@ local function AttachControl(client, timeout_ms)
 		local expired = deadline.finish(state)
 
 		if self._cancelled then
-			return nil, errcode.E_CANCEL, "cancelled"
+			return nil, base.CANCELED, "cancelled"
 		end
 
 		if expired then
-			return nil, errcode.E_TIMEOUT, "timeout"
+			return nil, net.TIMEOUT, "timeout"
 		end
 
 		return table.unpack(rets, 1, rets.n)

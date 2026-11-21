@@ -60,7 +60,7 @@ static int klua_kstore_abs_path(lua_State* L)
     if ((int)strlen(p_root) >= KLB_STORE_PATH_MAX)
     {
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_STORE_E_ARG);
+        lua_pushinteger(L, KLB_BASECODE_EINVAL);
         return 2;
     }
 
@@ -92,26 +92,6 @@ int klua_open_kstore(lua_State* L)
     };
 
     luaL_newlib(L, lib);
-
-    lua_pushinteger(L, KLB_STORE_OK);
-    lua_setfield(L, -2, "OK");
-    lua_pushinteger(L, KLB_STORE_E_ARG);
-    lua_setfield(L, -2, "E_ARG");
-    lua_pushinteger(L, KLB_STORE_E_NOENT);
-    lua_setfield(L, -2, "E_NOENT");
-    lua_pushinteger(L, KLB_STORE_E_IO);
-    lua_setfield(L, -2, "E_IO");
-    lua_pushinteger(L, KLB_STORE_E_NOSPC);
-    lua_setfield(L, -2, "E_NOSPC");
-    lua_pushinteger(L, KLB_STORE_E_BUSY);
-    lua_setfield(L, -2, "E_BUSY");
-    lua_pushinteger(L, KLB_STORE_E_NOTIMPL);
-    lua_setfield(L, -2, "E_NOTIMPL");
-    lua_pushinteger(L, KLB_STORE_E_AUTH);
-    lua_setfield(L, -2, "E_AUTH");
-    lua_pushinteger(L, KLB_STORE_E_RANGE);
-    lua_setfield(L, -2, "E_RANGE");
-
     return 1;
 }
 

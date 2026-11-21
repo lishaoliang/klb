@@ -33,12 +33,6 @@ include Makefile
 _stage:
 	\$(call DO_install_by_path, $PREFIX)
 EOF
-make -C "$_ws_root/portfs" -f - _stage <<EOF
-include Makefile
-.PHONY: _stage
-_stage:
-	\$(call DO_install_by_path, $PREFIX)
-EOF
 mkdir -p "$PREFIX/include/pubfw" "$PREFIX/lib"
 cp -f "$_ws_root/pubfw/inc/pubfw.h" "$PREFIX/include/pubfw/pubfw.h" 2>/dev/null || true
 cp -f "$_ws_root/pubfw/lib/libpubfw.so" "$PREFIX/lib/" 2>/dev/null || true

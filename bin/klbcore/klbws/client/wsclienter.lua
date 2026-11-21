@@ -7,10 +7,11 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kws = require("kws")
 local kco = require("kco")
 local ktime = require("ktime")
-local errcode = require("klbcore.klbws.errcode")
 
 
 --------------------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ function wsclient:connect(host, port, path, opts)
 	local client, code = kws.connect(tostring(host), tonumber(port), ws_path, connect_opts)
 	if not client then
 		self.last_code = code or 1
-		self.last_error = errcode.str(code or errcode.E_UNKNOWN)
+		self.last_error = klbcode.strerror(code or base.ERR)
 		return 1, code -- 连接失败
 	end
 
@@ -236,7 +237,7 @@ function wsclient:co_recv()
 
 	if "error" == msg or "exit" == msg then
 		self.last_code = head
-		self.last_error = errcode.str(errcode.E_IO)
+		self.last_error = klbcode.strerror(base.IO)
 	elseif "close" == msg then
 		self.last_code = head
 		self.last_error = tostring(body or "")

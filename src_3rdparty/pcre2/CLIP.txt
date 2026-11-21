@@ -1,0 +1,5 @@
+klb src_3rdparty/pcre2
+
+Clip no-pcre2. Compile pcre2/src/*.c; skip pcre2grep.c pcre2_dftables.c pcre2_fuzzsupport.c.
+Public headers: inc/klbthird/pcre2.h pcre2posix.h
+Version: 10.36

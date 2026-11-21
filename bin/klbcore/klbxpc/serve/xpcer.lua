@@ -6,11 +6,12 @@
 -- @history 修改历史
 --		[2026-11] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kco = require("kco")
 local kxpc = require("kxpc")
 local cfger = require("klbcore.klbxpc.cfger")
 local router = require("klbcore.klbxpc.router")
-local errcode = require("klbcore.klbxpc.errcode")
 
 
 local function capture(...)
@@ -114,12 +115,12 @@ local L = {}
 
 function L:setup(cfg)
 	if self._serving then
-		return false, errcode.E_BUSY
+		return false, base.BUSY
 	end
 
 	local parsed, ok = cfger.parse_setup(cfg)
 	if not ok or not parsed then
-		return false, errcode.E_ARG
+		return false, base.INVAL
 	end
 
 	if "" ~= parsed.name then
@@ -136,7 +137,7 @@ end
 
 function L:serve()
 	if not self._name_ok or "" == self._name then
-		return false, errcode.E_STATE
+		return false, base.STATE
 	end
 
 	if self._serving then
@@ -155,7 +156,7 @@ function L:serve()
 	end
 
 	if not mo then
-		return false, errcode.E_IO
+		return false, base.IO
 	end
 
 	self._mo = mo

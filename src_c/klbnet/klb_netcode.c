@@ -16,207 +16,207 @@ int klb_netcode_from_syserr(int syserr)
 {
     if (0 == syserr)
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
 #ifdef _WIN32
     if (WSAEINTR == syserr)
     {
-        return KLB_NETCODE_INTR;
+        return KLB_NETCODE_EINTR;
     }
     else if (WSAEWOULDBLOCK == syserr)
     {
-        return KLB_NETCODE_AGAIN;
+        return KLB_NETCODE_EAGAIN;
     }
     else if (WSAEINVAL == syserr)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
     else if (WSAEACCES == syserr)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
     else if (WSAEADDRINUSE == syserr)
     {
-        return KLB_NETCODE_ADDRINUSE;
+        return KLB_NETCODE_EADDRINUSE;
     }
     else if (WSAEADDRNOTAVAIL == syserr)
     {
-        return KLB_NETCODE_ADDRNOTAVAIL;
+        return KLB_NETCODE_EADDRNOTAVAIL;
     }
     else if (WSAENETUNREACH == syserr)
     {
-        return KLB_NETCODE_NETUNREACH;
+        return KLB_NETCODE_ENETUNREACH;
     }
     else if (WSAECONNABORTED == syserr)
     {
-        return KLB_NETCODE_CONNABORTED;
+        return KLB_NETCODE_ECONNABORTED;
     }
     else if (WSAECONNRESET == syserr)
     {
-        return KLB_NETCODE_CONNRESET;
+        return KLB_NETCODE_ECONNRESET;
     }
     else if (WSAENOBUFS == syserr)
     {
-        return KLB_NETCODE_NOBUFS;
+        return KLB_NETCODE_ENOBUFS;
     }
     else if (WSAEISCONN == syserr)
     {
-        return KLB_NETCODE_ISCONN;
+        return KLB_NETCODE_EISCONN;
     }
     else if (WSAENOTCONN == syserr)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
     else if (WSAETIMEDOUT == syserr)
     {
-        return KLB_NETCODE_TIMEDOUT;
+        return KLB_NETCODE_ETIMEDOUT;
     }
     else if (WSAECONNREFUSED == syserr)
     {
-        return KLB_NETCODE_CONNREFUSED;
+        return KLB_NETCODE_ECONNREFUSED;
     }
     else if (WSAEHOSTUNREACH == syserr)
     {
-        return KLB_NETCODE_HOSTUNREACH;
+        return KLB_NETCODE_EHOSTUNREACH;
     }
     else if (WSAEALREADY == syserr)
     {
-        return KLB_NETCODE_ALREADY;
+        return KLB_NETCODE_EALREADY;
     }
     else if (WSAEINPROGRESS == syserr)
     {
-        return KLB_NETCODE_INPROGRESS;
+        return KLB_NETCODE_EINPROGRESS;
     }
     else if (WSAEAFNOSUPPORT == syserr)
     {
-        return KLB_NETCODE_AFNOSUPPORT;
+        return KLB_NETCODE_EAFNOSUPPORT;
     }
     else if (WSAEMSGSIZE == syserr)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
-    return KLB_NETCODE_IO;
+    return KLB_NETCODE_EIO;
 #else
     if (EPERM == syserr)
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
     else if (ENOENT == syserr)
     {
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
     else if (EINTR == syserr)
     {
-        return KLB_NETCODE_INTR;
+        return KLB_NETCODE_EINTR;
     }
     else if (EIO == syserr)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
     else if (EBADF == syserr)
     {
-        return KLB_NETCODE_BADF;
+        return KLB_NETCODE_EBADF;
     }
     else if (EAGAIN == syserr)
     {
-        return KLB_NETCODE_AGAIN;
+        return KLB_NETCODE_EAGAIN;
     }
     else if (ENOMEM == syserr)
     {
-        return KLB_NETCODE_NOMEM;
+        return KLB_NETCODE_ENOMEM;
     }
     else if (EACCES == syserr)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
     else if (EBUSY == syserr)
     {
-        return KLB_NETCODE_BUSY;
+        return KLB_NETCODE_EBUSY;
     }
     else if (EEXIST == syserr)
     {
-        return KLB_NETCODE_EXIST;
+        return KLB_NETCODE_EEXIST;
     }
     else if (EINVAL == syserr)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
     else if (EPIPE == syserr)
     {
-        return KLB_NETCODE_PIPE;
+        return KLB_NETCODE_EPIPE;
     }
     else if (EMSGSIZE == syserr)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
     else if (EOPNOTSUPP == syserr)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
     else if (EAFNOSUPPORT == syserr)
     {
-        return KLB_NETCODE_AFNOSUPPORT;
+        return KLB_NETCODE_EAFNOSUPPORT;
     }
     else if (EADDRINUSE == syserr)
     {
-        return KLB_NETCODE_ADDRINUSE;
+        return KLB_NETCODE_EADDRINUSE;
     }
     else if (EADDRNOTAVAIL == syserr)
     {
-        return KLB_NETCODE_ADDRNOTAVAIL;
+        return KLB_NETCODE_EADDRNOTAVAIL;
     }
     else if (ENETUNREACH == syserr)
     {
-        return KLB_NETCODE_NETUNREACH;
+        return KLB_NETCODE_ENETUNREACH;
     }
     else if (ECONNABORTED == syserr)
     {
-        return KLB_NETCODE_CONNABORTED;
+        return KLB_NETCODE_ECONNABORTED;
     }
     else if (ECONNRESET == syserr)
     {
-        return KLB_NETCODE_CONNRESET;
+        return KLB_NETCODE_ECONNRESET;
     }
     else if (ENOBUFS == syserr)
     {
-        return KLB_NETCODE_NOBUFS;
+        return KLB_NETCODE_ENOBUFS;
     }
     else if (EISCONN == syserr)
     {
-        return KLB_NETCODE_ISCONN;
+        return KLB_NETCODE_EISCONN;
     }
     else if (ENOTCONN == syserr)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
     else if (ETIMEDOUT == syserr)
     {
-        return KLB_NETCODE_TIMEDOUT;
+        return KLB_NETCODE_ETIMEDOUT;
     }
     else if (ECONNREFUSED == syserr)
     {
-        return KLB_NETCODE_CONNREFUSED;
+        return KLB_NETCODE_ECONNREFUSED;
     }
     else if (EHOSTUNREACH == syserr)
     {
-        return KLB_NETCODE_HOSTUNREACH;
+        return KLB_NETCODE_EHOSTUNREACH;
     }
     else if (EALREADY == syserr)
     {
-        return KLB_NETCODE_ALREADY;
+        return KLB_NETCODE_EALREADY;
     }
     else if (EINPROGRESS == syserr)
     {
-        return KLB_NETCODE_INPROGRESS;
+        return KLB_NETCODE_EINPROGRESS;
     }
     else if (ECANCELED == syserr)
     {
         return KLB_NETCODE_ECANCELED;
     }
 
-    return KLB_NETCODE_IO;
+    return KLB_NETCODE_EIO;
 #endif
 }
 
@@ -236,61 +236,61 @@ const char* klb_netcode_strerror(int code)
     switch (code)
     {
     // 负段 (-errno)
-    case KLB_NETCODE_ERR:
+    case KLB_NETCODE_EPERM:
         return "[klbnet] Error";
-    case KLB_NETCODE_NOENT:
+    case KLB_NETCODE_ENOENT:
         return "[klbnet] No such file or directory";
-    case KLB_NETCODE_INTR:
+    case KLB_NETCODE_EINTR:
         return "[klbnet] Interrupted system call";
-    case KLB_NETCODE_IO:
+    case KLB_NETCODE_EIO:
         return "[klbnet] I/O error";
-    case KLB_NETCODE_BADF:
+    case KLB_NETCODE_EBADF:
         return "[klbnet] Bad file descriptor";
-    case KLB_NETCODE_AGAIN:
+    case KLB_NETCODE_EAGAIN:
         return "[klbnet] Try again";
-    case KLB_NETCODE_NOMEM:
+    case KLB_NETCODE_ENOMEM:
         return "[klbnet] Not enough resources";
-    case KLB_NETCODE_ACCES:
+    case KLB_NETCODE_EACCES:
         return "[klbnet] Permission denied";
-    case KLB_NETCODE_BUSY:
+    case KLB_NETCODE_EBUSY:
         return "[klbnet] Device or resource busy";
-    case KLB_NETCODE_EXIST:
+    case KLB_NETCODE_EEXIST:
         return "[klbnet] Already exists";
-    case KLB_NETCODE_INVAL:
+    case KLB_NETCODE_EINVAL:
         return "[klbnet] Invalid argument";
-    case KLB_NETCODE_PIPE:
+    case KLB_NETCODE_EPIPE:
         return "[klbnet] Broken pipe";
-    case KLB_NETCODE_MSGSIZE:
+    case KLB_NETCODE_EMSGSIZE:
         return "[klbnet] Message too long";
-    case KLB_NETCODE_NOTSUP:
+    case KLB_NETCODE_EOPNOTSUPP:
         return "[klbnet] Not supported";
-    case KLB_NETCODE_AFNOSUPPORT:
+    case KLB_NETCODE_EAFNOSUPPORT:
         return "[klbnet] Address family not supported";
-    case KLB_NETCODE_ADDRINUSE:
+    case KLB_NETCODE_EADDRINUSE:
         return "[klbnet] Address already in use";
-    case KLB_NETCODE_ADDRNOTAVAIL:
+    case KLB_NETCODE_EADDRNOTAVAIL:
         return "[klbnet] Cannot assign requested address";
-    case KLB_NETCODE_NETUNREACH:
+    case KLB_NETCODE_ENETUNREACH:
         return "[klbnet] Network is unreachable";
-    case KLB_NETCODE_CONNABORTED:
+    case KLB_NETCODE_ECONNABORTED:
         return "[klbnet] Software caused connection abort";
-    case KLB_NETCODE_CONNRESET:
+    case KLB_NETCODE_ECONNRESET:
         return "[klbnet] Connection reset by peer";
-    case KLB_NETCODE_NOBUFS:
+    case KLB_NETCODE_ENOBUFS:
         return "[klbnet] No buffer space available";
-    case KLB_NETCODE_ISCONN:
+    case KLB_NETCODE_EISCONN:
         return "[klbnet] Transport endpoint is already connected";
-    case KLB_NETCODE_NOTCONN:
+    case KLB_NETCODE_ENOTCONN:
         return "[klbnet] Transport endpoint is not connected";
-    case KLB_NETCODE_TIMEDOUT:
+    case KLB_NETCODE_ETIMEDOUT:
         return "[klbnet] Connection timed out";
-    case KLB_NETCODE_CONNREFUSED:
+    case KLB_NETCODE_ECONNREFUSED:
         return "[klbnet] Connection refused";
-    case KLB_NETCODE_HOSTUNREACH:
+    case KLB_NETCODE_EHOSTUNREACH:
         return "[klbnet] No route to host";
-    case KLB_NETCODE_ALREADY:
+    case KLB_NETCODE_EALREADY:
         return "[klbnet] Operation already in progress";
-    case KLB_NETCODE_INPROGRESS:
+    case KLB_NETCODE_EINPROGRESS:
         return "[klbnet] Operation now in progress";
     case KLB_NETCODE_ECANCELED:
         return "[klbnet] Operation canceled";

@@ -5,7 +5,7 @@
 /// @file    klbstore.h
 /// @author  随风(https://gitee.com/klua/klb)
 /// @brief   klb 可裁剪包 klbstore 对外入口 (根仅对外; 实现见 core/ store_klua/)
-/// @version 0.2
+/// @version 0.3
 /// @history 修改历史
 ///  \n [2026-10] 创建文件 (桩; Lua 契约在 klbcore.klbstore)
 ///  \n [2026-11] 错码对齐 klb_basecode_e (与 klbcore.klbcode 一致)
@@ -22,20 +22,6 @@
 extern "C" {
 #endif
 
-
-/// @brief API 返回值 (数值同 KLB_BASECODE_*)
-typedef enum klb_store_errcode_e_
-{
-    KLB_STORE_OK         = KLB_BASECODE_OK,         ///< 成功
-    KLB_STORE_E_ARG      = KLB_BASECODE_INVAL,      ///< 参数非法
-    KLB_STORE_E_NOENT    = KLB_BASECODE_NOENT,      ///< 不存在
-    KLB_STORE_E_IO       = KLB_BASECODE_IO,         ///< 读写失败
-    KLB_STORE_E_NOSPC    = KLB_BASECODE_NOSPC,      ///< 空间不足
-    KLB_STORE_E_BUSY     = KLB_BASECODE_BUSY,       ///< 占用 / 冲突
-    KLB_STORE_E_NOTIMPL  = KLB_BASECODE_NOTIMPL,    ///< 桩: 未实现
-    KLB_STORE_E_AUTH     = KLB_BASECODE_ACCES,      ///< 令牌无效
-    KLB_STORE_E_RANGE    = KLB_BASECODE_RANGE,      ///< 分片区间非法
-} klb_store_errcode_e;
 
 
 /// @brief 存储对象
@@ -59,7 +45,7 @@ KLB_API void klb_store_destroy(klb_store_t* p_store);
 /// @param [in] len         数据长度
 /// @param [in] offset      落盘偏移
 /// @return int 0.成功; 非0.错误码
-/// @note 桩: 回 KLB_STORE_E_NOTIMPL
+/// @note 桩: 回 KLB_BASECODE_NOTIMPL
 KLB_API int klb_store_write(klb_store_t* p_store, const char* p_id,
     const uint8_t* p_data, int len, int64_t offset);
 
@@ -70,7 +56,7 @@ KLB_API int klb_store_write(klb_store_t* p_store, const char* p_id,
 /// @param [out] *p_out     输出缓冲
 /// @param [in] len         期望长度
 /// @return int 实际字节数; 非正数.错误码
-/// @note 桩: 回 KLB_STORE_E_NOTIMPL
+/// @note 桩: 回 KLB_BASECODE_NOTIMPL
 KLB_API int klb_store_read(klb_store_t* p_store, const char* p_id,
     int64_t offset, uint8_t* p_out, int len);
 
@@ -80,7 +66,7 @@ KLB_API int klb_store_read(klb_store_t* p_store, const char* p_id,
 /// @param [out] *p_size    文件大小 (可为 NULL)
 /// @param [out] *p_mtime   修改时间 (可为 NULL)
 /// @return int 0.成功; 非0.错误码
-/// @note 桩: 回 KLB_STORE_E_NOTIMPL
+/// @note 桩: 回 KLB_BASECODE_NOTIMPL
 KLB_API int klb_store_stat(klb_store_t* p_store, const char* p_id,
     int64_t* p_size, int64_t* p_mtime);
 
@@ -88,7 +74,7 @@ KLB_API int klb_store_stat(klb_store_t* p_store, const char* p_id,
 /// @param [in] *p_store    存储对象
 /// @param [in] *p_id       文件标识
 /// @return int 0.成功; 非0.错误码
-/// @note 桩: 回 KLB_STORE_E_NOTIMPL
+/// @note 桩: 回 KLB_BASECODE_NOTIMPL
 KLB_API int klb_store_remove(klb_store_t* p_store, const char* p_id);
 
 /// @brief 校验文件标识

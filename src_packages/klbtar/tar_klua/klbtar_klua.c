@@ -71,7 +71,7 @@ static int klua_ktar_probe(lua_State* L)
     if (0 == rc)
     {
         lua_pushinteger(L, fmt);
-        lua_pushinteger(L, KLBTAR_OK);
+        lua_pushinteger(L, KLB_BASECODE_OK);
         lua_pushstring(L, "");
         return 3;
     }
@@ -121,7 +121,7 @@ static int klua_ktar_tostring(lua_State* L)
 static int klua_ktar_open(lua_State* L)
 {
     const char* p_path = luaL_checkstring(L, 1);
-    int err = KLBTAR_OK;
+    int err = KLB_BASECODE_OK;
     klbtar_t* p_tar = NULL;
 
     p_tar = klbtar_open_ex(p_path, &err);
@@ -155,7 +155,7 @@ static int klua_ktar_extract(lua_State* L)
     if (0 == rc)
     {
         lua_pushboolean(L, 1);
-        lua_pushinteger(L, KLBTAR_OK);
+        lua_pushinteger(L, KLB_BASECODE_OK);
         lua_pushstring(L, "");
         return 3;
     }

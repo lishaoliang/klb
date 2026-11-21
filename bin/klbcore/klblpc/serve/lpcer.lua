@@ -7,11 +7,12 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kco = require("kco")
 local klpc = require("klpc")
 local cfger = require("klbcore.klblpc.cfger")
 local router = require("klbcore.klblpc.router")
-local errcode = require("klbcore.klblpc.errcode")
 
 
 --------------------------------------------------------------------------------------------
@@ -122,12 +123,12 @@ local L = {}
 -- @return [number|nil] code			失败错误码
 function L:setup(cfg)
 	if self._serving then
-		return false, errcode.E_BUSY
+		return false, base.BUSY
 	end
 
 	local parsed, ok = cfger.parse_setup(cfg)
 	if not ok or not parsed then
-		return false, errcode.E_ARG
+		return false, base.INVAL
 	end
 
 	if "" ~= parsed.name then
@@ -145,7 +146,7 @@ end
 -- @note 幂等; 已启动则直接 true
 function L:serve()
 	if not self._name_ok or "" == self._name then
-		return false, errcode.E_STATE
+		return false, base.STATE
 	end
 
 	if self._serving then

@@ -131,22 +131,22 @@ int klb_store_core_rel_path(const char* p_id, char* p_out, int out_max)
 {
     if (!klb_store_core_valid_id(p_id))
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if (NULL == p_out || out_max <= 0)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if ((int)strlen(p_id) >= out_max)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     snprintf(p_out, (size_t)out_max, "%s", p_id);
 
-    return KLB_STORE_OK;
+    return KLB_BASECODE_OK;
 }
 
 
@@ -154,12 +154,12 @@ int klb_store_core_abs_path(const klb_store_t* p_store, const char* p_id, char* 
 {
     if (NULL == p_store || NULL == p_out || out_max <= 0)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if (!klb_store_core_valid_id(p_id))
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     int root_len = (int)strlen(p_store->root);
@@ -167,12 +167,12 @@ int klb_store_core_abs_path(const klb_store_t* p_store, const char* p_id, char* 
 
     if (root_len + 1 + id_len >= out_max)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     snprintf(p_out, (size_t)out_max, "%s/%s", p_store->root, p_id);
 
-    return KLB_STORE_OK;
+    return KLB_BASECODE_OK;
 }
 
 
@@ -180,10 +180,10 @@ int klb_store_core_mkdir_p(const char* p_dir)
 {
     if (NULL == p_dir || '\0' == p_dir[0])
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLB_STORE_E_NOTIMPL;
+    return KLB_BASECODE_NOTIMPL;
 }
 
 
@@ -224,15 +224,15 @@ int klb_store_write(klb_store_t* p_store, const char* p_id, const uint8_t* p_dat
 {
     if (NULL == p_store || NULL == p_data || len <= 0 || offset < 0)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if (!klb_store_core_valid_id(p_id))
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLB_STORE_E_NOTIMPL;
+    return KLB_BASECODE_NOTIMPL;
 }
 
 
@@ -240,15 +240,15 @@ int klb_store_read(klb_store_t* p_store, const char* p_id, int64_t offset, uint8
 {
     if (NULL == p_store || NULL == p_out || len <= 0 || offset < 0)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if (!klb_store_core_valid_id(p_id))
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLB_STORE_E_NOTIMPL;
+    return KLB_BASECODE_NOTIMPL;
 }
 
 
@@ -256,15 +256,15 @@ int klb_store_stat(klb_store_t* p_store, const char* p_id, int64_t* p_size, int6
 {
     if (NULL == p_store)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if (!klb_store_core_valid_id(p_id))
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLB_STORE_E_NOTIMPL;
+    return KLB_BASECODE_NOTIMPL;
 }
 
 
@@ -272,15 +272,15 @@ int klb_store_remove(klb_store_t* p_store, const char* p_id)
 {
     if (NULL == p_store)
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
     if (!klb_store_core_valid_id(p_id))
     {
-        return KLB_STORE_E_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLB_STORE_E_NOTIMPL;
+    return KLB_BASECODE_NOTIMPL;
 }
 
 

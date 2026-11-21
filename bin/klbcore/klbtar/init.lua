@@ -4,14 +4,13 @@
 -- @brief  klbtar: 常用归档解包入口 (tar / gzip / tar.gz|tgz)
 -- @note   require("klbcore.klbtar"); M1-M8: probe/list/extract/read/open_entry
 --   \n P0 格式: .tar / .gz / .tar.gz / .tgz; zip/xz/bz2 非本范围
+--   \n 返回码: 直接用 klbcore.klbcode.base (同 C klb_basecode_e); 不本地再映射 E_*
 -- @history 修改历史
 --  \n 2026 创建文件 (桩)
 --  \n 2026 M1-M8 读侧实现
 --]]
 
 
-local klbcode = require("klbcore.klbcode")
-local base = klbcode.base
 local detect = require("klbcore.klbtar.detect")
 local archive = require("klbcore.klbtar.archive")
 
@@ -20,27 +19,8 @@ local klbtar = {}
 
 
 --------------------------------------------------------------------------------------------
--- 返回码 (真源 klbcore.klbcode; 与 C klbtar_errcode_e / klb_basecode 同值)
-
-klbtar.OK = klbcode.OK
-klbtar.ERR = base.ERR
-klbtar.E_ARG = base.INVAL
-klbtar.E_OPEN = base.NOENT
-klbtar.E_FORMAT = base.PACKAGE_BAD
-klbtar.E_IO = base.IO
-klbtar.E_PATH = base.RANGE
-klbtar.E_LIMIT = base.LIMIT
-klbtar.E_UNSUP = base.NOTSUP
-
-
--- 格式名常量
-klbtar.FMT_TAR = detect.FMT_TAR
-klbtar.FMT_GZIP = detect.FMT_GZIP
-klbtar.FMT_TAR_GZ = detect.FMT_TAR_GZ
-
-
---------------------------------------------------------------------------------------------
 -- 模块级入口
+-- @note 返回码真源 klbcore.klbcode.base (同 C klb_basecode_e); 格式名见 detect.FMT_*
 
 -- @brief 探测路径对应格式
 -- @param [in]  path[string]			归档路径

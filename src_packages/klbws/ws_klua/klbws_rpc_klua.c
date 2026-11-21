@@ -810,7 +810,7 @@ int klua_kws_connect_rpc(lua_State* L)
             if (0 == n || n >= sizeof(path) || text_has_ctl_klb_wsrpc(p_path, n))
             {
                 lua_pop(L, 1);
-                return push_err_klua_kwsrpc(L, KLB_NETCODE_INVAL);
+                return push_err_klua_kwsrpc(L, KLB_NETCODE_EINVAL);
             }
 
             memcpy(path, p_path, n + 1);
@@ -825,7 +825,7 @@ int klua_kws_connect_rpc(lua_State* L)
             if (n >= sizeof(protocol) || (0 < n && text_has_ctl_klb_wsrpc(p_proto, n)))
             {
                 lua_pop(L, 1);
-                return push_err_klua_kwsrpc(L, KLB_NETCODE_INVAL);
+                return push_err_klua_kwsrpc(L, KLB_NETCODE_EINVAL);
             }
 
             if (0 < n)
@@ -838,7 +838,7 @@ int klua_kws_connect_rpc(lua_State* L)
 
     if (text_has_ctl_klb_wsrpc(p_host, strlen(p_host)))
     {
-        return push_err_klua_kwsrpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwsrpc(L, KLB_NETCODE_EINVAL);
     }
 
     char key[32] = { 0 };
@@ -846,7 +846,7 @@ int klua_kws_connect_rpc(lua_State* L)
     sds req = build_upgrade_klb_wsrpc(p_host, port, path, tls, protocol, key, (int)sizeof(key));
     if (NULL == req)
     {
-        return push_err_klua_kwsrpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwsrpc(L, KLB_NETCODE_EINVAL);
     }
 
     klua_env_t* p_env = klua_env_get_by_L(L);
@@ -856,7 +856,7 @@ int klua_kws_connect_rpc(lua_State* L)
     if (NULL == p_netmulti)
     {
         KLB_FREE_BY(req, sdsfree);
-        return push_err_klua_kwsrpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwsrpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_conn = klb_wsclient_connect(p_netmulti, p_host, port, tls, &code);
@@ -1554,7 +1554,7 @@ int klua_kws_listen_rpc(lua_State* L)
     if (NULL == p_netmulti)
     {
         KLB_FREE_BY(p_tls_ctx, klb_socket_tls_server_ctx_destroy);
-        return push_err_klua_kwsrpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_kwsrpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);

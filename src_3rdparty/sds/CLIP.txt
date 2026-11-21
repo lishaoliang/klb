@@ -1,0 +1,5 @@
+klb src_3rdparty/sds
+
+Full tree for libklb (always on; not clip-gated).
+Public header: inc/klbthird/sds.h
+Version: 2.0.0

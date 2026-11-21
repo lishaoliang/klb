@@ -10,7 +10,8 @@
 
 
 local kproxy_io = require("klbcore.klbproxy.io")
-local errcode = require("klbcore.klbsocks5.errcode")
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 
 
 local M = {}
@@ -383,7 +384,7 @@ M.connect = function (proxy_host, proxy_port, dest_host, dest_port, auth, opts)
 		return true, conn
 	end
 
-	return nil, errcode.of(conn), conn
+	return nil, ((("number" == type(conn)) and conn) or base.IO), conn
 end
 
 
@@ -517,7 +518,7 @@ M.probe = function (tcp, probe_target)
 		return true
 	end
 
-	return nil, errcode.of(err), err
+	return nil, ((("number" == type(err)) and err) or base.IO), err
 end
 
 

@@ -10,7 +10,8 @@
 
 
 local kproxy_io = require("klbcore.klbproxy.io")
-local errcode = require("klbcore.klbsocks5.errcode")
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 
 
 local M = {}
@@ -389,7 +390,7 @@ M.serve_conn = function (sock, opts)
 		return true, req
 	end
 
-	return nil, errcode.of(req), req
+	return nil, ((("number" == type(req)) and req) or base.IO), req
 end
 
 
@@ -475,7 +476,7 @@ M.reply = function (sock, rep, bnd)
 		return true
 	end
 
-	return nil, errcode.of(err), err
+	return nil, ((("number" == type(err)) and err) or base.IO), err
 end
 
 

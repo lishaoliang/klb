@@ -22,7 +22,7 @@ local pool = require("klbagent.packages.proxy.relay.pool")
 local hop_pool = require("klbagent.packages.proxy.transport.hop_pool")
 local smp_server = require("klbagent.packages.proxy.transport.smp.server")
 local klbsocks5 = require("klbcore.klbsocks5")
-local klbhttp = require("klbcore.klbhttp")
+local net = require("klbcore.klbcode.netcode")
 local http_connect_server = require("klbcore.klbhttp.proxy_connect.server")
 local tunnel_server = require("klbcore.klbtunnel.serve")
 local tunnel_crypto = require("klbcore.klbtunnel.crypto")
@@ -407,7 +407,7 @@ local function _handle_ws_tunnel(client, cfg, req)
 	end
 
 	if type(ws_server.is_tunnel_path) == "function" and not ws_server.is_tunnel_path(req.path) then
-		http_connect_server.reply(client, klbhttp.STATUS_NOT_FOUND, "Not Found")
+		http_connect_server.reply(client, net.HTTP_NOT_FOUND, "Not Found")
 		_close_tcp(client)
 		return false, "bad ws path"
 	end
@@ -529,14 +529,14 @@ local function _handle_http_connect(client, cfg, prefix, peer_ip)
 
 		if not _route_allow(cfg, req.host, req.port, peer_ip) then
 			stats.on_reject()
-			http_connect_server.reply(client, klbhttp.STATUS_FORBIDDEN, "Forbidden")
+			http_connect_server.reply(client, net.HTTP_FORBIDDEN, "Forbidden")
 			_close_tcp(client)
 			return false, "route allow_from deny"
 		end
 
 		local upstream, session, err_u = _open_upstream(cfg, req.host, req.port)
 		if upstream == nil then
-			http_connect_server.reply(client, klbhttp.STATUS_BAD_GATEWAY, "Bad Gateway")
+			http_connect_server.reply(client, net.HTTP_BAD_GATEWAY, "Bad Gateway")
 			_close_tcp(client)
 			return false, err_u
 		end
@@ -554,7 +554,7 @@ local function _handle_http_connect(client, cfg, prefix, peer_ip)
 				if session ~= nil and type(session.close) == "function" then
 					session.close()
 				end
-				http_connect_server.reply(client, klbhttp.STATUS_BAD_GATEWAY, "Bad Gateway")
+				http_connect_server.reply(client, net.HTTP_BAD_GATEWAY, "Bad Gateway")
 				_close_tcp(client)
 				return false, "forward send fail"
 			end
@@ -569,8 +569,8 @@ local function _handle_http_connect(client, cfg, prefix, peer_ip)
 				return true
 			end
 		else
-			-- CONNECT: STATUS_OK 后裸 TCP 中继 (不复用)
-			local ok_r = http_connect_server.reply(client, klbhttp.STATUS_OK)
+			-- CONNECT: HTTP_OK 后裸 TCP 中继 (不复用)
+			local ok_r = http_connect_server.reply(client, net.HTTP_OK)
 			if not ok_r then
 				_close_tcp(upstream)
 				if session ~= nil and type(session.close) == "function" then

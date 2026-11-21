@@ -149,7 +149,7 @@ static inline int klua_netlisten_parse_bind_cfg(lua_State* L, int idx,
         if ((int)strlen(p) >= host_cap)
         {
             lua_pop(L, 1);
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
 
         if ('\0' != p[0])
@@ -163,7 +163,7 @@ static inline int klua_netlisten_parse_bind_cfg(lua_State* L, int idx,
     klua_netlisten_fill_open_opts(L, idx, p_opts);
     if (-1 == p_opts->family)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (1 > *p_max_connect)

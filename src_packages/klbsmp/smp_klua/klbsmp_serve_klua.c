@@ -523,7 +523,7 @@ int klua_ksmpserve_new_serve(lua_State* L)
 
     if (NULL == p_listen_socket)
     {
-        return push_err_klua_ksmpserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_ksmpserve(L, KLB_NETCODE_EINVAL);
     }
 
     bool tls = p_listen_socket->tls;
@@ -603,7 +603,7 @@ int klua_ksmpserve_new_serve(lua_State* L)
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
-            return push_err_klua_ksmpserve(L, KLB_NETCODE_NOMEM);
+            return push_err_klua_ksmpserve(L, KLB_NETCODE_ENOMEM);
         }
     }
 
@@ -914,7 +914,7 @@ int klua_ksmpserve_listen(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_ksmpserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_ksmpserve(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);
@@ -1651,7 +1651,7 @@ int klua_ksmpserverpc_listen(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_ksmpserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_ksmpserve(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);
@@ -1688,7 +1688,7 @@ int klua_ksmpserverpc_new_serve(lua_State* L)
 
     if (NULL == p_listen_socket)
     {
-        return push_err_klua_ksmpserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_ksmpserve(L, KLB_NETCODE_EINVAL);
     }
 
     tls = p_listen_socket->tls;
@@ -1744,7 +1744,7 @@ int klua_ksmpserverpc_new_serve(lua_State* L)
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
-            return push_err_klua_ksmpserve(L, KLB_NETCODE_NOMEM);
+            return push_err_klua_ksmpserve(L, KLB_NETCODE_ENOMEM);
         }
     }
 

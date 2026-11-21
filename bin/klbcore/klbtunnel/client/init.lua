@@ -7,12 +7,13 @@
 -- @history 修改历史
 --  \n [2026-10] 创建文件 (桩); 明文帧握手 + CONNECT; N3-2 PSK 会话 + wrap_conn; hello_connect / io_* 供 smp/ws 复用
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 
 
 local frame = require("klbcore.klbtunnel.frame")
 local crypto = require("klbcore.klbtunnel.crypto")
 local kproxy_io = require("klbcore.klbproxy.io")
-local errcode = require("klbcore.klbtunnel.errcode")
 
 
 local M = {}
@@ -443,7 +444,7 @@ M.hello_connect = function (io, dest_host, dest_port, opts)
 		return true, info
 	end
 
-	return false, errcode.of(info), tostring(info)
+	return false, ((("number" == type(info)) and info) or base.IO), tostring(info)
 end
 
 
@@ -457,7 +458,7 @@ M.connect = function (proxy_host, proxy_port, dest_host, dest_port, opts)
 		return true, conn
 	end
 
-	return false, errcode.of(conn), tostring(conn)
+	return false, ((("number" == type(conn)) and conn) or base.IO), tostring(conn)
 end
 
 

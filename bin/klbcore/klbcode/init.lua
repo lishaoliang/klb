@@ -3,6 +3,11 @@
 -- @file   init.lua
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klb 库错码门面 (聚合 net/base; 对外统一入口)
+-- @stability stable
+-- @impl mature
+-- @attention
+--   \n @stability stable: AI 禁止擅自添加/删除/变更本文件对外接口 (含导出名, 参数, 返回与已文档含义); 须用户点名
+--   \n @impl mature: 实现倾向冻结; 重构须同等谨慎, 不得破坏本文件导出签名与可观察语义
 -- @note   分表挂载: M.net / M.base; 负段同名同值; 私有段按区间分域
 --   \n 不扁平合并短键 (CANCELED/LIMIT 等跨表同名异值)
 --   \n net 另含 HTTP status [100,599] / WS close [1000,4999] 别名
@@ -10,8 +15,6 @@
 --   \n 不含 alua core/code; 不含各包 internal errcode
 --   \n 完整码名 M.strerror -> klb.<域>.<码名> / klb.OK / klb.UNKNOWN
 --   \n require("klbcore.klbcode")
--- @stability experimental
--- @impl evolving
 -- @history 修改历史
 --  \n [2026-11] 创建文件; 并入 util/netcode.lua util/basecode.lua
 --  \n [2026-11] domain/str 认 HTTP / WS 协议码段
@@ -40,6 +43,7 @@ end
 -- @brief 按数值区间判域
 -- @param [in]  code[number]	错误码
 -- @return [string]			"ok" / "errno" / "socket" / "http" / "ws" / "net" / "base" / "unknown"
+-- @stability stable
 M.domain = function (code)
 	if type(code) ~= "number" then
 		return "unknown"
@@ -85,6 +89,7 @@ local _UNKNOWN = "klb.UNKNOWN"
 -- @brief 错误码转短键名 (带域前缀; 非完整码名)
 -- @param [in]  code[number]	错误码
 -- @return [string]			eg. "net.WBUF_EMPTY" / "base.STATE" / "errno.INVAL" / "OK"
+-- @stability stable
 -- @note 完整码名用 strerror (eg. klb.net.WBUF_EMPTY)
 M.str = function (code)
 	local dom = M.domain(code)
@@ -122,6 +127,7 @@ end
 -- @brief 码名 (完整串)
 -- @param [in]  code[number]	码值
 -- @return name[string]		`klb.<域>.<码名>`; 成功 `klb.OK`; 未登记 `klb.UNKNOWN`
+-- @stability stable
 -- @note eg. strerror(net.WBUF_EMPTY) -> "klb.net.WBUF_EMPTY"
 --   \n     strerror(base.STATE) -> "klb.base.STATE"
 --   \n     strerror(-22) -> "klb.errno.INVAL"

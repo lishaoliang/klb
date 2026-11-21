@@ -7,11 +7,13 @@
 -- @history 修改历史
 --		[2025-10] 添加基础
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
 local ksmp = require("ksmp")
 local kurl = require("kurl")
 local cjson = require("cjson.safe")
 local stringex = require("klbcore.util.stringex")
-local errcode = require("klbcore.klbsmp.errcode")
 local deadline = require("klbcore.klbsmp.deadline")
 
 
@@ -124,7 +126,7 @@ end
 local CallOnce = function (self, ...)
 	local client = self._client
 	if not client then
-		return nil, errcode.E_CLOSED, "closed"
+		return nil, net.CLOSED, "closed"
 	end
 
 	local rpctype = RpcType(self.rpctype)
@@ -160,7 +162,7 @@ end
 -- @note 到期以 disconnect 唤醒阻塞的 co_call; 返回 `nil, E_TIMEOUT`
 local CoCall = function (self, ...)
 	if self._cancelled then
-		return nil, errcode.E_CANCEL, "cancelled"
+		return nil, base.CANCELED, "cancelled"
 	end
 
 	local state = deadline.arm(self._timeout_ms, function ()
@@ -173,11 +175,11 @@ local CoCall = function (self, ...)
 	local expired = deadline.finish(state)
 
 	if self._cancelled then
-		return nil, errcode.E_CANCEL, "cancelled"
+		return nil, base.CANCELED, "cancelled"
 	end
 
 	if expired then
-		return nil, errcode.E_TIMEOUT, "timeout"
+		return nil, net.TIMEOUT, "timeout"
 	end
 
 	return table.unpack(rets, 1, rets.n)

@@ -9,11 +9,12 @@
 -- @history 修改历史
 --		[2026-11] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kco = require("kco")
 local kxpc = require("kxpc")
 local cfger = require("klbcore.klbxpc.cfger")
 local router = require("klbcore.klbxpc.router")
-local errcode = require("klbcore.klbxpc.errcode")
 
 
 local function capture(...)
@@ -233,12 +234,12 @@ G.close = G.stop
 -- @return ok[boolean], code[number|nil]
 function G:open(cfg)
 	if self._serving then
-		return false, errcode.E_BUSY
+		return false, base.BUSY
 	end
 
 	local parsed, ok = cfger.parse_group(cfg)
 	if not ok or not parsed then
-		return false, errcode.E_ARG
+		return false, base.INVAL
 	end
 
 	self:stop()
@@ -262,7 +263,7 @@ function G:open(cfg)
 						m:close()
 					end
 				end
-				return false, errcode.E_IO
+				return false, base.IO
 			end
 		else
 			local slot = {
@@ -277,7 +278,7 @@ function G:open(cfg)
 	end
 
 	if 0 == #slots then
-		return false, errcode.E_IO
+		return false, base.IO
 	end
 
 	self._name = parsed.name
@@ -299,11 +300,11 @@ end
 -- @return ok[boolean], code[number|nil]
 function G:serve()
 	if not self._name_ok or "" == self._name then
-		return false, errcode.E_STATE
+		return false, base.STATE
 	end
 
 	if 0 == #self._slots then
-		return false, errcode.E_STATE
+		return false, base.STATE
 	end
 
 	if self._serving then
@@ -358,7 +359,7 @@ end
 function G:response(transport, src, corr, ...)
 	local slot = find_slot(self, transport)
 	if not slot or not slot.mo then
-		return false, errcode.E_NOENT
+		return false, base.NOENT
 	end
 
 	local ok = slot.mo:response(src, corr, ...)
@@ -366,7 +367,7 @@ function G:response(transport, src, corr, ...)
 		return true
 	end
 
-	return false, errcode.E_IO
+	return false, base.IO
 end
 
 

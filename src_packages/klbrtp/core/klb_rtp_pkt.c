@@ -107,7 +107,7 @@ int klb_rtp_head_parse(const uint8_t* p_data, int len, klb_rtp_head_t* p_head, i
 {
     if ((NULL == p_data) || (NULL == p_head))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_RTP_FIXED_LEN > len)
@@ -164,7 +164,7 @@ int klb_rtcp_head_parse(const uint8_t* p_data, int len, klb_rtcp_head_t* p_head)
 {
     if ((NULL == p_data) || (NULL == p_head))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (4 > len)
@@ -257,7 +257,7 @@ static int scan_annexb_klb_rtp(const uint8_t* p_buf, int len,
         count++;
     }
 
-    return (0 < count) ? count : KLB_NETCODE_INVAL;
+    return (0 < count) ? count : KLB_NETCODE_EINVAL;
 }
 
 
@@ -276,7 +276,7 @@ static int packetize_body_klb_rtp(const uint8_t* p_body, int body_len, int mtu, 
     {
         if ((pos + KLB_RTP_FIXED_LEN + body_len) > cap)
         {
-            return KLB_NETCODE_MSGSIZE;
+            return KLB_NETCODE_EMSGSIZE;
         }
 
         put_rtp_head_klb_rtp(p_out + pos, (0 != marker), KLB_RTP_PT_H264,
@@ -293,7 +293,7 @@ static int packetize_body_klb_rtp(const uint8_t* p_body, int body_len, int mtu, 
     int chunk = mtu - KLB_RTP_FIXED_LEN - KLB_RTP_FU_HEADS;
     if (0 >= chunk)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     int off = 1;                        // 跳过原 NALU 头
@@ -308,7 +308,7 @@ static int packetize_body_klb_rtp(const uint8_t* p_body, int body_len, int mtu, 
         bool end = ((off + n) >= body_len) ? true : false;
         if ((pos + KLB_RTP_FIXED_LEN + KLB_RTP_FU_HEADS + n) > cap)
         {
-            return KLB_NETCODE_MSGSIZE;
+            return KLB_NETCODE_EMSGSIZE;
         }
 
         put_rtp_head_klb_rtp(p_out + pos, ((0 != marker) && end), KLB_RTP_PT_H264,
@@ -338,12 +338,12 @@ int klb_rtp_h264_packetize(const uint8_t* p_nalu, int nalu_len, int mtu, int mar
 {
     if ((NULL == p_nalu) || (NULL == p_out) || (NULL == p_out_len) || (0 >= nalu_len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 >= mtu) || (mtu <= KLB_RTP_FIXED_LEN))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step1. 拆分 Annex-B 得到多个 NALU
@@ -353,7 +353,7 @@ int klb_rtp_h264_packetize(const uint8_t* p_nalu, int nalu_len, int mtu, int mar
         KLB_RTP_STAP_MAX_NALU);
     if (0 >= nalu_num)
     {
-        return (0 > nalu_num) ? nalu_num : KLB_NETCODE_INVAL;
+        return (0 > nalu_num) ? nalu_num : KLB_NETCODE_EINVAL;
     }
 
     // step2. 单 NALU: 单包 / FU-A
@@ -406,7 +406,7 @@ int klb_rtp_h264_packetize(const uint8_t* p_nalu, int nalu_len, int mtu, int mar
             seq, timestamp, ssrc, p_out + pos, cap - pos, &sub_len);
         if (0 >= sub_count)
         {
-            return (0 > sub_count) ? sub_count : KLB_NETCODE_ERR;
+            return (0 > sub_count) ? sub_count : KLB_NETCODE_EPERM;
         }
 
         pos += sub_len;
@@ -424,7 +424,7 @@ int klb_rtcp_fb_parse(const uint8_t* p_data, int len, klb_rtcp_fb_t* p_fb)
 {
     if ((NULL == p_data) || (NULL == p_fb))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_rtcp_head_t head;
@@ -477,13 +477,13 @@ int klb_rtcp_nack_build(uint32_t sender_ssrc, uint32_t media_ssrc,
 {
     if ((NULL == p_seqs) || (NULL == p_out) || (0 >= seq_num))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int total = KLB_RTCP_FB_HEADS + seq_num * 4;
     if (total > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_fb_head_klb_rtp(p_out, 1, KLB_RTCP_RTPFB, total, sender_ssrc, media_ssrc);
@@ -503,12 +503,12 @@ int klb_rtcp_pli_build(uint32_t sender_ssrc, uint32_t media_ssrc, uint8_t* p_out
 {
     if (NULL == p_out)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_RTCP_FB_HEADS > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_fb_head_klb_rtp(p_out, 1, KLB_RTCP_PSFB, KLB_RTCP_FB_HEADS, sender_ssrc, media_ssrc);
@@ -521,13 +521,13 @@ int klb_rtcp_fir_build(uint32_t sender_ssrc, uint32_t media_ssrc, uint8_t* p_out
 {
     if (NULL == p_out)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int total = KLB_RTCP_FB_HEADS + 8;
     if (total > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_fb_head_klb_rtp(p_out, 4, KLB_RTCP_PSFB, total, sender_ssrc, media_ssrc);
@@ -548,13 +548,13 @@ int klb_rtcp_remb_build(uint32_t sender_ssrc, uint32_t media_ssrc, uint32_t bitr
 {
     if ((NULL == p_out) || (0 > ssrc_num) || ((0 < ssrc_num) && (NULL == p_ssrcs)))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int total = KLB_RTCP_FB_HEADS + 8 + ssrc_num * 4;
     if (total > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_fb_head_klb_rtp(p_out, 15, KLB_RTCP_PSFB, total, sender_ssrc, media_ssrc);
@@ -648,13 +648,13 @@ int klb_rtcp_sr_build(uint32_t sender_ssrc, uint32_t ntp_sec, uint32_t ntp_frac,
     if ((NULL == p_out) || (0 > block_num) || (KLB_RTCP_BLOCK_MAX < block_num)
         || ((0 < block_num) && (NULL == p_blocks)))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int total = 4 + KLB_RTCP_SR_HEADS + block_num * KLB_RTCP_BLOCK_LEN;
     if (total > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     p_out[0] = (uint8_t)(0x80 | (block_num & 0x1F));
@@ -682,13 +682,13 @@ int klb_rtcp_rr_build(uint32_t sender_ssrc, const klb_rtcp_report_block_t* p_blo
     if ((NULL == p_out) || (0 > block_num) || (KLB_RTCP_BLOCK_MAX < block_num)
         || ((0 < block_num) && (NULL == p_blocks)))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int total = 4 + KLB_RTCP_RR_HEADS + block_num * KLB_RTCP_BLOCK_LEN;
     if (total > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     p_out[0] = (uint8_t)(0x80 | (block_num & 0x1F));
@@ -709,7 +709,7 @@ int klb_rtcp_sr_parse(const uint8_t* p_data, int len, klb_rtcp_sr_t* p_sr)
 {
     if ((NULL == p_data) || (NULL == p_sr))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_rtcp_head_t head;
@@ -764,7 +764,7 @@ int klb_rtcp_rr_parse(const uint8_t* p_data, int len, klb_rtcp_rr_t* p_rr)
 {
     if ((NULL == p_data) || (NULL == p_rr))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_rtcp_head_t head;
@@ -816,7 +816,7 @@ int klb_rtcp_twcc_build(uint32_t sender_ssrc, uint32_t media_ssrc, uint16_t base
 {
     if ((NULL == p_status) || (NULL == p_out) || (0 >= count) || (0xFFFF < count))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step1. 统计游程块数与到达时间增量字节数 (每 1 个已收包 1 字节)
@@ -843,7 +843,7 @@ int klb_rtcp_twcc_build(uint32_t sender_ssrc, uint32_t media_ssrc, uint16_t base
     total = (total + 3) & ~3;                   // RTCP 包按 32 位对齐
     if (total > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     // step2. 公共头与 TWCC 公共字段
@@ -899,7 +899,7 @@ int klb_rtcp_twcc_parse(const uint8_t* p_data, int len, klb_rtcp_twcc_t* p_twcc,
 {
     if ((NULL == p_data) || (NULL == p_twcc) || (NULL == p_status))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_rtcp_head_t head;
@@ -933,7 +933,7 @@ int klb_rtcp_twcc_parse(const uint8_t* p_data, int len, klb_rtcp_twcc_t* p_twcc,
     int count = (int)p_twcc->count;
     if (cap < count)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     // step1. 解块: 游程块 / 状态向量块; 到达时间增量按符号宽度跳过

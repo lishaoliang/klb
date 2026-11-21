@@ -213,7 +213,7 @@ static int sdp_append_klb_webrtc(char* p_buf, int cap, int pos, const char* p_fm
 {
     if ((0 > pos) || (pos >= cap))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     va_list ap;
@@ -223,12 +223,12 @@ static int sdp_append_klb_webrtc(char* p_buf, int cap, int pos, const char* p_fm
 
     if (0 > n)
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     if (n >= (cap - pos))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     return pos + n;
@@ -805,7 +805,7 @@ int klb_webrtc_sdp_parse(const char* p_sdp, klb_webrtc_sdp_t* p_info)
 {
     if ((NULL == p_sdp) || (NULL == p_info))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     KLB_MEMSET(p_info, 0, sizeof(klb_webrtc_sdp_t));
@@ -906,13 +906,13 @@ static int build_sdp_klb_webrtc(klb_webrtc_peer_t* p_peer, char* p_sdp, int cap)
     int ret = klb_ice_agent_local_ufrag(p_peer->p_ice, ufrag, (int)sizeof(ufrag));
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_ERR;
+        return (0 > ret) ? ret : KLB_NETCODE_EPERM;
     }
 
     ret = klb_ice_agent_local_pwd(p_peer->p_ice, pwd, (int)sizeof(pwd));
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_ERR;
+        return (0 > ret) ? ret : KLB_NETCODE_EPERM;
     }
 
     int cand_num = klb_ice_agent_local_count(p_peer->p_ice);
@@ -1234,7 +1234,7 @@ static int queue_push_klb_webrtc(klb_webrtc_queue_t* p_queue, const uint8_t* p_d
 {
     if ((0 > len) || (KLB_WEBRTC_PKT_MAX < len))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     if (KLB_WEBRTC_QUEUE_SLOTS <= p_queue->count)
@@ -1311,7 +1311,7 @@ static int init_srtp_klb_webrtc(klb_webrtc_peer_t* p_peer)
     p_peer->p_srtp_tx = klb_srtp_create(KLB_SRTP_PROFILE_AES128_CM_HMAC_SHA1_80, &code);
     if (NULL == p_peer->p_srtp_tx)
     {
-        return (0 != code) ? code : KLB_NETCODE_ERR;
+        return (0 != code) ? code : KLB_NETCODE_EPERM;
     }
 
     ret = klb_srtp_set_key(p_peer->p_srtp_tx, key, (int)sizeof(key), salt, (int)sizeof(salt));
@@ -1330,7 +1330,7 @@ static int init_srtp_klb_webrtc(klb_webrtc_peer_t* p_peer)
     p_peer->p_srtp_rx = klb_srtp_create(KLB_SRTP_PROFILE_AES128_CM_HMAC_SHA1_80, &code);
     if (NULL == p_peer->p_srtp_rx)
     {
-        return (0 != code) ? code : KLB_NETCODE_ERR;
+        return (0 != code) ? code : KLB_NETCODE_EPERM;
     }
 
     ret = klb_srtp_set_key(p_peer->p_srtp_rx, key, (int)sizeof(key), salt, (int)sizeof(salt));
@@ -1355,7 +1355,7 @@ static int open_dtls_klb_webrtc(klb_webrtc_peer_t* p_peer)
 
     if ((NULL == p_peer->p_cert_pem) || (NULL == p_peer->p_key_pem))
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     if (KLB_ICE_STATE_CONNECTED != klb_ice_agent_get_state(p_peer->p_ice))
@@ -1383,7 +1383,7 @@ static int open_dtls_klb_webrtc(klb_webrtc_peer_t* p_peer)
     p_peer->p_dtls = klb_socket_dtls_io_open(is_server, &io, &cfg, &code);
     if (NULL == p_peer->p_dtls)
     {
-        return (0 != code) ? code : KLB_NETCODE_ERR;
+        return (0 != code) ? code : KLB_NETCODE_EPERM;
     }
 
     return 0;
@@ -1404,7 +1404,7 @@ static int check_fp_klb_webrtc(klb_webrtc_peer_t* p_peer)
     if (0 > ret)
     {
         // 不校验对端证书时, DTLS 服务端不请求客户端证书, 无从核对指纹
-        if ((KLB_NETCODE_NOENT == ret) && (0 == p_peer->verify_peer))
+        if ((KLB_NETCODE_ENOENT == ret) && (0 == p_peer->verify_peer))
         {
             return 0;
         }
@@ -1545,7 +1545,7 @@ static int send_rtp_klb_webrtc(klb_webrtc_peer_t* p_peer, const uint8_t* p_data,
 {
     if (KLB_WEBRTC_PKT_MAX < len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     uint8_t pkt[KLB_WEBRTC_PKT_MAX];
@@ -1587,7 +1587,7 @@ static int send_rtcp_klb_webrtc(klb_webrtc_peer_t* p_peer, const uint8_t* p_data
 {
     if ((0 >= len) || (KLB_WEBRTC_PKT_MAX < len))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     uint8_t pkt[KLB_WEBRTC_PKT_MAX];
@@ -1624,7 +1624,7 @@ static int ensure_media_klb_webrtc(klb_webrtc_peer_t* p_peer)
 {
     if (NULL == p_peer->p_cert_pem)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     int ret = pump_dtls_klb_webrtc(p_peer);
@@ -1635,10 +1635,10 @@ static int ensure_media_klb_webrtc(klb_webrtc_peer_t* p_peer)
 
     if (1 == ret)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
-    return (NULL != p_peer->p_srtp_tx) ? 0 : KLB_NETCODE_NOTCONN;
+    return (NULL != p_peer->p_srtp_tx) ? 0 : KLB_NETCODE_ENOTCONN;
 }
 
 
@@ -1956,7 +1956,7 @@ static int append_nalu_klb_webrtc(klb_webrtc_peer_t* p_peer, const uint8_t* p_da
     int need = p_peer->nalu_len + len;
     if (KLB_WEBRTC_NALU_MAX < need)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     if (p_peer->nalu_cap < need)
@@ -1970,7 +1970,7 @@ static int append_nalu_klb_webrtc(klb_webrtc_peer_t* p_peer, const uint8_t* p_da
         uint8_t* p_new = KLB_MALLOC(uint8_t, cap, 0);
         if (NULL == p_new)
         {
-            return KLB_NETCODE_NOMEM;
+            return KLB_NETCODE_ENOMEM;
         }
 
         if (NULL != p_peer->p_nalu)
@@ -2021,7 +2021,7 @@ static int pull_stap_klb_webrtc(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int c
     {
         reset_stap_klb_webrtc(p_peer);
 
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     memcpy(p_buf, p + 2, (size_t)n);
@@ -2045,7 +2045,7 @@ static int store_stap_klb_webrtc(klb_webrtc_peer_t* p_peer, const uint8_t* p_pay
         uint8_t* p_new = KLB_MALLOC(uint8_t, plen, 0);
         if (NULL == p_new)
         {
-            return KLB_NETCODE_NOMEM;
+            return KLB_NETCODE_ENOMEM;
         }
 
         KLB_FREE(p_peer->p_stap);
@@ -2196,7 +2196,7 @@ klb_webrtc_peer_t* klb_webrtc_peer_create(klb_netmulti_t* p_netmulti, int role, 
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -2210,7 +2210,7 @@ klb_webrtc_peer_t* klb_webrtc_peer_create(klb_netmulti_t* p_netmulti, int role, 
     {
         if (NULL != p_code)
         {
-            *p_code = (0 != code) ? code : KLB_NETCODE_ERR;
+            *p_code = (0 != code) ? code : KLB_NETCODE_EPERM;
         }
 
         return NULL;
@@ -2223,7 +2223,7 @@ klb_webrtc_peer_t* klb_webrtc_peer_create(klb_netmulti_t* p_netmulti, int role, 
 
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOMEM;
+            *p_code = KLB_NETCODE_ENOMEM;
         }
 
         return NULL;
@@ -2251,7 +2251,7 @@ int klb_webrtc_peer_set_dtls_cert(klb_webrtc_peer_t* p_peer, const char* p_cert_
 {
     if ((NULL == p_peer) || (NULL == p_cert_pem) || (NULL == p_key_pem) || (NULL != p_peer->p_dtls))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     char* p_cert = dup_text_klb_webrtc(p_cert_pem);
@@ -2263,7 +2263,7 @@ int klb_webrtc_peer_set_dtls_cert(klb_webrtc_peer_t* p_peer, const char* p_cert_
         KLB_FREE(p_key);
         KLB_FREE(p_ca);
 
-        return KLB_NETCODE_NOMEM;
+        return KLB_NETCODE_ENOMEM;
     }
 
     KLB_FREE(p_peer->p_cert_pem);
@@ -2329,7 +2329,7 @@ int klb_webrtc_peer_create_offer(klb_webrtc_peer_t* p_peer, char* p_sdp, int cap
 {
     if ((NULL == p_peer) || (NULL == p_sdp) || (0 >= cap))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = prepare_klb_webrtc(p_peer);
@@ -2347,7 +2347,7 @@ int klb_webrtc_peer_create_answer(klb_webrtc_peer_t* p_peer, const char* p_remot
 {
     if ((NULL == p_peer) || (NULL == p_remote_sdp) || (NULL == p_sdp) || (0 >= cap))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = klb_webrtc_peer_set_remote_sdp(p_peer, p_remote_sdp);
@@ -2364,7 +2364,7 @@ int klb_webrtc_peer_set_remote_sdp(klb_webrtc_peer_t* p_peer, const char* p_sdp)
 {
     if ((NULL == p_peer) || (NULL == p_sdp))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_webrtc_sdp_t info;
@@ -2429,7 +2429,7 @@ int klb_webrtc_peer_add_ice_candidate(klb_webrtc_peer_t* p_peer, const char* p_c
 {
     if ((NULL == p_peer) || (NULL == p_candidate))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = klb_ice_agent_add_remote_candidate(p_peer->p_ice, p_candidate);
@@ -2455,7 +2455,7 @@ int klb_webrtc_peer_state(klb_webrtc_peer_t* p_peer)
 {
     if (NULL == p_peer)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     return klb_ice_agent_get_state(p_peer->p_ice);
@@ -2490,7 +2490,7 @@ int klb_webrtc_peer_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_data, int l
 {
     if ((NULL == p_peer) || (NULL == p_data) || (0 >= len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL == p_peer->p_cert_pem)
@@ -2538,10 +2538,10 @@ int klb_webrtc_peer_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap, int
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_code)
@@ -2573,7 +2573,7 @@ int klb_webrtc_peer_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap, int
             {
                 if (NULL != p_code)
                 {
-                    *p_code = KLB_NETCODE_IO;
+                    *p_code = KLB_NETCODE_EIO;
                 }
 
                 return dn;
@@ -2619,12 +2619,12 @@ int klb_webrtc_peer_rtp_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_data, i
 {
     if ((NULL == p_peer) || (NULL == p_data) || (0 >= len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_WEBRTC_PKT_MAX < len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     klb_rtp_head_t head;
@@ -2658,12 +2658,12 @@ int klb_webrtc_peer_h264_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_nalu,
 {
     if ((NULL == p_peer) || (NULL == p_nalu) || (0 >= len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_WEBRTC_NALU_MAX < len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     int ret = ensure_media_klb_webrtc(p_peer);
@@ -2680,7 +2680,7 @@ int klb_webrtc_peer_h264_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_nalu,
     uint8_t* p_out = KLB_MALLOC(uint8_t, cap, 0);
     if (NULL == p_out)
     {
-        return KLB_NETCODE_NOMEM;
+        return KLB_NETCODE_ENOMEM;
     }
 
     int total = 0;
@@ -2691,7 +2691,7 @@ int klb_webrtc_peer_h264_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_nalu,
     {
         KLB_FREE(p_out);
 
-        return (0 > count) ? count : KLB_NETCODE_ERR;
+        return (0 > count) ? count : KLB_NETCODE_EPERM;
     }
 
     int pos = 0;
@@ -2737,10 +2737,10 @@ int klb_webrtc_peer_rtp_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap,
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_code)
@@ -2752,10 +2752,10 @@ int klb_webrtc_peer_rtp_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap,
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOTCONN;
+            *p_code = KLB_NETCODE_ENOTCONN;
         }
 
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     int ret = pump_dtls_klb_webrtc(p_peer);
@@ -2779,10 +2779,10 @@ int klb_webrtc_peer_h264_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_code)
@@ -2843,10 +2843,10 @@ int klb_webrtc_peer_h264_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap
             {
                 if (NULL != p_code)
                 {
-                    *p_code = KLB_NETCODE_MSGSIZE;
+                    *p_code = KLB_NETCODE_EMSGSIZE;
                 }
 
-                return KLB_NETCODE_MSGSIZE;
+                return KLB_NETCODE_EMSGSIZE;
             }
 
             memcpy(p_buf, p_payload, (size_t)plen);
@@ -2903,10 +2903,10 @@ int klb_webrtc_peer_h264_recv(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap
 
                 if (NULL != p_code)
                 {
-                    *p_code = KLB_NETCODE_MSGSIZE;
+                    *p_code = KLB_NETCODE_EMSGSIZE;
                 }
 
-                return KLB_NETCODE_MSGSIZE;
+                return KLB_NETCODE_EMSGSIZE;
             }
 
             memcpy(p_buf, p_peer->p_nalu, (size_t)nalu_len);
@@ -2949,7 +2949,7 @@ int klb_webrtc_peer_rtcp_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_data, 
 {
     if ((NULL == p_peer) || (NULL == p_data) || (0 >= len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = ensure_media_klb_webrtc(p_peer);
@@ -2966,7 +2966,7 @@ int klb_webrtc_peer_nack_send(klb_webrtc_peer_t* p_peer, const uint16_t* p_seqs,
 {
     if ((NULL == p_peer) || (NULL == p_seqs) || (0 >= num) || (KLB_WEBRTC_NACK_MAX < num))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = ensure_media_klb_webrtc(p_peer);
@@ -2981,7 +2981,7 @@ int klb_webrtc_peer_nack_send(klb_webrtc_peer_t* p_peer, const uint16_t* p_seqs,
         p_seqs, num, pkt, (int)sizeof(pkt));
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_ERR;
+        return (0 > ret) ? ret : KLB_NETCODE_EPERM;
     }
 
     int pkt_len = ret;
@@ -3004,19 +3004,19 @@ int klb_webrtc_peer_add_media(klb_webrtc_peer_t* p_peer, int kind,
     if ((NULL == p_peer) || (NULL == p_codecs) || (0 >= num)
         || (KLB_WEBRTC_CODEC_MAX < num) || (KLB_WEBRTC_MLINE_MAX <= p_peer->media_num))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((KLB_WEBRTC_KIND_VIDEO != kind) && (KLB_WEBRTC_KIND_AUDIO != kind))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     for (int i = 0; i < num; i++)
     {
         if (('\0' == p_codecs[i].name[0]) || (0 > p_codecs[i].pt))
         {
-            return KLB_NETCODE_INVAL;
+            return KLB_NETCODE_EINVAL;
         }
     }
 
@@ -3047,7 +3047,7 @@ uint32_t klb_webrtc_rtcp_sr_send(klb_webrtc_peer_t* p_peer, int* p_code)
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return 0;
@@ -3080,7 +3080,7 @@ uint32_t klb_webrtc_rtcp_sr_send(klb_webrtc_peer_t* p_peer, int* p_code)
     {
         if (NULL != p_code)
         {
-            *p_code = (0 > n) ? n : KLB_NETCODE_ERR;
+            *p_code = (0 > n) ? n : KLB_NETCODE_EPERM;
         }
 
         return 0;
@@ -3107,7 +3107,7 @@ int klb_webrtc_rtcp_rr_send(klb_webrtc_peer_t* p_peer)
 {
     if (NULL == p_peer)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = ensure_media_klb_webrtc(p_peer);
@@ -3125,7 +3125,7 @@ int klb_webrtc_rtcp_rr_send(klb_webrtc_peer_t* p_peer)
         block_num, pkt, (int)sizeof(pkt));
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_ERR;
+        return (0 > ret) ? ret : KLB_NETCODE_EPERM;
     }
 
     int pkt_len = ret;
@@ -3148,7 +3148,7 @@ int klb_webrtc_rtcp_twcc_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_status
     if ((NULL == p_peer) || (NULL == p_status) || (0 >= count)
         || (KLB_WEBRTC_TWCC_MAX < count))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = ensure_media_klb_webrtc(p_peer);
@@ -3163,7 +3163,7 @@ int klb_webrtc_rtcp_twcc_send(klb_webrtc_peer_t* p_peer, const uint8_t* p_status
         p_status, NULL, count, ref_time, p_peer->twcc_fb_count, pkt, (int)sizeof(pkt));
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_ERR;
+        return (0 > ret) ? ret : KLB_NETCODE_EPERM;
     }
 
     int pkt_len = ret;
@@ -3185,7 +3185,7 @@ int klb_webrtc_rtcp_twcc_flush(klb_webrtc_peer_t* p_peer)
 {
     if (NULL == p_peer)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (0 >= p_peer->twcc_count)
@@ -3235,7 +3235,7 @@ int klb_webrtc_rtcp_twcc_flush(klb_webrtc_peer_t* p_peer)
         p_peer->twcc_status, delta, count, ref_time, p_peer->twcc_fb_count, pkt, (int)sizeof(pkt));
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_ERR;
+        return (0 > ret) ? ret : KLB_NETCODE_EPERM;
     }
 
     int pkt_len = ret;
@@ -3298,7 +3298,7 @@ int klb_webrtc_peer_event_poll(klb_webrtc_peer_t* p_peer, klb_webrtc_event_t* p_
 {
     if ((NULL == p_peer) || (NULL == p_event))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     collect_events_klb_webrtc(p_peer);
@@ -3320,7 +3320,7 @@ int klb_webrtc_peer_stats(klb_webrtc_peer_t* p_peer, klb_webrtc_stats_t* p_stats
 {
     if ((NULL == p_peer) || (NULL == p_stats))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     KLB_MEMSET(p_stats, 0, sizeof(*p_stats));
@@ -3406,7 +3406,7 @@ int klb_webrtc_peer_dc_open(klb_webrtc_peer_t* p_peer)
 {
     if (NULL == p_peer)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = pump_dtls_klb_webrtc(p_peer);
@@ -3417,7 +3417,7 @@ int klb_webrtc_peer_dc_open(klb_webrtc_peer_t* p_peer)
 
     if (1 == ret)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     if (NULL == p_peer->p_dc)
@@ -3429,7 +3429,7 @@ int klb_webrtc_peer_dc_open(klb_webrtc_peer_t* p_peer)
         p_peer->p_dc = klb_webrtc_dc_create(is_client, &code);
         if (NULL == p_peer->p_dc)
         {
-            return (0 != code) ? code : KLB_NETCODE_ERR;
+            return (0 != code) ? code : KLB_NETCODE_EPERM;
         }
 
         ret = klb_webrtc_dc_open(p_peer->p_dc);
@@ -3469,7 +3469,7 @@ int klb_webrtc_peer_dc_open_stream(klb_webrtc_peer_t* p_peer, int stream_id)
 {
     if ((NULL == p_peer) || (0 > stream_id))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int ret = klb_webrtc_peer_dc_open(p_peer);
@@ -3480,7 +3480,7 @@ int klb_webrtc_peer_dc_open_stream(klb_webrtc_peer_t* p_peer, int stream_id)
 
     if (NULL == p_peer->p_dc)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     ret = klb_webrtc_dc_open_stream(p_peer->p_dc, stream_id);
@@ -3504,12 +3504,12 @@ int klb_webrtc_peer_dc_send_stream(klb_webrtc_peer_t* p_peer, int stream_id,
 {
     if ((NULL == p_peer) || (NULL == p_data) || (0 >= len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((NULL == p_peer->p_dc) || (NULL == p_peer->p_dtls))
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     int ppid = (0 != is_binary) ? KLB_WEBRTC_DC_PPID_BINARY : KLB_WEBRTC_DC_PPID_STRING;
@@ -3526,7 +3526,7 @@ int klb_webrtc_peer_dc_send_stream(klb_webrtc_peer_t* p_peer, int stream_id,
     ret = klb_socket_send(p_peer->p_dtls, pkt, out_len);
     if (0 >= ret)
     {
-        return (0 > ret) ? ret : KLB_NETCODE_AGAIN;
+        return (0 > ret) ? ret : KLB_NETCODE_EAGAIN;
     }
 
     p_peer->dtls_tx_pkts++;
@@ -3550,10 +3550,10 @@ static int recv_dc_klb_webrtc(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_code)
@@ -3565,10 +3565,10 @@ static int recv_dc_klb_webrtc(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOTCONN;
+            *p_code = KLB_NETCODE_ENOTCONN;
         }
 
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     for (int guard = 0; guard < 32; guard++)
@@ -3618,7 +3618,7 @@ static int recv_dc_klb_webrtc(klb_webrtc_peer_t* p_peer, uint8_t* p_buf, int cap
             {
                 if (NULL != p_code)
                 {
-                    *p_code = KLB_NETCODE_IO;
+                    *p_code = KLB_NETCODE_EIO;
                 }
 
                 return dn;

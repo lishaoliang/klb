@@ -108,7 +108,7 @@ static int klua_ksrtp_create(lua_State* L)
     klb_srtp_ctx_t* p_ctx = klb_srtp_create(profile, &code);
     if (NULL == p_ctx)
     {
-        return push_err_klua_ksrtp(L, (0 != code) ? code : KLB_NETCODE_ERR);
+        return push_err_klua_ksrtp(L, (0 != code) ? code : KLB_NETCODE_EPERM);
     }
 
     klua_ksrtp_t* p_srtp = new_klua_ksrtp(L);
@@ -161,7 +161,7 @@ static int klua_ksrtp_protect(lua_State* L)
     uint8_t* p_buf = KLB_MALLOC(uint8_t, cap, 0);
     if (NULL == p_buf)
     {
-        return push_err_klua_ksrtp(L, KLB_NETCODE_NOMEM);
+        return push_err_klua_ksrtp(L, KLB_NETCODE_ENOMEM);
     }
 
     memcpy(p_buf, p_pkt, len);
@@ -190,7 +190,7 @@ static int klua_ksrtp_unprotect(lua_State* L)
     uint8_t* p_buf = KLB_MALLOC(uint8_t, (int)len + 1, 0);
     if (NULL == p_buf)
     {
-        return push_err_klua_ksrtp(L, KLB_NETCODE_NOMEM);
+        return push_err_klua_ksrtp(L, KLB_NETCODE_ENOMEM);
     }
 
     memcpy(p_buf, p_pkt, len);

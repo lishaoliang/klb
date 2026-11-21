@@ -530,7 +530,7 @@ static int klua_krtspclient_connect(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_krtsp(L, KLB_NETCODE_INVAL);
+        return push_err_klua_krtsp(L, KLB_NETCODE_EINVAL);
     }
 
     p_rtsp_conn = klb_rtspclient_connect(p_netmulti, p_host, port, &code);

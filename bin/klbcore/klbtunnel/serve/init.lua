@@ -7,13 +7,14 @@
 -- @history 修改历史
 --  \n [2026-10] 创建文件 (桩); 明文帧握手 + CONNECT; N3-2 PSK 会话密钥; N3-3 is_magic / listen / start(tunnel-only); serve_conn_packet (mnps 整包 HELLO/CONNECT)
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 
 
 local kproxy_io = require("klbcore.klbproxy.io")
 
 local frame = require("klbcore.klbtunnel.frame")
 local crypto = require("klbcore.klbtunnel.crypto")
-local errcode = require("klbcore.klbtunnel.errcode")
 
 
 local M = {}
@@ -383,7 +384,7 @@ M.listen = function (host, port, backlog)
 		return listener
 	end
 
-	return nil, errcode.of(err), tostring(err or "")
+	return nil, ((("number" == type(err)) and err) or base.IO), tostring(err or "")
 end
 
 
@@ -394,7 +395,7 @@ M.start = function (cfg, opts)
 		return true, err
 	end
 
-	return false, errcode.of(err), tostring(err or "")
+	return false, ((("number" == type(err)) and err) or base.IO), tostring(err or "")
 end
 
 
@@ -405,7 +406,7 @@ M.serve_conn = function (sock, opts)
 		return true, req
 	end
 
-	return false, errcode.of(req), tostring(req)
+	return false, ((("number" == type(req)) and req) or base.IO), tostring(req)
 end
 
 
@@ -416,7 +417,7 @@ M.serve_conn_packet = function (stream, opts)
 		return true, req
 	end
 
-	return false, errcode.of(req), tostring(req)
+	return false, ((("number" == type(req)) and req) or base.IO), tostring(req)
 end
 
 
@@ -427,7 +428,7 @@ M.reply = function (sock, ok, err)
 		return true
 	end
 
-	return false, errcode.of(err_r), tostring(err_r)
+	return false, ((("number" == type(err_r)) and err_r) or base.IO), tostring(err_r)
 end
 
 

@@ -777,14 +777,14 @@ int klua_khttp_connect_rpc(lua_State* L)
     host_len = strlen(p_host);
     if (0 == host_len || host_len >= 128)
     {
-        return push_err_klua_khttprpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttprpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_env = klua_env_get_by_L(L);
     p_netmulti = klua_netmulti_get(p_env);
     if (NULL == p_netmulti)
     {
-        return push_err_klua_khttprpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttprpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_conn = klb_httpclient_connect(p_netmulti, p_host, port, tls, &code);
@@ -1548,7 +1548,7 @@ int klua_khttp_listen_rpc(lua_State* L)
     if (NULL == p_netmulti)
     {
         KLB_FREE_BY(p_tls_ctx, klb_socket_tls_server_ctx_destroy);
-        return push_err_klua_khttprpc(L, KLB_NETCODE_INVAL);
+        return push_err_klua_khttprpc(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);

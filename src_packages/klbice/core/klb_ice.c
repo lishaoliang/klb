@@ -470,7 +470,7 @@ static int copy_token_klb_ice(char* p_dest, int cap, const char* p_src)
     {
         if ((len + 1) >= cap)
         {
-            return KLB_NETCODE_MSGSIZE;
+            return KLB_NETCODE_EMSGSIZE;
         }
 
         p_dest[len] = *p_src;
@@ -550,7 +550,7 @@ static int hmac_sha1_klb_ice(const char* p_key, const uint8_t* p_data, int len, 
     const mbedtls_md_info_t* p_md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
     if (NULL == p_md)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     static const uint8_t s_empty = 0;
@@ -569,7 +569,7 @@ static int hmac_sha1_klb_ice(const char* p_key, const uint8_t* p_data, int len, 
     int ret = mbedtls_md_hmac(p_md, p_key_data, key_len, p_data, (size_t)len, p_out);
     if (0 != ret)
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     return 0;
@@ -605,7 +605,7 @@ static int stun_put_attr_klb_ice(uint8_t* p_buf, int cap, int* p_pos,
 
     if ((*p_pos + total) > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_u16_klb_ice(p_buf + *p_pos, type);
@@ -639,7 +639,7 @@ static int stun_add_mi_klb_ice(uint8_t* p_buf, int cap, int* p_pos, const char* 
 {
     if ((*p_pos + 24) > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_u16_klb_ice(p_buf + 2, (uint16_t)((*p_pos - KLB_ICE_STUN_HEADER_LEN) + 24));
@@ -670,7 +670,7 @@ static int stun_add_fingerprint_klb_ice(uint8_t* p_buf, int cap, int* p_pos)
 {
     if ((*p_pos + 8) > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_u16_klb_ice(p_buf + 2, (uint16_t)((*p_pos - KLB_ICE_STUN_HEADER_LEN) + 8));
@@ -729,7 +729,7 @@ static int stun_put_xor_mapped_klb_ice(uint8_t* p_val, const struct sockaddr* p_
         return 20;
     }
 
-    return KLB_NETCODE_AFNOSUPPORT;
+    return KLB_NETCODE_EAFNOSUPPORT;
 }
 
 
@@ -801,7 +801,7 @@ static int stun_find_attr_klb_ice(const uint8_t* p_buf, int len, uint16_t type,
         off = next;
     }
 
-    return KLB_NETCODE_NOENT;
+    return KLB_NETCODE_ENOENT;
 }
 
 
@@ -895,7 +895,7 @@ static int stun_parse_xor_mapped_klb_ice(const uint8_t* p_val, int len,
 
         if (NULL == inet_ntop(AF_INET, &addr, p_ip, (socklen_t)ip_cap))
         {
-            return KLB_NETCODE_ERR;
+            return KLB_NETCODE_EPERM;
         }
 
         if (NULL != p_port)
@@ -928,7 +928,7 @@ static int stun_parse_xor_mapped_klb_ice(const uint8_t* p_val, int len,
 
         if (NULL == inet_ntop(AF_INET6, &addr6, p_ip, (socklen_t)ip_cap))
         {
-            return KLB_NETCODE_ERR;
+            return KLB_NETCODE_EPERM;
         }
 
         if (NULL != p_port)
@@ -939,7 +939,7 @@ static int stun_parse_xor_mapped_klb_ice(const uint8_t* p_val, int len,
         return 0;
     }
 
-    return KLB_NETCODE_AFNOSUPPORT;
+    return KLB_NETCODE_EAFNOSUPPORT;
 }
 
 
@@ -999,13 +999,13 @@ static int hmac_sha1_raw_klb_ice(const uint8_t* p_key, int key_len,
     const mbedtls_md_info_t* p_md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA1);
     if (NULL == p_md)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     int ret = mbedtls_md_hmac(p_md, p_key, (size_t)key_len, p_data, (size_t)len, p_out);
     if (0 != ret)
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     return 0;
@@ -1024,7 +1024,7 @@ static int stun_add_mi_raw_klb_ice(uint8_t* p_buf, int cap, int* p_pos,
 {
     if ((*p_pos + 24) > cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     put_u16_klb_ice(p_buf + 2, (uint16_t)((*p_pos - KLB_ICE_STUN_HEADER_LEN) + 24));
@@ -1060,12 +1060,12 @@ static int stun_get_text_klb_ice(const uint8_t* p_buf, int len, uint16_t type,
 
     if (0 != stun_find_attr_klb_ice(p_buf, len, type, &p_val, &vlen))
     {
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
 
     if (0 >= cap)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     if ((cap - 1) < vlen)
@@ -1146,13 +1146,13 @@ static int turn_make_key_klb_ice(klb_ice_turn_t* p_turn)
         p_turn->username, p_turn->realm, p_turn->password);
     if ((0 > len) || ((int)sizeof(text) <= len))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     int ret = mbedtls_md5((const unsigned char*)text, (size_t)len, p_turn->key);
     if (0 != ret)
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     p_turn->key_valid = true;
@@ -1171,7 +1171,7 @@ static int turn_add_auth_klb_ice(klb_ice_turn_t* p_turn, uint8_t* p_buf, int cap
 {
     if (!p_turn->key_valid)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
 
     int ret = stun_put_attr_klb_ice(p_buf, cap, p_pos, KLB_ICE_ATTR_USERNAME,
@@ -1279,7 +1279,7 @@ static int turn_transact_klb_ice(klb_ice_turn_t* p_turn, const uint8_t* p_req, i
         }
     }
 
-    return KLB_NETCODE_TIMEDOUT;
+    return KLB_NETCODE_ETIMEDOUT;
 }
 
 
@@ -1373,7 +1373,7 @@ static bool remote_match_klb_ice(const klb_ice_remote_t* p_remote, const struct 
 
 
 /// @brief 按事务 ID 查找候选对
-/// @return int 大于等于 0.下标; 小于 0.KLB_NETCODE_NOENT
+/// @return int 大于等于 0.下标; 小于 0.KLB_NETCODE_ENOENT
 static int find_pair_by_txid_klb_ice(const klb_ice_agent_t* p_agent, const uint8_t* p_txid)
 {
     for (int i = 0; i < p_agent->pair_count; i++)
@@ -1384,12 +1384,12 @@ static int find_pair_by_txid_klb_ice(const klb_ice_agent_t* p_agent, const uint8
         }
     }
 
-    return KLB_NETCODE_NOENT;
+    return KLB_NETCODE_ENOENT;
 }
 
 
 /// @brief 按本地 socket 下标 + 来源地址查找候选对
-/// @return int 大于等于 0.下标; 小于 0.KLB_NETCODE_NOENT
+/// @return int 大于等于 0.下标; 小于 0.KLB_NETCODE_ENOENT
 static int find_pair_by_source_klb_ice(const klb_ice_agent_t* p_agent, int local_idx,
     const struct sockaddr* p_from)
 {
@@ -1408,7 +1408,7 @@ static int find_pair_by_source_klb_ice(const klb_ice_agent_t* p_agent, int local
         }
     }
 
-    return KLB_NETCODE_NOENT;
+    return KLB_NETCODE_ENOENT;
 }
 
 
@@ -1685,7 +1685,7 @@ static int handle_stun_klb_ice(klb_ice_agent_t* p_agent, int local_idx, uint8_t*
         int idx = find_pair_by_txid_klb_ice(p_agent, p_buf + 8);
         if (0 > idx)
         {
-            return KLB_NETCODE_NOENT;
+            return KLB_NETCODE_ENOENT;
         }
 
         const uint8_t* p_val = NULL;
@@ -1820,7 +1820,7 @@ static int add_local_ex_klb_ice(klb_ice_agent_t* p_agent, int type, const char* 
 
         if (0 == strcmp(p_old->ip, p_ip))
         {
-            return KLB_NETCODE_EXIST;
+            return KLB_NETCODE_EEXIST;
         }
     }
 
@@ -1854,7 +1854,7 @@ static int add_local_klb_ice(klb_ice_agent_t* p_agent, const char* p_ip)
         if ((KLB_ICE_CAND_HOST == p_agent->locals[i].type)
             && (0 == strcmp(p_agent->locals[i].ip, p_ip)))
         {
-            return KLB_NETCODE_EXIST;
+            return KLB_NETCODE_EEXIST;
         }
     }
 
@@ -1885,7 +1885,7 @@ static int gather_local_klb_ice(klb_ice_agent_t* p_agent)
     char host[256] = { 0 };
     if (0 != gethostname(host, (int)sizeof(host)))
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     struct addrinfo hints;
@@ -1930,7 +1930,7 @@ static int gather_local_klb_ice(klb_ice_agent_t* p_agent)
     struct ifaddrs* p_list = NULL;
     if (0 != getifaddrs(&p_list))
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     for (struct ifaddrs* p_ifa = p_list; NULL != p_ifa; p_ifa = p_ifa->ifa_next)
@@ -1994,7 +1994,7 @@ static int send_to_local_klb_ice(klb_ice_local_t* p_local, const uint8_t* p_data
 
         if (NULL == inet_ntop(AF_INET, &p_to->sin_addr, ip, (socklen_t)sizeof(ip)))
         {
-            return KLB_NETCODE_ERR;
+            return KLB_NETCODE_EPERM;
         }
 
         return klb_ice_turn_send(p_local->p_turn, ip, (int)ntohs(p_to->sin_port), p_data, len);
@@ -2002,7 +2002,7 @@ static int send_to_local_klb_ice(klb_ice_local_t* p_local, const uint8_t* p_data
 
     if (NULL == p_local->p_socket)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     return klb_socket_udp_sendto(p_local->p_socket, p_data, len,
@@ -2092,7 +2092,7 @@ static int stun_query_mapped_klb_ice(klb_socket_t* p_socket, const struct sockad
         }
     }
 
-    return KLB_NETCODE_TIMEDOUT;
+    return KLB_NETCODE_ETIMEDOUT;
 }
 
 
@@ -2164,7 +2164,7 @@ static int gather_relay_klb_ice(klb_ice_agent_t* p_agent)
     klb_ice_turn_t* p_turn = klb_ice_turn_create(&cfg, &code);
     if (NULL == p_turn)
     {
-        return (0 != code) ? code : KLB_NETCODE_ERR;
+        return (0 != code) ? code : KLB_NETCODE_EPERM;
     }
 
     int ret = klb_ice_turn_allocate(p_turn);
@@ -2207,7 +2207,7 @@ klb_ice_agent_t* klb_ice_agent_create(klb_netmulti_t* p_netmulti, int role, int*
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -2270,13 +2270,13 @@ int klb_ice_agent_local_ufrag(klb_ice_agent_t* p_agent, char* p_buf, int cap)
 {
     if ((NULL == p_agent) || (NULL == p_buf))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int len = (int)strlen(p_agent->local_ufrag);
     if (cap <= len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     memcpy(p_buf, p_agent->local_ufrag, (size_t)len);
@@ -2290,7 +2290,7 @@ int klb_ice_agent_add_remote_candidate(klb_ice_agent_t* p_agent, const char* p_c
 {
     if ((NULL == p_agent) || (NULL == p_candidate))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     const char* p_line = p_candidate;
@@ -2308,17 +2308,17 @@ int klb_ice_agent_add_remote_candidate(klb_ice_agent_t* p_agent, const char* p_c
     if (0 == strncmp(p_line, "ice-ufrag:", 10))
     {
         return (0 <= copy_token_klb_ice(p_agent->remote_ufrag,
-            (int)sizeof(p_agent->remote_ufrag), p_line + 10)) ? 0 : KLB_NETCODE_MSGSIZE;
+            (int)sizeof(p_agent->remote_ufrag), p_line + 10)) ? 0 : KLB_NETCODE_EMSGSIZE;
     }
     else if (0 == strncmp(p_line, "ice-pwd:", 8))
     {
         return (0 <= copy_token_klb_ice(p_agent->remote_pwd,
-            (int)sizeof(p_agent->remote_pwd), p_line + 8)) ? 0 : KLB_NETCODE_MSGSIZE;
+            (int)sizeof(p_agent->remote_pwd), p_line + 8)) ? 0 : KLB_NETCODE_EMSGSIZE;
     }
 
     if (0 != strncmp(p_line, "candidate:", 10))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     char foundation[32] = { 0 };
@@ -2333,17 +2333,17 @@ int klb_ice_agent_add_remote_candidate(klb_ice_agent_t* p_agent, const char* p_c
         foundation, &component, transport, &priority, ip, &port, ctype);
     if (7 != n)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!str_ieq_klb_ice(transport, "UDP"))
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     if ((0 >= port) || (65535 < port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (KLB_ICE_MAX_REMOTE <= p_agent->remote_count)
@@ -2391,7 +2391,7 @@ int klb_ice_agent_gather(klb_ice_agent_t* p_agent)
 {
     if (NULL == p_agent)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (0 < p_agent->local_count)
@@ -2411,7 +2411,7 @@ int klb_ice_agent_gather(klb_ice_agent_t* p_agent)
     if (0 == ret)
     {
         p_agent->state = KLB_ICE_STATE_FAILED;
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
 
     // srflx / relay 收集失败不致命, 保留已收集的 host 候选
@@ -2426,7 +2426,7 @@ int klb_ice_agent_restart(klb_ice_agent_t* p_agent)
 {
     if (NULL == p_agent)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_rand_string(p_agent->local_ufrag, KLB_ICE_UFRAG_LEN, true);
@@ -2449,12 +2449,12 @@ int klb_ice_agent_set_stun_server(klb_ice_agent_t* p_agent, const char* p_host, 
 {
     if ((NULL == p_agent) || (NULL == p_host) || (0 == p_host[0]))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 > port) || (65535 < port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     snprintf(p_agent->stun_host, sizeof(p_agent->stun_host), "%s", p_host);
@@ -2469,12 +2469,12 @@ int klb_ice_agent_set_turn_server(klb_ice_agent_t* p_agent, const char* p_host, 
 {
     if ((NULL == p_agent) || (NULL == p_host) || (0 == p_host[0]))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 > port) || (65535 < port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     snprintf(p_agent->turn_host, sizeof(p_agent->turn_host), "%s", p_host);
@@ -2501,12 +2501,12 @@ int klb_ice_agent_start(klb_ice_agent_t* p_agent)
 {
     if (NULL == p_agent)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 == p_agent->local_count) || (0 == p_agent->remote_count))
     {
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
 
     if ((KLB_ICE_STATE_CHECKING == p_agent->state) || (KLB_ICE_STATE_CONNECTED == p_agent->state))
@@ -2546,7 +2546,7 @@ int klb_ice_agent_start(klb_ice_agent_t* p_agent)
 
     if (0 == p_agent->pair_count)
     {
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
 
     // step2. 进入检查态, 最高优先级对由 controlling 侧提名
@@ -2570,7 +2570,7 @@ int klb_ice_agent_get_state(klb_ice_agent_t* p_agent)
 {
     if (NULL == p_agent)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     return p_agent->state;
@@ -2581,7 +2581,7 @@ int klb_ice_agent_stats(klb_ice_agent_t* p_agent, klb_ice_stats_t* p_stats)
 {
     if ((NULL == p_agent) || (NULL == p_stats))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     memset(p_stats, 0, sizeof(*p_stats));
@@ -2623,12 +2623,12 @@ int klb_ice_agent_send(klb_ice_agent_t* p_agent, const uint8_t* p_data, int len)
 {
     if ((NULL == p_agent) || (NULL == p_data) || (0 > len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 > p_agent->selected) || (KLB_ICE_STATE_CONNECTED != p_agent->state))
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     klb_ice_pair_t* p_pair = &p_agent->pairs[p_agent->selected];
@@ -2652,10 +2652,10 @@ int klb_ice_agent_recv(klb_ice_agent_t* p_agent, uint8_t* p_buf, int cap, int* p
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_code)
@@ -2769,7 +2769,7 @@ int klb_ice_agent_local_count(klb_ice_agent_t* p_agent)
 {
     if (NULL == p_agent)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     return p_agent->local_count;
@@ -2787,7 +2787,7 @@ int klb_ice_agent_local_candidate(klb_ice_agent_t* p_agent, int index,
 {
     if ((NULL == p_agent) || (NULL == p_buf) || (0 > index) || (p_agent->local_count <= index))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_ice_local_t* p_local = &p_agent->locals[index];
@@ -2806,7 +2806,7 @@ int klb_ice_agent_local_candidate(klb_ice_agent_t* p_agent, int index,
         index + 1, (unsigned int)p_local->priority, p_local->ip, p_local->port, p_type);
     if ((0 > len) || (cap <= len))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     return len;
@@ -2823,13 +2823,13 @@ int klb_ice_agent_local_pwd(klb_ice_agent_t* p_agent, char* p_buf, int cap)
 {
     if ((NULL == p_agent) || (NULL == p_buf))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     int len = (int)strlen(p_agent->local_pwd);
     if (cap <= len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     memcpy(p_buf, p_agent->local_pwd, (size_t)len);
@@ -2850,7 +2850,7 @@ int klb_ice_agent_set_remote_credentials(klb_ice_agent_t* p_agent,
 {
     if ((NULL == p_agent) || (NULL == p_ufrag) || (NULL == p_pwd))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 > copy_token_klb_ice(p_agent->remote_ufrag,
@@ -2858,7 +2858,7 @@ int klb_ice_agent_set_remote_credentials(klb_ice_agent_t* p_agent,
         || (0 > copy_token_klb_ice(p_agent->remote_pwd,
             (int)sizeof(p_agent->remote_pwd), p_pwd)))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     return 0;
@@ -2880,7 +2880,7 @@ klb_ice_turn_t* klb_ice_turn_create(const klb_ice_turn_cfg_t* p_cfg, int* p_code
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -2890,7 +2890,7 @@ klb_ice_turn_t* klb_ice_turn_create(const klb_ice_turn_cfg_t* p_cfg, int* p_code
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -2968,7 +2968,7 @@ int klb_ice_turn_allocate(klb_ice_turn_t* p_turn)
 
     if (NULL == p_turn)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     tried_auth = p_turn->key_valid;
@@ -3044,7 +3044,7 @@ int klb_ice_turn_allocate(klb_ice_turn_t* p_turn)
         int err = stun_get_error_code_klb_ice(rsp, rsp_len);
         if ((401 != err) || tried_auth)
         {
-            return (401 == err) ? KLB_NETCODE_ACCES : KLB_NETCODE_PROTO_UNEXPECTED;
+            return (401 == err) ? KLB_NETCODE_EACCES : KLB_NETCODE_PROTO_UNEXPECTED;
         }
 
         if ((0 != stun_get_text_klb_ice(rsp, rsp_len, KLB_ICE_ATTR_REALM,
@@ -3064,7 +3064,7 @@ int klb_ice_turn_allocate(klb_ice_turn_t* p_turn)
         tried_auth = true;
     }
 
-    return KLB_NETCODE_ACCES;
+    return KLB_NETCODE_EACCES;
 }
 
 
@@ -3077,12 +3077,12 @@ int klb_ice_turn_refresh(klb_ice_turn_t* p_turn, int lifetime)
 
     if (NULL == p_turn)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_turn->key_valid)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
 
     if (0 >= lifetime)
@@ -3141,17 +3141,17 @@ int klb_ice_turn_create_permission(klb_ice_turn_t* p_turn, const char* p_peer_ip
 
     if ((NULL == p_turn) || (NULL == p_peer_ip))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 >= peer_port) || (65535 < peer_port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_turn->key_valid)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
 
     stun_new_txid_klb_ice(txid);
@@ -3210,17 +3210,17 @@ int klb_ice_turn_channel_bind(klb_ice_turn_t* p_turn, const char* p_peer_ip, int
 
     if ((NULL == p_turn) || (NULL == p_peer_ip))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 >= peer_port) || (65535 < peer_port))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_turn->key_valid)
     {
-        return KLB_NETCODE_ACCES;
+        return KLB_NETCODE_EACCES;
     }
 
     if (0 >= chan)
@@ -3234,7 +3234,7 @@ int klb_ice_turn_channel_bind(klb_ice_turn_t* p_turn, const char* p_peer_ip, int
     }
     else if ((KLB_ICE_TURN_CHANNEL_MIN > chan) || (KLB_ICE_TURN_CHANNEL_MAX < chan))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     stun_new_txid_klb_ice(txid);
@@ -3304,18 +3304,18 @@ int klb_ice_turn_relayed_address(klb_ice_turn_t* p_turn, char* p_ip, int ip_cap,
 {
     if ((NULL == p_turn) || (NULL == p_ip) || (0 >= ip_cap))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (0 == p_turn->relay_ip[0])
     {
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
 
     int len = (int)strlen(p_turn->relay_ip);
     if (ip_cap <= len)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     memcpy(p_ip, p_turn->relay_ip, (size_t)len + 1);
@@ -3334,12 +3334,12 @@ int klb_ice_turn_send(klb_ice_turn_t* p_turn, const char* p_peer_ip, int peer_po
 {
     if ((NULL == p_turn) || (NULL == p_peer_ip) || (NULL == p_data) || (0 > len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if ((0 == len) || (KLB_ICE_TURN_MSG_MAX < len))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     klb_ice_turn_peer_t* p_peer = turn_find_peer_klb_ice(p_turn, p_peer_ip, peer_port);
@@ -3356,7 +3356,7 @@ int klb_ice_turn_send(klb_ice_turn_t* p_turn, const char* p_peer_ip, int peer_po
         p_peer = turn_find_peer_klb_ice(p_turn, p_peer_ip, peer_port);
         if (NULL == p_peer)
         {
-            return KLB_NETCODE_NOENT;
+            return KLB_NETCODE_ENOENT;
         }
     }
 
@@ -3368,7 +3368,7 @@ int klb_ice_turn_send(klb_ice_turn_t* p_turn, const char* p_peer_ip, int peer_po
         // ChannelData: 2 字节通道号 + 2 字节长度 + 载荷
         if ((int)sizeof(buf) < (len + 4))
         {
-            return KLB_NETCODE_MSGSIZE;
+            return KLB_NETCODE_EMSGSIZE;
         }
 
         put_u16_klb_ice(buf, (uint16_t)p_peer->channel);
@@ -3414,10 +3414,10 @@ int klb_ice_turn_recv(klb_ice_turn_t* p_turn, uint8_t* p_buf, int cap,
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_code)
@@ -3552,7 +3552,7 @@ klb_ice_agent_t* klb_ice_agent_create(klb_netmulti_t* p_netmulti, int role, int*
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
     return NULL;
@@ -3571,7 +3571,7 @@ int klb_ice_agent_local_ufrag(klb_ice_agent_t* p_agent, char* p_buf, int cap)
     (void)p_buf;
     (void)cap;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3579,7 +3579,7 @@ int klb_ice_agent_local_count(klb_ice_agent_t* p_agent)
 {
     (void)p_agent;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3590,7 +3590,7 @@ int klb_ice_agent_local_candidate(klb_ice_agent_t* p_agent, int index, char* p_b
     (void)p_buf;
     (void)cap;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3600,7 +3600,7 @@ int klb_ice_agent_local_pwd(klb_ice_agent_t* p_agent, char* p_buf, int cap)
     (void)p_buf;
     (void)cap;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3611,7 +3611,7 @@ int klb_ice_agent_set_remote_credentials(klb_ice_agent_t* p_agent,
     (void)p_ufrag;
     (void)p_pwd;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3620,7 +3620,7 @@ int klb_ice_agent_add_remote_candidate(klb_ice_agent_t* p_agent, const char* p_c
     (void)p_agent;
     (void)p_candidate;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3630,7 +3630,7 @@ int klb_ice_agent_set_stun_server(klb_ice_agent_t* p_agent, const char* p_host, 
     (void)p_host;
     (void)port;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3643,7 +3643,7 @@ int klb_ice_agent_set_turn_server(klb_ice_agent_t* p_agent, const char* p_host, 
     (void)p_username;
     (void)p_password;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3651,7 +3651,7 @@ int klb_ice_agent_gather(klb_ice_agent_t* p_agent)
 {
     (void)p_agent;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3659,7 +3659,7 @@ int klb_ice_agent_restart(klb_ice_agent_t* p_agent)
 {
     (void)p_agent;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3667,7 +3667,7 @@ int klb_ice_agent_start(klb_ice_agent_t* p_agent)
 {
     (void)p_agent;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3675,7 +3675,7 @@ int klb_ice_agent_get_state(klb_ice_agent_t* p_agent)
 {
     (void)p_agent;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3684,7 +3684,7 @@ int klb_ice_agent_stats(klb_ice_agent_t* p_agent, klb_ice_stats_t* p_stats)
     (void)p_agent;
     (void)p_stats;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3694,7 +3694,7 @@ int klb_ice_agent_send(klb_ice_agent_t* p_agent, const uint8_t* p_data, int len)
     (void)p_data;
     (void)len;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3706,10 +3706,10 @@ int klb_ice_agent_recv(klb_ice_agent_t* p_agent, uint8_t* p_buf, int cap, int* p
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3719,7 +3719,7 @@ klb_ice_turn_t* klb_ice_turn_create(const klb_ice_turn_cfg_t* p_cfg, int* p_code
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
     return NULL;
@@ -3736,7 +3736,7 @@ int klb_ice_turn_allocate(klb_ice_turn_t* p_turn)
 {
     (void)p_turn;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3745,7 +3745,7 @@ int klb_ice_turn_refresh(klb_ice_turn_t* p_turn, int lifetime)
     (void)p_turn;
     (void)lifetime;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3755,7 +3755,7 @@ int klb_ice_turn_create_permission(klb_ice_turn_t* p_turn, const char* p_peer_ip
     (void)p_peer_ip;
     (void)peer_port;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3766,7 +3766,7 @@ int klb_ice_turn_channel_bind(klb_ice_turn_t* p_turn, const char* p_peer_ip, int
     (void)peer_port;
     (void)channel;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3777,7 +3777,7 @@ int klb_ice_turn_relayed_address(klb_ice_turn_t* p_turn, char* p_ip, int ip_cap,
     (void)ip_cap;
     (void)p_port;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3790,7 +3790,7 @@ int klb_ice_turn_send(klb_ice_turn_t* p_turn, const char* p_peer_ip, int peer_po
     (void)p_data;
     (void)len;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 
@@ -3806,10 +3806,10 @@ int klb_ice_turn_recv(klb_ice_turn_t* p_turn, uint8_t* p_buf, int cap,
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 #endif

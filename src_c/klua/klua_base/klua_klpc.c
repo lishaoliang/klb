@@ -149,7 +149,7 @@ static int klua_klpc_module_status(lua_State* L)
     klua_klpc_module_t* p_mo = to_klua_klpc_module(L, 1);
 
     lua_pushboolean(L, p_mo->run);
-    lua_pushinteger(L, p_mo->run ? 0 : KLB_NETCODE_NOTCONN);
+    lua_pushinteger(L, p_mo->run ? 0 : KLB_NETCODE_ENOTCONN);
     return 2;
 }
 
@@ -329,7 +329,7 @@ static int lib_klua_klpc_new_module(lua_State* L)
     if (0 == name_len || KLUA_LPC_NAME_LEN < name_len)
     {
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_NETCODE_INVAL);
+        lua_pushinteger(L, KLB_NETCODE_EINVAL);
         return 2;
     }
 
@@ -354,7 +354,7 @@ static int lib_klua_klpc_new_module(lua_State* L)
 
         lua_pop(L, 1);
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_NETCODE_EXIST);
+        lua_pushinteger(L, KLB_NETCODE_EEXIST);
         return 2;
     }
 
@@ -508,7 +508,7 @@ static int klua_klpc_status(lua_State* L)
     bool ok = (NULL != p_klpc->name);
 
     lua_pushboolean(L, ok);
-    lua_pushinteger(L, ok ? 0 : KLB_NETCODE_NOTCONN);
+    lua_pushinteger(L, ok ? 0 : KLB_NETCODE_ENOTCONN);
     return 2;
 }
 
@@ -573,7 +573,7 @@ static int klua_klpc_co_call(lua_State* L)
         // 目标不存在
         klua_msg_free(ptr);
         lua_pushnil(L);
-        lua_pushinteger(L, KLB_NETCODE_NOENT);
+        lua_pushinteger(L, KLB_NETCODE_ENOENT);
         return 2;
     }
 }

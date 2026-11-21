@@ -505,7 +505,7 @@ int klua_krtspserve_new_serve(lua_State* L)
     // close 唤醒 co_accept 时可能传入 NULL lightuserdata
     if (NULL == p_listen_socket)
     {
-        return push_err_klua_krtspserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_krtspserve(L, KLB_NETCODE_EINVAL);
     }
 
     tls = p_listen_socket->tls;
@@ -562,7 +562,7 @@ int klua_krtspserve_new_serve(lua_State* L)
         if (NULL == p_socket)
         {
             KLB_SOCKET_CLOSE(fd);
-            return push_err_klua_krtspserve(L, KLB_NETCODE_NOMEM);
+            return push_err_klua_krtspserve(L, KLB_NETCODE_ENOMEM);
         }
     }
 
@@ -571,7 +571,7 @@ int klua_krtspserve_new_serve(lua_State* L)
     if (NULL == p_netmulti)
     {
         KLB_FREE_BY(p_socket, klb_socket_destroy);
-        return push_err_klua_krtspserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_krtspserve(L, KLB_NETCODE_EINVAL);
     }
 
     p_serve = new_klua_krtspserve(L);
@@ -895,7 +895,7 @@ int klua_krtspserve_listen(lua_State* L)
 
     if (NULL == p_netmulti)
     {
-        return push_err_klua_krtspserve(L, KLB_NETCODE_INVAL);
+        return push_err_klua_krtspserve(L, KLB_NETCODE_EINVAL);
     }
 
     p_listen_conn = klb_netlisten_conn_create(p_netmulti);

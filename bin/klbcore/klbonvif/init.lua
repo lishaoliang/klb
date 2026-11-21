@@ -6,6 +6,7 @@
 -- @note   ONVIF 协议脚本封装; Discovery + 客户端/服务端 Device/Media 主路径
 --   \n C `konvif.connect` / `konvif.listen` 为纯桩 (NOTSUP); 请用本模块 new_client / new_listen
 --   \n 服务端现行不鉴权 (见 soap_serve)
+--   \n 返回码: 直接用 klbcore.klbcode.base / net; 不本地再映射 E_*
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]

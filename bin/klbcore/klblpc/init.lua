@@ -4,6 +4,7 @@
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klblpc init.lua
 -- @note   本进程跨线程 LPC; 服务在 serve/; 客户端在 client/; 底层 klpc; **非** 网络 RPC
+--   \n 返回码: 直接用 klbcore.klbcode.base / net; 不本地再映射 E_*
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]

@@ -83,7 +83,7 @@ klb_webrtc_jb_t* klb_webrtc_jb_create(int slots, int* p_code)
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -94,7 +94,7 @@ klb_webrtc_jb_t* klb_webrtc_jb_create(int slots, int* p_code)
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOMEM;
+            *p_code = KLB_NETCODE_ENOMEM;
         }
 
         return NULL;
@@ -107,7 +107,7 @@ klb_webrtc_jb_t* klb_webrtc_jb_create(int slots, int* p_code)
 
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOMEM;
+            *p_code = KLB_NETCODE_ENOMEM;
         }
 
         return NULL;
@@ -169,7 +169,7 @@ int klb_webrtc_jb_put(klb_webrtc_jb_t* p_jb, uint16_t seq, const uint8_t* p_data
 {
     if ((NULL == p_jb) || (NULL == p_data) || (0 >= len))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (!p_jb->has_base)
@@ -201,7 +201,7 @@ int klb_webrtc_jb_put(klb_webrtc_jb_t* p_jb, uint16_t seq, const uint8_t* p_data
     uint8_t* p_copy = KLB_MALLOC(uint8_t, len, 0);
     if (NULL == p_copy)
     {
-        return KLB_NETCODE_NOMEM;
+        return KLB_NETCODE_ENOMEM;
     }
 
     memcpy(p_copy, p_data, (size_t)len);
@@ -344,7 +344,7 @@ int klb_webrtc_jb_stats(klb_webrtc_jb_t* p_jb, klb_webrtc_jb_stats_t* p_stats)
 {
     if ((NULL == p_jb) || (NULL == p_stats))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     *p_stats = p_jb->stats;

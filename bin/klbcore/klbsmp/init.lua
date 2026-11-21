@@ -6,6 +6,7 @@
 -- @note   SMP协议
 --   \n 服务端心跳默认开 (C/Lua 默认 interval 15s / timeout 30s); `ksmp.new_serve` 可传 ping_interval_ms/ping_timeout_ms (0 关)
 --   \n `klbsmp.listen` 路径 accept 后沿用 C 默认; 客户端无自动心跳
+--   \n 返回码: 直接用 klbcore.klbcode.base / net; 不本地再映射 E_*
 -- @history 修改历史
 --		[2025-10] 添加基础
 --		[2026-10] adopt / MAGIC 魔数分类 (proxy L0-1/2)

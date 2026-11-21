@@ -7,9 +7,12 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
+
 local konvif = require("konvif")
 local kco = require("kco")
-local errcode = require("klbcore.klbonvif.errcode")
 local wsd_soap = require("klbcore.klbonvif.discovery.wsd_soap")
 
 
@@ -49,7 +52,7 @@ function onvifdiscover:open()
 	local disc, err = konvif.discover()
 	if nil == disc then
 		E.last_err = err or "konvif.discover failed"
-		return nil, errcode.of(E.last_err), E.last_err
+		return nil, ((("number" == type(E.last_err)) and E.last_err) or base.IO), E.last_err
 	end
 
 	self._disc = disc
@@ -85,7 +88,7 @@ function onvifdiscover:co_search(opts)
 
 	local rc = self._disc:send(probe)
 	if 0 ~= rc then
-		return nil, errcode.E_IO, "send probe failed"
+		return nil, base.IO, "send probe failed"
 	end
 
 	local results = {}
@@ -112,9 +115,9 @@ function onvifdiscover:co_search(opts)
 				results[#results + 1] = item
 			end
 		elseif "error" == msg then
-			return nil, errcode.E_IO, "recv error"
+			return nil, base.IO, "recv error"
 		elseif "exit" == msg and not stop then
-			return nil, errcode.E_CLOSED, "recv exit"
+			return nil, net.CLOSED, "recv exit"
 		else
 			break
 		end

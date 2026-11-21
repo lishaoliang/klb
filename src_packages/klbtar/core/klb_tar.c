@@ -20,10 +20,10 @@ int klbtar_probe(const char* p_path, int* p_fmt)
 
     if (NULL == p_path || '\0' == p_path[0])
     {
-        return KLBTAR_ERR_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLBTAR_ERR_UNSUP;
+    return KLB_BASECODE_EOPNOTSUPP;
 }
 
 
@@ -37,14 +37,14 @@ klbtar_t* klbtar_open_ex(const char* p_path, int* p_err)
 {
     if (NULL != p_err)
     {
-        *p_err = KLBTAR_ERR_UNSUP;
+        *p_err = KLB_BASECODE_EOPNOTSUPP;
     }
 
     if (NULL == p_path || '\0' == p_path[0])
     {
         if (NULL != p_err)
         {
-            *p_err = KLBTAR_ERR_ARG;
+            *p_err = KLB_BASECODE_EINVAL;
         }
 
         return NULL;
@@ -64,10 +64,10 @@ int klbtar_extract(const char* p_path, const char* p_dest)
 {
     if (NULL == p_path || '\0' == p_path[0] || NULL == p_dest || '\0' == p_dest[0])
     {
-        return KLBTAR_ERR_ARG;
+        return KLB_BASECODE_EINVAL;
     }
 
-    return KLBTAR_ERR_UNSUP;
+    return KLB_BASECODE_EOPNOTSUPP;
 }
 
 

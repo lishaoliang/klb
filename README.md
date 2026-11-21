@@ -34,18 +34,41 @@ Lua API 文档: <https://gitee.com/klua/klua_doc> (`lua/klua/`, `lua/klbcore/`)
    ->klbmem  --------------- C内存
    ->klbnet  --------------- C网络
    ->klbplatform  ---------- C平台相关
-   ->klbthird  ------------- 第三方库
+   ->klbrt  ---------------- runtime支撑
+   ->klbthird  ------------- 第三方单文件 (cJSON/http_parser/klb_getopt)
    ->klbutil  -------------- C基础1
    ->klua  ----------------- lua基础2
    ->compat  --------------- 兼容层
    ->libavutil  ------------ ffmpeg基础代码
-   ->zlib-1.2.11  ---------- zlib
-   ->qrencode-4.1.1  ------- QR码
 
- ->src_packages  ----------- 扩展包
+ ->src_apps  --------------- 可复用C片段 (alua/svn_ra)
+
+ ->src_packages  ----------- 扩展包 (自有可裁剪包)
    ->klbwui  --------------- GUI控件包
+   ->klbpfs  --------------- 可移植文件系统
+   ->klbhttp  -------------- HTTP (clip no-http)
+   ->klbws  ---------------- WebSocket (clip no-ws)
+   ->klbsmp  --------------- SMP (clip no-smp)
+   ->klbrtsp  -------------- RTSP (clip no-rtsp)
+   ->klbmnp  --------------- MNP (clip no-mnp)
+   ->klbmp4  --------------- MP4 (clip no-mp4)
+   ->klbtar  --------------- TAR (clip no-tar)
+   ->klbsocks5  ------------ SOCKS5 (clip no-socks5)
+   ->klbtunnel  ------------ 隧道 (clip no-tunnel)
+   ->klbstore  ------------- 存储 (clip no-store)
+   ->klbonvif  ------------- ONVIF (clip no-onvif)
+   ->klbice  --------------- ICE (clip no-ice)
+   ->klbsrtp  -------------- SRTP (clip no-srtp)
+   ->klbrtp  --------------- RTP (clip no-rtp)
+   ->klbwebrtc  ------------ WebRTC (clip no-webrtc)
 
  ->src_3rdparty  ----------- 第三方开源可裁剪库
+   ->zlib-1.3.2  ----------- zlib (clip no-zlib)
+   ->qrencode-4.1.1  ------- QR码 (clip no-qrencode)
+   ->pcre2  ---------------- PCRE2 10.36 (clip no-pcre2)
+   ->sds  ------------------ SDS 2.0.0
+   ->mbedtls-3.6.7 --------- TLS (clip no-ssl)
+   ->getopt  --------------- getopt (常开)
 
  ->proj/klua  -------------- klua可执行入口
  ->proj  ------------------- 工程文件 (VS2015)
@@ -58,6 +81,6 @@ Lua API 文档: <https://gitee.com/klua/klua_doc> (`lua/klua/`, `lua/klbcore/`)
 同组织相关仓库, 可对照阅读、组合使用:
 
 * [klua_doc](https://gitee.com/klua/klua_doc) — 文档仓 (klb / pfs / Lua API)
-* [portfs](https://gitee.com/klua/portfs) — 跨平台可移植文件系统
+* 可移植文件系统 — 现行 `src_packages/klbpfs`（裁剪 `no-pfs`；对外暂 `pfs_*` / `kpfs`）；历史独立仓 [portfs](https://gitee.com/klua/portfs) 暂保留
 * [wlua](https://gitee.com/klua/wlua) — Windows 桌面 Lua 宿主 (SDL, 链接 libklb)
 * [pubfw](https://gitee.com/klua/pubfw) — 公共框架 (目前空壳)

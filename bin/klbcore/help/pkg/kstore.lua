@@ -30,7 +30,7 @@ end
 -- @brief ID 转仓储相对路径
 -- @param [in] id[string]	数据 ID
 -- @return [string]	相对路径
--- @return nil, code[number(int)]	失败; code 见 kstore.E_*
+-- @return nil, code[number(int)]	失败; code 见 klbcode.base
 -- @note 路径缓冲上限 512 (KLB_STORE_PATH_MAX), 超长按 E_ARG
 kstore.rel_path = function (id)
 	return ''
@@ -41,23 +41,15 @@ end
 -- @param [in] root[string]	数据根目录 (无尾斜杠)
 -- @param [in] id[string]		数据 ID
 -- @return [string]	绝对路径
--- @return nil, code[number(int)]	失败; code 见 kstore.E_*
--- @note root 长度 >= 512 直接 E_ARG
+-- @return nil, code[number(int)]	失败; code 见 klbcode.base
+-- @note root 长度 >= 512 直接 base.INVAL
 kstore.abs_path = function (root, id)
 	return ''
 end
 
 
--- 错误码 (klb_store_errcode_e)
-kstore.OK = 0				-- 成功
-kstore.E_ARG = -1			-- 参数非法
-kstore.E_NOENT = -2			-- 不存在
-kstore.E_IO = -3			-- 读写失败
-kstore.E_NOSPC = -4			-- 空间不足
-kstore.E_BUSY = -5			-- 占用/冲突
-kstore.E_NOTIMPL = -6		-- 桩: 未实现
-kstore.E_AUTH = -7			-- 令牌无效
-kstore.E_RANGE = -8			-- 分片区间非法
+-- 错误码真源: require("klbcore.klbcode").base (同 C klb_basecode_e)
+-- 常用: OK/INVAL/NOENT/IO/NOSPC/BUSY/NOTIMPL/ACCES/RANGE
 
 
 return kstore

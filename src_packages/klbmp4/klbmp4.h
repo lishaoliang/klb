@@ -5,7 +5,7 @@
 /// @file    klbmp4.h
 /// @author  随风(https://gitee.com/klua/klb)
 /// @brief   klb 可裁剪包 klbmp4 对外入口 (根目录仅暴露外部接口; 实现见 core/ mp4_klua/)
-/// @version 0.6
+/// @version 0.7
 /// @history 修改历史
 ///  \n [2026] 创建文件; klbmp4_close 改为返回状态; 写侧落盘失败可被感知; 增加 info / seek / 打开失败错误码; 读侧记录宽高与 profile/level
 ///  \n [2026-11] 错码对齐 klb_basecode_e (与 klbcore.klbcode 一致); EOF=1 读完
@@ -27,21 +27,9 @@ extern "C" {
 typedef struct klbmp4_t_ klbmp4_t;
 
 
-/// @enum klbmp4_errcode_e
-/// @brief 打开 / 读写失败码 (数值同 KLB_BASECODE_*; EOF 为读完)
-typedef enum klbmp4_errcode_e_
-{
-    KLBMP4_OK           = KLB_BASECODE_OK,              ///< 成功
-    KLBMP4_EOF          = 1,                            ///< 读侧已读完 (同 socket DISCONNECT 数值)
-    KLBMP4_ERR_ARG      = KLB_BASECODE_INVAL,           ///< 参数非法
-    KLBMP4_ERR_OPEN     = KLB_BASECODE_NOENT,           ///< 打开文件失败(不存在 / 无权限)
-    KLBMP4_ERR_FORMAT   = KLB_BASECODE_CODEC_PROTO,     ///< 非 MP4 / 顶层 box 非法
-    KLBMP4_ERR_MOOV     = KLB_BASECODE_PACKAGE_BAD,     ///< 无 moov / moov 损坏 / 超过 32MB
-    KLBMP4_ERR_TRACK    = KLB_BASECODE_CODEC_NOSUP,     ///< 无 vide 轨 / 非 avc1 / 样本表非法
-    KLBMP4_ERR_LIMIT    = KLB_BASECODE_LIMIT,           ///< 样本数 / 块数 / 单样本超过硬上限
-    KLBMP4_ERR_IO       = KLB_BASECODE_IO,              ///< 文件读写失败
-    KLBMP4_ERR_WRITE    = KLB_BASECODE_PACKAGE_IO,      ///< 写侧未写出(0 样本或落盘失败)
-}klbmp4_errcode_e;
+/// @def KLBMP4_EOF
+/// @brief 读侧已读完 (数值 1, 同 KLB_NETCODE_DISCONNECT / socket DISCONNECT)
+#define KLBMP4_EOF      1
 
 
 /// @struct klbmp4_info_t
@@ -68,7 +56,7 @@ KLB_API klbmp4_t* klbmp4_open_read(const char* p_path);
 
 /// @brief 打开 MP4 只读(带错误码)
 /// @param [in]  *p_path    文件路径
-/// @param [out] *p_err     失败时 klbmp4_errcode_e; 可为 NULL
+/// @param [out] *p_err     失败时 klb_basecode_e; 可为 NULL
 /// @return klbmp4_t* 成功非 NULL; 失败 NULL
 KLB_API klbmp4_t* klbmp4_open_read_ex(const char* p_path, int* p_err);
 
@@ -82,7 +70,7 @@ KLB_API klbmp4_t* klbmp4_open_write(const char* p_path);
 
 /// @brief 打开 MP4 只写(带错误码)
 /// @param [in]  *p_path    文件路径
-/// @param [out] *p_err     失败时 klbmp4_errcode_e; 可为 NULL
+/// @param [out] *p_err     失败时 klb_basecode_e; 可为 NULL
 /// @return klbmp4_t* 成功非 NULL; 失败 NULL
 KLB_API klbmp4_t* klbmp4_open_write_ex(const char* p_path, int* p_err);
 
@@ -97,7 +85,7 @@ KLB_API int klbmp4_close(klbmp4_t* p_mp4);
 /// @brief 读下一访问单元
 /// @param [in]  *p_mp4     句柄
 /// @param [out] *p_frame   成功时为 klb_buf_t: [klb_mnp_media_t][载荷]
-/// @return int KLBMP4_OK 成功; KLBMP4_EOF 已读完; 其它为失败码 (现多为 KLB_BASECODE_ERR)
+/// @return int KLB_BASECODE_OK 成功; KLBMP4_EOF 已读完; 其它为失败码 (现多为 KLB_BASECODE_EPERM)
 /// @note 成功时 *p_frame 为 klb_buf_malloc 结果, 调用方 free. 关键帧前拼 SPS/PPS
 /// @note time 与 FLV demux 相同: 媒体毫秒乘 1000. 非同步样本记为 P 帧
 KLB_API int klbmp4_read(klbmp4_t* p_mp4, klb_buf_t** p_frame);

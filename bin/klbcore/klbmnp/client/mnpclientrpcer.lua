@@ -7,10 +7,12 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
 local kmnp = require("kmnp")
 local kurl = require("kurl")
 local cjson = require("cjson.safe")
-local errcode = require("klbcore.klbmnp.errcode")
 local deadline = require("klbcore.klbmnp.deadline")
 
 
@@ -105,7 +107,7 @@ end
 local CallOnce = function (self, ...)
 	local client = self._client
 	if not client then
-		return nil, errcode.E_CLOSED, "closed"
+		return nil, net.CLOSED, "closed"
 	end
 
 	local rpctype = RpcType(self.rpctype)
@@ -139,7 +141,7 @@ end
 -- @note 到期以 disconnect 唤醒阻塞的 co_call; 返回 `nil, E_TIMEOUT`
 local CoCall = function (self, ...)
 	if self._cancelled then
-		return nil, errcode.E_CANCEL, "cancelled"
+		return nil, base.CANCELED, "cancelled"
 	end
 
 	local state = deadline.arm(self._timeout_ms, function ()
@@ -152,11 +154,11 @@ local CoCall = function (self, ...)
 	local expired = deadline.finish(state)
 
 	if self._cancelled then
-		return nil, errcode.E_CANCEL, "cancelled"
+		return nil, base.CANCELED, "cancelled"
 	end
 
 	if expired then
-		return nil, errcode.E_TIMEOUT, "timeout"
+		return nil, net.TIMEOUT, "timeout"
 	end
 
 	return table.unpack(rets, 1, rets.n)
@@ -210,7 +212,7 @@ function mnpclientrpc:connect_rpc(host, port, opts)
 	local client, code = kmnp.connect_rpc(tostring(host), tonumber(port), opts)
 	if not client then
 		self._last_code = code or 1
-		self._last_error = errcode.str(code or errcode.E_UNKNOWN)
+		self._last_error = klbcode.strerror(code or base.ERR)
 		return self._last_code
 	end
 
@@ -284,7 +286,7 @@ function mnpclientrpc:co_recv()
 	local msg, head, body = self._client:co_recv()
 	if "error" == msg then
 		self._last_code = head or 1
-		self._last_error = errcode.str(errcode.E_IO)
+		self._last_error = klbcode.strerror(base.IO)
 		return "error", self._last_code, self._last_error
 	end
 

@@ -7,8 +7,10 @@
 -- @history 修改历史
 --		[2026-10] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
+local net = klbcode.net
 local klpc = require("klpc")
-local errcode = require("klbcore.klblpc.errcode")
 local deadline = require("klbcore.klblpc.deadline")
 
 
@@ -34,14 +36,14 @@ end
 -- @return [number|nil] code			失败错误码
 lpcclient_co.post = function (mo_name, ...)
 	if "string" ~= type(mo_name) or "" == mo_name then
-		return false, errcode.E_ARG
+		return false, base.INVAL
 	end
 
 	if klpc.post(mo_name, ...) then
 		return true
 	end
 
-	return false, errcode.E_IO
+	return false, base.IO
 end
 
 
@@ -80,12 +82,12 @@ end
 -- @return [...]						对方 response 的数据; 失败 `nil, code[, err]`
 local function CallTimed(ms, mo_name, ...)
 	if "string" ~= type(mo_name) or "" == mo_name then
-		return nil, errcode.E_ARG, "invalid mo_name"
+		return nil, base.INVAL, "invalid mo_name"
 	end
 
 	local lpc = klpc.new()
 	if not lpc then
-		return nil, errcode.E_IO, "new lpc failed"
+		return nil, base.IO, "new lpc failed"
 	end
 
 	local closed = false
@@ -105,17 +107,17 @@ local function CallTimed(ms, mo_name, ...)
 	close_lpc()
 
 	if expired then
-		return nil, errcode.E_TIMEOUT, "timeout"
+		return nil, net.TIMEOUT, "timeout"
 	end
 
 	if 0 == rets.n then
 		fire_peer_gone(mo_name)
-		return nil, errcode.E_CLOSED, "closed"
+		return nil, net.CLOSED, "closed"
 	end
 
 	if nil == rets[1] and "number" == type(rets[2]) then
 		fire_peer_gone(mo_name)
-		return nil, rets[2], errcode.str(rets[2])
+		return nil, rets[2], klbcode.strerror(rets[2])
 	end
 
 	return table.unpack(rets, 1, rets.n)

@@ -499,7 +499,7 @@ static bool build_samples_klb_mp4(klbmp4_t* p_mp4, const uint8_t* p_stbl, int st
 
     if (sample_count <= 0 || sample_count > MP4_MAX_SAMPLES)
     {
-        p_mp4->err = (sample_count > MP4_MAX_SAMPLES) ? KLBMP4_ERR_LIMIT : KLBMP4_ERR_TRACK;
+        p_mp4->err = (sample_count > MP4_MAX_SAMPLES) ? KLB_BASECODE_LIMIT : KLB_BASECODE_CODEC_NOSUP;
         return false;
     }
 
@@ -511,7 +511,7 @@ static bool build_samples_klb_mp4(klbmp4_t* p_mp4, const uint8_t* p_stbl, int st
     chunk_count = (int)KLB_RB32(p_stco + 4);
     if (chunk_count <= 0 || chunk_count > MP4_MAX_SAMPLES)
     {
-        p_mp4->err = (chunk_count > MP4_MAX_SAMPLES) ? KLBMP4_ERR_LIMIT : KLBMP4_ERR_TRACK;
+        p_mp4->err = (chunk_count > MP4_MAX_SAMPLES) ? KLB_BASECODE_LIMIT : KLB_BASECODE_CODEC_NOSUP;
         return false;
     }
 
@@ -530,7 +530,7 @@ static bool build_samples_klb_mp4(klbmp4_t* p_mp4, const uint8_t* p_stbl, int st
     stsc_n = (int)KLB_RB32(p_stsc + 4);
     if (stsc_n <= 0 || stsc_n > MP4_MAX_SAMPLES || stsc_len < 8 + stsc_n * 12)
     {
-        p_mp4->err = (stsc_n > MP4_MAX_SAMPLES) ? KLBMP4_ERR_LIMIT : KLBMP4_ERR_TRACK;
+        p_mp4->err = (stsc_n > MP4_MAX_SAMPLES) ? KLB_BASECODE_LIMIT : KLB_BASECODE_CODEC_NOSUP;
         return false;
     }
 
@@ -555,7 +555,7 @@ static bool build_samples_klb_mp4(klbmp4_t* p_mp4, const uint8_t* p_stbl, int st
 
         if (sz <= 0 || sz > MP4_MAX_SAMPLE)
         {
-            p_mp4->err = (sz > MP4_MAX_SAMPLE) ? KLBMP4_ERR_LIMIT : KLBMP4_ERR_TRACK;
+            p_mp4->err = (sz > MP4_MAX_SAMPLE) ? KLB_BASECODE_LIMIT : KLB_BASECODE_CODEC_NOSUP;
             goto err;
         }
 
@@ -706,9 +706,9 @@ err:
     KLB_FREE(p_stsc_tab);
     clear_track_klb_mp4(p_mp4);
 
-    if (KLBMP4_OK == p_mp4->err)
+    if (KLB_BASECODE_OK == p_mp4->err)
     {
-        p_mp4->err = KLBMP4_ERR_TRACK;
+        p_mp4->err = KLB_BASECODE_CODEC_NOSUP;
     }
 
     return false;
@@ -884,7 +884,7 @@ static bool load_moov_klb_mp4(klbmp4_t* p_mp4)
 
     if (file_size < 8)
     {
-        p_mp4->err = KLBMP4_ERR_FORMAT;
+        p_mp4->err = KLB_BASECODE_CODEC_PROTO;
         return false;
     }
 
@@ -897,7 +897,7 @@ static bool load_moov_klb_mp4(klbmp4_t* p_mp4)
 
         if (!read_at_klb_mp4(p_mp4->pf, pos, hdr, 8))
         {
-            p_mp4->err = KLBMP4_ERR_IO;
+            p_mp4->err = KLB_BASECODE_EIO;
             return false;
         }
 
@@ -908,7 +908,7 @@ static bool load_moov_klb_mp4(klbmp4_t* p_mp4)
         {
             if (!read_at_klb_mp4(p_mp4->pf, pos + 8, hdr + 8, 8))
             {
-                p_mp4->err = KLBMP4_ERR_IO;
+                p_mp4->err = KLB_BASECODE_EIO;
                 return false;
             }
 
@@ -922,7 +922,7 @@ static bool load_moov_klb_mp4(klbmp4_t* p_mp4)
 
         if (box < hdr_len || pos > file_size - box)
         {
-            p_mp4->err = KLBMP4_ERR_FORMAT;
+            p_mp4->err = KLB_BASECODE_CODEC_PROTO;
             return false;
         }
 
@@ -939,7 +939,7 @@ static bool load_moov_klb_mp4(klbmp4_t* p_mp4)
 
     if (moov_off < 0 || moov_size - moov_hdr <= 0 || moov_size - moov_hdr > MP4_MAX_MOOV)
     {
-        p_mp4->err = (moov_size - moov_hdr > MP4_MAX_MOOV) ? KLBMP4_ERR_LIMIT : KLBMP4_ERR_MOOV;
+        p_mp4->err = (moov_size - moov_hdr > MP4_MAX_MOOV) ? KLB_BASECODE_LIMIT : KLB_BASECODE_PACKAGE_BAD;
         return false;
     }
 
@@ -949,16 +949,16 @@ static bool load_moov_klb_mp4(klbmp4_t* p_mp4)
     if (!read_at_klb_mp4(p_mp4->pf, moov_off + moov_hdr, p_body, body_len))
     {
         KLB_FREE(p_body);
-        p_mp4->err = KLBMP4_ERR_IO;
+        p_mp4->err = KLB_BASECODE_EIO;
         return false;
     }
 
     ok = parse_moov_klb_mp4(p_mp4, p_body, body_len);
     KLB_FREE(p_body);
 
-    if (!ok && KLBMP4_OK == p_mp4->err)
+    if (!ok && KLB_BASECODE_OK == p_mp4->err)
     {
-        p_mp4->err = KLBMP4_ERR_TRACK;
+        p_mp4->err = KLB_BASECODE_CODEC_NOSUP;
     }
 
     return ok;
@@ -2010,7 +2010,7 @@ static klbmp4_t* open_file_klb_mp4(const char* p_path, bool write, int* p_err)
     {
         if (NULL != p_err)
         {
-            *p_err = KLBMP4_ERR_ARG;
+            *p_err = KLB_BASECODE_EINVAL;
         }
 
         return NULL;
@@ -2024,7 +2024,7 @@ static klbmp4_t* open_file_klb_mp4(const char* p_path, bool write, int* p_err)
 
         if (NULL != p_err)
         {
-            *p_err = KLBMP4_ERR_OPEN;
+            *p_err = KLB_BASECODE_ENOENT;
         }
 
         return NULL;
@@ -2048,7 +2048,7 @@ klbmp4_t* klbmp4_open_read_ex(const char* p_path, int* p_err)
 
     if (NULL != p_err)
     {
-        *p_err = KLBMP4_OK;
+        *p_err = KLB_BASECODE_OK;
     }
 
     p_mp4 = open_file_klb_mp4(p_path, false, p_err);
@@ -2066,7 +2066,7 @@ klbmp4_t* klbmp4_open_read_ex(const char* p_path, int* p_err)
 
         if (NULL != p_err)
         {
-            *p_err = (KLBMP4_OK != err) ? err : KLBMP4_ERR_FORMAT;
+            *p_err = (KLB_BASECODE_OK != err) ? err : KLB_BASECODE_CODEC_PROTO;
         }
 
         return NULL;
@@ -2084,7 +2084,7 @@ klbmp4_t* klbmp4_open_write_ex(const char* p_path, int* p_err)
 {
     if (NULL != p_err)
     {
-        *p_err = KLBMP4_OK;
+        *p_err = KLB_BASECODE_OK;
     }
 
     return open_file_klb_mp4(p_path, true, p_err);
@@ -2242,7 +2242,7 @@ int klbmp4_read(klbmp4_t* p_mp4, klb_buf_t** p_frame)
 
     if (0 > rc)
     {
-        p_mp4->err = KLBMP4_ERR_IO;
+        p_mp4->err = KLB_BASECODE_EIO;
     }
 
     return rc;

@@ -14,7 +14,7 @@
 local M = {}
 
 
--- 锚定协议修订 (见 PROTOCOL.md)
+-- 锚定协议修订 (摘要已迁出包内; 现行 PROTOCOL_VERSION)
 M.PROTOCOL_VERSION = "2025-06-18"
 
 -- 支持集: 集内回相同; 否则回锚定 PROTOCOL_VERSION

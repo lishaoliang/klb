@@ -135,7 +135,7 @@ KLB_API int klb_socket_udp_recv_judge(klb_socket_t* p_socket, int n, int cap, bo
 /// @param [in]  *p_socket      UDP socket 对象
 /// @param [in]  enable         true.开启; false.关闭
 /// @return int 0.成功; 小于 0.klb_netcode_e
-/// @note 仅 IPv4; IPv6 返回 KLB_NETCODE_NOTSUP
+/// @note 仅 IPv4; IPv6 返回 KLB_NETCODE_EOPNOTSUPP
 KLB_API int klb_socket_udp_set_broadcast(klb_socket_t* p_socket, bool enable);
 
 

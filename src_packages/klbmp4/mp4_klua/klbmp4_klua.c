@@ -70,16 +70,16 @@ static int klua_kmp4_read(lua_State* L)
     if (NULL == p_obj->p_mp4 || p_obj->write)
     {
         lua_pushnil(L);
-        lua_pushinteger(L, KLBMP4_ERR_ARG);
+        lua_pushinteger(L, KLB_BASECODE_EINVAL);
         return 2;
     }
 
     rc = klbmp4_read(p_obj->p_mp4, &p_frame);
 
-    if (KLBMP4_OK == rc)
+    if (KLB_BASECODE_OK == rc)
     {
         lua_pushlightuserdata(L, p_frame);
-        lua_pushinteger(L, KLBMP4_OK);
+        lua_pushinteger(L, KLB_BASECODE_OK);
         return 2;
     }
 
@@ -91,7 +91,7 @@ static int klua_kmp4_read(lua_State* L)
     }
 
     lua_pushnil(L);
-    lua_pushinteger(L, KLB_BASECODE_ERR);
+    lua_pushinteger(L, KLB_BASECODE_EPERM);
     return 2;
 }
 
@@ -104,12 +104,12 @@ static int klua_kmp4_write(lua_State* L)
 
     if (NULL == p_obj->p_mp4 || !p_obj->write || NULL == p_frame)
     {
-        lua_pushinteger(L, KLBMP4_ERR_ARG);
+        lua_pushinteger(L, KLB_BASECODE_EINVAL);
         return 1;
     }
 
     rc = klbmp4_write(p_obj->p_mp4, p_frame);
-    lua_pushinteger(L, (0 == rc) ? KLBMP4_OK : KLBMP4_ERR_WRITE);
+    lua_pushinteger(L, (0 == rc) ? KLB_BASECODE_OK : KLB_BASECODE_PACKAGE_IO);
     return 1;
 }
 
@@ -180,7 +180,7 @@ static int klua_kmp4_info(lua_State* L)
     if (NULL == p_obj->p_mp4 || 0 != klbmp4_info(p_obj->p_mp4, &info))
     {
         lua_pushnil(L);
-        lua_pushinteger(L, KLBMP4_ERR_ARG);
+        lua_pushinteger(L, KLB_BASECODE_EINVAL);
         return 2;
     }
 
@@ -210,7 +210,7 @@ static int klua_kmp4_info(lua_State* L)
     lua_pushinteger(L, (lua_Integer)info.duration_ms);
     lua_setfield(L, -2, "duration_ms");
 
-    lua_pushinteger(L, KLBMP4_OK);
+    lua_pushinteger(L, KLB_BASECODE_OK);
     return 2;
 }
 
@@ -223,12 +223,12 @@ static int klua_kmp4_seek(lua_State* L)
 
     if (NULL == p_obj->p_mp4 || p_obj->write)
     {
-        lua_pushinteger(L, KLBMP4_ERR_ARG);
+        lua_pushinteger(L, KLB_BASECODE_EINVAL);
         return 1;
     }
 
     rc = klbmp4_seek(p_obj->p_mp4, (int64_t)time_ms);
-    lua_pushinteger(L, (0 == rc) ? KLBMP4_OK : KLB_BASECODE_ERR);
+    lua_pushinteger(L, (0 == rc) ? KLB_BASECODE_OK : KLB_BASECODE_EPERM);
     return 1;
 }
 
@@ -302,7 +302,7 @@ static int open_klua_kmp4(lua_State* L, bool write)
     const char* p_path = luaL_checkstring(L, 1);
     klbmp4_t* p_mp4 = NULL;
     klua_kmp4_t* p_obj = NULL;
-    int err = KLBMP4_OK;
+    int err = KLB_BASECODE_OK;
 
     if (write)
     {

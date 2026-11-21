@@ -4,6 +4,7 @@
 -- @author 随风(https://gitee.com/klua/klb)
 -- @brief  klbsocks5 脚本封装 (SOCKS5; 内部可用 ksocks5)
 -- @note   IO 编排在本层; wire 优先 ksocks5 (RFC1928/1929)
+--   \n 返回码: 直接用 klbcore.klbcode.base / net; 不本地再映射 E_*
 -- @history 修改历史
 --  \n [2026-10] 从 proxy.socks5 迁入; is_ver / rep_for_upstream_err / probe (proxy L0-2/7/8)
 --]]
@@ -11,7 +12,6 @@
 
 local client = require("klbcore.klbsocks5.client")
 local server = require("klbcore.klbsocks5.serve")
-local errcode = require("klbcore.klbsocks5.errcode")
 
 
 local klbsocks5 = {}
@@ -19,10 +19,10 @@ local klbsocks5 = {}
 
 klbsocks5.client = client
 klbsocks5.server = server
-klbsocks5.errcode = errcode
 klbsocks5.VER = 0x05
 -- RFC1928 REP: succeeded
 klbsocks5.REP_SUCCEEDED = 0x00
+-- @note 返回码真源 klbcore.klbcode (base/net); 不本地再映射 E_*
 
 
 -- @brief C 绑定是否可用 (桩亦返回 true)

@@ -4,8 +4,10 @@
 #include "libavutil/aes.h"
 #include "libavutil/aes_ctr.h"
 #include "libavutil/random_seed.h"
+#ifndef __KLB_NO_SSL__
 #include "mbedtls/aes.h"
 #include "mbedtls/chacha20.h"
+#endif // !__KLB_NO_SSL__
 #include <string.h>
 #include <assert.h>
 
@@ -418,6 +420,8 @@ static int xform_xor_klb_mnp_crypto(const uint8_t* p_key, uint32_t key_size,
 }
 
 
+#ifndef __KLB_NO_SSL__
+
 /// @brief AES-ECB(mbedtls); 仅整块; 尾字节保持原样
 static int xform_aes_ecb_klb_mnp_crypto(const uint8_t* p_keymat,
     uint8_t* p_body, int body_len, bool encrypt)
@@ -470,6 +474,8 @@ static int xform_aes_ecb_klb_mnp_crypto(const uint8_t* p_keymat,
     return KLB_MNP_CRYPTO_OK;
 }
 
+#endif // !__KLB_NO_SSL__
+
 
 /// @brief AES-CTR(libavutil); iv 取自 PSK 尾部
 static int xform_aes_ctr_klb_mnp_crypto(const uint8_t* p_keymat, const uint8_t* p_iv,
@@ -502,6 +508,8 @@ static int xform_aes_ctr_klb_mnp_crypto(const uint8_t* p_keymat, const uint8_t* 
     return KLB_MNP_CRYPTO_OK;
 }
 
+
+#ifndef __KLB_NO_SSL__
 
 /// @brief AES-OFB(mbedtls); iv 取自 PSK 尾部; 对称
 static int xform_aes_ofb_klb_mnp_crypto(const uint8_t* p_keymat, const uint8_t* p_iv,
@@ -610,6 +618,8 @@ static int xform_chacha20_klb_mnp_crypto(const uint8_t* p_keymat, const uint8_t*
     return KLB_MNP_CRYPTO_OK;
 }
 
+#endif // !__KLB_NO_SSL__
+
 
 KLB_API int klb_mnp_crypto_xform_payload(const klb_mnp_crypto_side_t* p_side,
     int packtype, uint8_t* p_data, int data_len, bool encrypt)
@@ -666,6 +676,7 @@ KLB_API int klb_mnp_crypto_xform_payload(const klb_mnp_crypto_side_t* p_side,
     {
         return xform_aes_ctr_klb_mnp_crypto(p_side->p_key, p_side->p_key + 16, p_body, body_len);
     }
+#ifndef __KLB_NO_SSL__
     else if (KLB_MNP_CRYPTO_AES_OFB == p_side->format)
     {
         return xform_aes_ofb_klb_mnp_crypto(p_side->p_key, p_side->p_key + 16, p_body, body_len);
@@ -682,6 +693,7 @@ KLB_API int klb_mnp_crypto_xform_payload(const klb_mnp_crypto_side_t* p_side,
     {
         return xform_chacha20_klb_mnp_crypto(p_side->p_key, p_side->p_key + 32, p_body, body_len);
     }
+#endif // !__KLB_NO_SSL__
 
     return KLB_MNP_CRYPTO_ENOSUP;
 }

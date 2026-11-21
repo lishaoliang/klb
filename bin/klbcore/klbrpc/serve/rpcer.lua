@@ -9,9 +9,10 @@
 --		[2026-09] 创建文件
 --]]
 local kco = require("kco")
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local cfger = require("klbcore.klbrpc.cfger")
 local router = require("klbcore.klbrpc.router")
-local errcode = require("klbcore.klbrpc.errcode")
 
 
 --------------------------------------------------------------------------------------------
@@ -172,19 +173,19 @@ local function CheckToken(auth, token)
 	end
 
 	if "string" ~= type(auth.expect) or "" == auth.expect then
-		return false, errcode.E_AUTH, "auth not configured"
+		return false, base.ACCES, "auth not configured"
 	end
 
 	local expire = auth.expire_ms
 	if nil ~= expire and 0 < expire and expire <= math.floor(os.time() * 1000) then
-		return false, errcode.E_AUTH, "token expired"
+		return false, base.ACCES, "token expired"
 	end
 
 	if TokenEq(tostring(token or ""), auth.expect) then
 		return true
 	end
 
-	return false, errcode.E_AUTH, "auth rejected"
+	return false, base.ACCES, "auth rejected"
 end
 
 
@@ -204,12 +205,12 @@ end
 -- @param [in]  conn[table]		承载协议包 rpc 服务连接
 -- @param [in]  sequence[number]	请求序号
 -- @param [in]  msg[string]		错误描述
--- @param [in]  code[number|nil]	错误码; 缺省 E_UNKNOWN
+-- @param [in]  code[number|nil]	错误码; 缺省 base.ERR
 -- @return ok[boolean]
 local function RespondFail(conn, sequence, msg, code)
 	local rc
 	if "function" == type(conn.response_error) then
-		rc = conn:response_error(sequence, code or errcode.E_UNKNOWN, msg)
+		rc = conn:response_error(sequence, code or base.ERR, msg)
 	else
 		rc = conn:response(sequence, false, msg)
 	end
@@ -241,7 +242,7 @@ local function ServeConn(app, conn, scheme, auth_state)
 
 		if "string" ~= type(name) or "" == name or not kind then
 			if "REQUEST" == method then
-				if not RespondFail(conn, sequence, "method not found", errcode.E_NOENT) then
+				if not RespondFail(conn, sequence, "method not found", base.NOENT) then
 					return
 				end
 			end
@@ -265,7 +266,7 @@ local function ServeConn(app, conn, scheme, auth_state)
 		elseif not auth_state.authed then
 			-- 未鉴权: REQUEST 回错误; POST/NOTIFY 丢弃
 			if "call" == kind then
-				if not RespondFail(conn, sequence, "auth required", errcode.E_AUTH) then
+				if not RespondFail(conn, sequence, "auth required", base.ACCES) then
 					return
 				end
 			end
@@ -273,7 +274,7 @@ local function ServeConn(app, conn, scheme, auth_state)
 			local fn = app._router:find(kind, name)
 			if not fn then
 				if "call" == kind then
-					if not RespondFail(conn, sequence, "method not found", errcode.E_NOENT) then
+					if not RespondFail(conn, sequence, "method not found", base.NOENT) then
 						return
 					end
 				end
@@ -300,7 +301,7 @@ local function ServeConn(app, conn, scheme, auth_state)
 
 					if "call" == kind then
 						if not xok then
-							RespondFail(conn, sequence, tostring(xn), errcode.E_UNKNOWN)
+							RespondFail(conn, sequence, tostring(xn), base.ERR)
 						else
 							local rc = conn:response(sequence, table.unpack(xr, 1, xn))
 							if 0 ~= rc then

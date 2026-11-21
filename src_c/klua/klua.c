@@ -27,6 +27,9 @@
 #if !defined(__KLB_NO_TAR__)
 #include "klbtar/klbtar.h"
 #endif
+#if !defined(__KLB_NO_PFS__)
+#include "klbpfs/klbpfs.h"
+#endif
 #if !defined(__KLB_NO_SOCKS5__)
 #include "klbsocks5/klbsocks5.h"
 #endif
@@ -307,7 +310,7 @@ int klua_open_zlib(lua_State *L)
 #endif
 
 #if !defined(__KLB_NO_SQLITE__)
-// from ./klb/src_c/klua/lsqlite3/src/lsqlite3.c
+// from ./klb/src_c/klua/lsqlite3/lsqlite3.c
 extern int luaopen_lsqlite3(lua_State *L);
 
 int klua_open_lsqlite3(lua_State* L)
@@ -410,6 +413,15 @@ int klua_loadlib_all(lua_State* L)
 
 #if !defined(__KLB_NO_TAR__)
         klua_loadlib(L, klua_open_ktar, "ktar");
+#endif
+
+#if !defined(__KLB_NO_PFS__)
+        klua_loadlib(L, pfs_klua_open_kpfs, "kpfs");
+        klua_loadlib(L, pfs_klua_open_kpfs_vfs, "kpfs.vfs");
+        klua_loadlib(L, pfs_klua_open_kpfs_probe, "kpfs.probe");
+        klua_loadlib(L, pfs_klua_open_kpfs_disk, "kpfs.disk");
+        klua_loadlib(L, pfs_klua_open_kpfs_image, "kpfs.image");
+        klua_loadlib(L, pfs_klua_open_kpfs_mtd, "kpfs.mtd");
 #endif
 
 #if !defined(__KLB_NO_SOCKS5__)

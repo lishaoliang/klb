@@ -1086,7 +1086,7 @@ klb_netconn_t* klb_rtspclient_connect(klb_netmulti_t* p_netmulti, const char* p_
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -1096,7 +1096,7 @@ klb_netconn_t* klb_rtspclient_connect(klb_netmulti_t* p_netmulti, const char* p_
     if (INVALID_SOCKET == fd)
     {
         code = klb_netcode_last_syserr();
-        if (KLB_NETCODE_IO == code || KLB_NETCODE_ERR == code)
+        if (KLB_NETCODE_EIO == code || KLB_NETCODE_EPERM == code)
         {
             code = KLB_NETCODE_CONNECT_FAIL;
         }

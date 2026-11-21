@@ -7,10 +7,11 @@
 -- @history 修改历史
 --		[2026-09] 创建文件
 --]]
+local klbcode = require("klbcore.klbcode")
+local base = klbcode.base
 local kws = require("kws") -- 确保 kws userdata 元表已加载
 local kco = require("kco")
 local ktime = require("ktime")
-local errcode = require("klbcore.klbws.errcode")
 
 
 --------------------------------------------------------------------------------------------
@@ -187,7 +188,7 @@ function wsserve:co_recv()
 
 	if "error" == msg or "exit" == msg then
 		self.last_code = head
-		self.last_error = errcode.str(errcode.E_IO)
+		self.last_error = klbcode.strerror(base.IO)
 	elseif "close" == msg then
 		self.last_code = head
 		self.last_error = tostring(body or "")

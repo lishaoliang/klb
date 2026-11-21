@@ -67,7 +67,7 @@ MY_INCLUDES += -I ../../src_apps
 # 第三方库头文件
 MY_INCLUDES += -I ../../src_c/klua/lua-5.4.6/src
 MY_INCLUDES += -I ../../inc/klbthird
-MY_INCLUDES += -I ../../src_c/zlib-1.2.11
+MY_INCLUDES += -I ../../src_3rdparty/zlib-1.3.2
 
 
 # openssl
@@ -101,7 +101,7 @@ MY_FIND_FILES_CPP = $(wildcard $(dir)/*.cpp)
 MY_SOURCES = $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_C))
 MY_SOURCES += $(foreach dir, $(MY_DIRS), $(MY_FIND_FILES_CPP))
 ifneq ($(ALUA_WITH_KSVNRA),0)
-MY_ZLIB_DIR := ../../src_c/zlib-1.2.11
+MY_ZLIB_DIR := ../../src_3rdparty/zlib-1.3.2
 MY_SOURCES += $(MY_ZLIB_DIR)/adler32.c $(MY_ZLIB_DIR)/crc32.c $(MY_ZLIB_DIR)/inffast.c
 MY_SOURCES += $(MY_ZLIB_DIR)/inflate.c $(MY_ZLIB_DIR)/inftrees.c $(MY_ZLIB_DIR)/zutil.c
 endif

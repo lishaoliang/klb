@@ -1052,7 +1052,7 @@ int klb_httpserve_conn_take(klb_netconn_t* p_conn, klb_socket_t** pp_socket, klb
 
     if (NULL == p_conn || NULL == pp_socket || NULL == pp_tail)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     p_httpserve = (klb_httpserve_conn_t*)p_conn->extra;
@@ -1067,12 +1067,12 @@ int klb_httpserve_conn_take(klb_netconn_t* p_conn, klb_socket_t** pp_socket, klb
 
     if (!klb_httpserve_wbuf_is_empty(p_conn))
     {
-        return KLB_NETCODE_BUSY;
+        return KLB_NETCODE_EBUSY;
     }
 
     if (0 != klb_netmulti_remove(p_httpserve->p_netmulti, p_conn))
     {
-        return KLB_NETCODE_ERR;
+        return KLB_NETCODE_EPERM;
     }
 
     klb_buf_t* p_tail = copy_tail_klb_httpserve_conn(p_httpserve);
@@ -1099,12 +1099,12 @@ int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, i
 
     if (NULL == p_path || 0 == p_path[0] || offset < 0 || length < 0)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     if (NULL != p_httpserve->p_file)
     {
-        return KLB_NETCODE_BUSY;
+        return KLB_NETCODE_EBUSY;
     }
 
     FILE* p_file = NULL;
@@ -1113,7 +1113,7 @@ int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, i
         p_file = fopen(p_path, "rb");
         if (NULL == p_file)
         {
-            return KLB_NETCODE_NOENT;
+            return KLB_NETCODE_ENOENT;
         }
 
         if (0 < offset)
@@ -1121,7 +1121,7 @@ int klb_httpserve_conn_send_file(klb_netconn_t* p_conn, const uint8_t* p_head, i
             if (0 != seek_file_klb_httpserve_conn(p_file, offset))
             {
                 fclose(p_file);
-                return KLB_NETCODE_IO;
+                return KLB_NETCODE_EIO;
             }
         }
     }

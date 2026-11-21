@@ -332,7 +332,7 @@ static int peek_peer_klb_socket_dtls(klb_socket_t* p_socket)
     if (0 != p_socket->connected)
     {
         p_dtls->has_peer = (0 < p_socket->peer.len) ? true : false;
-        return p_dtls->has_peer ? 0 : KLB_NETCODE_NOTCONN;
+        return p_dtls->has_peer ? 0 : KLB_NETCODE_ENOTCONN;
     }
 
     uint8_t dummy = 0;
@@ -357,7 +357,7 @@ static int peek_peer_klb_socket_dtls(klb_socket_t* p_socket)
             return 1;
         }
 
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     memcpy(&p_socket->peer.addr, &sa, (size_t)sa_len);
@@ -647,7 +647,7 @@ static int init_klb_socket_dtls(klb_socket_t* p_socket, const klb_socket_dtls_cf
         &p_dtls->entropy, pers, sizeof(pers) - 1);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     ret = mbedtls_ssl_config_defaults(&p_dtls->conf,
@@ -655,7 +655,7 @@ static int init_klb_socket_dtls(klb_socket_t* p_socket, const klb_socket_dtls_cf
         MBEDTLS_SSL_TRANSPORT_DATAGRAM, MBEDTLS_SSL_PRESET_DEFAULT);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     mbedtls_ssl_conf_rng(&p_dtls->conf, mbedtls_ctr_drbg_random, &p_dtls->ctr_drbg);
@@ -700,7 +700,7 @@ static int init_klb_socket_dtls(klb_socket_t* p_socket, const klb_socket_dtls_cf
         ret = mbedtls_ssl_conf_own_cert(&p_dtls->conf, &p_dtls->own_cert, &p_dtls->own_key);
         if (0 != ret)
         {
-            return KLB_NETCODE_IO;
+            return KLB_NETCODE_EIO;
         }
 
         has_own_cert = true;
@@ -708,7 +708,7 @@ static int init_klb_socket_dtls(klb_socket_t* p_socket, const klb_socket_dtls_cf
 
     if (is_server && !has_own_cert)
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     // step3. cookie (服务端 HelloVerify); 默认 config 的回调为 dummy
@@ -718,7 +718,7 @@ static int init_klb_socket_dtls(klb_socket_t* p_socket, const klb_socket_dtls_cf
         ret = mbedtls_ssl_cookie_setup(&p_dtls->cookie, mbedtls_ctr_drbg_random, &p_dtls->ctr_drbg);
         if (0 != ret)
         {
-            return KLB_NETCODE_IO;
+            return KLB_NETCODE_EIO;
         }
 
         mbedtls_ssl_conf_dtls_cookies(&p_dtls->conf, mbedtls_ssl_cookie_write,
@@ -731,14 +731,14 @@ static int init_klb_socket_dtls(klb_socket_t* p_socket, const klb_socket_dtls_cf
     ret = mbedtls_ssl_conf_dtls_srtp_protection_profiles(&p_dtls->conf, s_dtls_srtp_profiles);
     if (0 != ret)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 #endif
 
     ret = mbedtls_ssl_setup(&p_dtls->ssl, &p_dtls->conf);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     mbedtls_ssl_set_mtu(&p_dtls->ssl, KLB_DTLS_MTU);
@@ -757,7 +757,7 @@ static klb_socket_t* open_klb_socket_dtls(klb_socket_t* p_udp, const klb_socket_
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -767,7 +767,7 @@ static klb_socket_t* open_klb_socket_dtls(klb_socket_t* p_udp, const klb_socket_
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -837,7 +837,7 @@ static klb_socket_t* open_io_klb_socket_dtls(bool is_server, const klb_socket_dt
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -847,7 +847,7 @@ static klb_socket_t* open_io_klb_socket_dtls(bool is_server, const klb_socket_dt
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_INVAL;
+            *p_code = KLB_NETCODE_EINVAL;
         }
 
         return NULL;
@@ -858,7 +858,7 @@ static klb_socket_t* open_io_klb_socket_dtls(bool is_server, const klb_socket_dt
     {
         if (NULL != p_code)
         {
-            *p_code = KLB_NETCODE_NOMEM;
+            *p_code = KLB_NETCODE_ENOMEM;
         }
 
         return NULL;
@@ -929,7 +929,7 @@ int klb_socket_dtls_handshake(klb_socket_t* p_socket)
 {
     if ((NULL == p_socket) || !is_dtls_klb_socket_dtls(p_socket))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     return handshake_klb_socket_dtls(p_socket);
@@ -948,18 +948,18 @@ static int export_klb_socket_dtls(klb_socket_t* p_socket, bool peer, uint8_t* p_
 {
     if ((NULL == p_socket) || (NULL == p_key) || (NULL == p_salt) || !is_dtls_klb_socket_dtls(p_socket))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_socket_dtls_t* p_dtls = (klb_socket_dtls_t*)p_socket->extra;
     if (!p_dtls->handshake_done)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     if ((key_cap < KLB_DTLS_SRTP_KEY_LEN) || (salt_cap < KLB_DTLS_SRTP_SALT_LEN))
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
 #if defined(MBEDTLS_SSL_DTLS_SRTP)
@@ -969,13 +969,13 @@ static int export_klb_socket_dtls(klb_socket_t* p_socket, bool peer, uint8_t* p_
     mbedtls_ssl_get_dtls_srtp_negotiation_result(&p_dtls->ssl, &info);
     if (MBEDTLS_TLS_SRTP_UNSET == info.chosen_dtls_srtp_profile)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 #endif
 
     if (!p_dtls->keys_exported)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     // step2. RFC 5764 4.2 节: PRF(master_secret, label, client_random||server_random, 60)
@@ -1032,7 +1032,7 @@ static int format_fp_klb_socket_dtls(const unsigned char* digest, char* p_text, 
     int need = (int)(sizeof(KLB_DTLS_FP_PREFIX) - 1) + KLB_DTLS_FP_SHA256_LEN * 3;
     if (cap < need)
     {
-        return KLB_NETCODE_MSGSIZE;
+        return KLB_NETCODE_EMSGSIZE;
     }
 
     static const char hex[] = "0123456789ABCDEF";
@@ -1059,32 +1059,32 @@ int klb_socket_dtls_fingerprint(klb_socket_t* p_socket, char* p_text, int cap)
 {
     if ((NULL == p_socket) || (NULL == p_text) || !is_dtls_klb_socket_dtls(p_socket))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     klb_socket_dtls_t* p_dtls = (klb_socket_dtls_t*)p_socket->extra;
     if (!p_dtls->handshake_done)
     {
-        return KLB_NETCODE_NOTCONN;
+        return KLB_NETCODE_ENOTCONN;
     }
 
     const mbedtls_x509_crt* p_crt = mbedtls_ssl_get_peer_cert(&p_dtls->ssl);
     if (NULL == p_crt)
     {
-        return KLB_NETCODE_NOENT;
+        return KLB_NETCODE_ENOENT;
     }
 
     const mbedtls_md_info_t* p_md = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
     if (NULL == p_md)
     {
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     unsigned char digest[KLB_DTLS_FP_SHA256_LEN];
     int ret = mbedtls_md(p_md, p_crt->raw.p, p_crt->raw.len, digest);
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     // "sha-256 " + 32*2 hex + 31 ':' + '\0'
@@ -1096,7 +1096,7 @@ int klb_socket_dtls_cert_fingerprint(const char* p_cert_pem, char* p_text, int c
 {
     if ((NULL == p_cert_pem) || (NULL == p_text))
     {
-        return KLB_NETCODE_INVAL;
+        return KLB_NETCODE_EINVAL;
     }
 
     mbedtls_x509_crt crt;
@@ -1114,7 +1114,7 @@ int klb_socket_dtls_cert_fingerprint(const char* p_cert_pem, char* p_text, int c
     if (NULL == p_md)
     {
         mbedtls_x509_crt_free(&crt);
-        return KLB_NETCODE_NOTSUP;
+        return KLB_NETCODE_EOPNOTSUPP;
     }
 
     unsigned char digest[KLB_DTLS_FP_SHA256_LEN];
@@ -1123,7 +1123,7 @@ int klb_socket_dtls_cert_fingerprint(const char* p_cert_pem, char* p_text, int c
 
     if (0 != ret)
     {
-        return KLB_NETCODE_IO;
+        return KLB_NETCODE_EIO;
     }
 
     return format_fp_klb_socket_dtls(digest, p_text, cap);
@@ -1137,7 +1137,7 @@ int klb_socket_dtls_cert_fingerprint(const char* p_cert_pem, char* p_text, int c
     (void)p_text;
     (void)cap;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 klb_socket_t* klb_socket_dtls_client_open(klb_socket_t* p_socket, const klb_socket_dtls_cfg_t* p_cfg, int* p_code)
@@ -1147,7 +1147,7 @@ klb_socket_t* klb_socket_dtls_client_open(klb_socket_t* p_socket, const klb_sock
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
     return NULL;
@@ -1160,7 +1160,7 @@ klb_socket_t* klb_socket_dtls_server_open(klb_socket_t* p_socket, const klb_sock
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
     return NULL;
@@ -1175,7 +1175,7 @@ klb_socket_t* klb_socket_dtls_io_open(bool is_server, const klb_socket_dtls_io_t
 
     if (NULL != p_code)
     {
-        *p_code = KLB_NETCODE_NOTSUP;
+        *p_code = KLB_NETCODE_EOPNOTSUPP;
     }
 
     return NULL;
@@ -1185,7 +1185,7 @@ int klb_socket_dtls_handshake(klb_socket_t* p_socket)
 {
     (void)p_socket;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 int klb_socket_dtls_srtp_export(klb_socket_t* p_socket, uint8_t* p_key, int key_cap,
@@ -1197,7 +1197,7 @@ int klb_socket_dtls_srtp_export(klb_socket_t* p_socket, uint8_t* p_key, int key_
     (void)p_salt;
     (void)salt_cap;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 int klb_socket_dtls_fingerprint(klb_socket_t* p_socket, char* p_text, int cap)
@@ -1206,7 +1206,7 @@ int klb_socket_dtls_fingerprint(klb_socket_t* p_socket, char* p_text, int cap)
     (void)p_text;
     (void)cap;
 
-    return KLB_NETCODE_NOTSUP;
+    return KLB_NETCODE_EOPNOTSUPP;
 }
 
 #endif

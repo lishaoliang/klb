@@ -54,7 +54,7 @@ int klb_store_core_abs_path(const klb_store_t* p_store, const char* p_id, char* 
 /// @brief 递归创建目录
 /// @param [in] *p_dir      目录路径
 /// @return int 0.成功; 非0.错误码
-/// @note 桩: 回 KLB_STORE_E_NOTIMPL
+/// @note 桩: 回 KLB_BASECODE_NOTIMPL
 int klb_store_core_mkdir_p(const char* p_dir);
 
 

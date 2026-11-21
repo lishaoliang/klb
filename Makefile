@@ -63,18 +63,19 @@ MY_DIRS += ./src_c/klua/lua-5.4.6/src ./src_c/klua/lua-cjson-2.1.0 ./src_c/klua/
 # klbapp — 主应用程序框架
 MY_DIRS += ./src_c/klbapp
 
-# compat / libavutil / klbthird
+# compat / libavutil / klbthird (单文件: cJSON / http_parser / klb_getopt)
 MY_DIRS += ./src_c/compat ./src_c/libavutil
-MY_DIRS += ./src_c/klbthird ./src_c/klbthird/sds
+MY_DIRS += ./src_c/klbthird
+MY_DIRS += ./src_3rdparty/sds
 
-# src_3rdparty: 第三方开源可裁剪库 (clip.mk; mbedtls-3.6.7 / no-ssl; getopt 常开)
+# src_3rdparty: 第三方开源可裁剪库 (clip.mk; mbedtls/pcre2/zlib/qrencode; getopt 常开)
 
 ###########################################################
 # 头文件目录
 
 # 引用头文件
 MY_INCLUDES := -I ./src_c -I ./inc -I ./src_c/compat
-MY_INCLUDES += -I ./src_c/klbthird/sds
+MY_INCLUDES += -I ./src_3rdparty/sds
 MY_INCLUDES += -I ./inc/klbthird
 
 # klua bundled 头文件 (qrencode 等可选见 clip.mk)

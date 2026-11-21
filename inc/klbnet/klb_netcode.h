@@ -13,6 +13,7 @@
 #define __KLB_NETCODE_H__
 
 #include "klb_type.h"
+#include "klbbase/klb_basecode.h"
 #include "klbnet/klb_socket.h"
 
 #if defined(__cplusplus)
@@ -37,43 +38,43 @@ extern "C" {
 
 /// @enum  klb_netcode_e
 /// @brief 网络模块 消息码 (传输/连接/流控; 另含 HTTP status / WS close 别名)
-/// @note 负段数值 = -errno, 对齐 linux asm-generic/errno*.h (同 pfs; 自持常量)
+/// @note 负段 = KLB_BASECODE_* 同名常量 (数值 -errno); 非完整表
 ///   \n WinSock 等非 Linux 数值须由实现映射到本枚举, 勿直接返回 WSA* 原值
 ///   \n 结果码约定(默认): 0 成功; <0 失败/重试; >=PRIVATE_BASE 细分失败
 ///   \n 例外: send/recv 等返回字节数的 API 另见各自 @return
 typedef enum klb_netcode_e_
 {
     //////////////////////////////////////////////////////////////////////////
-    // 负段: -errno (网络常用; 非完整表; 与 PRIVATE_* 语义码并存)
-    KLB_NETCODE_ERR             = -1,                       ///< 泛化失败 (EPERM)
-    KLB_NETCODE_NOENT           = -2,                       ///< 路径/对象不存在 (ENOENT)
-    KLB_NETCODE_INTR            = -4,                       ///< 被信号中断 (EINTR)
-    KLB_NETCODE_IO              = -5,                       ///< I/O 失败 (EIO)
-    KLB_NETCODE_BADF            = -9,                       ///< 坏的 fd (EBADF)
-    KLB_NETCODE_AGAIN           = -11,                      ///< 暂不可用/需重试 (EAGAIN)
-    KLB_NETCODE_NOMEM           = -12,                      ///< 资源不足 (ENOMEM)
-    KLB_NETCODE_ACCES           = -13,                      ///< 权限不足 (EACCES)
-    KLB_NETCODE_BUSY            = -16,                      ///< 忙/不可用 (EBUSY)
-    KLB_NETCODE_EXIST           = -17,                      ///< 已存在/冲突 (EEXIST)
-    KLB_NETCODE_INVAL           = -22,                      ///< 参数非法 (EINVAL)
-    KLB_NETCODE_PIPE            = -32,                      ///< 管道破裂/写对端已关 (EPIPE)
-    KLB_NETCODE_MSGSIZE         = -90,                      ///< 报文过大 (EMSGSIZE)
-    KLB_NETCODE_NOTSUP          = -95,                      ///< 不支持/未实现 (EOPNOTSUPP)
-    KLB_NETCODE_AFNOSUPPORT     = -97,                      ///< 地址族不支持 (EAFNOSUPPORT)
-    KLB_NETCODE_ADDRINUSE       = -98,                      ///< 地址已占用 (EADDRINUSE)
-    KLB_NETCODE_ADDRNOTAVAIL    = -99,                      ///< 地址不可用 (EADDRNOTAVAIL)
-    KLB_NETCODE_NETUNREACH      = -101,                     ///< 网络不可达 (ENETUNREACH)
-    KLB_NETCODE_CONNABORTED     = -103,                     ///< 连接中止 (ECONNABORTED)
-    KLB_NETCODE_CONNRESET       = -104,                     ///< 连接复位 (ECONNRESET)
-    KLB_NETCODE_NOBUFS          = -105,                     ///< 无缓冲空间 (ENOBUFS)
-    KLB_NETCODE_ISCONN          = -106,                     ///< 已连接 (EISCONN)
-    KLB_NETCODE_NOTCONN         = -107,                     ///< 未连接 (ENOTCONN)
-    KLB_NETCODE_TIMEDOUT        = -110,                     ///< 操作超时 (ETIMEDOUT)
-    KLB_NETCODE_CONNREFUSED     = -111,                     ///< 连接被拒绝 (ECONNREFUSED)
-    KLB_NETCODE_HOSTUNREACH     = -113,                     ///< 主机不可达 (EHOSTUNREACH)
-    KLB_NETCODE_ALREADY         = -114,                     ///< 操作已在进行 (EALREADY)
-    KLB_NETCODE_INPROGRESS      = -115,                     ///< 操作进行中 (EINPROGRESS)
-    KLB_NETCODE_ECANCELED       = -125,                     ///< 操作被取消 (ECANCELED)
+    // 负段: 取自 KLB_BASECODE_* (同名同值)
+    KLB_NETCODE_EPERM           = KLB_BASECODE_EPERM,       ///< 泛化失败 (EPERM)
+    KLB_NETCODE_ENOENT          = KLB_BASECODE_ENOENT,      ///< 路径/对象不存在 (ENOENT)
+    KLB_NETCODE_EINTR           = KLB_BASECODE_EINTR,       ///< 被信号中断 (EINTR)
+    KLB_NETCODE_EIO             = KLB_BASECODE_EIO,         ///< I/O 失败 (EIO)
+    KLB_NETCODE_EBADF           = KLB_BASECODE_EBADF,       ///< 坏的 fd (EBADF)
+    KLB_NETCODE_EAGAIN          = KLB_BASECODE_EAGAIN,      ///< 暂不可用/需重试 (EAGAIN)
+    KLB_NETCODE_ENOMEM          = KLB_BASECODE_ENOMEM,      ///< 资源不足 (ENOMEM)
+    KLB_NETCODE_EACCES          = KLB_BASECODE_EACCES,      ///< 权限不足 (EACCES)
+    KLB_NETCODE_EBUSY           = KLB_BASECODE_EBUSY,       ///< 忙/不可用 (EBUSY)
+    KLB_NETCODE_EEXIST          = KLB_BASECODE_EEXIST,      ///< 已存在/冲突 (EEXIST)
+    KLB_NETCODE_EINVAL          = KLB_BASECODE_EINVAL,      ///< 参数非法 (EINVAL)
+    KLB_NETCODE_EPIPE           = KLB_BASECODE_EPIPE,       ///< 管道破裂/写对端已关 (EPIPE)
+    KLB_NETCODE_EMSGSIZE        = KLB_BASECODE_EMSGSIZE,    ///< 报文过大 (EMSGSIZE)
+    KLB_NETCODE_EOPNOTSUPP      = KLB_BASECODE_EOPNOTSUPP,  ///< 不支持/未实现 (EOPNOTSUPP)
+    KLB_NETCODE_EAFNOSUPPORT    = KLB_BASECODE_EAFNOSUPPORT, ///< 地址族不支持 (EAFNOSUPPORT)
+    KLB_NETCODE_EADDRINUSE      = KLB_BASECODE_EADDRINUSE,  ///< 地址已占用 (EADDRINUSE)
+    KLB_NETCODE_EADDRNOTAVAIL   = KLB_BASECODE_EADDRNOTAVAIL, ///< 地址不可用 (EADDRNOTAVAIL)
+    KLB_NETCODE_ENETUNREACH     = KLB_BASECODE_ENETUNREACH, ///< 网络不可达 (ENETUNREACH)
+    KLB_NETCODE_ECONNABORTED    = KLB_BASECODE_ECONNABORTED, ///< 连接中止 (ECONNABORTED)
+    KLB_NETCODE_ECONNRESET      = KLB_BASECODE_ECONNRESET,  ///< 连接复位 (ECONNRESET)
+    KLB_NETCODE_ENOBUFS         = KLB_BASECODE_ENOBUFS,     ///< 无缓冲空间 (ENOBUFS)
+    KLB_NETCODE_EISCONN         = KLB_BASECODE_EISCONN,     ///< 已连接 (EISCONN)
+    KLB_NETCODE_ENOTCONN        = KLB_BASECODE_ENOTCONN,    ///< 未连接 (ENOTCONN)
+    KLB_NETCODE_ETIMEDOUT       = KLB_BASECODE_ETIMEDOUT,   ///< 操作超时 (ETIMEDOUT)
+    KLB_NETCODE_ECONNREFUSED    = KLB_BASECODE_ECONNREFUSED, ///< 连接被拒绝 (ECONNREFUSED)
+    KLB_NETCODE_EHOSTUNREACH    = KLB_BASECODE_EHOSTUNREACH, ///< 主机不可达 (EHOSTUNREACH)
+    KLB_NETCODE_EALREADY        = KLB_BASECODE_EALREADY,    ///< 操作已在进行 (EALREADY)
+    KLB_NETCODE_EINPROGRESS     = KLB_BASECODE_EINPROGRESS, ///< 操作进行中 (EINPROGRESS)
+    KLB_NETCODE_ECANCELED       = KLB_BASECODE_ECANCELED,   ///< 操作被取消 (ECANCELED)
 
     //////////////////////////////////////////////////////////////////////////
     // [0 ~ KLB_SOCKET_STATUS_MAX), 沿用 klb_socket_status_e (别名, 数值同源)
@@ -242,7 +243,7 @@ KLB_API const char* klb_netcode_strerror(int code);
 
 /// @brief 将宿主 errno / WSAGetLastError 映射为 klb_netcode_e
 /// @param [in]  syserr             宿主错误号 (Linux errno 或 Win WSA*)
-/// @return int                     klb_netcode_e; 未知为 KLB_NETCODE_IO; 0 为 KLB_NETCODE_ERR
+/// @return int                     klb_netcode_e; 未知为 KLB_NETCODE_EIO; 0 为 KLB_NETCODE_EPERM
 KLB_API int klb_netcode_from_syserr(int syserr);
 
 

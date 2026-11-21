@@ -3,7 +3,7 @@
 set -euo pipefail
 
 _klb_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-_clip_lib="${_klb_dir}/../build/scripts/lib/klb-clip.sh"
+_clip_lib="${_klb_dir}/../klua_release/scripts/lib/klb-clip.sh"
 
 if [[ ! -f "${_clip_lib}" ]]; then
     echo "clip-build.sh: missing ${_clip_lib}" >&2
@@ -22,27 +22,27 @@ _raw_clip=""
 
 usage() {
     cat <<EOF
-用法: ${_klb_dir}/clip-build.sh [裁剪选项] [--] [make 目标...]
+Usage: ${_klb_dir}/clip-build.sh [clip options] [--] [make targets...]
 
-记名 (Autotools 对齐):
-  no-* / --disable-*     裁掉库 (全量基准)
-  use-* / --enable-*     加回库 (须配合 --min-core 或仅写 enable 时默认 min-core; make 直传亦可)
-  --min-core             最小预设
+Tokens (Autotools aligned):
+  no-* / --disable-*     drop library (full baseline)
+  use-* / --enable-*     add library back (pair with --min-core; enable-only implies min-core; make direct pass also works)
+  --min-core             minimal preset
 
-示例:
+Examples:
   ./clip-build.sh --min-core --enable zlib --enable lpeg -j8
   ./clip-build.sh --min-core use-zlib use-net-proto --print
   ./clip-build.sh --full --disable-gui --disable-zlib -j8
   ./clip-build.sh --disable gui --disable sqlite --print
 
-兼容:
-  --minus LIB ...        同 --disable
-  --core-plus LIB ...    同 --min-core --enable
+Compatibility:
+  --minus LIB ...        same as --disable
+  --core-plus LIB ...    same as --min-core --enable
 
-选项:
+Options:
   --print / --info / -j N / --raw '...' / -h
 
-库名: zlib lpeg sqlite pcre2 cpp gui format qrencode net-proto http ws smp rtsp mnp ssl wui wui-embed wui-sim
+Libraries: zlib lpeg sqlite pcre2 cpp gui format qrencode net-proto http ws smp rtsp mnp ssl wui wui-embed wui-sim pfs
 EOF
 }
 
@@ -76,7 +76,7 @@ while [[ $# -gt 0 ]]; do
         --raw)
             shift
             if [[ $# -lt 1 ]]; then
-                echo "clip-build.sh: --raw 需要 MY_CLIP 字符串" >&2
+                echo "clip-build.sh: --raw requires MY_CLIP string" >&2
                 exit 1
             fi
             _raw_clip="$1"
@@ -129,7 +129,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --disable)
             if [[ $# -lt 2 ]]; then
-                echo "clip-build.sh: --disable 需要库名" >&2
+                echo "clip-build.sh: --disable requires library name" >&2
                 exit 1
             fi
             _compose_tokens+=("--disable-$2")
@@ -137,7 +137,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --enable)
             if [[ $# -lt 2 ]]; then
-                echo "clip-build.sh: --enable 需要库名" >&2
+                echo "clip-build.sh: --enable requires library name" >&2
                 exit 1
             fi
             _compose_tokens+=("--enable-$2")
@@ -145,7 +145,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         use)
             if [[ $# -lt 2 ]]; then
-                echo "clip-build.sh: use 需要库名" >&2
+                echo "clip-build.sh: use requires library name" >&2
                 exit 1
             fi
             _compose_tokens+=("use-$2")
@@ -177,7 +177,7 @@ if [[ -n "${_raw_clip}" ]]; then
     MY_CLIP="$(klb_clip_normalize_my_clip_string ${_raw_clip})"
     _mode="raw"
 elif ((${#_compose_tokens[@]} == 0)); then
-    echo "clip-build.sh: 须指定 --min-core / --disable / --enable / use / --minus 等" >&2
+    echo "clip-build.sh: specify --min-core / --disable / --enable / use / --minus ..." >&2
     usage >&2
     exit 1
 else
